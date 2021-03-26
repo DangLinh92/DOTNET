@@ -33,6 +33,8 @@ namespace FirstEmptyWebApp
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseStaticFiles();
+
             app.UseRouting();
 
             app.Use(async (context, next) =>
