@@ -1,0 +1,9 @@
+E:\Git-Responsitory\DotNet\AutoMapper\bin\Debug\AutoMapper.exe.config
+E:\Git-Responsitory\DotNet\AutoMapper\bin\Debug\AutoMapper.exe
+E:\Git-Responsitory\DotNet\AutoMapper\bin\Debug\AutoMapper.pdb
+E:\Git-Responsitory\DotNet\AutoMapper\bin\Debug\AutoMapper.dll
+E:\Git-Responsitory\DotNet\AutoMapper\bin\Debug\AutoMapper.xml
+E:\Git-Responsitory\DotNet\AutoMapper\obj\Debug\AutoMapperDemo.csprojAssemblyReference.cache
+E:\Git-Responsitory\DotNet\AutoMapper\obj\Debug\AutoMapperDemo.csproj.CopyComplete
+E:\Git-Responsitory\DotNet\AutoMapper\obj\Debug\AutoMapper.exe
+E:\Git-Responsitory\DotNet\AutoMapper\obj\Debug\AutoMapper.pdb

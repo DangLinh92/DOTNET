@@ -13,38 +13,81 @@ namespace AutoMapperDemo
     {
         static void Main(string[] args)
         {
+            var department = new Department()
+            {
+                DeptName = "D1",
+                Address = "Duy tan",
+                Description = "Phong IT"
+            };
             //Creating the source object
             var employees = new List<Employee>()
             {
                 new Employee
                 {
-                Name = "James",
+                FullName = "James",
                 Salary = 20000,
                 Address = "London",
-                Department = "IT"
+                Department = "IT",
+                Description = "aaa",
+                DeptName = "bbb",
+                DeptAddress = "HN"
                 }
                 ,
                 new Employee
                 {
-                    Name = "Bon",
+                    FullName = "Bon",
                     Salary = 10000,
                     Address = "LA",
-                    Department = "IT"
+                    Department = "IT",
+                    Description = "aaa",
+                    DeptName = "bbb",
+                    DeptAddress = "HN"
                 }
             };
 
-
-            
-            var mapper = MapperConfig.Instant.CreateMapper();
+            var config = new MapperConfiguration(cfg =>
+            {
+               cfg.AddProfile(new MappingProfile());
+            });
+            var mapper = config.CreateMapper();
 
             var empDtos = employees.Select(emp => mapper.Map<Employee, EmployeeDto>(emp));
 
             foreach (var empDto in empDtos)
             {
-                Console.WriteLine("Name:" + empDto.Name + ", Salary:" + empDto.Salary + ", Address:" + empDto.Address + ", Department:" + empDto.Department);
+                Console.WriteLine("Name:" + empDto.Name + ", Salary:" + empDto.Salary + 
+                                  ", Address:" + empDto.Address + ", Department:" + empDto.Department+
+                                  ", Department Desciption:"+empDto.DepartmentDto.DescriptionDto);
             }
 
             Console.ReadLine();
+        }
+    }
+
+    public class MappingProfile : Profile
+    {
+        public MappingProfile()
+        {
+            CreateMap<Employee, EmployeeDto>()
+                .ForMember(
+                    des => des.Name,
+                    act => act.MapFrom(src => src.FullName))
+                .ForMember(des => des.DepartmentDto,
+                    act => act.MapFrom(src => new DepartmentDto
+                    {
+                    DeptNameDto = src.DeptName,
+                    AddressDto = src.DeptAddress,
+                    DescriptionDto = src.Description
+                }));
+              
+
+            CreateMap<Department, DepartmentDto>().
+                ForMember(des=>des.DeptNameDto,
+                    act=>act.MapFrom(src=>src.DeptName))
+                .ForMember(des => des.AddressDto,
+                act => act.MapFrom(src => src.Address))
+                .ForMember(des => des.DescriptionDto,
+                    act => act.MapFrom(src => src.Description));
         }
     }
 
@@ -84,10 +127,13 @@ namespace AutoMapperDemo
 
     public class Employee
     {
-        public string Name { get; set; }
+        public string FullName { get; set; }
         public int Salary { get; set; }
         public string Address { get; set; }
         public string Department { get; set; }
+        public string DeptName { get; set; }
+        public string DeptAddress { get; set; }
+        public string Description { get; set; }
     }
 
     public class EmployeeDto
@@ -96,6 +142,7 @@ namespace AutoMapperDemo
         public int Salary { get; set; }
         public string Address { get; set; }
         public string Department { get; set; }
+        public DepartmentDto DepartmentDto { get; set; }
     }
 
     public class Department
@@ -108,9 +155,9 @@ namespace AutoMapperDemo
 
     public class DepartmentDto
     {
-        public string DeptName { get; set; }
-        public string Address { get; set; }
-        public string Description { get; set; }
+        public string DeptNameDto { get; set; }
+        public string AddressDto { get; set; }
+        public string DescriptionDto { get; set; }
 
     }
 }
