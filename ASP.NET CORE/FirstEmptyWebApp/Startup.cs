@@ -23,6 +23,7 @@ namespace FirstEmptyWebApp
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllersWithViews();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -37,39 +38,48 @@ namespace FirstEmptyWebApp
 
             app.UseRouting();
 
-            app.Use(async (context, next) =>
-            {
-                await context.Response.WriteAsync("<div>Hello World1!</div>");
-                await next.Invoke();
-                await context.Response.WriteAsync("<div>Hello World1-back!</div>");
-            });
+            //app.UseMvcWithDefaultRoute();
 
-            app.Use(async (context, next) =>
-            {
-                await context.Response.WriteAsync("<div>Hello World2!</div>");
-                await next.Invoke();
-                await context.Response.WriteAsync("<div>Hello World2-back!</div>");
-            });
+            //app.Use(async (context, next) =>
+            //{
+            //    await context.Response.WriteAsync("<div>Hello World1!</div>");
+            //    await next.Invoke();
+            //    await context.Response.WriteAsync("<div>Hello World1-back!</div>");
+            //});
 
-            app.UseMiddleware<SimpleMiddleware>();
+            //app.Use(async (context, next) =>
+            //{
+            //    await context.Response.WriteAsync("<div>Hello World2!</div>");
+            //    await next.Invoke();
+            //    await context.Response.WriteAsync("<div>Hello World2-back!</div>");
+            //});
 
-            app.Use(async (context,next) =>
-            {
-                await context.Response.WriteAsync("Hello World 3!");
-                await next.Invoke();
-            });
+            //app.UseMiddleware<SimpleMiddleware>();
+
+            //app.Use(async (context,next) =>
+            //{
+            //    await context.Response.WriteAsync("Hello World 3!");
+            //    await next.Invoke();
+            //});
+
+
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync(Configuration.GetSection("productionString").Value);
-                    await context.Response.WriteAsync(Configuration.GetSection("Message").Value);
-                    await context.Response.WriteAsync(Configuration.GetSection("ConnectionStrings:connection2").Value);
-                    await context.Response.WriteAsync(Configuration.GetConnectionString("connection1"));
-                    await context.Response.WriteAsync(Configuration.GetSection("connectionString12:db1").Value);    
-                });
+                //endpoints.MapGet("/", async context =>
+                //{
+                //    await context.Response.WriteAsync(Configuration.GetSection("productionString").Value);
+                //    await context.Response.WriteAsync(Configuration.GetSection("Message").Value);
+                //    await context.Response.WriteAsync(Configuration.GetSection("ConnectionStrings:connection2").Value);
+                //    await context.Response.WriteAsync(Configuration.GetConnectionString("connection1"));
+                //    await context.Response.WriteAsync(Configuration.GetSection("connectionString12:db1").Value);
+                //});
+                endpoints.MapControllerRoute("demo", "home/{id:maxlength(3)}", new { controller = "Home", action = "Detail" });
+                endpoints.MapControllerRoute("default", "{controller}/{action}/{id?}", new { controller = "Home", action = "Index" });
+             
             });
+
+
         }
     }
 }
