@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<ArrayOfBook xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Book>
+    <Id>2</Id>
+    <Name>ASP.NET Core for dummy2</Name>
+    <Authors>Trump D2</Authors>
+    <Publisher>Washington2-2</Publisher>
+    <Year>2020</Year>
+    <Description>ahihi</Description>
+  </Book>
+  <Book>
+    <Id>3</Id>
+    <Name>ASP.NET Core for dummy3</Name>
+    <Authors>Trump D3</Authors>
+    <Publisher>Washington3</Publisher>
+    <Year>2020</Year>
+  </Book>
+  <Book>
+    <Id>4</Id>
+    <Name>ASP.NET Core for dummy3</Name>
+    <Authors>Trump D3</Authors>
+    <Publisher>Washington3</Publisher>
+    <Year>2020</Year>
+  </Book>
+  <Book>
+    <Id>5</Id>
+    <Name>ASP.NET Core for dummy3</Name>
+    <Authors>Trump D3</Authors>
+    <Publisher>Washington3</Publisher>
+    <Year>2020</Year>
+  </Book>
+  <Book>
+    <Id>6</Id>
+    <Name>Sách thiếu nhi</Name>
+    <Authors>Danglv</Authors>
+    <Publisher>Kim Đồng</Publisher>
+    <Year>2021</Year>
+  </Book>
+  <Book>
+    <Id>7</Id>
+    <Name>Sách thiếu nhi123</Name>
+    <Authors>Danglv</Authors>
+    <Publisher>Kim Đồng</Publisher>
+    <Year>2021</Year>
+    <Description>asdas</Description>
+    <DataFile>13_1.jpg</DataFile>
+  </Book>
+  <Book>
+    <Id>8</Id>
+    <Name>Sách thiếu nhi12334</Name>
+    <Authors>Danglv</Authors>
+    <Publisher>Washington2-2</Publisher>
+    <Year>2021</Year>
+    <DataFile>Git_Document.docx</DataFile>
+  </Book>
+</ArrayOfBook>

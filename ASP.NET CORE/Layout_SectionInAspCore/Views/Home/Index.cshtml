@@ -1,0 +1,12 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    var user = ViewData["Info"] as UserModel;
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome @ViewData["Name"]</h1>
+    <p>@user.Name-@user.Age</p>
+    <p>@ViewBag.UserInfo.Name - @ViewBag.UserInfo.Age</p>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">bilding Web apps with ASP.NET Core</a>.</p>
+    <a href="Home/Create">Create</a>
+</div>

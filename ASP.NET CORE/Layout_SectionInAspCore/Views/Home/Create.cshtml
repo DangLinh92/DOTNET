@@ -1,0 +1,30 @@
+﻿@addTagHelper *,Microsoft.AspNetCore.Mvc.TagHelpers
+@model Layout_SectionInAspCore.Models.ProductEditModel
+@{
+    ViewData["Title"] = "Create";
+}
+
+<style>
+    .field-validation-error{color: red}
+    .validation-summary-errors{color:red}
+</style>
+
+<h1>Create</h1>
+
+<form action="/home/create" method="post">
+    
+    <div asp-validation-summary="ModelOnly">
+        <span>Please correct the following errors</span>
+    </div>
+    <label for="Name">Name</label>
+    <input type="text" value="" name="Name"/>
+    <span asp-validation-for="Name"></span><br/>
+
+    <label for="Rate">Rate</label>
+    <input type="text" value="" name="Rate"/><br />
+
+    <label for="Rating">Rating</label>
+    <input type="text" value="" name="Rating"/><br />
+
+    <input type="submit" value="submit"/>
+</form>
