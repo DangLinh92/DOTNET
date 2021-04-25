@@ -1,10 +1,9 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
-using Microsoft.AspNetCore.Http;
 
 namespace BookMan.Models
 {
@@ -64,13 +63,12 @@ namespace BookMan.Models
             }
             else
             {
-                using(var stream = File.OpenRead(_dataFile))
+                using (var stream = File.OpenRead(_dataFile))
                 {
                     Books = _serializer.Deserialize(stream) as HashSet<Book>;
                 }
             }
         }
-
 
         public Book[] Get() => Books.ToArray();
 
@@ -103,18 +101,18 @@ namespace BookMan.Models
 
         public string GetPathData(string file) => $"Data\\{file}";
 
-        public void Upload(Book book,IFormFile file)
+        public void Upload(Book book, IFormFile file)
         {
             if (file != null)
             {
                 var path = GetPathData(file.FileName);
-                using var stream = new FileStream(path,FileMode.Create);
+                using var stream = new FileStream(path, FileMode.Create);
                 file.CopyTo(stream);
                 book.DataFile = file.FileName;
             }
         }
 
-        public (Stream,string) Download(Book book)
+        public (Stream, string) Download(Book book)
         {
             var memory = new MemoryStream();
             using var stream = new FileStream(GetPathData(book.DataFile), FileMode.Open);
@@ -145,7 +143,7 @@ namespace BookMan.Models
                                     x.Year.ToString().ToLower().Contains(s)).ToArray();
         }
 
-        public (Book[] books,int pages,int page) Paging(int page)
+        public (Book[] books, int pages, int page) Paging(int page)
         {
             int size = 5;
             int pages = (int)Math.Ceiling((double)Books.Count / size);

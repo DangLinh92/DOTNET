@@ -1,23 +1,19 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using BookMan.Models;
+﻿using BookMan.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BookMan.Controllers
 {
     public class BookController : Controller
     {
         private readonly Service _service;
+
         public BookController(Service service)
         {
             _service = service;
         }
 
-        public IActionResult Index(int page=1)
+        public IActionResult Index(int page = 1)
         {
             var model = _service.Paging(page);
             ViewData["Pages"] = model.pages;
@@ -36,7 +32,7 @@ namespace BookMan.Controllers
         public IActionResult Delete(int id)
         {
             var b = _service.Get(id);
-            if(b== null)
+            if (b == null)
             {
                 return NotFound();
             }
@@ -59,14 +55,14 @@ namespace BookMan.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(Book book,IFormFile file)
+        public IActionResult Edit(Book book, IFormFile file)
         {
             if (ModelState.IsValid)
             {
                 _service.Upload(book, file);
                 _service.Update(book);
                 _service.SaveChange();
-                return RedirectToAction("Index");   
+                return RedirectToAction("Index");
             }
             return View(book);
         }
@@ -77,11 +73,11 @@ namespace BookMan.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Book book,IFormFile file)
+        public IActionResult Create(Book book, IFormFile file)
         {
             if (ModelState.IsValid)
             {
-                _service.Upload(book,file);
+                _service.Upload(book, file);
                 _service.Add(book);
                 _service.SaveChange();
                 return RedirectToAction("Index");

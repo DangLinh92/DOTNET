@@ -9,7 +9,7 @@
 <div class="mb-3">
     <a asp-action="Create" class="btn btn-outline-primary">Create New</a>
     <form asp-action="Search" method="get" class="input-group w-50 float-right">
-        <input type="text" class="form-control" placeholder="search for" name="search" style="margin:0 10px"/>
+        <input type="text" class="form-control" placeholder="search for" name="search" style="margin:0 10px" />
         <div class="input-group-append">
             <button class="btn btn-outline-secondary" type="submit">Search</button>
         </div>
@@ -39,16 +39,16 @@
         {
             <tr>
                 <td>
-                  <a asp-route-id="@item.Id" asp-action="Details">@item.Name</a>
+                    <a asp-route-id="@item.Id" asp-action="Details">@item.Name</a>
                 </td>
                 <td>
-                   @item.Authors
+                    @item.Authors
                 </td>
                 <td>
-                   @item.Publisher
+                    @item.Publisher
                 </td>
                 <td>
-                   @item.Year
+                    @item.Year
                 </td>
                 <td>
                     <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info">Details</a>
@@ -58,10 +58,10 @@
                 </td>
             </tr>
         }
-    <tr>
-        <td colspan="5">
-            <strong>Sum: @Model.Count()</strong>
-        </td>
-    </tr>
+        <tr>
+            <td colspan="5">
+                <strong>Sum: @Model.Count()</strong>
+            </td>
+        </tr>
     </tbody>
 </table>

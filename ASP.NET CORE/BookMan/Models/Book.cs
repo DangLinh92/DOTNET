@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BookMan.Models
 {
@@ -11,16 +8,16 @@ namespace BookMan.Models
     {
         public int Id { get; set; }
 
-        [Required,DisplayName("Tiêu đề")]
+        [Required, DisplayName("Tiêu đề")]
         public string Name { get; set; }
 
-        [Required,DisplayName("Tác giả")]
+        [Required, DisplayName("Tác giả")]
         public string Authors { get; set; }
 
-        [Required,DisplayName("Nhà xuất bản")]
+        [Required, DisplayName("Nhà xuất bản")]
         public string Publisher { get; set; }
 
-        [Required,Range(1990,int.MaxValue),DisplayName("Năm xuất bản")]
+        [Required, Range(1990, int.MaxValue), DisplayName("Năm xuất bản")]
         public int Year { get; set; }
 
         [DisplayName("Tóm tắt")]
@@ -28,6 +25,5 @@ namespace BookMan.Models
 
         [DisplayName("File")]
         public string DataFile { get; set; }
-
     }
 }
