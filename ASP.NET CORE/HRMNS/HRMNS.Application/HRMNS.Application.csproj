@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Implementation\" />
+    <Folder Include="Interfaces\" />
+    <Folder Include="Automapper\" />
+    <Folder Include="ViewModels\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HRMNS.Data.EF\HRMNS.Data.EF.csproj" />
+    <ProjectReference Include="..\HRMNS.Data\HRMNS.Data.csproj" />
+    <ProjectReference Include="..\HRMNS.Utilities\HRMNS.Utilities.csproj" />
+  </ItemGroup>
+
+</Project>

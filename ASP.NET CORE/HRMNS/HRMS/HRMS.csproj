@@ -13,4 +13,12 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.16" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\HRMNS.Application\HRMNS.Application.csproj" />
+    <ProjectReference Include="..\HRMNS.Data.EF\HRMNS.Data.EF.csproj" />
+    <ProjectReference Include="..\HRMNS.Data\HRMNS.Data.csproj" />
+    <ProjectReference Include="..\HRMNS.Utilities\HRMNS.Utilities.csproj" />
+    <ProjectReference Include="..\HRMS.Infrastructure\HRMS.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
