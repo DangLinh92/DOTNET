@@ -7,12 +7,11 @@ using System.Text;
 
 namespace HRMNS.Data.Entities
 {
-    [Table("Permissions")]
+    [Table("PERMISSION")]
     public class PERMISSION : DomainEntity<int>
     {
-        [StringLength(450)]
         [Required]
-        public string RoleId { get; set; }
+        public Guid RoleId { get; set; }
 
         [StringLength(128)]
         [Required]

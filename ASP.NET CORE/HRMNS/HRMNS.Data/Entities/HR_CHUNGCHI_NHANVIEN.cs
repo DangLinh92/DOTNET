@@ -7,7 +7,7 @@ using System.Text;
 
 namespace HRMNS.Data.Entities
 {
-    [Table("[HR.CHUNGCHI_NHANVIEN]")]
+    [Table("HR_CHUNGCHI_NHANVIEN")]
     public class HR_CHUNGCHI_NHANVIEN : DomainEntity<int>
     {
         [StringLength(50)]

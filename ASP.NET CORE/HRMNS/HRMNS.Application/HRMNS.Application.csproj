@@ -5,16 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Implementation\" />
-    <Folder Include="Interfaces\" />
-    <Folder Include="Automapper\" />
-    <Folder Include="ViewModels\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\HRMNS.Data.EF\HRMNS.Data.EF.csproj" />
     <ProjectReference Include="..\HRMNS.Data\HRMNS.Data.csproj" />
     <ProjectReference Include="..\HRMNS.Utilities\HRMNS.Utilities.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="6.1.1" />
   </ItemGroup>
 
 </Project>

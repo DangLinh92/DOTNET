@@ -7,8 +7,8 @@ using System.Text;
 
 namespace HRMNS.Data.Entities
 {
-    [Table("[HR.NHANVIEN]")]
-    public class HR_NHANVIEN : DomainEntity <string>
+    [Table("HR_NHANVIEN")]
+    public class HR_NHANVIEN : DomainEntity<string>
     {
         public HR_NHANVIEN()
         {
@@ -18,6 +18,46 @@ namespace HRMNS.Data.Entities
             HR_QUATRINHLAMVIEC = new HashSet<HR_QUATRINHLAMVIEC>();
             HR_TINHTRANGHOSO = new HashSet<HR_TINHTRANGHOSO>();
             HR_CHUNGCHI_NHANVIEN = new HashSet<HR_CHUNGCHI_NHANVIEN>();
+        }
+
+        public HR_NHANVIEN
+            (string tenNV, string maChucDanh, string maBoPhan, string gioiTinh, string ngaySinh, string noiSinh, string tinhTrangHonNhan, string danToc, string tonGiao, string diaChiThuongTru,
+            string soDienThoai, string soDienThoaiNguoiThan, string quanHeNguoiThan, string cMTND, string ngayCapCMTND, string noiCapCMTND, string soTaiKhoanNH,
+            string tenNganHang, string truongDaoTao, string ngayVao, string nguyenQuan, string dChiHienTai, string kyLuatLD, string maBHXH, string maSoThue, int soNguoiGiamTru,
+            string email, string note, string ngayNghiViec, string status, string image, string isDelete)
+        {
+            TenNV = tenNV;
+            MaChucDanh = maChucDanh;
+            MaBoPhan = maBoPhan;
+            GioiTinh = gioiTinh;
+            NgaySinh = ngaySinh;
+            NoiSinh = noiSinh;
+            TinhTrangHonNhan = tinhTrangHonNhan;
+            DanToc = danToc;
+            TonGiao = tonGiao;
+            DiaChiThuongTru = diaChiThuongTru;
+            SoDienThoai = soDienThoai;
+            SoDienThoaiNguoiThan = soDienThoaiNguoiThan;
+            QuanHeNguoiThan = quanHeNguoiThan;
+            CMTND = cMTND;
+            NgayCapCMTND = ngayCapCMTND;
+            NoiCapCMTND = noiCapCMTND;
+            SoTaiKhoanNH = soTaiKhoanNH;
+            TenNganHang = tenNganHang;
+            TruongDaoTao = truongDaoTao;
+            NgayVao = ngayVao;
+            NguyenQuan = nguyenQuan;
+            DChiHienTai = dChiHienTai;
+            KyLuatLD = kyLuatLD;
+            MaBHXH = maBHXH;
+            MaSoThue = maSoThue;
+            SoNguoiGiamTru = soNguoiGiamTru;
+            Email = email;
+            Note = note;
+            NgayNghiViec = ngayNghiViec;
+            Status = status;
+            Image = image;
+            IsDelete = isDelete;
         }
 
         [StringLength(250)]
@@ -90,7 +130,7 @@ namespace HRMNS.Data.Entities
         [StringLength(50)]
         public string MaSoThue { get; set; }
 
-        public int? SoNguoiGiamTru { get; set; }
+        public int SoNguoiGiamTru { get; set; }
 
         [StringLength(250)]
         public string Email { get; set; }

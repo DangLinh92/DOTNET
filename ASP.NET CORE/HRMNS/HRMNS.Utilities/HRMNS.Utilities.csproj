@@ -5,8 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Dtos\" />
-    <Folder Include="Helpers\" />
+    <Compile Remove="Dtos\**" />
+    <Compile Remove="Helpers\**" />
+    <EmbeddedResource Remove="Dtos\**" />
+    <EmbeddedResource Remove="Helpers\**" />
+    <None Remove="Dtos\**" />
+    <None Remove="Helpers\**" />
   </ItemGroup>
 
 </Project>

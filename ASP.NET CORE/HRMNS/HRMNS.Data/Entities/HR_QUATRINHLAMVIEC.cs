@@ -7,7 +7,7 @@ using System.Text;
 
 namespace HRMNS.Data.Entities
 {
-    [Table("[HR.QUATRINHLAMVIEC]")]
+    [Table("HR_QUATRINHLAMVIEC")]
     public class HR_QUATRINHLAMVIEC : DomainEntity<int>
     {
         [Required]

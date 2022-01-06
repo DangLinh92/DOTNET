@@ -8,6 +8,7 @@ using System.Text;
 
 namespace HRMNS.Data.Entities
 {
+    [Table("CHUNG_CHI")]
     public class CHUNG_CHI : DomainEntity<string>, IDateTracking
     {
         public CHUNG_CHI()

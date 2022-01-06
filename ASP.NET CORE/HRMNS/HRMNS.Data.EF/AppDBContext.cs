@@ -6,7 +6,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 using System;
+using System.IO;
 using System.Linq;
 
 namespace HRMNS.Data.EF
@@ -40,11 +43,11 @@ namespace HRMNS.Data.EF
         protected override void OnModelCreating(ModelBuilder builder)
         {
             #region
-            builder.Entity<IdentityUserClaim<string>>().ToTable("APP_USER_CLAIM").HasKey(x => x.Id);
-            builder.Entity<IdentityRoleClaim<string>>().ToTable("APP_ROLE_CLAIM").HasKey(x => x.Id);
-            builder.Entity<IdentityUserLogin<string>>().ToTable("APP_USER_LOGIN").HasKey(x => x.UserId);
-            builder.Entity<IdentityUserRole<string>>().ToTable("APP_USER_ROLE").HasKey(x => new { x.RoleId, x.UserId });
-            builder.Entity<IdentityUserToken<string>>().ToTable("APP_USER_TOKEN").HasKey(x => x.UserId);
+            builder.Entity<IdentityUserClaim<Guid>>().ToTable("APP_USER_CLAIM").HasKey(x => x.Id);
+            builder.Entity<IdentityRoleClaim<Guid>>().ToTable("APP_ROLE_CLAIM").HasKey(x => x.Id);
+            builder.Entity<IdentityUserLogin<Guid>>().ToTable("APP_USER_LOGIN").HasKey(x => x.UserId);
+            builder.Entity<IdentityUserRole<Guid>>().ToTable("APP_USER_ROLE").HasKey(x => new { x.RoleId, x.UserId });
+            builder.Entity<IdentityUserToken<Guid>>().ToTable("APP_USER_TOKEN").HasKey(x => x.UserId);
             #endregion
 
             builder.AddConfiguration(new CheDoBHConfiguration());
@@ -63,7 +66,7 @@ namespace HRMNS.Data.EF
             builder.AddConfiguration(new PermissionConfiguration());
             builder.AddConfiguration(new QuatrinhlamviecConfiguration());
             builder.AddConfiguration(new TinhTrangHosoConfiguration());
-            base.OnModelCreating(builder);
+            //base.OnModelCreating(builder);
         }
 
         public override int SaveChanges()
@@ -82,6 +85,20 @@ namespace HRMNS.Data.EF
                 }
             }
             return base.SaveChanges();
+        }
+    }
+
+    public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<AppDBContext>
+    {
+        public AppDBContext CreateDbContext(string[] args)
+        {
+            IConfiguration configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json").Build();
+            var builder = new DbContextOptionsBuilder<AppDBContext>();
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            builder.UseSqlServer(connectionString);
+            return new AppDBContext(builder.Options);
         }
     }
 }

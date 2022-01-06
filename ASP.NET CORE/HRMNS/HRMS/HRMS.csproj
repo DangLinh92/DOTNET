@@ -6,11 +6,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="6.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.16" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.16" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.16" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.16" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.16" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />
+    <PackageReference Include="WebMarkupMin.AspNetCore2" Version="2.10.0" />
+    <PackageReference Include="WebMarkupMin.NUglify" Version="2.11.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,6 +24,13 @@
     <ProjectReference Include="..\HRMNS.Data\HRMNS.Data.csproj" />
     <ProjectReference Include="..\HRMNS.Utilities\HRMNS.Utilities.csproj" />
     <ProjectReference Include="..\HRMS.Infrastructure\HRMS.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Areas\Admin\Controllers\" />
+    <Folder Include="Areas\Admin\Data\" />
+    <Folder Include="Areas\Admin\Models\" />
+    <Folder Include="Areas\Admin\Views\" />
   </ItemGroup>
 
 </Project>
