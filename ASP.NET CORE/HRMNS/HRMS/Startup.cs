@@ -107,7 +107,7 @@ namespace HRMS
 
                 routes.MapControllerRoute(
                     "areaRoute",
-                    "{area:exists}/{controller=Login}/{action=Index}/{id?}");
+                    "{area:exists}/{controller=Home}/{action=Index}/{id?}");
             });
         }
     }
