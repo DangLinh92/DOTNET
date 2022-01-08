@@ -18,6 +18,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -74,12 +76,15 @@ namespace HRMS
             services.AddTransient(typeof(IUnitOfWork), typeof(EFUnitOfWork));
             services.AddTransient(typeof(IRespository<,>), typeof(EFRepository<,>));
             services.AddTransient<INhanVienService, NhanVienService>();
-            services.AddMvc();
+            services.AddMvc().AddNewtonsoftJson(options => {
+                options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
+            loggerFactory.AddFile("Logs/hrms-{Date}.txt");
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -107,7 +112,7 @@ namespace HRMS
 
                 routes.MapControllerRoute(
                     "areaRoute",
-                    "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+                    "{area:exists}/{controller=Login}/{action=Index}/{id?}");
             });
         }
     }
