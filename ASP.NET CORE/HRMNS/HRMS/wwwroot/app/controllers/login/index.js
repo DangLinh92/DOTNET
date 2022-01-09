@@ -4,24 +4,32 @@
     }
 
     var registerEvents = function () {
+
+        $('#frmLogin').validate({
+            errorClass: 'error',
+            ignore: [],
+            lang:'en',
+            rules: {
+                userName: {
+                    required: true
+                },
+                passWord: {
+                    required: true
+                }
+            }
+        });
+
         $('#btnLogin').on('click', function (e) {
-            e.preventDefault();
-            var user = $('#txtUserName').val();
-            var pass = $('#txtPassword').val();
 
-            if (typeof user === 'undefined' || user === null || user == '') {
-                // myVar is undefined or null
-                hrms.notify('Login failed : Incorrect user name', 'error', 'alert', function () { });
-                return;
+            if ($('#frmLogin').valid()) {
+                e.preventDefault();
+
+                var user = $('#txtUserName').val();
+                var pass = $('#txtPassword').val();
+
+                login(user, pass);
             }
 
-            if (typeof pass === 'undefined' || pass === null || pass == '') {
-                // myVar is undefined or null
-                hrms.notify('Login failed : Incorrect Password', 'error', 'alert', function () { });
-                return;
-            }
-
-            login(user,pass);
         });
     }
 

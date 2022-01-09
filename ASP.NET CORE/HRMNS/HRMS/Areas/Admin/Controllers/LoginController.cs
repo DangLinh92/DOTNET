@@ -56,7 +56,7 @@ namespace HRMS.Areas.Admin.Controllers
                 }
                 else
                 {
-                    return new OkObjectResult(new GenericResult(false, "Đăng nhập sai"));
+                    return new OkObjectResult(new GenericResult(false, "Login failed"));
                 }
             }
 

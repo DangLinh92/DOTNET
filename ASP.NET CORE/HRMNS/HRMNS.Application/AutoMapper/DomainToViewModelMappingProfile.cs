@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using HRMNS.Application.ViewModels.HR;
+using HRMNS.Application.ViewModels.System;
 using HRMNS.Data.Entities;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace HRMNS.Application.AutoMapper
         public DomainToViewModelMappingProfile()
         {
             CreateMap<HR_NHANVIEN, NhanVienViewModel>();
+            CreateMap<FUNCTION, FunctionViewModel>();
         }
     }
 }

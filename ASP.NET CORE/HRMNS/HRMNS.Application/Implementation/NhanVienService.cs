@@ -16,16 +16,18 @@ namespace HRMNS.Application.Implementation
     {
         private IRespository<HR_NHANVIEN, string> _nhanvienRepository;
         private IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public NhanVienService(IRespository<HR_NHANVIEN, string> nhanVienRepository, IUnitOfWork unitOfWork)
+        public NhanVienService(IRespository<HR_NHANVIEN, string> nhanVienRepository, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _nhanvienRepository = nhanVienRepository;
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         public NhanVienViewModel Add(NhanVienViewModel nhanVienVm)
         {
-            var nhanvien = Mapper.Map<NhanVienViewModel, HR_NHANVIEN>(nhanVienVm);
+            var nhanvien = _mapper.Map<NhanVienViewModel, HR_NHANVIEN>(nhanVienVm);
             _nhanvienRepository.Add(nhanvien);
             return nhanVienVm;
         }
@@ -37,22 +39,20 @@ namespace HRMNS.Application.Implementation
 
         public List<NhanVienViewModel> GetAll()
         {
-            return _nhanvienRepository.FindAll().ProjectTo<NhanVienViewModel>().ToList(); ;
+            return _mapper.ProjectTo<NhanVienViewModel>(_nhanvienRepository.FindAll()).ToList();
         }
 
         public List<NhanVienViewModel> GetAll(string keyword)
         {
             if (!string.IsNullOrEmpty(keyword))
-                return _nhanvienRepository.FindAll(x => x.TenNV.Contains(keyword)).ProjectTo<NhanVienViewModel>().ToList();
+                return _mapper.ProjectTo < NhanVienViewModel >(_nhanvienRepository.FindAll(x => x.TenNV.Contains(keyword))).ToList();
             else
-                return _nhanvienRepository.FindAll()
-                    .ProjectTo<NhanVienViewModel>()
-                    .ToList();
+                return _mapper.ProjectTo<NhanVienViewModel>(_nhanvienRepository.FindAll()).ToList();
         }
 
         public NhanVienViewModel GetById(string id)
         {
-            return Mapper.Map<HR_NHANVIEN, NhanVienViewModel>(_nhanvienRepository.FindById(id));
+            return _mapper.Map<HR_NHANVIEN, NhanVienViewModel>(_nhanvienRepository.FindById(id));
         }
 
         public void Save()

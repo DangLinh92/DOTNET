@@ -27,6 +27,12 @@
     <!-- Main CSS -->
     <link rel="stylesheet" href="~/css/style.css">
 
+    <style>
+        .error {
+            color: red !important;
+        }
+    </style>
+
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
         <script src="assets/js/html5shiv.min.js"></script>
@@ -57,7 +63,7 @@
                             @Html.AntiForgeryToken()
                             <div class="form-group">
                                 <label>User Name</label>
-                                <input class="form-control" type="text" id="txtUserName" name="userName" required="">
+                                <input class="form-control" type="text" id="txtUserName" name="userName" required>
                             </div>
                             <div class="form-group">
                                 <div class="row">
@@ -70,7 +76,7 @@
                                         </a>
                                     </div>
                                 </div>
-                                <input class="form-control" type="password" id="txtPassword" name="passWord" required="">
+                                <input class="form-control" type="password" id="txtPassword" name="passWord" required>
                             </div>
                             <div class="form-group text-center">
                                 <button class="btn btn-primary account-btn" type="submit" id="btnLogin">Login</button>
@@ -95,6 +101,13 @@
     <script src="~/js/bootstrap.min.js"></script>
 
     <script src="~/plugins/alertify/alertify.min.js"></script>
+
+    <!-- Validate JS -->
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation/dist/additional-methods.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+    <script src="~/lib/jquery-validation/Localization/messages_vi.js"></script>
+
     <!-- Custom JS -->
     <script src="~/js/app.js"></script>
     <script src="~/app/shared/hrms.js"></script>

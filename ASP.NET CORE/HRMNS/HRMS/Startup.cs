@@ -6,6 +6,7 @@ using HRMNS.Data.EF;
 using HRMNS.Data.EF.Repositories;
 using HRMNS.Data.Entities;
 using HRMNS.Data.IRepositories;
+using HRMS.Helpers;
 using HRMS.Infrastructure.Interfaces;
 using HRMS.Services;
 using Microsoft.AspNetCore.Builder;
@@ -73,11 +74,20 @@ namespace HRMS
             services.AddTransient<Services.IEmailSender, EmailSender>();
 
             services.AddTransient<DBInitializer>();
+
+            services.AddScoped<IUserClaimsPrincipalFactory<APP_USER>, CustomClaimsPrincipalFactory>();
+
+            // Unit of work and repository
             services.AddTransient(typeof(IUnitOfWork), typeof(EFUnitOfWork));
             services.AddTransient(typeof(IRespository<,>), typeof(EFRepository<,>));
+
+            // Service
             services.AddTransient<INhanVienService, NhanVienService>();
+            services.AddTransient<IFunctionService, FunctionService>();
+
+
             services.AddMvc().AddNewtonsoftJson(options => {
-                options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+                options.SerializerSettings.ContractResolver = new DefaultContractResolver();// not change format json
             });
         }
 
