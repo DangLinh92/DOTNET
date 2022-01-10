@@ -54,7 +54,7 @@ namespace HRMNS.Application.Implementation
             if (!string.IsNullOrEmpty(filter))
                 query = query.Where(x => x.Name.Contains(filter));
 
-            return _mapper.ProjectTo<FunctionViewModel>(query.OrderBy(x => x.ParentId)).ToListAsync();
+            return _mapper.ProjectTo<FunctionViewModel>(query.OrderBy(x => x.SortOrder)).ToListAsync();
         }
 
         public Task<List<FunctionViewModel>> GetAllByPermission(Guid userId)

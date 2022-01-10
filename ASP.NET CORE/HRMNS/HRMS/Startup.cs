@@ -118,11 +118,12 @@ namespace HRMS
             {
                 routes.MapControllerRoute(
                     "default",
-                    "{controller=Home}/{action=Index}/{id?}");
+                    "{controller=Account}/{action=Login}/{id?}");
 
                 routes.MapControllerRoute(
                     "areaRoute",
                     "{area:exists}/{controller=Login}/{action=Index}/{id?}");
+              
             });
         }
     }

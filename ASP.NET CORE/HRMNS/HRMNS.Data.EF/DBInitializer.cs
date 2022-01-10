@@ -75,18 +75,20 @@ namespace HRMNS.Data.EF
                 _context.Functions.AddRange(new List<FUNCTION>()
                 {
                     new FUNCTION() {Id = "EHS", Name = "EHS",ParentId = null,SortOrder = 1,Status = Status.Active,URL = "",IconCss = ""  },
-                    new FUNCTION() {Id = "SAFETY", Name = "An toàn",ParentId = "EHS",SortOrder = 1,Status = Status.Active,URL = "/admin/safety/index",IconCss = "fa-home"  },
-                    new FUNCTION() {Id = "ENVIRONMENT", Name = "Môi trường",ParentId = "EHS",SortOrder = 2,Status = Status.Active,URL = "/admin/inviroment/index",IconCss = "fa-home"  },
-                    new FUNCTION() {Id = "DOCUMENT", Name = "Văn bản",ParentId = "EHS",SortOrder =3,Status = Status.Active,URL = "/admin/document/index",IconCss = "fa-home"  },
+                    new FUNCTION() {Id = "SAFETY", Name = "Safety",ParentId = "EHS",SortOrder = 1,Status = Status.Active,URL = "/admin/safety/index",IconCss = "la la-share-alt"  },
+                    new FUNCTION() {Id = "ENVIRONMENT", Name = "Environment",ParentId = "EHS",SortOrder = 2,Status = Status.Active,URL = "/admin/inviroment/index",IconCss = "la la-puzzle-piece"  },
+                    new FUNCTION() {Id = "DOCUMENT", Name = "Document",ParentId = "EHS",SortOrder =3,Status = Status.Active,URL = "/admin/document/index",IconCss = "la la-file-text"  },
 
                     new FUNCTION() {Id = "HR", Name = "HR",ParentId = null,SortOrder = 2,Status = Status.Active,URL = "",IconCss = ""  },
-                    new FUNCTION() {Id = "NHANSU", Name = "Nhân sự",ParentId = "HR",SortOrder = 1,Status = Status.Active,URL = "",IconCss = "la la-user"  },
-                    new FUNCTION() {Id = "NHANVIEN", Name = "Nhân viên",ParentId = "NHANSU",SortOrder = 1,Status = Status.Active,URL = "/admin/nhanvien/index",IconCss = "la la-user"  },
-                    new FUNCTION() {Id = "TIMEKEEPING", Name = "Chấm công",ParentId = "HR",SortOrder = 2,Status = Status.Active,URL = "/admin/chamcong/index",IconCss = "fa fa-calculator"  },
+                    new FUNCTION() {Id = "NHANSU", Name = "Personnel",ParentId = "HR",SortOrder = 1,Status = Status.Active,URL = "",IconCss = "la la-user"  },
+                    new FUNCTION() {Id = "NHANVIEN", Name = "Employees",ParentId = "NHANSU",SortOrder = 1,Status = Status.Active,URL = "/admin/nhanvien/index",IconCss = ""  },
+                    new FUNCTION() {Id = "TIMEKEEPING", Name = "Timekeeping",ParentId = "HR",SortOrder = 2,Status = Status.Active,URL = "/admin/chamcong/index",IconCss = "la la-edit"  },
 
                     new FUNCTION() {Id = "GA",Name = "GA",ParentId = null,SortOrder = 3,Status = Status.Active,URL = "",IconCss = ""  },
+                    new FUNCTION() {Id = "COST",Name = "Cost",ParentId = "GA",SortOrder = 1,Status = Status.Active,URL = "/admin/cost/index",IconCss = "la la-money"  },
 
-                    new FUNCTION() {Id = "SETTINGS",Name = "Settings",ParentId = null,SortOrder = 4,Status = Status.Active,URL = "/admin/settings/index",IconCss = "la la-cog"  },
+                    new FUNCTION() {Id = "SETTINGS_TOP",Name = "Settings",ParentId = null,SortOrder = 4,Status = Status.Active,URL = "",IconCss = ""  },
+                    new FUNCTION() {Id = "SETTINGS",Name = "Settings",ParentId = "SETTINGS_TOP",SortOrder = 1,Status = Status.Active,URL = "/admin/settings/index",IconCss = "la la-cog"  },
                 });
             }
 

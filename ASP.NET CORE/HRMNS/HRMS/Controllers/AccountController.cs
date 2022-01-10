@@ -17,7 +17,6 @@ using System.Threading.Tasks;
 namespace HRMS.Controllers
 {
     [Authorize]
-    [Route("[controller]/[action]")]
     public class AccountController : Controller
     {
         private readonly UserManager<APP_USER> _userManager;
