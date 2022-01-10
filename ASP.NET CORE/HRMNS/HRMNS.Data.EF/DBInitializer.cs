@@ -64,7 +64,8 @@ namespace HRMNS.Data.EF
                     UserName = "admin",
                     FullName = "Administrator",
                     Email = "admin@gmail.com",
-                    ShowPass = "123654$"
+                    ShowPass = "123654$",
+                    Avatar= "/img/profiles/avatar-01.jpg"
                 }, "123654$");
                 var user = await _userManager.FindByNameAsync("admin");
                 await _userManager.AddToRoleAsync(user, "Admin");

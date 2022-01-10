@@ -35,14 +35,8 @@
 }
 
 $(document).ajaxSend(function (e, xhr, options) {
-
-    console.log(options.type);
-
     if (options.type.toUpperCase() == "POST" || options.type.toUpperCase() == "PUT") {
         var token = $('form').find("input[name='__RequestVerificationToken']").val();
-
-        console.log(token);
-
         xhr.setRequestHeader("RequestVerificationToken", token);
     }
 });

@@ -63,7 +63,7 @@
 
             <!-- Header Title -->
             <div class="page-title-box">
-                <h3>Wisol Our Deam</h3>
+                <h3>Wisol Our Dream</h3>
             </div>
             <!-- /Header Title -->
 
@@ -193,18 +193,7 @@
                 <!-- /Message Notifications -->
 
                 <li class="nav-item dropdown has-arrow main-drop">
-                    <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
-                        <span class="user-img">
-                            <img src="@User.GetSpecificClaim("Avatar")" alt="" onerror="this.onerror=null;this.src='~/img/profiles/avatar-01.jpg';">
-                            <span class="status online"></span>
-                        </span>
-                        <span>@User.GetSpecificClaim("FullName")</span>
-                    </a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="profile.html">My Profile</a>
-                        <a class="dropdown-item" href="settings.html">Settings</a>
-                        <a class="dropdown-item" href="login.html">Logout</a>
-                    </div>
+                    @await Html.PartialAsync("_LoginPartial")
                 </li>
             </ul>
             <!-- /Header Menu -->
@@ -212,9 +201,11 @@
             <div class="dropdown mobile-user-menu">
                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
                 <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item" href="profile.html">My Profile</a>
-                    <a class="dropdown-item" href="settings.html">Settings</a>
-                    <a class="dropdown-item" href="login.html">Logout</a>
+                    <a class="dropdown-item" href="/admin/profile/index">My Profile</a>
+                    <a class="dropdown-item" href="/admin/settings/index">Settings</a>
+                    <form action="/Admin/Account/Logout" method="post" id="logoutFormMobile">
+                        <button type="submit" class="dropdown-item">Logout</button>
+                    </form>
                 </div>
             </div>
             <!-- /Mobile Menu -->
