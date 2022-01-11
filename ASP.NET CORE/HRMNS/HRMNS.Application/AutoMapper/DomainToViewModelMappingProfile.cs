@@ -12,6 +12,18 @@ namespace HRMNS.Application.AutoMapper
     {
         public DomainToViewModelMappingProfile()
         {
+            CreateMap<HR_LOAIHOPDONG, LoaiHopDongViewModel>();
+            CreateMap<LOAICHUNGCHI, LoaiChungChiViewModel>();
+            CreateMap<CHUNG_CHI, ChungChiViewModel>();
+            CreateMap<HR_CHEDOBH, CheDoBaoHiemViewModel>();
+            CreateMap<BOPHAN, BoPhanViewModel>();
+            CreateMap<HR_BHXH, BHXHViewModel>();
+            CreateMap<HR_CHUCDANH, ChucDanhViewModel>();
+            CreateMap<HR_CHUNGCHI_NHANVIEN, ChungChiNhanVienViewModel>();
+            CreateMap<HR_HOPDONG, HopDongViewModel>();
+            CreateMap<HR_KEKHAIBAOHIEM, KeKhaiBaoHiemViewModel>();
+            CreateMap<HR_QUATRINHLAMVIEC, QuaTrinhLamViecViewModel>();
+            CreateMap<HR_TINHTRANGHOSO, TinhTrangHoSoViewModel>();
             CreateMap<HR_NHANVIEN, NhanVienViewModel>();
             CreateMap<FUNCTION, FunctionViewModel>();
         }

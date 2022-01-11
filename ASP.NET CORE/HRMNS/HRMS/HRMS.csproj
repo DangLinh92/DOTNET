@@ -34,6 +34,12 @@
   <ItemGroup>
     <Folder Include="Areas\Admin\Data\" />
     <Folder Include="Areas\Admin\Models\" />
+    <Folder Include="wwwroot\lib\mustache\test\spec\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\lib\mustache\.github\workflows\usage.yml" />
+    <None Include="wwwroot\lib\mustache\.github\workflows\verify.yml" />
   </ItemGroup>
 
 </Project>

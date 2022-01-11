@@ -28,8 +28,19 @@
     <!-- alertify CSS -->
     <link href="~/plugins/alertify/alertify.min.css" rel="stylesheet" />
 
+    <!-- Datatable CSS -->
+    <link rel="stylesheet" href="~/css/dataTables.bootstrap4.min.css">
+
+    <!-- Select2 CSS -->
+    <link rel="stylesheet" href="~/css/select2.min.css">
+
+    <!-- Datetimepicker CSS -->
+    <link rel="stylesheet" href="~/css/bootstrap-datetimepicker.min.css">
+
     <!-- Main CSS -->
     <link rel="stylesheet" href="~/css/style.css">
+
+    @RenderSection("Styles", required: false)
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -189,7 +200,6 @@
                 </li>
                 <!-- /Notifications -->
                 <!-- Message Notifications -->
-
                 <!-- /Message Notifications -->
 
                 <li class="nav-item dropdown has-arrow main-drop">
@@ -238,15 +248,30 @@
     <!-- Slimscroll JS -->
     <script src="~/js/jquery.slimscroll.min.js"></script>
 
+    <!-- Logic-less templates with JavaScript-->
+    <script src="~/lib/mustache/mustache.js"></script>
+
+    <!-- Select2 JS -->
+    <script src="~/js/select2.min.js"></script>
+
+    <!-- Datetimepicker JS -->
+    <script src="~/js/moment.min.js"></script>
+    <script src="~/js/bootstrap-datetimepicker.min.js"></script>
+
+    <!-- Datatable JS -->
     <!-- Chart JS -->
-    <script src="~/plugins/morris/morris.min.js"></script>
-    <script src="~/plugins/raphael/raphael.min.js"></script>
-    <script src="~/js/chart.js"></script>
+    @*<script src="~/plugins/morris/morris.min.js"></script>
+        <script src="~/plugins/raphael/raphael.min.js"></script>
+        <script src="~/js/chart.js"></script>*@
 
     <script src="~/plugins/alertify/alertify.min.js"></script>
     <script src="~/app/shared/hrms.js"></script>
 
     <!-- Custom JS -->
     <script src="~/js/app.js"></script>
+
+    @RenderSection("Scripts", required: false)
+    <script src="~/js/jquery.dataTables.min.js"></script>
+    <script src="~/js/dataTables.bootstrap4.min.js"></script>
 </body>
 </html>

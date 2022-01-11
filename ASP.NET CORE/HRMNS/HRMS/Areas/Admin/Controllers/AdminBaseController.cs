@@ -7,11 +7,9 @@ using System.Threading.Tasks;
 
 namespace HRMS.Areas.Admin.Controllers
 {
-    public class HomeController : AdminBaseController
+    [Authorize]
+    [Area("Admin")]
+    public class AdminBaseController : Controller
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
     }
 }

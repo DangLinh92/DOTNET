@@ -65,7 +65,7 @@ namespace HRMNS.Data.EF
                     FullName = "Administrator",
                     Email = "admin@gmail.com",
                     ShowPass = "123654$",
-                    Avatar= "/img/profiles/avatar-01.jpg"
+                    Avatar = "/img/profiles/avatar-01.jpg"
                 }, "123654$");
                 var user = await _userManager.FindByNameAsync("admin");
                 await _userManager.AddToRoleAsync(user, "Admin");
@@ -90,6 +90,108 @@ namespace HRMNS.Data.EF
 
                     new FUNCTION() {Id = "SETTINGS_TOP",Name = "Settings",ParentId = null,SortOrder = 4,Status = Status.Active,URL = "",IconCss = ""  },
                     new FUNCTION() {Id = "SETTINGS",Name = "Settings",ParentId = "SETTINGS_TOP",SortOrder = 1,Status = Status.Active,URL = "/admin/settings/index",IconCss = "la la-cog"  },
+                });
+            }
+
+            if (_context.BoPhans.Count() == 0)
+            {
+                _context.BoPhans.AddRange(new List<BOPHAN>()
+                {
+                    new BOPHAN()
+                    {
+                        Id = "PI",
+                        TenBoPhan = "PI"
+                    },
+                    new BOPHAN()
+                    {
+                        Id = "SMT",
+                        TenBoPhan = "SMT"
+                    }
+                    ,
+                    new BOPHAN()
+                    {
+                        Id = "CSP",
+                        TenBoPhan = "CSP"
+                    },
+                     new BOPHAN()
+                    {
+                        Id = "WLP1",
+                        TenBoPhan = "WLP1"
+                    }
+                    ,
+                    new BOPHAN()
+                    {
+                        Id = "WLP2",
+                        TenBoPhan = "WLP2"
+                    },
+                    new BOPHAN()
+                    {
+                        Id = "LFEM",
+                        TenBoPhan = "LFEM"
+                    }
+                    ,
+                    new BOPHAN()
+                    {
+                        Id = "SUPPORT",
+                        TenBoPhan = "SUPPORT"
+                    }
+                });
+            }
+
+            if (_context.HrNhanVien.Count() == 0)
+            {
+                _context.HrNhanVien.AddRange(new List<HR_NHANVIEN>() {
+                    new HR_NHANVIEN()
+                    {
+                        Id="H2105001",TenNV="Lê Văn Đặng",MaBoPhan="PI",NgaySinh="1992-05-04",Email="danglevan.9919@gmail.com",SoDienThoai="0974628108",NgayVao="2021-05-01",Status=Status.Active.ToString(),Image="/img/profiles/avatar-01.jpg"
+                    },
+                    new HR_NHANVIEN()
+                    {
+                        Id="H2105002",TenNV="Lê Văn Đặng2",MaBoPhan="PI",NgaySinh="1992-05-04",Email="danglevan.9919@gmail.com",SoDienThoai="0974628108",NgayVao="2021-05-01",Status=Status.Active.ToString(),Image="/img/profiles/avatar-01.jpg"
+                    },
+                    new HR_NHANVIEN()
+                    {
+                        Id="H2105003",TenNV="Lê Văn Đặng3",MaBoPhan="PI",NgaySinh="1992-05-04",Email="danglevan.9919@gmail.com",SoDienThoai="0974628108",NgayVao="2021-05-01",Status=Status.Active.ToString(),Image="/img/profiles/avatar-01.jpg"
+                    },
+                    new HR_NHANVIEN()
+                    {
+                        Id="H2105004",TenNV="Lê Văn Đặng4",MaBoPhan="PI",NgaySinh="1992-05-04",Email="danglevan.9919@gmail.com",SoDienThoai="0974628108",NgayVao="2021-05-01",Status=Status.Active.ToString(),Image="/img/profiles/avatar-01.jpg"
+                    },
+                    new HR_NHANVIEN()
+                    {
+                        Id="H2105005",TenNV="Lê Văn Đặng5",MaBoPhan="PI",NgaySinh="1992-05-04",Email="danglevan.9919@gmail.com",SoDienThoai="0974628108",NgayVao="2021-05-01",Status=Status.Active.ToString(),Image="/img/profiles/avatar-01.jpg"
+                    },
+                    new HR_NHANVIEN()
+                    {
+                        Id="H2105006",TenNV="Lê Văn Đặng6",MaBoPhan="PI",NgaySinh="1992-05-04",Email="danglevan.9919@gmail.com",SoDienThoai="0974628108",NgayVao="2021-05-01",Status=Status.Active.ToString(),Image="/img/profiles/avatar-01.jpg"
+                    },
+                    new HR_NHANVIEN()
+                    {
+                        Id="H2105007",TenNV="Lê Văn Đặng7",MaBoPhan="PI",NgaySinh="1992-05-04",Email="danglevan.9919@gmail.com",SoDienThoai="0974628108",NgayVao="2021-05-01",Status=Status.Active.ToString(),Image="/img/profiles/avatar-01.jpg"
+                    },
+                    new HR_NHANVIEN()
+                    {
+                        Id="H2105008",TenNV="Lê Văn Đặng8",MaBoPhan="PI",NgaySinh="1992-05-04",Email="danglevan.9919@gmail.com",SoDienThoai="0974628108",NgayVao="2021-05-01",Status=Status.Active.ToString(),Image="/img/profiles/avatar-01.jpg"
+                    },
+                    new HR_NHANVIEN()
+                    {
+                        Id="H2105009",TenNV="Lê Văn Đặng9",MaBoPhan="PI",NgaySinh="1992-05-04",Email="danglevan.9919@gmail.com",SoDienThoai="0974628108",NgayVao="2021-05-01",Status=Status.Active.ToString(),Image="/img/profiles/avatar-01.jpg"
+                    },
+                    new HR_NHANVIEN()
+                    {
+                        Id="H2105010",TenNV="Lê Văn Đặng10",MaBoPhan="PI",NgaySinh="1992-05-04",Email="danglevan.9919@gmail.com",SoDienThoai="0974628108",NgayVao="2021-05-01",Status=Status.InActive.ToString(),Image="/img/profiles/avatar-01.jpg"
+                    }
+                });
+            }
+
+            if (_context.HrChucDanh.Count() == 0)
+            {
+                _context.HrChucDanh.AddRange(new List<HR_CHUCDANH>() {
+                    new HR_CHUCDANH()
+                    {
+                        Id = "Staff",
+                        TenChucDanh="Staff"
+                    }
                 });
             }
 

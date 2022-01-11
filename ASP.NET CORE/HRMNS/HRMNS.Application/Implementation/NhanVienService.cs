@@ -64,5 +64,10 @@ namespace HRMNS.Application.Implementation
         {
             throw new NotImplementedException();
         }
+
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+        }
     }
 }

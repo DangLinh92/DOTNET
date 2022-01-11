@@ -5,7 +5,7 @@ using System.Text;
 
 namespace HRMNS.Application.Interfaces
 {
-    public interface INhanVienService
+    public interface INhanVienService: IDisposable
     {
         NhanVienViewModel Add(NhanVienViewModel nhanVienVm);
 

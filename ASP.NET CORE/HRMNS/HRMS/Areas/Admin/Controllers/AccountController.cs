@@ -9,9 +9,7 @@ using System.Threading.Tasks;
 
 namespace HRMS.Areas.Admin.Controllers
 {
-    [Authorize]
-    [Area("Admin")]
-    public class AccountController : Controller
+    public class AccountController : AdminBaseController
     {
         private readonly SignInManager<APP_USER> _signInManager;
 
