@@ -1,6 +1,6 @@
 ﻿var nhanVienController = function () {
     this.initialize = function () {
-        loadData();
+        // loadData();
     }
 
     function registerEvents() {
@@ -16,7 +16,6 @@
             dataType: 'json',
             success: function (response) {
                 $.each(response.Data, function (i, item) {
-                    console.log(item);
                     render += Mustache.render(template, {
                         Avatar: item.Image == null ? "/img/profiles/avatar-01.jpg" : item.Image,
                         MaNV: item.Id,

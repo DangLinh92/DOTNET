@@ -11,24 +11,28 @@ namespace HRMS.Areas.Admin.Controllers
     public class NhanVienController : AdminBaseController
     {
         INhanVienService _nhanvienService;
+        IBoPhanService _boPhanService;
             
-        public NhanVienController(INhanVienService nhanVienService)
+        public NhanVienController(INhanVienService nhanVienService,IBoPhanService boPhanService)
         {
             _nhanvienService = nhanVienService;
+            _boPhanService = boPhanService;
         }
 
         public IActionResult Index()
         {
-            return View();
+            ViewBag.BoPhans = _boPhanService.GetAll(null);
+            var model = _nhanvienService.GetAll();
+            return View(model);
         }
 
-        #region AJAX API
-        [HttpGet]
-        public IActionResult GetAll()
-        {
-            var model = _nhanvienService.GetAll();
-            return new OkObjectResult(new GenericResult(true, model));
-        }
-        #endregion
+        //#region AJAX API
+        //[HttpGet]
+        //public IActionResult Index()
+        //{
+        //    var model = _nhanvienService.GetAll();
+        //    return View(model);
+        //}
+        //#endregion
     }
 }

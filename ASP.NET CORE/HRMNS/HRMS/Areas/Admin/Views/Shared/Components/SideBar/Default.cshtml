@@ -6,8 +6,9 @@
                 <li class="menu-title">
                     <span>Main</span>
                 </li>
-                <li class="submenu">
-                    <a href="/Admin/Home/Index"><i class="la la-dashboard"></i> <span> Home</span></a>
+                @*<li class="submenu">*@
+                <li>
+                    <a href="/Admin/Home/Index" target="_self"><i class="la la-dashboard"></i> <span> Home</span></a>
                 </li>
 
                 @foreach (var item in Model.Where(x => string.IsNullOrEmpty(x.ParentId)))
