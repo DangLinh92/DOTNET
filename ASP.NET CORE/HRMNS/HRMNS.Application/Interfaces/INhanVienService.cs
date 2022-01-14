@@ -19,6 +19,8 @@ namespace HRMNS.Application.Interfaces
 
         NhanVienViewModel GetById(string id);
 
+        List<NhanVienViewModel> Search(string id, string name, string dept);
+
         void Save();
     }
 }

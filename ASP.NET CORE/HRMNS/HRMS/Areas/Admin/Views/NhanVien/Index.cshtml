@@ -4,6 +4,16 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
+@section Scripts
+{
+    <script src="~/app/controllers/nhanvien/index.js"></script>
+    <script>
+            //var nhanvienJs = new nhanVienController();
+            //nhanvienJs.initialize();
+    </script>
+
+}
+
 <div class="content container-fluid">
     <!-- Page Header -->
     <div class="page-header">
@@ -22,34 +32,39 @@
     </div>
     <!-- /Page Header -->
     <!-- Search Filter -->
-    <div class="row filter-row">
-        <div class="col-sm-6 col-md-3">
-            <div class="form-group form-focus">
-                <input type="text" class="form-control floating">
-                <label class="focus-label">Employee ID</label>
+    <form action="Index" method="get">
+        <div class="row filter-row">
+
+            <div class="col-sm-6 col-md-3">
+                <div class="form-group form-focus">
+                    <input type="text" id="txtMaNV" name="id" value="@ViewBag.SearchId" class="form-control floating">
+                    <label class="focus-label">Employee ID</label>
+                </div>
             </div>
-        </div>
-        <div class="col-sm-6 col-md-3">
-            <div class="form-group form-focus">
-                <input type="text" class="form-control floating">
-                <label class="focus-label">Employee Name</label>
+            <div class="col-sm-6 col-md-3">
+                <div class="form-group form-focus">
+                    <input type="text" id="txtTenNV" name="name" value="@ViewBag.SearchName" class="form-control floating">
+                    <label class="focus-label">Employee Name</label>
+                </div>
             </div>
-        </div>
-        <div class="col-sm-6 col-md-3">
-            <div class="form-group form-focus select-focus">
-                <select class="select floating">
-                    @foreach (BoPhanViewModel item in ViewBag.BoPhans)
-                    {
-                        <option value="@item.Id">@item.TenBoPhan</option>
-                    }
-                </select>
-                <label class="focus-label">Department</label>
+            <div class="col-sm-6 col-md-3">
+                <div class="form-group form-focus select-focus">
+                    <select class="select floating" id="slBoPhan" name="dept">
+                        <option>ALL</option>
+                        @foreach (BoPhanViewModel item in ViewBag.BoPhans)
+                        {
+                            <!option value="@item.Id" @(ViewBag.SearchDept == item.Id ? "selected" : "")>@item.TenBoPhan</!option>
+                        }
+                    </select>
+                    <label class="focus-label">Department</label>
+                </div>
             </div>
+            <div class="col-sm-6 col-md-3">
+                <button id="btnSearch" type="submit" class="btn btn-success btn-block"> Search </button>
+            </div>
+
         </div>
-        <div class="col-sm-6 col-md-3">
-            <a href="#" class="btn btn-success btn-block"> Search </a>
-        </div>
-    </div>
+    </form>
     <!-- /Search Filter -->
     <!-- /Search Filter -->
     <div class="row">
@@ -210,7 +225,6 @@
     </div>
 </div>
 <!-- /Add Employee Modal -->
-
 <!-- Edit Employee Modal -->
 <div id="edit_employee" class="modal custom-modal fade" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -286,7 +300,7 @@
                             </div>
                         </div>
                     </div>
-                  
+
                     <div class="submit-section">
                         <button class="btn btn-primary submit-btn">Save</button>
                     </div>

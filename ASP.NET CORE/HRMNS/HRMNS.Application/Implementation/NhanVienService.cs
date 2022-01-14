@@ -45,7 +45,7 @@ namespace HRMNS.Application.Implementation
         public List<NhanVienViewModel> GetAll(string keyword)
         {
             if (!string.IsNullOrEmpty(keyword))
-                return _mapper.ProjectTo < NhanVienViewModel >(_nhanvienRepository.FindAll(x => x.TenNV.Contains(keyword))).ToList();
+                return _mapper.ProjectTo<NhanVienViewModel>(_nhanvienRepository.FindAll(x => x.TenNV.Contains(keyword) || x.Id.Contains(keyword))).ToList();
             else
                 return _mapper.ProjectTo<NhanVienViewModel>(_nhanvienRepository.FindAll()).ToList();
         }
@@ -68,6 +68,38 @@ namespace HRMNS.Application.Implementation
         public void Dispose()
         {
             GC.SuppressFinalize(this);
+        }
+
+        public List<NhanVienViewModel> Search(string id, string name, string dept)
+        {
+            if (string.IsNullOrEmpty(id) && string.IsNullOrEmpty(name) && string.IsNullOrEmpty(dept))
+            {
+                return GetAll();
+            }
+
+            List<NhanVienViewModel> lstNV = new List<NhanVienViewModel>();
+
+            if (!string.IsNullOrEmpty(id))
+            {
+                NhanVienViewModel nv = _mapper.Map<HR_NHANVIEN, NhanVienViewModel>(_nhanvienRepository.FindById(id));
+                if (nv != null)
+                {
+                    lstNV.Add(nv);
+                    return lstNV;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                lstNV = _mapper.ProjectTo<NhanVienViewModel>(_nhanvienRepository.FindAll(x => x.TenNV.Contains(name))).ToList();
+            }
+            else
+            if (!string.IsNullOrEmpty(dept) && !string.IsNullOrEmpty(name))
+            {
+                lstNV = _mapper.ProjectTo<NhanVienViewModel>(_nhanvienRepository.FindAll(x => x.TenNV.Contains(name) && x.MaBoPhan.Contains(dept))).ToList();
+            }
+
+            return lstNV;
         }
     }
 }

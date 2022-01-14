@@ -1,10 +1,26 @@
 ﻿var nhanVienController = function () {
     this.initialize = function () {
         // loadData();
+
+        $('#btnSearch').on('click', searchNhanVien)
     }
 
     function registerEvents() {
         // bindding event
+    }
+
+    function searchNhanVien() {
+        var idNV = $('#txtMaNV').val();
+        var name = $('#txtTenNV').val();
+        var dept = $('#slBoPhan').val();
+        var url = '/Admin/NhanVien/Index?id=' + idNV + '&name=' + name + '&dept=' + dept;
+        $.ajax({
+            type: 'GET',
+            url: url,
+            dataType: 'json',
+            success: function (res) { },
+            error: function (res) {}
+        })
     }
 
     function loadData() {
