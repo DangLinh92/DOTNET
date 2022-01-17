@@ -10,8 +10,17 @@
     <script>
             //var nhanvienJs = new nhanVienController();
             //nhanvienJs.initialize();
+        $(document).ready(function () {
+            $('#nhanVienDataTable').DataTable();
+
+            $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Anything you want.');;
+        });
     </script>
 
+}
+
+@section Styles{ 
+   
 }
 
 <div class="content container-fluid">
@@ -32,7 +41,7 @@
     </div>
     <!-- /Page Header -->
     <!-- Search Filter -->
-    <form action="Index" method="get">
+    @*<form action="Index" method="get">
         <div class="row filter-row">
 
             <div class="col-sm-6 col-md-3">
@@ -64,13 +73,13 @@
             </div>
 
         </div>
-    </form>
+    </form>*@
     <!-- /Search Filter -->
     <!-- /Search Filter -->
     <div class="row">
         <div class="col-md-12">
             <div class="table-responsive">
-                <table class="table table-striped custom-table datatable">
+                <table class="table table-striped custom-table datatable" id="nhanVienDataTable">
                     <thead>
                         <tr>
                             <th>Name</th>
