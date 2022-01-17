@@ -20,32 +20,38 @@ namespace HRMS.Areas.Admin.Controllers
             _boPhanService = boPhanService;
         }
 
-        //public IActionResult Index()
-        //{
-        //    ViewBag.BoPhans = _boPhanService.GetAll(null);
-        //    nhanviens = _nhanvienService.GetAll();
-        //    return View(nhanviens);
-        //}
-
-        public IActionResult Index(
-            [FromQuery(Name = "id")] string id,
-            [FromQuery(Name = "name")] string name,
-            [FromQuery(Name = "dept")] string dept)
+        public IActionResult Index()
         {
-
             ViewBag.BoPhans = _boPhanService.GetAll(null);
-            ViewBag.SearchId = id;
-            ViewBag.SearchName = name;
-            ViewBag.SearchDept = dept;
-
-            if (dept == "ALL")
-            {
-                dept = "";
-            }
-
-            List<NhanVienViewModel> nhanviens = _nhanvienService.Search(id, name, dept);
+            List<NhanVienViewModel> nhanviens = _nhanvienService.GetAll();
             return View(nhanviens);
         }
+
+        public IActionResult OnGetPartialData()
+        {
+            List<NhanVienViewModel> nhanviens = _nhanvienService.GetAll();
+            return PartialView("_NhanVienGridPartial", nhanviens);
+        }
+
+        //public IActionResult Index(
+        //    [FromQuery(Name = "id")] string id,
+        //    [FromQuery(Name = "name")] string name,
+        //    [FromQuery(Name = "dept")] string dept)
+        //{
+
+        //    ViewBag.BoPhans = _boPhanService.GetAll(null);
+        //    ViewBag.SearchId = id;
+        //    ViewBag.SearchName = name;
+        //    ViewBag.SearchDept = dept;
+
+        //    if (dept == "ALL")
+        //    {
+        //        dept = "";
+        //    }
+
+        //    List<NhanVienViewModel> nhanviens = _nhanvienService.Search(id, name, dept);
+        //    return View(nhanviens);
+        //}
 
         //#region AJAX API
         //[HttpGet]
