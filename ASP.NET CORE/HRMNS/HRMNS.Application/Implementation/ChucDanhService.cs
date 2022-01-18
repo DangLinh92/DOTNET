@@ -12,15 +12,15 @@ using System.Threading.Tasks;
 
 namespace HRMNS.Application.Implementation
 {
-    public class BoPhanService : IBoPhanService
+    public class ChucDanhService : IChucDanhService
     {
         private IUnitOfWork _unitOfWork;
-        IRespository<BOPHAN, string> _boPhanRepository;
+        IRespository<HR_CHUCDANH, string> _chucDanhRepository;
         private readonly IMapper _mapper;
 
-        public BoPhanService(IRespository<BOPHAN, string> boPhanRepository, IUnitOfWork unitOfWork, IMapper mapper)
+        public ChucDanhService(IRespository<HR_CHUCDANH, string> chucDanhRepository, IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _boPhanRepository = boPhanRepository;
+            _chucDanhRepository = chucDanhRepository;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
         }
@@ -30,15 +30,16 @@ namespace HRMNS.Application.Implementation
             GC.SuppressFinalize(this);
         }
 
-        public List<BoPhanViewModel> GetAll(string filter)
+        public List<ChucDanhViewModel> GetAll(string filter)
         {
-            var boPhan = _boPhanRepository.FindAll();
+            var chucDanh = _chucDanhRepository.FindAll();
             if (!string.IsNullOrEmpty(filter))
             {
-                boPhan = boPhan.Where(x => x.TenBoPhan.Contains(filter));
+                chucDanh = chucDanh.Where(x => x.TenChucDanh.Contains(filter));
             }
 
-            return _mapper.ProjectTo<BoPhanViewModel>(boPhan).ToList();
+            return _mapper.ProjectTo<ChucDanhViewModel>(chucDanh).ToList();
+
         }
     }
 }

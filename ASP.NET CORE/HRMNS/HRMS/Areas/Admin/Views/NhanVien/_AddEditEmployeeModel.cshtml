@@ -1,0 +1,82 @@
+﻿<div id="add_employee" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Employee</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Name <span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" name="TenNV" id="txtTenNV" required>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Gender </label>
+                                <select class="select" name="GioiTinh" id="txtGioiTinh" required>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Email </label>
+                                <input class="form-control" type="email" name="Email" id="txtEmail">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Phone </label>
+                                <input class="form-control" type="text" name="SoDienThoai" id="txtSoDienThoai">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Employee ID <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="MaNV" id="txtMaNV" required>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Joining Date </label>
+                                <div class="cal-icon"><input class="form-control datetimepicker" type="text" name="NgayVao" id="txtNgayVao"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Department <span class="text-danger">*</span></label>
+                                <select class="select" name="BoPhan" id="txtBoPhan" required>
+                                    <option>Select Department</option>
+                                    <option>Web Development</option>
+                                    <option>IT Management</option>
+                                    <option>Marketing</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Team Position <span class="text-danger">*</span></label>
+                                <select class="select" name="ChucDanh" id="txtChucDanh">
+                                    <option>Select Designation</option>
+                                    <option>Web Designer</option>
+                                    <option>Web Developer</option>
+                                    <option>Android Developer</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn" id="btnSave">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

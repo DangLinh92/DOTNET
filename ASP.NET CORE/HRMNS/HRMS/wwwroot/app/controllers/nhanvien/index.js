@@ -1,26 +1,68 @@
 ﻿var nhanVienController = function () {
     this.initialize = function () {
         // loadData();
-
-        $('#btnSearch').on('click', searchNhanVien)
     }
 
     function registerEvents() {
         // bindding event
     }
 
-    function searchNhanVien() {
-        var idNV = $('#txtMaNV').val();
-        var name = $('#txtTenNV').val();
-        var dept = $('#slBoPhan').val();
-        var url = '/Admin/NhanVien/Index?id=' + idNV + '&name=' + name + '&dept=' + dept;
+    $('#btnCreate').on('click', function () {
+        resetFormData();
+        initSelectOptionBoPhan();
+        initSelectOptionChucDanh();
+        $('#add_employee').modal('show');
+    });
+
+    function resetFormData() {
+        $('#txtTenNV').val('');
+        $('#txtGioiTinh').val('Male');
+        $('#txtEmail').val('');
+        $('#txtSoDienThoai').val('');
+        $('#txtMaNV').val('');
+        $('#txtNgayVao').val('');
+        $('#txtBoPhan').val('');
+        $('#txtChucDanh').val('');
+    }
+
+    function initSelectOptionBoPhan() {
         $.ajax({
+            url: '/Admin/BoPhan/GetAll',
             type: 'GET',
-            url: url,
             dataType: 'json',
-            success: function (res) { },
-            error: function (res) {}
-        })
+            async: false,
+            success: function (response) {
+                var render = "<option value=''>--Select department--</option>";
+                $.each(response, function (i, item) {
+                    render += "<option value='" + item.Id + "'>" + item.TenBoPhan + "</option >"
+                });
+                $('#txtBoPhan').html(render);
+            },
+            error: function (status) {
+                console.log(status);
+                hrms.notify('Cannot loading department data', 'error', 'alert', function () { });
+            }
+        });
+    }
+
+    function initSelectOptionChucDanh() {
+        $.ajax({
+            url: '/Admin/ChucDanh/GetAll',
+            type: 'GET',
+            dataType: 'json',
+            async: false,
+            success: function (response) {
+                var render = "<option value=''>--Select team position--</option>";
+                $.each(response, function (i, item) {
+                    render += "<option value='" + item.Id + "'>" + item.TenChucDanh + "</option >"
+                });
+                $('#txtChucDanh').html(render);
+            },
+            error: function (status) {
+                console.log(status);
+                hrms.notify('Cannot loading team position data', 'error', 'alert', function () { });
+            }
+        });
     }
 
     function loadData() {
