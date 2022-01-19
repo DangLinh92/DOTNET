@@ -1,4 +1,5 @@
-﻿var nhanVienController = function () {
+﻿
+var nhanVienController = function () {
     this.initialize = function () {
         // loadData();
     }
@@ -7,11 +8,61 @@
         // bindding event
     }
 
+    // Open popup Add employee
     $('#btnCreate').on('click', function () {
         resetFormData();
         initSelectOptionBoPhan();
         initSelectOptionChucDanh();
         $('#add_employee').modal('show');
+    });
+
+    // Click save popup
+    $('#btnSave').on('click', function (e) {
+
+        if ($('#frmAddEditEmployee').valid()) {
+            e.preventDefault();
+
+            var tenNV = $('#txtTenNV').val();
+            var gioiTinh = $('#txtGioiTinh').val();
+            var email = $('#txtEmail').val();
+            var phone = $('#txtSoDienThoai').val();
+            var maNV = $('#txtMaNV').val();
+            var joinDate = $('#txtNgayVao').val();
+            var boPhan = $('#txtBoPhan').val();
+            var chucDanh = $('#txtChucDanh').val();
+
+            $.ajax({
+                url: '/Admin/NhanVien/SaveEmployee',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    Id: maNV,
+                    TenNV: tenNV,
+                    MaChucDanh: chucDanh,
+                    MaBoPhan: boPhan,
+                    GioiTinh: gioiTinh,
+                    Email: email,
+                    SoDienThoai: phone,
+                    NgayVao: joinDate
+                },
+                success: function (response) {
+                    $('#add_employee').modal('hide');
+                    hrms.notify("Thêm mới thành công!", 'Success', 'alert', function () {
+                        $('#btnSearch').submit(function () {
+                            if ($('#nhanVienDataTable').length > 0) {
+                                $('#nhanVienDataTable').DataTable();
+                                $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Anything you want.');
+                            }
+                        });
+
+                    });
+                },
+                error: function (status) {
+                    console.log(status);
+                    hrms.notify('Cannot loading department data', 'error', 'alert', function () { });
+                }
+            });
+        }
     });
 
     function resetFormData() {

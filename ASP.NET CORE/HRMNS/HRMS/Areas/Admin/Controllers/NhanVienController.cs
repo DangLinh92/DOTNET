@@ -2,6 +2,7 @@
 using HRMNS.Application.ViewModels.HR;
 using HRMNS.Utilities.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,10 +28,35 @@ namespace HRMS.Areas.Admin.Controllers
             return View(nhanviens);
         }
 
+        [HttpGet]
         public IActionResult OnGetPartialData()
         {
             List<NhanVienViewModel> nhanviens = _nhanvienService.GetAll();
             return PartialView("_NhanVienGridPartial", nhanviens);
+        }
+
+        [HttpPost]
+        public IActionResult SaveEmployee(NhanVienViewModel nhanvienVm)
+        {
+            if (!ModelState.IsValid)
+            {
+                IEnumerable<ModelError> allErrors = ModelState.Values.SelectMany(v => v.Errors);
+                return new BadRequestObjectResult(allErrors);
+            }
+            else
+            {
+                bool isAdd = _nhanvienService.GetById(nhanvienVm.Id) == null;
+                if (isAdd)
+                {
+                    _nhanvienService.Add(nhanvienVm);
+                }
+                else
+                {
+                    _nhanvienService.Update(nhanvienVm);
+                }
+                _nhanvienService.Save();
+                return new OkObjectResult(nhanvienVm);
+            }
         }
 
         //public IActionResult Index(

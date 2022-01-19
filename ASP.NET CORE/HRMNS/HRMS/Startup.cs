@@ -11,6 +11,7 @@ using HRMS.Infrastructure.Interfaces;
 using HRMS.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
@@ -65,6 +66,7 @@ namespace HRMS
             });
 
             services.AddSingleton(AutoMapperConfig.RegisterMappings().CreateMapper());
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             services.AddScoped<UserManager<APP_USER>, UserManager<APP_USER>>();
             services.AddScoped<RoleManager<APP_ROLE>, RoleManager<APP_ROLE>>();

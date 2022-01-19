@@ -7,6 +7,7 @@
                 }
                 else {
                     alertify.success("Ok");
+                    okcallback();
                 }
             });
         }

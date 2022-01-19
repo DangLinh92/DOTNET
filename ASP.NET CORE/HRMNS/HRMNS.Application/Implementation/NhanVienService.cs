@@ -5,6 +5,7 @@ using HRMNS.Application.ViewModels.HR;
 using HRMNS.Data.Entities;
 using HRMNS.Data.IRepositories;
 using HRMS.Infrastructure.Interfaces;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,22 +13,27 @@ using System.Text;
 
 namespace HRMNS.Application.Implementation
 {
-    public class NhanVienService : INhanVienService
+    public class NhanVienService : BaseService,INhanVienService
     {
         private IRespository<HR_NHANVIEN, string> _nhanvienRepository;
         private IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public NhanVienService(IRespository<HR_NHANVIEN, string> nhanVienRepository, IUnitOfWork unitOfWork, IMapper mapper)
+        public NhanVienService(IRespository<HR_NHANVIEN, string> nhanVienRepository, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _nhanvienRepository = nhanVienRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public NhanVienViewModel Add(NhanVienViewModel nhanVienVm)
         {
             var nhanvien = _mapper.Map<NhanVienViewModel, HR_NHANVIEN>(nhanVienVm);
+            nhanvien.DateCreated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            nhanvien.DateModified = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            nhanvien.UserCreated = GetUserId();
+            nhanvien.IsDelete = "N";
             _nhanvienRepository.Add(nhanvien);
             return nhanVienVm;
         }
@@ -39,7 +45,7 @@ namespace HRMNS.Application.Implementation
 
         public List<NhanVienViewModel> GetAll()
         {
-            return _mapper.ProjectTo<NhanVienViewModel>(_nhanvienRepository.FindAll()).ToList();
+            return _mapper.ProjectTo<NhanVienViewModel>(_nhanvienRepository.FindAll().OrderByDescending(x=>x.DateModified)).ToList();
         }
 
         public List<NhanVienViewModel> GetAll(string keyword)
@@ -62,7 +68,8 @@ namespace HRMNS.Application.Implementation
 
         public void Update(NhanVienViewModel nhanVienVm)
         {
-            throw new NotImplementedException();
+            var nhanvien = _mapper.Map<NhanVienViewModel, HR_NHANVIEN>(nhanVienVm);
+            _nhanvienRepository.Update(nhanvien);
         }
 
         public void Dispose()

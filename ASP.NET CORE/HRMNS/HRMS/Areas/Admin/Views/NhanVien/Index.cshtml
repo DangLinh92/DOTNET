@@ -43,31 +43,6 @@
     <!-- Search Filter -->
     <form method="get" data-ajax="true" data-ajax-url="/Admin/NhanVien/OnGetPartialData" data-ajax-update="#gridNhanVien" data-ajax-mode='replace'>
         <div class="row filter-row">
-
-            <div class="col-sm-6 col-md-3">
-                <div class="form-group form-focus">
-                    <input type="text" id="txtMaNV" name="id" value="@ViewBag.SearchId" class="form-control floating">
-                    <label class="focus-label">Employee ID</label>
-                </div>
-            </div>
-            <div class="col-sm-6 col-md-3">
-                <div class="form-group form-focus">
-                    <input type="text" id="txtTenNV" name="name" value="@ViewBag.SearchName" class="form-control floating">
-                    <label class="focus-label">Employee Name</label>
-                </div>
-            </div>
-            <div class="col-sm-6 col-md-3">
-                <div class="form-group form-focus select-focus">
-                    <select class="select floating" id="slBoPhan" name="dept">
-                        <option>ALL</option>
-                        @foreach (BoPhanViewModel item in ViewBag.BoPhans)
-                        {
-                            <!option value="@item.Id" @(ViewBag.SearchDept == item.Id ? "selected" : "")>@item.TenBoPhan</!option>
-                        }
-                    </select>
-                    <label class="focus-label">Department</label>
-                </div>
-            </div>
             <div class="col-sm-6 col-md-3">
                 <button id="btnSearch" type="submit" class="btn btn-success btn-block"> Search </button>
             </div>
