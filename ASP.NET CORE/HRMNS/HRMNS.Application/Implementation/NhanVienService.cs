@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using HRMNS.Application.Interfaces;
 using HRMNS.Application.ViewModels.HR;
 using HRMNS.Data.Entities;
+using HRMNS.Data.Enums;
 using HRMNS.Data.IRepositories;
 using HRMS.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -30,6 +31,7 @@ namespace HRMNS.Application.Implementation
         public NhanVienViewModel Add(NhanVienViewModel nhanVienVm)
         {
             var nhanvien = _mapper.Map<NhanVienViewModel, HR_NHANVIEN>(nhanVienVm);
+            nhanvien.Status = Status.Active.ToString();
             nhanvien.DateCreated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             nhanvien.DateModified = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             nhanvien.UserCreated = GetUserId();
@@ -45,7 +47,7 @@ namespace HRMNS.Application.Implementation
 
         public List<NhanVienViewModel> GetAll()
         {
-            return _mapper.ProjectTo<NhanVienViewModel>(_nhanvienRepository.FindAll().OrderByDescending(x=>x.DateModified)).ToList();
+            return _mapper.ProjectTo<NhanVienViewModel>(_nhanvienRepository.FindAll()).OrderByDescending(x=>x.DateModified).ToList();
         }
 
         public List<NhanVienViewModel> GetAll(string keyword)

@@ -12,8 +12,11 @@
         var nhanvienJs = new nhanVienController();
         nhanvienJs.initialize();
         $(document).ready(function () {
-            $('#nhanVienDataTable').DataTable();
+            $('#nhanVienDataTable').DataTable({
+                "order": [8,'asc']
+            });
             $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Anything you want.');
+            $('select[name="nhanVienDataTable_length"]').removeClass('form-control-sm');
         });
     </script>
 
@@ -41,7 +44,7 @@
     </div>
     <!-- /Page Header -->
     <!-- Search Filter -->
-    <form method="get" data-ajax="true" data-ajax-url="/Admin/NhanVien/OnGetPartialData" data-ajax-update="#gridNhanVien" data-ajax-mode='replace'>
+    <form method="get" hidden="hidden" data-ajax="true" data-ajax-url="/Admin/NhanVien/OnGetPartialData" data-ajax-update="#gridNhanVien" data-ajax-mode='replace'>
         <div class="row filter-row">
             <div class="col-sm-6 col-md-3">
                 <button id="btnSearch" type="submit" class="btn btn-success btn-block"> Search </button>

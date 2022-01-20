@@ -36,30 +36,41 @@ var nhanVienController = function () {
                 type: 'POST',
                 dataType: 'json',
                 data: {
-                    Id: maNV,
-                    TenNV: tenNV,
-                    MaChucDanh: chucDanh,
-                    MaBoPhan: boPhan,
-                    GioiTinh: gioiTinh,
-                    Email: email,
-                    SoDienThoai: phone,
-                    NgayVao: joinDate
+                    Action: 'Add',
+                    NhanVien: {
+                        Id: maNV,
+                        TenNV: tenNV,
+                        MaChucDanh: chucDanh,
+                        MaBoPhan: boPhan,
+                        GioiTinh: gioiTinh,
+                        Email: email,
+                        SoDienThoai: phone,
+                        NgayVao: joinDate
+                    }
                 },
                 success: function (response) {
                     $('#add_employee').modal('hide');
                     hrms.notify("Thêm mới thành công!", 'Success', 'alert', function () {
-                        $('#btnSearch').submit(function () {
-                            if ($('#nhanVienDataTable').length > 0) {
-                                $('#nhanVienDataTable').DataTable();
-                                $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Anything you want.');
-                            }
-                        });
 
+                        // update grid data with datatable jquery
+                        $('#btnSearch').submit();
+                        let myVar = setInterval(function () {
+                            var table = $('#nhanVienDataTable');
+                            if (table) {
+                                table.DataTable().destroy();
+                                $('#nhanVienDataTable').DataTable({
+                                    "order": [8, 'asc']
+                                });
+                                $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Anything you want.');
+                                $('select[name="nhanVienDataTable_length"]').removeClass('form-control-sm');
+                                clearInterval(myVar);
+                            }
+                        }, 500);
                     });
                 },
                 error: function (status) {
-                    console.log(status);
-                    hrms.notify('Cannot loading department data', 'error', 'alert', function () { });
+                    console.log(status.responseText);
+                    hrms.notify('error:' + status.responseText, 'error', 'alert', function () { });
                 }
             });
         }

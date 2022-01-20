@@ -1,5 +1,7 @@
 ﻿using HRMNS.Application.Interfaces;
 using HRMNS.Application.ViewModels.HR;
+using HRMNS.Application.ViewModels.System;
+using HRMNS.Utilities.Constants;
 using HRMNS.Utilities.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -36,7 +38,7 @@ namespace HRMS.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult SaveEmployee(NhanVienViewModel nhanvienVm)
+        public IActionResult SaveEmployee(NhanVienCustomizeViewModel nhanvienVm)
         {
             if (!ModelState.IsValid)
             {
@@ -45,15 +47,26 @@ namespace HRMS.Areas.Admin.Controllers
             }
             else
             {
-                bool isAdd = _nhanvienService.GetById(nhanvienVm.Id) == null;
-                if (isAdd)
+                bool isAdd = nhanvienVm.Action == CommonConstants.Add_Action;
+                bool notExist = _nhanvienService.GetById(nhanvienVm.NhanVien.Id) == null;
+
+                if (isAdd && notExist)
                 {
-                    _nhanvienService.Add(nhanvienVm);
+                    _nhanvienService.Add(nhanvienVm.NhanVien);
                 }
-                else
+                else if (isAdd && !notExist)
                 {
-                    _nhanvienService.Update(nhanvienVm);
+                    return new ConflictObjectResult(CommonConstants.ConflictObjectResult_Msg);
                 }
+                else if (!isAdd && notExist)
+                {
+                    return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
+                }
+                else if (!isAdd && !notExist)
+                {
+                    _nhanvienService.Update(nhanvienVm.NhanVien);
+                }
+
                 _nhanvienService.Save();
                 return new OkObjectResult(nhanvienVm);
             }
