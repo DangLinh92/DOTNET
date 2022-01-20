@@ -5,6 +5,7 @@ using HRMNS.Application.ViewModels.HR;
 using HRMNS.Data.Entities;
 using HRMNS.Data.Enums;
 using HRMNS.Data.IRepositories;
+using HRMNS.Utilities.Constants;
 using HRMS.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -47,7 +48,7 @@ namespace HRMNS.Application.Implementation
 
         public List<NhanVienViewModel> GetAll()
         {
-            return _mapper.ProjectTo<NhanVienViewModel>(_nhanvienRepository.FindAll()).OrderByDescending(x=>x.DateModified).ToList();
+            return _mapper.ProjectTo<NhanVienViewModel>(_nhanvienRepository.FindAll(x => x.IsDelete != CommonConstants.IsDelete)).OrderByDescending(x=>x.DateModified).ToList();
         }
 
         public List<NhanVienViewModel> GetAll(string keyword)

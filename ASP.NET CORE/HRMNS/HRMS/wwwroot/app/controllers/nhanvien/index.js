@@ -1,4 +1,5 @@
-﻿
+﻿const { type } = require("jquery");
+
 var nhanVienController = function () {
     this.initialize = function () {
         // loadData();
@@ -16,10 +17,27 @@ var nhanVienController = function () {
         $('#add_employee').modal('show');
     });
 
+    // Click Edit employee
+    $('body').on('click', '.edit-employee', function (e) {
+        e.preventDefault();
+
+        var that = $(this).data('id');
+
+        $.ajax({
+            type: "GET",
+            url: "/Admin/NhanVien/GetById",
+            dataType: "json",
+            data: {
+                id:that
+            }
+        });
+    });
+
     // Click save popup
     $('#btnSave').on('click', function (e) {
 
         if ($('#frmAddEditEmployee').valid()) {
+
             e.preventDefault();
 
             var tenNV = $('#txtTenNV').val();
@@ -52,7 +70,7 @@ var nhanVienController = function () {
                     $('#add_employee').modal('hide');
                     hrms.notify("Thêm mới thành công!", 'Success', 'alert', function () {
 
-                        // update grid data with datatable jquery
+                        // update grid data ,update datatable jquery
                         $('#btnSearch').submit();
                         let myVar = setInterval(function () {
                             var table = $('#nhanVienDataTable');
