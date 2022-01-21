@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Add Employee</h5>
+                <h5 class="modal-title" id="txtTitleAddEdit">Add Employee</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -53,21 +53,13 @@
                             <div class="form-group">
                                 <label>Department <span class="text-danger">*</span></label>
                                 <select class="select" name="BoPhan" id="txtBoPhan" required>
-                                    <option>Select Department</option>
-                                    <option>Web Development</option>
-                                    <option>IT Management</option>
-                                    <option>Marketing</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Team Position <span class="text-danger">*</span></label>
-                                <select class="select" name="ChucDanh" id="txtChucDanh">
-                                    <option>Select Designation</option>
-                                    <option>Web Designer</option>
-                                    <option>Web Developer</option>
-                                    <option>Android Developer</option>
+                                <select class="select" name="ChucDanh" id="txtChucDanh" required>
                                 </select>
                             </div>
                         </div>

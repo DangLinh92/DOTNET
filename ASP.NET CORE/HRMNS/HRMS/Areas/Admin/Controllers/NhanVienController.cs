@@ -68,8 +68,16 @@ namespace HRMS.Areas.Admin.Controllers
                 }
 
                 _nhanvienService.Save();
-                return new OkObjectResult(nhanvienVm);
+
+                return new OkObjectResult(nhanvienVm.NhanVien);
             }
+        }
+
+        [HttpGet]
+        public IActionResult GetById(string Id)
+        {
+           NhanVienViewModel nhanVien = _nhanvienService.GetById(Id);
+            return new OkObjectResult(nhanVien);
         }
 
         //public IActionResult Index(

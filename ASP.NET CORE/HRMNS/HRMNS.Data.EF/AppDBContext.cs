@@ -79,9 +79,9 @@ namespace HRMNS.Data.EF
                 {
                     if (item.State == EntityState.Added)
                     {
-                        changeOrAddedItem.DateCreated = DateTime.Now.ToString("yyyyMMdd");
+                        changeOrAddedItem.DateCreated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                     }
-                    changeOrAddedItem.DateModified = DateTime.Now.ToString("yyyyMMdd");
+                    changeOrAddedItem.DateModified = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                 }
             }
             return base.SaveChanges();

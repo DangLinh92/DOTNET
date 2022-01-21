@@ -21,11 +21,12 @@ namespace HRMNS.Data.Entities
         }
 
         public HR_NHANVIEN
-            (string tenNV, string maChucDanh, string maBoPhan, string gioiTinh, string ngaySinh, string noiSinh, string tinhTrangHonNhan, string danToc, string tonGiao, string diaChiThuongTru,
+            (string id,string tenNV, string maChucDanh, string maBoPhan, string gioiTinh, string ngaySinh, string noiSinh, string tinhTrangHonNhan, string danToc, string tonGiao, string diaChiThuongTru,
             string soDienThoai, string soDienThoaiNguoiThan, string quanHeNguoiThan, string cMTND, string ngayCapCMTND, string noiCapCMTND, string soTaiKhoanNH,
             string tenNganHang, string truongDaoTao, string ngayVao, string nguyenQuan, string dChiHienTai, string kyLuatLD, string maBHXH, string maSoThue, int soNguoiGiamTru,
             string email, string note, string ngayNghiViec, string status, string image, string isDelete)
         {
+            Id = id;
             TenNV = tenNV;
             MaChucDanh = maChucDanh;
             MaBoPhan = maBoPhan;

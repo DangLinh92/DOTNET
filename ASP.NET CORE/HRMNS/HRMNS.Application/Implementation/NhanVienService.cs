@@ -71,8 +71,16 @@ namespace HRMNS.Application.Implementation
 
         public void Update(NhanVienViewModel nhanVienVm)
         {
-            var nhanvien = _mapper.Map<NhanVienViewModel, HR_NHANVIEN>(nhanVienVm);
-            _nhanvienRepository.Update(nhanvien);
+            try
+            {
+                var nhanvien = _mapper.Map<NhanVienViewModel, HR_NHANVIEN>(nhanVienVm);
+                _nhanvienRepository.Update(nhanvien);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            
         }
 
         public void Dispose()

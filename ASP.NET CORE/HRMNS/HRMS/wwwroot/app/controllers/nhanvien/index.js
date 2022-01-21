@@ -1,6 +1,4 @@
-﻿const { type } = require("jquery");
-
-var nhanVienController = function () {
+﻿var nhanVienController = function () {
     this.initialize = function () {
         // loadData();
     }
@@ -11,6 +9,9 @@ var nhanVienController = function () {
 
     // Open popup Add employee
     $('#btnCreate').on('click', function () {
+        $('#txtTitleAddEdit').text('Add Employee');
+        $("#txtMaNV").prop('disabled', false);
+
         resetFormData();
         initSelectOptionBoPhan();
         initSelectOptionChucDanh();
@@ -21,6 +22,14 @@ var nhanVienController = function () {
     $('body').on('click', '.edit-employee', function (e) {
         e.preventDefault();
 
+        $('#txtTitleAddEdit').text('Edit Employee');
+        $("#txtMaNV").prop('disabled', true);
+
+        resetFormData();
+        initSelectOptionBoPhan();
+        initSelectOptionChucDanh();
+        $('#add_employee').modal('show');
+
         var that = $(this).data('id');
 
         $.ajax({
@@ -28,7 +37,27 @@ var nhanVienController = function () {
             url: "/Admin/NhanVien/GetById",
             dataType: "json",
             data: {
-                id:that
+                Id: that
+            },
+            success: function (nhanvien) {
+                if (nhanvien) {
+                    $('#txtTenNV').val(nhanvien.TenNV);
+                    $('#txtGioiTinh').val(nhanvien.GioiTinh);
+                    $('#txtEmail').val(nhanvien.Email);
+                    $('#txtSoDienThoai').val(nhanvien.SoDienThoai);
+                    $('#txtMaNV').val(nhanvien.Id);
+                    $('#txtNgayVao').val(nhanvien.NgayVao);
+                    $('#txtBoPhan').val(nhanvien.MaBoPhan);
+                    $('#txtBoPhan').trigger('change');
+                    $('#txtChucDanh').val(nhanvien.MaChucDanh);
+                    $('#txtChucDanh').trigger('change');
+                }
+                else {
+                    hrms.notify('error: Not found employee!', 'error', 'alert', function () { });
+                }
+            },
+            error: function (status) {
+                hrms.notify('error: ' + status.responseText, 'error', 'alert', function () { });
             }
         });
     });
@@ -49,12 +78,21 @@ var nhanVienController = function () {
             var boPhan = $('#txtBoPhan').val();
             var chucDanh = $('#txtChucDanh').val();
 
+            var action = '';
+            var title = $('#txtTitleAddEdit').text();
+            if (title == 'Edit Employee') {
+                action = 'Edit';
+            }
+            else {
+                action = 'Add';
+            }
+
             $.ajax({
                 url: '/Admin/NhanVien/SaveEmployee',
                 type: 'POST',
                 dataType: 'json',
                 data: {
-                    Action: 'Add',
+                    Action: action,
                     NhanVien: {
                         Id: maNV,
                         TenNV: tenNV,
@@ -68,7 +106,7 @@ var nhanVienController = function () {
                 },
                 success: function (response) {
                     $('#add_employee').modal('hide');
-                    hrms.notify("Thêm mới thành công!", 'Success', 'alert', function () {
+                    hrms.notify("Update success!", 'Success', 'alert', function () {
 
                         // update grid data ,update datatable jquery
                         $('#btnSearch').submit();
