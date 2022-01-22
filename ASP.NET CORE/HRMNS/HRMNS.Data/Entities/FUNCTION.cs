@@ -1,4 +1,5 @@
 ﻿using HRMNS.Data.Enums;
+using HRMNS.Data.Interfaces;
 using HRMS.Infrastructure.SharedKernel;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Text;
 namespace HRMNS.Data.Entities
 {
     [Table("FUNCTION")]
-    public class FUNCTION : DomainEntity<string>
+    public class FUNCTION : DomainEntity<string>, IDateTracking
     {
         public FUNCTION()
         {

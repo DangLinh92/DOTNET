@@ -1,4 +1,5 @@
-﻿using HRMS.Infrastructure.SharedKernel;
+﻿using HRMNS.Data.Interfaces;
+using HRMS.Infrastructure.SharedKernel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

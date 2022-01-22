@@ -48,7 +48,8 @@ namespace HRMS.Areas.Admin.Controllers
             else
             {
                 bool isAdd = nhanvienVm.Action == CommonConstants.Add_Action;
-                bool notExist = _nhanvienService.GetById(nhanvienVm.NhanVien.Id) == null;
+                bool notExist = !_nhanvienService.GetAll().Any(x => x.Id == nhanvienVm.NhanVien.Id);
+                //bool notExist = nv == null;
 
                 if (isAdd && notExist)
                 {
