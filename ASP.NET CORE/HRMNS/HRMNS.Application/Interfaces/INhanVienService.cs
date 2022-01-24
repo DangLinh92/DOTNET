@@ -23,6 +23,8 @@ namespace HRMNS.Application.Interfaces
 
         List<NhanVienViewModel> Search(string id, string name, string dept);
 
+        void ImportExcel(string filePath);
+
         void Save();
     }
 }
