@@ -11,6 +11,8 @@ namespace HRMNS.Application.Interfaces
 
         void Update(NhanVienViewModel nhanVienVm);
 
+        void UpdateSingle(NhanVienViewModel nhanVienVm);
+
         void Delete(string id);
 
         List<NhanVienViewModel> GetAll();

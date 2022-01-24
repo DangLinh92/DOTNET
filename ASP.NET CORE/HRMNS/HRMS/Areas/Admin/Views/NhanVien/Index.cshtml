@@ -13,7 +13,7 @@
         nhanvienJs.initialize();
         $(document).ready(function () {
             $('#nhanVienDataTable').DataTable({
-                "order": [8,'asc']
+                "order": [8, 'asc']
             });
             $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Anything you want.');
             $('select[name="nhanVienDataTable_length"]').removeClass('form-control-sm');
@@ -23,7 +23,17 @@
 }
 
 @section Styles{
+    <style>
+        #btnCreate {
+            float: none;
+            margin-right : 20px;
+        }
 
+        #btnImport {
+            min-width: 150px;
+            border-radius:50px;
+        }
+    </style>
 }
 
 <div class="content container-fluid">
@@ -39,6 +49,13 @@
             </div>
             <div class="col-auto float-right ml-auto">
                 <a href="#" id="btnCreate" class="btn add-btn" data-toggle="modal" data-target="#add_employee"><i class="fa fa-plus"></i> Add Employee</a>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info dropdown-toggle" id="btnImport" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Import</button>
+                    <div class="dropdown-menu" style="">
+                        <a class="dropdown-item" href="#">Get file import</a>
+                        <a class="dropdown-item" href="#">Import employee</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -66,11 +83,9 @@
 <!-- Add Employee Modal -->
 <partial name="_AddEditEmployeeModel" />
 <!-- /Add Employee Modal -->
-
 <!-- Edit Employee Modal -->
 <!--<partial name="_EditEmployeeModel" />-->
 <!-- /Edit Employee Modal -->
-
 <!-- Delete Employee Modal -->
 <partial name="_DeleteEmployeeModel" />
 <!-- /Delete Employee Modal -->

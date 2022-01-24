@@ -15,7 +15,7 @@ using System.Text;
 
 namespace HRMNS.Application.Implementation
 {
-    public class NhanVienService : BaseService,INhanVienService
+    public class NhanVienService : BaseService, INhanVienService
     {
         private IRespository<HR_NHANVIEN, string> _nhanvienRepository;
         private IUnitOfWork _unitOfWork;
@@ -48,7 +48,7 @@ namespace HRMNS.Application.Implementation
 
         public List<NhanVienViewModel> GetAll()
         {
-            return _mapper.ProjectTo<NhanVienViewModel>(_nhanvienRepository.FindAll(x => x.IsDelete != CommonConstants.IsDelete)).OrderByDescending(x=>x.DateModified).ToList();
+            return _mapper.ProjectTo<NhanVienViewModel>(_nhanvienRepository.FindAll(x => x.IsDelete != CommonConstants.IsDelete)).OrderByDescending(x => x.DateModified).ToList();
         }
 
         public List<NhanVienViewModel> GetAll(string keyword)
@@ -71,16 +71,8 @@ namespace HRMNS.Application.Implementation
 
         public void Update(NhanVienViewModel nhanVienVm)
         {
-            try
-            {
-                var nhanvien = _mapper.Map<NhanVienViewModel, HR_NHANVIEN>(nhanVienVm);
-                _nhanvienRepository.Update(nhanvien);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            
+            var nhanvien = _mapper.Map<NhanVienViewModel, HR_NHANVIEN>(nhanVienVm);
+            _nhanvienRepository.Update(nhanvien);
         }
 
         public void Dispose()
@@ -118,6 +110,13 @@ namespace HRMNS.Application.Implementation
             }
 
             return lstNV;
+        }
+
+        public void UpdateSingle(NhanVienViewModel nhanVienVm)
+        {
+            nhanVienVm.UserModified = GetUserId();
+            HR_NHANVIEN nHANVIEN = ((Data.EF.EFUnitOfWork)_unitOfWork).DBContext().HrNhanVien.First(x => x.Id == nhanVienVm.Id);
+            var nhanvien = _mapper.Map(nhanVienVm, nHANVIEN);
         }
     }
 }

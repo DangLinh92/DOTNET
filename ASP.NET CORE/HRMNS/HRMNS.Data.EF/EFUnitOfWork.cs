@@ -21,5 +21,10 @@ namespace HRMNS.Data.EF
         {
             _context.Dispose();
         }
+
+        public AppDBContext DBContext()
+        {
+            return _context;
+        }
     }
 }

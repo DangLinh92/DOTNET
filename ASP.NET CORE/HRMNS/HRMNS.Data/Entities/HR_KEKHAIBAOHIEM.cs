@@ -1,4 +1,5 @@
-﻿using HRMS.Infrastructure.SharedKernel;
+﻿using HRMNS.Data.Interfaces;
+using HRMS.Infrastructure.SharedKernel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -9,7 +10,7 @@ namespace HRMNS.Data.Entities
 {
     [Table("HR_KEKHAIBAOHIEM")]
 
-    public class HR_KEKHAIBAOHIEM : DomainEntity<int>
+    public class HR_KEKHAIBAOHIEM : DomainEntity<int>, IDateTracking
     {
 
         [StringLength(50)]

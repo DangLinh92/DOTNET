@@ -65,7 +65,16 @@ namespace HRMS.Areas.Admin.Controllers
                 }
                 else if (!isAdd && !notExist)
                 {
-                    _nhanvienService.Update(nhanvienVm.NhanVien);
+                    NhanVienViewModel nhanVien = _nhanvienService.GetById(nhanvienVm.NhanVien.Id);
+                    nhanVien.TenNV = nhanvienVm.NhanVien.TenNV;
+                    nhanVien.GioiTinh = nhanvienVm.NhanVien.GioiTinh;
+                    nhanVien.Email = nhanvienVm.NhanVien.Email;
+                    nhanVien.SoDienThoai = nhanvienVm.NhanVien.SoDienThoai;
+                    nhanVien.NgayVao = nhanvienVm.NhanVien.NgayVao;
+                    nhanVien.MaBoPhan = nhanvienVm.NhanVien.MaBoPhan;
+                    nhanVien.MaChucDanh = nhanvienVm.NhanVien.MaChucDanh;
+
+                    _nhanvienService.UpdateSingle(nhanVien);
                 }
 
                 _nhanvienService.Save();
@@ -74,10 +83,23 @@ namespace HRMS.Areas.Admin.Controllers
             }
         }
 
+        [HttpPost]
+        public IActionResult Delete(string Id)
+        {
+            bool notExist = !_nhanvienService.GetAll().Any(x => x.Id == Id);
+            if (notExist)
+            {
+                return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
+            }
+            _nhanvienService.Delete(Id);
+            _nhanvienService.Save();
+            return new OkObjectResult(null);
+        }
+
         [HttpGet]
         public IActionResult GetById(string Id)
         {
-           NhanVienViewModel nhanVien = _nhanvienService.GetById(Id);
+            NhanVienViewModel nhanVien = _nhanvienService.GetById(Id);
             return new OkObjectResult(nhanVien);
         }
 

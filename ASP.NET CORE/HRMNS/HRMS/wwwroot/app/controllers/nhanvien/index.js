@@ -7,6 +7,7 @@
         // bindding event
     }
 
+    // ADD EDIT START
     // Open popup Add employee
     $('#btnCreate').on('click', function () {
         $('#txtTitleAddEdit').text('Add Employee');
@@ -109,19 +110,7 @@
                     hrms.notify("Update success!", 'Success', 'alert', function () {
 
                         // update grid data ,update datatable jquery
-                        $('#btnSearch').submit();
-                        let myVar = setInterval(function () {
-                            var table = $('#nhanVienDataTable');
-                            if (table) {
-                                table.DataTable().destroy();
-                                $('#nhanVienDataTable').DataTable({
-                                    "order": [8, 'asc']
-                                });
-                                $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Anything you want.');
-                                $('select[name="nhanVienDataTable_length"]').removeClass('form-control-sm');
-                                clearInterval(myVar);
-                            }
-                        }, 500);
+                        ReloadData();
                     });
                 },
                 error: function (status) {
@@ -131,6 +120,38 @@
             });
         }
     });
+    // ADD EDIT END
+
+    // DELETE START
+    $('#btnDelete').on('click', function (e) {
+
+        e.preventDefault();
+        var that = $('#txtId').val();
+        $.ajax({
+            type: "POST",
+            url: "/Admin/NhanVien/Delete",
+            dataType: "json",
+            data: {
+                Id: that
+            },
+            success: function (response) {
+                $('#delete_employee').modal('hide');
+                hrms.notify("Delete success!", 'Success', 'alert', function () {
+                    ReloadData();
+                });
+            },
+            error: function (status) {
+                hrms.notify('error: ' + status.responseText, 'error', 'alert', function () { });
+            }
+        });
+    });
+
+    $('body').on('click', '.delete-employee', function (e) {
+        e.preventDefault();
+        $('#delete_employee').modal('show');
+        $('#txtId').val($(this).data('id'));
+    });
+    // DELETE END
 
     function resetFormData() {
         $('#txtTenNV').val('');
@@ -216,5 +237,22 @@
                 hrms.notify('Cannot loading data', 'error', 'alert', function () { });
             }
         })
+    }
+
+    function ReloadData() {
+        // update grid data ,update datatable jquery
+        $('#btnSearch').submit();
+        let myVar = setInterval(function () {
+            var table = $('#nhanVienDataTable');
+            if (table) {
+                table.DataTable().destroy();
+                $('#nhanVienDataTable').DataTable({
+                    "order": [8, 'asc']
+                });
+                $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Anything you want.');
+                $('select[name="nhanVienDataTable_length"]').removeClass('form-control-sm');
+                clearInterval(myVar);
+            }
+        }, 500);
     }
 }
