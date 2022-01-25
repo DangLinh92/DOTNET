@@ -19,19 +19,19 @@
             $('select[name="nhanVienDataTable_length"]').removeClass('form-control-sm');
         });
     </script>
-
 }
 
 @section Styles{
     <style>
+
         #btnCreate {
             float: none;
-            margin-right : 20px;
+            margin-right: 10px;
         }
 
         #btnImport {
             min-width: 150px;
-            border-radius:50px;
+            border-radius: 50px;
         }
     </style>
 }
@@ -50,10 +50,11 @@
             <div class="col-auto float-right ml-auto">
                 <a href="#" id="btnCreate" class="btn add-btn" data-toggle="modal" data-target="#add_employee"><i class="fa fa-plus"></i> Add Employee</a>
                 <div class="btn-group">
-                    <button type="button" class="btn btn-info dropdown-toggle" id="btnImport" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Import</button>
+                    <button type="button" class="btn btn-info dropdown-toggle" id="btnImport" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Excel</button>
                     <div class="dropdown-menu" style="">
-                        <a class="dropdown-item" href="#">Get file import</a>
-                        <a class="dropdown-item" href="#">Import employee</a>
+                        <a class="dropdown-item" href="~/templates/EmployeeTemplate.xlsx">Get file import</a>
+                        <a class="dropdown-item" href="#" id="btn-import">Import employee</a>
+                        <a class="dropdown-item" href="#" id="btn-export">Export employee</a>
                     </div>
                 </div>
             </div>
@@ -89,3 +90,5 @@
 <!-- Delete Employee Modal -->
 <partial name="_DeleteEmployeeModel" />
 <!-- /Delete Employee Modal -->
+
+<partial name="_ImportExcelModel" />

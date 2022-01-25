@@ -109,6 +109,25 @@
             return '';
         }
         return obj;
+    },
+
+    run_waitMe: function (obj) {
+        obj.waitMe({
+            effect: 'facebook',
+            text: 'Please waiting...',
+            bg: 'rgba(255, 255, 255, 0.7)',
+            color: '#000',
+            maxSize: '',
+            waitTime: -1,
+            textPos: 'vertical',
+            fontSize: '',
+            source: '',
+            onClose: function () { }
+        });
+    },
+
+    hide_waitMe: function (obj) {
+        obj.waitMe("hide");
     }
 }
 

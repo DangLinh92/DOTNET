@@ -153,6 +153,88 @@
     });
     // DELETE END
 
+    // IMPORT EXCEL START
+    $('#btn-import').on('click', function () {
+        $("#fileInputExcel").val(null);
+        $('#import_employee').modal('show');
+    });
+
+    $('#btnCloseImportExcel').on('click', function () {
+        var fileUpload = $("#fileInputExcel").get(0);
+        var files = fileUpload.files;
+        if (files.length > 0) {
+            $("#fileInputExcel").val(null);
+            $('#import_employee').modal('hide');
+            location.reload();
+        }
+    });
+
+    $('#btnCloseImport').on('click', function () {
+        var fileUpload = $("#fileInputExcel").get(0);
+        var files = fileUpload.files;
+        if (files.length > 0) {
+            $("#fileInputExcel").val(null);
+            $('#import_employee').modal('hide');
+            location.reload();
+        }
+    });
+
+    $('#btnImportExcel').on('click', function () {
+        var fileUpload = $("#fileInputExcel").get(0);
+        var files = fileUpload.files;
+
+        // Create FormData object  
+        var fileData = new FormData();
+        // Looping over all files and add it to FormData object  
+        for (var i = 0; i < files.length; i++) {
+            fileData.append("files", files[i]);
+        }
+        // Adding one more key to FormData object  
+        // fileData.append('categoryId', $('#ddlCategoryIdImportExcel').combotree('getValue'));
+
+        $.ajax({
+            url: '/Admin/NhanVien/ImportExcel',
+            type: 'POST',
+            data: fileData,
+            processData: false,  // tell jQuery not to process the data
+            contentType: false,  // tell jQuery not to set contentType
+            success: function (data) {
+                $('#import_employee').modal('hide');
+                hrms.notify("Import success!", 'Success', 'alert', function () {
+
+                    // update grid data ,update datatable jquery
+                    // ReloadData();
+                    location.reload();
+                });
+            },
+            error: function (status) {
+                hrms.notify('error: Import error!', 'error', 'alert', function () { });
+            }
+        });
+        return false;
+    });
+    // IMPORT EXCEL END
+
+    // Export excel start
+    $('#btn-export').on('click', function () {
+        $.ajax({
+            type: "POST",
+            url: "/Admin/NhanVien/ExportExcel",
+            beforeSend: function () {
+                hrms.run_waitMe($('#gridNhanVien'));
+            },
+            success: function (response) {
+                window.location.href = response;
+                hrms.hide_waitMe($('#gridNhanVien'));
+            },
+            error: function () {
+                hrms.notify('Has an error in progress!', 'error', 'alert', function () { });
+                hrms.hide_waitMe($('#gridNhanVien'));
+            }
+        });
+    });
+    // Export excel end
+
     function resetFormData() {
         $('#txtTenNV').val('');
         $('#txtGioiTinh').val('Male');
@@ -241,6 +323,8 @@
 
     function ReloadData() {
         // update grid data ,update datatable jquery
+        hrms.run_waitMe($('#gridNhanVien'));
+
         $('#btnSearch').submit();
         let myVar = setInterval(function () {
             var table = $('#nhanVienDataTable');
@@ -252,6 +336,7 @@
                 $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Anything you want.');
                 $('select[name="nhanVienDataTable_length"]').removeClass('form-control-sm');
                 clearInterval(myVar);
+                hrms.hide_waitMe($('#gridNhanVien'));
             }
         }, 500);
     }
