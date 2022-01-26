@@ -19,13 +19,14 @@ namespace HRMNS.Data.Entities
             HR_QUATRINHLAMVIEC = new HashSet<HR_QUATRINHLAMVIEC>();
             HR_TINHTRANGHOSO = new HashSet<HR_TINHTRANGHOSO>();
             HR_CHUNGCHI_NHANVIEN = new HashSet<HR_CHUNGCHI_NHANVIEN>();
+            HR_PHEP_NAM = new HashSet<HR_PHEP_NAM>();
         }
 
         public HR_NHANVIEN
             (string id,string tenNV, string maChucDanh, string maBoPhan, string gioiTinh, string ngaySinh, string noiSinh, string tinhTrangHonNhan, string danToc, string tonGiao, string diaChiThuongTru,
             string soDienThoai, string soDienThoaiNguoiThan, string quanHeNguoiThan, string cMTND, string ngayCapCMTND, string noiCapCMTND, string soTaiKhoanNH,
             string tenNganHang, string truongDaoTao, string ngayVao, string nguyenQuan, string dChiHienTai, string kyLuatLD, string maBHXH, string maSoThue, int soNguoiGiamTru,
-            string email, string note, string ngayNghiViec, string status, string image, string isDelete)
+            string email, string note, string ngayNghiViec, string status, string image, string isDelete,int? maBoPhanChiTiet)
         {
             Id = id;
             TenNV = tenNV;
@@ -60,6 +61,7 @@ namespace HRMNS.Data.Entities
             Status = status;
             Image = image;
             IsDelete = isDelete;
+            MaBoPhanChiTiet = maBoPhanChiTiet;
         }
 
         [StringLength(250)]
@@ -70,6 +72,8 @@ namespace HRMNS.Data.Entities
 
         [StringLength(50)]
         public string MaBoPhan { get; set; }
+
+        public int? MaBoPhanChiTiet { get; set; }
 
         [StringLength(20)]
         public string GioiTinh { get; set; }
@@ -123,7 +127,7 @@ namespace HRMNS.Data.Entities
 
         public string DChiHienTai { get; set; }
 
-        [StringLength(50)]
+        [StringLength(500)]
         public string KyLuatLD { get; set; }
 
         [StringLength(50)]
@@ -164,6 +168,10 @@ namespace HRMNS.Data.Entities
 
         [ForeignKey("MaBoPhan")]
         public virtual BOPHAN BOPHAN { get; set; }
+
+        [ForeignKey("MaBoPhanChiTiet")]
+        public virtual HR_BO_PHAN_DETAIL HR_BO_PHAN_DETAIL { get; set; }
+
         public virtual ICollection<HR_BHXH> HR_BHXH { get; set; }
 
         [ForeignKey("MaChucDanh")]
@@ -173,5 +181,6 @@ namespace HRMNS.Data.Entities
         public virtual ICollection<HR_KEKHAIBAOHIEM> HR_KEKHAIBAOHIEM { get; set; }
         public virtual ICollection<HR_QUATRINHLAMVIEC> HR_QUATRINHLAMVIEC { get; set; }
         public virtual ICollection<HR_TINHTRANGHOSO> HR_TINHTRANGHOSO { get; set; }
+        public virtual ICollection<HR_PHEP_NAM> HR_PHEP_NAM { get; set; }
     }
 }

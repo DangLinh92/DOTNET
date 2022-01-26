@@ -266,6 +266,41 @@ namespace HRMNS.Data.EF.Migrations
                     b.ToTable("HR_BHXH");
                 });
 
+            modelBuilder.Entity("HRMNS.Data.Entities.HR_BO_PHAN_DETAIL", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("MaBoPhan")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("TenBoPhanChiTiet")
+                        .HasColumnType("nvarchar(500)")
+                        .HasMaxLength(500);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("HR_BO_PHAN_DETAIL");
+                });
+
             modelBuilder.Entity("HRMNS.Data.Entities.HR_CHEDOBH", b =>
                 {
                     b.Property<string>("Id")
@@ -552,8 +587,8 @@ namespace HRMNS.Data.EF.Migrations
                         .HasMaxLength(10);
 
                     b.Property<string>("KyLuatLD")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
+                        .HasColumnType("nvarchar(500)")
+                        .HasMaxLength(500);
 
                     b.Property<string>("MaBHXH")
                         .HasColumnType("nvarchar(50)")
@@ -562,6 +597,9 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("MaBoPhan")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
+
+                    b.Property<int?>("MaBoPhanChiTiet")
+                        .HasColumnType("int");
 
                     b.Property<string>("MaChucDanh")
                         .HasColumnType("nvarchar(50)")
@@ -654,9 +692,54 @@ namespace HRMNS.Data.EF.Migrations
 
                     b.HasIndex("MaBoPhan");
 
+                    b.HasIndex("MaBoPhanChiTiet");
+
                     b.HasIndex("MaChucDanh");
 
                     b.ToTable("HR_NHANVIEN");
+                });
+
+            modelBuilder.Entity("HRMNS.Data.Entities.HR_PHEP_NAM", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("MaNhanVien")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<int>("SoPhepConLai")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SoPhepNam")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MaNhanVien");
+
+                    b.ToTable("HR_PHEP_NAM");
                 });
 
             modelBuilder.Entity("HRMNS.Data.Entities.HR_QUATRINHLAMVIEC", b =>
@@ -1010,9 +1093,20 @@ namespace HRMNS.Data.EF.Migrations
                         .WithMany("HR_NHANVIEN")
                         .HasForeignKey("MaBoPhan");
 
+                    b.HasOne("HRMNS.Data.Entities.HR_BO_PHAN_DETAIL", "HR_BO_PHAN_DETAIL")
+                        .WithMany("HR_NHANVIEN")
+                        .HasForeignKey("MaBoPhanChiTiet");
+
                     b.HasOne("HRMNS.Data.Entities.HR_CHUCDANH", "HR_CHUCDANH")
                         .WithMany("HR_NHANVIEN")
                         .HasForeignKey("MaChucDanh");
+                });
+
+            modelBuilder.Entity("HRMNS.Data.Entities.HR_PHEP_NAM", b =>
+                {
+                    b.HasOne("HRMNS.Data.Entities.HR_NHANVIEN", "HR_NHANVIEN")
+                        .WithMany("HR_PHEP_NAM")
+                        .HasForeignKey("MaNhanVien");
                 });
 
             modelBuilder.Entity("HRMNS.Data.Entities.HR_QUATRINHLAMVIEC", b =>

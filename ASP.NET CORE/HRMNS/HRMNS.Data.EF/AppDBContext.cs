@@ -40,6 +40,8 @@ namespace HRMNS.Data.EF
         public virtual DbSet<HR_CHUNGCHI_NHANVIEN> HrChungChiNhanVien { get; set; }
         public virtual DbSet<PERMISSION> Permissions { get; set; }
         public virtual DbSet<LANGUAGE> Languages { get; set; }
+        public virtual DbSet<HR_PHEP_NAM> HrPhepNam { get; set; }
+        public virtual DbSet<HR_BO_PHAN_DETAIL> HrBoPhanDetail { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -67,6 +69,8 @@ namespace HRMNS.Data.EF
             builder.AddConfiguration(new PermissionConfiguration());
             builder.AddConfiguration(new QuatrinhlamviecConfiguration());
             builder.AddConfiguration(new TinhTrangHosoConfiguration());
+            builder.AddConfiguration(new BoPhanDetailConfiguration());
+            builder.AddConfiguration(new PhepNamConfiguration());
             //base.OnModelCreating(builder);
         }
 

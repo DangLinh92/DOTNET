@@ -1,9 +1,12 @@
 ﻿using HRMNS.Application.Interfaces;
 using HRMNS.Application.ViewModels.HR;
 using HRMNS.Application.ViewModels.System;
+using HRMNS.Data.EF.Extensions;
+using HRMNS.Data.Enums;
 using HRMNS.Utilities.Common;
 using HRMNS.Utilities.Constants;
 using HRMNS.Utilities.Dtos;
+using HRMS.Areas.Admin.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -144,7 +147,7 @@ namespace HRMS.Areas.Admin.Controllers
                 file.Delete();
                 file = new FileInfo(Path.Combine(sWebRootFolder, sFileName));
             }
-            var nhanviens = _nhanvienService.GetAll().Select(x => new
+            var nhanviens = _nhanvienService.GetAll().Where(x => x.Status.NullString() != Status.InActive.ToString()).Select(x => new
             {
                 x.Id,
                 x.TenNV,
@@ -202,33 +205,32 @@ namespace HRMS.Areas.Admin.Controllers
             return new OkObjectResult(nhanVien);
         }
 
-        //public IActionResult Index(
-        //    [FromQuery(Name = "id")] string id,
-        //    [FromQuery(Name = "name")] string name,
-        //    [FromQuery(Name = "dept")] string dept)
-        //{
+        [HttpGet]
+        public IActionResult Profile(string Id)
+        {
+            NhanVienViewModel nhanVien = _nhanvienService.GetById(Id);
+            if (nhanVien != null)
+            {
+                NhanVienProfileModel profileModel = new NhanVienProfileModel();
+                profileModel.MaNhanVien = nhanVien.Id;
+                profileModel.Avartar = nhanVien.Image;
+                return View(profileModel);
+            }
+            else
+            {
+                return RedirectToAction("Index", "Error", new { id = CommonConstants.NotFound, Area = "Admin" });
+            }
+        }
 
-        //    ViewBag.BoPhans = _boPhanService.GetAll(null);
-        //    ViewBag.SearchId = id;
-        //    ViewBag.SearchName = name;
-        //    ViewBag.SearchDept = dept;
+        [HttpPost]
+        public IActionResult SaveAvatar(string Id, string url)
+        {
+            NhanVienViewModel nhanVien = _nhanvienService.GetById(Id);
+            nhanVien.Image = url;
+            _nhanvienService.UpdateSingle(nhanVien);
+            _nhanvienService.Save();
 
-        //    if (dept == "ALL")
-        //    {
-        //        dept = "";
-        //    }
-
-        //    List<NhanVienViewModel> nhanviens = _nhanvienService.Search(id, name, dept);
-        //    return View(nhanviens);
-        //}
-
-        //#region AJAX API
-        //[HttpGet]
-        //public IActionResult Index()
-        //{
-        //    var model = _nhanvienService.GetAll();
-        //    return View(model);
-        //}
-        //#endregion
+            return new OkObjectResult(null);
+        }
     }
 }

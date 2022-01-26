@@ -1,4 +1,5 @@
 ﻿using HRMNS.Application.ViewModels;
+using HRMNS.Utilities.Constants;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,6 +14,7 @@ namespace HRMNS.Application.ViewModels.HR
         public string MaChucDanh { get; set; }
 
         public string MaBoPhan { get; set; }
+        public int? MaBoPhanChiTiet { get; set; }
 
         public string GioiTinh { get; set; }
 
@@ -68,7 +70,26 @@ namespace HRMNS.Application.ViewModels.HR
 
         public string Status { get; set; }
 
-        public string Image { get; set; }
+        private string _image;
+        public string Image
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_image))
+                {
+                    return CommonConstants.DefaultAvatar;
+                }
+                return _image;
+            }
+            set
+            {
+                _image = value;
+                if (string.IsNullOrEmpty(value))
+                {
+                    _image = CommonConstants.DefaultAvatar;
+                }
+            }
+        }
 
         public string DateCreated { get; set; }
 
@@ -88,5 +109,7 @@ namespace HRMNS.Application.ViewModels.HR
         public ICollection<KeKhaiBaoHiemViewModel> HR_KEKHAIBAOHIEM { get; set; }
         public ICollection<QuaTrinhLamViecViewModel> HR_QUATRINHLAMVIEC { get; set; }
         public ICollection<TinhTrangHoSoViewModel> HR_TINHTRANGHOSO { get; set; }
+        public BoPhanDetailViewModel HR_BO_PHAN_DETAIL { get; set; }
+        public ICollection<PhepNamViewModel> HR_PHEP_NAM { get; set; }
     }
 }

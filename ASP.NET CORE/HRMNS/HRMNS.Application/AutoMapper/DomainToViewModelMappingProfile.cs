@@ -26,6 +26,8 @@ namespace HRMNS.Application.AutoMapper
             CreateMap<HR_TINHTRANGHOSO, TinhTrangHoSoViewModel>();
             CreateMap<HR_NHANVIEN, NhanVienViewModel>();
             CreateMap<FUNCTION, FunctionViewModel>();
+            CreateMap<HR_BO_PHAN_DETAIL, BoPhanDetailViewModel>();
+            CreateMap<HR_PHEP_NAM, PhepNamViewModel>();
         }
     }
 }
