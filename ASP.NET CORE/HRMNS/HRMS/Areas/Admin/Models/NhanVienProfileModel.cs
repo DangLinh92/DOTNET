@@ -16,6 +16,7 @@ namespace HRMS.Areas.Admin.Models
             phepNams = new List<PhepNamViewModel>();
             hopDongs = new List<HopDongViewModel>();
         }
+
         // profile common
         private string _avartar;
         public string Avartar
@@ -45,6 +46,7 @@ namespace HRMS.Areas.Admin.Models
         public string TenNhanVien { get; set; }
         public string BoPhan { get; set; }
         public string BoPhanDetail { get; set; }
+        public int? MaBoPhanDetail { get; set; }
         public string ChucDanh { get; set; }
         public string NgayVaoCongTy { get; set; }
         public string Phone { get; set; }
@@ -63,10 +65,11 @@ namespace HRMS.Areas.Admin.Models
         public string NgayCapCMTND { get; set; }
         public string NoiCapCMTND { get; set; }
         public string MaSoThue { get; set; }
-        public string SoNguoiGiamTru { get; set; }
+        public int SoNguoiGiamTru { get; set; }
         public string TinhTrangHonNhan { get; set; }
         public string TruongDaoTao { get; set; }
         public string Note { get; set; }
+        public string Status { get; set; }
 
         // Nghỉ viêc
         public string NgayNghiViec { get; set; }

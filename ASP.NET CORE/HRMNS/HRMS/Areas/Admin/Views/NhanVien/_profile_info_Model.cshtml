@@ -1,0 +1,133 @@
+﻿<div id="profile_info" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Profile Information</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" data-ajax="true" data-ajax-url="/admin/nhanVien/UpdateProfileBasic" data-ajax-update="#id-profile-basic" data-ajax-mode='replace'>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Mã Nhân Viên<span class="text-danger"> *</span></label>
+                                        <input type="text" name="MaNhanVien" id="txtMaNhanVien" class="form-control" value="John" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Tên Nhân Viên<span class="text-danger"> *</span></label>
+                                        <input type="text" name="TenNhanVien" id="txtTenNhanVien" class="form-control" value="Doe" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Ngày Sinh<span class="text-danger"> *</span></label>
+                                        <div class="cal-icon">
+                                            <input name="Birthday" id="txtBirthday" class="form-control datetimepicker" type="text" value="05/06/1985" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Giới Tính<span class="text-danger"> *</span></label>
+                                        <select id="txtGioiTinh" name="GioiTinh" class="select form-control" required>
+                                            <option value="male selected">Male</option>
+                                            <option value="female">Female</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Bộ Phận<span class="text-danger"> *</span></label>
+                                        <select name="BoPhan" id="txtBoPhan" class="select form-control" required>
+                                            <option value="male selected">Male</option>
+                                            <option value="female">Female</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Vị trí<span class="text-danger"> *</span></label>
+                                        <select name="BoPhanDetail" id="txtBoPhanDetail" class="select form-control" required>
+                                            <option value="male selected">Male</option>
+                                            <option value="female">Female</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Chức Danh<span class="text-danger"> *</span></label>
+                                        <select name="ChucDanh" id="txtChucDanh" class="select form-control" required>
+                                            <option value="male selected">Male</option>
+                                            <option value="female">Female</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Ngày Vào</label>
+                                        <div class="cal-icon">
+                                            <input name="NgayVaoCongTy" id="txtNgayVaoCongTy" class="form-control datetimepicker" type="text" value="05/06/1985">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Địa Chỉ Hiện Tại</label>
+                                <input name="DCHienTai" id="txtDCHienTai" type="text" class="form-control" value="4487 Snowbird Lane">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Phone</label>
+                                <input name="Phone" id="txtPhone" type="text" class="form-control" value="631-889-3206">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input name="Email" id="txtEmail" type="text" class="form-control" value="danglevan.9919@gmail.com">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Tình Trạng Hôn Nhân</label>
+                                <select id="txtTinhTrangHonNhan" name="TinhTrangHonNhan" class="select">
+                                    <option>Single</option>
+                                    <option>Married</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Status</label>
+                                <select name="Status" id="txtStatus" class="select">
+                                    <option>Active</option>
+                                    <option>InActive</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

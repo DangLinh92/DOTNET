@@ -1,0 +1,53 @@
+﻿<script id="pfCommonInfo-template" type="x-tmpl-mustache">
+                            <div class="profile-img-wrap">
+                            <div class="profile-img">
+                                <a id="btnSelectImg" href="#"><img alt="" id="imgAvatar" src="{{Avartar}}"></a>
+                                <input type="file" id="fileInputImage" style="display:none" />
+                            </div>
+                        </div>
+                        <div class="profile-basic">
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="profile-info-left">
+                                        <h3 class="user-name m-t-0 mb-0" id="txtTenNV">{{TenNhanVien}}</h3>
+                                        <h6 class="text-muted" id="txtBoPhanDetail">{{BoPhanDetail}}</h6>
+                                        <small class="text-muted" id="txtChucDanh">{{ChucDanh}}</small>
+                                        <div class="staff-id" id="txtMaNhanVien" data-id="{{MaNhanVien}}">Employee ID : {{MaNhanVien}}</div>
+                                        <div class="small doj text-muted" id="txtNgayVaoCty">Date of Join : {{NgayVaoCongTy}}</div>
+                                        <div class="staff-msg">
+                                           {{Status}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-7">
+                                    <ul class="personal-info">
+                                        <li>
+                                            <div class="title">Phone:</div>
+                                            <div class="text"><a href="">{{Phone}}</a></div>
+                                        </li>
+                                        <li>
+                                            <div class="title">Email:</div>
+                                            <div class="text"><a href="">{{Email}}</a></div>
+                                        </li>
+                                        <li>
+                                            <div class="title">Birthday:</div>
+                                            <div class="text">{{Birthday}}</div>
+                                        </li>
+                                        <li>
+                                            <div class="title">Address:</div>
+                                            <div class="text">{{DCHienTai}}</div>
+                                        </li>
+                                        <li>
+                                            <div class="title">Gender:</div>
+                                            <div class="text">{{GioiTinh}}</div>
+                                        </li>
+                                        <li>
+                                            <div class="title">Status:</div>
+                                            <div class="text">{{TinhTrangHonNhan}}</div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pro-edit"><a data-target="#profile_info" data-toggle="modal" class="edit-icon" href="#"><i class="fa fa-pencil"></i></a></div>
+</script>

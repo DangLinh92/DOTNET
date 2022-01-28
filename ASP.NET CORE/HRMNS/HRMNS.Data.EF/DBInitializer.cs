@@ -99,8 +99,8 @@ namespace HRMNS.Data.EF
                 {
                     new BOPHAN()
                     {
-                        Id = "PI",
-                        TenBoPhan = "PI"
+                        Id = "KHO",
+                        TenBoPhan = "KHO"
                     },
                     new BOPHAN()
                     {
@@ -132,8 +132,155 @@ namespace HRMNS.Data.EF
                     ,
                     new BOPHAN()
                     {
-                        Id = "SUPPORT",
-                        TenBoPhan = "SUPPORT"
+                        Id = "KOREA",
+                        TenBoPhan = "KOREA"
+                    },
+                     new BOPHAN()
+                    {
+                        Id = "QC",
+                        TenBoPhan = "QC"
+                    },
+                      new BOPHAN()
+                    {
+                        Id = "SP",
+                        TenBoPhan = "SP"
+                    },
+                        new BOPHAN()
+                    {
+                        Id = "UTILITY",
+                        TenBoPhan = "UTILITY"
+                    }
+                });
+            }
+
+            if (_context.HrBoPhanDetail.Count() == 0)
+            {
+                _context.HrBoPhanDetail.AddRange(new List<HR_BO_PHAN_DETAIL>() {
+                    new HR_BO_PHAN_DETAIL()
+                    {
+                        TenBoPhanChiTiet = "Accounting/ Kế toán",
+                        MaBoPhan = "SP"
+                    },
+                     new HR_BO_PHAN_DETAIL()
+                    {
+                        TenBoPhanChiTiet = "CSP Manufacturing/ Sản xuất CSP",
+                        MaBoPhan = "CSP"
+                    },
+                      new HR_BO_PHAN_DETAIL()
+                    {
+                        TenBoPhanChiTiet = "CSP Technology/ Kỹ thuật CSP",
+                        MaBoPhan = "CSP"
+                    },
+                        new HR_BO_PHAN_DETAIL()
+                    {
+                        TenBoPhanChiTiet = "GOC",
+                        MaBoPhan = "SP"
+                    },
+                        new HR_BO_PHAN_DETAIL()
+                    {
+                        TenBoPhanChiTiet = "Human Resource/ HCNS",
+                        MaBoPhan = "SP"
+                    }
+                        ,
+                        new HR_BO_PHAN_DETAIL()
+                    {
+                        TenBoPhanChiTiet = "Human Resource/ HCNS (EHS)",
+                        MaBoPhan = "SP"
+                    } ,
+                        new HR_BO_PHAN_DETAIL()
+                    {
+                        TenBoPhanChiTiet = "Human Resource/ HCNS (Utility)",
+                        MaBoPhan = "UTILITY"
+                    },
+                        new HR_BO_PHAN_DETAIL()
+                    {
+                        TenBoPhanChiTiet = "KOREA",
+                        MaBoPhan = "KOREA"
+                    },    new HR_BO_PHAN_DETAIL()
+                    {
+                        TenBoPhanChiTiet = "LFEM  Manufacturing/ Sản xuất LFEM",
+                        MaBoPhan = "LFEM"
+                    }
+                    ,    new HR_BO_PHAN_DETAIL()
+                    {
+                        TenBoPhanChiTiet = "LFEM Technology/ Kỹ thuật LFEM",
+                        MaBoPhan = "LFEM"
+                    } ,    new HR_BO_PHAN_DETAIL()
+                    {
+                        TenBoPhanChiTiet = "Logistic/ XNK",
+                        MaBoPhan = "SP"
+                    }
+                     ,    new HR_BO_PHAN_DETAIL()
+                    {
+                        TenBoPhanChiTiet = "PI",
+                        MaBoPhan = "SP"
+                    } ,    new HR_BO_PHAN_DETAIL()
+                    {
+                        TenBoPhanChiTiet = "Purchasing/ Mua hàng",
+                        MaBoPhan = "SP"
+                    } ,    new HR_BO_PHAN_DETAIL()
+                    {
+                        TenBoPhanChiTiet = "Quality Control/ QL Chất lượng",
+                        MaBoPhan = "QC"
+                    },    new HR_BO_PHAN_DETAIL()
+                    {
+                        TenBoPhanChiTiet = "Quality Control/ QL Chất lượng (CS)",
+                        MaBoPhan = "QC"
+                    },    new HR_BO_PHAN_DETAIL()
+                    {
+                        TenBoPhanChiTiet = "Quality Control/ QL Chất lượng (IQC)",
+                        MaBoPhan = "QC"
+                    },    new HR_BO_PHAN_DETAIL()
+                    {
+                        TenBoPhanChiTiet = "Quality Control/ QL Chất lượng (OQC)",
+                        MaBoPhan = "QC"
+                    },    new HR_BO_PHAN_DETAIL()
+                    {
+                        TenBoPhanChiTiet = "Quality Control/ QL Chất lượng (PQC)",
+                        MaBoPhan = "QC"
+                    },    new HR_BO_PHAN_DETAIL()
+                    {
+                        TenBoPhanChiTiet = "Quality Control/ QL Chất lượng (QQC)",
+                        MaBoPhan = "QC"
+                    },    new HR_BO_PHAN_DETAIL()
+                    {
+                        TenBoPhanChiTiet = "Quality Control/ QL Chất lượng (Reability)",
+                        MaBoPhan = "QC"
+                    },    new HR_BO_PHAN_DETAIL()
+                    {
+                        TenBoPhanChiTiet = "SMT Manufacturing/ Sản xuất SMT",
+                        MaBoPhan = "SMT"
+                    },    new HR_BO_PHAN_DETAIL()
+                    {
+                        TenBoPhanChiTiet = "SMT Innovation Group",
+                        MaBoPhan = "SMT"
+                    },    new HR_BO_PHAN_DETAIL()
+                    {
+                        TenBoPhanChiTiet = "SMT Technology/ Kỹ thuật SMT",
+                        MaBoPhan = "SMT"
+                    },    new HR_BO_PHAN_DETAIL()
+                    {
+                        TenBoPhanChiTiet = "Warehouse",
+                        MaBoPhan = "KHO"
+                    },    new HR_BO_PHAN_DETAIL()
+                    {
+                        TenBoPhanChiTiet = "WLP1 Manufacturing/ Sản xuất WLP1",
+                        MaBoPhan = "WLP1"
+                    }
+                    ,    new HR_BO_PHAN_DETAIL()
+                    {
+                        TenBoPhanChiTiet = "WLP1 Technology/ Kỹ thuật WLP1",
+                        MaBoPhan = "WLP1"
+                    }
+                     ,    new HR_BO_PHAN_DETAIL()
+                    {
+                        TenBoPhanChiTiet = "WLP2 Manufacturing/ Sản xuất WLP2",
+                        MaBoPhan = "WLP2"
+                    }
+                      ,    new HR_BO_PHAN_DETAIL()
+                    {
+                        TenBoPhanChiTiet = "WLP2 Technology/ Kỹ thuật WLP2",
+                        MaBoPhan = "WLP2"
                     }
                 });
             }
@@ -191,6 +338,112 @@ namespace HRMNS.Data.EF
                     {
                         Id = "Staff",
                         TenChucDanh="Staff"
+                    },
+                    new HR_CHUCDANH()
+                    {
+                        Id = "Assistant leader",
+                        TenChucDanh="Assistant leader/ Phó nhóm"
+                    },
+                    new HR_CHUCDANH()
+                    {
+                        Id = "Assistant Manager",
+                        TenChucDanh="Assistant Manager"
+                    },
+                    new HR_CHUCDANH()
+                    {
+                        Id = "Engineer Assistant leader",
+                        TenChucDanh="Engineer Assistant leader/ Phó nhóm kỹ thuật"
+                    },
+                    new HR_CHUCDANH()
+                    {
+                        Id = "Engineer shift leader",
+                        TenChucDanh="Engineer shift leader/ Tổ trưởng kỹ thuật"
+                    },
+                    new HR_CHUCDANH()
+                    {
+                        Id = "Engineer supervisor",
+                        TenChucDanh="Engineer supervisor/ Giám sát kỹ thuật"
+                    },
+                    new HR_CHUCDANH()
+                    {
+                        Id = "General Director",
+                        TenChucDanh="General Director"
+                    },
+                    new HR_CHUCDANH()
+                    {
+                        Id = "General Manager",
+                        TenChucDanh="General Manager"
+                    },
+                    new HR_CHUCDANH()
+                    {
+                        Id = "Group Leader",
+                        TenChucDanh="Group Leader/ Trưởng bộ phận"
+                    }
+                    ,
+                    new HR_CHUCDANH()
+                    {
+                        Id = "Manager",
+                        TenChucDanh="Manager"
+                    },
+                    new HR_CHUCDANH()
+                    {
+                        Id = "Operator",
+                        TenChucDanh="Operator/ Công nhân"
+                    },
+                    new HR_CHUCDANH()
+                    {
+                        Id = "Operator Radiation safety",
+                        TenChucDanh="Operator/ Công nhân - An toàn bức xạ"
+                    },
+                    new HR_CHUCDANH()
+                    {
+                        Id = "Operator XRF",
+                        TenChucDanh="Operator/ Công nhân (bức xạ XRF)"
+                    },
+                    new HR_CHUCDANH()
+                    {
+                        Id = "Operator TOXIC",
+                        TenChucDanh="Operator/ Công nhân tiếp xúc hóa chất độc hại"
+                    },
+                    new HR_CHUCDANH()
+                    {
+                        Id = "Part Leader",
+                        TenChucDanh="Part Leader/ Trưởng nhóm"
+                    },
+                    new HR_CHUCDANH()
+                    {
+                        Id = "Senior Manager",
+                        TenChucDanh="Senior Manager"
+                    },
+                    new HR_CHUCDANH()
+                    {
+                        Id = "Shift leader",
+                        TenChucDanh="Shift leader/ Tổ trưởng sản xuất"
+                    },
+                    new HR_CHUCDANH()
+                    {
+                        Id = "Staff Xray",
+                        TenChucDanh="Staff/ Nhân viên - Bức xạ máy Xray"
+                    },
+                    new HR_CHUCDANH()
+                    {
+                        Id = "Staff Reveal",
+                        TenChucDanh="Staff/ Nhân viên - Lộ quang"
+                    },
+                    new HR_CHUCDANH()
+                    {
+                        Id = "Staff Ma",
+                        TenChucDanh="Staff/ Nhân viên - Mạ"
+                    },
+                    new HR_CHUCDANH()
+                    {
+                        Id = "Staff XRF",
+                        TenChucDanh="Staff/ Nhân viên (bức xạ XRF)"
+                    },
+                    new HR_CHUCDANH()
+                    {
+                        Id = "Supervisor",
+                        TenChucDanh="Supervisor/ Giám sát line"
                     }
                 });
             }

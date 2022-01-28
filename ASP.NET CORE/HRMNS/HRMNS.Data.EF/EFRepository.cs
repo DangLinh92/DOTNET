@@ -58,12 +58,12 @@ namespace HRMNS.Data.EF
 
         public T FindById(K id, params Expression<Func<T, object>>[] includeProperties)
         {
-            return FindAll(includeProperties).SingleOrDefault(x => x.Id.Equals(id));
+            return FindAll(includeProperties).AsNoTracking().SingleOrDefault(x => x.Id.Equals(id));
         }
 
         public T FindSingle(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includeProperties)
         {
-            return FindAll(includeProperties).SingleOrDefault(predicate);
+            return FindAll(includeProperties).AsNoTracking().SingleOrDefault(predicate);
         }
 
         public void Remove(T entity)

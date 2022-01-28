@@ -208,17 +208,107 @@ namespace HRMS.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult Profile(string Id)
         {
-            NhanVienViewModel nhanVien = _nhanvienService.GetById(Id);
+            NhanVienViewModel nhanVien = _nhanvienService.GetById(Id,
+                                                                    i => i.BOPHAN,
+                                                                    x => x.HR_BO_PHAN_DETAIL,
+                                                                    y => y.HR_TINHTRANGHOSO,
+                                                                    o => o.HR_BHXH,
+                                                                    p => p.HR_QUATRINHLAMVIEC,
+                                                                    q => q.HR_PHEP_NAM,
+                                                                    k => k.HR_HOPDONG);
             if (nhanVien != null)
             {
                 NhanVienProfileModel profileModel = new NhanVienProfileModel();
+
+                // Thong tin chung
                 profileModel.MaNhanVien = nhanVien.Id;
                 profileModel.Avartar = nhanVien.Image;
+                profileModel.TenNhanVien = nhanVien.TenNV;
+                profileModel.BoPhan = nhanVien.MaBoPhan;
+                profileModel.BoPhanDetail = nhanVien.HR_BO_PHAN_DETAIL?.TenBoPhanChiTiet;
+                profileModel.ChucDanh = nhanVien.MaChucDanh;
+                profileModel.NgayVaoCongTy = nhanVien.NgayVao;
+                profileModel.Phone = nhanVien.SoDienThoai;
+                profileModel.Email = nhanVien.Email;
+                profileModel.Birthday = nhanVien.NgaySinh;
+                profileModel.DCHienTai = nhanVien.DChiHienTai;
+                profileModel.GioiTinh = nhanVien.GioiTinh;
+                profileModel.Status = nhanVien.Status.ToString();
+
+                // So yeu li lich
+                profileModel.NoiSinh = nhanVien.NoiSinh;
+                profileModel.NguyenQuan = nhanVien.NguyenQuan;
+                profileModel.DiaChiThuongTru = nhanVien.DiaChiThuongTru;
+                profileModel.DanToc = nhanVien.DanToc;
+                profileModel.TonGiao = nhanVien.TonGiao;
+                profileModel.CMTND = nhanVien.CMTND;
+                profileModel.NgayCapCMTND = nhanVien.NgayCapCMTND;
+                profileModel.NoiCapCMTND = nhanVien.NoiCapCMTND;
+                profileModel.MaSoThue = nhanVien.MaSoThue;
+                profileModel.SoNguoiGiamTru = nhanVien.SoNguoiGiamTru;
+                profileModel.TinhTrangHonNhan = nhanVien.TinhTrangHonNhan;
+                profileModel.TruongDaoTao = nhanVien.TruongDaoTao;
+                profileModel.Note = nhanVien.Note;
+
+                // Nghỉ viêc 
+                profileModel.NgayNghiViec = nhanVien.NgayNghiViec;
+
+                // Lien lac
+                profileModel.SoDienThoaiNguoiThan = nhanVien.SoDienThoaiNguoiThan;
+                profileModel.QuanHeNguoiThan = nhanVien.QuanHeNguoiThan;
+
+                // Bank Info
+                profileModel.TenNganHang = nhanVien.TenNganHang;
+                profileModel.SoTaiKhoanNH = nhanVien.SoTaiKhoanNH;
+
+                // Tinh Trang Ho So --
+                TinhTrangHoSoViewModel tthsModel = nhanVien.HR_TINHTRANGHOSO.FirstOrDefault();
+
+                if (tthsModel != null)
+                {
+                    profileModel.tinhTrangHoSo = new TinhTrangHoSoViewModel()
+                    {
+                        AnhThe = tthsModel.AnhThe,
+                        SoYeuLyLich = tthsModel.SoYeuLyLich,
+                        CMTND = tthsModel.CMTND,
+                        SoHoKhau = tthsModel.SoHoKhau,
+                        GiayKhaiSinh = tthsModel.GiayKhaiSinh,
+                        BangTotNghiep = tthsModel.BangTotNghiep,
+                        XacNhanDanSu = tthsModel.XacNhanDanSu
+                    };
+                }
+
+                // Ky Luat Lao Dong 
+                profileModel.KyLuatLaoDong = nhanVien.KyLuatLD;
+
+                // Bao Hiem
+                BHXHViewModel bHXH = nhanVien.HR_BHXH.FirstOrDefault();
+                if (bHXH != null)
+                {
+                    profileModel.bHXHs = new BHXHViewModel()
+                    {
+                        NgayThamGia = bHXH.NgayThamGia,
+                        NgayKetThuc = bHXH.NgayKetThuc,
+                        Id = bHXH.Id
+                    };
+                }
+
+                // Bang cap , chung chi
+                profileModel.chungChis = nhanVien.HR_CHUNGCHI_NHANVIEN.ToList();
+
+                // Qua Trinh Lam Viec --
+                profileModel.quaTrinhLamViecs = nhanVien.HR_QUATRINHLAMVIEC.ToList();
+
+                profileModel.phepNams = nhanVien.HR_PHEP_NAM.ToList();
+
+                // --
+                profileModel.hopDongs = nhanVien.HR_HOPDONG.ToList();
+
                 return View(profileModel);
             }
             else
             {
-                return RedirectToAction("Index", "Error", new { id = CommonConstants.NotFound, Area = "Admin" });
+                return Redirect("/Admin/Error/Index?id=" + CommonConstants.NotFound);
             }
         }
 
@@ -231,6 +321,119 @@ namespace HRMS.Areas.Admin.Controllers
             _nhanvienService.Save();
 
             return new OkObjectResult(null);
+        }
+
+        [HttpPost]
+        public IActionResult UpdateProfileBasic(NhanVienProfileModel profileBasic)
+        {
+            return PartialView("_profilebasicPartial", profileBasic);
+        }
+
+        [HttpGet]
+        public IActionResult GetProfile(string Id)
+        {
+            NhanVienViewModel nhanVien = _nhanvienService.GetById(Id,
+                                                                   i => i.BOPHAN,
+                                                                   x => x.HR_BO_PHAN_DETAIL,
+                                                                   y => y.HR_TINHTRANGHOSO,
+                                                                   o => o.HR_BHXH,
+                                                                   p => p.HR_QUATRINHLAMVIEC,
+                                                                   q => q.HR_PHEP_NAM,
+                                                                   k => k.HR_HOPDONG);
+            if (nhanVien != null)
+            {
+                NhanVienProfileModel profileModel = new NhanVienProfileModel();
+
+                // Thong tin chung
+                profileModel.MaNhanVien = nhanVien.Id;
+                profileModel.Avartar = nhanVien.Image;
+                profileModel.TenNhanVien = nhanVien.TenNV;
+                profileModel.BoPhan = nhanVien.MaBoPhan;
+                profileModel.MaBoPhanDetail = nhanVien.MaBoPhanChiTiet;
+                profileModel.ChucDanh = nhanVien.MaChucDanh;
+                profileModel.NgayVaoCongTy = nhanVien.NgayVao;
+                profileModel.Phone = nhanVien.SoDienThoai;
+                profileModel.Email = nhanVien.Email;
+                profileModel.Birthday = nhanVien.NgaySinh;
+                profileModel.DCHienTai = nhanVien.DChiHienTai;
+                profileModel.GioiTinh = nhanVien.GioiTinh;
+                profileModel.Status = nhanVien.Status.ToString();
+
+                // So yeu li lich
+                profileModel.NoiSinh = nhanVien.NoiSinh;
+                profileModel.NguyenQuan = nhanVien.NguyenQuan;
+                profileModel.DiaChiThuongTru = nhanVien.DiaChiThuongTru;
+                profileModel.DanToc = nhanVien.DanToc;
+                profileModel.TonGiao = nhanVien.TonGiao;
+                profileModel.CMTND = nhanVien.CMTND;
+                profileModel.NgayCapCMTND = nhanVien.NgayCapCMTND;
+                profileModel.NoiCapCMTND = nhanVien.NoiCapCMTND;
+                profileModel.MaSoThue = nhanVien.MaSoThue;
+                profileModel.SoNguoiGiamTru = nhanVien.SoNguoiGiamTru;
+                profileModel.TinhTrangHonNhan = nhanVien.TinhTrangHonNhan;
+                profileModel.TruongDaoTao = nhanVien.TruongDaoTao;
+                profileModel.Note = nhanVien.Note;
+
+                // Nghỉ viêc 
+                profileModel.NgayNghiViec = nhanVien.NgayNghiViec;
+
+                // Lien lac
+                profileModel.SoDienThoaiNguoiThan = nhanVien.SoDienThoaiNguoiThan;
+                profileModel.QuanHeNguoiThan = nhanVien.QuanHeNguoiThan;
+
+                // Bank Info
+                profileModel.TenNganHang = nhanVien.TenNganHang;
+                profileModel.SoTaiKhoanNH = nhanVien.SoTaiKhoanNH;
+
+                // Tinh Trang Ho So --
+                TinhTrangHoSoViewModel tthsModel = nhanVien.HR_TINHTRANGHOSO.FirstOrDefault();
+
+                if (tthsModel != null)
+                {
+                    profileModel.tinhTrangHoSo = new TinhTrangHoSoViewModel()
+                    {
+                        AnhThe = tthsModel.AnhThe,
+                        SoYeuLyLich = tthsModel.SoYeuLyLich,
+                        CMTND = tthsModel.CMTND,
+                        SoHoKhau = tthsModel.SoHoKhau,
+                        GiayKhaiSinh = tthsModel.GiayKhaiSinh,
+                        BangTotNghiep = tthsModel.BangTotNghiep,
+                        XacNhanDanSu = tthsModel.XacNhanDanSu
+                    };
+                }
+
+                // Ky Luat Lao Dong 
+                profileModel.KyLuatLaoDong = nhanVien.KyLuatLD;
+
+                // Bao Hiem
+                BHXHViewModel bHXH = nhanVien.HR_BHXH.FirstOrDefault();
+                if (bHXH != null)
+                {
+                    profileModel.bHXHs = new BHXHViewModel()
+                    {
+                        NgayThamGia = bHXH.NgayThamGia,
+                        NgayKetThuc = bHXH.NgayKetThuc,
+                        Id = bHXH.Id
+                    };
+                }
+
+                // Bang cap , chung chi
+                profileModel.chungChis = nhanVien.HR_CHUNGCHI_NHANVIEN.ToList();
+
+                // Qua Trinh Lam Viec --
+                profileModel.quaTrinhLamViecs = nhanVien.HR_QUATRINHLAMVIEC.ToList();
+
+                profileModel.phepNams = nhanVien.HR_PHEP_NAM.ToList();
+
+                // --
+                profileModel.hopDongs = nhanVien.HR_HOPDONG.ToList();
+
+                return new OkObjectResult(profileModel);
+            }
+            else
+            {
+                return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
+            }
         }
     }
 }

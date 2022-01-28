@@ -88,6 +88,7 @@ namespace HRMS
             services.AddTransient<IFunctionService, FunctionService>();
             services.AddTransient<IBoPhanService, BoPhanService>();
             services.AddTransient<IChucDanhService, ChucDanhService>();
+            services.AddTransient<IBoPhanDetailService, BoPhanDetailService>();
 
 
             services.AddMvc().AddNewtonsoftJson(options => {

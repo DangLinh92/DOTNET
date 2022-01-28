@@ -1,0 +1,50 @@
+﻿@model NhanVienProfileModel
+<div class="row">
+    <div class="col-md-5">
+        <div class="profile-info-left">
+            <h3 class="user-name m-t-0 mb-0">@Model.TenNhanVien</h3>
+            <h6 class="text-muted">@Model.BoPhanDetail</h6>
+            <small class="text-muted">@Model.ChucDanh</small>
+            <div class="staff-id" data-id="@Model.MaNhanVien">Employee ID : @Model.MaNhanVien</div>
+            <div class="small doj text-muted">Date of Join : @Model.NgayVaoCongTy</div>
+            <div class="staff-msg">
+                @if (Model.Status == HRMNS.Data.Enums.Status.Active.ToString())
+                {
+                    <a class="btn btn-success" href="#">@Model.Status</a>
+                }
+                else
+                {
+                    <a class="btn btn-secondary" href="#">@Model.Status</a>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-7">
+        <ul class="personal-info">
+            <li>
+                <div class="title">Phone:</div>
+                <div class="text"><a href="">@Model.Phone</a></div>
+            </li>
+            <li>
+                <div class="title">Email:</div>
+                <div class="text"><a href="">@Model.Email</a></div>
+            </li>
+            <li>
+                <div class="title">Birthday:</div>
+                <div class="text">@Model.Birthday</div>
+            </li>
+            <li>
+                <div class="title">Address:</div>
+                <div class="text">@Model.DCHienTai</div>
+            </li>
+            <li>
+                <div class="title">Gender:</div>
+                <div class="text">@Model.GioiTinh</div>
+            </li>
+            <li>
+                <div class="title">Status:</div>
+                <div class="text">@Model.TinhTrangHonNhan</div>
+            </li>
+        </ul>
+    </div>
+</div>

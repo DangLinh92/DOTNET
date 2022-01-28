@@ -13,6 +13,7 @@ using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace HRMNS.Application.Implementation
@@ -61,9 +62,14 @@ namespace HRMNS.Application.Implementation
                 return _mapper.ProjectTo<NhanVienViewModel>(_nhanvienRepository.FindAll()).ToList();
         }
 
-        public NhanVienViewModel GetById(string id)
+        //public NhanVienViewModel GetById(string id)
+        //{
+        //    return _mapper.Map<HR_NHANVIEN, NhanVienViewModel>(_nhanvienRepository.FindById(id));
+        //}
+
+        public NhanVienViewModel GetById(string id, params Expression<Func<HR_NHANVIEN, object>>[] includeProperties)
         {
-            return _mapper.Map<HR_NHANVIEN, NhanVienViewModel>(_nhanvienRepository.FindById(id));
+            return _mapper.Map<HR_NHANVIEN, NhanVienViewModel>(_nhanvienRepository.FindById(id, includeProperties));
         }
 
         public void Save()
@@ -135,7 +141,10 @@ namespace HRMNS.Application.Implementation
                     nhanvien.MaBoPhan = worksheet.Cells[i, 4].Value.NullString();
                     nhanvien.TenNV = worksheet.Cells[i, 5].Value.NullString();
                     nhanvien.GioiTinh = worksheet.Cells[i, 6].Value.NullString();
-                    nhanvien.NgaySinh = worksheet.Cells[i, 7].Value.NullString();
+
+                    DateTime.TryParse(worksheet.Cells[i, 7].Value.NullString(), out var ngaysinh);
+                    nhanvien.NgaySinh = ngaysinh.ToString("dd/MM/yyyy");
+
                     nhanvien.NoiSinh = worksheet.Cells[i, 8].Value.NullString();
                     nhanvien.TinhTrangHonNhan = worksheet.Cells[i, 9].Value.NullString();
                     nhanvien.DanToc = worksheet.Cells[i, 10].Value.NullString();
