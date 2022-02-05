@@ -1,0 +1,34 @@
+﻿<div id="emergency_contact_modal" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Emergency Contact</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" data-ajax="true" data-ajax-confirm="Are you sure you want update this?" data-ajax-url="/admin/nhanVien/UpdateProfileBasic?model=4" data-ajax-update="#id-profile-Emergency-Info" data-ajax-mode='replace' data-ajax-success="UpdateOnsuccess">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Quan hệ</label>
+                                <input class="form-control" type="text" name="QuanHeNguoiThan" id="txtQuanHeNguoiThan">
+                                <input type="hidden" id="id-Emergency" name="MaNhanVien">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Số Điện Thoại</label>
+                                <input class="form-control" type="text" name="SoDienThoaiNguoiThan" id="txtSoDienThoaiNguoiThan">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

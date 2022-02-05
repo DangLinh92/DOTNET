@@ -13,6 +13,17 @@
     <script>
         var profileMng = new ProfileMng();
         profileMng.initialize();
+
+        // Close popup when update data oke
+        var UpdateOnsuccess = function () {
+            $('#profile_info').modal('hide');
+            $('#personal_info_modal').modal('hide');
+            $('#bank_info_modal').modal('hide');
+            $('#emergency_contact_modal').modal('hide');
+            hrms.notify("Update success!", 'Success', 'alert', function () {
+            });
+        }
+
     </script>
 }
 
@@ -49,6 +60,7 @@
                             <div class="profile-img">
                                 <a id="btnSelectImg" href="#"><img alt="" id="imgAvatar" src="@Model.Avartar"></a>
                                 <input type="file" id="fileInputImage" style="display:none" />
+                                <input type="hidden" data-id="@Model.MaNhanVien" id="hdMaNV" />
                             </div>
                         </div>
                         <div class="profile-basic" id="id-profile-basic">
@@ -75,97 +87,35 @@
     </div>
 
     <div class="tab-content">
-
         <!-- Profile Info Tab -->
         <div id="emp_profile" class="pro-overview tab-pane fade show active">
             <div class="row">
                 <div class="col-md-12 d-flex">
                     <div class="card profile-box flex-fill">
-                        <div class="card-body">
-                            <h3 class="card-title">Personal Informations <a href="#" class="edit-icon" data-toggle="modal" data-target="#personal_info_modal"><i class="fa fa-pencil"></i></a></h3>
-                            <ul class="personal-info">
-                                <li>
-                                    <div class="title">Nơi Sinh.</div>
-                                    <div class="text">@Model.NoiSinh</div>
-                                </li>
-                                <li>
-                                    <div class="title">Nguyên Quán.</div>
-                                    <div class="text">@Model.NguyenQuan</div>
-                                </li>
-                                <li>
-                                    <div class="title">Địa Chỉ Thường Trú</div>
-                                    <div class="text">@Model.DiaChiThuongTru</div>
-                                </li>
-                                <li>
-                                    <div class="title">Dân Tộc</div>
-                                    <div class="text">@Model.DanToc</div>
-                                </li>
-                                <li>
-                                    <div class="title">Tôn Giáo</div>
-                                    <div class="text">@Model.TonGiao</div>
-                                </li>
-                                <li>
-                                    <div class="title">CMTND/CCCD</div>
-                                    <div class="text">@Model.CMTND</div>
-                                </li>
-                                <li>
-                                    <div class="title">Ngày cấp CMTND</div>
-                                    <div class="text">@Model.NgayCapCMTND</div>
-                                </li>
-                                <li>
-                                    <div class="title">Nơi cấp CMTND</div>
-                                    <div class="text">@Model.NoiCapCMTND</div>
-                                </li>
-                                <li>
-                                    <div class="title">Mã Số Thuế</div>
-                                    <div class="text">@Model.MaSoThue</div>
-                                </li>
-                                <li>
-                                    <div class="title">Trường Đào Tạo</div>
-                                    <div class="text">@Model.TruongDaoTao</div>
-                                </li>
-                            </ul>
+                        <div class="card-body" id="id-profile-Personal-Info">
+                            @await Html.PartialAsync("_profilePersonalInfoPartial", Model)
                         </div>
                     </div>
                 </div>
-
             </div>
+
             <div class="row">
                 <div class="col-md-6 d-flex">
                     <div class="card profile-box flex-fill">
-                        <div class="card-body">
-                            <h3 class="card-title">Bank information<a href="#" class="edit-icon" data-toggle="modal" data-target="#bank_infor_modal"><i class="fa fa-pencil"></i></a></h3>
-                            <ul class="personal-info">
-                                <li>
-                                    <div class="title">Bank name</div>
-                                    <div class="text">@Model.TenNganHang</div>
-                                </li>
-                                <li>
-                                    <div class="title">Bank account No.</div>
-                                    <div class="text">@Model.SoTaiKhoanNH</div>
-                                </li>
-                            </ul>
+                        <div class="card-body" id="id-profile-Bank-Info">
+                            @await Html.PartialAsync("_profileBankInfoPartial", Model)
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6 d-flex">
                     <div class="card profile-box flex-fill">
-                        <div class="card-body">
-                            <h3 class="card-title">Emergency Contact <a href="#" class="edit-icon" data-toggle="modal" data-target="#emergency_contact_modal"><i class="fa fa-pencil"></i></a></h3>
-                            <ul class="personal-info">
-                                <li>
-                                    <div class="title">Quan hệ</div>
-                                    <div class="text">@Model.QuanHeNguoiThan</div>
-                                </li>
-                                <li>
-                                    <div class="title">Số Điện Thoại</div>
-                                    <div class="text">@Model.SoDienThoaiNguoiThan</div>
-                                </li>
-                            </ul>
+                        <div class="card-body" id="id-profile-Emergency-Info">
+                            @await Html.PartialAsync("_profileEmergencyContactPartial", Model)
                         </div>
                     </div>
                 </div>
             </div>
+
             <div class="row">
                 <div class="col-md-6 d-flex">
                     <div class="card profile-box flex-fill">
@@ -480,259 +430,15 @@
 <!-- /Page Content -->
 <!-- Profile Modal -->
 <partial name="_profile_info_Model" />
-
 <!-- /Profile Modal -->
 <!-- Personal Info Modal -->
-<div id="personal_info_modal" class="modal custom-modal fade" role="dialog">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Personal Information</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Passport No</label>
-                                <input type="text" class="form-control">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Passport Expiry Date</label>
-                                <div class="cal-icon">
-                                    <input class="form-control datetimepicker" type="text">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Tel</label>
-                                <input class="form-control" type="text">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Nationality <span class="text-danger">*</span></label>
-                                <input class="form-control" type="text">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Religion</label>
-                                <div class="cal-icon">
-                                    <input class="form-control" type="text">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Marital status <span class="text-danger">*</span></label>
-                                <select class="select form-control">
-                                    <option>-</option>
-                                    <option>Single</option>
-                                    <option>Married</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Employment of spouse</label>
-                                <input class="form-control" type="text">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>No. of children </label>
-                                <input class="form-control" type="text">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="submit-section">
-                        <button class="btn btn-primary submit-btn">Submit</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+<partial name="_profilePersonalInfoModel" />
 <!-- /Personal Info Modal -->
-<!-- Family Info Modal -->
-<div id="family_info_modal" class="modal custom-modal fade" role="dialog">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title"> Family Informations</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="form-scroll">
-                        <div class="card">
-                            <div class="card-body">
-                                <h3 class="card-title">Family Member <a href="javascript:void(0);" class="delete-icon"><i class="fa fa-trash-o"></i></a></h3>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Name <span class="text-danger">*</span></label>
-                                            <input class="form-control" type="text">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Relationship <span class="text-danger">*</span></label>
-                                            <input class="form-control" type="text">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Date of birth <span class="text-danger">*</span></label>
-                                            <input class="form-control" type="text">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Phone <span class="text-danger">*</span></label>
-                                            <input class="form-control" type="text">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-body">
-                                <h3 class="card-title">Education Informations <a href="javascript:void(0);" class="delete-icon"><i class="fa fa-trash-o"></i></a></h3>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Name <span class="text-danger">*</span></label>
-                                            <input class="form-control" type="text">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Relationship <span class="text-danger">*</span></label>
-                                            <input class="form-control" type="text">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Date of birth <span class="text-danger">*</span></label>
-                                            <input class="form-control" type="text">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Phone <span class="text-danger">*</span></label>
-                                            <input class="form-control" type="text">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="add-more">
-                                    <a href="javascript:void(0);"><i class="fa fa-plus-circle"></i> Add More</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="submit-section">
-                        <button class="btn btn-primary submit-btn">Submit</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- /Family Info Modal -->
+<!-- Bank Info Modal -->
+<partial name="_profileBankInfoModel" />
+<!-- /Bank Info Modal -->
 <!-- Emergency Contact Modal -->
-<div id="emergency_contact_modal" class="modal custom-modal fade" role="dialog">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Personal Information</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="card">
-                        <div class="card-body">
-                            <h3 class="card-title">Primary Contact</h3>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Name <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Relationship <span class="text-danger">*</span></label>
-                                        <input class="form-control" type="text">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Phone <span class="text-danger">*</span></label>
-                                        <input class="form-control" type="text">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Phone 2</label>
-                                        <input class="form-control" type="text">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-body">
-                            <h3 class="card-title">Primary Contact</h3>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Name <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Relationship <span class="text-danger">*</span></label>
-                                        <input class="form-control" type="text">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Phone <span class="text-danger">*</span></label>
-                                        <input class="form-control" type="text">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Phone 2</label>
-                                        <input class="form-control" type="text">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="submit-section">
-                        <button class="btn btn-primary submit-btn">Submit</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+<partial name="_profileEmergencyContactModel" />
 <!-- /Emergency Contact Modal -->
 <!-- Education Modal -->
 <div id="education_info" class="modal custom-modal fade" role="dialog">

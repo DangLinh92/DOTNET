@@ -1,0 +1,85 @@
+﻿<div id="personal_info_modal" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Personal Information</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" data-ajax="true" data-ajax-confirm="Are you sure you want update this?" data-ajax-url="/admin/nhanVien/UpdateProfileBasic?model=2" data-ajax-update="#id-profile-Personal-Info" data-ajax-mode='replace' data-ajax-success="UpdateOnsuccess">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Số CMTND<span class="text-danger">*</span></label>
+                                <input type="text" name="CMTND" id="txtCMTND" class="form-control" required>
+                                <input type="hidden" name="MaNhanVien" id="id-Personal"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Ngày Cấp CMTND</label>
+                                <div class="cal-icon">
+                                    <input class="form-control datetimepicker" type="text" name="NgayCapCMTND" id="txtNgayCapCMTND">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Nơi Cấp CMTND</label>
+                                <input class="form-control" type="text" name="NoiCapCMTND" id="txtNoiCapCMTND">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Dân Tộc</label>
+                                <input class="form-control" type="text" name="DanToc" id="txtDanToc">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Tôn Giáo</label>
+                                <input class="form-control" type="text" name="TonGiao" id="txtTonGiao">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Mã Số Thuế</label>
+                                <input class="form-control" type="text" name="MaSoThue" id="txtMaSoThue">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Nơi Sinh</label>
+                                <input class="form-control" type="text" name="NoiSinh" id="txtNoiSinh">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Nguyên Quán</label>
+                                <input class="form-control" type="text" name="NguyenQuan" id="txtNguyenQuan">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Địa Chỉ Thường Trú</label>
+                                <input class="form-control" type="text" name="DiaChiThuongTru" id="txtDiaChiThuongTru">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Trường Đào Tạo</label>
+                                <input class="form-control" type="text" name="TruongDaoTao" id="txtTruongDaoTao">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

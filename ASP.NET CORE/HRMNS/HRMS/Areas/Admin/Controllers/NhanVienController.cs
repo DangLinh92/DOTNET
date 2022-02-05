@@ -26,13 +26,15 @@ namespace HRMS.Areas.Admin.Controllers
     {
         INhanVienService _nhanvienService;
         IBoPhanService _boPhanService;
+        IBoPhanDetailService _boPhanDetailService;
         private readonly IWebHostEnvironment _hostingEnvironment;
 
-        public NhanVienController(INhanVienService nhanVienService, IBoPhanService boPhanService, IWebHostEnvironment hostingEnvironment)
+        public NhanVienController(INhanVienService nhanVienService, IBoPhanService boPhanService, IBoPhanDetailService boPhanDetailService, IWebHostEnvironment hostingEnvironment)
         {
             _nhanvienService = nhanVienService;
             _boPhanService = boPhanService;
             _hostingEnvironment = hostingEnvironment;
+            _boPhanDetailService = boPhanDetailService;
         }
 
         public IActionResult Index()
@@ -324,9 +326,110 @@ namespace HRMS.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult UpdateProfileBasic(NhanVienProfileModel profileBasic)
+        public IActionResult UpdateProfileBasic(NhanVienProfileModel profileBasic, string model)
         {
-            return PartialView("_profilebasicPartial", profileBasic);
+            string partialName = "";
+            if (!ModelState.IsValid)
+            {
+                IEnumerable<ModelError> allErrors = ModelState.Values.SelectMany(v => v.Errors);
+                return new BadRequestObjectResult(allErrors);
+            }
+            else
+            {
+                bool notExist = !_nhanvienService.GetAll().Any(x => x.Id == profileBasic.MaNhanVien);
+                if (notExist)
+                {
+                    return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
+                }
+                else
+                {
+                    NhanVienViewModel nhanVien = _nhanvienService.GetById(profileBasic.MaNhanVien);
+
+                    // Update for basic info
+                    if (model == "1")
+                    {
+                        nhanVien.TenNV = profileBasic.TenNhanVien;
+                        if (DateTime.TryParse(profileBasic.Birthday, out var ngaysinh))
+                        {
+                            nhanVien.NgaySinh = ngaysinh.ToString("dd/MM/yyyy");
+                            profileBasic.Birthday = ngaysinh.ToString("dd/MM/yyyy");
+                        }
+                        else
+                        {
+                            nhanVien.NgaySinh = "";
+                        }
+
+                        nhanVien.GioiTinh = profileBasic.GioiTinh;
+                        nhanVien.Email = profileBasic.Email;
+                        nhanVien.SoDienThoai = profileBasic.Phone;
+
+                        if (DateTime.TryParse(profileBasic.NgayVaoCongTy, out var ngayvao))
+                        {
+                            nhanVien.NgayVao = ngayvao.ToString("dd/MM/yyyy");
+                        }
+                        else
+                        {
+                            nhanVien.NgayVao = "";
+                        }
+
+                        nhanVien.MaBoPhan = profileBasic.BoPhan;
+                        nhanVien.MaChucDanh = profileBasic.ChucDanh;
+                        nhanVien.MaBoPhanChiTiet = profileBasic.MaBoPhanDetail;
+
+                        profileBasic.BoPhanDetail = _boPhanDetailService.GetAll(null).FirstOrDefault(x => x.Id == profileBasic.MaBoPhanDetail).TenBoPhanChiTiet;
+
+                        nhanVien.DChiHienTai = profileBasic.DCHienTai;
+                        nhanVien.TinhTrangHonNhan = profileBasic.TinhTrangHonNhan;
+                        nhanVien.Status = profileBasic.Status;
+
+                        partialName = "_profilebasicPartial";
+                    }
+                    else if (model == "2") // Update for personal info
+                    {
+                        nhanVien.CMTND = profileBasic.CMTND;
+
+                        if (DateTime.TryParse(profileBasic.NgayCapCMTND, out var ngaycap))
+                        {
+                            nhanVien.NgayCapCMTND = ngaycap.ToString("dd/MM/yyyy");
+                        }
+                        else
+                        {
+                            nhanVien.NgayCapCMTND = "";
+                        }
+
+                        nhanVien.NoiCapCMTND = profileBasic.NoiCapCMTND;
+                        nhanVien.DanToc = profileBasic.DanToc;
+                        nhanVien.TonGiao = profileBasic.TonGiao;
+                        nhanVien.MaSoThue = profileBasic.MaSoThue;
+                        nhanVien.NoiSinh = profileBasic.NoiSinh;
+                        nhanVien.NguyenQuan = profileBasic.NguyenQuan;
+                        nhanVien.DiaChiThuongTru = profileBasic.DiaChiThuongTru;
+                        nhanVien.TruongDaoTao = profileBasic.TruongDaoTao;
+
+                        partialName = "_profilePersonalInfoPartial";
+                    }
+                    else if (model == "3") // Update Bank Info
+                    {
+                        nhanVien.TenNganHang = profileBasic.TenNganHang;
+                        nhanVien.SoTaiKhoanNH = profileBasic.SoTaiKhoanNH;
+
+                        partialName = "_profileBankInfoPartial";
+                    }
+                    else if(model == "4") // Update liên lạc người thân
+                    {
+                        nhanVien.QuanHeNguoiThan = profileBasic.QuanHeNguoiThan;
+                        nhanVien.SoDienThoaiNguoiThan = profileBasic.SoDienThoaiNguoiThan;
+
+                        partialName = "_profileEmergencyContactPartial";
+                    }
+
+                    _nhanvienService.UpdateSingle(nhanVien);
+                }
+
+                _nhanvienService.Save();
+            }
+
+            return PartialView(partialName, profileBasic);
         }
 
         [HttpGet]

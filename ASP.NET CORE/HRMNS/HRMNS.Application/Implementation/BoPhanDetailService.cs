@@ -32,7 +32,7 @@ namespace HRMNS.Application.Implementation
 
         public List<BoPhanDetailViewModel> GetAll(string filter)
         {
-            var boPhan = _boPhanDetailRepository.FindAll();
+            var boPhan = _boPhanDetailRepository.FindAll().AsNoTracking();
             if (!string.IsNullOrEmpty(filter))
             {
                 boPhan = boPhan.Where(x => x.TenBoPhanChiTiet.Contains(filter));

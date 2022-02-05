@@ -11,7 +11,7 @@
         $("#fileInputImage").on('change', function () {
             var fileUpload = $(this).get(0);
             var files = fileUpload.files;
-            var idNhanVien = $('#txtMaNhanVien').data('id');
+            var idNhanVien = $('#hdMaNV').data('id');
             var data = new FormData();
             for (var i = 0; i < files.length; i++) {
                 data.append(files[i].name, files[i]);
@@ -79,7 +79,9 @@
                         $('#txtMaNhanVien').val(nhanVienProfile.MaNhanVien);
                         $('#txtTenNhanVien').val(nhanVienProfile.TenNhanVien);
                         $('#txtBirthday').val(nhanVienProfile.Birthday);
+
                         $('#txtGioiTinh').val(nhanVienProfile.GioiTinh);
+                        $('#txtGioiTinh').trigger('change');
 
                         $('#txtBoPhan').val(nhanVienProfile.BoPhan);
                         $('#txtBoPhan').trigger('change');
@@ -94,8 +96,12 @@
                         $('#txtDCHienTai').val(nhanVienProfile.DCHienTai);
                         $('#txtPhone').val(nhanVienProfile.Phone);
                         $('#txtEmail').val(nhanVienProfile.Email);
+
                         $('#txtStatus').val(nhanVienProfile.Status);
                         $('#txtStatus').trigger('change');
+
+                        $('#txtTinhTrangHonNhan').val(nhanVienProfile.TinhTrangHonNhan);
+                        $('#txtTinhTrangHonNhan').trigger('change');
                     }
                     else {
                         hrms.notify('error: Not found employee!', 'error', 'alert', function () { });
@@ -181,5 +187,138 @@
                 }
             });
         }
+
+        function resetFormPersonalInfoData() {
+            $('#id-Personal').val('');
+            $('#txtCMTND').val('');
+            $('#txtNgayCapCMTND').val('');
+            $('#txtNoiCapCMTND').val('');
+            $('#txtDanToc').val('');
+            $('#txtTonGiao').val('');
+            $('#txtNoiSinh').val('');
+            $('#txtNguyenQuan').val('');
+            $('#txtDiaChiThuongTru').val('');
+            $('#txtMaSoThue').val('');
+            $('#txtTruongDaoTao').val('');
+        }
+
+        // Open popup personal info
+        $('#btn-UpdatePersonalInfo').on('click', function (e) {
+            e.preventDefault();
+
+            resetFormPersonalInfoData();
+
+            $('#personal_info_modal').modal('show');
+
+            var that = $('#btn-UpdateProfileBasic').data('id');
+
+            $.ajax({
+                type: "GET",
+                url: "/Admin/NhanVien/GetProfile",
+                dataType: "json",
+                data: {
+                    Id: that
+                },
+                success: function (nhanVienProfile) {
+                    if (nhanVienProfile) {
+                        $('#id-Personal').val(that);
+                        $('#txtCMTND').val(nhanVienProfile.CMTND);
+                        $('#txtNgayCapCMTND').val(nhanVienProfile.NgayCapCMTND);
+                        $('#txtNoiCapCMTND').val(nhanVienProfile.NoiCapCMTND);
+                        $('#txtDanToc').val(nhanVienProfile.DanToc);
+                        $('#txtTonGiao').val(nhanVienProfile.TonGiao);
+                        $('#txtNoiSinh').val(nhanVienProfile.NoiSinh);
+                        $('#txtNguyenQuan').val(nhanVienProfile.NguyenQuan);
+                        $('#txtDiaChiThuongTru').val(nhanVienProfile.DiaChiThuongTru);
+                        $('#txtMaSoThue').val(nhanVienProfile.MaSoThue);
+                        $('#txtTruongDaoTao').val(nhanVienProfile.TruongDaoTao);
+                    }
+                    else {
+                        hrms.notify('error: Not found employee!', 'error', 'alert', function () { });
+                    }
+                },
+                error: function (status) {
+                    hrms.notify('error: ' + status.responseText, 'error', 'alert', function () { });
+                }
+            });
+        })
+
+        // Open popup bank info
+        $('#btn-UpdateBankInfo').on('click', function (e) {
+            e.preventDefault();
+
+            resetFormBankInfoData();
+
+            $('#bank_info_modal').modal('show');
+
+            var that = $('#btn-UpdateProfileBasic').data('id');
+
+            $.ajax({
+                type: "GET",
+                url: "/Admin/NhanVien/GetProfile",
+                dataType: "json",
+                data: {
+                    Id: that
+                },
+                success: function (nhanVienProfile) {
+                    if (nhanVienProfile) {
+                        $('#id-BankInfo').val(that);
+                        $('#txtTenNganHang').val(nhanVienProfile.TenNganHang);
+                        $('#txtSoTaiKhoanNH').val(nhanVienProfile.SoTaiKhoanNH);
+                    }
+                    else {
+                        hrms.notify('error: Not found employee!', 'error', 'alert', function () { });
+                    }
+                },
+                error: function (status) {
+                    hrms.notify('error: ' + status.responseText, 'error', 'alert', function () { });
+                }
+            });
+        })
+
+        function resetFormBankInfoData() {
+            $('#txtTenNganHang').val('');
+            $('#txtSoTaiKhoanNH').val('');
+        }
+
+        // Update emergency contact
+        $('#btn-UpdateEmergency').on('click', function (e) {
+            e.preventDefault();
+
+            resetFormEmergencyInfoData();
+
+            $('#emergency_contact_modal').modal('show');
+
+            var that = $('#btn-UpdateProfileBasic').data('id');
+
+            $.ajax({
+                type: "GET",
+                url: "/Admin/NhanVien/GetProfile",
+                dataType: "json",
+                data: {
+                    Id: that
+                },
+                success: function (nhanVienProfile) {
+                    if (nhanVienProfile) {
+                        $('#id-Emergency').val(that);
+                        $('#txtQuanHeNguoiThan').val(nhanVienProfile.QuanHeNguoiThan);
+                        $('#txtSoDienThoaiNguoiThan').val(nhanVienProfile.SoDienThoaiNguoiThan);
+                    }
+                    else {
+                        hrms.notify('error: Not found employee!', 'error', 'alert', function () { });
+                    }
+                },
+                error: function (status) {
+                    hrms.notify('error: ' + status.responseText, 'error', 'alert', function () { });
+                }
+            });
+        })
+
+        function resetFormEmergencyInfoData() {
+            $('#txtQuanHeNguoiThan').val('');
+            $('#txtSoDienThoaiNguoiThan').val('');
+        }
     }
+
+
 }

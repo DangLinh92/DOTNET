@@ -8,14 +8,14 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="post" data-ajax="true" data-ajax-url="/admin/nhanVien/UpdateProfileBasic" data-ajax-update="#id-profile-basic" data-ajax-mode='replace'>
+                <form method="post" data-ajax="true" data-ajax-confirm="Are you sure you want update this?" data-ajax-url="/admin/nhanVien/UpdateProfileBasic?model=1" data-ajax-update="#id-profile-basic" data-ajax-mode='replace' data-ajax-success="UpdateOnsuccess">
                     <div class="row">
                         <div class="col-md-12">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Mã Nhân Viên<span class="text-danger"> *</span></label>
-                                        <input type="text" name="MaNhanVien" id="txtMaNhanVien" class="form-control" value="John" required>
+                                        <input type="text" name="MaNhanVien" id="txtMaNhanVien" class="form-control" value="John" readonly="readonly" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -36,8 +36,8 @@
                                     <div class="form-group">
                                         <label>Giới Tính<span class="text-danger"> *</span></label>
                                         <select id="txtGioiTinh" name="GioiTinh" class="select form-control" required>
-                                            <option value="male selected">Male</option>
-                                            <option value="female">Female</option>
+                                            <option value="Male">Male</option>
+                                            <option value="Female">Female</option>
                                         </select>
                                     </div>
                                 </div>
@@ -59,7 +59,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Vị trí<span class="text-danger"> *</span></label>
-                                        <select name="BoPhanDetail" id="txtBoPhanDetail" class="select form-control" required>
+                                        <select name="MaBoPhanDetail" id="txtBoPhanDetail" class="select form-control" required>
                                             <option value="male selected">Male</option>
                                             <option value="female">Female</option>
                                         </select>
