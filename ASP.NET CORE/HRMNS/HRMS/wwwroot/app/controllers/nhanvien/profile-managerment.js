@@ -277,6 +277,7 @@
         })
 
         function resetFormBankInfoData() {
+            $('#id-BankInfo').val('');
             $('#txtTenNganHang').val('');
             $('#txtSoTaiKhoanNH').val('');
         }
@@ -315,8 +316,130 @@
         })
 
         function resetFormEmergencyInfoData() {
+            $('#id-Emergency').val('');
             $('#txtQuanHeNguoiThan').val('');
             $('#txtSoDienThoaiNguoiThan').val('');
+        }
+
+        // Update BHXH
+        $('#btn-UpdateBHXH').on('click', function (e) {
+            e.preventDefault();
+
+            resetFormBHXH();
+
+            $('#bhxh_infor_modal').modal('show');
+            var that = $('#btn-UpdateProfileBasic').data('id');
+
+            $.ajax({
+                type: "GET",
+                url: "/Admin/NhanVien/GetProfile",
+                dataType: "json",
+                data: {
+                    Id: that
+                },
+                success: function (nhanVienProfile) {
+                    if (nhanVienProfile) {
+                        $('#id-Bhxh').val(that);
+                        $('#txtMaBHXH').val(nhanVienProfile.MaBHXH);
+                        $('#txtNgayThamGia').val(nhanVienProfile.NgayThamGia);
+                        $('#txtNgayKetThuc').val(nhanVienProfile.NgayKetThuc);
+                    }
+                    else {
+                        hrms.notify('error: Not found employee!', 'error', 'alert', function () { });
+                    }
+                },
+                error: function (status) {
+                    hrms.notify('error: ' + status.responseText, 'error', 'alert', function () { });
+                }
+            });
+        });
+
+        function resetFormBHXH() {
+            $('#id-Bhxh').val('');
+            $('#txtMaBHXH').val('');
+            $('#txtNgayThamGia').val('');
+            $('#txtNgayKetThuc').val('');
+        }
+
+        // Update Phep Nam
+        $('#btn-UpdatePhepNam').on('click', function (e) {
+            e.preventDefault();
+            $('#phepNam_infor_modal').modal('show');
+        });
+
+        // Update ngay nghi viec
+        $('#btn-updateQuitwork').on('click', function (e) {
+            e.preventDefault();
+
+            resetFormQuitWork();
+
+            $('#quitWork_infor_modal').modal('show');
+
+            var that = $('#btn-UpdateProfileBasic').data('id');
+
+            $.ajax({
+                type: "GET",
+                url: "/Admin/NhanVien/GetProfile",
+                dataType: "json",
+                data: {
+                    Id: that
+                },
+                success: function (nhanVienProfile) {
+                    if (nhanVienProfile) {
+                        $('#hd-QuitWork').val(that);
+                        $('#txtNgayNghiViec').val(nhanVienProfile.NgayNghiViec);
+                    }
+                    else {
+                        hrms.notify('error: Not found employee!', 'error', 'alert', function () { });
+                    }
+                },
+                error: function (status) {
+                    hrms.notify('error: ' + status.responseText, 'error', 'alert', function () { });
+                }
+            });
+        });
+
+        function resetFormQuitWork() {
+            $('#hd-QuitWork').val('');
+            $('#txtNgayNghiViec').val('');
+        }
+
+        // Update ky luat ld
+        $('#btn-Update-KyLuatLaoDong').on('click', function (e) {
+
+            e.preventDefault();
+
+            resetFormKyLuatLD();
+
+            $('#LaborDiscipline_infor_modal').modal('show');
+
+            var that = $('#btn-UpdateProfileBasic').data('id');
+
+            $.ajax({
+                type: "GET",
+                url: "/Admin/NhanVien/GetProfile",
+                dataType: "json",
+                data: {
+                    Id: that
+                },
+                success: function (nhanVienProfile) {
+                    if (nhanVienProfile) {
+                        $('#id-KyLuatLD').val(that);
+                        $('#txtKyLuatLD').val(nhanVienProfile.KyLuatLaoDong);
+                    }
+                    else {
+                        hrms.notify('error: Not found employee!', 'error', 'alert', function () { });
+                    }
+                },
+                error: function (status) {
+                    hrms.notify('error: ' + status.responseText, 'error', 'alert', function () { });
+                }
+            });
+        });
+
+        function resetFormKyLuatLD() {
+            $('#id-KyLuatLD').val('');
+            $('#txtKyLuatLD').val('');
         }
     }
 

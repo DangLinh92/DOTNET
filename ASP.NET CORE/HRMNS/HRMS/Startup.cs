@@ -89,7 +89,8 @@ namespace HRMS
             services.AddTransient<IBoPhanService, BoPhanService>();
             services.AddTransient<IChucDanhService, ChucDanhService>();
             services.AddTransient<IBoPhanDetailService, BoPhanDetailService>();
-
+            services.AddTransient<IBHXHService, BHXHService>();
+            services.AddTransient<IPhepNamService, PhepNamService>();
 
             services.AddMvc().AddNewtonsoftJson(options => {
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();// not change format json

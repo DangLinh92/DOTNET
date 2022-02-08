@@ -1,8 +1,10 @@
 ﻿using HRMNS.Data.Entities;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace HRMNS.Application.ViewModels.HR
@@ -26,6 +28,8 @@ namespace HRMNS.Application.ViewModels.HR
         public string UserModified { get; set; }
 
         [ForeignKey("MaNhanVien")]
+        [JsonIgnore]
+        [IgnoreDataMember]
         public HR_NHANVIEN HR_NHANVIEN { get; set; }
     }
 }

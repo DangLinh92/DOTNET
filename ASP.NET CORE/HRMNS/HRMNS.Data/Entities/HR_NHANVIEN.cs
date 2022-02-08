@@ -81,6 +81,7 @@ namespace HRMNS.Data.Entities
         [StringLength(50)]
         public string NgaySinh { get; set; }
 
+        [StringLength(250)]
         public string NoiSinh { get; set; }
 
         [StringLength(50)]
@@ -92,6 +93,7 @@ namespace HRMNS.Data.Entities
         [StringLength(50)]
         public string TonGiao { get; set; }
 
+        [StringLength(250)]
         public string DiaChiThuongTru { get; set; }
 
         [StringLength(50)]
@@ -109,6 +111,7 @@ namespace HRMNS.Data.Entities
         [StringLength(50)]
         public string NgayCapCMTND { get; set; }
 
+        [StringLength(250)]
         public string NoiCapCMTND { get; set; }
 
         [StringLength(50)]
@@ -123,8 +126,10 @@ namespace HRMNS.Data.Entities
         [StringLength(50)]
         public string NgayVao { get; set; }
 
+        [StringLength(250)]
         public string NguyenQuan { get; set; }
 
+        [StringLength(250)]
         public string DChiHienTai { get; set; }
 
         [StringLength(500)]
@@ -141,6 +146,7 @@ namespace HRMNS.Data.Entities
         [StringLength(250)]
         public string Email { get; set; }
 
+        [StringLength(250)]
         public string Note { get; set; }
 
         [StringLength(50)]
@@ -149,6 +155,7 @@ namespace HRMNS.Data.Entities
         [StringLength(50)]
         public string Status { get; set; }
 
+        [StringLength(500)]
         public string Image { get; set; }
 
         [StringLength(50)]

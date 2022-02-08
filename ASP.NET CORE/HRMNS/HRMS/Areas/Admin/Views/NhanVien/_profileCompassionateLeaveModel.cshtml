@@ -1,0 +1,49 @@
+﻿@model List<PhepNamViewModel>
+<div id="phepNam_infor_modal" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Compassionate leave</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="id-form-phepnam" method="post" data-ajax="true" data-ajax-confirm="Are you sure you want update this?" data-ajax-url="/admin/PhepNam/UpdatePhepNam" data-ajax-update="#id-profile-compassionateLeave-info" data-ajax-mode='replace' data-ajax-success="UpdateOnsuccess">
+                    <div class="form-scroll" id="phepNam-data-model">
+
+                        <!--import template-->
+                        @for (int i = 0; i < Model.Count(); i++)
+                        {
+                            <div class="card">
+                                <div class="card-body">
+                                    <h3 class="card-title" id="txtYearTitle">Năm:@Model[i].Year</h3>
+                                    @Html.HiddenFor(m => m[i].Year)
+                                    @Html.HiddenFor(m => m[i].Id)
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Tổng Phép Năm</label>
+                                                @Html.EditorFor(m => m[i].SoPhepNam, new { htmlAttributes = new { @class = "form-control", @type = "number" } })
+                                                @Html.HiddenFor(m => m[i].MaNhanVien)
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Số Phép Còn Lại</label>
+                                                @Html.EditorFor(m => m[i].SoPhepConLai, new { htmlAttributes = new { @class = "form-control", @type = "number" } })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

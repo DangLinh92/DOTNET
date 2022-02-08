@@ -20,6 +20,10 @@
             $('#personal_info_modal').modal('hide');
             $('#bank_info_modal').modal('hide');
             $('#emergency_contact_modal').modal('hide');
+            $('#bhxh_infor_modal').modal('hide');
+            $('#phepNam_infor_modal').modal('hide');
+            $('#quitWork_infor_modal').modal('hide');
+            $('#LaborDiscipline_infor_modal').modal('hide');
             hrms.notify("Update success!", 'Success', 'alert', function () {
             });
         }
@@ -31,6 +35,10 @@
     <style>
         .page-wrapper {
             min-height: 641px;
+        }
+
+        #phepNam-data-model {
+            max-height: 420px;
         }
     </style>
 }
@@ -78,7 +86,7 @@
             <div class="col-lg-12 col-md-12 col-sm-12 line-tabs">
                 <ul class="nav nav-tabs nav-tabs-bottom">
                     <li class="nav-item"><a href="#emp_profile" data-toggle="tab" class="nav-link active">Sơ Yếu Lý Lịch</a></li>
-                    <li class="nav-item"><a href="#emp_projects" data-toggle="tab" class="nav-link">Tình Trạng Hồ Sơ</a></li>
+                    <li class="nav-item"><a href="#emp_ttHoSo" data-toggle="tab" class="nav-link">Tình Trạng Hồ Sơ</a></li>
                     <li class="nav-item"><a href="#quatrinhCongTacTab" data-toggle="tab" class="nav-link">Quá Trình Làm Việc</a></li>
                     <li class="nav-item"><a href="#bank_statutory" data-toggle="tab" class="nav-link">Hợp Đồng <small class="text-danger">(Admin Only)</small></a></li>
                 </ul>
@@ -119,40 +127,15 @@
             <div class="row">
                 <div class="col-md-6 d-flex">
                     <div class="card profile-box flex-fill">
-                        <div class="card-body">
-                            <h3 class="card-title">Social Insurance<a href="#" class="edit-icon" data-toggle="modal" data-target="#bhxh_infor_modal"><i class="fa fa-pencil"></i></a></h3>
-                            <ul class="personal-info">
-                                <li>
-                                    <div class="title">Mã BHXH</div>
-                                    <div class="text">@Model.bHXHs?.Id</div>
-                                </li>
-                                <li>
-                                    <div class="title">Ngày Tham Gia</div>
-                                    <div class="text">@Model.bHXHs?.NgayThamGia</div>
-                                </li>
-                                <li>
-                                    <div class="title">Ngày Kết thúc</div>
-                                    <div class="text">@Model.bHXHs?.NgayKetThuc</div>
-                                </li>
-                            </ul>
+                        <div class="card-body" id="id-profile-bhxh-Info">
+                            @await Html.PartialAsync("_profileSocialInsurancePartial", Model)
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6 d-flex">
                     <div class="card profile-box flex-fill">
-                        <div class="card-body">
-                            <h3 class="card-title">Compassionate leave<a href="#" class="edit-icon" data-toggle="modal" data-target="#phepNam_infor_modal"><i class="fa fa-pencil"></i></a></h3>
-                            <ul class="personal-info">
-                                <li>
-                                    <div class="title">Tổng Phép năm @Model.phepNams?.FirstOrDefault()?.Year</div>
-                                    <div class="text">@Model.phepNams?.FirstOrDefault()?.SoPhepNam</div>
-                                </li>
-                                <li>
-                                    <div class="title">Còn Lại</div>
-                                    <div class="text">@Model.phepNams?.FirstOrDefault()?.SoPhepConLai</div>
-                                </li>
-
-                            </ul>
+                        <div class="card-body" id="id-profile-compassionateLeave-info">
+                            @await Html.PartialAsync("_profileCompassionateLeavePartial", Model.phepNams)
                         </div>
                     </div>
                 </div>
@@ -160,27 +143,15 @@
             <div class="row">
                 <div class="col-md-6 d-flex">
                     <div class="card profile-box flex-fill">
-                        <div class="card-body">
-                            <h3 class="card-title">Quit work<a href="#" class="edit-icon" data-toggle="modal" data-target="#quitWork_infor_modal"><i class="fa fa-pencil"></i></a></h3>
-                            <ul class="personal-info">
-                                <li>
-                                    <div class="title">Thời gian nghỉ việc</div>
-                                    <div class="text">@Model.NgayNghiViec</div>
-                                </li>
-                            </ul>
+                        <div class="card-body" id="id-profile-quitwork-Info">
+                            @await Html.PartialAsync("_profileQuitWorkPartial", Model)
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6 d-flex">
                     <div class="card profile-box flex-fill">
-                        <div class="card-body">
-                            <h3 class="card-title">Labor discipline<a href="#" class="edit-icon" data-toggle="modal" data-target="#LaborDiscipline_infor_modal"><i class="fa fa-pencil"></i></a></h3>
-                            <ul class="personal-info">
-                                <li>
-                                    <div class="title">Kỷ Luật Lao Động</div>
-                                    <div class="text">@Model.NgayNghiViec</div>
-                                </li>
-                            </ul>
+                        <div class="card-body" id="id-profile-kyluatLD-Info">
+                            @await Html.PartialAsync("_profileLabordisciplinePartial", Model)
                         </div>
                     </div>
                 </div>
@@ -188,7 +159,7 @@
         </div>
         <!-- /Profile Info Tab -->
         <!-- Projects Tab -->
-        <div class="tab-pane fade" id="emp_projects">
+        <div class="tab-pane fade" id="emp_ttHoSo">
             <div class="row">
                 <div class="col-lg-12 col-sm-12 col-md-12 col-xl-12">
                     <div class="table-responsive">
@@ -440,6 +411,19 @@
 <!-- Emergency Contact Modal -->
 <partial name="_profileEmergencyContactModel" />
 <!-- /Emergency Contact Modal -->
+<!-- BHXH Modal -->
+<partial name="_profileSocialInsuranceModel" />
+<!-- /BHXH Modal -->
+
+<!--Phep nam-->
+@await Html.PartialAsync("_profileCompassionateLeaveModel", Model.phepNams)
+
+<!-- Quit work -->
+<partial name="_profileQuitWorkModel" />
+
+<partial name="_profileLabordisciplineModel" />
+
+@*<partial name="_profileCompassionateLeaveModel" />*@
 <!-- Education Modal -->
 <div id="education_info" class="modal custom-modal fade" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -673,3 +657,4 @@
 <!-- Template area -->
 <!-- header information -->
 <partial name="_pfCommonInfoTemplate" />
+<partial name="_pfPhepNamTemplate" />

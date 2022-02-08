@@ -1,0 +1,40 @@
+﻿<div id="bhxh_infor_modal" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Social Insurance</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" data-ajax="true" data-ajax-confirm="Are you sure you want update this?" data-ajax-url="/admin/nhanVien/UpdateProfileBasic?model=5" data-ajax-update="#id-profile-bhxh-Info" data-ajax-mode='replace' data-ajax-success="UpdateOnsuccess">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Mã số BHXH</label>
+                                <input class="form-control" type="text" name="MaBHXH" id="txtMaBHXH">
+                                <input type="hidden" id="id-Bhxh" name="MaNhanVien">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Ngày Tham Gia</label>
+                                <div class="cal-icon"><input class="form-control datetimepicker" type="text" name="NgayThamGia" id="txtNgayThamGia"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Ngày Kết Thúc</label>
+                                <div class="cal-icon"><input class="form-control datetimepicker" type="text" name="NgayKetThuc" id="txtNgayKetThuc"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

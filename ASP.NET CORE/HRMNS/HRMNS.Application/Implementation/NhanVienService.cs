@@ -51,7 +51,9 @@ namespace HRMNS.Application.Implementation
 
         public List<NhanVienViewModel> GetAll()
         {
-            return _mapper.ProjectTo<NhanVienViewModel>(_nhanvienRepository.FindAll(x => x.IsDelete != CommonConstants.IsDelete)).OrderByDescending(x => x.DateModified).ToList();
+            var er = _nhanvienRepository.FindAll(x => x.IsDelete != CommonConstants.IsDelete).OrderByDescending(o => o.DateModified).ToList();
+            return (List<NhanVienViewModel>)_mapper.Map(er, typeof(List<HR_NHANVIEN>), typeof(List<NhanVienViewModel>));
+            //return _mapper.ProjectTo<NhanVienViewModel>(null).ToList();
         }
 
         public List<NhanVienViewModel> GetAll(string keyword)

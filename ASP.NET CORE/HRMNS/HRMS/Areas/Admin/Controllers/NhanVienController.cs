@@ -27,14 +27,16 @@ namespace HRMS.Areas.Admin.Controllers
         INhanVienService _nhanvienService;
         IBoPhanService _boPhanService;
         IBoPhanDetailService _boPhanDetailService;
+        IBHXHService _bhxhService;
         private readonly IWebHostEnvironment _hostingEnvironment;
 
-        public NhanVienController(INhanVienService nhanVienService, IBoPhanService boPhanService, IBoPhanDetailService boPhanDetailService, IWebHostEnvironment hostingEnvironment)
+        public NhanVienController(INhanVienService nhanVienService, IBoPhanService boPhanService, IBoPhanDetailService boPhanDetailService, IBHXHService bHXHService, IWebHostEnvironment hostingEnvironment)
         {
             _nhanvienService = nhanVienService;
             _boPhanService = boPhanService;
             _hostingEnvironment = hostingEnvironment;
             _boPhanDetailService = boPhanDetailService;
+            _bhxhService = bHXHService;
         }
 
         public IActionResult Index()
@@ -284,7 +286,7 @@ namespace HRMS.Areas.Admin.Controllers
                 profileModel.KyLuatLaoDong = nhanVien.KyLuatLD;
 
                 // Bao Hiem
-                BHXHViewModel bHXH = nhanVien.HR_BHXH.FirstOrDefault();
+                BHXHViewModel bHXH = nhanVien.HR_BHXH.ToList().OrderByDescending(x => x.DateModified).FirstOrDefault();
                 if (bHXH != null)
                 {
                     profileModel.bHXHs = new BHXHViewModel()
@@ -293,6 +295,10 @@ namespace HRMS.Areas.Admin.Controllers
                         NgayKetThuc = bHXH.NgayKetThuc,
                         Id = bHXH.Id
                     };
+
+                    profileModel.MaBHXH = bHXH.Id;
+                    profileModel.NgayThamGia = bHXH.NgayThamGia;
+                    profileModel.NgayKetThuc = bHXH.NgayKetThuc;
                 }
 
                 // Bang cap , chung chi
@@ -301,7 +307,27 @@ namespace HRMS.Areas.Admin.Controllers
                 // Qua Trinh Lam Viec --
                 profileModel.quaTrinhLamViecs = nhanVien.HR_QUATRINHLAMVIEC.ToList();
 
-                profileModel.phepNams = nhanVien.HR_PHEP_NAM.ToList();
+                profileModel.phepNams = nhanVien.HR_PHEP_NAM.OrderByDescending(x => x.Year).Take(2).ToList();
+                if (profileModel.phepNams.Count() == 0)
+                {
+                    profileModel.phepNams = new List<PhepNamViewModel>()
+                    {
+                        new PhepNamViewModel()
+                        {
+                            MaNhanVien = Id,
+                            SoPhepNam = 0,
+                            SoPhepConLai = 0,
+                            Year = DateTime.Now.Year
+                        },
+                        new PhepNamViewModel()
+                        {
+                            MaNhanVien = Id,
+                            SoPhepNam = 0,
+                            SoPhepConLai = 0,
+                            Year = DateTime.Now.Year - 1
+                        }
+                    };
+                }
 
                 // --
                 profileModel.hopDongs = nhanVien.HR_HOPDONG.ToList();
@@ -415,12 +441,55 @@ namespace HRMS.Areas.Admin.Controllers
 
                         partialName = "_profileBankInfoPartial";
                     }
-                    else if(model == "4") // Update liên lạc người thân
+                    else if (model == "4") // Update liên lạc người thân
                     {
                         nhanVien.QuanHeNguoiThan = profileBasic.QuanHeNguoiThan;
                         nhanVien.SoDienThoaiNguoiThan = profileBasic.SoDienThoaiNguoiThan;
 
                         partialName = "_profileEmergencyContactPartial";
+                    }
+                    else if (model == "5") // Update BHXH
+                    {
+                        nhanVien.MaBHXH = profileBasic.MaBHXH;
+                        BHXHViewModel bhxhViewModel = _bhxhService.GetById(profileBasic.MaBHXH);
+                        if (bhxhViewModel == null)
+                        {
+                            _bhxhService.Delete(_bhxhService.GetAll(null).FirstOrDefault()?.Id);
+                            _bhxhService.Save();
+
+                            bhxhViewModel = new BHXHViewModel()
+                            {
+                                Id = profileBasic.MaBHXH,
+                                MaNV = profileBasic.MaNhanVien,
+                                NgayThamGia = profileBasic.NgayThamGia,
+                                NgayKetThuc = profileBasic.NgayKetThuc,
+                                UserCreated = _bhxhService.GetUserLogin()
+                            };
+
+                            nhanVien.HR_BHXH = new List<BHXHViewModel>() { bhxhViewModel };
+                            partialName = "_profileSocialInsurancePartial";
+                        }
+                        else
+                        {
+                            bhxhViewModel.MaNV = profileBasic.MaNhanVien;
+                            bhxhViewModel.NgayThamGia = profileBasic.NgayThamGia;
+                            bhxhViewModel.NgayKetThuc = profileBasic.NgayKetThuc;
+
+                            _bhxhService.Update(bhxhViewModel);
+                            _bhxhService.Save();
+                            partialName = "_profileSocialInsurancePartial";
+                            return PartialView(partialName, profileBasic);
+                        }
+                    }
+                    else if(model == "6") // Quitwork
+                    {
+                        nhanVien.NgayNghiViec = profileBasic.NgayNghiViec;
+                        partialName = "_profileQuitWorkPartial";
+                    }
+                    else if(model == "7") // ky luat lao dong
+                    {
+                        nhanVien.KyLuatLD = profileBasic.KyLuatLaoDong;
+                        partialName = "_profileLabordisciplinePartial";
                     }
 
                     _nhanvienService.UpdateSingle(nhanVien);
@@ -509,7 +578,7 @@ namespace HRMS.Areas.Admin.Controllers
                 profileModel.KyLuatLaoDong = nhanVien.KyLuatLD;
 
                 // Bao Hiem
-                BHXHViewModel bHXH = nhanVien.HR_BHXH.FirstOrDefault();
+                BHXHViewModel bHXH = nhanVien.HR_BHXH.ToList().OrderByDescending(x => x.DateModified).FirstOrDefault();
                 if (bHXH != null)
                 {
                     profileModel.bHXHs = new BHXHViewModel()
@@ -518,6 +587,10 @@ namespace HRMS.Areas.Admin.Controllers
                         NgayKetThuc = bHXH.NgayKetThuc,
                         Id = bHXH.Id
                     };
+
+                    profileModel.MaBHXH = bHXH.Id;
+                    profileModel.NgayThamGia = bHXH.NgayThamGia;
+                    profileModel.NgayKetThuc = bHXH.NgayKetThuc;
                 }
 
                 // Bang cap , chung chi
@@ -526,7 +599,27 @@ namespace HRMS.Areas.Admin.Controllers
                 // Qua Trinh Lam Viec --
                 profileModel.quaTrinhLamViecs = nhanVien.HR_QUATRINHLAMVIEC.ToList();
 
-                profileModel.phepNams = nhanVien.HR_PHEP_NAM.ToList();
+                profileModel.phepNams = nhanVien.HR_PHEP_NAM.OrderByDescending(x=>x.Year).Take(2).ToList();
+                if(profileModel.phepNams.Count() == 0)
+                {
+                    profileModel.phepNams = new List<PhepNamViewModel>()
+                    {
+                        new PhepNamViewModel()
+                        {
+                            MaNhanVien = Id,
+                            SoPhepNam = 0,
+                            SoPhepConLai = 0,
+                            Year = DateTime.Now.Year
+                        },
+                        new PhepNamViewModel()
+                        {
+                            MaNhanVien = Id,
+                            SoPhepNam = 0,
+                            SoPhepConLai = 0,
+                            Year = DateTime.Now.Year - 1
+                        }
+                    };
+                }
 
                 // --
                 profileModel.hopDongs = nhanVien.HR_HOPDONG.ToList();

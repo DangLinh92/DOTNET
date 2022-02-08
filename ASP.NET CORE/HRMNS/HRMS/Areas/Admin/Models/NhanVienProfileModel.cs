@@ -88,6 +88,10 @@ namespace HRMS.Areas.Admin.Models
         // Ky Luat Lao Dong
         public string KyLuatLaoDong { get; set; }
 
+        public string MaBHXH { get; set; }
+        public string NgayThamGia { get; set; }
+        public string NgayKetThuc { get; set; }
+
         // Bao Hiem
         public BHXHViewModel bHXHs { get; set; }
 

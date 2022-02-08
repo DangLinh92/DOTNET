@@ -1,0 +1,29 @@
+﻿@model List<PhepNamViewModel>
+<h3 class="card-title">Compassionate leave<a href="#" class="edit-icon" data-toggle="modal" data-target="#phepNam_infor_modal" id="btn-UpdatePhepNam"><i class="fa fa-pencil"></i></a></h3>
+<h5 class="section-title">Primary</h5>
+<ul class="personal-info">
+    <li>
+        <div class="title">Tổng Phép năm @Model.OrderByDescending(x => x.Year)?.FirstOrDefault()?.Year</div>
+        <div class="text">@Model.OrderByDescending(x => x.Year)?.FirstOrDefault()?.SoPhepNam</div>
+    </li>
+    <li>
+        <div class="title">Còn Lại</div>
+        <div class="text">@Model.OrderByDescending(x => x.Year)?.FirstOrDefault()?.SoPhepConLai</div>
+    </li>
+</ul>
+
+@if (Model.Count() > 1)
+{
+    <hr>
+    <h5 class="section-title">Secondary</h5>
+    <ul class="personal-info">
+        <li>
+            <div class="title">Tổng Phép năm @Model.OrderByDescending(x => x.Year)?.LastOrDefault()?.Year</div>
+            <div class="text">@Model.OrderByDescending(x => x.Year)?.LastOrDefault()?.SoPhepNam</div>
+        </li>
+        <li>
+            <div class="title">Còn Lại</div>
+            <div class="text">@Model.OrderByDescending(x => x.Year)?.LastOrDefault()?.SoPhepConLai</div>
+        </li>
+    </ul>
+}

@@ -11,6 +11,19 @@ namespace HRMNS.Data.Entities
     [Table("HR_PHEP_NAM")]
     public class HR_PHEP_NAM : DomainEntity<int>, IDateTracking
     {
+        public HR_PHEP_NAM()
+        {
+
+        }
+
+        public HR_PHEP_NAM(string maNV,int soPhepNam,int soPhepConLai,int year)
+        {
+            MaNhanVien = maNV;
+            SoPhepNam = soPhepNam;
+            SoPhepConLai = soPhepConLai;
+            Year = year;
+        }
+
         [StringLength(50)]
         public string MaNhanVien { get; set; }
         public int SoPhepNam { get; set; }

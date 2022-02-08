@@ -15,6 +15,14 @@ namespace HRMNS.Data.Entities
         {
         }
 
+        public HR_BHXH(string maBHXH,string maNV,string ngayThamGia,string ngayKetThuc)
+        {
+            Id = maBHXH;
+            MaNV = maNV;
+            NgayThamGia = ngayThamGia;
+            NgayKetThuc = ngayKetThuc;
+        }
+
         [StringLength(50)]
         public string MaNV { get; set; }
 

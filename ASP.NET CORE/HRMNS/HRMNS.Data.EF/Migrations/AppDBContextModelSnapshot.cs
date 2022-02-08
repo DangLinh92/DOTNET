@@ -554,7 +554,8 @@ namespace HRMNS.Data.EF.Migrations
                         .HasMaxLength(50);
 
                     b.Property<string>("DChiHienTai")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
 
                     b.Property<string>("DanToc")
                         .HasColumnType("nvarchar(50)")
@@ -569,7 +570,8 @@ namespace HRMNS.Data.EF.Migrations
                         .HasMaxLength(50);
 
                     b.Property<string>("DiaChiThuongTru")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(250)")
@@ -580,7 +582,8 @@ namespace HRMNS.Data.EF.Migrations
                         .HasMaxLength(20);
 
                     b.Property<string>("Image")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(500)")
+                        .HasMaxLength(500);
 
                     b.Property<string>("IsDelete")
                         .HasColumnType("nvarchar(10)")
@@ -626,16 +629,20 @@ namespace HRMNS.Data.EF.Migrations
                         .HasMaxLength(50);
 
                     b.Property<string>("NguyenQuan")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
 
                     b.Property<string>("NoiCapCMTND")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
 
                     b.Property<string>("NoiSinh")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
 
                     b.Property<string>("Note")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
 
                     b.Property<string>("QuanHeNguoiThan")
                         .HasColumnType("nvarchar(100)")

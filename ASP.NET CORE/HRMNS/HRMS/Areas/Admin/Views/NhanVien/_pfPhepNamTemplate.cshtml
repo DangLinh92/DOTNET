@@ -1,0 +1,25 @@
+﻿@*<script id="pfPhepNam-template" type="x-tmpl-mustache">
+{{#phepNams}}
+    <div class="card">
+        <div class="card-body">
+            <h3 class="card-title" id="txtYearTitle">Năm:{{Year}}</h3>
+            <input type="hidden" name="Year" asp-for="phepNams[0].Year" value="{{Year}}">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Tổng Phép Năm</label>
+                        <input class="form-control" type="number" asp-for="phepNams[0].SoPhepNam" name="SoPhepNam" value="{{SoPhepNam}}">
+                        <input type="hidden" name="MaNhanVien" asp-for="phepNams[0].MaNhanVien" value="{{MaNhanVien}}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Số Phép Còn Lại</label>
+                        <input class="form-control" type="number" asp-for="phepNams[0].SoPhepConLai" name="SoPhepConLai" value="{{SoPhepConLai}}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{{/phepNams}}
+</script>*@
