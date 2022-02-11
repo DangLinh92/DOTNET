@@ -615,7 +615,7 @@ namespace HRMS.Areas.Admin.Controllers
                 maNV = lstQtrinhCtac[0].MaNV;
             }
 
-            if (!string.IsNullOrEmpty(id) && int.TryParse(id, out int newId))
+            if (!string.IsNullOrEmpty(id) && int.TryParse(id, out int newId) && lstQtrinhCtac.Count() > 0)
             {
                 if (newId == -9999)//  add area
                 {
@@ -678,7 +678,7 @@ namespace HRMS.Areas.Admin.Controllers
                 var deleteItem = lstQtrinhCtac.Find(x => x.Id == item.Id);
                 if (deleteItem == null)
                 {
-                    lstDelete.Add(deleteItem);
+                    lstDelete.Add(item);
                 }
             }
 

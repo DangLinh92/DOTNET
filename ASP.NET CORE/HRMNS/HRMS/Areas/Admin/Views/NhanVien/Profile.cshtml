@@ -25,15 +25,16 @@
             $('#quitWork_infor_modal').modal('hide');
             $('#LaborDiscipline_infor_modal').modal('hide');
             $('#quatrinhCtac_infor_modal').modal('hide');
-          
+
             hrms.notify("Update success!", 'Success', 'alert', function () {
             });
         }
 
-        var reloadJs = function() {
-            
+        var reloadJs = function () {
+            var dateTimepickerId = $('#id-form-qtrinhCtac .datetimepicker')[0].id;
+            $('#' + dateTimepickerId).load('#' + dateTimepickerId);
         }
-        
+
         // reload select js after submit
         var ReloadPageOnsuccess = function () {
             hrms.notify("Update success!", 'Success', 'alert', function () {
@@ -244,5 +245,5 @@
 <!-- /Education Modal -->
 <!-- Template area -->
 <!-- header information -->
-<partial name="_pfCommonInfoTemplate" />
-<partial name="_pfPhepNamTemplate" />
+@*<partial name="_pfCommonInfoTemplate" />
+<partial name="_pfPhepNamTemplate" />*@

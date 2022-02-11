@@ -467,7 +467,8 @@
             $('#id-form-qtrinhCtac').attr("data-ajax-success", "reloadJs")
             $('#id-form-qtrinhCtac').attr("data-ajax-confirm","Are you sure you want delete this?")
 
-            $('#btn-submit-qtrCongTac').submit();
+            //$('#btn-submit-qtrCongTac').submit();
+            $('#btnSubmitQtct').submit();
         });
 
         // add new area qua trinh ctac
@@ -478,7 +479,8 @@
             $('#id-form-qtrinhCtac').attr("data-ajax-success", "reloadJs")
             $('#id-form-qtrinhCtac').removeAttr("data-ajax-confirm")
 
-            $('#btn-submit-qtrCongTac').submit();
+            //$('#btn-submit-qtrCongTac').submit();
+            $('#btnSubmitQtct').submit();
         });
 
         // save data qua trinh cong tac
@@ -488,8 +490,8 @@
             $('#id-form-qtrinhCtac').attr("data-ajax-url", "/admin/NhanVien/UpdateQuatrinhCtac?id=" + id)
             $('#id-form-qtrinhCtac').attr("data-ajax-update", "#quatrinhCongTacTab")
             $('#id-form-qtrinhCtac').attr("data-ajax-success", "ReloadPageOnsuccess")
-            $('#id-form-qtrinhCtac').attr("data-ajax-confirm", "Are you sure you want update this?")
-            $('#btn-submit-qtrCongTac').submit();
+            $('#id-form-qtrinhCtac').attr("data-ajax-confirm", "Are you sure you want update this aaa?")
+            $('#btnSubmitQtct').submit();
         });
     }
 
