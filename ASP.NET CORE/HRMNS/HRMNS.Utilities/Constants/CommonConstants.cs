@@ -25,5 +25,10 @@ namespace HRMNS.Utilities.Constants
         public const string DefaultAvatar = "/img/profiles/avatar-02.jpg";
         public const string NotFound = "NotFound";
         public const string Error404 = "Error404";
+
+        public const string sTrue = "1";
+        public const string sFalse = "0";
+        public const string Y = "Y";
+        public const string N = "N";
     }
 }

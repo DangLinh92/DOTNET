@@ -1,0 +1,86 @@
+﻿@model List<HopDongViewModel>
+@{
+    int i = 0;
+}
+<h3 class="card-title"> Contract Information</h3>
+
+@if (Model.Count() > 0)
+{
+    @foreach (HopDongViewModel item in Model.OrderByDescending(x => x.DateCreated))
+    {
+        if (i++ > 0)
+        {
+            break;
+        }
+        <form id="id-form-HopDong" method="post" data-ajax="true" data-ajax-confirm="Are you sure you want update this?" data-ajax-url="/admin/NhanVien/UpdateHopDong" data-ajax-update="#id-profile-HopDong-info" data-ajax-mode='replace' data-ajax-success="ReloadPageOnsuccess">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="col-form-label">Mã Số Hợp Đồng<span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" placeholder="N/A" name="MaHD" id="txtMaHD" value="@item.MaHD" required>
+                        <input type="hidden" name="Id" value="@item.Id" id="txtIdContract">
+                        <input type="hidden" name="MaNV" value="@item.MaNV" id="maNV_Contract">
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="col-form-label">Tên Hợp Đồng<span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" placeholder="N/A" name="TenHD" value="@item.TenHD" id="txtTenHD" required>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="col-form-label">Loại Hợp Đồng<span class="text-danger">*</span></label>
+                        <select class="select" name="LoaiHD" id="slLoaiHD" value="@item.LoaiHD" required>
+                            <!option value="0" @(item.LoaiHD == 0 || item.LoaiHD == null ? "selected" : "")>--Chọn Loại Hợp Đồng--</!option>
+                            @foreach (var loaiHd in ViewBag.LoaiHD)
+                            {
+                                <!option value="@loaiHd.Id" @(item.LoaiHD == loaiHd.Id ? "selected" : "")>@loaiHd.TenLoaiHD</!option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="col-form-label">Ngày Ký<span class="text-danger">*</span></label>
+                        <div class="cal-icon"><input class="form-control datetimepicker" type="text" name="NgayKy" value="@item.NgayKy" id="txtNgayKy" required></div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="col-form-label">Ngày Hiệu Lực<span class="text-danger">*</span></label>
+                        <div class="cal-icon"><input class="form-control datetimepicker" type="text" name="NgayHieuLuc" value="@item.NgayHieuLuc" id="txtNgayHieuLuc" required></div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="col-form-label">Ngày Hết Hiệu Lực</label>
+                        <div class="cal-icon"><input class="form-control datetimepicker" type="text" name="NgayHetHieuLuc" value="@item.NgayHetHieuLuc" id="txtNgayHetHieuLuc" required></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="col-form-label">Số ngày thông báo trước hạn</label>
+                        <select class="select" name="DayNumberNoti" id="txtDayNumberNoti" required>
+                            <!option value="30" @(item.DayNumberNoti == 30 ? "selected" : "")>30 Day</!option>
+                            <!option value="20" @(item.DayNumberNoti == 20 ? "selected" : "")>20 Day</!option>
+                            <!option value="10" @(item.DayNumberNoti == 10 ? "selected" : "")>10 Day</!option>
+                            <!option value="0" @(item.DayNumberNoti == 0 ? "selected" : "")>Off</!option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="submit-section">
+                <button class="btn btn-info" type="button" id="btnClearContract">New Contract</button>
+                <button class="btn btn-primary" type="submit">Save Contract</button>
+            </div>
+        </form>
+    }
+}
+
+

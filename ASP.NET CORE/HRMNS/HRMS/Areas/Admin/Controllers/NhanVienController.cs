@@ -28,15 +28,25 @@ namespace HRMS.Areas.Admin.Controllers
         IBoPhanService _boPhanService;
         IBoPhanDetailService _boPhanDetailService;
         IBHXHService _bhxhService;
+        ITinhTrangHoSoService _ttrangHoSoService;
+        IHopDongService _hopDongService;
+        IHRLoaiHopDongService _hrLoaiHDService;
+        IQuatrinhLamViecService _quatrinhLamViecService;
+
         private readonly IWebHostEnvironment _hostingEnvironment;
 
-        public NhanVienController(INhanVienService nhanVienService, IBoPhanService boPhanService, IBoPhanDetailService boPhanDetailService, IBHXHService bHXHService, IWebHostEnvironment hostingEnvironment)
+        public NhanVienController(INhanVienService nhanVienService, IBoPhanService boPhanService, IBoPhanDetailService boPhanDetailService, IBHXHService bHXHService,
+            ITinhTrangHoSoService tinhTrangHoSoService, IHopDongService hopDongService, IHRLoaiHopDongService hrLoaiHDService, IQuatrinhLamViecService qtrinhLvService, IWebHostEnvironment hostingEnvironment)
         {
             _nhanvienService = nhanVienService;
             _boPhanService = boPhanService;
             _hostingEnvironment = hostingEnvironment;
             _boPhanDetailService = boPhanDetailService;
             _bhxhService = bHXHService;
+            _ttrangHoSoService = tinhTrangHoSoService;
+            _hopDongService = hopDongService;
+            _hrLoaiHDService = hrLoaiHDService;
+            _quatrinhLamViecService = qtrinhLvService;
         }
 
         public IActionResult Index()
@@ -272,6 +282,8 @@ namespace HRMS.Areas.Admin.Controllers
                 {
                     profileModel.tinhTrangHoSo = new TinhTrangHoSoViewModel()
                     {
+                        Id = tthsModel.Id,
+                        MaNV = nhanVien.Id,
                         AnhThe = tthsModel.AnhThe,
                         SoYeuLyLich = tthsModel.SoYeuLyLich,
                         CMTND = tthsModel.CMTND,
@@ -279,6 +291,20 @@ namespace HRMS.Areas.Admin.Controllers
                         GiayKhaiSinh = tthsModel.GiayKhaiSinh,
                         BangTotNghiep = tthsModel.BangTotNghiep,
                         XacNhanDanSu = tthsModel.XacNhanDanSu
+                    };
+                }
+                else
+                {
+                    profileModel.tinhTrangHoSo = new TinhTrangHoSoViewModel()
+                    {
+                        MaNV = nhanVien.Id,
+                        AnhThe = false,
+                        SoYeuLyLich = false,
+                        CMTND = false,
+                        SoHoKhau = false,
+                        GiayKhaiSinh = false,
+                        BangTotNghiep = false,
+                        XacNhanDanSu = false
                     };
                 }
 
@@ -305,7 +331,20 @@ namespace HRMS.Areas.Admin.Controllers
                 profileModel.chungChis = nhanVien.HR_CHUNGCHI_NHANVIEN.ToList();
 
                 // Qua Trinh Lam Viec --
-                profileModel.quaTrinhLamViecs = nhanVien.HR_QUATRINHLAMVIEC.ToList();
+                profileModel.quaTrinhLamViecs = nhanVien.HR_QUATRINHLAMVIEC.OrderBy(x => x.ThơiGianBatDau).ToList();
+                if (profileModel.quaTrinhLamViecs.Count() == 0)
+                {
+                    profileModel.quaTrinhLamViecs = new List<QuaTrinhLamViecViewModel>()
+                    {   new QuaTrinhLamViecViewModel()
+                        {
+                            Id= 0,
+                            ThơiGianBatDau = "",
+                            TieuDe = "",
+                            Note = "",
+                            MaNV = profileModel.MaNhanVien
+                        }
+                    };
+                }
 
                 profileModel.phepNams = nhanVien.HR_PHEP_NAM.OrderByDescending(x => x.Year).Take(2).ToList();
                 if (profileModel.phepNams.Count() == 0)
@@ -331,6 +370,17 @@ namespace HRMS.Areas.Admin.Controllers
 
                 // --
                 profileModel.hopDongs = nhanVien.HR_HOPDONG.ToList();
+                if (profileModel.hopDongs == null || profileModel.hopDongs.Count() == 0)
+                {
+                    profileModel.hopDongs = new List<HopDongViewModel>()
+                    {
+                        new HopDongViewModel()
+                        {
+                            MaNV =profileModel.MaNhanVien
+                        }
+                    };
+                }
+                ViewBag.LoaiHD = _hrLoaiHDService.GetAll();
 
                 return View(profileModel);
             }
@@ -481,12 +531,12 @@ namespace HRMS.Areas.Admin.Controllers
                             return PartialView(partialName, profileBasic);
                         }
                     }
-                    else if(model == "6") // Quitwork
+                    else if (model == "6") // Quitwork
                     {
                         nhanVien.NgayNghiViec = profileBasic.NgayNghiViec;
                         partialName = "_profileQuitWorkPartial";
                     }
-                    else if(model == "7") // ky luat lao dong
+                    else if (model == "7") // ky luat lao dong
                     {
                         nhanVien.KyLuatLD = profileBasic.KyLuatLaoDong;
                         partialName = "_profileLabordisciplinePartial";
@@ -499,6 +549,175 @@ namespace HRMS.Areas.Admin.Controllers
             }
 
             return PartialView(partialName, profileBasic);
+        }
+
+        [HttpPost]
+        public IActionResult UpdateTinhTrangHoSo(TinhTrangHoSoViewModel ttHso)
+        {
+            TinhTrangHoSoViewModel tinhTrangHs = _ttrangHoSoService.GetByMaNV(ttHso.MaNV);
+
+            if (tinhTrangHs == null)
+            {
+                SetTinhTrangHoSo(ttHso);
+                _ttrangHoSoService.Add(ttHso);
+            }
+            else
+            {
+                tinhTrangHs.AnhThe = ttHso.AnhThe;
+                tinhTrangHs.SoYeuLyLich = ttHso.SoYeuLyLich;
+                tinhTrangHs.CMTND = ttHso.CMTND;
+                tinhTrangHs.SoHoKhau = ttHso.SoHoKhau;
+                tinhTrangHs.GiayKhaiSinh = ttHso.GiayKhaiSinh;
+                tinhTrangHs.BangTotNghiep = ttHso.BangTotNghiep;
+                tinhTrangHs.XacNhanDanSu = ttHso.XacNhanDanSu;
+                SetTinhTrangHoSo(tinhTrangHs);
+                _ttrangHoSoService.Update(tinhTrangHs);
+            }
+            _ttrangHoSoService.Save();
+            return PartialView("_profileTinhTrangHoSoPartial", ttHso);
+        }
+
+        [HttpPost]
+        public IActionResult UpdateHopDong(HopDongViewModel hopDong)
+        {
+            HopDongViewModel hopDongViewModel = _hopDongService.GetById(hopDong.Id);
+            if (hopDongViewModel == null)
+            {
+                _hopDongService.Add(hopDong);
+            }
+            else
+            {
+                hopDongViewModel.MaHD = hopDong.MaHD;
+                hopDongViewModel.TenHD = hopDong.TenHD;
+                hopDongViewModel.LoaiHD = hopDong.LoaiHD;
+                hopDongViewModel.NgayKy = hopDong.NgayKy;
+                hopDongViewModel.NgayTao = hopDong.NgayKy;
+                hopDongViewModel.NgayHieuLuc = hopDong.NgayHieuLuc;
+                hopDongViewModel.NgayHetHieuLuc = hopDong.NgayHetHieuLuc;
+                hopDongViewModel.DayNumberNoti = hopDong.DayNumberNoti;
+                _hopDongService.Update(hopDongViewModel);
+            }
+            _hopDongService.Save();
+            List<HopDongViewModel> lstHD = new List<HopDongViewModel>()
+            {
+                hopDong
+            };
+            ViewBag.LoaiHD = _hrLoaiHDService.GetAll();
+            return PartialView("_profileContractInfoPartial", lstHD);
+        }
+
+        [HttpPost]
+        public IActionResult UpdateViewQuatrinhCtac(List<QuaTrinhLamViecViewModel> lstQtrinhCtac, string id)
+        {
+            string maNV = "";
+            if (lstQtrinhCtac.Count() > 0)
+            {
+                maNV = lstQtrinhCtac[0].MaNV;
+            }
+
+            if (!string.IsNullOrEmpty(id) && int.TryParse(id, out int newId))
+            {
+                if (newId == -9999)//  add area
+                {
+                    int nId = lstQtrinhCtac.OrderBy(x => x.Id).FirstOrDefault().Id - 1;
+
+                    if (nId == -9999)
+                    {
+                        return PartialView("_profileQuaTrinhCtacModel", lstQtrinhCtac);
+                    }
+
+                    lstQtrinhCtac.Add(new QuaTrinhLamViecViewModel()
+                    {
+                        Id = nId,
+                        MaNV = maNV
+                    });
+                }
+                else // delete area
+                {
+                    var qtct = lstQtrinhCtac.FirstOrDefault(x => x.Id == newId);
+                    lstQtrinhCtac.Remove(qtct);
+                }
+            }
+
+            if (lstQtrinhCtac.Count() == 0)
+            {
+                lstQtrinhCtac.Add(new QuaTrinhLamViecViewModel()
+                {
+                    Id = 0,
+                    MaNV = maNV
+                });
+            }
+            return PartialView("_profileQuaTrinhCtacModel", lstQtrinhCtac);
+        }
+
+        [HttpPost]
+        public IActionResult UpdateQuatrinhCtac(List<QuaTrinhLamViecViewModel> lstQtrinhCtac, string id)
+        {
+            var qtCtacAll = _quatrinhLamViecService.GetAll(id);
+
+            // Find object add new , update , delete
+            List<QuaTrinhLamViecViewModel> lstAdd = new List<QuaTrinhLamViecViewModel>();
+            List<QuaTrinhLamViecViewModel> lstUpdate = new List<QuaTrinhLamViecViewModel>();
+            List<QuaTrinhLamViecViewModel> lstDelete = new List<QuaTrinhLamViecViewModel>();
+
+            foreach (var item in lstQtrinhCtac)
+            {
+                var updateItem = qtCtacAll.Find(x => x.Id == item.Id);
+                if (updateItem == null)
+                {
+                    lstAdd.Add(item);
+                }
+                else
+                {
+                    lstUpdate.Add(item);
+                }
+            }
+
+            foreach (var item in qtCtacAll)
+            {
+                var deleteItem = lstQtrinhCtac.Find(x => x.Id == item.Id);
+                if (deleteItem == null)
+                {
+                    lstDelete.Add(deleteItem);
+                }
+            }
+
+            // Update data
+            foreach (var item in lstUpdate)
+            {
+                QuaTrinhLamViecViewModel updateModel = qtCtacAll.Find(x => x.Id == item.Id);
+                updateModel.TieuDe = item.TieuDe;
+                updateModel.ThơiGianBatDau = item.ThơiGianBatDau;
+                updateModel.ThoiGianKetThuc = item.ThoiGianKetThuc;
+                updateModel.Note = item.Note;
+                _quatrinhLamViecService.Update(updateModel);
+            }
+
+            foreach (var item in lstDelete)
+            {
+                _quatrinhLamViecService.Delete(item.Id);
+            }
+
+            foreach (var item in lstAdd)
+            {
+                item.MaNV = id;
+                _quatrinhLamViecService.Add(item);
+            }
+
+            _quatrinhLamViecService.Save();
+            return PartialView("_profileQuaTrinhCtacPartial", lstQtrinhCtac);
+        }
+
+        private void SetTinhTrangHoSo(TinhTrangHoSoViewModel ttHso)
+        {
+            if (ttHso.AnhThe && ttHso.SoYeuLyLich && ttHso.CMTND && ttHso.SoHoKhau && ttHso.GiayKhaiSinh && ttHso.BangTotNghiep && ttHso.XacNhanDanSu)
+            {
+                ttHso.Status = CommonConstants.Y;
+            }
+            else
+            {
+                ttHso.Status = CommonConstants.N;
+            }
         }
 
         [HttpGet]
@@ -564,6 +783,8 @@ namespace HRMS.Areas.Admin.Controllers
                 {
                     profileModel.tinhTrangHoSo = new TinhTrangHoSoViewModel()
                     {
+                        Id = tthsModel.Id,
+                        MaNV = nhanVien.Id,
                         AnhThe = tthsModel.AnhThe,
                         SoYeuLyLich = tthsModel.SoYeuLyLich,
                         CMTND = tthsModel.CMTND,
@@ -571,6 +792,20 @@ namespace HRMS.Areas.Admin.Controllers
                         GiayKhaiSinh = tthsModel.GiayKhaiSinh,
                         BangTotNghiep = tthsModel.BangTotNghiep,
                         XacNhanDanSu = tthsModel.XacNhanDanSu
+                    };
+                }
+                else
+                {
+                    profileModel.tinhTrangHoSo = new TinhTrangHoSoViewModel()
+                    {
+                        MaNV = nhanVien.Id,
+                        AnhThe = false,
+                        SoYeuLyLich = false,
+                        CMTND = false,
+                        SoHoKhau = false,
+                        GiayKhaiSinh = false,
+                        BangTotNghiep = false,
+                        XacNhanDanSu = false
                     };
                 }
 
@@ -597,10 +832,24 @@ namespace HRMS.Areas.Admin.Controllers
                 profileModel.chungChis = nhanVien.HR_CHUNGCHI_NHANVIEN.ToList();
 
                 // Qua Trinh Lam Viec --
-                profileModel.quaTrinhLamViecs = nhanVien.HR_QUATRINHLAMVIEC.ToList();
+                profileModel.quaTrinhLamViecs = nhanVien.HR_QUATRINHLAMVIEC.OrderBy(x => x.ThơiGianBatDau).ToList();
+                if (profileModel.quaTrinhLamViecs.Count() == 0)
+                {
+                    profileModel.quaTrinhLamViecs = new List<QuaTrinhLamViecViewModel>()
+                    {
+                        new QuaTrinhLamViecViewModel()
+                        {
+                            Id = 0,
+                            ThơiGianBatDau = "",
+                            TieuDe = "",
+                            Note = "",
+                            MaNV = profileModel.MaNhanVien
+                        }
+                    };
+                }
 
-                profileModel.phepNams = nhanVien.HR_PHEP_NAM.OrderByDescending(x=>x.Year).Take(2).ToList();
-                if(profileModel.phepNams.Count() == 0)
+                profileModel.phepNams = nhanVien.HR_PHEP_NAM.OrderByDescending(x => x.Year).Take(2).ToList();
+                if (profileModel.phepNams.Count() == 0)
                 {
                     profileModel.phepNams = new List<PhepNamViewModel>()
                     {
@@ -623,6 +872,18 @@ namespace HRMS.Areas.Admin.Controllers
 
                 // --
                 profileModel.hopDongs = nhanVien.HR_HOPDONG.ToList();
+                if (profileModel.hopDongs == null || profileModel.hopDongs.Count() == 0)
+                {
+                    profileModel.hopDongs = new List<HopDongViewModel>()
+                    {
+                        new HopDongViewModel()
+                        {
+                            MaNV =profileModel.MaNhanVien
+                        }
+                    };
+                }
+
+                ViewBag.LoaiHD = _hrLoaiHDService.GetAll();
 
                 return new OkObjectResult(profileModel);
             }

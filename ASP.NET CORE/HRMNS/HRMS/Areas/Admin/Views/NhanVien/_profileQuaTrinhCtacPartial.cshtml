@@ -1,0 +1,73 @@
+﻿@model List<QuaTrinhLamViecViewModel>
+@{
+    int i = 0;
+    int j = 0;
+}
+<div class="row">
+    
+    <!-- Timeline -->
+    <div class="col-md-12">
+        <div class="card">
+            <h3 class="card-title" style="margin:20px"><a href="#" class="edit-icon" data-toggle="modal" data-target="#quatrinhCtac_infor_modal" id="btn-UpdateQuatrinhCtac"><i class="fa fa-pencil"></i></a></h3>
+            <div class="card-body">
+                <div class="cd-horizontal-timeline">
+                    <div class="timeline" style="max-width:550px">
+                        <div class="events-wrapper">
+                            <div class="events">
+                                <ol>
+                                    @foreach (QuaTrinhLamViecViewModel item in Model)
+                                    {
+                                        if (i++ == 0)
+                                        {
+                                            <li><a href="#0" class="selected" data-date="@item.ThơiGianBatDau">@item.ThơiGianBatDau</a></li>
+                                        }
+                                        else
+                                        {
+                                            <li><a href="#0" data-date="@item.ThơiGianBatDau">@item.ThơiGianBatDau</a></li>
+                                        }
+                                    }
+                                </ol>
+                                <span class="filling-line" aria-hidden="true"></span>
+                            </div>
+                            <!-- events -->
+                        </div>
+                        <ul class="cd-timeline-navigation">
+                            <li><a href="#0" class="prev inactive">Prev</a></li>
+                            <li><a href="#0" class="next">Next</a></li>
+                        </ul>
+                        <!-- cd-timeline-navigation -->
+                    </div>
+                    <!-- timeline -->
+                    <div class="events-content">
+                        <ol>
+                            @foreach (QuaTrinhLamViecViewModel item in Model)
+                            {
+                                if (j++ == 0)
+                                {
+                                    <li class="selected" data-date="@item.ThơiGianBatDau">
+                                        <h3><small>@item.TieuDe</small></h3>
+                                        <p class="m-t-40">
+                                            @item.Note
+                                        </p>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li  data-date="@item.ThơiGianBatDau">
+                                        <h3><small>@item.TieuDe</small></h3>
+                                        <p class="m-t-40">
+                                            @item.Note
+                                        </p>
+                                    </li>
+                                }
+                            }
+                        </ol>
+                    </div>
+                    <!-- .events-content -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Ribbon -->
+
+</div>

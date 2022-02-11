@@ -285,7 +285,7 @@ namespace HRMNS.Data.EF
                 });
             }
 
-            if (_context.HrNhanVien.Count() == 0)
+            if (_context.HrNhanVien.Count() < 0)
             {
                 _context.HrNhanVien.AddRange(new List<HR_NHANVIEN>() {
                     new HR_NHANVIEN()
@@ -445,6 +445,17 @@ namespace HRMNS.Data.EF
                         Id = "Supervisor",
                         TenChucDanh="Supervisor/ Giám sát line"
                     }
+                });
+            }
+
+            if (_context.HrLoaiHopDong.Count() == 0)
+            {
+                _context.HrLoaiHopDong.AddRange(new List<HR_LOAIHOPDONG>()
+                {
+                   new HR_LOAIHOPDONG(){ TenLoaiHD = "Hợp Đồng Thử Việc" },
+                    new HR_LOAIHOPDONG(){ TenLoaiHD = "Hợp Đồng 1 năm lần 1" },
+                     new HR_LOAIHOPDONG(){ TenLoaiHD = "Hợp Đồng 1 năm lần 2" },
+                      new HR_LOAIHOPDONG(){ TenLoaiHD = "Hợp Đồng Không Thời Hạn" },
                 });
             }
 

@@ -82,6 +82,7 @@ namespace HRMNS.Application.Implementation
         public void Update(NhanVienViewModel nhanVienVm)
         {
             var nhanvien = _mapper.Map<NhanVienViewModel, HR_NHANVIEN>(nhanVienVm);
+            nhanvien.UserModified = GetUserId();
             _nhanvienRepository.Update(nhanvien);
         }
 

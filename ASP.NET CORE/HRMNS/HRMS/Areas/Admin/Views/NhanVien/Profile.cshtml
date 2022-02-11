@@ -13,7 +13,7 @@
     <script>
         var profileMng = new ProfileMng();
         profileMng.initialize();
-
+        // profileMng.InitLoaiHopDong();
         // Close popup when update data oke
         var UpdateOnsuccess = function () {
             $('#profile_info').modal('hide');
@@ -24,7 +24,21 @@
             $('#phepNam_infor_modal').modal('hide');
             $('#quitWork_infor_modal').modal('hide');
             $('#LaborDiscipline_infor_modal').modal('hide');
+            $('#quatrinhCtac_infor_modal').modal('hide');
+          
             hrms.notify("Update success!", 'Success', 'alert', function () {
+            });
+        }
+
+        var reloadJs = function() {
+            
+        }
+        
+        // reload select js after submit
+        var ReloadPageOnsuccess = function () {
+            hrms.notify("Update success!", 'Success', 'alert', function () {
+                location.reload();
+                /*$('#link-hopDong_tab').click();*/
             });
         }
 
@@ -88,7 +102,7 @@
                     <li class="nav-item"><a href="#emp_profile" data-toggle="tab" class="nav-link active">Sơ Yếu Lý Lịch</a></li>
                     <li class="nav-item"><a href="#emp_ttHoSo" data-toggle="tab" class="nav-link">Tình Trạng Hồ Sơ</a></li>
                     <li class="nav-item"><a href="#quatrinhCongTacTab" data-toggle="tab" class="nav-link">Quá Trình Làm Việc</a></li>
-                    <li class="nav-item"><a href="#bank_statutory" data-toggle="tab" class="nav-link">Hợp Đồng <small class="text-danger">(Admin Only)</small></a></li>
+                    <li class="nav-item"><a href="#contract-info-Tab" id="link-hopDong_tab" data-toggle="tab" class="nav-link">Hợp Đồng <small class="text-danger">(Admin Only)</small></a></li>
                 </ul>
             </div>
         </div>
@@ -162,59 +176,8 @@
         <div class="tab-pane fade" id="emp_ttHoSo">
             <div class="row">
                 <div class="col-lg-12 col-sm-12 col-md-12 col-xl-12">
-                    <div class="table-responsive">
-                        <table class="table table-striped custom-table">
-                            <thead>
-                                <tr>
-                                    <th>Giấy tờ</th>
-                                    <th class="text-center">Hoàn Thành/Chưa Hoàn Thành</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Sơ Yếu Lý Lịch</td>
-                                    <td class="text-center">
-                                        <input type="checkbox" checked="">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>CMTND/CCCD</td>
-                                    <td class="text-center">
-                                        <input type="checkbox" checked="">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Sổ Hộ Khẩu</td>
-                                    <td class="text-center">
-                                        <input type="checkbox" checked="">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Giấy Khai Sinh</td>
-                                    <td class="text-center">
-                                        <input type="checkbox" checked="">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Bằng Tốt Nghiệp</td>
-                                    <td class="text-center">
-                                        <input type="checkbox" checked="">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Xác Nhận Dân Sự</td>
-                                    <td class="text-center">
-                                        <input type="checkbox" checked="">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Ảnh Thẻ</td>
-                                    <td class="text-center">
-                                        <input type="checkbox" checked="">
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="table-responsive" id="id-profile-TinhTrangHoSo">
+                        @await Html.PartialAsync("_profileTinhTrangHoSoPartial", Model.tinhTrangHoSo)
                     </div>
                 </div>
             </div>
@@ -222,175 +185,14 @@
 
         <!-- Qua trình công tác -->
         <div class="tab-pane fade" id="quatrinhCongTacTab">
-            <div class="row">
-                <!-- Timeline -->
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="cd-horizontal-timeline">
-                                <div class="timeline">
-                                    <div class="events-wrapper">
-                                        <div class="events">
-                                            <ol>
-                                                <li><a href="#0" data-date="16/01/2014" class="selected">16 Jan</a></li>
-                                                <li><a href="#0" data-date="28/02/2014">28 Feb</a></li>
-                                                <li><a href="#0" data-date="20/04/2014">20 Mar</a></li>
-                                                <li><a href="#0" data-date="20/05/2014">20 May</a></li>
-                                                <li><a href="#0" data-date="09/07/2014">09 Jul</a></li>
-                                                <li><a href="#0" data-date="30/08/2014">30 Aug</a></li>
-                                                <li><a href="#0" data-date="15/09/2014">15 Sep</a></li>
-                                                <li><a href="#0" data-date="01/11/2014">01 Nov</a></li>
-                                                <li><a href="#0" data-date="10/12/2014">10 Dec</a></li>
-                                                <li><a href="#0" data-date="19/01/2015">29 Jan</a></li>
-                                                <li><a href="#0" data-date="03/03/2015">3 Mar</a></li>
-                                            </ol>
-                                            <span class="filling-line" aria-hidden="true"></span>
-                                        </div>
-                                        <!-- events -->
-                                    </div>
-                                    <ul class="cd-timeline-navigation">
-                                        <li><a href="#0" class="prev inactive">Prev</a></li>
-                                        <li><a href="#0" class="next">Next</a></li>
-                                    </ul>
-                                    <!-- cd-timeline-navigation -->
-                                </div>
-                                <!-- timeline -->
-                                <div class="events-content">
-                                    <ol>
-                                        <li class="selected" data-date="16/01/2014">
-                                            <h3><small>Title 01</small></h3>
-                                            <p class="m-t-40">
-                                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illum praesentium officia, fugit recusandae ipsa, quia velit nulla adipisci? Consequuntur aspernatur at, eaque hic repellendus sit dicta consequatur quae, ut harum ipsam molestias maxime non nisi reiciendis eligendi! Doloremque quia pariatur harum ea amet quibusdam quisquam, quae, temporibus dolores porro doloribus.
-                                            </p>
-                                        </li>
-                                        <li data-date="28/02/2014">
-                                            <h3> <small>Title 02</small></h3>
-                                            <p class="m-t-40">
-                                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illum praesentium officia, fugit recusandae ipsa, quia velit nulla adipisci? Consequuntur aspernatur at, eaque hic repellendus sit dicta consequatur quae, ut harum ipsam molestias maxime non nisi reiciendis eligendi! Doloremque quia pariatur harum ea amet quibusdam quisquam, quae, temporibus dolores porro doloribus.
-                                            </p>
-                                        </li>
-                                        <li data-date="20/04/2014">
-                                            <h3><small>Title 03</small></h3>
-                                            <p class="m-t-40">
-                                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illum praesentium officia, fugit recusandae ipsa, quia velit nulla adipisci? Consequuntur aspernatur at, eaque hic repellendus sit dicta consequatur quae, ut harum ipsam molestias maxime non nisi reiciendis eligendi! Doloremque quia pariatur harum ea amet quibusdam quisquam, quae, temporibus dolores porro doloribus.
-                                            </p>
-                                        </li>
-                                        <li data-date="20/05/2014">
-                                            <h3><small>Title 04</small></h3>
-                                            <p class="m-t-40">
-                                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illum praesentium officia, fugit recusandae ipsa, quia velit nulla adipisci? Consequuntur aspernatur at, eaque hic repellendus sit dicta consequatur quae, ut harum ipsam molestias maxime non nisi reiciendis eligendi! Doloremque quia pariatur harum ea amet quibusdam quisquam, quae, temporibus dolores porro doloribus.
-                                            </p>
-                                        </li>
-                                        <li data-date="09/07/2014">
-                                            <h3><small>Title 05</small></h3>
-                                            <p class="m-t-40">
-                                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illum praesentium officia, fugit recusandae ipsa, quia velit nulla adipisci? Consequuntur aspernatur at, eaque hic repellendus sit dicta consequatur quae, ut harum ipsam molestias maxime non nisi reiciendis eligendi! Doloremque quia pariatur harum ea amet quibusdam quisquam, quae, temporibus dolores porro doloribus.
-                                            </p>
-                                        </li>
-                                        <li data-date="30/08/2014">
-                                            <h3> <small>Title 06</small></h3>
-                                            <p class="m-t-40">
-                                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illum praesentium officia, fugit recusandae ipsa, quia velit nulla adipisci? Consequuntur aspernatur at, eaque hic repellendus sit dicta consequatur quae, ut harum ipsam molestias maxime non nisi reiciendis eligendi! Doloremque quia pariatur harum ea amet quibusdam quisquam, quae, temporibus dolores porro doloribus.
-                                            </p>
-                                        </li>
-                                        <li data-date="15/09/2014">
-                                            <h3><small>Title 07</small></h3>
-                                            <p class="m-t-40">
-                                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illum praesentium officia, fugit recusandae ipsa, quia velit nulla adipisci? Consequuntur aspernatur at, eaque hic repellendus sit dicta consequatur quae, ut harum ipsam molestias maxime non nisi reiciendis eligendi! Doloremque quia pariatur harum ea amet quibusdam quisquam, quae, temporibus dolores porro doloribus.
-                                            </p>
-                                        </li>
-                                        <li data-date="01/11/2014">
-                                            <h3> <small>Event List</small></h3>
-                                            <p class="m-t-40">
-                                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illum praesentium officia, fugit recusandae ipsa, quia velit nulla adipisci? Consequuntur aspernatur at, eaque hic repellendus sit dicta consequatur quae, ut harum ipsam molestias maxime non nisi reiciendis eligendi! Doloremque quia pariatur harum ea amet quibusdam quisquam, quae, temporibus dolores porro doloribus.
-                                            </p>
-                                        </li>
-                                        <li data-date="10/12/2014">
-                                            <h3><small>Event Item</small></h3>
-                                            <p class="m-t-40">
-                                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illum praesentium officia, fugit recusandae ipsa, quia velit nulla adipisci? Consequuntur aspernatur at, eaque hic repellendus sit dicta consequatur quae, ut harum ipsam molestias maxime non nisi reiciendis eligendi! Doloremque quia pariatur harum ea amet quibusdam quisquam, quae, temporibus dolores porro doloribus.
-                                            </p>
-                                        </li>
-                                        <li data-date="19/01/2015">
-                                            <h3><small>Event title</small></h3>
-                                            <p>
-                                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illum praesentium officia, fugit recusandae ipsa, quia velit nulla adipisci? Consequuntur aspernatur at, eaque hic repellendus sit dicta consequatur quae, ut harum ipsam molestias maxime non nisi reiciendis eligendi! Doloremque quia pariatur harum ea amet quibusdam quisquam, quae, temporibus dolores porro doloribus.
-                                            </p>
-                                        </li>
-                                        <li data-date="03/03/2015">
-                                            <h3><small>Event title</small></h3>
-                                            <p>
-                                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illum praesentium officia, fugit recusandae ipsa, quia velit nulla adipisci? Consequuntur aspernatur at, eaque hic repellendus sit dicta consequatur quae, ut harum ipsam molestias maxime non nisi reiciendis eligendi! Doloremque quia pariatur harum ea amet quibusdam quisquam, quae, temporibus dolores porro doloribus.
-                                            </p>
-                                        </li>
-                                    </ol>
-                                </div>
-                                <!-- .events-content -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- /Ribbon -->
-
-            </div>
+            @await Html.PartialAsync("_profileQuaTrinhCtacPartial", Model.quaTrinhLamViecs)
         </div>
         <!-- /Projects Tab -->
         <!-- Bank Statutory Tab -->
-        <div class="tab-pane fade" id="bank_statutory">
+        <div class="tab-pane fade" id="contract-info-Tab">
             <div class="card">
-                <div class="card-body">
-                    <h3 class="card-title"> Contract Information</h3>
-                    <form>
-                        <div class="row">
-                            <div class="col-sm-4">
-                                <div class="form-group">
-                                    <label class="col-form-label">Mã Số Hợp Đồng<span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" placeholder="N/A" value="HD202201001">
-                                </div>
-                            </div>
-                            <div class="col-sm-4">
-                                <div class="form-group">
-                                    <label class="col-form-label">Tên Hợp Đồng<span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" placeholder="N/A" value="HD Thu Việc">
-                                </div>
-                            </div>
-                            <div class="col-sm-4">
-                                <div class="form-group">
-                                    <label class="col-form-label">Loại Hợp Đồng<span class="text-danger">*</span></label>
-                                    <select class="select">
-                                        <option>Select payment type</option>
-                                        <option>Bank transfer</option>
-                                        <option>Check</option>
-                                        <option>Cash</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-sm-4">
-                                <div class="form-group">
-                                    <label class="col-form-label">Ngày Ký<span class="text-danger">*</span></label>
-                                    <div class="cal-icon"><input class="form-control datetimepicker" type="text"></div>
-                                </div>
-                            </div>
-                            <div class="col-sm-4">
-                                <div class="form-group">
-                                    <label class="col-form-label">Ngày Hiệu Lực<span class="text-danger">*</span></label>
-                                    <div class="cal-icon"><input class="form-control datetimepicker" type="text"></div>
-                                </div>
-                            </div>
-                            <div class="col-sm-4">
-                                <div class="form-group">
-                                    <label class="col-form-label">Ngày Hết Hiệu Lực</label>
-                                    <div class="cal-icon"><input class="form-control datetimepicker" type="text"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="submit-section">
-                            <button class="btn btn-primary submit-btn" type="submit">Save</button>
-                        </div>
-                    </form>
+                <div class="card-body" id="id-profile-HopDong-info">
+                    @await Html.PartialAsync("_profileContractInfoPartial", Model.hopDongs)
                 </div>
             </div>
         </div>
@@ -414,7 +216,6 @@
 <!-- BHXH Modal -->
 <partial name="_profileSocialInsuranceModel" />
 <!-- /BHXH Modal -->
-
 <!--Phep nam-->
 @await Html.PartialAsync("_profileCompassionateLeaveModel", Model.phepNams)
 
@@ -425,235 +226,22 @@
 
 @*<partial name="_profileCompassionateLeaveModel" />*@
 <!-- Education Modal -->
-<div id="education_info" class="modal custom-modal fade" role="dialog">
+<div id="quatrinhCtac_infor_modal" class="modal custom-modal fade" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title"> Education Informations</h5>
+                <h5 class="modal-title"> Work flow</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                <form>
-                    <div class="form-scroll">
-                        <div class="card">
-                            <div class="card-body">
-                                <h3 class="card-title">Education Informations <a href="javascript:void(0);" class="delete-icon"><i class="fa fa-trash-o"></i></a></h3>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group form-focus focused">
-                                            <input type="text" value="Oxford University" class="form-control floating">
-                                            <label class="focus-label">Institution</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group form-focus focused">
-                                            <input type="text" value="Computer Science" class="form-control floating">
-                                            <label class="focus-label">Subject</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group form-focus focused">
-                                            <div class="cal-icon">
-                                                <input type="text" value="01/06/2002" class="form-control floating datetimepicker">
-                                            </div>
-                                            <label class="focus-label">Starting Date</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group form-focus focused">
-                                            <div class="cal-icon">
-                                                <input type="text" value="31/05/2006" class="form-control floating datetimepicker">
-                                            </div>
-                                            <label class="focus-label">Complete Date</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group form-focus focused">
-                                            <input type="text" value="BE Computer Science" class="form-control floating">
-                                            <label class="focus-label">Degree</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group form-focus focused">
-                                            <input type="text" value="Grade A" class="form-control floating">
-                                            <label class="focus-label">Grade</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-body">
-                                <h3 class="card-title">Education Informations <a href="javascript:void(0);" class="delete-icon"><i class="fa fa-trash-o"></i></a></h3>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group form-focus focused">
-                                            <input type="text" value="Oxford University" class="form-control floating">
-                                            <label class="focus-label">Institution</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group form-focus focused">
-                                            <input type="text" value="Computer Science" class="form-control floating">
-                                            <label class="focus-label">Subject</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group form-focus focused">
-                                            <div class="cal-icon">
-                                                <input type="text" value="01/06/2002" class="form-control floating datetimepicker">
-                                            </div>
-                                            <label class="focus-label">Starting Date</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group form-focus focused">
-                                            <div class="cal-icon">
-                                                <input type="text" value="31/05/2006" class="form-control floating datetimepicker">
-                                            </div>
-                                            <label class="focus-label">Complete Date</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group form-focus focused">
-                                            <input type="text" value="BE Computer Science" class="form-control floating">
-                                            <label class="focus-label">Degree</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group form-focus focused">
-                                            <input type="text" value="Grade A" class="form-control floating">
-                                            <label class="focus-label">Grade</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="add-more">
-                                    <a href="javascript:void(0);"><i class="fa fa-plus-circle"></i> Add More</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="submit-section">
-                        <button class="btn btn-primary submit-btn">Submit</button>
-                    </div>
-                </form>
+            <div class="modal-body" id="quatrinhCtac_content_modal">
+                @await Html.PartialAsync("_profileQuaTrinhCtacModel", Model.quaTrinhLamViecs)
             </div>
         </div>
     </div>
 </div>
 <!-- /Education Modal -->
-<!-- Experience Modal -->
-<div id="experience_info" class="modal custom-modal fade" role="dialog">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Experience Informations</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="form-scroll">
-                        <div class="card">
-                            <div class="card-body">
-                                <h3 class="card-title">Experience Informations <a href="javascript:void(0);" class="delete-icon"><i class="fa fa-trash-o"></i></a></h3>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group form-focus">
-                                            <input type="text" class="form-control floating" value="Digital Devlopment Inc">
-                                            <label class="focus-label">Company Name</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group form-focus">
-                                            <input type="text" class="form-control floating" value="United States">
-                                            <label class="focus-label">Location</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group form-focus">
-                                            <input type="text" class="form-control floating" value="Web Developer">
-                                            <label class="focus-label">Job Position</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group form-focus">
-                                            <div class="cal-icon">
-                                                <input type="text" class="form-control floating datetimepicker" value="01/07/2007">
-                                            </div>
-                                            <label class="focus-label">Period From</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group form-focus">
-                                            <div class="cal-icon">
-                                                <input type="text" class="form-control floating datetimepicker" value="08/06/2018">
-                                            </div>
-                                            <label class="focus-label">Period To</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-body">
-                                <h3 class="card-title">Experience Informations <a href="javascript:void(0);" class="delete-icon"><i class="fa fa-trash-o"></i></a></h3>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group form-focus">
-                                            <input type="text" class="form-control floating" value="Digital Devlopment Inc">
-                                            <label class="focus-label">Company Name</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group form-focus">
-                                            <input type="text" class="form-control floating" value="United States">
-                                            <label class="focus-label">Location</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group form-focus">
-                                            <input type="text" class="form-control floating" value="Web Developer">
-                                            <label class="focus-label">Job Position</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group form-focus">
-                                            <div class="cal-icon">
-                                                <input type="text" class="form-control floating datetimepicker" value="01/07/2007">
-                                            </div>
-                                            <label class="focus-label">Period From</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group form-focus">
-                                            <div class="cal-icon">
-                                                <input type="text" class="form-control floating datetimepicker" value="08/06/2018">
-                                            </div>
-                                            <label class="focus-label">Period To</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="add-more">
-                                    <a href="javascript:void(0);"><i class="fa fa-plus-circle"></i> Add More</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="submit-section">
-                        <button class="btn btn-primary submit-btn">Submit</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- /Experience Modal -->
 <!-- Template area -->
 <!-- header information -->
 <partial name="_pfCommonInfoTemplate" />

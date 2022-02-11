@@ -11,29 +11,40 @@ namespace HRMNS.Data.Entities
     [Table("HR_TINHTRANGHOSO")]
     public class HR_TINHTRANGHOSO : DomainEntity<int>, IDateTracking
     {
+        public HR_TINHTRANGHOSO()
+        {
+
+        }
+
+        public HR_TINHTRANGHOSO(int id,string maNV, bool soYeuLyLich, bool cmtnd, bool sohokhau, bool giayKhaiSinh, bool bangTotNghiep, bool xacNhanDanSu, bool anhThe)
+        {
+            Id = id;
+            MaNV = maNV;
+            SoYeuLyLich = soYeuLyLich;
+            CMTND = cmtnd;
+            SoHoKhau = sohokhau;
+            GiayKhaiSinh = giayKhaiSinh;
+            BangTotNghiep = bangTotNghiep;
+            XacNhanDanSu = xacNhanDanSu;
+            AnhThe = anhThe;
+        }
+
         [StringLength(50)]
         public string MaNV { get; set; }
 
-        [StringLength(50)]
-        public string SoYeuLyLich { get; set; }
+        public bool SoYeuLyLich { get; set; }
 
-        [StringLength(50)]
-        public string CMTND { get; set; }
+        public bool CMTND { get; set; }
 
-        [StringLength(50)]
-        public string SoHoKhau { get; set; }
+        public bool SoHoKhau { get; set; }
 
-        [StringLength(50)]
-        public string GiayKhaiSinh { get; set; }
+        public bool GiayKhaiSinh { get; set; }
 
-        [StringLength(50)]
-        public string BangTotNghiep { get; set; }
+        public bool BangTotNghiep { get; set; }
 
-        [StringLength(50)]
-        public string XacNhanDanSu { get; set; }
+        public bool XacNhanDanSu { get; set; }
 
-        [StringLength(50)]
-        public string AnhThe { get; set; }
+        public bool AnhThe { get; set; }
 
         [StringLength(50)]
         public string DateCreated { get; set; }

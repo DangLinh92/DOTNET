@@ -30,23 +30,14 @@
                 <td>@nv.SoDienThoai</td>
                 <td>@nv.NgayVao</td>
                 <td>
-                    <div class="dropdown action-label">
-                        <a href="#" class="btn btn-white btn-sm btn-rounded dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                            @if (nv.Status == "Active")
-                            {
-                                <i class="fa fa-dot-circle-o text-success"></i>
-                            }
-                            else
-                            {
-                                <i class="fa fa-dot-circle-o text-danger"></i>
-                            }
-                            @nv.Status
-                        </a>
-                        <div class="dropdown-menu" style="">
-                            <a class="dropdown-item" href="#"><i class="fa fa-dot-circle-o text-success"></i>Active</a>
-                            <a class="dropdown-item" href="#"><i class="fa fa-dot-circle-o text-danger"></i>InActive</a>
-                        </div>
-                    </div>
+                    @if (nv.Status == "Active")
+                    {
+                        <span class="badge bg-inverse-success">@nv.Status</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-inverse-dark">@nv.Status</span>
+                    }
                 </td>
                 <td class="text-right">
                     <div class="dropdown dropdown-action">

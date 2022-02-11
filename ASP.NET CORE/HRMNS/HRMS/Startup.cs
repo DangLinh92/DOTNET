@@ -91,9 +91,15 @@ namespace HRMS
             services.AddTransient<IBoPhanDetailService, BoPhanDetailService>();
             services.AddTransient<IBHXHService, BHXHService>();
             services.AddTransient<IPhepNamService, PhepNamService>();
+            services.AddTransient<ITinhTrangHoSoService, TinhTrangHoSoService>();
+            services.AddTransient<IHRLoaiHopDongService, HRLoaiHopDongService>();
+            services.AddTransient<IHopDongService, HopDongService>();
+            services.AddTransient<IQuatrinhLamViecService, QuatrinhLamViecService>();
 
-            services.AddMvc().AddNewtonsoftJson(options => {
+            services.AddMvc().AddNewtonsoftJson(options =>
+            {
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();// not change format json
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             });
         }
 
@@ -129,7 +135,7 @@ namespace HRMS
                 routes.MapControllerRoute(
                     "areaRoute",
                     "{area:exists}/{controller=Login}/{action=Index}/{id?}");
-              
+
             });
         }
     }

@@ -1,0 +1,80 @@
+﻿@model TinhTrangHoSoViewModel
+<form method="post" data-ajax="true" data-ajax-confirm="Are you sure you want update this?" data-ajax-url="/admin/nhanVien/UpdateTinhTrangHoSo" data-ajax-update="#id-profile-TinhTrangHoSo" data-ajax-mode='replace' data-ajax-success="UpdateOnsuccess">
+    <table class="table table-striped custom-table">
+        <thead>
+            <tr>
+                <th>Giấy tờ</th>
+                <th class="text-center">Hoàn Thành/Chưa Hoàn Thành</th>
+                <th>
+                    @Html.HiddenFor(m=>m.MaNV)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Sơ Yếu Lý Lịch</td>
+                <td class="text-center">
+                    @Html.CheckBoxFor(m => m.SoYeuLyLich)
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>CMTND/CCCD</td>
+                <td class="text-center">
+                    @Html.CheckBoxFor(m => m.CMTND)
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Sổ Hộ Khẩu</td>
+                <td class="text-center">
+                    @Html.CheckBoxFor(m => m.SoHoKhau)
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Giấy Khai Sinh</td>
+                <td class="text-center">
+                    @Html.CheckBoxFor(m => m.GiayKhaiSinh)
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Bằng Tốt Nghiệp</td>
+                <td class="text-center">
+                    @Html.CheckBoxFor(m => m.BangTotNghiep)
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Xác Nhận Dân Sự</td>
+                <td class="text-center">
+                    @Html.CheckBoxFor(m => m.XacNhanDanSu)
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Ảnh Thẻ</td>
+                <td class="text-center">
+                    @Html.CheckBoxFor(m => m.AnhThe)
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                </td>
+                <td> <button class="btn btn-primary">Save</button></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+</form>

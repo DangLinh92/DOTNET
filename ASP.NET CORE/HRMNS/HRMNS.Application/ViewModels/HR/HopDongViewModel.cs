@@ -7,7 +7,10 @@ namespace HRMNS.Application.ViewModels.HR
 {
     public class HopDongViewModel
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
+
+        [StringLength(50)]
+        public string MaHD { get; set; }
 
         [StringLength(50)]
         public string MaNV { get; set; }
@@ -49,6 +52,7 @@ namespace HRMNS.Application.ViewModels.HR
 
         [StringLength(10)]
         public string IsDelete { get; set; }
+        public int DayNumberNoti { get; set; }
 
         public LoaiHopDongViewModel HR_LOAIHOPDONG { get; set; }
 

@@ -11,18 +11,26 @@ namespace HRMNS.Data.Entities
     [Table("HR_QUATRINHLAMVIEC")]
     public class HR_QUATRINHLAMVIEC : DomainEntity<int>, IDateTracking
     {
+        public HR_QUATRINHLAMVIEC()
+        {
+
+        }
+
+        public HR_QUATRINHLAMVIEC(string maNV,string tieuDe,string note,string thoigianBatDau,string thoigianKetThuc)
+        {
+            MaNV = maNV;
+            TieuDe = tieuDe;
+            Note = note;
+            ThơiGianBatDau = thoigianBatDau;
+            ThoiGianKetThuc = thoigianKetThuc;
+        }
+
         [Required]
         [StringLength(50)]
         public string MaNV { get; set; }
 
         [StringLength(500)]
         public string TieuDe { get; set; }
-
-        [StringLength(50)]
-        public string ChuyenChucVu { get; set; }
-
-        [StringLength(50)]
-        public string ChuyenPhongBan { get; set; }
 
         public string Note { get; set; }
 

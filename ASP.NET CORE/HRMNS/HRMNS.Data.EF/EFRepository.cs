@@ -40,7 +40,7 @@ namespace HRMNS.Data.EF
                     items = items.Include(includeProperty);
                 }
             }
-            return items;
+            return items.AsNoTracking();
         }
 
         public IQueryable<T> FindAll(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includeProperties)
@@ -53,7 +53,7 @@ namespace HRMNS.Data.EF
                     items = items.Include(includeProperty);
                 }
             }
-            return items.Where(predicate);
+            return items.Where(predicate).AsNoTracking();
         }
 
         public T FindById(K id, params Expression<Func<T, object>>[] includeProperties)

@@ -1,0 +1,65 @@
+﻿@model List<QuaTrinhLamViecViewModel>
+    <!-- Datetimepicker CSS -->
+    <link rel="stylesheet" href="~/css/bootstrap-datetimepicker.min.css">
+
+    <form id="id-form-qtrinhCtac" method="post" data-ajax="true" data-ajax-confirm="Are you sure you want update this?" data-ajax-url="/admin/NhanVien/UpdateQuatrinhCtac" data-ajax-update="#quatrinhCtac_infor_modal" data-ajax-mode='replace' data-ajax-success="UpdateOnsuccess">
+        <div class="form-scroll">
+            @for (int i = 0; i < Model.Count(); i++)
+            {
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title">
+                            Thông tin quá trình công tác @Model[i].DateCustom
+                            <a href="#" data-id="@Model[i].Id" class="delete-icon btn-delete-qtrinhCtac"><i class="fa fa-trash-o"></i></a>
+                        </h3>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group form-focus focused">
+                                    @Html.EditorFor(m => m[i].TieuDe, new { htmlAttributes = new { @class = "form-control floating", @type = "text" } })
+                                    @Html.HiddenFor(m => m[i].Id)
+                                    @Html.HiddenFor(m => m[i].MaNV)
+                                    <label class="focus-label">Tiêu Đề</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-focus focused">
+                                    <div class="cal-icon">
+                                        @Html.EditorFor(m => m[i].ThơiGianBatDau, new { htmlAttributes = new { @class = "form-control floating datetimepicker", @type = "text" } })
+                                    </div>
+                                    <label class="focus-label">Thời gian bắt đầu</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-focus focused">
+                                    <div class="cal-icon">
+                                        @Html.EditorFor(m => m[i].ThoiGianKetThuc, new { htmlAttributes = new { @class = "form-control floating datetimepicker", @type = "text" } })
+                                    </div>
+                                    <label class="focus-label">Thời gian kết thúc</label>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group row form-focus focused" style="margin-left:0;margin-right:0">
+                                    @Html.TextAreaFor(m => m[i].Note, new { @class = "form-control floating", @rows = "4" })
+                                    <label class="focus-label">Nội Dung</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        @if (i == Model.Count() - 1)
+                        {
+                            <div class="add-more">
+                                <a href="#" class="btn-add-Area-qtCtac"><i class="fa fa-plus-circle"></i> Add More</a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="submit-section">
+            <button id="btn-submit-qtrCongTac" data-id="@Model[0].MaNV" class="btn btn-primary submit-btn">Save</button>
+        </div>
+    </form>
+    <script src="~/js/jquery-3.6.0.min.js"></script>
+    <!-- Datetimepicker JS -->
+    <script src="~/js/moment.min.js"></script>
+    <script src="~/js/bootstrap-datetimepicker.min.js"></script>

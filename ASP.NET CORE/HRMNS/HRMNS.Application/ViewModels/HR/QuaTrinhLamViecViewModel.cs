@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.Text;
 
 namespace HRMNS.Application.ViewModels.HR
@@ -15,12 +16,6 @@ namespace HRMNS.Application.ViewModels.HR
 
         [StringLength(500)]
         public string TieuDe { get; set; }
-
-        [StringLength(50)]
-        public string ChuyenChucVu { get; set; }
-
-        [StringLength(50)]
-        public string ChuyenPhongBan { get; set; }
 
         public string Note { get; set; }
 
@@ -41,6 +36,18 @@ namespace HRMNS.Application.ViewModels.HR
 
         [StringLength(50)]
         public string UserModified { get; set; }
+
+        public string DateCustom
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(ThơiGianBatDau))
+                {
+                    return "";
+                }
+                return DateTime.ParseExact(ThơiGianBatDau,"dd/MM/yyyy", CultureInfo.InvariantCulture).ToString("MM/yy");
+            }
+        }
 
         public NhanVienViewModel HR_NHANVIEN { get; set; }
     }

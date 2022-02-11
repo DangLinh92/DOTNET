@@ -441,7 +441,75 @@
             $('#id-KyLuatLD').val('');
             $('#txtKyLuatLD').val('');
         }
+
+        $('#btnClearContract').on('click', function (e) {
+            e.preventDefault();
+            resetContractInfo();
+        });
+
+        function resetContractInfo() {
+            $('#txtMaHD').val('');
+            $('#txtIdContract').val('');
+            $('#txtTenHD').val('');
+            $('#slLoaiHD').val(0);
+            $('#slLoaiHD').trigger('change');
+            $('#txtNgayKy').val('');
+            $('#txtNgayHieuLuc').val('');
+            $('#txtNgayHetHieuLuc').val('');
+        }
+
+        // delete area qua trinh ctac
+        $('body').on('click', '.btn-delete-qtrinhCtac', function (e) {
+            e.preventDefault();
+            var id = $(this).data('id');
+            $('#id-form-qtrinhCtac').attr("data-ajax-url", "/admin/NhanVien/UpdateViewQuatrinhCtac?id=" + id)
+            $('#id-form-qtrinhCtac').attr("data-ajax-update", "#quatrinhCtac_content_modal")
+            $('#id-form-qtrinhCtac').attr("data-ajax-success", "reloadJs")
+            $('#id-form-qtrinhCtac').attr("data-ajax-confirm","Are you sure you want delete this?")
+
+            $('#btn-submit-qtrCongTac').submit();
+        });
+
+        // add new area qua trinh ctac
+        $('body').on('click', '.btn-add-Area-qtCtac', function (e) {
+            e.preventDefault();
+            $('#id-form-qtrinhCtac').attr("data-ajax-url", "/admin/NhanVien/UpdateViewQuatrinhCtac?id=-9999")
+            $('#id-form-qtrinhCtac').attr("data-ajax-update", "#quatrinhCtac_content_modal")
+            $('#id-form-qtrinhCtac').attr("data-ajax-success", "reloadJs")
+            $('#id-form-qtrinhCtac').removeAttr("data-ajax-confirm")
+
+            $('#btn-submit-qtrCongTac').submit();
+        });
+
+        // save data qua trinh cong tac
+        $('body').on('click', '#btn-submit-qtrCongTac', function (e) {
+            e.preventDefault();
+            var id = $(this).data('id');
+            $('#id-form-qtrinhCtac').attr("data-ajax-url", "/admin/NhanVien/UpdateQuatrinhCtac?id=" + id)
+            $('#id-form-qtrinhCtac').attr("data-ajax-update", "#quatrinhCongTacTab")
+            $('#id-form-qtrinhCtac').attr("data-ajax-success", "ReloadPageOnsuccess")
+            $('#id-form-qtrinhCtac').attr("data-ajax-confirm", "Are you sure you want update this?")
+            $('#btn-submit-qtrCongTac').submit();
+        });
     }
 
-
+    this.InitLoaiHopDong = function () {
+        $.ajax({
+            url: '/Admin/HRLoaiHD/GetAll',
+            type: 'GET',
+            dataType: 'json',
+            async: false,
+            success: function (response) {
+                var render = "<option value='0'>--Chọn Loại Hợp Đồng--</option>";
+                $.each(response, function (i, item) {
+                    render += "<option value='" + item.Id + "'>" + item.TenLoaiHD + "</option >"
+                });
+                $('#slLoaiHD').html(render);
+            },
+            error: function (status) {
+                console.log(status);
+                hrms.notify('Cannot loading contract type data', 'error', 'alert', function () { });
+            }
+        });
+    }
 }
