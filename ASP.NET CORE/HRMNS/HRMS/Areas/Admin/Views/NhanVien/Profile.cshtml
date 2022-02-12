@@ -30,9 +30,20 @@
             });
         }
 
-        var reloadJs = function () {
-            var dateTimepickerId = $('#id-form-qtrinhCtac .datetimepicker')[0].id;
-            $('#' + dateTimepickerId).load('#' + dateTimepickerId);
+        var reloadDatePicker = function () {
+
+            // Date Time Picker
+            if ($('.datetimepicker').length > 0) {
+                $('.datetimepicker').datetimepicker({
+                    format: 'DD/MM/YYYY',
+                    icons: {
+                        up: "fa fa-angle-up",
+                        down: "fa fa-angle-down",
+                        next: 'fa fa-angle-right',
+                        previous: 'fa fa-angle-left'
+                    }
+                });
+            }
         }
 
         // reload select js after submit
@@ -246,4 +257,4 @@
 <!-- Template area -->
 <!-- header information -->
 @*<partial name="_pfCommonInfoTemplate" />
-<partial name="_pfPhepNamTemplate" />*@
+    <partial name="_pfPhepNamTemplate" />*@

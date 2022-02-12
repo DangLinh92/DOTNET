@@ -39,14 +39,7 @@ namespace HRMNS.Application.ViewModels.HR
 
         public string DateCustom
         {
-            get
-            {
-                if (string.IsNullOrEmpty(ThơiGianBatDau))
-                {
-                    return "";
-                }
-                return DateTime.ParseExact(ThơiGianBatDau,"dd/MM/yyyy", CultureInfo.InvariantCulture).ToString("MM/yy");
-            }
+            get;set;
         }
 
         public NhanVienViewModel HR_NHANVIEN { get; set; }

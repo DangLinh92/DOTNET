@@ -15,6 +15,7 @@ using OfficeOpenXml;
 using OfficeOpenXml.Table;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http.Headers;
@@ -344,6 +345,17 @@ namespace HRMS.Areas.Admin.Controllers
                             MaNV = profileModel.MaNhanVien
                         }
                     };
+                }
+                else
+                {
+                    foreach (var item in profileModel.quaTrinhLamViecs)
+                    {
+                        if (string.IsNullOrEmpty(item.ThơiGianBatDau))
+                        {
+                            item.DateCustom = "";
+                        }
+                        item.DateCustom = DateTime.ParseExact(item.ThơiGianBatDau, "dd/MM/yyyy", CultureInfo.InvariantCulture).ToString("yyyy");
+                    }
                 }
 
                 profileModel.phepNams = nhanVien.HR_PHEP_NAM.OrderByDescending(x => x.Year).Take(2).ToList();
@@ -700,11 +712,25 @@ namespace HRMS.Areas.Admin.Controllers
 
             foreach (var item in lstAdd)
             {
+                item.Id = 0;
                 item.MaNV = id;
                 _quatrinhLamViecService.Add(item);
             }
 
             _quatrinhLamViecService.Save();
+
+            if (lstQtrinhCtac.Count() > 0)
+            {
+                foreach (var item in lstQtrinhCtac)
+                {
+                    if (string.IsNullOrEmpty(item.ThơiGianBatDau))
+                    {
+                        item.DateCustom = "";
+                    }
+                    item.DateCustom = DateTime.ParseExact(item.ThơiGianBatDau, "dd/MM/yyyy", CultureInfo.InvariantCulture).ToString("yyyy");
+                }
+            }
+
             return PartialView("_profileQuaTrinhCtacPartial", lstQtrinhCtac);
         }
 
@@ -846,6 +872,17 @@ namespace HRMS.Areas.Admin.Controllers
                             MaNV = profileModel.MaNhanVien
                         }
                     };
+                }
+                else
+                {
+                    foreach (var item in profileModel.quaTrinhLamViecs)
+                    {
+                        if (string.IsNullOrEmpty(item.ThơiGianBatDau))
+                        {
+                            item.DateCustom = "";
+                        }
+                        item.DateCustom = DateTime.ParseExact(item.ThơiGianBatDau, "dd/MM/yyyy", CultureInfo.InvariantCulture).ToString("yyyy");
+                    }
                 }
 
                 profileModel.phepNams = nhanVien.HR_PHEP_NAM.OrderByDescending(x => x.Year).Take(2).ToList();

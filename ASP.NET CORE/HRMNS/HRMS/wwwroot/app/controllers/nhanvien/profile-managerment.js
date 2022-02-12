@@ -464,11 +464,10 @@
             var id = $(this).data('id');
             $('#id-form-qtrinhCtac').attr("data-ajax-url", "/admin/NhanVien/UpdateViewQuatrinhCtac?id=" + id)
             $('#id-form-qtrinhCtac').attr("data-ajax-update", "#quatrinhCtac_content_modal")
-            $('#id-form-qtrinhCtac').attr("data-ajax-success", "reloadJs")
+            $('#id-form-qtrinhCtac').attr("data-ajax-success", "reloadDatePicker")
             $('#id-form-qtrinhCtac').attr("data-ajax-confirm","Are you sure you want delete this?")
 
-            //$('#btn-submit-qtrCongTac').submit();
-            $('#btnSubmitQtct').submit();
+            $('#btn-submit-qtrCongTac').submit();
         });
 
         // add new area qua trinh ctac
@@ -476,11 +475,10 @@
             e.preventDefault();
             $('#id-form-qtrinhCtac').attr("data-ajax-url", "/admin/NhanVien/UpdateViewQuatrinhCtac?id=-9999")
             $('#id-form-qtrinhCtac').attr("data-ajax-update", "#quatrinhCtac_content_modal")
-            $('#id-form-qtrinhCtac').attr("data-ajax-success", "reloadJs")
+            $('#id-form-qtrinhCtac').attr("data-ajax-success", "reloadDatePicker")
             $('#id-form-qtrinhCtac').removeAttr("data-ajax-confirm")
 
-            //$('#btn-submit-qtrCongTac').submit();
-            $('#btnSubmitQtct').submit();
+            $('#btn-submit-qtrCongTac').submit();
         });
 
         // save data qua trinh cong tac
@@ -490,8 +488,8 @@
             $('#id-form-qtrinhCtac').attr("data-ajax-url", "/admin/NhanVien/UpdateQuatrinhCtac?id=" + id)
             $('#id-form-qtrinhCtac').attr("data-ajax-update", "#quatrinhCongTacTab")
             $('#id-form-qtrinhCtac').attr("data-ajax-success", "ReloadPageOnsuccess")
-            $('#id-form-qtrinhCtac').attr("data-ajax-confirm", "Are you sure you want update this aaa?")
-            $('#btnSubmitQtct').submit();
+            $('#id-form-qtrinhCtac').attr("data-ajax-confirm", "Are you sure you want update this?")
+            $(this).submit();
         });
     }
 
