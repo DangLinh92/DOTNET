@@ -104,5 +104,7 @@ namespace HRMS.Areas.Admin.Models
         public List<PhepNamViewModel> phepNams { get; set; }
 
         public List<HopDongViewModel> hopDongs { get; set; }
+
+        public List<KeKhaiBaoHiemViewModel> kekhaibaohiems { get; set; }
     }
 }

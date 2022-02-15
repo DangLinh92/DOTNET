@@ -47,7 +47,8 @@ namespace HRMNS.Application.Implementation
 
         public List<HopDongViewModel> GetAll()
         {
-            throw new NotImplementedException();
+            var er = _hopDongRepository.FindAll().OrderByDescending(o => o.DateModified).ToList();
+            return (List<HopDongViewModel>)_mapper.Map(er, typeof(List<HR_HOPDONG>), typeof(List<HopDongViewModel>));
         }
 
         public HopDongViewModel GetById(int id)

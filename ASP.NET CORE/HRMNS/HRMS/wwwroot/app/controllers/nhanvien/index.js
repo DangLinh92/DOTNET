@@ -63,6 +63,51 @@
         });
     });
 
+    // Click Edit Code employee
+    $('body').on('click', '.updateCode_employee', function (e) {
+        e.preventDefault();
+
+        var that = $(this).data('id');
+        $('#txtCodeOld').val(that);
+        $('#txtCodeNew').val('');
+
+        $('#updateCode_employee').modal('show');
+    });
+
+    // Click save update ma nhan vien
+    $('#btnSaveCodeEmployee').on('click', function (e) {
+
+        if ($('#frmUpdateCodeEmployee').valid()) {
+
+            e.preventDefault();
+
+            var _oldId = $('#txtCodeOld').val();
+            var _newId = $('#txtCodeNew').val();
+           
+            $.ajax({
+                url: '/Admin/NhanVien/UpdateMaNV',
+                type: 'POST',
+                data: {
+                    Id: _oldId,
+                    newId: _newId
+                },
+                success: function (response) {
+                    $('#updateCode_employee').modal('hide');
+                    hrms.notify("Update code success!", 'Success', 'alert', function () {
+
+                        // update grid data ,update datatable jquery
+                        ReloadData();
+                    });
+                },
+                error: function (status) {
+                    console.log(status.responseText);
+                    hrms.notify('error:' + status.responseText, 'error', 'alert', function () { });
+                }
+            });
+        }
+    });
+
+
     // Click save popup
     $('#btnSave').on('click', function (e) {
 

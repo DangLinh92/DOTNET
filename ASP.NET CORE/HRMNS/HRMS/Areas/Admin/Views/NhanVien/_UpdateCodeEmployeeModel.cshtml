@@ -1,0 +1,33 @@
+﻿<div id="updateCode_employee" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Code Employee</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="frmUpdateCodeEmployee">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Code(Old) <span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" name="codeOld" id="txtCodeOld" required readonly>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Code(New) <span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" name="codeNew" id="txtCodeNew" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn" id="btnSaveCodeEmployee">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

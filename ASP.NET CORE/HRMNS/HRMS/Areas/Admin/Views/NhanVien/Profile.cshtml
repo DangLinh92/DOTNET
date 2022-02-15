@@ -114,6 +114,7 @@
                     <li class="nav-item"><a href="#emp_profile" data-toggle="tab" class="nav-link active">Sơ Yếu Lý Lịch</a></li>
                     <li class="nav-item"><a href="#emp_ttHoSo" data-toggle="tab" class="nav-link">Tình Trạng Hồ Sơ</a></li>
                     <li class="nav-item"><a href="#quatrinhCongTacTab" data-toggle="tab" class="nav-link">Quá Trình Làm Việc</a></li>
+                    <li class="nav-item"><a href="#kekhaibh-info-Tab" data-toggle="tab" class="nav-link">Bảo Hiểm</a></li>
                     <li class="nav-item"><a href="#contract-info-Tab" id="link-hopDong_tab" data-toggle="tab" class="nav-link">Hợp Đồng <small class="text-danger">(Admin Only)</small></a></li>
                 </ul>
             </div>
@@ -200,6 +201,16 @@
             @await Html.PartialAsync("_profileQuaTrinhCtacPartial", Model.quaTrinhLamViecs)
         </div>
         <!-- /Projects Tab -->
+
+        <!-- Ke khai bao hiem -->
+        <div class="tab-pane fade" id="kekhaibh-info-Tab">
+            <div class="card">
+                <div class="card-body" id="id-profile-kekhaibh-info">
+                    @await Html.PartialAsync("_profileBHXHPartial", Model.kekhaibaohiems)
+                </div>
+            </div>
+        </div>
+
         <!-- Bank Statutory Tab -->
         <div class="tab-pane fade" id="contract-info-Tab">
             <div class="card">
