@@ -11,7 +11,7 @@ namespace HRMNS.Application.ViewModels.HR
 
         [StringLength(250)]
         public string TenChungChi { get; set; }
-        public int LoaiChungChi { get; set; }
+        public int? LoaiChungChi { get; set; }
 
         public LoaiChungChiViewModel LOAICHUNGCHI1 { get; set; }
         public string DateCreated { get; set; }

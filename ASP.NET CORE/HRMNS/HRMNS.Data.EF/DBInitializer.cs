@@ -285,52 +285,6 @@ namespace HRMNS.Data.EF
                 });
             }
 
-            if (_context.HrNhanVien.Count() < 0)
-            {
-                _context.HrNhanVien.AddRange(new List<HR_NHANVIEN>() {
-                    new HR_NHANVIEN()
-                    {
-                        Id="H2105001",TenNV="Lê Văn Đặng",MaBoPhan="PI",NgaySinh="1992-05-04",Email="danglevan.9919@gmail.com",SoDienThoai="0974628108",NgayVao="2021-05-01",Status=Status.Active.ToString(),Image="/img/profiles/avatar-01.jpg"
-                    },
-                    new HR_NHANVIEN()
-                    {
-                        Id="H2105002",TenNV="Lê Văn Đặng2",MaBoPhan="PI",NgaySinh="1992-05-04",Email="danglevan.9919@gmail.com",SoDienThoai="0974628108",NgayVao="2021-05-01",Status=Status.Active.ToString(),Image="/img/profiles/avatar-01.jpg"
-                    },
-                    new HR_NHANVIEN()
-                    {
-                        Id="H2105003",TenNV="Lê Văn Đặng3",MaBoPhan="PI",NgaySinh="1992-05-04",Email="danglevan.9919@gmail.com",SoDienThoai="0974628108",NgayVao="2021-05-01",Status=Status.Active.ToString(),Image="/img/profiles/avatar-01.jpg"
-                    },
-                    new HR_NHANVIEN()
-                    {
-                        Id="H2105004",TenNV="Lê Văn Đặng4",MaBoPhan="PI",NgaySinh="1992-05-04",Email="danglevan.9919@gmail.com",SoDienThoai="0974628108",NgayVao="2021-05-01",Status=Status.Active.ToString(),Image="/img/profiles/avatar-01.jpg"
-                    },
-                    new HR_NHANVIEN()
-                    {
-                        Id="H2105005",TenNV="Lê Văn Đặng5",MaBoPhan="PI",NgaySinh="1992-05-04",Email="danglevan.9919@gmail.com",SoDienThoai="0974628108",NgayVao="2021-05-01",Status=Status.Active.ToString(),Image="/img/profiles/avatar-01.jpg"
-                    },
-                    new HR_NHANVIEN()
-                    {
-                        Id="H2105006",TenNV="Lê Văn Đặng6",MaBoPhan="PI",NgaySinh="1992-05-04",Email="danglevan.9919@gmail.com",SoDienThoai="0974628108",NgayVao="2021-05-01",Status=Status.Active.ToString(),Image="/img/profiles/avatar-01.jpg"
-                    },
-                    new HR_NHANVIEN()
-                    {
-                        Id="H2105007",TenNV="Lê Văn Đặng7",MaBoPhan="PI",NgaySinh="1992-05-04",Email="danglevan.9919@gmail.com",SoDienThoai="0974628108",NgayVao="2021-05-01",Status=Status.Active.ToString(),Image="/img/profiles/avatar-01.jpg"
-                    },
-                    new HR_NHANVIEN()
-                    {
-                        Id="H2105008",TenNV="Lê Văn Đặng8",MaBoPhan="PI",NgaySinh="1992-05-04",Email="danglevan.9919@gmail.com",SoDienThoai="0974628108",NgayVao="2021-05-01",Status=Status.Active.ToString(),Image="/img/profiles/avatar-01.jpg"
-                    },
-                    new HR_NHANVIEN()
-                    {
-                        Id="H2105009",TenNV="Lê Văn Đặng9",MaBoPhan="PI",NgaySinh="1992-05-04",Email="danglevan.9919@gmail.com",SoDienThoai="0974628108",NgayVao="2021-05-01",Status=Status.Active.ToString(),Image="/img/profiles/avatar-01.jpg"
-                    },
-                    new HR_NHANVIEN()
-                    {
-                        Id="H2105010",TenNV="Lê Văn Đặng10",MaBoPhan="PI",NgaySinh="1992-05-04",Email="danglevan.9919@gmail.com",SoDienThoai="0974628108",NgayVao="2021-05-01",Status=Status.InActive.ToString(),Image="/img/profiles/avatar-01.jpg"
-                    }
-                });
-            }
-
             if (_context.HrChucDanh.Count() == 0)
             {
                 _context.HrChucDanh.AddRange(new List<HR_CHUCDANH>() {
@@ -456,6 +410,38 @@ namespace HRMNS.Data.EF
                     new HR_LOAIHOPDONG(){ TenLoaiHD = "Hợp Đồng 1 năm lần 1" },
                      new HR_LOAIHOPDONG(){ TenLoaiHD = "Hợp Đồng 1 năm lần 2" },
                       new HR_LOAIHOPDONG(){ TenLoaiHD = "Hợp Đồng Không Thời Hạn" },
+                });
+            }
+
+            if (_context.HrCheDoBH.Count() == 0)
+            {
+                _context.HrCheDoBH.AddRange(new List<HR_CHEDOBH>()
+                {
+                    new HR_CHEDOBH()
+                    {
+                        Id = "HT",
+                        TenCheDo = "Hưu trí-tử tuất"
+                    },
+                    new HR_CHEDOBH()
+                    {
+                        Id = "TS",
+                        TenCheDo = "Ốm đau-thai sản"
+                    },
+                     new HR_CHEDOBH()
+                    {
+                        Id = "TNLD-BNN",
+                        TenCheDo = "Tai nạn lao động, bệnh nghề nghiệp"
+                    },
+                      new HR_CHEDOBH()
+                    {
+                        Id = "BHTN",
+                        TenCheDo = "BHTN"
+                    },
+                      new HR_CHEDOBH()
+                    {
+                        Id = "BHYT",
+                        TenCheDo = "BHYT"
+                    },
                 });
             }
 

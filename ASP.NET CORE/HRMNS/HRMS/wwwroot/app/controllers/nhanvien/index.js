@@ -280,6 +280,7 @@
     });
     // Export excel end
 
+    // Clear form data add new employee
     function resetFormData() {
         $('#txtTenNV').val('');
         $('#txtGioiTinh').val('Male');
@@ -289,6 +290,8 @@
         $('#txtNgayVao').val('');
         $('#txtBoPhan').val('');
         $('#txtChucDanh').val('');
+        var validator = $("#frmAddEditEmployee").validate();
+        validator.resetForm();
     }
 
     function initSelectOptionBoPhan() {

@@ -32,6 +32,9 @@ namespace HRMNS.Application.AutoMapper
 
             CreateMap<QuaTrinhLamViecViewModel, HR_QUATRINHLAMVIEC>()
              .ConstructUsing(c => new HR_QUATRINHLAMVIEC(c.MaNV, c.TieuDe, c.Note, c.ThơiGianBatDau, c.ThoiGianKetThuc));
+
+            CreateMap<KeKhaiBaoHiemViewModel, HR_KEKHAIBAOHIEM>()
+            .ConstructUsing(c => new HR_KEKHAIBAOHIEM(c.MaNV, c.CheDoBH, c.NgayBatDau, c.NgayKetThuc, c.NgayThanhToan, c.SoTienThanhToan));
         }
     }
 }

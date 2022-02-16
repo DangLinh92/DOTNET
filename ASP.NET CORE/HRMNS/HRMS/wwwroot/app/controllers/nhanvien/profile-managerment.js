@@ -465,7 +465,7 @@
             $('#id-form-qtrinhCtac').attr("data-ajax-url", "/admin/NhanVien/UpdateViewQuatrinhCtac?id=" + id)
             $('#id-form-qtrinhCtac').attr("data-ajax-update", "#quatrinhCtac_content_modal")
             $('#id-form-qtrinhCtac').attr("data-ajax-success", "reloadDatePicker")
-            $('#id-form-qtrinhCtac').attr("data-ajax-confirm","Are you sure you want delete this?")
+            $('#id-form-qtrinhCtac').attr("data-ajax-confirm", "Are you sure you want delete this?")
 
             $('#btn-submit-qtrCongTac').submit();
         });
@@ -491,6 +491,137 @@
             $('#id-form-qtrinhCtac').attr("data-ajax-confirm", "Are you sure you want update this?")
             $(this).submit();
         });
+
+        // show form Chi Tra BHXH
+        $('#btn-addKeKhaiBHInfo').on('click', function (e) {
+            e.preventDefault();
+
+            $('#cboCheDoBH').val('');
+            $('#txtNgayBatDau').val('');
+            $('#txtNgayKetThuctt').val('');
+            $('#txtNgayThanhToan').val('');
+            $('#txtSoTienThanhToan').val('');
+            $('#chiTraId').val('0');
+
+            var validator = $("#ttchiTraBH_Model").validate();
+            validator.resetForm();
+            $('#ttchiTraBH_Model').modal('show');
+
+            // var that = $('#btn-UpdateProfileBasic').data('id');// ma nhan vien
+        });
+
+        // Click Edit Chi tra BH
+        $('body').on('click', '.edit-kkbh', function (e) {
+            e.preventDefault();
+
+            var that = $(this).data('id');
+            var validator = $("#ttchiTraBH_Model").validate();
+            validator.resetForm();
+            $('#ttchiTraBH_Model').modal('show');
+
+            $.ajax({
+                type: "GET",
+                url: "/Admin/NhanVien/GetKeKhaiBH",
+                dataType: "json",
+                data: {
+                    Id: that
+                },
+                success: function (response) {
+                    if (response) {
+                        $('#cboCheDoBH').val(response.CheDoBH);
+                        $('#cboCheDoBH').trigger('change');
+                        $('#txtNgayBatDau').val(response.NgayBatDau);
+                        $('#txtNgayKetThuctt').val(response.NgayKetThuc);
+                        $('#txtNgayThanhToan').val(response.NgayThanhToan);
+                        $('#txtSoTienThanhToan').val(response.SoTienThanhToan);
+                        $('#chiTraId').val(that);
+                    }
+                    else {
+                        hrms.notify('error: Not found object!', 'error', 'alert', function () { });
+                    }
+                },
+                error: function (status) {
+                    hrms.notify('error: ' + status.responseText, 'error', 'alert', function () { });
+                }
+            });
+        });
+
+        // show delete form chi tra bh
+        $('body').on('click', '.delete-kkbh', function (e) {
+            e.preventDefault();
+            var that = $(this).data('id');
+            $('#txtIdChiTraBH').val(that);
+            $('#delete_chitraBH').modal('show');
+        });
+
+        // Save chi tra BHXH
+        $('#btnSaveTTchiTraBH').on('click', function (e) {
+            if ($('#frm_ttchiTraBH_Model').valid()) {
+
+                e.preventDefault();
+
+                var id = $('#chiTraId').val();
+                var cheDo = $('#cboCheDoBH').val();
+                var ngaybatdau = $('#txtNgayBatDau').val();
+                var ngayketthuc = $('#txtNgayKetThuctt').val();
+                var ngaythanhtoan = $('#txtNgayThanhToan').val();
+                var sotienthanhtoan = $('#txtSoTienThanhToan').val();
+                var manv = $('#btn-UpdateProfileBasic').data('id');// ma nhan vien
+
+                if (isNaN(sotienthanhtoan)) {
+                    sotienthanhtoan = 0;
+                }
+
+                $.ajax({
+                    url: '/Admin/NhanVien/UpdateKeKhaiBH',
+                    type: 'POST',
+                    data: {
+                        Id: id,
+                        MaNV: manv,
+                        CheDoBH: cheDo,
+                        NgayBatDau: ngaybatdau,
+                        NgayKetThuc: ngayketthuc,
+                        NgayThanhToan: ngaythanhtoan,
+                        SoTienThanhToan: sotienthanhtoan
+                    },
+                    success: function (response) {
+
+                        $('#ttchiTraBH_Model').modal('hide');
+                        hrms.notify("Update success!", 'Success', 'alert', function () {
+                            location.reload();
+                        });
+                    },
+                    error: function (status) {
+                        console.log(status.responseText);
+                        hrms.notify('error:' + status.responseText, 'error', 'alert', function () { });
+                    }
+                });
+            }
+        });
+
+        // Xoa chi tra BH
+        $('#btnDeleteChiTraBH').on('click', function (e) {
+            e.preventDefault();
+
+            var id = $('#txtIdChiTraBH').val();
+            $.ajax({
+                url: '/Admin/NhanVien/DeleteKeKhaiBH',
+                type: 'POST',
+                data: {
+                    Id: id,
+                },
+                success: function (response) {
+                    $('#delete_chitraBH').modal('hide');
+                    hrms.notify("Delete success!", 'Success', 'alert', function () {
+                        location.reload();
+                    });
+                },
+                error: function (status) {
+                    console.log(status.responseText);
+                    hrms.notify('error:' + status.responseText, 'error', 'alert', function () { });
+                }
+            });
+        });
     }
 
     this.InitLoaiHopDong = function () {
@@ -509,6 +640,27 @@
             error: function (status) {
                 console.log(status);
                 hrms.notify('Cannot loading contract type data', 'error', 'alert', function () { });
+            }
+        });
+    }
+
+    // Che Do Bao Hiem
+    this.InitCheDoBH = function () {
+        $.ajax({
+            url: '/Admin/NhanVien/GetCheDoBH',
+            type: 'GET',
+            dataType: 'json',
+            async: false,
+            success: function (response) {
+                var render = "<option value=''>--Chọn Chế Độ Bảo Hiểm--</option>";
+                $.each(response, function (i, item) {
+                    render += "<option value='" + item.Id + "'>" + item.TenCheDo + "</option >"
+                });
+                $('#cboCheDoBH').html(render);
+            },
+            error: function (status) {
+                console.log(status);
+                hrms.notify('Cannot loading data', 'error', 'alert', function () { });
             }
         });
     }

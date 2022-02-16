@@ -155,7 +155,7 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("DateModified")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("LoaiChungChi")
+                    b.Property<int?>("LoaiChungChi")
                         .HasColumnType("int");
 
                     b.Property<string>("TenChungChi")
@@ -1045,70 +1045,80 @@ namespace HRMNS.Data.EF.Migrations
                     b.HasOne("HRMNS.Data.Entities.LOAICHUNGCHI", "LOAICHUNGCHI1")
                         .WithMany("CHUNG_CHI")
                         .HasForeignKey("LoaiChungChi")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("HRMNS.Data.Entities.HR_BHXH", b =>
                 {
                     b.HasOne("HRMNS.Data.Entities.HR_NHANVIEN", "HR_NHANVIEN")
                         .WithMany("HR_BHXH")
-                        .HasForeignKey("MaNV");
+                        .HasForeignKey("MaNV")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("HRMNS.Data.Entities.HR_CHUNGCHI_NHANVIEN", b =>
                 {
                     b.HasOne("HRMNS.Data.Entities.CHUNG_CHI", "CHUNG_CHI")
                         .WithMany("HR_CHUNGCHI_NHANVIEN")
-                        .HasForeignKey("MaChungChi");
+                        .HasForeignKey("MaChungChi")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("HRMNS.Data.Entities.HR_NHANVIEN", "HR_NHANVIEN")
                         .WithMany("HR_CHUNGCHI_NHANVIEN")
-                        .HasForeignKey("MaNV");
+                        .HasForeignKey("MaNV")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("HRMNS.Data.Entities.HR_HOPDONG", b =>
                 {
                     b.HasOne("HRMNS.Data.Entities.HR_LOAIHOPDONG", "HR_LOAIHOPDONG")
                         .WithMany("HR_HOPDONG")
-                        .HasForeignKey("LoaiHD");
+                        .HasForeignKey("LoaiHD")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("HRMNS.Data.Entities.HR_NHANVIEN", "HR_NHANVIEN")
                         .WithMany("HR_HOPDONG")
-                        .HasForeignKey("MaNV");
+                        .HasForeignKey("MaNV")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("HRMNS.Data.Entities.HR_KEKHAIBAOHIEM", b =>
                 {
                     b.HasOne("HRMNS.Data.Entities.HR_CHEDOBH", "HR_CHEDOBH")
                         .WithMany("HR_KEKHAIBAOHIEM")
-                        .HasForeignKey("CheDoBH");
+                        .HasForeignKey("CheDoBH")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("HRMNS.Data.Entities.HR_NHANVIEN", "HR_NHANVIEN")
                         .WithMany("HR_KEKHAIBAOHIEM")
-                        .HasForeignKey("MaNV");
+                        .HasForeignKey("MaNV")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("HRMNS.Data.Entities.HR_NHANVIEN", b =>
                 {
                     b.HasOne("HRMNS.Data.Entities.BOPHAN", "BOPHAN")
                         .WithMany("HR_NHANVIEN")
-                        .HasForeignKey("MaBoPhan");
+                        .HasForeignKey("MaBoPhan")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("HRMNS.Data.Entities.HR_BO_PHAN_DETAIL", "HR_BO_PHAN_DETAIL")
                         .WithMany("HR_NHANVIEN")
-                        .HasForeignKey("MaBoPhanChiTiet");
+                        .HasForeignKey("MaBoPhanChiTiet")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("HRMNS.Data.Entities.HR_CHUCDANH", "HR_CHUCDANH")
                         .WithMany("HR_NHANVIEN")
-                        .HasForeignKey("MaChucDanh");
+                        .HasForeignKey("MaChucDanh")
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("HRMNS.Data.Entities.HR_PHEP_NAM", b =>
                 {
                     b.HasOne("HRMNS.Data.Entities.HR_NHANVIEN", "HR_NHANVIEN")
                         .WithMany("HR_PHEP_NAM")
-                        .HasForeignKey("MaNhanVien");
+                        .HasForeignKey("MaNhanVien")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("HRMNS.Data.Entities.HR_QUATRINHLAMVIEC", b =>
@@ -1124,7 +1134,8 @@ namespace HRMNS.Data.EF.Migrations
                 {
                     b.HasOne("HRMNS.Data.Entities.HR_NHANVIEN", "HR_NHANVIEN")
                         .WithMany("HR_TINHTRANGHOSO")
-                        .HasForeignKey("MaNV");
+                        .HasForeignKey("MaNV")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("HRMNS.Data.Entities.PERMISSION", b =>

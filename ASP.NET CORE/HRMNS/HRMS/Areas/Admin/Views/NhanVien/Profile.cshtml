@@ -11,9 +11,16 @@
     <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
     <script src="~/app/controllers/nhanvien/profile-managerment.js"></script>
     <script>
+        $(document).ready(function () {
+            $('#keKhaiBHDataTable').DataTable();
+        });
+
         var profileMng = new ProfileMng();
         profileMng.initialize();
         // profileMng.InitLoaiHopDong();
+
+        profileMng.InitCheDoBH();
+
         // Close popup when update data oke
         var UpdateOnsuccess = function () {
             $('#profile_info').modal('hide');
@@ -201,7 +208,6 @@
             @await Html.PartialAsync("_profileQuaTrinhCtacPartial", Model.quaTrinhLamViecs)
         </div>
         <!-- /Projects Tab -->
-
         <!-- Ke khai bao hiem -->
         <div class="tab-pane fade" id="kekhaibh-info-Tab">
             <div class="card">
@@ -265,6 +271,10 @@
     </div>
 </div>
 <!-- /Education Modal -->
+<!-- Chi Tra BHXH Modal -->
+<partial name="_profileBHXHPModel" />
+<partial name="_DeleteChiTraBH"/>
+<!-- Chi Tra BHXH Modal -->
 <!-- Template area -->
 <!-- header information -->
 @*<partial name="_pfCommonInfoTemplate" />

@@ -12,6 +12,20 @@ namespace HRMNS.Data.Entities
 
     public class HR_KEKHAIBAOHIEM : DomainEntity<int>, IDateTracking
     {
+        public HR_KEKHAIBAOHIEM()
+        {
+
+        }
+
+        public HR_KEKHAIBAOHIEM(string maNV,string chedo,string ngaybatdau,string ngayketthuc,string ngaythanhtoan,double? sotien)
+        {
+            MaNV = maNV;
+            CheDoBH = chedo;
+            NgayBatDau = ngaybatdau;
+            NgayKetThuc = ngayketthuc;
+            NgayThanhToan = ngaythanhtoan;
+            SoTienThanhToan = sotien;
+        }
 
         [StringLength(50)]
         public string MaNV { get; set; }

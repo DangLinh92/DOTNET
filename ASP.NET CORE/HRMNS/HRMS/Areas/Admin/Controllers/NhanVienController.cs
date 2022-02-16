@@ -34,11 +34,23 @@ namespace HRMS.Areas.Admin.Controllers
         IHRLoaiHopDongService _hrLoaiHDService;
         IQuatrinhLamViecService _quatrinhLamViecService;
         IPhepNamService _phepNamService;
+        IKeKhaiBaoHiemService _keKhaiBHService;
+        ICheDoBHService _cheDoBHService;
 
         private readonly IWebHostEnvironment _hostingEnvironment;
 
-        public NhanVienController(INhanVienService nhanVienService, IBoPhanService boPhanService, IBoPhanDetailService boPhanDetailService, IBHXHService bHXHService,
-            ITinhTrangHoSoService tinhTrangHoSoService, IHopDongService hopDongService, IHRLoaiHopDongService hrLoaiHDService, IQuatrinhLamViecService qtrinhLvService, IPhepNamService phepNamService, IWebHostEnvironment hostingEnvironment)
+        public NhanVienController(INhanVienService nhanVienService,
+            IBoPhanService boPhanService,
+            IBoPhanDetailService boPhanDetailService,
+            IBHXHService bHXHService,
+            ITinhTrangHoSoService tinhTrangHoSoService,
+            IHopDongService hopDongService,
+            IHRLoaiHopDongService hrLoaiHDService,
+            IQuatrinhLamViecService qtrinhLvService,
+            IPhepNamService phepNamService,
+            IKeKhaiBaoHiemService keKhaiBaoHiemService,
+            ICheDoBHService cheDoBHService,
+            IWebHostEnvironment hostingEnvironment)
         {
             _nhanvienService = nhanVienService;
             _boPhanService = boPhanService;
@@ -50,6 +62,8 @@ namespace HRMS.Areas.Admin.Controllers
             _hrLoaiHDService = hrLoaiHDService;
             _quatrinhLamViecService = qtrinhLvService;
             _phepNamService = phepNamService;
+            _keKhaiBHService = keKhaiBaoHiemService;
+            _cheDoBHService = cheDoBHService;
         }
 
         public IActionResult Index()
@@ -233,7 +247,7 @@ namespace HRMS.Areas.Admin.Controllers
                                                                     p => p.HR_QUATRINHLAMVIEC,
                                                                     q => q.HR_PHEP_NAM,
                                                                     k => k.HR_HOPDONG,
-                                                                    l=>l.HR_KEKHAIBAOHIEM);
+                                                                    l => l.HR_KEKHAIBAOHIEM);
             if (nhanVien != null)
             {
                 NhanVienProfileModel profileModel = new NhanVienProfileModel();
@@ -361,7 +375,7 @@ namespace HRMS.Areas.Admin.Controllers
                         {
                             item.DateCustom = DateTime.ParseExact(item.ThơiGianBatDau, "dd/MM/yyyy", CultureInfo.InvariantCulture).ToString("yyyy");
                         }
-                        
+
                     }
                 }
 
@@ -410,6 +424,12 @@ namespace HRMS.Areas.Admin.Controllers
                             MaNV =profileModel.MaNhanVien
                         }
                     };
+                }
+
+                var chedo = _cheDoBHService.GetAll(null);
+                foreach (var item in profileModel.kekhaibaohiems)
+                {
+                    item.HR_CHEDOBH = chedo.Find(x => x.Id == item.CheDoBH);
                 }
 
                 ViewBag.LoaiHD = _hrLoaiHDService.GetAll();
@@ -782,7 +802,7 @@ namespace HRMS.Areas.Admin.Controllers
                                                                    p => p.HR_QUATRINHLAMVIEC,
                                                                    q => q.HR_PHEP_NAM,
                                                                    k => k.HR_HOPDONG,
-                                                                   l=>l.HR_KEKHAIBAOHIEM);
+                                                                   l => l.HR_KEKHAIBAOHIEM);
             if (nhanVien != null)
             {
                 NhanVienProfileModel profileModel = new NhanVienProfileModel();
@@ -950,7 +970,7 @@ namespace HRMS.Areas.Admin.Controllers
                 }
 
                 profileModel.kekhaibaohiems = nhanVien.HR_KEKHAIBAOHIEM.ToList();
-                if(profileModel.kekhaibaohiems == null || profileModel.kekhaibaohiems.Count() == 0)
+                if (profileModel.kekhaibaohiems == null || profileModel.kekhaibaohiems.Count() == 0)
                 {
                     profileModel.kekhaibaohiems = new List<KeKhaiBaoHiemViewModel>()
                     {
@@ -959,6 +979,12 @@ namespace HRMS.Areas.Admin.Controllers
                             MaNV =profileModel.MaNhanVien
                         }
                     };
+                }
+
+                var chedo = _cheDoBHService.GetAll(null);
+                foreach (var item in profileModel.kekhaibaohiems)
+                {
+                    item.HR_CHEDOBH = chedo.Find(x => x.Id == item.CheDoBH);
                 }
 
                 ViewBag.LoaiHD = _hrLoaiHDService.GetAll();
@@ -972,14 +998,14 @@ namespace HRMS.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult UpdateMaNV(string Id,string newId)
+        public IActionResult UpdateMaNV(string Id, string newId)
         {
             var currentNv = _nhanvienService.GetById(Id);
             var newNhanVien = _nhanvienService.GetById(newId);
 
-            if(currentNv != null)
+            if (currentNv != null)
             {
-                if(newNhanVien == null)
+                if (newNhanVien == null)
                 {
                     newNhanVien = (NhanVienViewModel)currentNv.CloneObject();
                     newNhanVien.Id = newId;
@@ -1034,6 +1060,15 @@ namespace HRMS.Areas.Admin.Controllers
                     }
                     _phepNamService.Save();
 
+                    // update chi tra BH
+                    var lstChiTraBH = _keKhaiBHService.GetAll(Id);
+                    foreach (var item in lstChiTraBH)
+                    {
+                        item.MaNV = newId;
+                        _keKhaiBHService.Update(item);
+                    }
+                    _keKhaiBHService.Save();
+
                     // delete old nhan vien
                     _nhanvienService.Delete(Id);
                     _nhanvienService.Save();
@@ -1048,6 +1083,55 @@ namespace HRMS.Areas.Admin.Controllers
                 return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
             }
             return new OkObjectResult(newId);
+        }
+
+        [HttpGet]
+        public IActionResult GetCheDoBH()
+        {
+            var chedo = _cheDoBHService.GetAll(null);
+            return new OkObjectResult(chedo);
+        }
+
+        /// <summary>
+        /// Update ke khai bao hiem
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult UpdateKeKhaiBH(KeKhaiBaoHiemViewModel data)
+        {
+            var model = _keKhaiBHService.GetById(data.Id);
+            if (model == null)
+            {
+                _keKhaiBHService.Add(data);
+            }
+            else
+            {
+                model.CheDoBH = data.CheDoBH;
+                model.NgayBatDau = data.NgayBatDau;
+                model.NgayKetThuc = data.NgayKetThuc;
+                model.NgayThanhToan = data.NgayThanhToan;
+                model.SoTienThanhToan = data.SoTienThanhToan;
+
+                _keKhaiBHService.Update(model);
+            }
+            _keKhaiBHService.Save();
+            return new OkObjectResult(data);
+        }
+
+        [HttpGet]
+        public IActionResult GetKeKhaiBH(int Id)
+        {
+           var obj =  _keKhaiBHService.GetById(Id);
+            return new OkObjectResult(obj);
+        }
+
+        [HttpPost]
+        public IActionResult DeleteKeKhaiBH(int Id)
+        {
+            _keKhaiBHService.Delete(Id);
+            _keKhaiBHService.Save();
+            return new OkObjectResult(Id);
         }
     }
 }

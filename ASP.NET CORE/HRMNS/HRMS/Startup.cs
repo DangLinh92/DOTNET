@@ -95,6 +95,8 @@ namespace HRMS
             services.AddTransient<IHRLoaiHopDongService, HRLoaiHopDongService>();
             services.AddTransient<IHopDongService, HopDongService>();
             services.AddTransient<IQuatrinhLamViecService, QuatrinhLamViecService>();
+            services.AddTransient<ICheDoBHService, CheDoBHService>();
+            services.AddTransient<IKeKhaiBaoHiemService, KeKhaiBaoHiemService>();
 
             services.AddMvc().AddNewtonsoftJson(options =>
             {

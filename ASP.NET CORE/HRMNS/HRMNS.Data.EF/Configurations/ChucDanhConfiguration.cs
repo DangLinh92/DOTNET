@@ -1,5 +1,6 @@
 ﻿using HRMNS.Data.EF.Extensions;
 using HRMNS.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,8 @@ namespace HRMNS.Data.EF.Configurations
         {
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Id).HasMaxLength(50).IsRequired();
+
+            entity.HasMany(x => x.HR_NHANVIEN).WithOne(x => x.HR_CHUCDANH).OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

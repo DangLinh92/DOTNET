@@ -22,6 +22,7 @@ namespace HRMNS.Application.Implementation
             _kekhaiBHRepository = kekhaiBHRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public KeKhaiBaoHiemViewModel Add(KeKhaiBaoHiemViewModel bhxhVm)

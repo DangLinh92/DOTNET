@@ -32,7 +32,7 @@
                     <div class="form-group">
                         <label class="col-form-label">Loại Hợp Đồng<span class="text-danger">*</span></label>
                         <select class="select" name="LoaiHD" id="slLoaiHD" value="@item.LoaiHD" required>
-                            <!option value="0" @(item.LoaiHD == 0 || item.LoaiHD == null ? "selected" : "")>--Chọn Loại Hợp Đồng--</!option>
+                            <!option value="" @(item.LoaiHD == 0 || item.LoaiHD == null ? "selected" : "")>--Chọn Loại Hợp Đồng--</!option>
                             @foreach (var loaiHd in ViewBag.LoaiHD)
                             {
                                 <!option value="@loaiHd.Id" @(item.LoaiHD == loaiHd.Id ? "selected" : "")>@loaiHd.TenLoaiHD</!option>

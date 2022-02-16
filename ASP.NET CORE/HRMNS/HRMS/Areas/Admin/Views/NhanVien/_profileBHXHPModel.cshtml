@@ -1,0 +1,55 @@
+﻿<div id="ttchiTraBH_Model" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Thêm Thông Tin Chi Trả BH</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>  
+            <div class="modal-body">
+                <form id="frm_ttchiTraBH_Model">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Chế Độ BH <span class="text-danger"> *</span></label>
+                                <select class="select form-control" name="CheDoBH" id="cboCheDoBH" required>
+                                </select>
+                                <input type="hidden" id="chiTraId" />
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Ngày Bắt Đầu</label>
+                                <div class="cal-icon"><input class="form-control datetimepicker" type="text" name="NgayBatDau" id="txtNgayBatDau"></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Ngày Kết Thúc</label>
+                                <div class="cal-icon"><input class="form-control datetimepicker" type="text" name="NgayKetThuc" id="txtNgayKetThuctt"></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Ngày Thanh Toán</label>
+                                <div class="cal-icon"><input class="form-control datetimepicker" type="text" name="NgayThanhToan" id="txtNgayThanhToan"></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Số Tiền Thanh Toán </label>
+                                <input class="form-control" type="text" name="SoTienThanhToan" id="txtSoTienThanhToan">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn" id="btnSaveTTchiTraBH">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+

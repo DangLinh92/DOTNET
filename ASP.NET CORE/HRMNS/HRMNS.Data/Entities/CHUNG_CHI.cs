@@ -18,7 +18,7 @@ namespace HRMNS.Data.Entities
 
         [StringLength(250)]
         public string TenChungChi { get; set; }
-        public int LoaiChungChi { get; set; }
+        public int? LoaiChungChi { get; set; }
 
         [ForeignKey("LoaiChungChi")]
         public virtual LOAICHUNGCHI LOAICHUNGCHI1 { get; set; }
