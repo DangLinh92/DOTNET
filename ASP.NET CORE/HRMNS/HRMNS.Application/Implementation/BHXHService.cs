@@ -38,9 +38,9 @@ namespace HRMNS.Application.Implementation
         public List<BHXHViewModel> GetAll(string filter)
         {
             if (!string.IsNullOrEmpty(filter))
-                return _mapper.ProjectTo<BHXHViewModel>(_bhxhRepository.FindAll(x => x.Id.Contains(filter))).ToList();
+                return _mapper.Map<List<BHXHViewModel>>(_bhxhRepository.FindAll(x => x.Id.Contains(filter)));
             else
-                return _mapper.ProjectTo<BHXHViewModel>(_bhxhRepository.FindAll()).ToList();
+                return _mapper.Map<List<BHXHViewModel>>(_bhxhRepository.FindAll());
         }
 
         public void Save()

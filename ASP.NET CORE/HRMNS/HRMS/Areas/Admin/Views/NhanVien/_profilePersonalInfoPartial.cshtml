@@ -1,5 +1,5 @@
 ﻿@model NhanVienProfileModel
-    <h3 class="card-title">Personal Informations <a href="#" class="edit-icon" data-toggle="modal" data-target="#personal_info_modal" id="btn-UpdatePersonalInfo"><i class="fa fa-pencil"></i></a></h3>
+    <h3 class="card-title">Personal Informations <a href="#" class="edit-icon" data-toggle="modal" data-target="#personal_info_modal" id="btn-UpdatePersonalInfo"><i class="fa fa-edit"></i></a></h3>
     <ul class="personal-info">
         <li>
             <div class="title">Nơi Sinh</div>
@@ -40,5 +40,9 @@
         <li>
             <div class="title">Trường Đào Tạo</div>
             <div class="text">@Model.TruongDaoTao</div>
+        </li>
+        <li>
+            <div class="title">Số Người Giảm Trừ</div>
+            <div class="text">@Model.SoNguoiGiamTru</div>
         </li>
     </ul>

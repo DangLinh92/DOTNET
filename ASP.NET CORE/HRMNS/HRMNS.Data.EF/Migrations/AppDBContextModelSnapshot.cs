@@ -735,11 +735,11 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
-                    b.Property<int>("SoPhepConLai")
-                        .HasColumnType("int");
+                    b.Property<float>("SoPhepConLai")
+                        .HasColumnType("real");
 
-                    b.Property<int>("SoPhepNam")
-                        .HasColumnType("int");
+                    b.Property<float>("SoPhepNam")
+                        .HasColumnType("real");
 
                     b.Property<string>("UserCreated")
                         .HasColumnType("nvarchar(50)")

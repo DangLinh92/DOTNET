@@ -48,9 +48,9 @@ namespace HRMNS.Application.Implementation
         public List<KeKhaiBaoHiemViewModel> GetAll(string filter)
         {
             if (!string.IsNullOrEmpty(filter))
-                return _mapper.ProjectTo<KeKhaiBaoHiemViewModel>(_kekhaiBHRepository.FindAll(x => x.MaNV.Contains(filter))).ToList();
+                return _mapper.Map<List<KeKhaiBaoHiemViewModel>>(_kekhaiBHRepository.FindAll(x => x.MaNV.Contains(filter)));
             else
-                return _mapper.ProjectTo<KeKhaiBaoHiemViewModel>(_kekhaiBHRepository.FindAll()).ToList();
+                return _mapper.Map<List<KeKhaiBaoHiemViewModel>>(_kekhaiBHRepository.FindAll());
         }
 
         public KeKhaiBaoHiemViewModel GetById(int id)

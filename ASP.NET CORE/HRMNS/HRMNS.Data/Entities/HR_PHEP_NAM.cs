@@ -16,7 +16,7 @@ namespace HRMNS.Data.Entities
 
         }
 
-        public HR_PHEP_NAM(string maNV,int soPhepNam,int soPhepConLai,int year)
+        public HR_PHEP_NAM(string maNV,float soPhepNam,float soPhepConLai,int year)
         {
             MaNhanVien = maNV;
             SoPhepNam = soPhepNam;
@@ -26,8 +26,8 @@ namespace HRMNS.Data.Entities
 
         [StringLength(50)]
         public string MaNhanVien { get; set; }
-        public int SoPhepNam { get; set; }
-        public int SoPhepConLai { get; set; }
+        public float SoPhepNam { get; set; }
+        public float SoPhepConLai { get; set; }
         public int Year { get; set; }
         [StringLength(50)]
         public string DateCreated { get; set; }

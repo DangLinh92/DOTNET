@@ -35,7 +35,12 @@ namespace HRMNS.Application.Implementation
         public NhanVienViewModel Add(NhanVienViewModel nhanVienVm)
         {
             var nhanvien = _mapper.Map<NhanVienViewModel, HR_NHANVIEN>(nhanVienVm);
-            nhanvien.Status = Status.Active.ToString();
+
+            if (string.IsNullOrEmpty(nhanvien.Status))
+            {
+                nhanvien.Status = Status.Active.ToString();
+            }
+
             nhanvien.DateCreated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             nhanvien.DateModified = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             nhanvien.UserCreated = GetUserId();
@@ -59,9 +64,9 @@ namespace HRMNS.Application.Implementation
         public List<NhanVienViewModel> GetAll(string keyword)
         {
             if (!string.IsNullOrEmpty(keyword))
-                return _mapper.ProjectTo<NhanVienViewModel>(_nhanvienRepository.FindAll(x => x.TenNV.Contains(keyword) || x.Id.Contains(keyword))).ToList();
+                return _mapper.Map<List<NhanVienViewModel>>(_nhanvienRepository.FindAll(x => x.TenNV.Contains(keyword) || x.Id.Contains(keyword)));
             else
-                return _mapper.ProjectTo<NhanVienViewModel>(_nhanvienRepository.FindAll()).ToList();
+                return _mapper.Map<List<NhanVienViewModel>>(_nhanvienRepository.FindAll());
         }
 
         //public NhanVienViewModel GetById(string id)
@@ -112,12 +117,12 @@ namespace HRMNS.Application.Implementation
 
             if (!string.IsNullOrEmpty(name))
             {
-                lstNV = _mapper.ProjectTo<NhanVienViewModel>(_nhanvienRepository.FindAll(x => x.TenNV.Contains(name))).ToList();
+                lstNV = _mapper.Map<List<NhanVienViewModel>>(_nhanvienRepository.FindAll(x => x.TenNV.Contains(name)));
             }
             else
             if (!string.IsNullOrEmpty(dept) && !string.IsNullOrEmpty(name))
             {
-                lstNV = _mapper.ProjectTo<NhanVienViewModel>(_nhanvienRepository.FindAll(x => x.TenNV.Contains(name) && x.MaBoPhan.Contains(dept))).ToList();
+                lstNV = _mapper.Map<List<NhanVienViewModel>>(_nhanvienRepository.FindAll(x => x.TenNV.Contains(name) && x.MaBoPhan.Contains(dept)));
             }
 
             return lstNV;
@@ -135,18 +140,30 @@ namespace HRMNS.Application.Implementation
             using (var packet = new ExcelPackage(new System.IO.FileInfo(filePath)))
             {
                 ExcelWorksheet worksheet = packet.Workbook.Worksheets[1];
-                HR_NHANVIEN nhanvien; 
+                HR_NHANVIEN nhanvien;
                 for (int i = worksheet.Dimension.Start.Row + 2; i <= worksheet.Dimension.End.Row; i++)
                 {
                     nhanvien = new HR_NHANVIEN();
                     nhanvien.Id = worksheet.Cells[i, 2].Value.NullString();
+
+                    if (string.IsNullOrEmpty(nhanvien.Id))
+                    {
+                        continue;
+                    }
+
                     nhanvien.MaChucDanh = worksheet.Cells[i, 3].Value.NullString();
                     nhanvien.MaBoPhan = worksheet.Cells[i, 4].Value.NullString();
                     nhanvien.TenNV = worksheet.Cells[i, 5].Value.NullString();
                     nhanvien.GioiTinh = worksheet.Cells[i, 6].Value.NullString();
 
-                    DateTime.TryParse(worksheet.Cells[i, 7].Value.NullString(), out var ngaysinh);
-                    nhanvien.NgaySinh = ngaysinh.ToString("dd/MM/yyyy");
+                    if (DateTime.TryParse(worksheet.Cells[i, 7].Value.NullString(), out var ngaysinh))
+                    {
+                        nhanvien.NgaySinh = ngaysinh.ToString("yyyy-MM-dd");
+                    }
+                    else
+                    {
+                        nhanvien.NgaySinh = "";
+                    }
 
                     nhanvien.NoiSinh = worksheet.Cells[i, 8].Value.NullString();
                     nhanvien.TinhTrangHonNhan = worksheet.Cells[i, 9].Value.NullString();
@@ -156,27 +173,82 @@ namespace HRMNS.Application.Implementation
                     nhanvien.SoDienThoai = worksheet.Cells[i, 13].Value.NullString();
                     nhanvien.SoDienThoaiNguoiThan = worksheet.Cells[i, 14].Value.NullString();
                     nhanvien.QuanHeNguoiThan = worksheet.Cells[i, 15].Value.NullString();
-                    nhanvien.CMTND= worksheet.Cells[i, 16].Value.NullString();
+                    nhanvien.CMTND = worksheet.Cells[i, 16].Value.NullString();
 
-                    DateTime.TryParse(worksheet.Cells[i, 17].Value.NullString(), out var ngayCapCMTND);
-                    nhanvien.NgayCapCMTND = ngayCapCMTND.ToString("dd/MM/yyyy");
+                    if (DateTime.TryParse(worksheet.Cells[i, 17].Value.NullString(), out var ngayCapCMTND))
+                    {
+                        nhanvien.NgayCapCMTND = ngayCapCMTND.ToString("yyyy-MM-dd");
+                    }
+                    else
+                    {
+                        nhanvien.NgayCapCMTND = "";
+                    }
 
                     nhanvien.NoiCapCMTND = worksheet.Cells[i, 18].Value.NullString();
                     nhanvien.TenNganHang = worksheet.Cells[i, 19].Value.NullString();
                     nhanvien.SoTaiKhoanNH = worksheet.Cells[i, 20].Value.NullString();
                     nhanvien.TruongDaoTao = worksheet.Cells[i, 21].Value.NullString();
 
-                    DateTime.TryParse(worksheet.Cells[i, 22].Value.NullString(), out var ngayVao);
-                    nhanvien.NgayVao = ngayVao.ToString("dd/MM/yyyy");
+                    if (DateTime.TryParse(worksheet.Cells[i, 22].Value.NullString(), out var ngayVao))
+                    {
+                        nhanvien.NgayVao = ngayVao.ToString("yyyy-MM-dd");
+                    }
+                    else
+                    {
+                        nhanvien.NgayVao = "";
+                    }
 
                     nhanvien.NguyenQuan = worksheet.Cells[i, 23].Value.NullString();
                     nhanvien.DChiHienTai = worksheet.Cells[i, 24].Value.NullString();
                     nhanvien.KyLuatLD = worksheet.Cells[i, 25].Value.NullString();
                     nhanvien.Note = worksheet.Cells[i, 26].Value.NullString();
-                    nhanvien.MaBHXH= worksheet.Cells[i, 27].Value.NullString();
-                    nhanvien.MaSoThue = worksheet.Cells[i, 28].Value.NullString();
-                    nhanvien.SoNguoiGiamTru = worksheet.Cells[i, 29].Value.NullString() == "" ? 0 : int.Parse(worksheet.Cells[i, 29].Value.NullString());
-                    nhanvien.TonGiao = worksheet.Cells[i, 30].Value.NullString();
+                    nhanvien.MaBHXH = worksheet.Cells[i, 27].Value.NullString();
+
+                    DateTime.TryParse(worksheet.Cells[i, 28].Value.NullString(), out var ngayThamGiaBH);
+                    DateTime.TryParse(worksheet.Cells[i, 29].Value.NullString(), out var ngayKetThucBH);
+
+                    if (ngayThamGiaBH == null)
+                    {
+                        ngayThamGiaBH = DateTime.Now;
+                    }
+
+                    if (ngayKetThucBH == null)
+                    {
+                        ngayKetThucBH = DateTime.Now;
+                    }
+
+                    if (!string.IsNullOrEmpty(nhanvien.MaBHXH))
+                    {
+                        nhanvien.HR_BHXH.Add(new HR_BHXH()
+                        {
+                            Id = nhanvien.MaBHXH,
+                            MaNV = nhanvien.Id,
+                            NgayThamGia = ngayThamGiaBH.ToString("yyyy-MM-dd"),
+                            NgayKetThuc = ngayKetThucBH.ToString("yyyy-MM-dd"),
+                            DateCreated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                            UserCreated = GetUserId()
+                        });
+                    }
+
+                    nhanvien.MaSoThue = worksheet.Cells[i, 30].Value.NullString();
+                    int.TryParse(worksheet.Cells[i, 31].Value.NullString(), out var songuoigiamtru);
+                    nhanvien.SoNguoiGiamTru = songuoigiamtru;
+                    nhanvien.TonGiao = worksheet.Cells[i, 32].Value.NullString();
+
+                    float totalPhepNam = 12;
+                    float remainPhepNam = 0;
+                    float.TryParse(worksheet.Cells[i, 33].Value.NullString(), out totalPhepNam);
+                    float.TryParse(worksheet.Cells[i, 34].Value.NullString(), out remainPhepNam);
+
+                    nhanvien.HR_PHEP_NAM.Add(new HR_PHEP_NAM()
+                    {
+                        MaNhanVien = nhanvien.Id,
+                        SoPhepNam = totalPhepNam,
+                        SoPhepConLai = remainPhepNam,
+                        DateCreated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                        UserCreated = GetUserId()
+                    });
+
                     nhanvien.Status = Status.Active.NullString();
                     nhanvien.IsDelete = "N";
 

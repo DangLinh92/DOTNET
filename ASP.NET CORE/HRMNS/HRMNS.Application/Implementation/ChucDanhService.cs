@@ -38,7 +38,7 @@ namespace HRMNS.Application.Implementation
                 chucDanh = chucDanh.Where(x => x.TenChucDanh.Contains(filter));
             }
 
-            return _mapper.ProjectTo<ChucDanhViewModel>(chucDanh).ToList();
+            return _mapper.Map<List<ChucDanhViewModel>>(chucDanh);
 
         }
     }

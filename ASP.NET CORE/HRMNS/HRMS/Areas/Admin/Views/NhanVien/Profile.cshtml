@@ -6,13 +6,13 @@
 
 @section Scripts
 {
-    <!-- Timeline JS -->
-    <script src="~/plugins/timeline/horizontal-timeline.js"></script>
     <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
     <script src="~/app/controllers/nhanvien/profile-managerment.js"></script>
     <script>
         $(document).ready(function () {
-            $('#keKhaiBHDataTable').DataTable();
+            $('#keKhaiBHDataTable').DataTable({
+                "order": [2, 'desc']
+            });
         });
 
         var profileMng = new ProfileMng();
@@ -42,7 +42,7 @@
             // Date Time Picker
             if ($('.datetimepicker').length > 0) {
                 $('.datetimepicker').datetimepicker({
-                    format: 'DD/MM/YYYY',
+                    format: 'YYYY-MM-DD',//'DD/MM/YYYY',
                     icons: {
                         up: "fa fa-angle-up",
                         down: "fa fa-angle-down",
@@ -65,6 +65,8 @@
 }
 
 @section Styles{
+
+    <link href="~/plugins/fontawesome/css/all.min.css" rel="stylesheet" />
     <style>
         .page-wrapper {
             min-height: 641px;
@@ -107,7 +109,7 @@
                         <div class="profile-basic" id="id-profile-basic">
                             @await Html.PartialAsync("_profilebasicPartial", Model)
                         </div>
-                        <div class="pro-edit"><a data-target="#profile_info" data-toggle="modal" class="edit-icon" href="#" id="btn-UpdateProfileBasic" data-id="@Model.MaNhanVien"><i class="fa fa-pencil"></i></a></div>
+                        <div class="pro-edit"><a data-target="#profile_info" data-toggle="modal" class="edit-icon" href="#" id="btn-UpdateProfileBasic" data-id="@Model.MaNhanVien"><i class="fa fa-edit"></i></a></div>
                     </div>
                 </div>
             </div>
@@ -273,7 +275,7 @@
 <!-- /Education Modal -->
 <!-- Chi Tra BHXH Modal -->
 <partial name="_profileBHXHPModel" />
-<partial name="_DeleteChiTraBH"/>
+<partial name="_DeleteChiTraBH" />
 <!-- Chi Tra BHXH Modal -->
 <!-- Template area -->
 <!-- header information -->

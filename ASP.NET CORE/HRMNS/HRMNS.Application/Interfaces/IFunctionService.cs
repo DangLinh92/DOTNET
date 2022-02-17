@@ -10,7 +10,7 @@ namespace HRMNS.Application.Interfaces
     {
         void Add(FunctionViewModel function);
 
-        Task<List<FunctionViewModel>> GetAll(string filter);
+        List<FunctionViewModel> GetAll(string filter);
 
         Task<List<FunctionViewModel>> GetAllByPermission(Guid userId);
 

@@ -41,7 +41,7 @@ namespace HRMNS.Application.Implementation
 
         public List<PhepNamViewModel> GetAll(string keyword)
         {
-            return _mapper.ProjectTo<PhepNamViewModel>(_phepNamRepository.FindAll()).ToList();
+            return _mapper.Map<List<PhepNamViewModel>>(_phepNamRepository.FindAll());
         }
 
         public void Save()

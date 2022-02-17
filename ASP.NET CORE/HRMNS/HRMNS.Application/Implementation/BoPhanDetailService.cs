@@ -38,7 +38,7 @@ namespace HRMNS.Application.Implementation
                 boPhan = boPhan.Where(x => x.TenBoPhanChiTiet.Contains(filter));
             }
 
-            return _mapper.ProjectTo<BoPhanDetailViewModel>(boPhan).ToList();
+            return _mapper.Map<List<BoPhanDetailViewModel>>(boPhan);
         }
     }
 }

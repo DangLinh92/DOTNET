@@ -1,73 +1,62 @@
 ﻿@model List<QuaTrinhLamViecViewModel>
 @{
     int i = 0;
-    int j = 0;
 }
+<!-- Row -->
 <div class="row">
-    
-    <!-- Timeline -->
+    <!-- Ribbon -->
     <div class="col-md-12">
         <div class="card">
-            <h3 class="card-title" style="margin:20px"><a href="#" class="edit-icon" data-toggle="modal" data-target="#quatrinhCtac_infor_modal" id="btn-UpdateQuatrinhCtac"><i class="fa fa-pencil"></i></a></h3>
+            <h3 class="card-title" style="margin:20px"><a href="#" class="edit-icon" data-toggle="modal" data-target="#quatrinhCtac_infor_modal" id="btn-UpdateQuatrinhCtac"><i class="fa fa-edit"></i></a></h3>
             <div class="card-body">
-                <div class="cd-horizontal-timeline">
-                    <div class="timeline" style="max-width:550px">
-                        <div class="events-wrapper">
-                            <div class="events">
-                                <ol>
-                                    @foreach (QuaTrinhLamViecViewModel item in Model)
-                                    {
-                                        if (i++ == 0)
-                                        {
-                                            <li><a href="#0" class="selected" data-date="@item.ThơiGianBatDau">@item.DateCustom</a></li>
-                                        }
-                                        else
-                                        {
-                                            <li><a href="#0" data-date="@item.ThơiGianBatDau">@item.DateCustom</a></li>
-                                        }
-                                    }
-                                </ol>
-                                <span class="filling-line" aria-hidden="true"></span>
-                            </div>
-                            <!-- events -->
-                        </div>
-                        <ul class="cd-timeline-navigation">
-                            <li><a href="#0" class="prev inactive">Prev</a></li>
-                            <li><a href="#0" class="next">Next</a></li>
-                        </ul>
-                        <!-- cd-timeline-navigation -->
-                    </div>
-                    <!-- timeline -->
-                    <div class="events-content">
-                        <ol>
-                            @foreach (QuaTrinhLamViecViewModel item in Model)
-                            {
-                                if (j++ == 0)
-                                {
-                                    <li class="selected" data-date="@item.ThơiGianBatDau">
-                                        <h3><small>@item.TieuDe</small></h3>
-                                        <p class="m-t-40">
-                                            @item.Note
+                <ul class="timeline">
+
+                    @foreach (QuaTrinhLamViecViewModel item in Model)
+                    {
+                        if (i++ % 2 == 0)
+                        {
+                            <li>
+                                <div class="timeline-badge success">
+                                    <i class="fa fa-angle-double-up"></i>
+                                </div>
+                                <div class="timeline-panel">
+                                    <div class="timeline-heading">
+                                        <h4 class="timeline-title">@item.TieuDe</h4>
+                                    </div>
+                                    <div class="timeline-body">
+                                        <p>
+                                            Bắt đầu: @item.ThơiGianBatDau <br />
+                                            <i>@item.Note</i>
                                         </p>
-                                    </li>
-                                }
-                                else
-                                {
-                                    <li  data-date="@item.ThơiGianBatDau">
-                                        <h3><small>@item.TieuDe</small></h3>
-                                        <p class="m-t-40">
-                                            @item.Note
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="timeline-inverted">
+                                <div class="timeline-badge info">
+                                    <i class="fa fa-angle-double-up"></i>
+                                </div>
+                                <div class="timeline-panel">
+                                    <div class="timeline-heading">
+                                        <h4 class="timeline-title">@item.TieuDe </h4>
+                                    </div>
+                                    <div class="timeline-body">
+                                        <p>
+                                            Bắt đầu: @item.ThơiGianBatDau <br />
+                                            <i>@item.Note</i>
                                         </p>
-                                    </li>
-                                }
-                            }
-                        </ol>
-                    </div>
-                    <!-- .events-content -->
-                </div>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                    }
+                </ul>
             </div>
         </div>
     </div>
     <!-- /Ribbon -->
 
 </div>
+<!-- /Row -->

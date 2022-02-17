@@ -38,7 +38,7 @@ namespace HRMNS.Application.Implementation
                 cheDoBH = cheDoBH.Where(x => x.TenCheDo.Contains(filter));
             }
 
-            return _mapper.ProjectTo<CheDoBaoHiemViewModel>(cheDoBH).ToList();
+            return _mapper.Map<List<CheDoBaoHiemViewModel>>(cheDoBH);
         }
     }
 }

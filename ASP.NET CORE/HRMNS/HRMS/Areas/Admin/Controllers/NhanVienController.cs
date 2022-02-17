@@ -349,7 +349,7 @@ namespace HRMS.Areas.Admin.Controllers
                 profileModel.chungChis = nhanVien.HR_CHUNGCHI_NHANVIEN.ToList();
 
                 // Qua Trinh Lam Viec --
-                profileModel.quaTrinhLamViecs = nhanVien.HR_QUATRINHLAMVIEC.OrderBy(x => x.ThơiGianBatDau).ToList();
+                profileModel.quaTrinhLamViecs = nhanVien.HR_QUATRINHLAMVIEC.OrderByDescending(x => x.ThơiGianBatDau).ToList();
                 if (profileModel.quaTrinhLamViecs.Count() == 0)
                 {
                     profileModel.quaTrinhLamViecs = new List<QuaTrinhLamViecViewModel>()
@@ -373,7 +373,7 @@ namespace HRMS.Areas.Admin.Controllers
                         }
                         else
                         {
-                            item.DateCustom = DateTime.ParseExact(item.ThơiGianBatDau, "dd/MM/yyyy", CultureInfo.InvariantCulture).ToString("yyyy");
+                            item.DateCustom = DateTime.ParseExact(item.ThơiGianBatDau, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("yyyy");
                         }
 
                     }
@@ -402,7 +402,7 @@ namespace HRMS.Areas.Admin.Controllers
                 }
 
                 // --
-                profileModel.hopDongs = nhanVien.HR_HOPDONG.ToList();
+                profileModel.hopDongs = nhanVien.HR_HOPDONG.OrderByDescending(x=>x.NgayKy).ToList();
                 if (profileModel.hopDongs == null || profileModel.hopDongs.Count() == 0)
                 {
                     profileModel.hopDongs = new List<HopDongViewModel>()
@@ -479,8 +479,8 @@ namespace HRMS.Areas.Admin.Controllers
                         nhanVien.TenNV = profileBasic.TenNhanVien;
                         if (DateTime.TryParse(profileBasic.Birthday, out var ngaysinh))
                         {
-                            nhanVien.NgaySinh = ngaysinh.ToString("dd/MM/yyyy");
-                            profileBasic.Birthday = ngaysinh.ToString("dd/MM/yyyy");
+                            nhanVien.NgaySinh = ngaysinh.ToString("yyyy-MM-dd");
+                            profileBasic.Birthday = ngaysinh.ToString("yyyy-MM-dd");
                         }
                         else
                         {
@@ -493,7 +493,7 @@ namespace HRMS.Areas.Admin.Controllers
 
                         if (DateTime.TryParse(profileBasic.NgayVaoCongTy, out var ngayvao))
                         {
-                            nhanVien.NgayVao = ngayvao.ToString("dd/MM/yyyy");
+                            nhanVien.NgayVao = ngayvao.ToString("yyyy-MM-dd");
                         }
                         else
                         {
@@ -518,7 +518,7 @@ namespace HRMS.Areas.Admin.Controllers
 
                         if (DateTime.TryParse(profileBasic.NgayCapCMTND, out var ngaycap))
                         {
-                            nhanVien.NgayCapCMTND = ngaycap.ToString("dd/MM/yyyy");
+                            nhanVien.NgayCapCMTND = ngaycap.ToString("yyyy-MM-dd");
                         }
                         else
                         {
@@ -635,6 +635,7 @@ namespace HRMS.Areas.Admin.Controllers
             HopDongViewModel hopDongViewModel = _hopDongService.GetById(hopDong.Id);
             if (hopDongViewModel == null)
             {
+                hopDong.NgayTao = hopDong.NgayKy;
                 _hopDongService.Add(hopDong);
             }
             else
@@ -771,7 +772,7 @@ namespace HRMS.Areas.Admin.Controllers
                     }
                     else
                     {
-                        item.DateCustom = DateTime.ParseExact(item.ThơiGianBatDau, "dd/MM/yyyy", CultureInfo.InvariantCulture).ToString("yyyy");
+                        item.DateCustom = DateTime.ParseExact(item.ThơiGianBatDau, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("yyyy");
                     }
                 }
             }
@@ -904,7 +905,7 @@ namespace HRMS.Areas.Admin.Controllers
                 profileModel.chungChis = nhanVien.HR_CHUNGCHI_NHANVIEN.ToList();
 
                 // Qua Trinh Lam Viec --
-                profileModel.quaTrinhLamViecs = nhanVien.HR_QUATRINHLAMVIEC.OrderBy(x => x.ThơiGianBatDau).ToList();
+                profileModel.quaTrinhLamViecs = nhanVien.HR_QUATRINHLAMVIEC.OrderByDescending(x => x.ThơiGianBatDau).ToList();
                 if (profileModel.quaTrinhLamViecs.Count() == 0)
                 {
                     profileModel.quaTrinhLamViecs = new List<QuaTrinhLamViecViewModel>()
@@ -929,7 +930,7 @@ namespace HRMS.Areas.Admin.Controllers
                         }
                         else
                         {
-                            item.DateCustom = DateTime.ParseExact(item.ThơiGianBatDau, "dd/MM/yyyy", CultureInfo.InvariantCulture).ToString("yyyy");
+                            item.DateCustom = DateTime.ParseExact(item.ThơiGianBatDau, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("yyyy");
                         }
                     }
                 }
@@ -957,7 +958,7 @@ namespace HRMS.Areas.Admin.Controllers
                 }
 
                 // --
-                profileModel.hopDongs = nhanVien.HR_HOPDONG.ToList();
+                profileModel.hopDongs = nhanVien.HR_HOPDONG.OrderByDescending(x => x.NgayKy).ToList();
                 if (profileModel.hopDongs == null || profileModel.hopDongs.Count() == 0)
                 {
                     profileModel.hopDongs = new List<HopDongViewModel>()

@@ -200,6 +200,7 @@
             $('#txtDiaChiThuongTru').val('');
             $('#txtMaSoThue').val('');
             $('#txtTruongDaoTao').val('');
+            $('#txtSoNguoiGiamTru').val('');
         }
 
         // Open popup personal info
@@ -232,6 +233,7 @@
                         $('#txtDiaChiThuongTru').val(nhanVienProfile.DiaChiThuongTru);
                         $('#txtMaSoThue').val(nhanVienProfile.MaSoThue);
                         $('#txtTruongDaoTao').val(nhanVienProfile.TruongDaoTao);
+                        $('#txtSoNguoiGiamTru').val(nhanVienProfile.SoNguoiGiamTru);
                     }
                     else {
                         hrms.notify('error: Not found employee!', 'error', 'alert', function () { });
@@ -515,6 +517,11 @@
             e.preventDefault();
 
             var that = $(this).data('id');
+
+            if (!that || that == 0) {
+                return;
+            }
+
             var validator = $("#ttchiTraBH_Model").validate();
             validator.resetForm();
             $('#ttchiTraBH_Model').modal('show');
@@ -550,6 +557,9 @@
         $('body').on('click', '.delete-kkbh', function (e) {
             e.preventDefault();
             var that = $(this).data('id');
+            if (!that || that == 0) {
+                return;
+            }
             $('#txtIdChiTraBH').val(that);
             $('#delete_chitraBH').modal('show');
         });

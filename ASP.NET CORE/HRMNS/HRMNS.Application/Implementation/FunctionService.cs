@@ -48,13 +48,13 @@ namespace HRMNS.Application.Implementation
             GC.SuppressFinalize(this);
         }
 
-        public Task<List<FunctionViewModel>> GetAll(string filter)
+        public List<FunctionViewModel> GetAll(string filter)
         {
             var query = _functionRepository.FindAll(x => x.Status == Status.Active);
             if (!string.IsNullOrEmpty(filter))
                 query = query.Where(x => x.Name.Contains(filter));
 
-            return _mapper.ProjectTo<FunctionViewModel>(query.OrderBy(x => x.SortOrder)).ToListAsync();
+            return _mapper.Map<List<FunctionViewModel>>(query.OrderBy(x => x.SortOrder));
         }
 
         public Task<List<FunctionViewModel>> GetAllByPermission(Guid userId)

@@ -20,5 +20,14 @@ namespace HRMNS.Data.EF.Extensions
             else
                 return result.ToString().Trim() == "" ? "0" : result.ToString().Trim();
         }
+
+        // Dao nguoc chuoi
+        public static string Reverse(this string result)
+        {
+            char[] nameArray = result.ToCharArray();
+            Array.Reverse(nameArray);
+            string reverse = new string(nameArray);
+            return reverse;
+        }
     }
 }
