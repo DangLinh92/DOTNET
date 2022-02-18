@@ -259,9 +259,12 @@ namespace HRMNS.Application.Implementation
                     MaNhanVien = nhanvien.Id,
                     SoPhepNam = totalPhepNam,
                     SoPhepConLai = remainPhepNam,
+                    Year = DateTime.Now.Year,
                     DateCreated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                     UserCreated = GetUserId()
                 });
+
+                nhanvien.MaBoPhanChiTiet = GetBoPhanChiTiet(worksheet.Cells[i, 35].Value.NullString());
 
                 nhanvien.Status = Status.Active.NullString();
                 nhanvien.IsDelete = "N";
@@ -441,6 +444,142 @@ namespace HRMNS.Application.Implementation
             {
                 _nhanvienRepository.Update(item);
             }
+        }
+
+        private int? GetBoPhanChiTiet(string tenbp)
+        {
+            if (tenbp.Contains("Quality Control/ QL Chất lượng (PQC)"))
+            {
+                return 85;
+            }
+
+            if (tenbp.Contains("Quality Control/ QL Chất lượng (QQC)"))
+            {
+                return 86;
+            }
+
+            if (tenbp.Contains("Quality Control/ QL Chất lượng (Reability)"))
+            {
+                return 87;
+            }
+
+            if (tenbp.Contains("SMT Manufacturing/ Sản xuất SMT"))
+            {
+                return 88;
+            }
+
+            if (tenbp.Contains("SMT Innovation Group"))
+            {
+                return 89;
+            }
+
+            if (tenbp.Contains("WLP2 Manufacturing/ Sản xuất WLP2"))
+            {
+                return 90;
+            }
+
+            if (tenbp.Contains("Warehouse"))
+            {
+                return 91;
+            }
+
+            if (tenbp.Contains("WLP1 Manufacturing/ Sản xuất WLP1"))
+            {
+                return 92;
+            }
+
+            if (tenbp.Contains("WLP1 Technology/ Kỹ thuật WLP1"))
+            {
+                return 93;
+            }
+
+            if (tenbp.Contains("WLP2 Technology/ Kỹ thuật WLP2"))
+            {
+                return 94;
+            }
+
+            if (tenbp.Contains("Quality Control/ QL Chất lượng (OQC)"))
+            {
+                return 95;
+            }
+
+            if (tenbp.Contains("SMT Technology/ Kỹ thuật SMT"))
+            {
+                return 96;
+            }
+
+            if (tenbp.Contains("Quality Control/ QL Chất lượng (CS)"))
+            {
+                return 97;
+            }
+
+            if (tenbp.Contains("Quality Control/ QL Chất lượng (IQC)"))
+            {
+                return 98;
+            }
+
+            if (tenbp.Contains("Purchasing/ Mua hàng"))
+            {
+                return 99;
+            }
+
+            if (tenbp.Contains("Quality Control/ QL Chất lượng"))
+            {
+                return 100;
+            }
+
+            if (tenbp.Contains("Accounting/ Kế toán"))
+            {
+                return 101;
+            }
+
+            if (tenbp.Contains("CSP Technology/ Kỹ thuật CSP"))
+            {
+                return 102;
+            }
+            if (tenbp.Contains("GOC"))
+            {
+                return 103;
+            }
+
+            if (tenbp.Contains("Human Resource/ HCNS"))
+            {
+                return 104;
+            }
+            if (tenbp.Contains("Human Resource/ HCNS (EHS)"))
+            {
+                return 105;
+            }
+            if (tenbp.Contains("CSP Manufacturing/ Sản xuất CSP"))
+            {
+                return 106;
+            }
+            if (tenbp.Contains("KOREA"))
+            {
+                return 107;
+            }
+            if (tenbp.Contains("LFEM  Manufacturing/ Sản xuất LFEM"))
+            {
+                return 108;
+            }
+            if (tenbp.Contains("LFEM Technology/ Kỹ thuật LFEM"))
+            {
+                return 109;
+            }
+            if (tenbp.Contains("Logistic/ XNK"))
+            {
+                return 110;
+            }
+            if (tenbp.Contains("PI"))
+            {
+                return 111;
+            }
+            if (tenbp.Contains("Human Resource/ HCNS (Utility)"))
+            {
+                return 112;
+            }
+
+            return null;
         }
     }
 }

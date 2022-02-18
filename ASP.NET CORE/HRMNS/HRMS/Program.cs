@@ -39,10 +39,10 @@ namespace HRMS
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                    webBuilder.UseKestrel(options =>
-                    {
-                        options.Limits.MaxRequestBodySize = 209715200;
-                    });
+                    //webBuilder.UseKestrel(options =>
+                    //{
+                    //    options.Limits.MaxRequestBodySize = 209715200;
+                    //});
                 });
     }
 }

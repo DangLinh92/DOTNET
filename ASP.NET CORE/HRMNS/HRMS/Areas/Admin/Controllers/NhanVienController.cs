@@ -70,6 +70,15 @@ namespace HRMS.Areas.Admin.Controllers
         {
             ViewBag.BoPhans = _boPhanService.GetAll(null);
             List<NhanVienViewModel> nhanviens = _nhanvienService.GetAll();
+            var section = _boPhanDetailService.GetAll(null);
+            foreach (var item in nhanviens)
+            {
+                if (section.Any(x => x.Id == item.MaBoPhanChiTiet))
+                {
+                    item.HR_BO_PHAN_DETAIL = section.Find(x => x.Id == item.MaBoPhanChiTiet);
+                }
+            }
+
             return View(nhanviens);
         }
 
@@ -77,6 +86,14 @@ namespace HRMS.Areas.Admin.Controllers
         public IActionResult OnGetPartialData()
         {
             List<NhanVienViewModel> nhanviens = _nhanvienService.GetAll();
+            var section = _boPhanDetailService.GetAll(null);
+            foreach (var item in nhanviens)
+            {
+                if (section.Any(x => x.Id == item.MaBoPhanChiTiet))
+                {
+                    item.HR_BO_PHAN_DETAIL = section.Find(x => x.Id == item.MaBoPhanChiTiet);
+                }
+            }
             return PartialView("_NhanVienGridPartial", nhanviens);
         }
 
@@ -129,7 +146,7 @@ namespace HRMS.Areas.Admin.Controllers
         [HttpPost]
         [RequestFormLimits(MultipartBodyLengthLimit = 209715200)]
         [RequestSizeLimit(209715200)]
-        public IActionResult ImportExcel(IList<IFormFile> files,[FromQuery] string param)
+        public IActionResult ImportExcel(IList<IFormFile> files, [FromQuery] string param)
         {
             if (files != null && files.Count > 0)
             {
@@ -150,7 +167,7 @@ namespace HRMS.Areas.Admin.Controllers
                     file.CopyTo(fs);
                     fs.Flush();
                 }
-                _nhanvienService.ImportExcel(filePath,param);
+                _nhanvienService.ImportExcel(filePath, param);
                 _nhanvienService.Save();
 
                 if (System.IO.File.Exists(filePath))
@@ -296,7 +313,7 @@ namespace HRMS.Areas.Admin.Controllers
                 profileModel.SoTaiKhoanNH = nhanVien.SoTaiKhoanNH;
 
                 // Tinh Trang Ho So --
-                TinhTrangHoSoViewModel tthsModel = nhanVien.HR_TINHTRANGHOSO.OrderByDescending(x=>x.DateCreated).FirstOrDefault();
+                TinhTrangHoSoViewModel tthsModel = nhanVien.HR_TINHTRANGHOSO.OrderByDescending(x => x.DateCreated).FirstOrDefault();
 
                 if (tthsModel != null)
                 {
@@ -389,7 +406,7 @@ namespace HRMS.Areas.Admin.Controllers
                 }
 
                 // --
-                profileModel.hopDongs = nhanVien.HR_HOPDONG.OrderByDescending(x=>x.NgayKy).ToList();
+                profileModel.hopDongs = nhanVien.HR_HOPDONG.OrderByDescending(x => x.NgayKy).ToList();
                 if (profileModel.hopDongs == null || profileModel.hopDongs.Count() == 0)
                 {
                     profileModel.hopDongs = new List<HopDongViewModel>()
@@ -573,7 +590,7 @@ namespace HRMS.Areas.Admin.Controllers
                     else if (model == "6") // Quitwork
                     {
                         nhanVien.NgayNghiViec = profileBasic.NgayNghiViec;
-                        if (!string.IsNullOrEmpty(profileBasic.NgayNghiViec) && DateTime.TryParse(profileBasic.NgayNghiViec,out var dNgaynghi))
+                        if (!string.IsNullOrEmpty(profileBasic.NgayNghiViec) && DateTime.TryParse(profileBasic.NgayNghiViec, out var dNgaynghi))
                         {
                             nhanVien.Status = Status.InActive.ToString();
                         }
@@ -1086,7 +1103,7 @@ namespace HRMS.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetKeKhaiBH(int Id)
         {
-           var obj =  _keKhaiBHService.GetById(Id);
+            var obj = _keKhaiBHService.GetById(Id);
             return new OkObjectResult(obj);
         }
 
