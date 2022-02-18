@@ -3,6 +3,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="txtTitleImport">Import Excel</h5>
+                <input type="hidden" id="hd-ImportType" />
                 <button type="button" class="close" id="btnCloseImport" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -32,7 +33,7 @@
                             <form role="form" id="frmImportEmployee">
                                 <label class="custom-file-container__custom-file">
                                     <input type="file" id="fileInputExcel" class="custom-file-container__custom-file__custom-file-input" multiple>
-                                    <input type="hidden" name="MAX_FILE_SIZE" value="10485760" />
+                                    <input type="hidden" name="MAX_FILE_SIZE" value="209715200" />
                                     <span class="custom-file-container__custom-file__custom-file-control"></span>
                                 </label>
                                 <div class="custom-file-container__image-preview"></div>

@@ -12,6 +12,7 @@ using HRMS.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
@@ -102,6 +103,11 @@ namespace HRMS
             {
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();// not change format json
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            });
+
+            services.Configure<FormOptions>(x =>
+            {
+                x.MultipartBodyLengthLimit = 209715200;
             });
         }
 

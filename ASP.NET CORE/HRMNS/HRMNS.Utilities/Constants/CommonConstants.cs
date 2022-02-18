@@ -30,5 +30,8 @@ namespace HRMNS.Utilities.Constants
         public const string sFalse = "0";
         public const string Y = "Y";
         public const string N = "N";
+
+        public const string IMPORT_BASIC_EMP = "basic_emp";
+        public const string IMPORT_DETAIL_EMP = "detail_emp";
     }
 }

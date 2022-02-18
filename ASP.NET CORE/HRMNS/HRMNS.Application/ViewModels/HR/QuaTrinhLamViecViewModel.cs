@@ -37,11 +37,6 @@ namespace HRMNS.Application.ViewModels.HR
         [StringLength(50)]
         public string UserModified { get; set; }
 
-        public string DateCustom
-        {
-            get;set;
-        }
-
         public NhanVienViewModel HR_NHANVIEN { get; set; }
     }
 }

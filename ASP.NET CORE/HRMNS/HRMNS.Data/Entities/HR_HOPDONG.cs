@@ -11,6 +11,10 @@ namespace HRMNS.Data.Entities
     [Table("HR_HOPDONG")]
     public class HR_HOPDONG : DomainEntity<int>, IDateTracking
     {
+        public HR_HOPDONG()
+        {
+
+        }
         public HR_HOPDONG(string maHD,string maNV,string tenHD,int? loaiHD,string ngayTao,string ngayKy,string ngayHieuLuc,string ngayHetHieuLuc,string status,int dayNumberNoti)
         {
             MaHD = maHD;

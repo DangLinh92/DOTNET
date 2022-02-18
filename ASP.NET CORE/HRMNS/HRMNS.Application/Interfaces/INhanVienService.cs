@@ -27,7 +27,7 @@ namespace HRMNS.Application.Interfaces
 
         List<NhanVienViewModel> Search(string id, string name, string dept);
 
-        void ImportExcel(string filePath);
+        void ImportExcel(string filePath,string param);
 
         void Save();
     }

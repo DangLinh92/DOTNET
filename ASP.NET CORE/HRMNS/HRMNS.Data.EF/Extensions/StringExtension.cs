@@ -29,5 +29,17 @@ namespace HRMNS.Data.EF.Extensions
             string reverse = new string(nameArray);
             return reverse;
         }
+
+        public static string ToYYYYMMDD(this string obj)
+        {
+            if (DateTime.TryParse(obj, out var date))
+            {
+                return date.ToString("yyyy-MM-dd");
+            }
+            else
+            {
+                return "";
+            }
+        }
     }
 }

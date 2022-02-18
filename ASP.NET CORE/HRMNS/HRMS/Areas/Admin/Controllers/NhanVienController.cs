@@ -127,7 +127,9 @@ namespace HRMS.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult ImportExcel(IList<IFormFile> files)
+        [RequestFormLimits(MultipartBodyLengthLimit = 209715200)]
+        [RequestSizeLimit(209715200)]
+        public IActionResult ImportExcel(IList<IFormFile> files,[FromQuery] string param)
         {
             if (files != null && files.Count > 0)
             {
@@ -148,7 +150,7 @@ namespace HRMS.Areas.Admin.Controllers
                     file.CopyTo(fs);
                     fs.Flush();
                 }
-                _nhanvienService.ImportExcel(filePath);
+                _nhanvienService.ImportExcel(filePath,param);
                 _nhanvienService.Save();
 
                 if (System.IO.File.Exists(filePath))
@@ -294,7 +296,7 @@ namespace HRMS.Areas.Admin.Controllers
                 profileModel.SoTaiKhoanNH = nhanVien.SoTaiKhoanNH;
 
                 // Tinh Trang Ho So --
-                TinhTrangHoSoViewModel tthsModel = nhanVien.HR_TINHTRANGHOSO.FirstOrDefault();
+                TinhTrangHoSoViewModel tthsModel = nhanVien.HR_TINHTRANGHOSO.OrderByDescending(x=>x.DateCreated).FirstOrDefault();
 
                 if (tthsModel != null)
                 {
@@ -362,21 +364,6 @@ namespace HRMS.Areas.Admin.Controllers
                             MaNV = profileModel.MaNhanVien
                         }
                     };
-                }
-                else
-                {
-                    foreach (var item in profileModel.quaTrinhLamViecs)
-                    {
-                        if (string.IsNullOrEmpty(item.ThơiGianBatDau))
-                        {
-                            item.DateCustom = "";
-                        }
-                        else
-                        {
-                            item.DateCustom = DateTime.ParseExact(item.ThơiGianBatDau, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("yyyy");
-                        }
-
-                    }
                 }
 
                 profileModel.phepNams = nhanVien.HR_PHEP_NAM.OrderByDescending(x => x.Year).Take(2).ToList();
@@ -586,6 +573,11 @@ namespace HRMS.Areas.Admin.Controllers
                     else if (model == "6") // Quitwork
                     {
                         nhanVien.NgayNghiViec = profileBasic.NgayNghiViec;
+                        if (!string.IsNullOrEmpty(profileBasic.NgayNghiViec) && DateTime.TryParse(profileBasic.NgayNghiViec,out var dNgaynghi))
+                        {
+                            nhanVien.Status = Status.InActive.ToString();
+                        }
+
                         partialName = "_profileQuitWorkPartial";
                     }
                     else if (model == "7") // ky luat lao dong
@@ -762,21 +754,6 @@ namespace HRMS.Areas.Admin.Controllers
 
             _quatrinhLamViecService.Save();
 
-            if (lstQtrinhCtac.Count() > 0)
-            {
-                foreach (var item in lstQtrinhCtac)
-                {
-                    if (string.IsNullOrEmpty(item.ThơiGianBatDau))
-                    {
-                        item.DateCustom = "";
-                    }
-                    else
-                    {
-                        item.DateCustom = DateTime.ParseExact(item.ThơiGianBatDau, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("yyyy");
-                    }
-                }
-            }
-
             return PartialView("_profileQuaTrinhCtacPartial", lstQtrinhCtac);
         }
 
@@ -850,7 +827,7 @@ namespace HRMS.Areas.Admin.Controllers
                 profileModel.SoTaiKhoanNH = nhanVien.SoTaiKhoanNH;
 
                 // Tinh Trang Ho So --
-                TinhTrangHoSoViewModel tthsModel = nhanVien.HR_TINHTRANGHOSO.FirstOrDefault();
+                TinhTrangHoSoViewModel tthsModel = nhanVien.HR_TINHTRANGHOSO.OrderByDescending(x => x.DateCreated).FirstOrDefault();
 
                 if (tthsModel != null)
                 {
@@ -919,20 +896,6 @@ namespace HRMS.Areas.Admin.Controllers
                             MaNV = profileModel.MaNhanVien
                         }
                     };
-                }
-                else
-                {
-                    foreach (var item in profileModel.quaTrinhLamViecs)
-                    {
-                        if (string.IsNullOrEmpty(item.ThơiGianBatDau))
-                        {
-                            item.DateCustom = "";
-                        }
-                        else
-                        {
-                            item.DateCustom = DateTime.ParseExact(item.ThơiGianBatDau, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("yyyy");
-                        }
-                    }
                 }
 
                 profileModel.phepNams = nhanVien.HR_PHEP_NAM.OrderByDescending(x => x.Year).Take(2).ToList();

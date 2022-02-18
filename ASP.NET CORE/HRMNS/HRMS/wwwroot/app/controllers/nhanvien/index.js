@@ -199,8 +199,15 @@
     // DELETE END
 
     // IMPORT EXCEL START
-    $('#btn-import').on('click', function () {
+    $('#btn-import').on('click', function () { // import basic info for employee
         $("#fileInputExcel").val(null);
+        $('#hd-ImportType').val('basic_emp');
+        $('#import_employee').modal('show');
+    });
+
+    $('#btn-import-contract').on('click', function () { // import detail info for employee
+        $("#fileInputExcel").val(null);
+        $('#hd-ImportType').val('detail_emp');
         $('#import_employee').modal('show');
     });
 
@@ -209,6 +216,7 @@
         var files = fileUpload.files;
         if (files.length > 0) {
             $("#fileInputExcel").val(null);
+            $('#hd-ImportType').val('');
             $('#import_employee').modal('hide');
             location.reload();
         }
@@ -219,6 +227,7 @@
         var files = fileUpload.files;
         if (files.length > 0) {
             $("#fileInputExcel").val(null);
+            $('#hd-ImportType').val('');
             $('#import_employee').modal('hide');
             location.reload();
         }
@@ -236,9 +245,10 @@
         }
         // Adding one more key to FormData object  
         // fileData.append('categoryId', $('#ddlCategoryIdImportExcel').combotree('getValue'));
+        var type = $('#hd-ImportType').val();
 
         $.ajax({
-            url: '/Admin/NhanVien/ImportExcel',
+            url: '/Admin/NhanVien/ImportExcel?param=' + type,
             type: 'POST',
             data: fileData,
             processData: false,  // tell jQuery not to process the data
