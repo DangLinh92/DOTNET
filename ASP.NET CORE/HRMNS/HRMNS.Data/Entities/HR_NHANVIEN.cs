@@ -20,6 +20,10 @@ namespace HRMNS.Data.Entities
             HR_TINHTRANGHOSO = new HashSet<HR_TINHTRANGHOSO>();
             HR_CHUNGCHI_NHANVIEN = new HashSet<HR_CHUNGCHI_NHANVIEN>();
             HR_PHEP_NAM = new HashSet<HR_PHEP_NAM>();
+            DANGKY_CHAMCONG_DACBIET = new HashSet<DANGKY_CHAMCONG_DACBIET>();
+            DANGKY_OT_NHANVIEN = new HashSet<DANGKY_OT_NHANVIEN>();
+            DC_CHAM_CONG = new HashSet<DC_CHAM_CONG>();
+            NHANVIEN_CALAMVIEC = new HashSet<NHANVIEN_CALAMVIEC>();
         }
 
         public HR_NHANVIEN
@@ -189,5 +193,11 @@ namespace HRMNS.Data.Entities
         public virtual ICollection<HR_QUATRINHLAMVIEC> HR_QUATRINHLAMVIEC { get; set; }
         public virtual ICollection<HR_TINHTRANGHOSO> HR_TINHTRANGHOSO { get; set; }
         public virtual ICollection<HR_PHEP_NAM> HR_PHEP_NAM { get; set; }
+
+        public virtual ICollection<DANGKY_CHAMCONG_DACBIET> DANGKY_CHAMCONG_DACBIET { get; set; }
+        public virtual ICollection<DANGKY_OT_NHANVIEN> DANGKY_OT_NHANVIEN { get; set; }
+        public virtual ICollection<DC_CHAM_CONG> DC_CHAM_CONG { get; set; }
+        public virtual ICollection<NHANVIEN_CALAMVIEC> NHANVIEN_CALAMVIEC { get; set; }
+        
     }
 }

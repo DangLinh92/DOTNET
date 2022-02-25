@@ -406,10 +406,11 @@ namespace HRMNS.Data.EF
             {
                 _context.HrLoaiHopDong.AddRange(new List<HR_LOAIHOPDONG>()
                 {
-                   new HR_LOAIHOPDONG(){ TenLoaiHD = "Hợp Đồng Thử Việc" },
+                   new HR_LOAIHOPDONG(){ TenLoaiHD = "Hợp Đồng Thử Việc(85%)" },
                     new HR_LOAIHOPDONG(){ TenLoaiHD = "Hợp Đồng 1 năm lần 1" },
                      new HR_LOAIHOPDONG(){ TenLoaiHD = "Hợp Đồng 1 năm lần 2" },
                       new HR_LOAIHOPDONG(){ TenLoaiHD = "Hợp Đồng Không Thời Hạn" },
+                      new HR_LOAIHOPDONG(){ TenLoaiHD = "Hợp Đồng Thử Việc Cho OP(100%)" },
                 });
             }
 

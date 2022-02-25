@@ -43,6 +43,23 @@ namespace HRMNS.Data.EF
         public virtual DbSet<HR_PHEP_NAM> HrPhepNam { get; set; }
         public virtual DbSet<HR_BO_PHAN_DETAIL> HrBoPhanDetail { get; set; }
 
+        public virtual DbSet<CA_LVIEC> CA_LVIEC { get; set; }
+        public virtual DbSet<CHAM_CONG_LOG> CHAM_CONG_LOG { get; set; }
+        public virtual DbSet<DANGKY_CHAMCONG_CHITIET> DANGKY_CHAMCONG_CHITIET { get; set; }
+        public virtual DbSet<DANGKY_CHAMCONG_DACBIET> DANGKY_CHAMCONG_DACBIET { get; set; }
+        public virtual DbSet<DANGKY_OT_NHANVIEN> DANGKY_OT_NHANVIEN { get; set; }
+        public virtual DbSet<DC_CHAM_CONG> DC_CHAM_CONG { get; set; }
+        public virtual DbSet<DM_CA_LVIEC> DM_CA_LVIEC { get; set; }
+        public virtual DbSet<DM_DANGKY_CHAMCONG> DM_DANGKY_CHAMCONG { get; set; }
+        public virtual DbSet<DM_NGAY_LAMVIEC> DM_NGAY_LAMVIEC { get; set; }
+        public virtual DbSet<HE_SO_OVERTIME> HE_SO_OVERTIME { get; set; }
+        public virtual DbSet<KY_HIEU_CHAM_CONG> KY_HIEU_CHAM_CONG { get; set; }
+        public virtual DbSet<NGAY_LE_NAM> NGAY_LE_NAM { get; set; }
+        public virtual DbSet<NGAY_NGHI_BU_LE_NAM> NGAY_NGHI_BU_LE_NAM { get; set; }
+        public virtual DbSet<NHANVIEN_CALAMVIEC> NHANVIEN_CALAMVIEC { get; set; }
+        public virtual DbSet<SETTING_TIME_DIMUON_VESOM> SETTING_TIME_DIMUON_VESOM { get; set; }
+        public virtual DbSet<TRU_SO_LVIEC> TRU_SO_LVIEC { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             #region
@@ -71,6 +88,25 @@ namespace HRMNS.Data.EF
             builder.AddConfiguration(new TinhTrangHosoConfiguration());
             builder.AddConfiguration(new BoPhanDetailConfiguration());
             builder.AddConfiguration(new PhepNamConfiguration());
+
+            builder.AddConfiguration(new CaLviecConfiguration());
+            builder.AddConfiguration(new ChamCongLogConfiguration());
+            builder.AddConfiguration(new DkyChamCongChiTietConfiguration());
+            builder.AddConfiguration(new DkyChamCongDacBietConfiguration());
+            builder.AddConfiguration(new DKyOTNhanVienConfiguration());
+            builder.AddConfiguration(new DCChamCongConfiguration());
+            builder.AddConfiguration(new DMCaLviecConfiguration());
+            builder.AddConfiguration(new DMDangKyChamCongConfiguration());
+            builder.AddConfiguration(new DMNgayLamViecConfiguration());
+            builder.AddConfiguration(new HeSoOverTimeConfiguration());
+            builder.AddConfiguration(new KyHieuChamCongConfiguration());
+            builder.AddConfiguration(new NgayLeNamConfiguration());
+            builder.AddConfiguration(new NgayNghiBuLeNamConfiguration());
+            builder.AddConfiguration(new NhanVienCaLamViecConfiguration());
+            builder.AddConfiguration(new SettingTimeDiMuonVeSomConfiguration());
+            builder.AddConfiguration(new TruSoLamViecConfiguration());
+
+            
             //base.OnModelCreating(builder);
         }
 

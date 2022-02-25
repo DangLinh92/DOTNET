@@ -22,6 +22,11 @@ namespace HRMNS.Data.EF.Configurations
             entity.HasMany(x => x.HR_QUATRINHLAMVIEC).WithOne(x => x.HR_NHANVIEN).OnDelete(DeleteBehavior.Cascade);
             entity.HasMany(x => x.HR_TINHTRANGHOSO).WithOne(x => x.HR_NHANVIEN).OnDelete(DeleteBehavior.Cascade);
             entity.HasMany(x => x.HR_PHEP_NAM).WithOne(x => x.HR_NHANVIEN).OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasMany(x => x.DANGKY_CHAMCONG_DACBIET).WithOne(x => x.HR_NHANVIEN).OnDelete(DeleteBehavior.Cascade);
+            entity.HasMany(x => x.DANGKY_OT_NHANVIEN).WithOne(x => x.HR_NHANVIEN).OnDelete(DeleteBehavior.Cascade);
+            entity.HasMany(x => x.DC_CHAM_CONG).WithOne(x => x.HR_NHANVIEN).OnDelete(DeleteBehavior.Cascade);
+            entity.HasMany(x => x.NHANVIEN_CALAMVIEC).WithOne(x => x.HR_NHANVIEN).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
