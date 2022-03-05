@@ -17,7 +17,8 @@ namespace HRMNS.Data.Entities
         [StringLength(50)]
         public string MaNV { get; set; }
 
-        public int? DM_NgayLViec { get; set; }
+        [StringLength(50)]
+        public string DM_NgayLViec { get; set; }
 
         [StringLength(50)]
         public string DateCreated { get; set; }

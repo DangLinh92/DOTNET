@@ -1,5 +1,7 @@
-﻿using System;
+﻿using HRMNS.Utilities.Dtos;
+using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Text;
 
 namespace HRMS.Infrastructure.Interfaces

@@ -9,13 +9,12 @@ using System.Text;
 namespace HRMNS.Data.Entities
 {
     [Table("DM_NGAY_LAMVIEC")]
-    public class DM_NGAY_LAMVIEC : DomainEntity<int>, IDateTracking
+    public class DM_NGAY_LAMVIEC : DomainEntity<string>, IDateTracking
     {
         public DM_NGAY_LAMVIEC()
         {
             CA_LVIEC = new HashSet<CA_LVIEC>();
             DANGKY_OT_NHANVIEN = new HashSet<DANGKY_OT_NHANVIEN>();
-            HE_SO_OVERTIME = new HashSet<HE_SO_OVERTIME>();
         }
 
         [StringLength(100)]
@@ -37,6 +36,5 @@ namespace HRMNS.Data.Entities
 
         public virtual ICollection<DANGKY_OT_NHANVIEN> DANGKY_OT_NHANVIEN { get; set; }
 
-        public virtual ICollection<HE_SO_OVERTIME> HE_SO_OVERTIME { get; set; }
     }
 }

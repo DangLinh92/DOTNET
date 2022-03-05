@@ -24,6 +24,7 @@ namespace HRMNS.Data.Entities
             DANGKY_OT_NHANVIEN = new HashSet<DANGKY_OT_NHANVIEN>();
             DC_CHAM_CONG = new HashSet<DC_CHAM_CONG>();
             NHANVIEN_CALAMVIEC = new HashSet<NHANVIEN_CALAMVIEC>();
+            ATTENDANCE_RECORD = new HashSet<ATTENDANCE_RECORD>();
         }
 
         public HR_NHANVIEN
@@ -198,6 +199,8 @@ namespace HRMNS.Data.Entities
         public virtual ICollection<DANGKY_OT_NHANVIEN> DANGKY_OT_NHANVIEN { get; set; }
         public virtual ICollection<DC_CHAM_CONG> DC_CHAM_CONG { get; set; }
         public virtual ICollection<NHANVIEN_CALAMVIEC> NHANVIEN_CALAMVIEC { get; set; }
-        
+        public virtual ICollection<ATTENDANCE_RECORD> ATTENDANCE_RECORD { get; set; }
+
+
     }
 }

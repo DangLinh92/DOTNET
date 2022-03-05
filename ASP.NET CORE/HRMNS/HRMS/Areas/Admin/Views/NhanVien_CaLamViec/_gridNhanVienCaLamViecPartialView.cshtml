@@ -1,0 +1,50 @@
+﻿@model List<NhanVien_CalamViecViewModel>
+<table class="table table-striped custom-table datatable" id="nvCalamviecDataTable">
+    <thead>
+        <tr>
+            <th>User Id</th>
+            <th>User Name</th>
+            <th>Department</th>
+            <th>Shift</th>
+            <th>From Time</th>
+            <th>End Time</th>
+            <th class="text-nowrap">Status</th>
+            <th class="text-right no-sort">Action</th>
+        </tr>
+    </thead>
+    <tbody id="tbl-content">
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.MaNV</td>
+                <td>@item.HR_NHANVIEN?.TenNV</td>
+                <td>@item.HR_NHANVIEN?.MaBoPhan</td>
+                <td>@item.DM_CA_LVIEC?.TenCaLamViec</td>
+                <td>@item.BatDau_TheoCa</td>
+                <td>@item.KetThuc_TheoCa</td>
+                <td>
+                    @if (item.Status == "Active")
+                    {
+                        <span class="badge bg-inverse-success">@item.Status</span>
+                    }
+                    else if (item.Status == "New")
+                    {
+                        <span class="badge bg-inverse-info">@item.Status</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-inverse-dark">@item.Status</span>
+                    }
+                </td>
+                <td class="text-right">
+                    <div class="dropdown dropdown-action">
+                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item edit-employee" href="#" data-toggle="modal" data-target="#add_expense" data-id="@item.Id"><i class="fa fa-edit m-r-5"></i> Edit</a>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

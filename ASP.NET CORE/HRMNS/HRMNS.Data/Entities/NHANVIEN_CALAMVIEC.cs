@@ -14,13 +14,17 @@ namespace HRMNS.Data.Entities
         [StringLength(50)]
         public string MaNV { get; set; }
 
-        public int? Danhmuc_CaLviec { get; set; }
+         [StringLength(50)]
+        public string Danhmuc_CaLviec { get; set; }
 
         [StringLength(50)]
         public string BatDau_TheoCa { get; set; }
 
         [StringLength(50)]
         public string KetThuc_TheoCa { get; set; }
+
+        [StringLength(50)]
+        public string Status { get; set; }
 
         [StringLength(50)]
         public string DateCreated { get; set; }

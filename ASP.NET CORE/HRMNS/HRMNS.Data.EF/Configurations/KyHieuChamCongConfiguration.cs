@@ -14,10 +14,10 @@ namespace HRMNS.Data.EF.Configurations
             entity.HasKey(c => c.Id);
             entity.Property(c => c.Id).HasMaxLength(20);
 
-            entity.HasMany(x => x.CA_LVIEC).WithOne(x => x.KY_HIEU_CHAM_CONG).OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.SetNull);
             entity.HasMany(x => x.DANGKY_CHAMCONG_CHITIET).WithOne(x => x.KY_HIEU_CHAM_CONG).OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.SetNull);
             entity.HasMany(x => x.NGAY_LE_NAM).WithOne(x => x.KY_HIEU_CHAM_CONG).OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.SetNull);
             entity.HasMany(x => x.NGAY_NGHI_BU_LE_NAM).WithOne(x => x.KY_HIEU_CHAM_CONG).OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.SetNull);
+            entity.HasMany(x => x.ATTENDANCE_RECORD).WithOne(x => x.KY_HIEU_CHAM_CONG).OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.SetNull);
         }
     }
 }

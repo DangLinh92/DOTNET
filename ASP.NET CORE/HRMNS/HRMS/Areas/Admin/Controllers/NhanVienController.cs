@@ -83,6 +83,13 @@ namespace HRMS.Areas.Admin.Controllers
         }
 
         [HttpGet]
+        public IActionResult GetAll()
+        {
+            List<NhanVienViewModel> nhanviens = _nhanvienService.GetAll();
+            return new OkObjectResult(nhanviens);
+        }
+
+        [HttpGet]
         public IActionResult OnGetPartialData()
         {
             List<NhanVienViewModel> nhanviens = _nhanvienService.GetAll();

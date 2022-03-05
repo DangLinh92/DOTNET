@@ -1,6 +1,8 @@
-﻿using HRMS.Infrastructure.Interfaces;
+﻿using HRMNS.Utilities.Dtos;
+using HRMS.Infrastructure.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Text;
 
 namespace HRMNS.Data.EF

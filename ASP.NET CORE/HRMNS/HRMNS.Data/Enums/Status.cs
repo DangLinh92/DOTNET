@@ -7,7 +7,7 @@ namespace HRMNS.Data.Enums
     public enum Status
     {
         InActive,
-        Active
-
+        Active,
+        New
     }
 }

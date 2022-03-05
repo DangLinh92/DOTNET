@@ -158,7 +158,7 @@ namespace HRMNS.Application.Implementation
             for (int i = worksheet.Dimension.Start.Row + 2; i <= worksheet.Dimension.End.Row; i++)
             {
                 nhanvien = new HR_NHANVIEN();
-                nhanvien.Id = worksheet.Cells[i, 2].Value.NullString();
+                nhanvien.Id = worksheet.Cells[i, 2].Value.NullString().ToUpper();
 
                 if (string.IsNullOrEmpty(nhanvien.Id))
                 {
@@ -286,7 +286,7 @@ namespace HRMNS.Application.Implementation
             string maNV = "";
             for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
             {
-                maNV = worksheet.Cells[i, 1].Value.NullString();
+                maNV = worksheet.Cells[i, 1].Value.NullString().ToUpper();
                 nhanvien = lstNhanVien.FirstOrDefault(x => x.Id == maNV);
 
                 if (nhanvien == null)

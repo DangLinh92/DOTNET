@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +12,6 @@ namespace HRMS.Areas.Admin.Controllers
     [Area("Admin")]
     public class AdminBaseController : Controller
     {
+        public ILogger _logger;
     }
 }

@@ -11,7 +11,8 @@ namespace HRMNS.Data.Entities
     [Table("SETTING_TIME_DIMUON_VESOM")]
     public class SETTING_TIME_DIMUON_VESOM : DomainEntity<int>, IDateTracking
     {
-        public int? Danhmuc_CaLviec { get; set; }
+        [StringLength(50)]
+        public string Danhmuc_CaLviec { get; set; }
 
         [StringLength(50)]
         public string Time_LateCome { get; set; }

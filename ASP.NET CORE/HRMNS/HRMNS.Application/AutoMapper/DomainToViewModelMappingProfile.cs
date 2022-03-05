@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HRMNS.Application.ViewModels.HR;
 using HRMNS.Application.ViewModels.System;
+using HRMNS.Application.ViewModels.Time_Attendance;
 using HRMNS.Data.Entities;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,10 @@ namespace HRMNS.Application.AutoMapper
             CreateMap<FUNCTION, FunctionViewModel>();
             CreateMap<HR_BO_PHAN_DETAIL, BoPhanDetailViewModel>();
             CreateMap<HR_PHEP_NAM, PhepNamViewModel>();
+
+            CreateMap<CHAM_CONG_LOG, ChamCongLogViewModel>();
+            CreateMap<NHANVIEN_CALAMVIEC, NhanVien_CalamViecViewModel>();
+            CreateMap<DM_CA_LVIEC, DMCalamviecViewModel>();
         }
     }
 }

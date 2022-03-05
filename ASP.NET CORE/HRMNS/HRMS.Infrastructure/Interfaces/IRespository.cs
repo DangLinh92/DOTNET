@@ -1,5 +1,8 @@
-﻿using System;
+﻿using HRMNS.Utilities.Dtos;
+using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -25,5 +28,7 @@ namespace HRMS.Infrastructure.Interfaces
         void Remove(K id);
 
         void RemoveMultiple(List<T> entities);
+
+        ResultDB ExecProceduce(string ProcName, Dictionary<string, string> Dictionary, string tableParam, DataTable table);
     }
 }

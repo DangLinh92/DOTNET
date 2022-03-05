@@ -13,12 +13,14 @@ namespace HRMNS.Data.Entities
     {
         public CA_LVIEC()
         {
-
+            ATTENDANCE_OVERTIME = new HashSet<ATTENDANCE_OVERTIME>();
         }
 
-        public int? Danhmuc_CaLviec { get; set; }
+        [StringLength(50)]
+        public string Danhmuc_CaLviec { get; set; }
 
-        public int? DM_NgayLViec { get; set; }
+        [StringLength(50)]
+        public string DM_NgayLViec { get; set; }
 
         [StringLength(100)]
         public string TenCa { get; set; }
@@ -27,14 +29,16 @@ namespace HRMNS.Data.Entities
         public string Time_BatDau { get; set; }
 
         [StringLength(50)]
+        public string Time_BatDau2 { get; set; }
+
+        [StringLength(50)]
         public string Time_KetThuc { get; set; }
 
-        public int? DayInWeek_Start { get; set; }
+        [StringLength(50)]
+        public string Time_KetThuc2 { get; set; }
 
-        public int? DayInWeek_End { get; set; }
+        public float HeSo_OT { get; set; }
 
-        [StringLength(20)]
-        public string KyHieuChamCong { get; set; }
         [StringLength(50)]
         public string DateCreated { get; set; }
 
@@ -53,7 +57,6 @@ namespace HRMNS.Data.Entities
         [ForeignKey("DM_NgayLViec")]
         public virtual DM_NGAY_LAMVIEC DM_NGAY_LAMVIEC { get; set; }
 
-        [ForeignKey("KyHieuChamCong")]
-        public virtual KY_HIEU_CHAM_CONG KY_HIEU_CHAM_CONG { get; set; }
+        public virtual ICollection<ATTENDANCE_OVERTIME> ATTENDANCE_OVERTIME { get; set; }
     }
 }

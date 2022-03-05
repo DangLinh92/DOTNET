@@ -13,10 +13,10 @@ namespace HRMNS.Data.Entities
     {
         public KY_HIEU_CHAM_CONG()
         {
-            CA_LVIEC = new HashSet<CA_LVIEC>();
             DANGKY_CHAMCONG_CHITIET = new HashSet<DANGKY_CHAMCONG_CHITIET>();
             NGAY_LE_NAM = new HashSet<NGAY_LE_NAM>();
             NGAY_NGHI_BU_LE_NAM = new HashSet<NGAY_NGHI_BU_LE_NAM>();
+            ATTENDANCE_RECORD = new HashSet<ATTENDANCE_RECORD>();
         }
 
         [StringLength(300)]
@@ -36,12 +36,11 @@ namespace HRMNS.Data.Entities
         [StringLength(50)]
         public string UserModified { get; set; }
 
-        public virtual ICollection<CA_LVIEC> CA_LVIEC { get; set; }
-
         public virtual ICollection<DANGKY_CHAMCONG_CHITIET> DANGKY_CHAMCONG_CHITIET { get; set; }
 
         public virtual ICollection<NGAY_LE_NAM> NGAY_LE_NAM { get; set; }
 
         public virtual ICollection<NGAY_NGHI_BU_LE_NAM> NGAY_NGHI_BU_LE_NAM { get; set; }
+        public virtual ICollection<ATTENDANCE_RECORD> ATTENDANCE_RECORD { get; set; }
     }
 }

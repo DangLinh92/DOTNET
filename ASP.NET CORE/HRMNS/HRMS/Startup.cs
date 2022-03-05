@@ -98,6 +98,9 @@ namespace HRMS
             services.AddTransient<IQuatrinhLamViecService, QuatrinhLamViecService>();
             services.AddTransient<ICheDoBHService, CheDoBHService>();
             services.AddTransient<IKeKhaiBaoHiemService, KeKhaiBaoHiemService>();
+            services.AddTransient<IChamCongService, ChamCongService>();
+            services.AddTransient<INhanVien_CalamviecService, NhanVien_CalamviecService>();
+            services.AddTransient<IDMucCalamviecService, DMucCalamviecService>();
 
             services.AddMvc().AddNewtonsoftJson(options =>
             {
@@ -136,13 +139,14 @@ namespace HRMS
 
             app.UseEndpoints(routes =>
             {
-                routes.MapControllerRoute(
-                    "default",
-                    "{controller=Account}/{action=Login}/{id?}");
 
                 routes.MapControllerRoute(
-                    "areaRoute",
+                    "default",
                     "{area:exists}/{controller=Login}/{action=Index}/{id?}");
+
+                routes.MapControllerRoute(
+                    "Deptdefault",
+                    "{controller=Account}/{action=Login}/{id?}");
 
             });
         }

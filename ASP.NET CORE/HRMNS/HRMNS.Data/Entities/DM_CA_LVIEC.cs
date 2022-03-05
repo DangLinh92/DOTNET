@@ -9,7 +9,7 @@ using System.Text;
 namespace HRMNS.Data.Entities
 {
     [Table("DM_CA_LVIEC")]
-    public class DM_CA_LVIEC : DomainEntity<int>, IDateTracking
+    public class DM_CA_LVIEC : DomainEntity<string>, IDateTracking
     {
         public DM_CA_LVIEC()
         {

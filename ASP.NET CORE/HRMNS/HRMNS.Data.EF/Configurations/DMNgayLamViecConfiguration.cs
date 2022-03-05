@@ -12,11 +12,10 @@ namespace HRMNS.Data.EF.Configurations
         public override void Configure(EntityTypeBuilder<DM_NGAY_LAMVIEC> entity)
         {
             entity.HasKey(c => c.Id);
-            entity.Property(c => c.Id).ValueGeneratedOnAdd();
+            entity.Property(c => c.Id).HasMaxLength(50);
 
             entity.HasMany(x => x.CA_LVIEC).WithOne(x => x.DM_NGAY_LAMVIEC).OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.SetNull);
             entity.HasMany(x => x.DANGKY_OT_NHANVIEN).WithOne(x => x.DM_NGAY_LAMVIEC).OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.SetNull);
-            entity.HasMany(x => x.HE_SO_OVERTIME).WithOne(x => x.DM_NGAY_LAMVIEC).OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.SetNull);
         }
     }
 }

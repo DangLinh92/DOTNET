@@ -1,0 +1,257 @@
+﻿@model List<NhanVien_CalamViecViewModel>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts
+{
+    <script src="~/app/controllers/nhanvien_calamviec/index.js"></script>
+    <script>
+        var controller = new nhanvien_calamviecController();
+        controller.initialize();
+
+        $(document).ready(function () {
+            $('#nvCalamviecDataTable').DataTable({
+                "order": [7, 'asc']
+            });
+            $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
+            $('select[name="nvCalamviecDataTable_length"]').removeClass('form-control-sm');
+
+            // init select 2 jquery
+            $(".nested").select2({
+                tags: true
+            });
+        });
+    </script>
+}
+@section Styles{
+    <style>
+
+        #btnCreate {
+            float: none;
+            margin-right: 10px;
+        }
+
+        #btnManagement {
+            min-width: 150px;
+            border-radius: 50px;
+        }
+    </style>
+}
+<!-- Page Content -->
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Reschedule</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/admin/chamcong/index">Time and Attendance</a></li>
+                    <li class="breadcrumb-item active">Reschedule</li>
+                </ul>
+            </div>
+            <div class="col-auto float-right ml-auto">
+                <a href="#" id="btnCreate" class="btn add-btn" data-toggle="modal" data-target="#add_nhanvien_calamviecModel"><i class="fa fa-plus"></i> Add Schedule</a>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info dropdown-toggle" id="btnManagement" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Management</button>
+                    <div class="dropdown-menu" style="">
+                        <a class="dropdown-item" href="/admin/nhanvien_calamviec/index" id="btn-XepLichLamViec">Reschedule</a>
+                        <a class="dropdown-item" href="#" id="btn-Overtime">Overtime</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="~/templates/ShifTemplate.xlsx">Get Shift Template</a>
+                        <a class="dropdown-item" href="#" id="btn-importShift">Import Shift</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+    <!-- Search Filter -->
+    <div class="row filter-row">
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            <div class="form-group form-focus">
+                <input type="text" class="form-control floating">
+                <label class="focus-label">User id, user name</label>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            <div class="form-group form-focus select-focus">
+                <select class="select floating">
+                    <option> -- Select -- </option>
+                    <option>Loren Gatlin</option>
+                    <option>Tarah Shropshire</option>
+                </select>
+                <label class="focus-label">Deparment</label>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            <div class="form-group form-focus select-focus">
+                <select class="select floating">
+                    <option> -- Select -- </option>
+                    <option> Cash </option>
+                    <option> Cheque </option>
+                </select>
+                <label class="focus-label">Result Status</label>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            <div class="form-group form-focus">
+                <div class="cal-icon">
+                    <input class="form-control floating datetimepicker" type="text">
+                </div>
+                <label class="focus-label">From</label>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            <div class="form-group form-focus">
+                <div class="cal-icon">
+                    <input class="form-control floating datetimepicker" type="text">
+                </div>
+                <label class="focus-label">To</label>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            <a href="#" class="btn btn-success btn-block"> Search </a>
+        </div>
+    </div>
+    <!-- /Search Filter -->
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive" id="gridNvienCalamviecIndex">
+                @await Html.PartialAsync("_gridNhanVienCaLamViecPartialView", Model)
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Page Content -->
+
+<!-- Đang ký ca lam viec cho nhan vien -->
+<partial name="_nhanvienCalamviecModelPartialView" />
+
+<!-- Edit Expense Modal -->
+<div id="edit_expense" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Expense</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Item Name</label>
+                                <input class="form-control" value="Dell Laptop" type="text">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Purchase From</label>
+                                <input class="form-control" value="Amazon" type="text">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Purchase Date</label>
+                                <div class="cal-icon"><input class="form-control datetimepicker" type="text"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Purchased By </label>
+                                <select class="select">
+                                    <option>Daniel Porter</option>
+                                    <option>Roger Dixon</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Amount</label>
+                                <input placeholder="$50" class="form-control" value="$10000" type="text">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Paid By</label>
+                                <select class="select">
+                                    <option>Cash</option>
+                                    <option>Cheque</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Status</label>
+                                <select class="select">
+                                    <option>Pending</option>
+                                    <option>Approved</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Attachments</label>
+                                <input class="form-control" type="file">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="attach-files">
+                        <ul>
+                            <li>
+                                <img src="~/img/placeholder.jpg" alt="">
+                                <a href="#" class="fa fa-close file-remove"></a>
+                            </li>
+                            <li>
+                                <img src="~/img/placeholder.jpg" alt="">
+                                <a href="#" class="fa fa-close file-remove"></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Edit Expense Modal -->
+<!-- Delete Expense Modal -->
+<div class="modal custom-modal fade" id="delete_expense" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header">
+                    <h3>Delete Expense</h3>
+                    <p>Are you sure want to delete?</p>
+                </div>
+                <div class="modal-btn delete-action">
+                    <div class="row">
+                        <div class="col-6">
+                            <a href="javascript:void(0);" class="btn btn-primary continue-btn">Delete</a>
+                        </div>
+                        <div class="col-6">
+                            <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Delete Expense Modal -->
+<!-- import excel model -->
+<partial name="_ImportExcelModel" />
+

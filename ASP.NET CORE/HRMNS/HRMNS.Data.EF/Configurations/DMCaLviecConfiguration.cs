@@ -12,7 +12,7 @@ namespace HRMNS.Data.EF.Configurations
         public override void Configure(EntityTypeBuilder<DM_CA_LVIEC> entity)
         {
             entity.HasKey(c => c.Id);
-            entity.Property(c => c.Id).ValueGeneratedOnAdd();
+            entity.Property(c => c.Id).HasMaxLength(50);
 
             entity.HasMany(x => x.CA_LVIEC).WithOne(x => x.DM_CA_LVIEC).OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.SetNull);
             entity.HasMany(x => x.NHANVIEN_CALAMVIEC).WithOne(x => x.DM_CA_LVIEC).OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.SetNull);

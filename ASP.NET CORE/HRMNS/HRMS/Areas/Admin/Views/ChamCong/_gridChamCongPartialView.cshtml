@@ -1,0 +1,69 @@
+﻿@model List<ChamCongLogViewModel>
+<table class="table table-striped custom-table datatable" id="chamCongLogDataTable">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>User Id</th>
+            <th>User Name</th>
+            <th>Department</th>
+            <th>First-In Time</th>
+            <th>Last-Out Time</th>
+            <th>First-In</th>
+            <th>Last-Out</th>
+            <th>Result</th>
+            <th class="text-nowrap">Status</th>
+            <th class="text-right no-sort">Action</th>
+        </tr>
+    </thead>
+    <tbody id="tbl-content">
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Ngay_ChamCong</td>
+                <td>@item.ID_NV</td>
+                <td>@item.Ten_NV</td>
+                <td>@item.Department</td>
+                <td>@item.FirstIn_Time</td>
+                <td>@item.Last_Out_Time</td>
+                <td>@item.FirstIn</td>
+                <td>@item.LastOut</td>
+                <td>
+                    @if (item.Result == "NonWorking")
+                    {
+                        <span class="badge bg-inverse-dark">@item.Result</span>
+                    }
+                    else if (item.Result == "Miss_In")
+                    {
+                        <span class="badge bg-inverse-warning">@item.Result</span>
+                    }
+                    else if (item.Result == "Miss_Out")
+                    {
+                        <span class="badge badge bg-inverse-info">@item.Result</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-inverse-dark">@item.Result</span>
+                    }
+                </td>
+                <td>
+                    @if (item.Status == "Normal")
+                    {
+                        <span class="badge bg-inverse-success">@item.Status</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-inverse-danger">@item.Status</span>
+                    }
+                </td>
+                <td class="text-right">
+                    <div class="dropdown dropdown-action">
+                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item edit-employee" href="#" data-toggle="modal" data-target="#add_expense" data-id="@item.Id"><i class="fa fa-edit m-r-5"></i> Edit</a>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

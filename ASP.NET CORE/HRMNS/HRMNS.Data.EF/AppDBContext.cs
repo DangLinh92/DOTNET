@@ -52,13 +52,14 @@ namespace HRMNS.Data.EF
         public virtual DbSet<DM_CA_LVIEC> DM_CA_LVIEC { get; set; }
         public virtual DbSet<DM_DANGKY_CHAMCONG> DM_DANGKY_CHAMCONG { get; set; }
         public virtual DbSet<DM_NGAY_LAMVIEC> DM_NGAY_LAMVIEC { get; set; }
-        public virtual DbSet<HE_SO_OVERTIME> HE_SO_OVERTIME { get; set; }
         public virtual DbSet<KY_HIEU_CHAM_CONG> KY_HIEU_CHAM_CONG { get; set; }
         public virtual DbSet<NGAY_LE_NAM> NGAY_LE_NAM { get; set; }
         public virtual DbSet<NGAY_NGHI_BU_LE_NAM> NGAY_NGHI_BU_LE_NAM { get; set; }
         public virtual DbSet<NHANVIEN_CALAMVIEC> NHANVIEN_CALAMVIEC { get; set; }
         public virtual DbSet<SETTING_TIME_DIMUON_VESOM> SETTING_TIME_DIMUON_VESOM { get; set; }
         public virtual DbSet<TRU_SO_LVIEC> TRU_SO_LVIEC { get; set; }
+        public virtual DbSet<ATTENDANCE_RECORD> ATTENDANCE_RECORD { get; set; }
+        public virtual DbSet<ATTENDANCE_OVERTIME> ATTENDANCE_OVERTIME { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -98,15 +99,15 @@ namespace HRMNS.Data.EF
             builder.AddConfiguration(new DMCaLviecConfiguration());
             builder.AddConfiguration(new DMDangKyChamCongConfiguration());
             builder.AddConfiguration(new DMNgayLamViecConfiguration());
-            builder.AddConfiguration(new HeSoOverTimeConfiguration());
             builder.AddConfiguration(new KyHieuChamCongConfiguration());
             builder.AddConfiguration(new NgayLeNamConfiguration());
             builder.AddConfiguration(new NgayNghiBuLeNamConfiguration());
             builder.AddConfiguration(new NhanVienCaLamViecConfiguration());
             builder.AddConfiguration(new SettingTimeDiMuonVeSomConfiguration());
             builder.AddConfiguration(new TruSoLamViecConfiguration());
+            builder.AddConfiguration(new AttendenceRecordConfiguration());
+            builder.AddConfiguration(new AttendenceOvertimeConfiguration());
 
-            
             //base.OnModelCreating(builder);
         }
 
