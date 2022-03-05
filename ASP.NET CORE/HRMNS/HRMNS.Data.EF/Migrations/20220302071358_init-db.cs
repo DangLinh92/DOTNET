@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace HRMNS.Data.EF.Migrations
 {
-    public partial class initDB : Migration
+    public partial class initdb : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -139,6 +139,62 @@ namespace HRMNS.Data.EF.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CHAM_CONG_LOG",
+                columns: table => new
+                {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Ngay_ChamCong = table.Column<string>(maxLength: 20, nullable: true),
+                    ID_NV = table.Column<string>(maxLength: 50, nullable: true),
+                    Ten_NV = table.Column<string>(maxLength: 50, nullable: true),
+                    FirstOut_Time = table.Column<string>(maxLength: 20, nullable: true),
+                    Last_Out_Time = table.Column<string>(maxLength: 20, nullable: true),
+                    FirstIn = table.Column<string>(unicode: false, maxLength: 5, nullable: true),
+                    LastOut = table.Column<string>(unicode: false, maxLength: 5, nullable: true),
+                    DateCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    DateModified = table.Column<string>(maxLength: 50, nullable: true),
+                    UserCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    UserModified = table.Column<string>(maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CHAM_CONG_LOG", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DM_DANGKY_CHAMCONG",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TieuDe = table.Column<string>(maxLength: 250, nullable: true),
+                    DateCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    DateModified = table.Column<string>(maxLength: 50, nullable: true),
+                    UserCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    UserModified = table.Column<string>(maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DM_DANGKY_CHAMCONG", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DM_NGAY_LAMVIEC",
+                columns: table => new
+                {
+                    Id = table.Column<string>(maxLength: 50, nullable: false),
+                    Ten_NgayLV = table.Column<string>(maxLength: 100, nullable: true),
+                    DateCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    DateModified = table.Column<string>(maxLength: 50, nullable: true),
+                    UserCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    UserModified = table.Column<string>(maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DM_NGAY_LAMVIEC", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "FUNCTION",
                 columns: table => new
                 {
@@ -219,6 +275,23 @@ namespace HRMNS.Data.EF.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "KY_HIEU_CHAM_CONG",
+                columns: table => new
+                {
+                    Id = table.Column<string>(maxLength: 20, nullable: false),
+                    GiaiThich = table.Column<string>(maxLength: 300, nullable: true),
+                    Heso = table.Column<double>(nullable: true),
+                    DateCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    DateModified = table.Column<string>(maxLength: 50, nullable: true),
+                    UserCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    UserModified = table.Column<string>(maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_KY_HIEU_CHAM_CONG", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "LANGUAGE",
                 columns: table => new
                 {
@@ -244,6 +317,23 @@ namespace HRMNS.Data.EF.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_LOAICHUNGCHI", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TRU_SO_LVIEC",
+                columns: table => new
+                {
+                    Id = table.Column<string>(maxLength: 50, nullable: false),
+                    TenTruSo = table.Column<string>(maxLength: 250, nullable: true),
+                    DiaChi = table.Column<string>(maxLength: 250, nullable: true),
+                    DateCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    DateModified = table.Column<string>(maxLength: 50, nullable: true),
+                    UserCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    UserModified = table.Column<string>(maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TRU_SO_LVIEC", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -327,19 +417,97 @@ namespace HRMNS.Data.EF.Migrations
                         column: x => x.MaBoPhan,
                         principalTable: "BOPHAN",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_HR_NHANVIEN_HR_BO_PHAN_DETAIL_MaBoPhanChiTiet",
                         column: x => x.MaBoPhanChiTiet,
                         principalTable: "HR_BO_PHAN_DETAIL",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_HR_NHANVIEN_HR_CHUCDANH_MaChucDanh",
                         column: x => x.MaChucDanh,
                         principalTable: "HR_CHUCDANH",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DANGKY_CHAMCONG_CHITIET",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TenChiTiet = table.Column<string>(maxLength: 150, nullable: true),
+                    PhanLoaiDM = table.Column<int>(nullable: true),
+                    KyHieuChamCong = table.Column<string>(maxLength: 20, nullable: true),
+                    DateCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    DateModified = table.Column<string>(maxLength: 50, nullable: true),
+                    UserCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    UserModified = table.Column<string>(maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DANGKY_CHAMCONG_CHITIET", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DANGKY_CHAMCONG_CHITIET_KY_HIEU_CHAM_CONG_KyHieuChamCong",
+                        column: x => x.KyHieuChamCong,
+                        principalTable: "KY_HIEU_CHAM_CONG",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_DANGKY_CHAMCONG_CHITIET_DM_DANGKY_CHAMCONG_PhanLoaiDM",
+                        column: x => x.PhanLoaiDM,
+                        principalTable: "DM_DANGKY_CHAMCONG",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "NGAY_LE_NAM",
+                columns: table => new
+                {
+                    Id = table.Column<string>(maxLength: 10, nullable: false),
+                    TenNgayLe = table.Column<string>(maxLength: 150, nullable: true),
+                    KyHieuChamCong = table.Column<string>(maxLength: 20, nullable: true),
+                    DateCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    DateModified = table.Column<string>(maxLength: 50, nullable: true),
+                    UserCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    UserModified = table.Column<string>(maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NGAY_LE_NAM", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_NGAY_LE_NAM_KY_HIEU_CHAM_CONG_KyHieuChamCong",
+                        column: x => x.KyHieuChamCong,
+                        principalTable: "KY_HIEU_CHAM_CONG",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "NGAY_NGHI_BU_LE_NAM",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NoiDungNghi = table.Column<string>(maxLength: 250, nullable: true),
+                    KyHieuChamCong = table.Column<string>(maxLength: 20, nullable: true),
+                    DateCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    DateModified = table.Column<string>(maxLength: 50, nullable: true),
+                    UserCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    UserModified = table.Column<string>(maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NGAY_NGHI_BU_LE_NAM", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_NGAY_NGHI_BU_LE_NAM_KY_HIEU_CHAM_CONG_KyHieuChamCong",
+                        column: x => x.KyHieuChamCong,
+                        principalTable: "KY_HIEU_CHAM_CONG",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -348,7 +516,7 @@ namespace HRMNS.Data.EF.Migrations
                 {
                     Id = table.Column<string>(maxLength: 50, nullable: false),
                     TenChungChi = table.Column<string>(maxLength: 250, nullable: true),
-                    LoaiChungChi = table.Column<int>(nullable: false),
+                    LoaiChungChi = table.Column<int>(nullable: true),
                     DateCreated = table.Column<string>(nullable: true),
                     DateModified = table.Column<string>(nullable: true),
                     UserCreated = table.Column<string>(nullable: true),
@@ -361,6 +529,92 @@ namespace HRMNS.Data.EF.Migrations
                         name: "FK_CHUNG_CHI_LOAICHUNGCHI_LoaiChungChi",
                         column: x => x.LoaiChungChi,
                         principalTable: "LOAICHUNGCHI",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DM_CA_LVIEC",
+                columns: table => new
+                {
+                    Id = table.Column<string>(maxLength: 50, nullable: false),
+                    TenCaLamViec = table.Column<string>(maxLength: 100, nullable: true),
+                    MaTruSo = table.Column<string>(maxLength: 50, nullable: true),
+                    DateCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    DateModified = table.Column<string>(maxLength: 50, nullable: true),
+                    UserCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    UserModified = table.Column<string>(maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DM_CA_LVIEC", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DM_CA_LVIEC_TRU_SO_LVIEC_MaTruSo",
+                        column: x => x.MaTruSo,
+                        principalTable: "TRU_SO_LVIEC",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ATTENDANCE_RECORD",
+                columns: table => new
+                {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MaNV = table.Column<string>(maxLength: 50, nullable: true),
+                    Time_Check = table.Column<string>(maxLength: 50, nullable: true),
+                    Working_Status = table.Column<string>(maxLength: 20, nullable: true),
+                    EL_LC = table.Column<double>(nullable: true),
+                    DateCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    DateModified = table.Column<string>(maxLength: 50, nullable: true),
+                    UserCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    UserModified = table.Column<string>(maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ATTENDANCE_RECORD", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ATTENDANCE_RECORD_HR_NHANVIEN_MaNV",
+                        column: x => x.MaNV,
+                        principalTable: "HR_NHANVIEN",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_ATTENDANCE_RECORD_KY_HIEU_CHAM_CONG_Working_Status",
+                        column: x => x.Working_Status,
+                        principalTable: "KY_HIEU_CHAM_CONG",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DANGKY_OT_NHANVIEN",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NgayOT = table.Column<string>(maxLength: 50, nullable: true),
+                    MaNV = table.Column<string>(maxLength: 50, nullable: true),
+                    DM_NgayLViec = table.Column<string>(maxLength: 50, nullable: true),
+                    DateCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    DateModified = table.Column<string>(maxLength: 50, nullable: true),
+                    UserCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    UserModified = table.Column<string>(maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DANGKY_OT_NHANVIEN", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DANGKY_OT_NHANVIEN_DM_NGAY_LAMVIEC_DM_NgayLViec",
+                        column: x => x.DM_NgayLViec,
+                        principalTable: "DM_NGAY_LAMVIEC",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_DANGKY_OT_NHANVIEN_HR_NHANVIEN_MaNV",
+                        column: x => x.MaNV,
+                        principalTable: "HR_NHANVIEN",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -386,7 +640,7 @@ namespace HRMNS.Data.EF.Migrations
                         column: x => x.MaNV,
                         principalTable: "HR_NHANVIEN",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -420,13 +674,13 @@ namespace HRMNS.Data.EF.Migrations
                         column: x => x.LoaiHD,
                         principalTable: "HR_LOAIHOPDONG",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_HR_HOPDONG_HR_NHANVIEN_MaNV",
                         column: x => x.MaNV,
                         principalTable: "HR_NHANVIEN",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -454,13 +708,13 @@ namespace HRMNS.Data.EF.Migrations
                         column: x => x.CheDoBH,
                         principalTable: "HR_CHEDOBH",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_HR_KEKHAIBAOHIEM_HR_NHANVIEN_MaNV",
                         column: x => x.MaNV,
                         principalTable: "HR_NHANVIEN",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -470,8 +724,8 @@ namespace HRMNS.Data.EF.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     MaNhanVien = table.Column<string>(maxLength: 50, nullable: true),
-                    SoPhepNam = table.Column<int>(nullable: false),
-                    SoPhepConLai = table.Column<int>(nullable: false),
+                    SoPhepNam = table.Column<float>(nullable: false),
+                    SoPhepConLai = table.Column<float>(nullable: false),
                     Year = table.Column<int>(nullable: false),
                     DateCreated = table.Column<string>(maxLength: 50, nullable: true),
                     DateModified = table.Column<string>(maxLength: 50, nullable: true),
@@ -486,7 +740,7 @@ namespace HRMNS.Data.EF.Migrations
                         column: x => x.MaNhanVien,
                         principalTable: "HR_NHANVIEN",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -497,8 +751,6 @@ namespace HRMNS.Data.EF.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     MaNV = table.Column<string>(maxLength: 50, nullable: false),
                     TieuDe = table.Column<string>(maxLength: 500, nullable: true),
-                    ChuyenChucVu = table.Column<string>(maxLength: 50, nullable: true),
-                    ChuyenPhongBan = table.Column<string>(maxLength: 50, nullable: true),
                     Note = table.Column<string>(nullable: true),
                     ThơiGianBatDau = table.Column<string>(maxLength: 50, nullable: true),
                     ThoiGianKetThuc = table.Column<string>(maxLength: 50, nullable: true),
@@ -546,7 +798,76 @@ namespace HRMNS.Data.EF.Migrations
                         column: x => x.MaNV,
                         principalTable: "HR_NHANVIEN",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DANGKY_CHAMCONG_DACBIET",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MaNV = table.Column<string>(maxLength: 50, nullable: true),
+                    MaChamCong_ChiTiet = table.Column<int>(nullable: true),
+                    NgayBatDau = table.Column<string>(maxLength: 50, nullable: true),
+                    NgayKetThuc = table.Column<string>(maxLength: 50, nullable: true),
+                    NoiDung = table.Column<string>(maxLength: 300, nullable: true),
+                    DateCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    DateModified = table.Column<string>(maxLength: 50, nullable: true),
+                    UserCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    UserModified = table.Column<string>(maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DANGKY_CHAMCONG_DACBIET", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DANGKY_CHAMCONG_DACBIET_DANGKY_CHAMCONG_CHITIET_MaChamCong_ChiTiet",
+                        column: x => x.MaChamCong_ChiTiet,
+                        principalTable: "DANGKY_CHAMCONG_CHITIET",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_DANGKY_CHAMCONG_DACBIET_HR_NHANVIEN_MaNV",
+                        column: x => x.MaNV,
+                        principalTable: "HR_NHANVIEN",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DC_CHAM_CONG",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MaChamCong_ChiTiet = table.Column<int>(nullable: true),
+                    MaNV = table.Column<string>(maxLength: 50, nullable: true),
+                    NgayCanDieuChinh_From = table.Column<string>(maxLength: 50, nullable: true),
+                    NgayCanDieuChinh_To = table.Column<string>(maxLength: 50, nullable: true),
+                    NoiDungDC = table.Column<string>(maxLength: 300, nullable: true),
+                    GiaTriSauDC = table.Column<double>(nullable: true),
+                    GiaTriTruocDC = table.Column<double>(nullable: true),
+                    KyHieuChamCong = table.Column<string>(maxLength: 20, nullable: true),
+                    DateCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    DateModified = table.Column<string>(maxLength: 50, nullable: true),
+                    UserCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    UserModified = table.Column<string>(maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DC_CHAM_CONG", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DC_CHAM_CONG_DANGKY_CHAMCONG_CHITIET_MaChamCong_ChiTiet",
+                        column: x => x.MaChamCong_ChiTiet,
+                        principalTable: "DANGKY_CHAMCONG_CHITIET",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_DC_CHAM_CONG_HR_NHANVIEN_MaNV",
+                        column: x => x.MaNV,
+                        principalTable: "HR_NHANVIEN",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -574,19 +895,217 @@ namespace HRMNS.Data.EF.Migrations
                         column: x => x.MaChungChi,
                         principalTable: "CHUNG_CHI",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_HR_CHUNGCHI_NHANVIEN_HR_NHANVIEN_MaNV",
                         column: x => x.MaNV,
                         principalTable: "HR_NHANVIEN",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "CA_LVIEC",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Danhmuc_CaLviec = table.Column<string>(maxLength: 50, nullable: true),
+                    DM_NgayLViec = table.Column<string>(maxLength: 50, nullable: true),
+                    TenCa = table.Column<string>(maxLength: 100, nullable: true),
+                    Time_BatDau = table.Column<string>(maxLength: 50, nullable: true),
+                    Time_BatDau2 = table.Column<string>(maxLength: 50, nullable: true),
+                    Time_KetThuc = table.Column<string>(maxLength: 50, nullable: true),
+                    Time_KetThuc2 = table.Column<string>(maxLength: 50, nullable: true),
+                    HeSo_OT = table.Column<float>(nullable: false),
+                    DateCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    DateModified = table.Column<string>(maxLength: 50, nullable: true),
+                    UserCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    UserModified = table.Column<string>(maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CA_LVIEC", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CA_LVIEC_DM_NGAY_LAMVIEC_DM_NgayLViec",
+                        column: x => x.DM_NgayLViec,
+                        principalTable: "DM_NGAY_LAMVIEC",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_CA_LVIEC_DM_CA_LVIEC_Danhmuc_CaLviec",
+                        column: x => x.Danhmuc_CaLviec,
+                        principalTable: "DM_CA_LVIEC",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "NHANVIEN_CALAMVIEC",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MaNV = table.Column<string>(maxLength: 50, nullable: true),
+                    Danhmuc_CaLviec = table.Column<string>(maxLength: 50, nullable: true),
+                    BatDau_TheoCa = table.Column<string>(maxLength: 50, nullable: true),
+                    KetThuc_TheoCa = table.Column<string>(maxLength: 50, nullable: true),
+                    DateCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    DateModified = table.Column<string>(maxLength: 50, nullable: true),
+                    UserCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    UserModified = table.Column<string>(maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NHANVIEN_CALAMVIEC", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_NHANVIEN_CALAMVIEC_DM_CA_LVIEC_Danhmuc_CaLviec",
+                        column: x => x.Danhmuc_CaLviec,
+                        principalTable: "DM_CA_LVIEC",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_NHANVIEN_CALAMVIEC_HR_NHANVIEN_MaNV",
+                        column: x => x.MaNV,
+                        principalTable: "HR_NHANVIEN",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SETTING_TIME_DIMUON_VESOM",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Danhmuc_CaLviec = table.Column<string>(maxLength: 50, nullable: true),
+                    Time_LateCome = table.Column<string>(maxLength: 50, nullable: true),
+                    Time_EarlyLeave = table.Column<string>(maxLength: 50, nullable: true),
+                    DateCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    DateModified = table.Column<string>(maxLength: 50, nullable: true),
+                    UserCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    UserModified = table.Column<string>(maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SETTING_TIME_DIMUON_VESOM", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SETTING_TIME_DIMUON_VESOM_DM_CA_LVIEC_Danhmuc_CaLviec",
+                        column: x => x.Danhmuc_CaLviec,
+                        principalTable: "DM_CA_LVIEC",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ATTENDANCE_OVERTIME",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CaLviec = table.Column<int>(nullable: false),
+                    MaAttendence = table.Column<long>(nullable: false),
+                    DateCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    DateModified = table.Column<string>(maxLength: 50, nullable: true),
+                    UserCreated = table.Column<string>(maxLength: 50, nullable: true),
+                    UserModified = table.Column<string>(maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ATTENDANCE_OVERTIME", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ATTENDANCE_OVERTIME_CA_LVIEC_CaLviec",
+                        column: x => x.CaLviec,
+                        principalTable: "CA_LVIEC",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ATTENDANCE_OVERTIME_ATTENDANCE_RECORD_MaAttendence",
+                        column: x => x.MaAttendence,
+                        principalTable: "ATTENDANCE_RECORD",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ATTENDANCE_OVERTIME_CaLviec",
+                table: "ATTENDANCE_OVERTIME",
+                column: "CaLviec");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ATTENDANCE_OVERTIME_MaAttendence",
+                table: "ATTENDANCE_OVERTIME",
+                column: "MaAttendence");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ATTENDANCE_RECORD_MaNV",
+                table: "ATTENDANCE_RECORD",
+                column: "MaNV");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ATTENDANCE_RECORD_Working_Status",
+                table: "ATTENDANCE_RECORD",
+                column: "Working_Status");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CA_LVIEC_DM_NgayLViec",
+                table: "CA_LVIEC",
+                column: "DM_NgayLViec");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CA_LVIEC_Danhmuc_CaLviec",
+                table: "CA_LVIEC",
+                column: "Danhmuc_CaLviec");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CHUNG_CHI_LoaiChungChi",
                 table: "CHUNG_CHI",
                 column: "LoaiChungChi");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DANGKY_CHAMCONG_CHITIET_KyHieuChamCong",
+                table: "DANGKY_CHAMCONG_CHITIET",
+                column: "KyHieuChamCong");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DANGKY_CHAMCONG_CHITIET_PhanLoaiDM",
+                table: "DANGKY_CHAMCONG_CHITIET",
+                column: "PhanLoaiDM");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DANGKY_CHAMCONG_DACBIET_MaChamCong_ChiTiet",
+                table: "DANGKY_CHAMCONG_DACBIET",
+                column: "MaChamCong_ChiTiet");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DANGKY_CHAMCONG_DACBIET_MaNV",
+                table: "DANGKY_CHAMCONG_DACBIET",
+                column: "MaNV");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DANGKY_OT_NHANVIEN_DM_NgayLViec",
+                table: "DANGKY_OT_NHANVIEN",
+                column: "DM_NgayLViec");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DANGKY_OT_NHANVIEN_MaNV",
+                table: "DANGKY_OT_NHANVIEN",
+                column: "MaNV");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DC_CHAM_CONG_MaChamCong_ChiTiet",
+                table: "DC_CHAM_CONG",
+                column: "MaChamCong_ChiTiet");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DC_CHAM_CONG_MaNV",
+                table: "DC_CHAM_CONG",
+                column: "MaNV");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DM_CA_LVIEC_MaTruSo",
+                table: "DM_CA_LVIEC",
+                column: "MaTruSo");
 
             migrationBuilder.CreateIndex(
                 name: "IX_HR_BHXH_MaNV",
@@ -654,6 +1173,26 @@ namespace HRMNS.Data.EF.Migrations
                 column: "MaNV");
 
             migrationBuilder.CreateIndex(
+                name: "IX_NGAY_LE_NAM_KyHieuChamCong",
+                table: "NGAY_LE_NAM",
+                column: "KyHieuChamCong");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_NGAY_NGHI_BU_LE_NAM_KyHieuChamCong",
+                table: "NGAY_NGHI_BU_LE_NAM",
+                column: "KyHieuChamCong");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_NHANVIEN_CALAMVIEC_Danhmuc_CaLviec",
+                table: "NHANVIEN_CALAMVIEC",
+                column: "Danhmuc_CaLviec");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_NHANVIEN_CALAMVIEC_MaNV",
+                table: "NHANVIEN_CALAMVIEC",
+                column: "MaNV");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PERMISSION_FunctionId",
                 table: "PERMISSION",
                 column: "FunctionId");
@@ -662,6 +1201,11 @@ namespace HRMNS.Data.EF.Migrations
                 name: "IX_PERMISSION_RoleId",
                 table: "PERMISSION",
                 column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SETTING_TIME_DIMUON_VESOM_Danhmuc_CaLviec",
+                table: "SETTING_TIME_DIMUON_VESOM",
+                column: "Danhmuc_CaLviec");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -683,6 +1227,21 @@ namespace HRMNS.Data.EF.Migrations
 
             migrationBuilder.DropTable(
                 name: "APP_USER_TOKEN");
+
+            migrationBuilder.DropTable(
+                name: "ATTENDANCE_OVERTIME");
+
+            migrationBuilder.DropTable(
+                name: "CHAM_CONG_LOG");
+
+            migrationBuilder.DropTable(
+                name: "DANGKY_CHAMCONG_DACBIET");
+
+            migrationBuilder.DropTable(
+                name: "DANGKY_OT_NHANVIEN");
+
+            migrationBuilder.DropTable(
+                name: "DC_CHAM_CONG");
 
             migrationBuilder.DropTable(
                 name: "HR_BHXH");
@@ -709,7 +1268,28 @@ namespace HRMNS.Data.EF.Migrations
                 name: "LANGUAGE");
 
             migrationBuilder.DropTable(
+                name: "NGAY_LE_NAM");
+
+            migrationBuilder.DropTable(
+                name: "NGAY_NGHI_BU_LE_NAM");
+
+            migrationBuilder.DropTable(
+                name: "NHANVIEN_CALAMVIEC");
+
+            migrationBuilder.DropTable(
                 name: "PERMISSION");
+
+            migrationBuilder.DropTable(
+                name: "SETTING_TIME_DIMUON_VESOM");
+
+            migrationBuilder.DropTable(
+                name: "CA_LVIEC");
+
+            migrationBuilder.DropTable(
+                name: "ATTENDANCE_RECORD");
+
+            migrationBuilder.DropTable(
+                name: "DANGKY_CHAMCONG_CHITIET");
 
             migrationBuilder.DropTable(
                 name: "CHUNG_CHI");
@@ -721,16 +1301,31 @@ namespace HRMNS.Data.EF.Migrations
                 name: "HR_CHEDOBH");
 
             migrationBuilder.DropTable(
-                name: "HR_NHANVIEN");
-
-            migrationBuilder.DropTable(
                 name: "FUNCTION");
 
             migrationBuilder.DropTable(
                 name: "APP_ROLE");
 
             migrationBuilder.DropTable(
+                name: "DM_NGAY_LAMVIEC");
+
+            migrationBuilder.DropTable(
+                name: "DM_CA_LVIEC");
+
+            migrationBuilder.DropTable(
+                name: "HR_NHANVIEN");
+
+            migrationBuilder.DropTable(
+                name: "KY_HIEU_CHAM_CONG");
+
+            migrationBuilder.DropTable(
+                name: "DM_DANGKY_CHAMCONG");
+
+            migrationBuilder.DropTable(
                 name: "LOAICHUNGCHI");
+
+            migrationBuilder.DropTable(
+                name: "TRU_SO_LVIEC");
 
             migrationBuilder.DropTable(
                 name: "BOPHAN");
