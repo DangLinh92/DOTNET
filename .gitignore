@@ -61,6 +61,7 @@ Thumbs.db
 [Bb]in
 [Oo]bj
 [Tt]est[Rr]esults
+*/public/
 *.suo
 *.user
 *.[Cc]ache
@@ -904,3 +905,10 @@ ASP.NET CORE/HRMNS/public/wwwroot/plugins/twitter-bootstrap-wizard/form-wizard.c
 ASP.NET CORE/HRMNS/public/wwwroot/plugins/twitter-bootstrap-wizard/form-wizard.js
 ASP.NET CORE/HRMNS/public/wwwroot/plugins/twitter-bootstrap-wizard/jquery.bootstrap.wizard.min.js
 ASP.NET CORE/HRMNS/public/wwwroot/plugins/twitter-bootstrap-wizard/prettify.js
+ASP.NET CORE/HrmsCopyDataService/
+ASP.NET CORE/HRMNS/HRMS/Logs/
+ASP.NET CORE/HRMNS/HRMS/wwwroot/uploaded/
+ASP.NET CORE/HRMNS/public/wwwroot/uploaded/
+ASP.NET CORE/HRMNS/public/wwwroot/export-files/
+ASP.NET CORE/HRMNS/HRMS/wwwroot/export-files/
+ASP.NET CORE/HRMNS/public/Logs/
