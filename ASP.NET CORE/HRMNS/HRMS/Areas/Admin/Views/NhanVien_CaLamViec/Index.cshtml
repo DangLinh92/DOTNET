@@ -6,14 +6,17 @@
 
 @section Scripts
 {
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
     <script src="~/app/controllers/nhanvien_calamviec/index.js"></script>
     <script>
         var controller = new nhanvien_calamviecController();
         controller.initialize();
 
+        onSuccess = controller.doAftersearch;
+
         $(document).ready(function () {
             $('#nvCalamviecDataTable').DataTable({
-                "order": [7, 'asc']
+                "order": [8, 'asc']
             });
             $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
             $('select[name="nvCalamviecDataTable_length"]').removeClass('form-control-sm');
@@ -45,7 +48,7 @@
     <div class="page-header">
         <div class="row align-items-center">
             <div class="col">
-                <h3 class="page-title">Reschedule</h3>
+                <h3 class="page-title">Reschedule - Đăng Ký Ca Làm Việc</h3>
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/admin/chamcong/index">Time and Attendance</a></li>
                     <li class="breadcrumb-item active">Reschedule</li>
@@ -68,51 +71,61 @@
     </div>
     <!-- /Page Header -->
     <!-- Search Filter -->
-    <div class="row filter-row">
-        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-            <div class="form-group form-focus">
-                <input type="text" class="form-control floating">
-                <label class="focus-label">User id, user name</label>
-            </div>
-        </div>
-        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-            <div class="form-group form-focus select-focus">
-                <select class="select floating">
-                    <option> -- Select -- </option>
-                    <option>Loren Gatlin</option>
-                    <option>Tarah Shropshire</option>
-                </select>
-                <label class="focus-label">Deparment</label>
-            </div>
-        </div>
-        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-            <div class="form-group form-focus select-focus">
-                <select class="select floating">
-                    <option> -- Select -- </option>
-                    <option> Cash </option>
-                    <option> Cheque </option>
-                </select>
-                <label class="focus-label">Result Status</label>
-            </div>
-        </div>
-        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-            <div class="form-group form-focus">
-                <div class="cal-icon">
-                    <input class="form-control floating datetimepicker" type="text">
+    <form id="frmSearch" method="post" data-ajax="true" data-ajax-url="/Admin/NhanVien_CaLamViec/Search" data-ajax-loading="#spinner1" data-ajax-update="#gridNvienCalamviecIndex" data-ajax-mode='replace' data-ajax-success="onSuccess">
+        <div class="row filter-row">
+
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus select-focus">
+                    <select class="select floating" id="cboDepartment" name="department">
+                        <option value=""> -- Select -- </option>
+                        <option value="New">New</option>
+                        <option value="Active">Active</option>
+                        <option value="InActive">InActive</option>
+                    </select>
+                    <label class="focus-label">Deparment</label>
                 </div>
-                <label class="focus-label">From</label>
             </div>
-        </div>
-        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-            <div class="form-group form-focus">
-                <div class="cal-icon">
-                    <input class="form-control floating datetimepicker" type="text">
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus select-focus">
+                    <select class="select floating" id="searchStatus" name="status">
+                        <option value=""> -- Select -- </option>
+                        <option value="New">New</option>
+                        <option value="Active">Active</option>
+                        <option value="InActive">InActive</option>
+                        <option value="N">Not approved yet</option>
+                        <option value="Y">Approved</option>
+                    </select>
+                    <label class="focus-label">Status</label>
                 </div>
-                <label class="focus-label">To</label>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus">
+                    <div class="cal-icon">
+                        <input class="form-control floating datetimepicker" type="text" id="searchFromTime" name="timeFrom">
+                    </div>
+                    <label class="focus-label">From</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus">
+                    <div class="cal-icon">
+                        <input class="form-control floating datetimepicker" type="text" id="searchToTime" name="timeTo">
+                    </div>
+                    <label class="focus-label">To</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <button href="#" class="btn btn-success btn-block" id="btnSearch" type="submit"> Search </button>
+            </div>
+
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <a href="#" class="btn btn-success btn-block" id="btnApprove"> Approve </a>
             </div>
         </div>
-        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-            <a href="#" class="btn btn-success btn-block"> Search </a>
+    </form>
+    <div class="card-body" id="spinner1" style="text-align:center; display:none">
+        <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
         </div>
     </div>
     <!-- /Search Filter -->
@@ -120,127 +133,30 @@
     <div class="row">
         <div class="col-md-12">
             <div class="table-responsive" id="gridNvienCalamviecIndex">
+
                 @await Html.PartialAsync("_gridNhanVienCaLamViecPartialView", Model)
             </div>
         </div>
     </div>
 </div>
 <!-- /Page Content -->
-
 <!-- Đang ký ca lam viec cho nhan vien -->
 <partial name="_nhanvienCalamviecModelPartialView" />
 
-<!-- Edit Expense Modal -->
-<div id="edit_expense" class="modal custom-modal fade" role="dialog">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Edit Expense</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Item Name</label>
-                                <input class="form-control" value="Dell Laptop" type="text">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Purchase From</label>
-                                <input class="form-control" value="Amazon" type="text">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Purchase Date</label>
-                                <div class="cal-icon"><input class="form-control datetimepicker" type="text"></div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Purchased By </label>
-                                <select class="select">
-                                    <option>Daniel Porter</option>
-                                    <option>Roger Dixon</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Amount</label>
-                                <input placeholder="$50" class="form-control" value="$10000" type="text">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Paid By</label>
-                                <select class="select">
-                                    <option>Cash</option>
-                                    <option>Cheque</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Status</label>
-                                <select class="select">
-                                    <option>Pending</option>
-                                    <option>Approved</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Attachments</label>
-                                <input class="form-control" type="file">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="attach-files">
-                        <ul>
-                            <li>
-                                <img src="~/img/placeholder.jpg" alt="">
-                                <a href="#" class="fa fa-close file-remove"></a>
-                            </li>
-                            <li>
-                                <img src="~/img/placeholder.jpg" alt="">
-                                <a href="#" class="fa fa-close file-remove"></a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="submit-section">
-                        <button class="btn btn-primary submit-btn">Save</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- /Edit Expense Modal -->
 <!-- Delete Expense Modal -->
-<div class="modal custom-modal fade" id="delete_expense" role="dialog">
+<div class="modal custom-modal fade" id="delete_nhanVien_calviec" role="dialog">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body">
                 <div class="form-header">
-                    <h3>Delete Expense</h3>
+                    <input type="hidden" id="hdId_delete" />
+                    <h3>Delete</h3>
                     <p>Are you sure want to delete?</p>
                 </div>
                 <div class="modal-btn delete-action">
                     <div class="row">
                         <div class="col-6">
-                            <a href="javascript:void(0);" class="btn btn-primary continue-btn">Delete</a>
+                            <a href="javascript:void(0);" class="btn btn-primary continue-btn" id="btn-delete_nv_calamviec">Delete</a>
                         </div>
                         <div class="col-6">
                             <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>

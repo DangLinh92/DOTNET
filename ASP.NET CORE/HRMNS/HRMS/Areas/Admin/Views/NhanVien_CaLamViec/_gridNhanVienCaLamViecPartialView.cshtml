@@ -9,6 +9,7 @@
             <th>From Time</th>
             <th>End Time</th>
             <th class="text-nowrap">Status</th>
+            <th class="text-nowrap">Approved</th>
             <th class="text-right no-sort">Action</th>
         </tr>
     </thead>
@@ -29,18 +30,29 @@
                     }
                     else if (item.Status == "New")
                     {
-                        <span class="badge bg-inverse-info">@item.Status</span>
+                        <span class="badge bg-inverse-primary">@item.Status</span>
                     }
                     else
                     {
                         <span class="badge bg-inverse-dark">@item.Status</span>
                     }
                 </td>
+                <td>
+                    @if (item.Approved == CommonConstants.Y)
+                    {
+                        <span class="badge bg-inverse-success">Yes</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-inverse-dark">No</span>
+                    }
+                </td>
                 <td class="text-right">
                     <div class="dropdown dropdown-action">
                         <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                         <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item edit-employee" href="#" data-toggle="modal" data-target="#add_expense" data-id="@item.Id"><i class="fa fa-edit m-r-5"></i> Edit</a>
+                            <a class="dropdown-item edit-nv-calviec" href="#" data-toggle="modal" data-target="#add_nhanvien_calamviecModel" data-id="@item.Id"><i class="fa fa-edit m-r-5"></i> Edit</a>
+                            <a class="dropdown-item delete-nv-calviec" href="#" data-toggle="modal" data-target="#delete_nhanVien_calviec" data-id="@item.Id"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
                         </div>
                     </div>
                 </td>

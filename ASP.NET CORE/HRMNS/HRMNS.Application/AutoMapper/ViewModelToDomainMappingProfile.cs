@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using HRMNS.Application.ViewModels.HR;
+using HRMNS.Application.ViewModels.Time_Attendance;
 using HRMNS.Data.Entities;
 using System;
 using System.Collections.Generic;
@@ -35,6 +36,9 @@ namespace HRMNS.Application.AutoMapper
 
             CreateMap<KeKhaiBaoHiemViewModel, HR_KEKHAIBAOHIEM>()
             .ConstructUsing(c => new HR_KEKHAIBAOHIEM(c.MaNV, c.CheDoBH, c.NgayBatDau, c.NgayKetThuc, c.NgayThanhToan, c.SoTienThanhToan));
+
+            CreateMap<NhanVien_CalamViecViewModel, NHANVIEN_CALAMVIEC>()
+           .ConstructUsing(c => new NHANVIEN_CALAMVIEC(c.MaNV, c.Danhmuc_CaLviec, c.BatDau_TheoCa, c.KetThuc_TheoCa,c.Approved));
         }
     }
 }

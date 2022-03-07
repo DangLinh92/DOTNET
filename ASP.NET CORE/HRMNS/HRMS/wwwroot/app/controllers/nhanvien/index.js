@@ -391,7 +391,7 @@
                 $('#nhanVienDataTable').DataTable({
                     "order": [8, 'asc']
                 });
-                $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Anything you want.');
+                $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
                 $('select[name="nhanVienDataTable_length"]').removeClass('form-control-sm');
                 clearInterval(myVar);
                 hrms.hide_waitMe($('#gridNhanVien'));

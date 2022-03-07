@@ -56,8 +56,8 @@ BEGIN TRY
 					 TARGET.[Ten_NV]   =  SOURCE.[userName]	,
 					  TARGET.[Department] = SOURCE.Department
 			WHEN NOT MATCHED BY TARGET 
-			    THEN INSERT ([Ngay_ChamCong],[ID_NV],[Ten_NV],[Last_Out_Time],[FirstIn],[LastOut],[DateCreated],[DateModified],[UserCreated],[UserModified],[FirstIn_Time],[Department])
-				VALUES(SOURCE.Date_Check,SOURCE.userId, SOURCE.[userName],SOURCE.[Last_Out_Time],SOURCE.[First_In],SOURCE.[Last_Out],FORMAT(GETDATE(),'yyyy-MM-dd HH:mm:ss'),FORMAT(GETDATE(),'yyyy-MM-dd HH:mm:ss'),'sys','sys',SOURCE.[First_In_Time],SOURCE.Department);
+			    THEN INSERT ([MaNV],[Danhmuc_CaLviec],[BatDau_TheoCa],[KetThuc_TheoCa],[DateCreated],[DateModified],[UserCreated],[UserModified],[Status],Approved)
+				VALUES(SOURCE.[MaNV],SOURCE.[Danhmuc_CaLviec], SOURCE.[BatDau_TheoCa],SOURCE.[KetThuc_TheoCa],FORMAT(GETDATE(),'yyyy-MM-dd HH:mm:ss'),FORMAT(GETDATE(),'yyyy-MM-dd HH:mm:ss'),'sys','sys',SOURCE.[Status],'N');
        END
 	SET @N_RETURN = 0;
 	SET @V_RETURN = 'MSG_COM_004';

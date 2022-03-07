@@ -4,13 +4,15 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Nhân Viên - Ca Làm Việc</h5>
+                <input type="hidden" id="hd_NhanVien_Calviec" />
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form>
+                <form id="frmNhanVien_CaLviec_AddEdit">
                     <div class="form-group">
+                        <input type="hidden" id="_txtId"/>
                         <label for="_txtMaNV">Mã Nhân Viên<span class="text-danger">*</span></label>
                         <select id="_txtMaNV" class="form-control nested" required>
                             <option value="">Choose...</option>
@@ -48,7 +50,7 @@
                     </div>
 
                     <div class="submit-section">
-                        <button class="btn btn-primary submit-btn">Submit</button>
+                        <button class="btn btn-primary submit-btn" id="btnSave_Nv_Calmviec">Save</button>
                     </div>
                 </form>
             </div>

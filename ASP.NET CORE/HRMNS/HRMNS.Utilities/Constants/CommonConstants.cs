@@ -31,6 +31,9 @@ namespace HRMNS.Utilities.Constants
         public const string Y = "Y";
         public const string N = "N";
 
+        public const string No_Approved = "N";
+        public const string Approved = "Y";
+
         public const string IMPORT_BASIC_EMP = "basic_emp";
         public const string IMPORT_DETAIL_EMP = "detail_emp";
     }

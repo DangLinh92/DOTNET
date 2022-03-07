@@ -16,18 +16,20 @@ namespace HRMNS.Application.Interfaces
 
         void UpdateSingle(NhanVien_CalamViecViewModel nhanVienLVVm);
 
-        void Delete(string id);
+        void Delete(int id);
 
         List<NhanVien_CalamViecViewModel> GetAll();
 
         List<NhanVien_CalamViecViewModel> GetAll(string keyword, params Expression<Func<NHANVIEN_CALAMVIEC, object>>[] includeProperties);
 
-        NhanVien_CalamViecViewModel GetById(string id, params Expression<Func<NHANVIEN_CALAMVIEC, object>>[] includeProperties);
+        NhanVien_CalamViecViewModel GetById(int id, params Expression<Func<NHANVIEN_CALAMVIEC, object>>[] includeProperties);
 
-        List<NhanVien_CalamViecViewModel> Search(string id, string name, string dept);
+        List<NhanVien_CalamViecViewModel> Search(string dept,string status,string timeFrom,string timeTo, params Expression<Func<NHANVIEN_CALAMVIEC, object>>[] includeProperties);
 
         ResultDB ImportExcel(string filePath, string param);
         List<DMCalamviecViewModel> GetDMCalamViec();
         void Save();
+
+        NhanVien_CalamViecViewModel CheckExist(int id, string maNV, string dmCa, string From, string End);
     }
 }

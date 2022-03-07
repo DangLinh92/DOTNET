@@ -4,6 +4,7 @@ using HRMNS.Application.ViewModels.Time_Attendance;
 using HRMNS.Data.EF.Extensions;
 using HRMNS.Data.Entities;
 using HRMNS.Data.Enums;
+using HRMNS.Utilities.Constants;
 using HRMNS.Utilities.Dtos;
 using HRMS.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -35,12 +36,30 @@ namespace HRMNS.Application.Implementation
 
         public NhanVien_CalamViecViewModel Add(NhanVien_CalamViecViewModel nhanVienLVVm)
         {
-            throw new NotImplementedException();
+            nhanVienLVVm.UserCreated = GetUserId();
+            nhanVienLVVm.UserModified = GetUserId();
+
+            if (string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), nhanVienLVVm.BatDau_TheoCa) >= 0 && string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), nhanVienLVVm.KetThuc_TheoCa) <= 0)
+            {
+                nhanVienLVVm.Status = Status.Active.NullString();
+            }
+            else if (string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), nhanVienLVVm.BatDau_TheoCa) < 0)
+            {
+                nhanVienLVVm.Status = Status.New.ToString();
+            }
+            else
+            {
+                nhanVienLVVm.Status = Status.InActive.ToString();
+            }
+
+            var obj = _mapper.Map<NHANVIEN_CALAMVIEC>(nhanVienLVVm);
+            _nhanvienClviecRepository.Add(obj);
+            return nhanVienLVVm;
         }
 
-        public void Delete(string id)
+        public void Delete(int id)
         {
-            throw new NotImplementedException();
+            _nhanvienClviecRepository.Remove(id);
         }
 
         public void Dispose()
@@ -50,19 +69,34 @@ namespace HRMNS.Application.Implementation
 
         public List<NhanVien_CalamViecViewModel> GetAll()
         {
-            var lst = _nhanvienClviecRepository.FindAll(x => x.Status == Status.Active.ToString() || x.Status == Status.New.ToString());
+            var lst = _nhanvienClviecRepository.FindAll(x => x.Status == Status.Active.ToString() || x.Status == Status.New.ToString()).OrderByDescending(x => x.DateModified);
             return _mapper.Map<List<NhanVien_CalamViecViewModel>>(lst);
         }
 
         public List<NhanVien_CalamViecViewModel> GetAll(string keyword, params Expression<Func<NHANVIEN_CALAMVIEC, object>>[] includeProperties)
         {
-            var lst = _nhanvienClviecRepository.FindAll(x => x.Status == Status.Active.ToString() || x.Status == Status.New.ToString(),includeProperties);
-            return _mapper.Map<List<NhanVien_CalamViecViewModel>>(lst);
+            if (keyword == "")
+            {
+                var lst = _nhanvienClviecRepository.FindAll(x => x.Status == Status.Active.ToString() || x.Status == Status.New.ToString(), includeProperties).OrderByDescending(x => x.DateModified);
+                return _mapper.Map<List<NhanVien_CalamViecViewModel>>(lst);
+            }
+            else
+            {
+                var lst = _nhanvienClviecRepository.FindAll(x => (x.Status.Contains(keyword) || x.HR_NHANVIEN.MaBoPhan.Contains(keyword)) && (x.Status == Status.Active.ToString() || x.Status == Status.New.ToString()), includeProperties).OrderByDescending(x => x.DateModified);
+                return _mapper.Map<List<NhanVien_CalamViecViewModel>>(lst);
+            }
         }
 
-        public NhanVien_CalamViecViewModel GetById(string id, params Expression<Func<NHANVIEN_CALAMVIEC, object>>[] includeProperties)
+        public NhanVien_CalamViecViewModel GetById(int id, params Expression<Func<NHANVIEN_CALAMVIEC, object>>[] includeProperties)
         {
-            throw new NotImplementedException();
+            if (id > 0)
+            {
+                return _mapper.Map<NhanVien_CalamViecViewModel>(_nhanvienClviecRepository.FindById(id, includeProperties));
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public List<DMCalamviecViewModel> GetDMCalamViec()
@@ -116,15 +150,15 @@ namespace HRMNS.Application.Implementation
 
                         if (string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), worksheet.Cells[i, 3].Text.NullString()) >= 0 && string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), worksheet.Cells[i, 4].Text.NullString()) <= 0)
                         {
-                            row["Status"] = Status.Active;
+                            row["Status"] = Status.Active.ToString();
                         }
                         else if (string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), worksheet.Cells[i, 3].Text.NullString()) < 0)
                         {
-                            row["Status"] = Status.New;
+                            row["Status"] = Status.New.ToString();
                         }
                         else
                         {
-                            row["Status"] = Status.InActive;
+                            row["Status"] = Status.InActive.ToString();
                         }
                         table.Rows.Add(row);
                     }
@@ -143,22 +177,136 @@ namespace HRMNS.Application.Implementation
 
         public void Save()
         {
-            throw new NotImplementedException();
+            _unitOfWork.Commit();
         }
 
-        public List<NhanVien_CalamViecViewModel> Search(string id, string name, string dept)
+        public List<NhanVien_CalamViecViewModel> Search(string dept, string status, string timeFrom, string timeTo, params Expression<Func<NHANVIEN_CALAMVIEC, object>>[] includeProperties)
         {
-            throw new NotImplementedException();
+            if (!string.IsNullOrEmpty(timeFrom) && !string.IsNullOrEmpty(timeTo))
+            {
+                if (string.IsNullOrEmpty(dept) && string.IsNullOrEmpty(status))
+                {
+                    var lst = _nhanvienClviecRepository.FindAll(x => string.Compare(x.BatDau_TheoCa, timeFrom) >= 0 && string.Compare(x.KetThuc_TheoCa, timeTo) <= 0, includeProperties).OrderByDescending(x => x.DateModified);
+                    return _mapper.Map<List<NhanVien_CalamViecViewModel>>(lst);
+                }
+
+                if (!string.IsNullOrEmpty(dept) && string.IsNullOrEmpty(status))
+                {
+                    var lst = _nhanvienClviecRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && (string.Compare(x.BatDau_TheoCa, timeFrom) >= 0 && string.Compare(x.KetThuc_TheoCa, timeTo) <= 0), includeProperties).OrderByDescending(x => x.DateModified);
+                    return _mapper.Map<List<NhanVien_CalamViecViewModel>>(lst);
+                }
+
+                if (string.IsNullOrEmpty(dept) && !string.IsNullOrEmpty(status))
+                {
+                    if (status != CommonConstants.No_Approved && status != CommonConstants.Approved)
+                    {
+                        var lst = _nhanvienClviecRepository.FindAll(x => x.Status == status && (string.Compare(x.BatDau_TheoCa, timeFrom) >= 0 && string.Compare(x.KetThuc_TheoCa, timeTo) <= 0), includeProperties).OrderByDescending(x => x.DateModified);
+                        return _mapper.Map<List<NhanVien_CalamViecViewModel>>(lst);
+                    }
+                    else
+                    {
+                        string[] itemCheck = status == CommonConstants.No_Approved ? new string[] { "", null } : new string[] { status };
+                        var lst = _nhanvienClviecRepository.FindAll(x => (x.Approved == status || itemCheck.Contains(x.Approved)) && (string.Compare(x.BatDau_TheoCa, timeFrom) >= 0 && string.Compare(x.KetThuc_TheoCa, timeTo) <= 0), includeProperties).OrderByDescending(x => x.DateModified);
+                        return _mapper.Map<List<NhanVien_CalamViecViewModel>>(lst);
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(dept) && !string.IsNullOrEmpty(status))
+                {
+                    if (status != CommonConstants.No_Approved && status != CommonConstants.Approved)
+                    {
+                        var lst = _nhanvienClviecRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && x.Status == status && (string.Compare(x.BatDau_TheoCa, timeFrom) >= 0 && string.Compare(x.KetThuc_TheoCa, timeTo) <= 0), includeProperties).OrderByDescending(x => x.DateModified);
+                        return _mapper.Map<List<NhanVien_CalamViecViewModel>>(lst);
+                    }
+                    else
+                    {
+                        string[] itemCheck = status == CommonConstants.No_Approved ? new string[] { "", null } : new string[] { status };
+                        var lst = _nhanvienClviecRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && (x.Approved == status || itemCheck.Contains(x.Approved)) && (string.Compare(x.BatDau_TheoCa, timeFrom) >= 0 && string.Compare(x.KetThuc_TheoCa, timeTo) <= 0), includeProperties).OrderByDescending(x => x.DateModified);
+                        return _mapper.Map<List<NhanVien_CalamViecViewModel>>(lst);
+                    }
+                }
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(dept) && string.IsNullOrEmpty(status))
+                {
+                    return GetAll("", x => x.HR_NHANVIEN, y => y.DM_CA_LVIEC);
+                }
+
+                if (!string.IsNullOrEmpty(dept) && string.IsNullOrEmpty(status))
+                {
+                    return GetAll(dept, x => x.HR_NHANVIEN, y => y.DM_CA_LVIEC);
+                }
+
+                if (string.IsNullOrEmpty(dept) && !string.IsNullOrEmpty(status))
+                {
+                    if (status != CommonConstants.No_Approved && status != CommonConstants.Approved)
+                    {
+                        var lst = _nhanvienClviecRepository.FindAll(x => x.Status == status, includeProperties).OrderByDescending(x => x.DateModified);
+                        return _mapper.Map<List<NhanVien_CalamViecViewModel>>(lst);
+                    }
+                    else
+                    {
+                        string[] itemCheck = status == CommonConstants.No_Approved ? new string[] { "", null } : new string[] { status };
+                        var lst = _nhanvienClviecRepository.FindAll(x => x.Approved == status || itemCheck.Contains(x.Approved), includeProperties).OrderByDescending(x => x.DateModified);
+                        return _mapper.Map<List<NhanVien_CalamViecViewModel>>(lst);
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(dept) && !string.IsNullOrEmpty(status))
+                {
+                    if (status != CommonConstants.No_Approved && status != CommonConstants.Approved)
+                    {
+                        var lst = _nhanvienClviecRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && x.Status == status, includeProperties).OrderByDescending(x => x.DateModified);
+                        return _mapper.Map<List<NhanVien_CalamViecViewModel>>(lst);
+                    }
+                    else
+                    {
+                        string[] itemCheck = status == CommonConstants.No_Approved ? new string[] { "", null } : new string[] { status };
+                        var lst = _nhanvienClviecRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && (x.Approved == status || itemCheck.Contains(x.Approved)), includeProperties).OrderByDescending(x => x.DateModified);
+                        return _mapper.Map<List<NhanVien_CalamViecViewModel>>(lst);
+                    }
+                }
+            }
+
+            return new List<NhanVien_CalamViecViewModel>();
         }
 
         public void Update(NhanVien_CalamViecViewModel nhanVienLVVm)
         {
-            throw new NotImplementedException();
+            nhanVienLVVm.UserModified = GetUserId();
+            if (string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), nhanVienLVVm.BatDau_TheoCa) >= 0 && string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), nhanVienLVVm.KetThuc_TheoCa) <= 0)
+            {
+                nhanVienLVVm.Status = Status.Active.NullString();
+            }
+            else if (string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), nhanVienLVVm.BatDau_TheoCa) < 0)
+            {
+                nhanVienLVVm.Status = Status.New.ToString();
+            }
+            else
+            {
+                nhanVienLVVm.Status = Status.InActive.ToString();
+            }
+            var entity = _mapper.Map<NHANVIEN_CALAMVIEC>(nhanVienLVVm);
+            _nhanvienClviecRepository.Update(entity);
         }
 
         public void UpdateSingle(NhanVien_CalamViecViewModel nhanVienLVVm)
         {
             throw new NotImplementedException();
+        }
+
+        public NhanVien_CalamViecViewModel CheckExist(int id, string maNV, string dmCa, string from, string end)
+        {
+            if (id > 0)
+            {
+                return GetById(id);
+            }
+            else
+            {
+                var obj = _nhanvienClviecRepository.FindSingle(x => x.MaNV == maNV && x.Danhmuc_CaLviec == dmCa && x.BatDau_TheoCa == from && x.KetThuc_TheoCa == end);
+                return _mapper.Map<NhanVien_CalamViecViewModel>(obj);
+            }
         }
     }
 }
