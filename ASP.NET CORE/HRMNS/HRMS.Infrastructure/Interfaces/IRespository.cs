@@ -29,6 +29,8 @@ namespace HRMS.Infrastructure.Interfaces
 
         void RemoveMultiple(List<T> entities);
 
+        void UpdateRange(List<T> entities);
+
         ResultDB ExecProceduce(string ProcName, Dictionary<string, string> Dictionary, string tableParam, DataTable table);
     }
 }

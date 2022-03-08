@@ -2,6 +2,7 @@
     this.initialize = function () {
         registerEvents();
         initSelectOptionBoPhan();
+        initActiveTime();
     }
 
     function registerEvents() {
@@ -77,7 +78,7 @@
         $('#btnCreate').on('click', function () {
             ResetFormAddNhanVienClviec();
             initSelectOptionNhanVien();
-            initSelectDMCalamviec();
+            initSelectDMCalamviec('0');
 
             $('#hd_NhanVien_Calviec').val('Add');
 
@@ -96,7 +97,7 @@
         }
 
         // Init data dm ca lam viec
-        function initSelectDMCalamviec() {
+        function initSelectDMCalamviec(setting) {
             $.ajax({
                 url: '/Admin/NhanVien_CaLamViec/GetAllDMCaLamViec',
                 type: 'GET',
@@ -108,7 +109,13 @@
                     $.each(response, function (i, item) {
                         render += "<option value='" + item.Id + "'>" + item.TenCaLamViec + "</option>";
                     });
-                    $('#_txtDmCaLviec').html(render);
+                    if (setting == '1') {
+                        $('#_txtSettingDmCaLviec').html(render);
+                    }
+                    else {
+                        $('#_txtDmCaLviec').html(render);
+                    }
+
                 },
                 error: function (status) {
                     console.log(status);
@@ -199,7 +206,7 @@
 
             ResetFormAddNhanVienClviec();
             initSelectOptionNhanVien();
-            initSelectDMCalamviec();
+            initSelectDMCalamviec('0');
             $('#hd_NhanVien_Calviec').val('Edit');
             $("#_txtMaNV").prop('disabled', true);
 
@@ -234,13 +241,14 @@
             });
         });
 
-        // Delete nhan vien ca lam viec
+        // Show delete nhan vien ca lam viec
         $('body').on('click', '.delete-nv-calviec', function (e) {
             e.preventDefault();
             $('#hdId_delete').val($(this).data('id'));
             $('#delete_nhanVien_calviec').modal('show');
         });
 
+        // Delete nhan vien ca lam viec
         $('#btn-delete_nv_calamviec').on('click', function (e) {
             e.preventDefault();
             var that = $('#hdId_delete').val();
@@ -264,6 +272,288 @@
                 },
                 error: function (status) {
                     hrms.notify('error: ' + status.responseText, 'error', 'alert', function () { });
+                }
+            });
+        });
+
+        // Show Dang Ky Ca Lam Viec (admin)
+        $('#btn-registTimeShift').on('click', function (e) {
+            ResetFormSettingTimeCaLviec();
+            initSelectOptionSettingTimeCaLviec();
+            initSelectDMCalamviec('1');
+            $('#hd_Time_Calviec').val('Add');
+            $('#settingTimeCalamviecModel').modal('show');
+        });
+
+        function ResetFormSettingTimeCaLviec() {
+            $('#_txtIdSetting').val('0');
+            $('#_txtSettingDmCaLviec').val('');
+            $('#_txtSettingDmCaLviec').trigger('change');
+            $('#_txtSettingTimeTo').val('');
+            $('#_txtSettingTimeFrom').val('');
+            $('#_txtSettingTimeRegisFrom').val('');
+            $('#_txtSettingTimeRegisTo').val('');
+            $('#hd_Time_Calviec').val('');
+            $('#_txtSettingStatus').val('');
+            $('#_txtSettingStatus').trigger('change');
+            $('#btnAddSettingTime').attr('disabled', true);
+
+            $('#_txtSettingDmCaLviec').attr('disabled', false);
+            $('#_txtSettingTimeTo').attr('disabled', false);
+            $('#_txtSettingTimeFrom').attr('disabled', false);
+            $('#_txtSettingTimeRegisFrom').attr('disabled', false);
+            $('#_txtSettingTimeRegisTo').attr('disabled', false);
+            $('#_txtSettingStatus').attr('disabled', false);
+        }
+
+        // Init data setting time lam viec
+        function initSelectOptionSettingTimeCaLviec() {
+            $.ajax({
+                url: '/Admin/NhanVien_CaLamViec/GetTimeSettingCaLamViec',
+                type: 'GET',
+                dataType: 'json',
+                async: false,
+                success: function (response) {
+
+                    var render = "<option value='' selected='selected'>Select option...</option>";
+                    var ids = '';
+                    $.each(response, function (i, item) {
+                        ids = item.Id + '^' + item.CaLamViec + '^' + item.NgayBatDau + '^' + item.NgayKetThuc + '^' + item.NgayBatDauDangKy + '^' + item.NgayKetThucDangKy + '^' + item.Status;
+                        render += "<option value='" + ids + "'>" + item.DM_CA_LVIEC.TenCaLamViec + ' : [' + item.NgayBatDau + ' -> ' + item.NgayKetThuc + ']' + "</option>";
+                    });
+                    $('#_txtTimeSelect').html(render);
+                },
+                error: function (status) {
+                    console.log(status);
+                    hrms.notify('Cannot loading setting time', 'error', 'alert', function () { });
+                }
+            });
+        }
+
+        // Luu Setting time Ca lam viec
+        $('#btnSave_Setting_Calmviec').on('click', function (e) {
+
+            if ($('#frmSettingTime_CaLviec_AddEdit').valid()) {
+
+                e.preventDefault();
+
+                var calamviec = $('#_txtSettingDmCaLviec').val();
+                var ngayBatDau = $('#_txtSettingTimeFrom').val();
+                var ngayKetThuc = $('#_txtSettingTimeTo').val();
+
+                var ngaybatdauDangKy = $('#_txtSettingTimeRegisFrom').val();
+                var ngayKetThucDangKy = $('#_txtSettingTimeRegisTo').val();
+                var status = $('#_txtSettingStatus').val();
+
+                var action = $('#hd_Time_Calviec').val();
+                var code = $('#_txtIdSetting').val();
+
+                $.ajax({
+                    url: '/Admin/NhanVien_CaLamViec/RegisNewShift?action=' + action,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        Id: code,
+                        CaLamViec: calamviec,
+                        NgayBatDau: ngayBatDau,
+                        NgayKetThuc: ngayKetThuc,
+                        NgayBatDauDangKy: ngaybatdauDangKy,
+                        NgayKetThucDangKy: ngayKetThucDangKy,
+                        Status: status
+                    },
+                    success: function (response) {
+
+                        $('#settingTimeCalamviecModel').modal('hide');
+                        hrms.notify("Update success!", 'Success', 'alert', function () {
+
+                            location.reload();
+                        });
+                    },
+                    error: function (status) {
+                        console.log(status.responseText);
+                        hrms.notify('error:' + status.responseText, 'error', 'alert', function () { });
+                    }
+                });
+            }
+        });
+
+        // change select box setting time
+        $('#_txtTimeSelect').on('change', function (e) {
+            e.preventDefault();
+
+            // ids = item.Id + '^' + item.CaLamViec + '^' + item.NgayBatDau + '^' + item.NgayKetThuc + '^' + item.NgayBatDauDangKy + '^' + item.NgayKetThucDangKy;
+            var ids = $(this).val();
+
+            if (ids.indexOf('^') >= 0) {
+                var id = ids.split('^')[0];
+                var calviec = ids.split('^')[1];
+                var ngaybatdau = ids.split('^')[2];
+                var ngayketthuc = ids.split('^')[3];
+                var ngaydakybatdau = ids.split('^')[4];
+                var ngaydakyKetthuc = ids.split('^')[5];
+                var status = ids.split('^')[6];
+
+                $('#_txtIdSetting').val(id);
+                $('#_txtSettingDmCaLviec').val(calviec);
+                $('#_txtSettingDmCaLviec').trigger('change');
+                $('#_txtSettingTimeFrom').val(ngaybatdau);
+                $('#_txtSettingTimeTo').val(ngayketthuc);
+
+                $('#_txtSettingTimeRegisFrom').val(ngaydakybatdau);
+                $('#_txtSettingTimeRegisTo').val(ngaydakyKetthuc);
+                $('#hd_Time_Calviec').val('Edit');
+                $('#btnAddSettingTime').attr('disabled', false);
+
+                $('#_txtSettingStatus').val(status);
+                $('#_txtSettingStatus').trigger('change');
+
+                $('#_txtSettingDmCaLviec').attr('disabled', true);
+                $('#_txtSettingTimeTo').attr('disabled', true);
+                $('#_txtSettingTimeFrom').attr('disabled', true);
+                $('#_txtSettingTimeRegisFrom').attr('disabled', true);
+                $('#_txtSettingTimeRegisTo').attr('disabled', true);
+                $('#_txtSettingStatus').attr('disabled', true);
+            }
+            else {
+                $('#_txtIdSetting').val('0');
+                $('#_txtSettingDmCaLviec').val('');
+                $('#_txtSettingDmCaLviec').trigger('change');
+                $('#_txtSettingTimeTo').val('');
+                $('#_txtSettingTimeFrom').val('');
+                $('#_txtSettingTimeRegisFrom').val('');
+                $('#_txtSettingTimeRegisTo').val('');
+                $('#hd_Time_Calviec').val('Add');
+                $('#btnAddSettingTime').attr('disabled', true);
+
+                $('#_txtSettingStatus').val('');
+                $('#_txtSettingStatus').trigger('change');
+
+                $('#_txtSettingDmCaLviec').attr('disabled', false);
+                $('#_txtSettingTimeTo').attr('disabled', false);
+                $('#_txtSettingTimeFrom').attr('disabled', false);
+                $('#_txtSettingTimeRegisFrom').attr('disabled', false);
+                $('#_txtSettingTimeRegisTo').attr('disabled', false);
+                $('#_txtSettingStatus').attr('disabled', false);
+            }
+        });
+
+        // clear data to add setting time
+        $('#btnAddSettingTime').on('click', function (e) {
+
+            e.preventDefault();
+            $('#_txtTimeSelect').val('');
+            $('#_txtTimeSelect').trigger('change');
+            $('#_txtIdSetting').val('0');
+            $('#_txtSettingDmCaLviec').val('');
+            $('#_txtSettingDmCaLviec').trigger('change');
+            $('#_txtSettingTimeTo').val('');
+            $('#_txtSettingTimeFrom').val('');
+            $('#_txtSettingTimeRegisFrom').val('');
+            $('#_txtSettingTimeRegisTo').val('');
+            $('#hd_Time_Calviec').val('Add');
+
+            $('#_txtSettingStatus').val('');
+            $('#_txtSettingStatus').trigger('change');
+
+            $('#_txtSettingDmCaLviec').attr('disabled', false);
+            $('#_txtSettingTimeTo').attr('disabled', false);
+            $('#_txtSettingTimeFrom').attr('disabled', false);
+            $('#_txtSettingTimeRegisFrom').attr('disabled', false);
+            $('#_txtSettingTimeRegisTo').attr('disabled', false);
+            $('#_txtSettingStatus').attr('disabled', false);
+        });
+
+        // enable to edit setting time
+        $('#btnEditSettingTime').on('click', function (e) {
+            e.preventDefault();
+            $('#_txtSettingDmCaLviec').attr('disabled', false);
+            $('#_txtSettingTimeTo').attr('disabled', false);
+            $('#_txtSettingTimeFrom').attr('disabled', false);
+            $('#_txtSettingTimeRegisFrom').attr('disabled', false);
+            $('#_txtSettingTimeRegisTo').attr('disabled', false);
+            $('#_txtSettingStatus').attr('disabled', false);
+        });
+
+        // Approve
+        $('#btnApprove').on('click', function (e) {
+
+            e.preventDefault();
+
+            if ($('#cboDepartment').val() == '' || $('#searchStatus').val() != 'N') {
+                hrms.notify("Approve theo phòng ban có status = 'Not approved yet'", 'error', 'alert', function () { });
+            }
+            else {
+                $('#approve_nhanVien_calviec').modal('show');
+            }
+        });
+
+        // UnApprove
+        $('#btnUnApprove').on('click', function (e) {
+
+            e.preventDefault();
+
+            if ($('#cboDepartment').val() == '' || $('#searchStatus').val() != 'Y') {
+                hrms.notify("UnApprove theo phòng ban có status = 'Approved'", 'error', 'alert', function () { });
+            }
+            else {
+                $('#unapprove_nhanVien_calviec').modal('show');
+            }
+        });
+
+        // Submit approve
+        $('#btn-approve_nv_calamviec').on('click', function (e) {
+
+            e.preventDefault();
+
+            var _dept = $('#cboDepartment').val();
+            var _status = $('#searchStatus').val();
+
+            $.ajax({
+                url: '/Admin/NhanVien_CaLamViec/Approve',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    dept: _dept,
+                    status: _status
+                },
+                success: function (response) {
+                    $('#approve_nhanVien_calviec').modal('hide');
+                    hrms.notify("Update success!", 'Success', 'alert', function () {
+                        location.reload();
+                    });
+                },
+                error: function (status) {
+                    console.log(status.responseText);
+                    hrms.notify('error:' + status.responseText, 'error', 'alert', function () { });
+                }
+            });
+        });
+
+        // Submit unapprove
+        $('#btn-Unapprove_nv_calamviec').on('click', function (e) {
+
+            e.preventDefault();
+
+            var _dept = $('#cboDepartment').val();
+            var _status = $('#searchStatus').val();
+
+            $.ajax({
+                url: '/Admin/NhanVien_CaLamViec/UnApprove',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    dept: _dept,
+                    status: _status
+                },
+                success: function (response) {
+                    $('#unapprove_nhanVien_calviec').modal('hide');
+                    hrms.notify("Update success!", 'Success', 'alert', function () {
+                        location.reload();
+                    });
+                },
+                error: function (status) {
+                    console.log(status.responseText);
+                    hrms.notify('error:' + status.responseText, 'error', 'alert', function () { });
                 }
             });
         });
@@ -302,6 +592,26 @@
             error: function (status) {
                 console.log(status);
                 hrms.notify('Cannot loading department data', 'error', 'alert', function () { });
+            }
+        });
+    }
+
+    function initActiveTime() {
+        $.ajax({
+            url: '/Admin/NhanVien_CaLamViec/GetActiveTime',
+            type: 'GET',
+            dataType: 'json',
+            async: false,
+            success: function (response) {
+                $('#hTimeFrom').text(response.NgayBatDau);
+                $('#hTimeTo').text(response.NgayKetThuc);
+
+                $('#hRegisterTimeFrom').text(response.NgayBatDauDangKy)
+                $('#hRegisterTimeTo').text(response.NgayKetThucDangKy)
+            },
+            error: function (status) {
+                console.log(status);
+                hrms.notify('Cannot loading data', 'error', 'alert', function () { });
             }
         });
     }

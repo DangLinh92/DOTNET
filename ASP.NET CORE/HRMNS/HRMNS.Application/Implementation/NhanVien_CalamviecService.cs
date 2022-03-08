@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HRMNS.Application.Interfaces;
 using HRMNS.Application.ViewModels.Time_Attendance;
+using HRMNS.Data.EF;
 using HRMNS.Data.EF.Extensions;
 using HRMNS.Data.Entities;
 using HRMNS.Data.Enums;
@@ -307,6 +308,19 @@ namespace HRMNS.Application.Implementation
                 var obj = _nhanvienClviecRepository.FindSingle(x => x.MaNV == maNV && x.Danhmuc_CaLviec == dmCa && x.BatDau_TheoCa == from && x.KetThuc_TheoCa == end);
                 return _mapper.Map<NhanVien_CalamViecViewModel>(obj);
             }
+        }
+
+        public void Approve(string dept, string status, bool isApprove)
+        {
+            var lst = _nhanvienClviecRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && x.Approved == status || x.Approved == null, y => y.HR_NHANVIEN).ToList();
+
+            //var lst2 = _nhanvienClviecRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && x.Approved == status || x.Approved == null, y => y.HR_NHANVIEN).ToList();
+            foreach (var item in lst)
+            {
+                item.Approved = isApprove ? CommonConstants.Approved : CommonConstants.No_Approved;
+                item.HR_NHANVIEN = null;
+            }
+            _nhanvienClviecRepository.UpdateRange(lst);
         }
     }
 }

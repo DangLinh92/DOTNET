@@ -101,6 +101,7 @@ namespace HRMS
             services.AddTransient<IChamCongService, ChamCongService>();
             services.AddTransient<INhanVien_CalamviecService, NhanVien_CalamviecService>();
             services.AddTransient<IDMucCalamviecService, DMucCalamviecService>();
+            services.AddTransient<ISettingTimeCalamviecService, SettingTimeCalamviecService>();
 
             services.AddMvc().AddNewtonsoftJson(options =>
             {

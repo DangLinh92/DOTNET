@@ -60,6 +60,7 @@ namespace HRMNS.Data.EF
         public virtual DbSet<TRU_SO_LVIEC> TRU_SO_LVIEC { get; set; }
         public virtual DbSet<ATTENDANCE_RECORD> ATTENDANCE_RECORD { get; set; }
         public virtual DbSet<ATTENDANCE_OVERTIME> ATTENDANCE_OVERTIME { get; set; }
+        public virtual DbSet<SETTING_TIME_CA_LVIEC> SETTING_TIME_CA_LVIEC { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -107,6 +108,7 @@ namespace HRMNS.Data.EF
             builder.AddConfiguration(new TruSoLamViecConfiguration());
             builder.AddConfiguration(new AttendenceRecordConfiguration());
             builder.AddConfiguration(new AttendenceOvertimeConfiguration());
+            builder.AddConfiguration(new SettingTimeCaLamViecConfiguration());
 
             //base.OnModelCreating(builder);
         }

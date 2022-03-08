@@ -1,0 +1,70 @@
+﻿<div id="settingTimeCalamviecModel" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Đăng Ký Thời Gian Ca Làm Việc</h5>
+                <input type="hidden" id="hd_Time_Calviec" />
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="frmSettingTime_CaLviec_AddEdit" class="needs-validation" novalidate> 
+                    <div class="col-auto float-right ml-auto" style="margin-top: -24px;">
+                        <a href="#" class="btn btn-success" id="btnAddSettingTime"> Add </a>
+                        <a href="#" class="btn btn-success" id="btnEditSettingTime"> Edit </a>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="hidden" id="_txtIdSetting" />
+                        <label for="_txtTimeSelect">
+                            Thời gian đã tạo
+                        </label>
+                        <select id="_txtTimeSelect" class="select">
+                            <option value="">Choose...</option>
+                            <option>Daniel Porter</option>
+                            <option>Roger Dixon</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="_txtSettingDmCaLviec">Chọn Ca Làm Việc<span class="text-danger">*</span></label>
+                        <select id="_txtSettingDmCaLviec" class="select" name="CaLamViec" required>
+                            <option>Daniel Porter</option>
+                            <option>Roger Dixon</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="_txtSettingTimeFrom">Ngày Bắt Đầu Ca<span class="text-danger">*</span></label>
+                        <div class="cal-icon"><input id="_txtSettingTimeFrom" class="form-control datetimepicker" type="text" name="NgayBatDau" required></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="_txtSettingTimeTo">Ngày Kết Thúc Ca<span class="text-danger">*</span></label>
+                        <div class="cal-icon"><input id="_txtSettingTimeTo" class="form-control datetimepicker" name="NgayKetThuc" type="text" required></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="_txtSettingTimeRegisFrom">Ngày Bắt Đầu Đăng Ký<span class="text-danger">*</span></label>
+                        <div class="cal-icon"><input id="_txtSettingTimeRegisFrom" class="form-control datetimepicker" name="NgayBatDauDangKy" type="text" required></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="_txtSettingTimeRegisTo">Ngày Kết Thúc Đăng Ký<span class="text-danger">*</span></label>
+                        <div class="cal-icon"><input id="_txtSettingTimeRegisTo" class="form-control datetimepicker" name="NgayKetThucDangKy" type="text" required></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="_txtSettingStatus">Trạng Thái<span class="text-danger">*</span></label>
+                        <select id="_txtSettingStatus" class="select" name="Status" required>
+                            <option value="" selected>Choose...</option>
+                            <option value="InActive">InActive</option>
+                            <option value="Active">Active</option>
+                        </select>
+                    </div>
+
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn" id="btnSave_Setting_Calmviec">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

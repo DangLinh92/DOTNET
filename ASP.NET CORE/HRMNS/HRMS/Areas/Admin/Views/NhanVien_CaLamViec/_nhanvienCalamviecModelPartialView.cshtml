@@ -14,7 +14,7 @@
                     <div class="form-group">
                         <input type="hidden" id="_txtId"/>
                         <label for="_txtMaNV">Mã Nhân Viên<span class="text-danger">*</span></label>
-                        <select id="_txtMaNV" class="form-control nested" required>
+                        <select id="_txtMaNV" class="form-control nested" name="MaNV" required>
                             <option value="">Choose...</option>
                             <optgroup label="Group1">
                                 <option selected="selected">orange</option>
@@ -35,18 +35,18 @@
                     </div>
                     <div class="form-group">
                         <label for="_txtDmCaLviec">Chọn Ca Làm Việc<span class="text-danger">*</span></label>
-                        <select id="_txtDmCaLviec" class="select" required>
+                        <select id="_txtDmCaLviec" class="select" name="Danhmuc_CaLviec" required>
                             <option>Daniel Porter</option>
                             <option>Roger Dixon</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="_txtFrom">Ngày Bắt Đầu Ca<span class="text-danger">*</span></label>
-                        <div class="cal-icon"><input id="_txtFrom" class="form-control datetimepicker" type="text" required></div>
+                        <div class="cal-icon"><input id="_txtFrom" class="form-control datetimepicker" name="BatDau_TheoCa" type="text" required></div>
                     </div>
                     <div class="form-group">
                         <label for="_txtTo">Ngày Kết Thúc Ca<span class="text-danger">*</span></label>
-                        <div class="cal-icon"><input id="_txtTo" class="form-control datetimepicker" type="text" required></div>
+                        <div class="cal-icon"><input id="_txtTo" class="form-control datetimepicker" name="KetThuc_TheoCa" type="text" required></div>
                     </div>
 
                     <div class="submit-section">

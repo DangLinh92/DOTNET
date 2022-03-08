@@ -33,6 +33,7 @@ namespace HRMNS.Application.AutoMapper
             CreateMap<CHAM_CONG_LOG, ChamCongLogViewModel>();
             CreateMap<NHANVIEN_CALAMVIEC, NhanVien_CalamViecViewModel>();
             CreateMap<DM_CA_LVIEC, DMCalamviecViewModel>();
+            CreateMap<SETTING_TIME_CA_LVIEC, SettingTimeCalamviecViewModel>();
         }
     }
 }

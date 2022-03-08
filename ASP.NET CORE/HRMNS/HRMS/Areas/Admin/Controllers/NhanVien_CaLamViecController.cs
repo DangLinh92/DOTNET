@@ -1,5 +1,6 @@
 ﻿using HRMNS.Application.Interfaces;
 using HRMNS.Application.ViewModels.Time_Attendance;
+using HRMNS.Data.Enums;
 using HRMNS.Utilities.Common;
 using HRMNS.Utilities.Constants;
 using HRMNS.Utilities.Dtos;
@@ -21,12 +22,14 @@ namespace HRMS.Areas.Admin.Controllers
     {
         private readonly IWebHostEnvironment _hostingEnvironment;
         INhanVien_CalamviecService _nvienCalamviecService;
+        ISettingTimeCalamviecService _settingTimeCalamviec;
 
-        public NhanVien_CaLamViecController(INhanVien_CalamviecService nhanVien_CalamviecService, IWebHostEnvironment hostEnvironment, ILogger<NhanVien_CaLamViecController> logger)
+        public NhanVien_CaLamViecController(INhanVien_CalamviecService nhanVien_CalamviecService, ISettingTimeCalamviecService settingTimeCalamviec, IWebHostEnvironment hostEnvironment, ILogger<NhanVien_CaLamViecController> logger)
         {
             _hostingEnvironment = hostEnvironment;
             _nvienCalamviecService = nhanVien_CalamviecService;
             _logger = logger;
+            _settingTimeCalamviec = settingTimeCalamviec;
         }
 
         public IActionResult Index()
@@ -90,8 +93,8 @@ namespace HRMS.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult FindId(int Id)
         {
-           var obj = _nvienCalamviecService.GetById(Id);
-            if(obj != null)
+            var obj = _nvienCalamviecService.GetById(Id);
+            if (obj != null)
             {
                 return new OkObjectResult(obj);
             }
@@ -99,7 +102,7 @@ namespace HRMS.Areas.Admin.Controllers
             {
                 return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
             }
-        } 
+        }
 
         [HttpPost]
         public IActionResult RegisterNhanVienCalamViec(NhanVien_CalamViecViewModel calamviec, [FromQuery] string action)
@@ -149,10 +152,104 @@ namespace HRMS.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Search(string department,string status,string timeFrom,string timeTo)
+        public IActionResult Search(string department, string status, string timeFrom, string timeTo)
         {
             var lst = _nvienCalamviecService.Search(department, status, timeFrom, timeTo, x => x.HR_NHANVIEN, y => y.DM_CA_LVIEC);
             return PartialView("_gridNhanVienCaLamViecPartialView", lst);
+        }
+
+        [HttpPost]
+        public IActionResult RegisNewShift(SettingTimeCalamviecViewModel shift, [FromQuery] string action)
+        {
+            if (!ModelState.IsValid)
+            {
+                IEnumerable<ModelError> allErrors = ModelState.Values.SelectMany(v => v.Errors);
+                return new BadRequestObjectResult(allErrors);
+            }
+            else
+            {
+                var obj = _settingTimeCalamviec.GetById(shift.Id);
+                if (action == "Add")
+                {
+                    if (obj != null)
+                    {
+                        obj.CaLamViec = shift.CaLamViec;
+                        obj.NgayBatDau = shift.NgayBatDau;
+                        obj.NgayKetThuc = shift.NgayKetThuc;
+                        obj.NgayBatDauDangKy = shift.NgayBatDauDangKy;
+                        obj.NgayKetThucDangKy = shift.NgayKetThucDangKy;
+                        obj.Status = shift.Status;
+                        _settingTimeCalamviec.Update(obj);
+                    }
+                    else
+                    {
+                        _settingTimeCalamviec.Add(shift);
+                    }
+                }
+                else
+                {
+                    obj.CaLamViec = shift.CaLamViec;
+                    obj.NgayBatDau = shift.NgayBatDau;
+                    obj.NgayKetThuc = shift.NgayKetThuc;
+                    obj.NgayBatDauDangKy = shift.NgayBatDauDangKy;
+                    obj.NgayKetThucDangKy = shift.NgayKetThucDangKy;
+                    obj.Status = shift.Status;
+                    _settingTimeCalamviec.Update(obj);
+                }
+
+                if (shift.Status == Status.Active.ToString() && (shift.Id == 0 || (obj != null && shift.Id != obj.Id)))
+                {
+                    var oldItem = _settingTimeCalamviec.GetByStatus(shift.Status);
+                    if (oldItem != null)
+                    {
+                        oldItem.Status = Status.InActive.ToString();
+                        _settingTimeCalamviec.Update(oldItem);
+                    }
+                }
+
+                _settingTimeCalamviec.Save();
+                return new OkObjectResult(shift);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetTimeSettingCaLamViec()
+        {
+            var lst = _settingTimeCalamviec.GetAll("", x => x.DM_CA_LVIEC).Take(10);
+            return new OkObjectResult(lst);
+        }
+
+        [HttpGet]
+        public IActionResult GetActiveTime()
+        {
+            var obj = _settingTimeCalamviec.GetByStatus(Status.Active.ToString());
+            return new OkObjectResult(obj);
+        }
+
+        [HttpPost]
+        public IActionResult Approve(string dept,string status)
+        {
+            if(status != CommonConstants.No_Approved || string.IsNullOrEmpty(dept))
+            {
+                return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
+            }
+
+            _nvienCalamviecService.Approve(dept, status, true);
+            _nvienCalamviecService.Save();
+            return new OkObjectResult(true);
+        }
+
+        [HttpPost]
+        public IActionResult UnApprove(string dept, string status)
+        {
+            if (status != CommonConstants.Approved || string.IsNullOrEmpty(dept))
+            {
+                return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
+            }
+
+            _nvienCalamviecService.Approve(dept, status, false);
+            _nvienCalamviecService.Save();
+            return new OkObjectResult(null);
         }
     }
 }

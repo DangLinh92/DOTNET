@@ -140,5 +140,10 @@ namespace HRMNS.Data.EF
         {
             _context.Set<T>().Update(entity);
         }
+
+        public void UpdateRange(List<T> entities)
+        {
+            _context.Set<T>().UpdateRange(entities);
+        }
     }
 }

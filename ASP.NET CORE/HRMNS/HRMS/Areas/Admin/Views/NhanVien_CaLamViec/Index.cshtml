@@ -48,19 +48,18 @@
     <div class="page-header">
         <div class="row align-items-center">
             <div class="col">
-                <h3 class="page-title">Reschedule - Đăng Ký Ca Làm Việc</h3>
+                <h3 class="page-title">Register shift - Đăng Ký Ca Làm Việc</h3>
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/admin/chamcong/index">Time and Attendance</a></li>
-                    <li class="breadcrumb-item active">Reschedule</li>
+                    <li class="breadcrumb-item active">Register shift</li>
                 </ul>
             </div>
             <div class="col-auto float-right ml-auto">
-                <a href="#" id="btnCreate" class="btn add-btn" data-toggle="modal" data-target="#add_nhanvien_calamviecModel"><i class="fa fa-plus"></i> Add Schedule</a>
+                <a href="#" id="btnCreate" class="btn add-btn" data-toggle="modal" data-target="#add_nhanvien_calamviecModel"><i class="fa fa-plus"></i> Add Shift</a>
                 <div class="btn-group">
                     <button type="button" class="btn btn-info dropdown-toggle" id="btnManagement" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Management</button>
                     <div class="dropdown-menu" style="">
-                        <a class="dropdown-item" href="/admin/nhanvien_calamviec/index" id="btn-XepLichLamViec">Reschedule</a>
-                        <a class="dropdown-item" href="#" id="btn-Overtime">Overtime</a>
+                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#settingTimeCalamviecModel" id="btn-registTimeShift"><small class="text-danger">(Admin) </small>Register new shift</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="~/templates/ShifTemplate.xlsx">Get Shift Template</a>
                         <a class="dropdown-item" href="#" id="btn-importShift">Import Shift</a>
@@ -70,6 +69,32 @@
         </div>
     </div>
     <!-- /Page Header -->
+
+    <div class="row">
+        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
+        </div>
+        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
+        </div>
+        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
+            <div class="stats-info">
+                <h6>
+                    Register Time :
+                    <span id="hRegisterTimeFrom"></span> ~
+                    <span id="hRegisterTimeTo"></span>
+                </h6>
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
+            <div class="stats-info">
+                <h6>
+                    Active Time : 
+                    <span id="hTimeFrom"></span> ~ 
+                    <span id="hTimeTo"></span>
+                </h6>
+            </div>
+        </div>
+    </div>
+
     <!-- Search Filter -->
     <form id="frmSearch" method="post" data-ajax="true" data-ajax-url="/Admin/NhanVien_CaLamViec/Search" data-ajax-loading="#spinner1" data-ajax-update="#gridNvienCalamviecIndex" data-ajax-mode='replace' data-ajax-success="onSuccess">
         <div class="row filter-row">
@@ -119,10 +144,12 @@
             </div>
 
             <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-                <a href="#" class="btn btn-success btn-block" id="btnApprove"> Approve </a>
+                <a href="#" class="btn btn-primary" id="btnApprove" data-target="#approve_nhanVien_calviec">  Approve</a>
+                <a href="#" class="btn btn-primary" id="btnUnApprove" data-target="#unapprove_nhanVien_calviec">UnApprove</a>
             </div>
         </div>
     </form>
+
     <div class="card-body" id="spinner1" style="text-align:center; display:none">
         <div class="spinner-border" role="status">
             <span class="sr-only">Loading...</span>
@@ -133,7 +160,6 @@
     <div class="row">
         <div class="col-md-12">
             <div class="table-responsive" id="gridNvienCalamviecIndex">
-
                 @await Html.PartialAsync("_gridNhanVienCaLamViecPartialView", Model)
             </div>
         </div>
@@ -142,6 +168,8 @@
 <!-- /Page Content -->
 <!-- Đang ký ca lam viec cho nhan vien -->
 <partial name="_nhanvienCalamviecModelPartialView" />
+
+<partial name="_settingTimeCalamviecModelPartialView" />
 
 <!-- Delete Expense Modal -->
 <div class="modal custom-modal fade" id="delete_nhanVien_calviec" role="dialog">
@@ -168,6 +196,53 @@
     </div>
 </div>
 <!-- Delete Expense Modal -->
+
+<div class="modal custom-modal fade" id="approve_nhanVien_calviec" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header">
+                    <h3>Approve</h3>
+                    <p>Are you sure want to approve?</p>
+                </div>
+                <div class="modal-btn delete-action">
+                    <div class="row">
+                        <div class="col-6">
+                            <a href="javascript:void(0);" class="btn btn-primary continue-btn" id="btn-approve_nv_calamviec">Approve</a>
+                        </div>
+                        <div class="col-6">
+                            <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal custom-modal fade" id="unapprove_nhanVien_calviec" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header">
+                    <h3>UnApprove</h3>
+                    <p>Are you sure want to unapprove?</p>
+                </div>
+                <div class="modal-btn delete-action">
+                    <div class="row">
+                        <div class="col-6">
+                            <a href="javascript:void(0);" class="btn btn-primary continue-btn" id="btn-Unapprove_nv_calamviec">UnApprove</a>
+                        </div>
+                        <div class="col-6">
+                            <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- import excel model -->
 <partial name="_ImportExcelModel" />
 

@@ -30,6 +30,8 @@ namespace HRMNS.Application.Interfaces
         List<DMCalamviecViewModel> GetDMCalamViec();
         void Save();
 
+        void Approve(string dept, string status,bool isApprove);
+
         NhanVien_CalamViecViewModel CheckExist(int id, string maNV, string dmCa, string From, string End);
     }
 }

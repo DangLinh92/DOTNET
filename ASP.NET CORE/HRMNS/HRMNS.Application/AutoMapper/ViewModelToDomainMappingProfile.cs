@@ -39,6 +39,9 @@ namespace HRMNS.Application.AutoMapper
 
             CreateMap<NhanVien_CalamViecViewModel, NHANVIEN_CALAMVIEC>()
            .ConstructUsing(c => new NHANVIEN_CALAMVIEC(c.MaNV, c.Danhmuc_CaLviec, c.BatDau_TheoCa, c.KetThuc_TheoCa,c.Approved));
+
+            CreateMap<SettingTimeCalamviecViewModel, SETTING_TIME_CA_LVIEC>()
+          .ConstructUsing(c => new SETTING_TIME_CA_LVIEC(c.CaLamViec,c.NgayBatDau,c.NgayKetThuc,c.NgayBatDauDangKy,c.NgayKetThucDangKy,c.Status));
         }
     }
 }

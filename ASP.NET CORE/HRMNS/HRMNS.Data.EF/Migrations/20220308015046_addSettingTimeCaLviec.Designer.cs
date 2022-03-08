@@ -4,14 +4,16 @@ using HRMNS.Data.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HRMNS.Data.EF.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    partial class AppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20220308015046_addSettingTimeCaLviec")]
+    partial class addSettingTimeCaLviec
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1654,10 +1656,6 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
                     b.Property<string>("UserCreated")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
@@ -2090,8 +2088,8 @@ namespace HRMNS.Data.EF.Migrations
 
             modelBuilder.Entity("HRMNS.Data.Entities.SETTING_TIME_CA_LVIEC", b =>
                 {
-                    b.HasOne("HRMNS.Data.Entities.DM_CA_LVIEC", "DM_CA_LVIEC")
-                        .WithMany("SETTING_TIME_CA_LVIEC")
+                    b.HasOne("HRMNS.Data.Entities.DM_CA_LVIEC", "TRU_SO_LVIEC")
+                        .WithMany()
                         .HasForeignKey("CaLamViec");
                 });
 
