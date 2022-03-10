@@ -1,0 +1,49 @@
+﻿<!-- Add Nhan Vien Ca Lam Viec Modal -->
+<div id="addEditOvertimeModel" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Overtime</h5>
+                <input type="hidden" id="hd_overtime" />
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="frmOvertimeAddEdit">
+                    <div class="form-group">
+                        <input type="hidden" id="_txtId" />
+                        <label for="_txtMaNV">Mã Nhân Viên<span class="text-danger">*</span></label>
+                        <select id="_txtMaNV" class="form-control nested" name="MaNV" required>
+                            <option value="">Choose...</option>
+                            <optgroup label="Group1">
+                                <option selected="selected">orange</option>
+                                <option>white</option>
+                                <option>purple</option>
+                            </optgroup>
+                            <optgroup label="Group2">
+                                <option>purple</option>
+                                <option>orange</option>
+                                <option>white</option>
+                            </optgroup>
+                            <optgroup label="Group3">
+                                <option>white</option>
+                                <option>purple</option>
+                                <option>orange</option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="_txtOvertime">Ngày Đăng Ký Overtime<span class="text-danger">*</span></label>
+                        <div class="cal-icon"><input id="_txtOvertime" class="form-control datetimepicker" name="NgayOT" type="text" required></div>
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn" id="btnSave_Overtime">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Add Expense Modal -->

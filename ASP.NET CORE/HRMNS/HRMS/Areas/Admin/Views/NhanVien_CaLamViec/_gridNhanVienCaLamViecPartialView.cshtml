@@ -38,7 +38,7 @@
                     }
                 </td>
                 <td>
-                    @if (item.Approved == CommonConstants.Y)
+                    @if (item.Approved == CommonConstants.Approved)
                     {
                         <span class="badge bg-inverse-success">Yes</span>
                     }
@@ -53,6 +53,14 @@
                         <div class="dropdown-menu dropdown-menu-right">
                             <a class="dropdown-item edit-nv-calviec" href="#" data-toggle="modal" data-target="#add_nhanvien_calamviecModel" data-id="@item.Id"><i class="fa fa-edit m-r-5"></i> Edit</a>
                             <a class="dropdown-item delete-nv-calviec" href="#" data-toggle="modal" data-target="#delete_nhanVien_calviec" data-id="@item.Id"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                            @if (item.Approved != CommonConstants.Approved)
+                            {
+                                <a class="dropdown-item approve-nv-calviec" href="#" data-toggle="modal" data-target="#approve_nhanVien_calviec" data-id="@item.Id"><i class="fa fa-thumbs-up m-r-5"></i> Approve</a>
+                            }
+                            else
+                            {
+                                <a class="dropdown-item unapprove-nv-calviec" href="#" data-toggle="modal" data-target="#unapprove_nhanVien_calviec" data-id="@item.Id"><i class="fa fa-thumbs-down m-r-5"></i> UnApprove</a>
+                            }
                         </div>
                     </div>
                 </td>

@@ -21,6 +21,12 @@ namespace HRMNS.Application.ViewModels.Time_Attendance
         public string DM_NgayLViec { get; set; }
 
         [StringLength(50)]
+        public string Approve { get; set; }
+
+        [StringLength(2)]
+        public string Passed { get; set; }
+
+        [StringLength(50)]
         public string DateCreated { get; set; }
 
         [StringLength(50)]

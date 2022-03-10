@@ -31,6 +31,7 @@ namespace HRMNS.Application.Interfaces
         void Save();
 
         void Approve(string dept, string status,bool isApprove);
+        void ApproveSingle(int Id, bool isApprove);
 
         NhanVien_CalamViecViewModel CheckExist(int id, string maNV, string dmCa, string From, string End);
     }

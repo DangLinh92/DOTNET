@@ -52,7 +52,7 @@ namespace HRMNS.Application.Implementation
             throw new NotImplementedException();
         }
 
-        public DMCalamviecViewModel GetById(string id, params Expression<Func<DMCalamviecViewModel, object>>[] includeProperties)
+        public DMCalamviecViewModel GetById(string id, params Expression<Func<DM_CA_LVIEC, object>>[] includeProperties)
         {
             throw new NotImplementedException();
         }

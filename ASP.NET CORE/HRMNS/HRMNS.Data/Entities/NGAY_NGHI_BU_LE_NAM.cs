@@ -11,6 +11,9 @@ namespace HRMNS.Data.Entities
     [Table("NGAY_NGHI_BU_LE_NAM")]
     public class NGAY_NGHI_BU_LE_NAM : DomainEntity<int>, IDateTracking
     {
+        [StringLength(10)]
+        public string NgayNghiBu { get; set; }
+
         [StringLength(250)]
         public string NoiDungNghi { get; set; }
 

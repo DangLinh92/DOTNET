@@ -314,13 +314,19 @@ namespace HRMNS.Application.Implementation
         {
             var lst = _nhanvienClviecRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && x.Approved == status || x.Approved == null, y => y.HR_NHANVIEN).ToList();
 
-            //var lst2 = _nhanvienClviecRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && x.Approved == status || x.Approved == null, y => y.HR_NHANVIEN).ToList();
             foreach (var item in lst)
             {
                 item.Approved = isApprove ? CommonConstants.Approved : CommonConstants.No_Approved;
                 item.HR_NHANVIEN = null;
             }
             _nhanvienClviecRepository.UpdateRange(lst);
+        }
+
+        public void ApproveSingle(int Id, bool isApprove)
+        {
+            var obj = _nhanvienClviecRepository.FindById(Id);
+            obj.Approved = isApprove ? CommonConstants.Approved : CommonConstants.No_Approved;
+            _nhanvienClviecRepository.Update(obj);
         }
     }
 }

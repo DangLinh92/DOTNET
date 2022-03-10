@@ -12,8 +12,24 @@ namespace HRMNS.Data.Entities
     public class NGAY_LE_NAM : DomainEntity<string>, IDateTracking
     {
 
+        public NGAY_LE_NAM()
+        {
+
+        }
+
+        public NGAY_LE_NAM(string id,string name,string kyhieuchamcong,string islast)
+        {
+            Id = id;
+            TenNgayLe = name;
+            KyHieuChamCong = kyhieuchamcong;
+            IslastHoliday = islast;
+        }
+
         [StringLength(150)]
         public string TenNgayLe { get; set; }
+
+        [StringLength(10)]
+        public string IslastHoliday { get; set; }
 
         [StringLength(20)]
         public string KyHieuChamCong { get; set; }

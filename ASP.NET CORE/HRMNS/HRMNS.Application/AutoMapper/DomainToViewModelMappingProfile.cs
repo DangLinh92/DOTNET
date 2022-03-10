@@ -34,6 +34,10 @@ namespace HRMNS.Application.AutoMapper
             CreateMap<NHANVIEN_CALAMVIEC, NhanVien_CalamViecViewModel>();
             CreateMap<DM_CA_LVIEC, DMCalamviecViewModel>();
             CreateMap<SETTING_TIME_CA_LVIEC, SettingTimeCalamviecViewModel>();
+
+            CreateMap<DANGKY_OT_NHANVIEN, DangKyOTNhanVienViewModel>();
+            CreateMap<NGAY_LE_NAM, NgayLeNamViewModel>();
+            CreateMap<DM_NGAY_LAMVIEC, DMucNgayLamViecViewModel>();
         }
     }
 }

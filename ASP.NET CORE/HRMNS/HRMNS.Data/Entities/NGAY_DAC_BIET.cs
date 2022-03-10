@@ -8,23 +8,27 @@ using System.Text;
 
 namespace HRMNS.Data.Entities
 {
-    [Table("DM_NGAY_LAMVIEC")]
-    public class DM_NGAY_LAMVIEC : DomainEntity<string>, IDateTracking
+    [Table("NGAY_DAC_BIET")]
+    public class NGAY_DAC_BIET : DomainEntity<string>, IDateTracking
     {
-        public DM_NGAY_LAMVIEC()
+
+        public NGAY_DAC_BIET()
         {
-            CA_LVIEC = new HashSet<CA_LVIEC>();
-            DANGKY_OT_NHANVIEN = new HashSet<DANGKY_OT_NHANVIEN>();
+
         }
 
-        public DM_NGAY_LAMVIEC(string id,string name)
+        public NGAY_DAC_BIET(string id,string name,string kyhieuchamcong)
         {
             Id = id;
-            Ten_NgayLV = name;
+            TenNgayDacBiet = name;
+            KyHieuChamCong = kyhieuchamcong;
         }
 
-        [StringLength(100)]
-        public string Ten_NgayLV { get; set; }
+        [StringLength(150)]
+        public string TenNgayDacBiet { get; set; }
+
+        [StringLength(20)]
+        public string KyHieuChamCong { get; set; }
 
         [StringLength(50)]
         public string DateCreated { get; set; }
@@ -38,9 +42,7 @@ namespace HRMNS.Data.Entities
         [StringLength(50)]
         public string UserModified { get; set; }
 
-        public virtual ICollection<CA_LVIEC> CA_LVIEC { get; set; }
-
-        public virtual ICollection<DANGKY_OT_NHANVIEN> DANGKY_OT_NHANVIEN { get; set; }
-
+        [ForeignKey("KyHieuChamCong")]
+        public virtual KY_HIEU_CHAM_CONG KY_HIEU_CHAM_CONG { get; set; }
     }
 }

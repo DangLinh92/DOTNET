@@ -79,7 +79,7 @@ namespace HRMS.Areas.Admin.Controllers
 
                 if (result.ReturnInt == 0)
                 {
-                    return new OkObjectResult("");
+                    return new OkObjectResult(filePath);
                 }
                 else
                 {
@@ -119,6 +119,9 @@ namespace HRMS.Areas.Admin.Controllers
                     NhanVien_CalamViecViewModel itemCheck = _nvienCalamviecService.CheckExist(0, calamviec.MaNV, calamviec.Danhmuc_CaLviec, calamviec.BatDau_TheoCa, calamviec.KetThuc_TheoCa);
                     if (itemCheck != null)
                     {
+                        itemCheck.Danhmuc_CaLviec = calamviec.Danhmuc_CaLviec;
+                        itemCheck.BatDau_TheoCa = calamviec.BatDau_TheoCa;
+                        itemCheck.KetThuc_TheoCa = calamviec.KetThuc_TheoCa;
                         _nvienCalamviecService.Update(itemCheck);
                     }
                     else
@@ -227,27 +230,43 @@ namespace HRMS.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Approve(string dept,string status)
+        public IActionResult Approve(string dept, string status, int Id)
         {
-            if(status != CommonConstants.No_Approved || string.IsNullOrEmpty(dept))
+            if (Id > 0)
             {
-                return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
+                _nvienCalamviecService.ApproveSingle(Id, true);
+            }
+            else
+            {
+                if (status != CommonConstants.No_Approved || string.IsNullOrEmpty(dept))
+                {
+                    return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
+                }
+
+                _nvienCalamviecService.Approve(dept, status, true);
             }
 
-            _nvienCalamviecService.Approve(dept, status, true);
             _nvienCalamviecService.Save();
             return new OkObjectResult(true);
         }
 
         [HttpPost]
-        public IActionResult UnApprove(string dept, string status)
+        public IActionResult UnApprove(string dept, string status, int Id)
         {
-            if (status != CommonConstants.Approved || string.IsNullOrEmpty(dept))
+            if (Id > 0)
             {
-                return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
+                _nvienCalamviecService.ApproveSingle(Id, false);
+            }
+            else
+            {
+                if (status != CommonConstants.Approved || string.IsNullOrEmpty(dept))
+                {
+                    return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
+                }
+
+                _nvienCalamviecService.Approve(dept, status, false);
             }
 
-            _nvienCalamviecService.Approve(dept, status, false);
             _nvienCalamviecService.Save();
             return new OkObjectResult(null);
         }

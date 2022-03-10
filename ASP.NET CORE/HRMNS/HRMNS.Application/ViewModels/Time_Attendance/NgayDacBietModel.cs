@@ -5,15 +5,12 @@ using System.Text;
 
 namespace HRMNS.Application.ViewModels.Time_Attendance
 {
-    public class NgayNghiBuLeNamViewModel
+    public class NgayDacBietModel
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
 
-        [StringLength(10)]
-        public string NgayNghiBu { get; set; }
-
-        [StringLength(250)]
-        public string NoiDungNghi { get; set; }
+        [StringLength(150)]
+        public string TenNgayDacBiet { get; set; }
 
         [StringLength(20)]
         public string KyHieuChamCong { get; set; }

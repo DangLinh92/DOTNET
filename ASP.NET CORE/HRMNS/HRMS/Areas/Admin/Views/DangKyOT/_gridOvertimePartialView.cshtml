@@ -1,0 +1,53 @@
+﻿@model List<DangKyOTNhanVienViewModel>
+<table class="table table-striped custom-table datatable" id="overtimeDataTable">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>User Id</th>
+            <th>User Name</th>
+            <th>Department</th>
+            <th>Date Type</th>
+            <th class="text-nowrap">Approve</th>
+            <th class="text-right no-sort">Action</th>
+        </tr>
+    </thead>
+    <tbody id="tbl-content">
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.NgayOT</td>
+                <td>@item.MaNV</td>
+                <td>@item.HR_NHANVIEN?.TenNV</td>
+                <td>@item.HR_NHANVIEN?.MaBoPhan</td>
+                <td>@item.DM_NGAY_LAMVIEC?.Ten_NgayLV</td>
+                <td>
+                    @if (item.Approve == CommonConstants.Approved)
+                    {
+                        <span class="badge bg-inverse-success">Yes</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-inverse-dark">No</span>
+                    }
+                </td>
+                <td class="text-right">
+                    <div class="dropdown dropdown-action">
+                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item edit-nv-overtime" href="#" data-toggle="modal" data-target="#addEditOvertimeModel" data-id="@item.Id"><i class="fa fa-edit m-r-5"></i> Edit</a>
+                            <a class="dropdown-item delete-nv-overtime" href="#" data-toggle="modal" data-target="#delete_overtime" data-id="@item.Id"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                            @if (item.Approve != CommonConstants.Approved)
+                            {
+                                <a class="dropdown-item approve-nv-overtime" href="#" data-toggle="modal" data-target="#approve_overtime" data-id="@item.Id"><i class="fa fa-thumbs-up m-r-5"></i> Approve</a>
+                            }
+                            else
+                            {
+                                <a class="dropdown-item unapprove-nv-overtime" href="#" data-toggle="modal" data-target="#unapprove_overtime" data-id="@item.Id"><i class="fa fa-thumbs-down m-r-5"></i> UnApprove</a>
+                            }
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

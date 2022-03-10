@@ -4,14 +4,16 @@ using HRMNS.Data.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HRMNS.Data.EF.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    partial class AppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20220309035534_addPassOT")]
+    partial class addPassOT
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1460,43 +1462,6 @@ namespace HRMNS.Data.EF.Migrations
                     b.ToTable("LOAICHUNGCHI");
                 });
 
-            modelBuilder.Entity("HRMNS.Data.Entities.NGAY_DAC_BIET", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(10)")
-                        .HasMaxLength(10);
-
-                    b.Property<string>("DateCreated")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("DateModified")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("KyHieuChamCong")
-                        .HasColumnType("nvarchar(20)")
-                        .HasMaxLength(20);
-
-                    b.Property<string>("TenNgayDacBiet")
-                        .HasColumnType("nvarchar(150)")
-                        .HasMaxLength(150);
-
-                    b.Property<string>("UserCreated")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("UserModified")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("KyHieuChamCong");
-
-                    b.ToTable("NGAY_DAC_BIET");
-                });
-
             modelBuilder.Entity("HRMNS.Data.Entities.NGAY_LE_NAM", b =>
                 {
                     b.Property<string>("Id")
@@ -1510,10 +1475,6 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("DateModified")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
-
-                    b.Property<string>("IslastHoliday")
-                        .HasColumnType("nvarchar(10)")
-                        .HasMaxLength(10);
 
                     b.Property<string>("KyHieuChamCong")
                         .HasColumnType("nvarchar(20)")
@@ -1556,10 +1517,6 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("KyHieuChamCong")
                         .HasColumnType("nvarchar(20)")
                         .HasMaxLength(20);
-
-                    b.Property<string>("NgayNghiBu")
-                        .HasColumnType("nvarchar(10)")
-                        .HasMaxLength(10);
 
                     b.Property<string>("NoiDungNghi")
                         .HasColumnType("nvarchar(250)")
@@ -2095,13 +2052,6 @@ namespace HRMNS.Data.EF.Migrations
                         .WithMany("HR_TINHTRANGHOSO")
                         .HasForeignKey("MaNV")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("HRMNS.Data.Entities.NGAY_DAC_BIET", b =>
-                {
-                    b.HasOne("HRMNS.Data.Entities.KY_HIEU_CHAM_CONG", "KY_HIEU_CHAM_CONG")
-                        .WithMany()
-                        .HasForeignKey("KyHieuChamCong");
                 });
 
             modelBuilder.Entity("HRMNS.Data.Entities.NGAY_LE_NAM", b =>

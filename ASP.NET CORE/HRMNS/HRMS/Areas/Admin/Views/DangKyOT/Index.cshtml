@@ -1,25 +1,24 @@
-﻿@model List<NhanVien_CalamViecViewModel>
+﻿@model List<DangKyOTNhanVienViewModel>
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Overtime";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
-
 @section Scripts
 {
     <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
-    <script src="~/app/controllers/nhanvien_calamviec/index.js"></script>
+    <script src="~/app/controllers/Overtime/overtimeMns.js"></script>
     <script>
-        var controller = new nhanvien_calamviecController();
+        var controller = new overtimeController();
         controller.initialize();
 
         onSuccess = controller.doAftersearch;
 
         $(document).ready(function () {
-            $('#nvCalamviecDataTable').DataTable({
-                "order": [8, 'asc']
+            $('#overtimeDataTable').DataTable({
+                "order": [6, 'asc']
             });
             $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
-            $('select[name="nvCalamviecDataTable_length"]').removeClass('form-control-sm');
+            $('select[name="overtimeDataTable_length"]').removeClass('form-control-sm');
 
             // init select 2 jquery
             $(".nested").select2({
@@ -48,21 +47,19 @@
     <div class="page-header">
         <div class="row align-items-center">
             <div class="col">
-                <h3 class="page-title">Register shift - Xếp Lịch Làm Việc</h3>
+                <h3 class="page-title">Overtime</h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/chamcong/index">Time and Attendance</a></li>
-                    <li class="breadcrumb-item active">Register shift</li>
+                    <li class="breadcrumb-item"><a href="/admin/home/index">Home</a></li>
+                    <li class="breadcrumb-item active">Overtime</li>
                 </ul>
             </div>
             <div class="col-auto float-right ml-auto">
-                <a href="#" id="btnCreate" class="btn add-btn" data-toggle="modal" data-target="#add_nhanvien_calamviecModel"><i class="fa fa-plus"></i> Add Shift</a>
+                <a href="#" id="btnCreate" class="btn add-btn" data-toggle="modal" data-target="#addEditOvertimeModel"><i class="fa fa-plus"></i> Add Overtime</a>
                 <div class="btn-group">
                     <button type="button" class="btn btn-info dropdown-toggle" id="btnManagement" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Management</button>
                     <div class="dropdown-menu" style="">
-                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#settingTimeCalamviecModel" id="btn-registTimeShift"><small class="text-danger">(Admin) </small>Register new shift</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="~/templates/ShifTemplate.xlsx">Get Shift Template</a>
-                        <a class="dropdown-item" href="#" id="btn-importShift">Import Shift</a>
+                        <a class="dropdown-item" href="~/templates/OvertimeTemplate.xlsx">Get Overtime File Template</a>
+                        <a class="dropdown-item" href="#" id="btn-importOvertime">Import Overtime</a>
                     </div>
                 </div>
             </div>
@@ -70,33 +67,8 @@
     </div>
     <!-- /Page Header -->
 
-    <div class="row">
-        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
-        </div>
-        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
-        </div>
-        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
-            <div class="stats-info">
-                <h6>
-                    Hạn Đăng Ký :
-                    <span id="hRegisterTimeFrom"></span> ~
-                    <span id="hRegisterTimeTo"></span>
-                </h6>
-            </div>
-        </div>
-        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-3">
-            <div class="stats-info">
-                <h6>
-                    Ca làm việc : 
-                    <span id="hTimeFrom"></span> ~ 
-                    <span id="hTimeTo"></span>
-                </h6>
-            </div>
-        </div>
-    </div>
-
     <!-- Search Filter -->
-    <form id="frmSearch" method="post" data-ajax="true" data-ajax-url="/Admin/NhanVien_CaLamViec/Search" data-ajax-loading="#spinner1" data-ajax-update="#gridNvienCalamviecIndex" data-ajax-mode='replace' data-ajax-success="onSuccess">
+    <form id="frmSearch" method="post" data-ajax="true" data-ajax-url="/Admin/DangKyOT/Search" data-ajax-loading="#spinner1" data-ajax-update="#gridOvertimeIndex" data-ajax-mode='replace' data-ajax-success="onSuccess">
         <div class="row filter-row">
 
             <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
@@ -114,9 +86,6 @@
                 <div class="form-group form-focus select-focus">
                     <select class="select floating" id="searchStatus" name="status">
                         <option value=""> -- Select -- </option>
-                        <option value="New">New</option>
-                        <option value="Active">Active</option>
-                        <option value="InActive">InActive</option>
                         <option value="N">Not approved yet</option>
                         <option value="Y">Approved</option>
                     </select>
@@ -144,8 +113,8 @@
             </div>
 
             <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-                <a href="#" style="min-width: 120px" class="btn btn-primary" id="btnApprove" data-target="#approve_nhanVien_calviec">  Approve</a>
-                <a href="#" class="btn btn-primary" id="btnUnApprove" data-target="#unapprove_nhanVien_calviec">UnApprove</a>
+                <a href="#" style="min-width: 120px" class="btn btn-primary" id="btnApprove" data-target="#approve_overtime">  Approve</a>
+                <a href="#" class="btn btn-primary" id="btnUnApprove" data-target="#unapprove_overtime">UnApprove</a>
             </div>
         </div>
     </form>
@@ -159,32 +128,27 @@
 
     <div class="row">
         <div class="col-md-12">
-            <div class="table-responsive" id="gridNvienCalamviecIndex">
-                @await Html.PartialAsync("_gridNhanVienCaLamViecPartialView", Model)
+            <div class="table-responsive" id="gridOvertimeIndex">
+                @await Html.PartialAsync("_gridOvertimePartialView", Model)
             </div>
         </div>
     </div>
 </div>
 <!-- /Page Content -->
-<!-- Đang ký ca lam viec cho nhan vien -->
-<partial name="_nhanvienCalamviecModelPartialView" />
-
-<partial name="_settingTimeCalamviecModelPartialView" />
-
-<!-- Delete Expense Modal -->
-<div class="modal custom-modal fade" id="delete_nhanVien_calviec" role="dialog">
+<!-- Delete overtime -->
+<div class="modal custom-modal fade" id="delete_overtime" role="dialog">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body">
                 <div class="form-header">
-                    <input type="hidden" id="hdId_delete" />
-                    <h3>Delete</h3>
+                    <input type="hidden" id="txtHiddenId" />
+                    <h3>Delete Overtime</h3>
                     <p>Are you sure want to delete?</p>
                 </div>
                 <div class="modal-btn delete-action">
                     <div class="row">
                         <div class="col-6">
-                            <a href="javascript:void(0);" class="btn btn-primary continue-btn" id="btn-delete_nv_calamviec">Delete</a>
+                            <a href="javascript:void(0);" id="btnDeleteOvertime" class="btn btn-primary continue-btn">Delete</a>
                         </div>
                         <div class="col-6">
                             <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
@@ -197,19 +161,19 @@
 </div>
 <!-- Delete Expense Modal -->
 
-<div class="modal custom-modal fade" id="approve_nhanVien_calviec" role="dialog">
+<div class="modal custom-modal fade" id="approve_overtime" role="dialog">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body">
                 <div class="form-header">
-                    <input type="hidden" id="hiIdApprove"/>
+                    <input type="hidden" id="hiIdApprove" />
                     <h3>Approve</h3>
                     <p>Are you sure want to approve?</p>
                 </div>
                 <div class="modal-btn delete-action">
                     <div class="row">
                         <div class="col-6">
-                            <a href="javascript:void(0);" class="btn btn-primary continue-btn" id="btn-approve_nv_calamviec">Approve</a>
+                            <a href="javascript:void(0);" class="btn btn-primary continue-btn" id="btn-approve_overtime">Approve</a>
                         </div>
                         <div class="col-6">
                             <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
@@ -221,7 +185,7 @@
     </div>
 </div>
 
-<div class="modal custom-modal fade" id="unapprove_nhanVien_calviec" role="dialog">
+<div class="modal custom-modal fade" id="unapprove_overtime" role="dialog">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body">
@@ -233,7 +197,7 @@
                 <div class="modal-btn delete-action">
                     <div class="row">
                         <div class="col-6">
-                            <a href="javascript:void(0);" class="btn btn-primary continue-btn" id="btn-Unapprove_nv_calamviec">UnApprove</a>
+                            <a href="javascript:void(0);" class="btn btn-primary continue-btn" id="btn-Unapprove_overtime">UnApprove</a>
                         </div>
                         <div class="col-6">
                             <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
@@ -245,6 +209,7 @@
     </div>
 </div>
 
+<partial name="_dangkyOTModelView" />
+
 <!-- import excel model -->
 <partial name="_ImportExcelModel" />
-

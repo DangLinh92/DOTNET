@@ -29,6 +29,13 @@ CREATE TYPE [dbo].[DATA_RESULT_HRMS_BIOSTAR] AS TABLE(
 	[WorkTime] [nvarchar](50) NULL
 )
 GO
+CREATE TYPE [dbo].[DANG_KY_OT_NVIEN_TYPE] AS TABLE(
+	[NgayOT] [nvarchar](50) NULL,
+	[MaNV] [nvarchar](50) NULL,
+	[DM_NgayLViec] [nvarchar](50) NULL,
+	[Approve] [nvarchar](50) NULL
+)
+GO
 
 CREATE PROC [dbo].[PKG_BUSINESS@PUT_EVENT_LOG](
 @A_DATA		DATA_RESULT_HRMS_BIOSTAR READONLY,
@@ -94,6 +101,39 @@ BEGIN TRY
 			WHEN NOT MATCHED BY TARGET 
 			    THEN INSERT ([MaNV],[Danhmuc_CaLviec],[BatDau_TheoCa],[KetThuc_TheoCa],[DateCreated],[DateModified],[UserCreated],[UserModified],[Status])
 				VALUES(SOURCE.[MaNV],SOURCE.[Danhmuc_CaLviec], SOURCE.[BatDau_TheoCa],SOURCE.[KetThuc_TheoCa],FORMAT(GETDATE(),'yyyy-MM-dd HH:mm:ss'),FORMAT(GETDATE(),'yyyy-MM-dd HH:mm:ss'),'sys','sys',SOURCE.[Status]);
+       END
+	SET @N_RETURN = 0;
+	SET @V_RETURN = 'MSG_COM_004';
+END TRY
+	BEGIN CATCH
+  SET @N_RETURN = ERROR_NUMBER();
+  SET @V_RETURN = ERROR_MESSAGE();
+END CATCH
+---
+CREATE PROC [dbo].[PKG_BUSINESS@PUT_NHANVIEN_OVERTIME](
+@A_DATA		[dbo].[DANG_KY_OT_NVIEN_TYPE] READONLY,
+@N_RETURN			int				OUTPUT,
+@V_RETURN			NVARCHAR(4000)	OUTPUT
+)
+AS
+BEGIN TRY
+		BEGIN
+		    SET NOCOUNT OFF;  
+
+			MERGE [dbo].[DANGKY_OT_NHANVIEN] AS TARGET
+			USING @A_DATA AS SOURCE
+			ON (
+			      TARGET.[NgayOT] = SOURCE.[NgayOT] AND
+				  TARGET.[MaNV] = SOURCE.[MaNV]
+			   )
+			WHEN MATCHED
+			    THEN UPDATE SET 
+					 TARGET.[DateModified] = FORMAT(GETDATE(),'yyyy-MM-dd HH:mm:ss'),
+					 TARGET.[DM_NgayLViec] = SOURCE.[DM_NgayLViec],
+					 TARGET.[Approve]	   = SOURCE.[Approve]
+			WHEN NOT MATCHED BY TARGET 
+			    THEN INSERT ([NgayOT],[MaNV],[DM_NgayLViec],[DateCreated],[DateModified],[UserCreated],[UserModified],[Approve],[Passed])
+				VALUES(SOURCE.[NgayOT],SOURCE.[MaNV],SOURCE.[DM_NgayLViec],FORMAT(GETDATE(),'yyyy-MM-dd HH:mm:ss'),FORMAT(GETDATE(),'yyyy-MM-dd HH:mm:ss'),'sys','sys',SOURCE.[Approve],'N');
        END
 	SET @N_RETURN = 0;
 	SET @V_RETURN = 'MSG_COM_004';

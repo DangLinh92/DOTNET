@@ -478,6 +478,7 @@
         $('#btnApprove').on('click', function (e) {
 
             e.preventDefault();
+            $('#hiIdApprove').val(0);
 
             if ($('#cboDepartment').val() == '' || $('#searchStatus').val() != 'N') {
                 hrms.notify("Approve theo phòng ban có status = 'Not approved yet'", 'error', 'alert', function () { });
@@ -491,6 +492,7 @@
         $('#btnUnApprove').on('click', function (e) {
 
             e.preventDefault();
+            $('#hiIdUnApprove').val(0);
 
             if ($('#cboDepartment').val() == '' || $('#searchStatus').val() != 'Y') {
                 hrms.notify("UnApprove theo phòng ban có status = 'Approved'", 'error', 'alert', function () { });
@@ -507,6 +509,7 @@
 
             var _dept = $('#cboDepartment').val();
             var _status = $('#searchStatus').val();
+            var code = $('#hiIdApprove').val();
 
             $.ajax({
                 url: '/Admin/NhanVien_CaLamViec/Approve',
@@ -514,7 +517,8 @@
                 dataType: 'json',
                 data: {
                     dept: _dept,
-                    status: _status
+                    status: _status,
+                    Id: code
                 },
                 success: function (response) {
                     $('#approve_nhanVien_calviec').modal('hide');
@@ -529,6 +533,22 @@
             });
         });
 
+        // Click approve nhan vien ca lam viec tren gridview
+        $('body').on('click', '.approve-nv-calviec', function (e) {
+            e.preventDefault();
+
+            $('#hiIdApprove').val($(this).data('id'));
+            $('#approve_nhanVien_calviec').modal('show');
+        });
+
+         // Click unapprove nhan vien ca lam viec tren gridview
+        $('body').on('click', '.unapprove-nv-calviec', function (e) {
+            e.preventDefault();
+
+            $('#hiIdUnApprove').val($(this).data('id'));
+            $('#unapprove_nhanVien_calviec').modal('show');
+        });
+
         // Submit unapprove
         $('#btn-Unapprove_nv_calamviec').on('click', function (e) {
 
@@ -536,6 +556,7 @@
 
             var _dept = $('#cboDepartment').val();
             var _status = $('#searchStatus').val();
+            var code = $('#hiIdUnApprove').val();
 
             $.ajax({
                 url: '/Admin/NhanVien_CaLamViec/UnApprove',
@@ -543,7 +564,8 @@
                 dataType: 'json',
                 data: {
                     dept: _dept,
-                    status: _status
+                    status: _status,
+                    Id: code
                 },
                 success: function (response) {
                     $('#unapprove_nhanVien_calviec').modal('hide');

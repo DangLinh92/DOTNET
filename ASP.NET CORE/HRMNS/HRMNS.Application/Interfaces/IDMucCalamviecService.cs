@@ -22,7 +22,7 @@ namespace HRMNS.Application.Interfaces
 
         List<DMCalamviecViewModel> GetAll(string keyword);
 
-        DMCalamviecViewModel GetById(string id, params Expression<Func<DMCalamviecViewModel, object>>[] includeProperties);
+        DMCalamviecViewModel GetById(string id, params Expression<Func<DM_CA_LVIEC, object>>[] includeProperties);
 
         List<DMCalamviecViewModel> Search(string id, string name, string dept);
 

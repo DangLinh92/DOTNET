@@ -15,6 +15,9 @@ namespace HRMNS.Application.ViewModels.Time_Attendance
         [StringLength(20)]
         public string KyHieuChamCong { get; set; }
 
+        [StringLength(10)]
+        public string IslastHoliday { get; set; }
+
         [StringLength(50)]
         public string DateCreated { get; set; }
 

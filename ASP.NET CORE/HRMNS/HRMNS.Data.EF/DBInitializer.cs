@@ -100,13 +100,17 @@ namespace HRMNS.Data.EF
                     new FUNCTION() {Id = "HR", Name = "HR",ParentId = null,SortOrder = 2,Status = Status.Active,URL = "",IconCss = ""  },
                     new FUNCTION() {Id = "NHANSU", Name = "Personnel",ParentId = "HR",SortOrder = 1,Status = Status.Active,URL = "",IconCss = "la la-user"  },
                     new FUNCTION() {Id = "NHANVIEN", Name = "Employees",ParentId = "NHANSU",SortOrder = 1,Status = Status.Active,URL = "/admin/nhanvien/index",IconCss = ""  },
-                    new FUNCTION() {Id = "TIMEKEEPING", Name = "Time and Attendance",ParentId = "HR",SortOrder = 2,Status = Status.Active,URL = "/admin/chamcong/index",IconCss = "la la-edit"  },
+                    new FUNCTION() {Id = "TIMEKEEPING", Name = "Time & Attendance",ParentId = "NHANSU",SortOrder = 2,Status = Status.Active,URL = "/admin/chamcong/index",IconCss = ""  },
+                    new FUNCTION() {Id = "SHIFT_SCHEDULE", Name = "Shift & Schedule",ParentId = "NHANSU",SortOrder = 3,Status = Status.Active,URL = "/admin/nhanvien_calamviec/index",IconCss = ""  },
+                    new FUNCTION() {Id = "OVERTIME", Name = "Overtime",ParentId = "NHANSU",SortOrder = 4,Status = Status.Active,URL = "/admin/dangkyot/index",IconCss = ""  },
 
                     new FUNCTION() {Id = "GA",Name = "GA",ParentId = null,SortOrder = 3,Status = Status.Active,URL = "",IconCss = ""  },
                     new FUNCTION() {Id = "COST",Name = "Cost",ParentId = "GA",SortOrder = 1,Status = Status.Active,URL = "/admin/cost/index",IconCss = "la la-money"  },
 
-                    new FUNCTION() {Id = "SETTINGS_TOP",Name = "Settings",ParentId = null,SortOrder = 4,Status = Status.Active,URL = "",IconCss = ""  },
-                    new FUNCTION() {Id = "SETTINGS",Name = "Settings",ParentId = "SETTINGS_TOP",SortOrder = 1,Status = Status.Active,URL = "/admin/settings/index",IconCss = "la la-cog"  },
+                    new FUNCTION() {Id = "OTHER",Name = "Others",ParentId = null,SortOrder = 4,Status = Status.Active,URL = "",IconCss = ""  },
+                    new FUNCTION() {Id = "DOCUMENT_SUB",Name = "Documents",ParentId = "OTHER",SortOrder = 1,Status = Status.Active,URL = "/admin/documentall/index",IconCss = "la la-file-text"  },
+                    new FUNCTION() {Id = "CALENDAR",Name = "Calendar",ParentId = "OTHER",SortOrder = 2,Status = Status.Active,URL = "/admin/calendar/index",IconCss = "la la-table"  },
+                    new FUNCTION() {Id = "SETTINGS",Name = "Settings",ParentId = "OTHER",SortOrder = 3,Status = Status.Active,URL = "/admin/settings/index",IconCss = "la la-cog"  },
                 });
             }
 
@@ -1011,6 +1015,71 @@ namespace HRMNS.Data.EF
                         Time_LateCome = "20:10:00",
                         Time_EarlyLeave = "08:00:00"
                     },
+                });
+            }
+
+            if (_context.NGAY_LE_NAM.Count() == 0)
+            {
+                _context.NGAY_LE_NAM.AddRange(new List<NGAY_LE_NAM>() {
+                    new NGAY_LE_NAM()
+                    {
+                        Id = "2022-01-01",
+                        TenNgayLe="Tết dương lịch",
+                        IslastHoliday = "N"
+                    },
+                     new NGAY_LE_NAM()
+                    {
+                       Id = "2022-04-30",
+                       TenNgayLe="Giải Phóng Miền Nam",
+                       IslastHoliday = "N"
+                    },
+                      new NGAY_LE_NAM()
+                    {
+                       Id = "2022-05-01",
+                       TenNgayLe="Quốc Tế Lao Động",
+                       IslastHoliday = "Y"
+                    },
+                         new NGAY_LE_NAM()
+                    {
+                       Id = "2022-09-02",
+                       TenNgayLe="Lễ Quốc Khánh",
+                       IslastHoliday = "N"
+                    },
+                     new NGAY_LE_NAM()
+                    {
+                       Id = "2022-04-10",
+                       TenNgayLe="Giỗ Tổ Hùng Vương 10/3 âm lịch",
+                       IslastHoliday = "N"
+                    },
+                });
+            }
+
+            if (_context.NGAY_DAC_BIET.Count() == 0)
+            {
+                _context.NGAY_DAC_BIET.AddRange(new List<NGAY_DAC_BIET>()
+                {
+                    new NGAY_DAC_BIET()
+                    {
+                        Id="09-01",
+                        TenNgayDacBiet = "Ngày kỉ niệm công ty 1-9"
+                    }
+                });
+            }
+
+            if (_context.NGAY_NGHI_BU_LE_NAM.Count() == 0)
+            {
+                _context.NGAY_NGHI_BU_LE_NAM.AddRange(new List<NGAY_NGHI_BU_LE_NAM>()
+                {
+                    new NGAY_NGHI_BU_LE_NAM()
+                    {
+                        NgayNghiBu = "2022-04-11",
+                        NoiDungNghi = "Nghỉ bù do Giỗ tổ Hùng Vương là ngày chủ nhật"
+                    },
+                     new NGAY_NGHI_BU_LE_NAM()
+                    {
+                        NgayNghiBu = "2022-05-02",
+                        NoiDungNghi = "Nghỉ bù do 1-5 là ngày chủ nhật"
+                    }
                 });
             }
 
