@@ -32,5 +32,7 @@ namespace HRMS.Infrastructure.Interfaces
         void UpdateRange(List<T> entities);
 
         ResultDB ExecProceduce(string ProcName, Dictionary<string, string> Dictionary, string tableParam, DataTable table);
+
+        string GetMaxDate(Expression<Func<T, string>> selector);
     }
 }

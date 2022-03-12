@@ -102,12 +102,7 @@
 
             var _userId = $(this).data('id');
             var _time = $(this).data('date');
-            var _inTime = $(this).data('timein');
-            var _ouTime = $(this).data('timeout');
 
-            $('#lblNgayChamCong').text(_time);
-            $('#lblBeginTime').text(_inTime);
-            $('#lblEndTime').text(_ouTime);
             $('#lblTitle').text($(this).data('name'));
 
             $.ajax({
@@ -120,19 +115,29 @@
                 },
                 success: function (data) {
 
+                    var maxLeng = data.length;
+                    var dateMin = '';
+                    var dateMax = '';
                     var render = "";
-
                     $.each(data, function (index, value) {
+                        if (index == 0) {
+                            $('#lblNgayChamCong').text(_time);
+                            $('#lblBeginTime').text(value.sLogTime);
+                            dateMin = value.sLogTime;
+                        }
+                        else if (index == maxLeng - 1) {
+                            $('#lblEndTime').text(value.sLogTime);
+                            dateMax = value.sLogTime;
+                        }
+
                         render += "<li><p class='mb-0'>" + value.sName + "</p><p class='res-activity-time'><i class='fa fa-clock-o'></i>" + (new Date(value.sLogTime)).toLocaleTimeString() + "</p></li>"
                     });
 
-                    var dateTimeMin = new Date(_time + ' ' + _inTime);
-                    var dateTimeMax = new Date(_time + ' ' + _ouTime);
-
+                    var dateTimeMin = new Date(dateMin);
+                    var dateTimeMax = new Date(dateMax);
                     var Difference_In_Time = dateTimeMax.getTime() - dateTimeMin.getTime();
                     var Difference_In_Days = Difference_In_Time / (1000 * 3600); // hour in day
-
-                    $('#lblTotalTimeInDay').text(Math.abs(Difference_In_Days.toFixed(2)) + ' hrs');
+                    $('#lblTotalTimeInDay').text(Difference_In_Days.toFixed(2) + ' hrs');
                     $('#slActivity').html(render);
                   
                 },

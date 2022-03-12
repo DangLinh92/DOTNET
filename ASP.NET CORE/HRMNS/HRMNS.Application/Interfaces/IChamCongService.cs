@@ -2,6 +2,7 @@
 using HRMNS.Utilities.Dtos;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,9 +12,13 @@ namespace HRMNS.Application.Interfaces
     {
         List<ChamCongLogViewModel> GetAll(string keyword);
 
-        List<ChamCongLogViewModel> Search(string condition,string param);
+        List<ChamCongLogViewModel> Search(string dept,string timeFrom,string timeTo);
 
         ResultDB ImportExcel(string filePath, string param);
+
+        string GetMaxDate();
+
+        ResultDB InsertLogData(DataTable data);
 
         void Save();
     }

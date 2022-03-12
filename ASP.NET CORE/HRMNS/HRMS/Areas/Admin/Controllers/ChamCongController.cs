@@ -1,5 +1,6 @@
 ﻿using HRMNS.Application.Interfaces;
 using HRMNS.Application.ViewModels.Time_Attendance;
+using HRMNS.Data.EF;
 using HRMNS.Utilities.Common;
 using HRMNS.Utilities.Constants;
 using HRMNS.Utilities.Dtos;
@@ -19,10 +20,12 @@ namespace HRMS.Areas.Admin.Controllers
     {
         private readonly IWebHostEnvironment _hostingEnvironment;
         private IChamCongService _chamCongService;
+        private BioStarDBContext _bioStarDB;
 
-        public ChamCongController(IChamCongService chamCongService, IWebHostEnvironment hostingEnvironment)
+        public ChamCongController(IChamCongService chamCongService, IWebHostEnvironment hostingEnvironment, BioStarDBContext bioStarDB)
         {
             _chamCongService = chamCongService;
+            _bioStarDB = bioStarDB;
             _hostingEnvironment = hostingEnvironment;
         }
 
@@ -30,6 +33,73 @@ namespace HRMS.Areas.Admin.Controllers
         {
             List<ChamCongLogViewModel> chamCongLog = _chamCongService.GetAll("");
             return View(chamCongLog);
+        }
+
+        [HttpGet]
+        public IActionResult GetChamCongLog()
+        {
+            string maxDate = _chamCongService.GetMaxDate();
+            if (string.IsNullOrEmpty(maxDate))
+            {
+                maxDate = DateTime.Now.ToString("yyyy-MM") + "-01";
+            }
+            string fromTime = DateTime.Parse(maxDate).AddDays(-40).ToString("yyyy-MM-dd");
+            string toTime = DateTime.Now.AddDays(1).ToString("yyyy-MM-dd");
+            ResultDB result = _bioStarDB.GetChamCongLogData(fromTime, toTime);
+            if (result.ReturnInt == 0)
+            {
+                ResultDB result1 = _chamCongService.InsertLogData(result.ReturnDataSet.Tables[0]);
+
+                if (result1.ReturnInt == 0)
+                {
+                    return new OkObjectResult(result1.ReturnString);
+                }
+                else
+                {
+                    return new BadRequestObjectResult(result1.ReturnString);
+                }
+            }
+            else
+            {
+                return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetDepartment()
+        {
+            ResultDB result = _bioStarDB.GetDeparment();
+            if (result.ReturnInt == 0)
+            {
+                string depts = DataTableToJson.DataTableToJSONWithJSONNet(result.ReturnDataSet.Tables[0]);
+                return new OkObjectResult(depts);
+            }
+            else
+            {
+                return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult Search(string dept, string fromTime, string toTime)
+        {
+            var lst = _chamCongService.Search(dept, fromTime, toTime);
+            return PartialView("_gridChamCongPartialView", lst);
+        }
+
+        [HttpPost]
+        public IActionResult GetLogByUserId(string userId,string time)
+        {
+            ResultDB result = _bioStarDB.ShowChamCongLogInDay(userId,time);
+            if (result.ReturnInt == 0)
+            {
+                string data = DataTableToJson.DataTableToJSONWithJSONNet(result.ReturnDataSet.Tables[0]);
+                return new OkObjectResult(data);
+            }
+            else
+            {
+                return new OkObjectResult(result.ReturnString);
+            }
         }
 
         [HttpPost]

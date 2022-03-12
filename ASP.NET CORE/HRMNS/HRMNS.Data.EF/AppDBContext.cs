@@ -17,7 +17,7 @@ namespace HRMNS.Data.EF
 {
     public class AppDBContext : IdentityDbContext<APP_USER, APP_ROLE, Guid>
     {
-        public AppDBContext(DbContextOptions options) : base(options)
+        public AppDBContext(DbContextOptions<AppDBContext> options) : base(options)
         {
 
         }

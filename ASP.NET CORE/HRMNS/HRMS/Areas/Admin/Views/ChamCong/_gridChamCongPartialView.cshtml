@@ -42,7 +42,7 @@
                     }
                     else
                     {
-                        <span class="badge bg-inverse-dark">@item.Result</span>
+                        <span class="badge bg-inverse-success">@item.Result</span>
                     }
                 </td>
                 <td>
@@ -59,7 +59,9 @@
                     <div class="dropdown dropdown-action">
                         <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                         <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item edit-employee" href="#" data-toggle="modal" data-target="#add_expense" data-id="@item.Id"><i class="fa fa-edit m-r-5"></i> Edit</a>
+                            <a class="dropdown-item attendance-info" href="#" data-toggle="modal" data-target="#attendance_info" data-id="@item.ID_NV" data-date="@item.Ngay_ChamCong" data-name="@item.Ten_NV" data-timeIn="@item.FirstIn_Time" data-timeOut="@item.Last_Out_Time">
+                                <i class="fa fa-edit m-r-5"></i>Detail
+                            </a>
                         </div>
                     </div>
                 </td>
