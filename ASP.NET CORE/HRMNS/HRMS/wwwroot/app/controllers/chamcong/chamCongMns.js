@@ -147,7 +147,6 @@
 
     }
 
-
     function initSelectOptionBoPhan() {
         $.ajax({
             url: '/Admin/ChamCong/GetDepartment',

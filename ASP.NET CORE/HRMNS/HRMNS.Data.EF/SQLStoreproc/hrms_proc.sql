@@ -1,16 +1,14 @@
-USE [HRMSDB2]
+USE [HRMSDB]
 GO
-
-/****** Object:  UserDefinedTableType [dbo].[NHANVIEN_CALAMVIEC]    Script Date: 2022-03-05 11:44:39 AM ******/
-CREATE TYPE [dbo].[NHANVIEN_CALAMVIEC] AS TABLE(
+/****** Object:  UserDefinedTableType [dbo].[DANG_KY_OT_NVIEN_TYPE]    Script Date: 2022-03-14 8:50:21 AM ******/
+CREATE TYPE [dbo].[DANG_KY_OT_NVIEN_TYPE] AS TABLE(
+	[NgayOT] [nvarchar](50) NULL,
 	[MaNV] [nvarchar](50) NULL,
-	[Danhmuc_CaLviec] [nvarchar](50) NULL,
-	[BatDau_TheoCa] [nvarchar](50) NULL,
-	[KetThuc_TheoCa] [nvarchar](50) NULL,
-	[Status] [nvarchar](50) NULL
+	[DM_NgayLViec] [nvarchar](50) NULL,
+	[Approve] [nvarchar](50) NULL
 )
 GO
-/****** Object:  UserDefinedTableType [dbo].[DATA_RESULT_HRMS_BIOSTAR]    Script Date: 2022-03-05 11:44:58 AM ******/
+/****** Object:  UserDefinedTableType [dbo].[DATA_RESULT_HRMS_BIOSTAR]    Script Date: 2022-03-14 8:50:21 AM ******/
 CREATE TYPE [dbo].[DATA_RESULT_HRMS_BIOSTAR] AS TABLE(
 	[Date_Check] [nvarchar](50) NULL,
 	[userId] [varchar](64) NULL,
@@ -29,14 +27,25 @@ CREATE TYPE [dbo].[DATA_RESULT_HRMS_BIOSTAR] AS TABLE(
 	[WorkTime] [nvarchar](50) NULL
 )
 GO
-CREATE TYPE [dbo].[DANG_KY_OT_NVIEN_TYPE] AS TABLE(
-	[NgayOT] [nvarchar](50) NULL,
+/****** Object:  UserDefinedTableType [dbo].[NHANVIEN_CALAMVIEC]    Script Date: 2022-03-14 8:50:21 AM ******/
+CREATE TYPE [dbo].[NHANVIEN_CALAMVIEC] AS TABLE(
 	[MaNV] [nvarchar](50) NULL,
-	[DM_NgayLViec] [nvarchar](50) NULL,
-	[Approve] [nvarchar](50) NULL
+	[Danhmuc_CaLviec] [nvarchar](50) NULL,
+	[BatDau_TheoCa] [nvarchar](50) NULL,
+	[KetThuc_TheoCa] [nvarchar](50) NULL,
+	[Status] [nvarchar](50) NULL
 )
 GO
-
+/****** Object:  StoredProcedure [dbo].[PKG_BUSINESS@PUT_EVENT_LOG]    Script Date: 2022-03-14 8:50:21 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
 CREATE PROC [dbo].[PKG_BUSINESS@PUT_EVENT_LOG](
 @A_DATA		DATA_RESULT_HRMS_BIOSTAR READONLY,
 @N_RETURN			int				OUTPUT,
@@ -52,7 +61,7 @@ BEGIN TRY
 			ON (
 			      TARGET.ID_NV = SOURCE.userId AND
 				  TARGET.Ngay_ChamCong = SOURCE.Date_Check
-			   )
+				)
 			WHEN MATCHED
 			    THEN UPDATE SET 
 				     TARGET.FirstIn_Time =SOURCE.[First_In_Time],
@@ -63,8 +72,8 @@ BEGIN TRY
 					 TARGET.[Ten_NV]   =  SOURCE.[userName]	,
 					  TARGET.[Department] = SOURCE.Department
 			WHEN NOT MATCHED BY TARGET 
-			    THEN INSERT ([MaNV],[Danhmuc_CaLviec],[BatDau_TheoCa],[KetThuc_TheoCa],[DateCreated],[DateModified],[UserCreated],[UserModified],[Status],Approved)
-				VALUES(SOURCE.[MaNV],SOURCE.[Danhmuc_CaLviec], SOURCE.[BatDau_TheoCa],SOURCE.[KetThuc_TheoCa],FORMAT(GETDATE(),'yyyy-MM-dd HH:mm:ss'),FORMAT(GETDATE(),'yyyy-MM-dd HH:mm:ss'),'sys','sys',SOURCE.[Status],'N');
+			    THEN INSERT ([Ngay_ChamCong],[ID_NV],[Ten_NV],[Last_Out_Time],[FirstIn],[LastOut],[DateCreated],[DateModified],[UserCreated],[UserModified],[FirstIn_Time],[Department])
+				VALUES(SOURCE.Date_Check,SOURCE.userId, SOURCE.[userName],SOURCE.[Last_Out_Time],SOURCE.[First_In],SOURCE.[Last_Out],FORMAT(GETDATE(),'yyyy-MM-dd HH:mm:ss'),FORMAT(GETDATE(),'yyyy-MM-dd HH:mm:ss'),'sys','sys',SOURCE.[First_In_Time],SOURCE.Department);
        END
 	SET @N_RETURN = 0;
 	SET @V_RETURN = 'MSG_COM_004';
@@ -73,9 +82,17 @@ END TRY
   SET @N_RETURN = ERROR_NUMBER();
   SET @V_RETURN = ERROR_MESSAGE();
 END CATCH
-
 GO
------
+/****** Object:  StoredProcedure [dbo].[PKG_BUSINESS@PUT_NHANVIEN_CALAMVIEC]    Script Date: 2022-03-14 8:50:21 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
 CREATE PROC [dbo].[PKG_BUSINESS@PUT_NHANVIEN_CALAMVIEC](
 @A_DATA		NHANVIEN_CALAMVIEC READONLY,
 @N_RETURN			int				OUTPUT,
@@ -99,8 +116,8 @@ BEGIN TRY
 					 TARGET.[DateModified] = FORMAT(GETDATE(),'yyyy-MM-dd HH:mm:ss'),
 					 TARGET.[Status]   =  SOURCE.[Status]
 			WHEN NOT MATCHED BY TARGET 
-			    THEN INSERT ([MaNV],[Danhmuc_CaLviec],[BatDau_TheoCa],[KetThuc_TheoCa],[DateCreated],[DateModified],[UserCreated],[UserModified],[Status])
-				VALUES(SOURCE.[MaNV],SOURCE.[Danhmuc_CaLviec], SOURCE.[BatDau_TheoCa],SOURCE.[KetThuc_TheoCa],FORMAT(GETDATE(),'yyyy-MM-dd HH:mm:ss'),FORMAT(GETDATE(),'yyyy-MM-dd HH:mm:ss'),'sys','sys',SOURCE.[Status]);
+			    THEN INSERT ([MaNV],[Danhmuc_CaLviec],[BatDau_TheoCa],[KetThuc_TheoCa],[DateCreated],[DateModified],[UserCreated],[UserModified],[Status],Approved)
+				VALUES(SOURCE.[MaNV],SOURCE.[Danhmuc_CaLviec], SOURCE.[BatDau_TheoCa],SOURCE.[KetThuc_TheoCa],FORMAT(GETDATE(),'yyyy-MM-dd HH:mm:ss'),FORMAT(GETDATE(),'yyyy-MM-dd HH:mm:ss'),'sys','sys',SOURCE.[Status],'N');
        END
 	SET @N_RETURN = 0;
 	SET @V_RETURN = 'MSG_COM_004';
@@ -109,8 +126,18 @@ END TRY
   SET @N_RETURN = ERROR_NUMBER();
   SET @V_RETURN = ERROR_MESSAGE();
 END CATCH
----
-CREATE PROC [dbo].[PKG_BUSINESS@PUT_NHANVIEN_OVERTIME](
+GO
+/****** Object:  StoredProcedure [dbo].[PKG_BUSINESS@PUT_NHANVIEN_OVERTIME]    Script Date: 2022-03-14 8:50:21 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+create PROC [dbo].[PKG_BUSINESS@PUT_NHANVIEN_OVERTIME](
 @A_DATA		[dbo].[DANG_KY_OT_NVIEN_TYPE] READONLY,
 @N_RETURN			int				OUTPUT,
 @V_RETURN			NVARCHAR(4000)	OUTPUT
@@ -142,3 +169,4 @@ END TRY
   SET @N_RETURN = ERROR_NUMBER();
   SET @V_RETURN = ERROR_MESSAGE();
 END CATCH
+GO

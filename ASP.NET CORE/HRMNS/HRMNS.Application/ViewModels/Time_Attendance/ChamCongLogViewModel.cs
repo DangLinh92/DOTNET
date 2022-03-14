@@ -77,6 +77,16 @@ namespace HRMNS.Application.ViewModels.Time_Attendance
                     return ChamCongStatus.Miss_Out.ToString();
                 }
 
+                if ((string.Compare(FirstIn_Time, "20:10:00") >= 0 && string.Compare(FirstIn_Time, Last_Out_Time) > 0) || (string.Compare(FirstIn_Time, "08:10:00") >= 0 && string.Compare(FirstIn_Time, Last_Out_Time) < 0))
+                {
+                    return ChamCongStatus.LateIn.ToString();
+                }
+
+                if ((string.Compare(Last_Out_Time, "08:00:00") < 0 && string.Compare(FirstIn_Time, Last_Out_Time) > 0) || (string.Compare(Last_Out_Time, "17:00:00") < 0 && string.Compare(FirstIn_Time, Last_Out_Time) < 0))
+                {
+                    return ChamCongStatus.Early_Out.ToString();
+                }
+
                 return ChamCongStatus.InWorking.ToString();
             }
         }

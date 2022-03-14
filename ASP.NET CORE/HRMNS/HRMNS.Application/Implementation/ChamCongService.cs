@@ -42,7 +42,7 @@ namespace HRMNS.Application.Implementation
         public List<ChamCongLogViewModel> GetAll(string keyword)
         {
             string lastMonth = DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd");
-            var lst = _chamCongLogRepository.FindAll(x => string.Compare(x.Ngay_ChamCong, lastMonth) > 0).OrderByDescending(x=>x.Ngay_ChamCong);
+            var lst = _chamCongLogRepository.FindAll(x => string.Compare(x.Ngay_ChamCong, lastMonth) > 0).OrderByDescending(x => x.Ngay_ChamCong);
             return _mapper.Map<List<ChamCongLogViewModel>>(lst);
         }
 
@@ -102,7 +102,7 @@ namespace HRMNS.Application.Implementation
                         row["Date_Check"] = log.Ngay_ChamCong;
                         row["userId"] = log.ID_NV;
                         row["userName"] = log.Ten_NV;
-                        row["Department"] = (nv?.MaBoPhan) ?? worksheet.Cells[i, 4].Text.NullString().Remove(0,6).Split('/')[0].NullString();
+                        row["Department"] = (nv?.MaBoPhan) ?? worksheet.Cells[i, 4].Text.NullString().Remove(0, 6).Split('/')[0].NullString();
                         row["Shift_"] = "";
                         row["Daily_Schedule"] = "";
                         row["First_In_Time"] = log.FirstIn_Time;
@@ -136,26 +136,37 @@ namespace HRMNS.Application.Implementation
 
         public string GetMaxDate()
         {
-          return _chamCongLogRepository.GetMaxDate(x => x.Ngay_ChamCong);
+            return _chamCongLogRepository.GetMaxDate(x => x.Ngay_ChamCong);
         }
 
         public ResultDB InsertLogData(DataTable data)
         {
-           return _chamCongLogRepository.ExecProceduce("PKG_BUSINESS.PUT_EVENT_LOG", new Dictionary<string, string>(), "A_DATA", data);
+            return _chamCongLogRepository.ExecProceduce("PKG_BUSINESS.PUT_EVENT_LOG", new Dictionary<string, string>(), "A_DATA", data);
         }
 
-        public List<ChamCongLogViewModel> Search(string dept, string timeFrom, string timeTo)
+        public List<ChamCongLogViewModel> Search(string result, string dept, string timeFrom, string timeTo)
         {
             if (string.IsNullOrEmpty(dept))
             {
-                if(!string.IsNullOrEmpty(timeFrom) && !string.IsNullOrEmpty(timeTo))
+                if (!string.IsNullOrEmpty(timeFrom) && !string.IsNullOrEmpty(timeTo))
                 {
-                    var lst = _chamCongLogRepository.FindAll(x => string.Compare(x.Ngay_ChamCong, timeFrom) >= 0 && string.Compare(x.Ngay_ChamCong, timeTo) <= 0).OrderByDescending(x=>x.Ngay_ChamCong);
-                    return _mapper.Map<List<ChamCongLogViewModel>>(lst);
+                    var lst = _chamCongLogRepository.FindAll(x => string.Compare(x.Ngay_ChamCong, timeFrom) >= 0 && string.Compare(x.Ngay_ChamCong, timeTo) <= 0).OrderByDescending(x => x.Ngay_ChamCong);
+                    var vm = _mapper.Map<List<ChamCongLogViewModel>>(lst);
+                    if (!string.IsNullOrEmpty(result))
+                    {
+                        vm = vm.Where(x => x.Result.Contains(result)).ToList();
+                    }
+
+                    return vm;
                 }
-                else if(string.IsNullOrEmpty(timeFrom) && string.IsNullOrEmpty(timeTo))
+                else if (string.IsNullOrEmpty(timeFrom) && string.IsNullOrEmpty(timeTo))
                 {
-                   return GetAll("");
+                    var vm = GetAll("");
+                    if (!string.IsNullOrEmpty(result))
+                    {
+                        vm = vm.Where(x => x.Result.Contains(result)).ToList();
+                    }
+                    return vm;
                 }
             }
             else
@@ -163,11 +174,24 @@ namespace HRMNS.Application.Implementation
                 if (!string.IsNullOrEmpty(timeFrom) && !string.IsNullOrEmpty(timeTo))
                 {
                     var lst = _chamCongLogRepository.FindAll(x => x.Department.Contains(dept) && string.Compare(x.Ngay_ChamCong, timeFrom) >= 0 && string.Compare(x.Ngay_ChamCong, timeTo) <= 0).OrderByDescending(x => x.Ngay_ChamCong); ;
-                    return _mapper.Map<List<ChamCongLogViewModel>>(lst);
+                    var vm = _mapper.Map<List<ChamCongLogViewModel>>(lst);
+
+                    if (!string.IsNullOrEmpty(result))
+                    {
+                        vm = vm.Where(x => x.Result.Contains(result)).ToList();
+                    }
+
+                    return vm;
                 }
                 else if (string.IsNullOrEmpty(timeFrom) && string.IsNullOrEmpty(timeTo))
                 {
-                  return GetAll("").FindAll(x => x.Department.Contains(dept));
+                    var vm = GetAll("").FindAll(x => x.Department.Contains(dept));
+                    if (!string.IsNullOrEmpty(result))
+                    {
+                        vm = vm.Where(x => x.Result.Contains(result)).ToList();
+                    }
+
+                    return vm;
                 }
             }
             return new List<ChamCongLogViewModel>();

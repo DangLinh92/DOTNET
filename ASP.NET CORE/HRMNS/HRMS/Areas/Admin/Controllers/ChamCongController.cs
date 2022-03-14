@@ -31,8 +31,13 @@ namespace HRMS.Areas.Admin.Controllers
 
         public IActionResult Index()
         {
+            return View(new List<ChamCongLogViewModel>());
+        }
+
+        public IActionResult GetData()
+        {
             List<ChamCongLogViewModel> chamCongLog = _chamCongService.GetAll("");
-            return View(chamCongLog);
+            return View("Index",chamCongLog);
         }
 
         [HttpGet]
@@ -81,9 +86,9 @@ namespace HRMS.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Search(string dept, string fromTime, string toTime)
+        public IActionResult Search(string result, string dept, string fromTime, string toTime)
         {
-            var lst = _chamCongService.Search(dept, fromTime, toTime);
+            var lst = _chamCongService.Search(result, dept, fromTime, toTime);
             return PartialView("_gridChamCongPartialView", lst);
         }
 

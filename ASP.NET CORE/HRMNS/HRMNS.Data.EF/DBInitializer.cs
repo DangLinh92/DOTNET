@@ -103,6 +103,7 @@ namespace HRMNS.Data.EF
                     new FUNCTION() {Id = "TIMEKEEPING", Name = "Time & Attendance",ParentId = "NHANSU",SortOrder = 2,Status = Status.Active,URL = "/admin/chamcong/index",IconCss = ""  },
                     new FUNCTION() {Id = "SHIFT_SCHEDULE", Name = "Shift & Schedule",ParentId = "NHANSU",SortOrder = 3,Status = Status.Active,URL = "/admin/nhanvien_calamviec/index",IconCss = ""  },
                     new FUNCTION() {Id = "OVERTIME", Name = "Overtime",ParentId = "NHANSU",SortOrder = 4,Status = Status.Active,URL = "/admin/dangkyot/index",IconCss = ""  },
+                    new FUNCTION() {Id = "OVERTIME", Name = "Overtime",ParentId = "NHANSU",SortOrder = 4,Status = Status.Active,URL = "/admin/dangkyot/index",IconCss = ""  },
 
                     new FUNCTION() {Id = "GA",Name = "GA",ParentId = null,SortOrder = 3,Status = Status.Active,URL = "",IconCss = ""  },
                     new FUNCTION() {Id = "COST",Name = "Cost",ParentId = "GA",SortOrder = 1,Status = Status.Active,URL = "/admin/cost/index",IconCss = "la la-money"  },
@@ -751,6 +752,11 @@ namespace HRMNS.Data.EF
                         Id = "BM",
                         GiaiThich = "Làm ca đêm ngày kỷ niệm 1-9 trước lễ chính thức",
                     },
+                    new KY_HIEU_CHAM_CONG()
+                    {
+                        Id = "KDA_OT_05",
+                        GiaiThich = "Chấm không đi ăn trong giờ OT",
+                    },
                 });
             }
 
@@ -1080,6 +1086,285 @@ namespace HRMNS.Data.EF
                         NgayNghiBu = "2022-05-02",
                         NoiDungNghi = "Nghỉ bù do 1-5 là ngày chủ nhật"
                     }
+                });
+            }
+
+            if (_context.DM_DANGKY_CHAMCONG.Count() == 0)
+            {
+                _context.DM_DANGKY_CHAMCONG.AddRange(new List<DM_DANGKY_CHAMCONG>() {
+                    new DM_DANGKY_CHAMCONG()
+                    {
+                        TieuDe = "Đăng ký vắng mặt"
+                    },
+                    new DM_DANGKY_CHAMCONG()
+                    {
+                        TieuDe = "Đăng ký đi muộn/về sớm"
+                    },
+                    new DM_DANGKY_CHAMCONG()
+                    {
+                        TieuDe = "Chấm không đi ăn trong giờ OT"
+                    },
+                    new DM_DANGKY_CHAMCONG()
+                    {
+                        TieuDe = "Chấm công làm việc"
+                    }
+                });
+            }
+
+            if (_context.DANGKY_CHAMCONG_CHITIET.Count() == 0)
+            {
+                _context.DANGKY_CHAMCONG_CHITIET.AddRange(new List<DANGKY_CHAMCONG_CHITIET>() {
+                    new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Nghỉ phép",
+                       PhanLoaiDM = 1,
+                       KyHieuChamCong = "AL"
+                    },
+                    new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Nghỉ bù trực",
+                       PhanLoaiDM = 1,
+                       KyHieuChamCong = "B"
+                    },
+                    new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Nghỉ bù luân phiên",
+                       PhanLoaiDM = 1,
+                       KyHieuChamCong = "NB"
+                    },
+                     new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Nghỉ lễ",
+                       PhanLoaiDM = 1,
+                       KyHieuChamCong = "NH"
+                    },
+                     new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = " Nghỉ không lương (bao gồm cả thử việc)",
+                       PhanLoaiDM = 1,
+                       KyHieuChamCong = "UL"
+                    },
+                     new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Làm ca ngày và nghỉ phép 1/2 ngày",
+                       PhanLoaiDM = 1,
+                       KyHieuChamCong = "AL/DS"
+                    },
+                     new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Làm ca đêm và nghỉ phép 1/2 ngày",
+                       PhanLoaiDM = 1,
+                       KyHieuChamCong = "AL/NS"
+                    },
+                    new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Làm ca ngày và nghỉ không lương 1/2 ngày",
+                       PhanLoaiDM = 1,
+                       KyHieuChamCong = "UL/DS"
+                    },
+                    new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Làm ca đêm và nghỉ không lương 1/2 ngày",
+                       PhanLoaiDM = 1,
+                       KyHieuChamCong = "UL/NS"
+                    },
+                     new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Nghỉ đặc biệt (nghi huong luong)",
+                       PhanLoaiDM = 1,
+                       KyHieuChamCong = "SL"
+                    },
+                      new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Nghỉ ốm hưởng lương theo quy định cty",
+                       PhanLoaiDM = 1,
+                       KyHieuChamCong = "HL"
+                    },
+                    new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Nghỉ hưởng 70% lương vùng",
+                       PhanLoaiDM = 1,
+                       KyHieuChamCong = "L70"
+                    },
+                     new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Nghỉ bảo hiểm",
+                       PhanLoaiDM = 1,
+                       KyHieuChamCong = "IL"
+                    },
+                    new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Nghỉ không thông báo",
+                       PhanLoaiDM = 1,
+                       KyHieuChamCong = "NL"
+                    },
+                    new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Nghỉ việc",
+                       PhanLoaiDM = 1,
+                       KyHieuChamCong = "T"
+                    },
+
+                     new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Nghỉ 1/2 ca đêm trước ngày lễ và làm đầu ca đêm trước ngày lễ (thử việc)",
+                       PhanLoaiDM = 1,
+                       KyHieuChamCong = "PH/F"
+                    },
+                      new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Nghỉ 1/2 ca đêm trước ngày lễ và làm cuối ca đêm trước ngày lễ (thử việc)",
+                       PhanLoaiDM = 1,
+                       KyHieuChamCong = "PH/L"
+                    },
+                        new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Khám Thai",
+                       PhanLoaiDM = 1,
+                       KyHieuChamCong = "KT"
+                    },
+                    new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Làm ca ngày và nghỉ 1/2 ngày thử việc",
+                       PhanLoaiDM = 1,
+                       KyHieuChamCong = "P/DS"
+                    },
+                     new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Làm ca đêm và nghỉ 1/2 ca đêm thử việc",
+                       PhanLoaiDM = 1,
+                       KyHieuChamCong = "P/NS"
+                    }, new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Đi Công tác",
+                       PhanLoaiDM = 1,
+                       KyHieuChamCong = "CT"
+                    },
+                     new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Làm đầu ca đêm trước ngày lễ và nghỉ phép 1/2 ngày",
+                       PhanLoaiDM = 1,
+                       KyHieuChamCong = "AL/BF"
+                    },
+                     new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Làm cuối ca đêm trước ngày lễ và nghỉ phép 1/2 ngày",
+                       PhanLoaiDM = 1,
+                       KyHieuChamCong = "AL/BL"
+                    },
+                    new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Làm đầu ca đêm trước ngày lễ và nghỉ không lương 1/2 ngày",
+                       PhanLoaiDM = 1,
+                       KyHieuChamCong = "UL/BF"
+                    },
+                    new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Làm cuối ca đêm trước ngày lễ và nghỉ không lương 1/2 ngày",
+                       PhanLoaiDM = 1,
+                       KyHieuChamCong = "UL/BL"
+                    },
+                    new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Early Leave or Late Come",
+                       PhanLoaiDM = 2,
+                       KyHieuChamCong = "EL/LC"
+                    },
+                    new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Chấm không đi ăn trong giờ OT",
+                       PhanLoaiDM = 3,
+                       KyHieuChamCong = "KDA_OT_05"
+                    },
+                    new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Thử việc ca ngày",
+                       PhanLoaiDM = 4,
+                       KyHieuChamCong = "PD"
+                    },
+                     new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Thử việc ca đêm",
+                       PhanLoaiDM = 4,
+                       KyHieuChamCong = "PN"
+                    },
+                    new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Thử việc làm thêm ngày chủ nhật/ Probation",
+                       PhanLoaiDM = 4,
+                       KyHieuChamCong = "TV"
+                    },
+                    new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Thử việc làm thêm ca đêm chủ nhật",
+                       PhanLoaiDM = 4,
+                       KyHieuChamCong = "TVD"
+                    },
+                     new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Thử việc làm đêm ngày lễ",
+                       PhanLoaiDM = 4,
+                       KyHieuChamCong = "PDD"
+                    },
+                    new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Làm ca đêm trước ngày lễ( thử việc)",
+                       PhanLoaiDM = 4,
+                       KyHieuChamCong = "PH"
+                    },
+                    new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Day Shift/ Ca ngày",
+                       PhanLoaiDM = 4,
+                       KyHieuChamCong = "DS"
+                    },
+                    new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = " Night Shift/ Ca đêm",
+                       PhanLoaiDM = 4,
+                       KyHieuChamCong = "NS"
+                    },
+                    new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Làm ca đêm chủ nhật",
+                       PhanLoaiDM = 4,
+                       KyHieuChamCong = "D"
+                    },
+                    new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Làm ca đêm ngày lễ",
+                       PhanLoaiDM = 4,
+                       KyHieuChamCong = "NHD"
+                    },
+                     new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Làm ca đêm trước ngày lễ( chính thức)",
+                       PhanLoaiDM = 4,
+                       KyHieuChamCong = "BH"
+                    },
+                    new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Làm ca ngày chính thức, ngay ki niem",
+                       PhanLoaiDM = 4,
+                       KyHieuChamCong = "MD"
+                    },  new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Làm ca ngày thử việc, ngay ki niem",
+                       PhanLoaiDM = 4,
+                       KyHieuChamCong = "PMD"
+                    },
+                     new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Làm ca đêm ngày kỷ niệm trước lễ thử việc",
+                       PhanLoaiDM = 4,
+                       KyHieuChamCong = "PM"
+                    },   
+                    new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Làm ca đêm ngày kỷ niệm trước lễ chính thức",
+                       PhanLoaiDM = 4,
+                       KyHieuChamCong = "BM"
+                    },
                 });
             }
 

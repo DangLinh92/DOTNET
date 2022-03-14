@@ -20,6 +20,8 @@
             });
             $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
             $('select[name="chamCongLogDataTable_length"]').removeClass('form-control-sm');
+
+            $('#btnSearch').submit();
         });
     </script>
 }
@@ -68,6 +70,18 @@
             <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
             </div>
             <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus select-focus">
+                    <select id="cboResultStauts" name="result" class="select floating">
+                        <option value="" selected>--Select result--</option>
+                        <option value="Miss_In">Miss In</option>
+                        <option value="Miss_Out">Miss Out</option>
+                        <option value="NonWorking">Non working</option>
+                        <option value="InWorking">In Working</option>
+                        <option value="LateIn">Late In</option>
+                        <option value="Early_Out">Early Out</option>
+                    </select>
+                    <label class="focus-label">Result</label>
+                </div>
             </div>
             <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
                 <div class="form-group form-focus select-focus">
