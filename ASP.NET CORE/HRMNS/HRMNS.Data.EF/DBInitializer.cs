@@ -103,7 +103,7 @@ namespace HRMNS.Data.EF
                     new FUNCTION() {Id = "TIMEKEEPING", Name = "Time & Attendance",ParentId = "NHANSU",SortOrder = 2,Status = Status.Active,URL = "/admin/chamcong/index",IconCss = ""  },
                     new FUNCTION() {Id = "SHIFT_SCHEDULE", Name = "Shift & Schedule",ParentId = "NHANSU",SortOrder = 3,Status = Status.Active,URL = "/admin/nhanvien_calamviec/index",IconCss = ""  },
                     new FUNCTION() {Id = "OVERTIME", Name = "Overtime",ParentId = "NHANSU",SortOrder = 4,Status = Status.Active,URL = "/admin/dangkyot/index",IconCss = ""  },
-                    new FUNCTION() {Id = "OVERTIME", Name = "Overtime",ParentId = "NHANSU",SortOrder = 4,Status = Status.Active,URL = "/admin/dangkyot/index",IconCss = ""  },
+                    new FUNCTION() {Id = "REGIS_TIMEKEEPING", Name = "Register Timekeeping",ParentId = "NHANSU",SortOrder = 5,Status = Status.Active,URL = "/admin/chamcongdacbiet/index",IconCss = ""  },
 
                     new FUNCTION() {Id = "GA",Name = "GA",ParentId = null,SortOrder = 3,Status = Status.Active,URL = "",IconCss = ""  },
                     new FUNCTION() {Id = "COST",Name = "Cost",ParentId = "GA",SortOrder = 1,Status = Status.Active,URL = "/admin/cost/index",IconCss = "la la-money"  },

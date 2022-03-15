@@ -11,7 +11,7 @@ namespace HRMNS.Data.Entities
     [Table("DC_CHAM_CONG")]
     public class DC_CHAM_CONG : DomainEntity<int>, IDateTracking
     {
-        public int? MaChamCong_ChiTiet { get; set; }
+        public int? DM_DieuChinhCong { get; set; }
 
         [StringLength(50)]
         public string MaNV { get; set; }
@@ -25,12 +25,10 @@ namespace HRMNS.Data.Entities
         [StringLength(300)]
         public string NoiDungDC { get; set; }
 
-        public double? GiaTriSauDC { get; set; }
-
-        public double? GiaTriTruocDC { get; set; }
+        public double? GiaTriBoXung { get; set; }
 
         [StringLength(20)]
-        public string KyHieuChamCong { get; set; }
+        public string TrangThaiChiTra { get; set; }
 
         [StringLength(50)]
         public string DateCreated { get; set; }
@@ -44,8 +42,8 @@ namespace HRMNS.Data.Entities
         [StringLength(50)]
         public string UserModified { get; set; }
 
-        [ForeignKey("MaChamCong_ChiTiet")]
-        public virtual DANGKY_CHAMCONG_CHITIET DANGKY_CHAMCONG_CHITIET { get; set; }
+        [ForeignKey("DM_DieuChinhCong")]
+        public virtual DM_DIEUCHINH_CHAMCONG DM_DIEUCHINH_CHAMCONG { get; set; }
 
         [ForeignKey("MaNV")]
         public virtual HR_NHANVIEN HR_NHANVIEN { get; set; }

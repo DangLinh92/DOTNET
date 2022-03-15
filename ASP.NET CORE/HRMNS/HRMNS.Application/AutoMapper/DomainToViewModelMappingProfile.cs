@@ -38,6 +38,11 @@ namespace HRMNS.Application.AutoMapper
             CreateMap<DANGKY_OT_NHANVIEN, DangKyOTNhanVienViewModel>();
             CreateMap<NGAY_LE_NAM, NgayLeNamViewModel>();
             CreateMap<DM_NGAY_LAMVIEC, DMucNgayLamViecViewModel>();
+
+            CreateMap<DANGKY_CHAMCONG_CHITIET, DangKyChamCongChiTietViewModel>();
+            CreateMap<DANGKY_CHAMCONG_DACBIET, DangKyChamCongDacBietViewModel>();
+            CreateMap<DM_DANGKY_CHAMCONG, DMDangKyChamCongViewModel>();
+            CreateMap<DM_DIEUCHINH_CHAMCONG, DMDieuChinhChamCongViewModel>();
         }
     }
 }

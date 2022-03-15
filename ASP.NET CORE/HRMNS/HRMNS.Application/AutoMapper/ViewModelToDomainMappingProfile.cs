@@ -46,11 +46,24 @@ namespace HRMNS.Application.AutoMapper
             CreateMap<DangKyOTNhanVienViewModel, DANGKY_OT_NHANVIEN>()
             .ConstructUsing(c => new DANGKY_OT_NHANVIEN(c.NgayOT, c.MaNV, c.DM_NgayLViec, c.Approve, c.Passed));
 
-             CreateMap<NgayLeNamViewModel, NGAY_LE_NAM>()
-             .ConstructUsing(c => new NGAY_LE_NAM(c.Id, c.TenNgayLe, c.KyHieuChamCong, c.IslastHoliday));
+            CreateMap<NgayLeNamViewModel, NGAY_LE_NAM>()
+            .ConstructUsing(c => new NGAY_LE_NAM(c.Id, c.TenNgayLe, c.KyHieuChamCong, c.IslastHoliday));
 
-          CreateMap<DMucNgayLamViecViewModel, DM_NGAY_LAMVIEC>()
-         .ConstructUsing(c => new DM_NGAY_LAMVIEC(c.Id, c.Ten_NgayLV));
+            CreateMap<DMucNgayLamViecViewModel, DM_NGAY_LAMVIEC>()
+               .ConstructUsing(c => new DM_NGAY_LAMVIEC(c.Id, c.Ten_NgayLV));
+
+            CreateMap<DangKyChamCongChiTietViewModel, DANGKY_CHAMCONG_CHITIET>()
+               .ConstructUsing(c => new DANGKY_CHAMCONG_CHITIET(c.Id, c.TenChiTiet, c.PhanLoaiDM, c.KyHieuChamCong));
+
+            CreateMap<DangKyChamCongDacBietViewModel, DANGKY_CHAMCONG_DACBIET>()
+             .ConstructUsing(c => new DANGKY_CHAMCONG_DACBIET(c.MaNV, c.MaChamCong_ChiTiet, c.NoiDung, c.NgayBatDau, c.NgayKetThuc));
+
+            CreateMap<DMDangKyChamCongViewModel, DM_DANGKY_CHAMCONG>()
+            .ConstructUsing(c => new DM_DANGKY_CHAMCONG(c.Id, c.TieuDe));
+
+            CreateMap<DMDieuChinhChamCongViewModel, DM_DIEUCHINH_CHAMCONG>()
+          .ConstructUsing(c => new DM_DIEUCHINH_CHAMCONG(c.Id, c.TieuDe));
+
         }
     }
 }

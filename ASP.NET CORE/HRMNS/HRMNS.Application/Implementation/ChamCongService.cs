@@ -173,7 +173,7 @@ namespace HRMNS.Application.Implementation
             {
                 if (!string.IsNullOrEmpty(timeFrom) && !string.IsNullOrEmpty(timeTo))
                 {
-                    var lst = _chamCongLogRepository.FindAll(x => x.Department.Contains(dept) && string.Compare(x.Ngay_ChamCong, timeFrom) >= 0 && string.Compare(x.Ngay_ChamCong, timeTo) <= 0).OrderByDescending(x => x.Ngay_ChamCong); ;
+                    var lst = _chamCongLogRepository.FindAll(x => x.Department.Contains(dept) && string.Compare(x.Ngay_ChamCong, timeFrom) >= 0 && string.Compare(x.Ngay_ChamCong, timeTo) <= 0).OrderByDescending(x => x.Ngay_ChamCong);
                     var vm = _mapper.Map<List<ChamCongLogViewModel>>(lst);
 
                     if (!string.IsNullOrEmpty(result))

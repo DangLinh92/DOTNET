@@ -62,6 +62,7 @@ namespace HRMNS.Data.EF
         public virtual DbSet<ATTENDANCE_OVERTIME> ATTENDANCE_OVERTIME { get; set; }
         public virtual DbSet<SETTING_TIME_CA_LVIEC> SETTING_TIME_CA_LVIEC { get; set; }
         public virtual DbSet<NGAY_DAC_BIET> NGAY_DAC_BIET { get; set; }
+        public virtual DbSet<DM_DIEUCHINH_CHAMCONG> DM_DIEUCHINH_CHAMCONG { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -111,7 +112,8 @@ namespace HRMNS.Data.EF
             builder.AddConfiguration(new AttendenceOvertimeConfiguration());
             builder.AddConfiguration(new SettingTimeCaLamViecConfiguration());
             builder.AddConfiguration(new NgayDacBietConfiguration());
-            
+            builder.AddConfiguration(new DMDieuChinhChamCongConfiguration());
+
             //base.OnModelCreating(builder);
         }
 

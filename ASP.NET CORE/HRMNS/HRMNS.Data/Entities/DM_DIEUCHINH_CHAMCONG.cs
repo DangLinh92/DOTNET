@@ -8,18 +8,18 @@ using System.Text;
 
 namespace HRMNS.Data.Entities
 {
-    [Table("DM_DANGKY_CHAMCONG")]
-    public class DM_DANGKY_CHAMCONG: DomainEntity<int>, IDateTracking
+    [Table("DM_DIEUCHINH_CHAMCONG")]
+    public class DM_DIEUCHINH_CHAMCONG : DomainEntity<int>, IDateTracking
     {
-        public DM_DANGKY_CHAMCONG(int id,string tieude)
+        public DM_DIEUCHINH_CHAMCONG(int id,string tieude)
         {
             Id = id;
             TieuDe = tieude;
         }
 
-        public DM_DANGKY_CHAMCONG()
+        public DM_DIEUCHINH_CHAMCONG()
         {
-            DANGKY_CHAMCONG_CHITIET = new HashSet<DANGKY_CHAMCONG_CHITIET>();
+            DC_CHAM_CONG = new HashSet<DC_CHAM_CONG>();
         }
 
         [StringLength(250)]
@@ -37,6 +37,6 @@ namespace HRMNS.Data.Entities
         [StringLength(50)]
         public string UserModified { get; set; }
 
-        public virtual ICollection<DANGKY_CHAMCONG_CHITIET> DANGKY_CHAMCONG_CHITIET { get; set; }
+        public virtual ICollection<DC_CHAM_CONG> DC_CHAM_CONG { get; set; }
     }
 }

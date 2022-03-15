@@ -1,0 +1,79 @@
+﻿<!-- Add Nhan Vien Ca Lam Viec Modal -->
+<div id="addEditChamCongDacBietModel" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Register Timekeeping</h5>
+                <input type="hidden" id="hd_chamCongDB" />
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="frmChamCongDacBietAddEdit">
+                    <div class="form-group">
+                        <input type="hidden" id="_txtId" />
+                        <label for="_txtMaNV">Mã Nhân Viên<span class="text-danger">*</span></label>
+                        <select id="_txtMaNV" class="form-control nested" name="MaNV" required>
+                            <option value="">Choose...</option>
+                            <optgroup label="Group1">
+                                <option selected="selected">orange</option>
+                                <option>white</option>
+                                <option>purple</option>
+                            </optgroup>
+                            <optgroup label="Group2">
+                                <option>purple</option>
+                                <option>orange</option>
+                                <option>white</option>
+                            </optgroup>
+                            <optgroup label="Group3">
+                                <option>white</option>
+                                <option>purple</option>
+                                <option>orange</option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="_txtMaChamCongChiTiet">Danh Mục Chấm Công<span class="text-danger">*</span></label>
+                        <select id="_txtMaChamCongChiTiet" class="form-control nested" name="MaChamCong_ChiTiet" required>
+                            <option value="">Choose...</option>
+                            <optgroup label="Group1">
+                                <option selected="selected">orange</option>
+                                <option>white</option>
+                                <option>purple</option>
+                            </optgroup>
+                            <optgroup label="Group2">
+                                <option>purple</option>
+                                <option>orange</option>
+                                <option>white</option>
+                            </optgroup>
+                            <optgroup label="Group3">
+                                <option>white</option>
+                                <option>purple</option>
+                                <option>orange</option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="_txtNgayBatDau">Ngày Bắt Đầu<span class="text-danger">*</span></label>
+                        <div class="cal-icon"><input id="_txtNgayBatDau" class="form-control datetimepicker" name="NgayBatDau" type="text" required></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="_txtNgayKetThuc">Ngày Kết Thúc<span class="text-danger">*</span></label>
+                        <div class="cal-icon"><input id="_txtNgayKetThuc" class="form-control datetimepicker" name="NgayKetThuc" type="text" required></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Content</label>
+                        <textarea rows="4" class="form-control" id="_txtContent" name="NoiDung"></textarea>
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn" id="btnSave_ChamCongDB">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Add Expense Modal -->

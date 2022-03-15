@@ -11,6 +11,19 @@ namespace HRMNS.Data.Entities
     [Table("DANGKY_CHAMCONG_DACBIET")]
     public class DANGKY_CHAMCONG_DACBIET : DomainEntity<int>, IDateTracking
     {
+        public DANGKY_CHAMCONG_DACBIET()
+        {
+
+        }
+        public DANGKY_CHAMCONG_DACBIET(string maNV,int? maChamCong,string noiDung,string ngaybatdau,string ngaykethuc)
+        {
+            MaNV = maNV;
+            MaChamCong_ChiTiet = maChamCong;
+            NoiDung = noiDung;
+            NgayBatDau = ngaybatdau;
+            NgayKetThuc = ngaykethuc;
+        }
+
         [StringLength(50)]
         public string MaNV { get; set; }
 

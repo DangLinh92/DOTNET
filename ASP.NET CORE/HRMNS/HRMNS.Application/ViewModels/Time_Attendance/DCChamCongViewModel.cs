@@ -10,7 +10,7 @@ namespace HRMNS.Application.ViewModels.Time_Attendance
     {
         public int Id { get; set; }
 
-        public int? MaChamCong_ChiTiet { get; set; }
+        public string DM_DieuChinhCong { get; set; }
 
         [StringLength(50)]
         public string MaNV { get; set; }
@@ -24,12 +24,7 @@ namespace HRMNS.Application.ViewModels.Time_Attendance
         [StringLength(300)]
         public string NoiDungDC { get; set; }
 
-        public double? GiaTriSauDC { get; set; }
-
-        public double? GiaTriTruocDC { get; set; }
-
-        [StringLength(20)]
-        public string KyHieuChamCong { get; set; }
+        public double? GiaTriBoXung { get; set; }
 
         [StringLength(50)]
         public string DateCreated { get; set; }
@@ -42,8 +37,6 @@ namespace HRMNS.Application.ViewModels.Time_Attendance
 
         [StringLength(50)]
         public string UserModified { get; set; }
-
-        public DangKyChamCongChiTietViewModel DANGKY_CHAMCONG_CHITIET { get; set; }
 
         public NhanVienViewModel HR_NHANVIEN { get; set; }
     }
