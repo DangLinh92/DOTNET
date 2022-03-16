@@ -110,7 +110,11 @@ namespace HRMS
 
             services.AddTransient<IDangKyChamCongChiTietService, DangKyChamCongChiTietService>();
             services.AddTransient<IDangKyChamCongDacBietService, DangKyChamCongDacBietService>();
-            
+
+            services.AddTransient<IDM_DCChamCongService, DM_DCChamCongService>();
+            services.AddTransient<IDCChamCongService, DCChamCongService>();
+
+
             services.AddMvc().AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();// not change format json

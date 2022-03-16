@@ -157,6 +157,9 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
+                    b.Property<double?>("Value")
+                        .HasColumnType("float");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CaLviec");
@@ -183,6 +186,10 @@ namespace HRMNS.Data.EF.Migrations
 
                     b.Property<double?>("EL_LC")
                         .HasColumnType("float");
+
+                    b.Property<string>("IsLock")
+                        .HasColumnType("nvarchar(20)")
+                        .HasMaxLength(20);
 
                     b.Property<string>("MaNV")
                         .HasColumnType("nvarchar(50)")

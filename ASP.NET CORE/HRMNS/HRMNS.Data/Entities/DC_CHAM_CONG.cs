@@ -11,6 +11,22 @@ namespace HRMNS.Data.Entities
     [Table("DC_CHAM_CONG")]
     public class DC_CHAM_CONG : DomainEntity<int>, IDateTracking
     {
+        public DC_CHAM_CONG()
+        {
+
+        }
+
+        public DC_CHAM_CONG(int id,int? dmDC,string maNV,string ngayDCFrom,string ngayDCTo,string noiDung,double? giatridc,string status)
+        {
+            Id = id;
+            DM_DieuChinhCong = dmDC;
+            MaNV = maNV;
+            NgayCanDieuChinh_From = ngayDCFrom;
+            NgayCanDieuChinh_To = ngayDCTo;
+            NoiDungDC = noiDung;
+            GiaTriBoXung = giatridc;
+            TrangThaiChiTra = status;
+        }
         public int? DM_DieuChinhCong { get; set; }
 
         [StringLength(50)]

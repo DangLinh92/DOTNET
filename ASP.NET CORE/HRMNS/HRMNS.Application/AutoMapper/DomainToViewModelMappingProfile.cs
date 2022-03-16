@@ -43,6 +43,8 @@ namespace HRMNS.Application.AutoMapper
             CreateMap<DANGKY_CHAMCONG_DACBIET, DangKyChamCongDacBietViewModel>();
             CreateMap<DM_DANGKY_CHAMCONG, DMDangKyChamCongViewModel>();
             CreateMap<DM_DIEUCHINH_CHAMCONG, DMDieuChinhChamCongViewModel>();
+
+            CreateMap<DC_CHAM_CONG, DCChamCongViewModel>();
         }
     }
 }

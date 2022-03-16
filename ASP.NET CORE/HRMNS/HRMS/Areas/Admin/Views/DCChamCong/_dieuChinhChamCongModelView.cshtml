@@ -1,0 +1,75 @@
+﻿<!-- Add dieu chinh cham cong Modal -->
+<div id="addDieuChinhChamCongModel" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Timekeeping Adjustments</h5>
+                <input type="hidden" id="hd_dieuChinhChamCong" />
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="frmDCChamCongAddEdit">
+                    <div class="form-group">
+                        <input type="hidden" id="_txtId" />
+                        <label for="_txtMaNV">Mã Nhân Viên<span class="text-danger">*</span></label>
+                        <select id="_txtMaNV" class="form-control nested" name="MaNV" required>
+                            <option value="">Choose...</option>
+                            <optgroup label="Group1">
+                                <option selected="selected">orange</option>
+                                <option>white</option>
+                                <option>purple</option>
+                            </optgroup>
+                            <optgroup label="Group2">
+                                <option>purple</option>
+                                <option>orange</option>
+                                <option>white</option>
+                            </optgroup>
+                            <optgroup label="Group3">
+                                <option>white</option>
+                                <option>purple</option>
+                                <option>orange</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="_txtDM_DieuChinhCong">Danh mục điều chỉnh công<span class="text-danger">*</span></label>
+                        <select id="_txtDM_DieuChinhCong" class="select" name="DM_DieuChinhCong" required>
+                            <option>Daniel Porter</option>
+                            <option>Roger Dixon</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="_txtNgayCanDieuChinh_From">Ngày Điều Chỉnh(From)<span class="text-danger">*</span></label>
+                        <div class="cal-icon"><input id="_txtNgayCanDieuChinh_From" class="form-control datetimepicker" name="NgayCanDieuChinh_From" type="text" required></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="_txtNgayCanDieuChinh_To">Ngày Điều Chỉnh(To)<span class="text-danger">*</span></label>
+                        <div class="cal-icon"><input id="_txtNgayCanDieuChinh_To" class="form-control datetimepicker" name="NgayCanDieuChinh_To" type="text" required></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="_txtGiaTriBoXung">Giá trị điều Chỉnh<span class="text-danger">*</span></label>
+                        <input class="form-control" type="text" name="GiaTriBoXung" id="_txtGiaTriBoXung" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="_txtContent">Nội Dung</label>
+                        <textarea rows="4" class="form-control" id="_txtContent" name="NoiDungDC"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="_txtTrangThaiChiTra">Trạng Thái Chi Trả<span class="text-danger">*</span></label>
+                        <select id="_txtTrangThaiChiTra" class="select" name="TrangThaiChiTra" required>
+                            <option value="">Choose...</option>
+                            <option value="Y">Đã chi trả</option>
+                            <option value="N">Chưa chi trả</option>
+                        </select>
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn" id="btnSaveDieuChinhChamCong">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Add Expense Modal -->

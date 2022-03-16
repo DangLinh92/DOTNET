@@ -19,6 +19,9 @@ namespace HRMNS.Application.ViewModels.Time_Attendance
         [StringLength(20)]
         public string Working_Status { get; set; }
 
+        [StringLength(20)]
+        public string IsLock { get; set; }
+
         public double? EL_LC { get; set; }
 
         [StringLength(50)]

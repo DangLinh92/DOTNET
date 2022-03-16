@@ -1,0 +1,38 @@
+﻿<!-- Add danh muc dieu chinh cham cong Modal -->
+<div id="addDMDieuChinhChamCongModel" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Danh Mục Điều Chỉnh Chấm Công</h5>
+                <input type="hidden" id="hd_dmdieuChinhChamCong" />
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="frmDMDCChamCongAddEdit">
+                    <div class="form-group">
+                        <label for="_txtDMDieuChinhCong">Danh mục điều chỉnh công</label>
+                        <select id="_txtDMDieuChinhCong" class="select" name="Id">
+                            <option>Daniel Porter</option>
+                            <option>Roger Dixon</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="_txtTieuDe">Tiêu Đề<span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input class="form-control" type="text" name="TieuDe" id="_txtTieuDe" required/>
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="button" id="btnEditDMDChinh">Edit</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn" id="btnSaveDMDieuChinhChamCong">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Add Expense Modal -->

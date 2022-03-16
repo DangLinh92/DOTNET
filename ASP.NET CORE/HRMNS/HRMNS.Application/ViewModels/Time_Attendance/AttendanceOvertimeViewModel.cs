@@ -12,6 +12,8 @@ namespace HRMNS.Application.ViewModels.Time_Attendance
 
         public long MaAttendence { get; set; }
 
+        public double? Value { get; set; }
+
         [StringLength(50)]
         public string DateCreated { get; set; }
 

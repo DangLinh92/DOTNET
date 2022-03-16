@@ -27,6 +27,9 @@ namespace HRMNS.Data.Entities
 
         public double? EL_LC { get; set; }
 
+        [StringLength(20)]
+        public string IsLock { get; set; }
+
         [StringLength(50)]
         public string DateCreated { get; set; }
 

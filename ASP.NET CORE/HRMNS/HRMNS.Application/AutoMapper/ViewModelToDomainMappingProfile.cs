@@ -64,6 +64,9 @@ namespace HRMNS.Application.AutoMapper
             CreateMap<DMDieuChinhChamCongViewModel, DM_DIEUCHINH_CHAMCONG>()
           .ConstructUsing(c => new DM_DIEUCHINH_CHAMCONG(c.Id, c.TieuDe));
 
+            CreateMap<DCChamCongViewModel, DC_CHAM_CONG>()
+           .ConstructUsing(c => new DC_CHAM_CONG(c.Id,c.DM_DieuChinhCong,c.MaNV,c.NgayCanDieuChinh_From,c.NgayCanDieuChinh_To,c.NoiDungDC,c.GiaTriBoXung,c.TrangThaiChiTra));
+
         }
     }
 }
