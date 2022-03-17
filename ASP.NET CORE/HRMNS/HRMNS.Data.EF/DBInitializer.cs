@@ -104,7 +104,8 @@ namespace HRMNS.Data.EF
                     new FUNCTION() {Id = "SHIFT_SCHEDULE", Name = "Shift & Schedule",ParentId = "NHANSU",SortOrder = 3,Status = Status.Active,URL = "/admin/nhanvien_calamviec/index",IconCss = ""  },
                     new FUNCTION() {Id = "OVERTIME", Name = "Overtime",ParentId = "NHANSU",SortOrder = 4,Status = Status.Active,URL = "/admin/dangkyot/index",IconCss = ""  },
                     new FUNCTION() {Id = "REGIS_TIMEKEEPING", Name = "Register Timekeeping",ParentId = "NHANSU",SortOrder = 5,Status = Status.Active,URL = "/admin/chamcongdacbiet/index",IconCss = ""  },
-                    new FUNCTION() {Id = "ADJ_TIMEKEEPING", Name = "Timekeeping adjustments",ParentId = "NHANSU",SortOrder = 6,Status = Status.Active,URL = "/admin/dcchamcong/index",IconCss = ""  },
+                    new FUNCTION() {Id = "ADJ_TIMEKEEPING", Name = "Timekeeping Adjustments",ParentId = "NHANSU",SortOrder = 6,Status = Status.Active,URL = "/admin/dcchamcong/index",IconCss = ""  },
+                    new FUNCTION() {Id = "ATTENDANCE_RECORD", Name = "Monthly Attendance",ParentId = "NHANSU",SortOrder = 7,Status = Status.Active,URL = "/admin/bangcong/index",IconCss = ""  },
 
                     new FUNCTION() {Id = "GA",Name = "GA",ParentId = null,SortOrder = 3,Status = Status.Active,URL = "",IconCss = ""  },
                     new FUNCTION() {Id = "COST",Name = "Cost",ParentId = "GA",SortOrder = 1,Status = Status.Active,URL = "/admin/cost/index",IconCss = "la la-money"  },
@@ -1359,7 +1360,7 @@ namespace HRMNS.Data.EF
                        TenChiTiet = "Làm ca đêm ngày kỷ niệm trước lễ thử việc",
                        PhanLoaiDM = 4,
                        KyHieuChamCong = "PM"
-                    },   
+                    },
                     new DANGKY_CHAMCONG_CHITIET()
                     {
                        TenChiTiet = "Làm ca đêm ngày kỷ niệm trước lễ chính thức",

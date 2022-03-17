@@ -33,6 +33,7 @@ namespace HRMNS.Application.AutoMapper
             CreateMap<CHAM_CONG_LOG, ChamCongLogViewModel>();
             CreateMap<NHANVIEN_CALAMVIEC, NhanVien_CalamViecViewModel>();
             CreateMap<DM_CA_LVIEC, DMCalamviecViewModel>();
+            CreateMap<CA_LVIEC, CaLamViecViewModel>();
             CreateMap<SETTING_TIME_CA_LVIEC, SettingTimeCalamviecViewModel>();
 
             CreateMap<DANGKY_OT_NHANVIEN, DangKyOTNhanVienViewModel>();
@@ -45,6 +46,10 @@ namespace HRMNS.Application.AutoMapper
             CreateMap<DM_DIEUCHINH_CHAMCONG, DMDieuChinhChamCongViewModel>();
 
             CreateMap<DC_CHAM_CONG, DCChamCongViewModel>();
+            CreateMap<ATTENDANCE_OVERTIME, AttendanceOvertimeViewModel>();
+            CreateMap<ATTENDANCE_RECORD, AttendanceRecordViewModel>();
+            CreateMap<KY_HIEU_CHAM_CONG, KyHieuChamCongViewModel>();
+
         }
     }
 }

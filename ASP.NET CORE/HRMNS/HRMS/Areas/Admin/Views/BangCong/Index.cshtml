@@ -1,4 +1,149 @@
-﻿
-@*
-    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model List<AttendanceRecordViewModel>
+@{
+    ViewData["Title"] = "Attendance Record";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+@section Scripts
+{
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/app/controllers/bangCong/bangCongMns.js"></script>
+
+    <script>
+        var controller = new bangCongController({
+            fixedColumns: {
+                left: 1,
+                right: 1
+            }
+        });
+        controller.initialize();
+
+        $(document).ready(function () {
+            $('#bangCongDataTable').DataTable();
+
+            $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
+            $('select[name="bangCongDataTable_length"]').removeClass('form-control-sm');
+        });
+    </script>
+}
+@section Styles{
+    <link href="~/devExtreme/Lib/css/dx.light.css" rel="stylesheet" />
+    <style>
+
+        #btnCreate {
+            float: none;
+            margin-right: 10px;
+        }
+
+        #btnManagement {
+            min-width: 150px;
+            border-radius: 50px;
+        }
+
+        .options {
+            padding: 20px;
+            margin-top: 20px;
+            background-color: rgba(191, 191, 191, 0.15);
+        }
+
+        .caption {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .option {
+            width: 33%;
+            display: inline-block;
+            margin-top: 10px;
+        }
+    </style>
+}
+<!-- Page Content -->
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Monthly Attendance</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/admin/home/index">Home</a></li>
+                    <li class="breadcrumb-item active">Monthly Attendance</li>
+                </ul>
+            </div>
+            <div class="col-auto float-right ml-auto">
+                <a href="#" id="btnCreate" class="btn add-btn" data-toggle="modal" data-target="#addDieuChinhChamCongModel"><i class="fa fa-plus"></i> Lock </a>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+    <!-- Search Filter -->
+    <form id="frmSearch" method="post" data-ajax="true" data-ajax-url="/Admin/bangcong/Search" data-ajax-update="#gridDCChamCongIndex" data-ajax-mode='replace' data-ajax-success="onSuccess">
+        <div class="row filter-row">
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            </div>
+
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus select-focus">
+                    <select class="select floating" id="cboDepartment" name="department">
+                        <option value=""> -- Select -- </option>
+                        <option value="New">New</option>
+                        <option value="Active">Active</option>
+                        <option value="InActive">InActive</option>
+                    </select>
+                    <label class="focus-label">Deparment</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus">
+                    <div class="cal-icon">
+                        <input class="form-control floating datetimepicker" type="text" id="searchToTime" name="timeTo">
+                    </div>
+                    <label class="focus-label">To</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <button href="#" class="btn btn-success btn-block" id="btnSearch" type="submit"> Search </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- /Search Filter -->
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive dx-viewport" id="gridDCChamCongIndex">
+                @await Html.PartialAsync("_gridBangCongPartialView", Model)
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Page Content -->
+<!-- Delete overtime -->
+<div class="modal custom-modal fade" id="delete_DCChamCong" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header">
+                    <input type="hidden" id="txtHiddenId" />
+                    <h3>Delete</h3>
+                    <p>Are you sure want to delete?</p>
+                </div>
+                <div class="modal-btn delete-action">
+                    <div class="row">
+                        <div class="col-6">
+                            <a href="javascript:void(0);" id="btnDeleteDCChamCong" class="btn btn-primary continue-btn">Delete</a>
+                        </div>
+                        <div class="col-6">
+                            <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Delete Expense Modal -->
