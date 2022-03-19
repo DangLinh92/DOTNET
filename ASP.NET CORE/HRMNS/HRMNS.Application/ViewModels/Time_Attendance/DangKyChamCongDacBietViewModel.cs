@@ -25,6 +25,9 @@ namespace HRMNS.Application.ViewModels.Time_Attendance
         public string NoiDung { get; set; }
 
         [StringLength(50)]
+        public string Approve { get; set; }
+
+        [StringLength(50)]
         public string DateCreated { get; set; }
 
         [StringLength(50)]

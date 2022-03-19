@@ -15,13 +15,14 @@ namespace HRMNS.Data.Entities
         {
 
         }
-        public DANGKY_CHAMCONG_DACBIET(string maNV,int? maChamCong,string noiDung,string ngaybatdau,string ngaykethuc)
+        public DANGKY_CHAMCONG_DACBIET(string maNV,int? maChamCong,string noiDung,string ngaybatdau,string ngaykethuc,string approve)
         {
             MaNV = maNV;
             MaChamCong_ChiTiet = maChamCong;
             NoiDung = noiDung;
             NgayBatDau = ngaybatdau;
             NgayKetThuc = ngaykethuc;
+            Approve = approve;
         }
 
         [StringLength(50)]
@@ -37,6 +38,9 @@ namespace HRMNS.Data.Entities
 
         [StringLength(300)]
         public string NoiDung { get; set; }
+
+        [StringLength(50)]
+        public string Approve { get; set; }
 
         [StringLength(50)]
         public string DateCreated { get; set; }

@@ -27,6 +27,36 @@ namespace HRMS.Areas.Admin.Controllers
                         },
                     },
                     Time_Check = "2022-03-17"
+                },
+                 new AttendanceRecordViewModel()
+                {
+                    MaNV = "H2105002",
+                    HR_NHANVIEN = new HRMNS.Application.ViewModels.HR.NhanVienViewModel()
+                    {
+                        Id = "H2105002",
+                        TenNV = "LE VAN DANG",
+                        NgayVao = "2021-05-20",
+                        HR_BO_PHAN_DETAIL = new HRMNS.Application.ViewModels.HR.BoPhanDetailViewModel()
+                        {
+                            TenBoPhanChiTiet = "Support PI"
+                        },
+                    },
+                    Time_Check = "2022-03-18"
+                },
+                  new AttendanceRecordViewModel()
+                {
+                    MaNV = "H2105003",
+                    HR_NHANVIEN = new HRMNS.Application.ViewModels.HR.NhanVienViewModel()
+                    {
+                        Id = "H2105003",
+                        TenNV = "LE VAN DANG",
+                        NgayVao = "2021-05-20",
+                        HR_BO_PHAN_DETAIL = new HRMNS.Application.ViewModels.HR.BoPhanDetailViewModel()
+                        {
+                            TenBoPhanChiTiet = "Support PI"
+                        },
+                    },
+                    Time_Check = "2022-03-19"
                 }
             };
             return View(lst);

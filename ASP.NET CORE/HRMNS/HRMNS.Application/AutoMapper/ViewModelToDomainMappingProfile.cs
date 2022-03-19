@@ -56,7 +56,7 @@ namespace HRMNS.Application.AutoMapper
                .ConstructUsing(c => new DANGKY_CHAMCONG_CHITIET(c.Id, c.TenChiTiet, c.PhanLoaiDM, c.KyHieuChamCong));
 
             CreateMap<DangKyChamCongDacBietViewModel, DANGKY_CHAMCONG_DACBIET>()
-             .ConstructUsing(c => new DANGKY_CHAMCONG_DACBIET(c.MaNV, c.MaChamCong_ChiTiet, c.NoiDung, c.NgayBatDau, c.NgayKetThuc));
+             .ConstructUsing(c => new DANGKY_CHAMCONG_DACBIET(c.MaNV, c.MaChamCong_ChiTiet, c.NoiDung, c.NgayBatDau, c.NgayKetThuc,c.Approve));
 
             CreateMap<DMDangKyChamCongViewModel, DM_DANGKY_CHAMCONG>()
             .ConstructUsing(c => new DM_DANGKY_CHAMCONG(c.Id, c.TieuDe));

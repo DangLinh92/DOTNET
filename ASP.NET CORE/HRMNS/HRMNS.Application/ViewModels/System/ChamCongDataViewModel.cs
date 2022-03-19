@@ -9,8 +9,11 @@ namespace HRMNS.Application.ViewModels.System
     {
         public ChamCongDataViewModel()
         {
-            
+            WorkingStatuses = new List<WorkingStatus>();
+            EL_LC_Statuses = new List<EL_LC_Status>();
+            OvertimeValues = new List<OvertimeValue>();
         }
+
         public string MaNV { get; set; }
 
         public string TenNV { get; set; }
@@ -19,26 +22,38 @@ namespace HRMNS.Application.ViewModels.System
 
         public string BoPhan { get; set; }
 
-        public string Time_Check { get; set; }
+        public string BoPhanDetail { get; set; }
 
-        public string DayOfWeek { get; set; }
+        public int LoaiHD { get; set; }
+        public string TenHD { get; set; }
+        public string NgayHieuLucHD { get; set; }
+        public string NgayHetHLHD { get; set; }
 
-        public string Working_Status_Tile { get; set; }
+        public string month_Check { get; set; }
 
-        public string OT_Tile { get; set; }
+        public List<string> lstDanhMucOT { get; set; } // 150%,200%,....
 
-        public string EL_LC_Tile { get; set; }
-
-        public string Working_Status { get; set; }
-
-        public double? EL_LC { get; set; }
-
-       
+        public List<WorkingStatus> WorkingStatuses { get; set; }
+        public List<EL_LC_Status> EL_LC_Statuses { get; set; }
+        public List<OvertimeValue> OvertimeValues { get; set; }
     }
 
-    public class OvertimeAttendance
+    public class WorkingStatus
     {
-        public string Name { get; set; }
-        public string Value { get; set; }
+        public string DayCheck { get; set; }
+        public string Value { get; set; } // ky hieu cham cong
+    }
+
+    public class EL_LC_Status
+    {
+        public string DayCheck_EL { get; set; }
+        public string Value_EL { get; set; } // ky hieu cham cong
+    }
+
+    public class OvertimeValue
+    {
+        public string DMOvertime { get; set; }
+        public string DayCheckOT { get; set; }
+        public string ValueOT { get; set; }
     }
 }

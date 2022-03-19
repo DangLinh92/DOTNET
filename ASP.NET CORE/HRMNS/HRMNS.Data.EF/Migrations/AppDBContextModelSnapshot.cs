@@ -442,6 +442,10 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Approve")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<string>("DateCreated")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);

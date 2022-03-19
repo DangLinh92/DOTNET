@@ -1,7 +1,7 @@
 ﻿@model List<AttendanceRecordViewModel>
 <table class="table table-bordered mb-0 custom-table datatable" id="bangCongDataTable">
     <thead>
-        <tr>
+        <tr style="background-color:#F6DDCC">
             <th>Code</th>
             <th>Name</th>
             <th>Join Date</th>
@@ -34,7 +34,7 @@
             }
             <th class="text-right no-sort">Action</th>
         </tr>
-        <tr>
+        <tr  style="background-color: #FBEEE6">
             <th></th>
             <th></th>
             <th></th>
@@ -73,17 +73,24 @@
         </tr>
     </thead>
     <tbody id="tbl-content">
+        @{
+            int k = 0;
+        }
         @foreach (var item in Model)
         {
+
+            string style1 = k++ % 2 == 0 ? "background-color: #F2F3F4" : "background-color: #F8F9F9";
+
             <tr>
-                <td>@item.MaNV</td>
-                <td>@item.HR_NHANVIEN?.TenNV</td>
-                <td>@item.HR_NHANVIEN?.NgayVao</td>
-                <td>@item.HR_NHANVIEN?.HR_BO_PHAN_DETAIL.TenBoPhanChiTiet</td>
-                <td>
-                    <table class="table table-bordered mb-0 custom-table" style="background-color:#fff">
+                <td style="@style1">@item.MaNV</td>
+                <td style="@style1">@item.HR_NHANVIEN?.TenNV</td>
+                <td style="@style1">@item.HR_NHANVIEN?.NgayVao</td>
+                <td style="@style1">@item.HR_NHANVIEN?.HR_BO_PHAN_DETAIL.TenBoPhanChiTiet</td>
+                <td style="@style1">
+                    <table class="table table-bordered mb-0 custom-table">
                         <tr>
                             <td>Working Status</td>
+                            <td></td>
                         </tr>
                         <tr>
                             <td>
@@ -132,7 +139,7 @@
                                 }
                                 else if (j < 8)
                                 {
-                                    <tr style="background-color: #f6f6f6">
+                                    <tr>
                                         <td>@j</td>
                                     </tr>
                                 }
@@ -151,7 +158,6 @@
                         <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                         <div class="dropdown-menu dropdown-menu-right">
                             <a class="dropdown-item edit-ChamCongDB" href="#" data-toggle="modal" data-target="#addEditChamCongDacBietModel" data-id="@item.Id"><i class="fa fa-edit m-r-5"></i> Edit</a>
-                            <a class="dropdown-item delete-ChamCongDB" href="#" data-toggle="modal" data-target="#delete_chamcongDB" data-id="@item.Id"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
                         </div>
                     </div>
                 </td>
