@@ -18,6 +18,9 @@ namespace HRMNS.Data.Entities
         [StringLength(500)]
         public string TenLoaiHD { get; set; }
 
+        [StringLength(50)]
+        public string ShortName { get; set; }
+
         public virtual ICollection<HR_HOPDONG> HR_HOPDONG { get; set; }
     }
 }

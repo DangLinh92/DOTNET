@@ -326,6 +326,10 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
+                    b.Property<string>("FirstIn_Time_Update")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<string>("ID_NV")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
@@ -336,6 +340,10 @@ namespace HRMNS.Data.EF.Migrations
                         .IsUnicode(false);
 
                     b.Property<string>("Last_Out_Time")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Last_Out_Time_Update")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
@@ -1100,6 +1108,10 @@ namespace HRMNS.Data.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ShortName")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("TenLoaiHD")
                         .HasColumnType("nvarchar(500)")

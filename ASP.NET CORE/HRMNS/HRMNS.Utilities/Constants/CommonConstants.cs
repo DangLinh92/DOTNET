@@ -36,5 +36,24 @@ namespace HRMNS.Utilities.Constants
 
         public const string IMPORT_BASIC_EMP = "basic_emp";
         public const string IMPORT_DETAIL_EMP = "detail_emp";
+
+        // Hop Dong
+        public const string HD_THUVIEC_EM = "TV85";
+        public const string HD_THUVIEC_OP = "TV100";
+        public const string HD_MOT_NAM_L1 = "A_YEAR1";
+        public const string HD_MOT_NAM_L2 = "A_YEAR2";
+        public const string HD_KHONG_THOIHAN = "NO_LIMIT";
+
+        public const string CA_NGAY = "CN_WHC";// Ca ngày/ 주간
+        public const string CA_DEM = "CD_WHC"; // Ca đêm/ 야간
+
+        public const string BEGIN_CN = "08:00:00";
+        public const string END_CN_1 = "17:00:00";
+        public const string END_CN_2 = "17:15:00";
+
+        public const string BEGIN_CD = "20:00:00";
+        public const string END_CD = "05:00:00";
+
+        public const string ZERO_TIME = "00:00:00";
     }
 }

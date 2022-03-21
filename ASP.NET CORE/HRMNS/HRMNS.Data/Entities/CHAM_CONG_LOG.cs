@@ -27,6 +27,12 @@ namespace HRMNS.Data.Entities
         public string Last_Out_Time { get; set; }
 
         [StringLength(50)]
+        public string FirstIn_Time_Update { get; set; }
+
+        [StringLength(50)]
+        public string Last_Out_Time_Update { get; set; }
+
+        [StringLength(50)]
         public string FirstIn { get; set; }
 
         [StringLength(50)]

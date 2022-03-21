@@ -11,6 +11,10 @@ namespace HRMNS.Application.ViewModels.HR
 
         [StringLength(500)]
         public string TenLoaiHD { get; set; }
+
+        [StringLength(50)]
+        public string ShortName { get; set; }
+
         public ICollection<HopDongViewModel> HR_HOPDONG { get; set; }
     }
 }
