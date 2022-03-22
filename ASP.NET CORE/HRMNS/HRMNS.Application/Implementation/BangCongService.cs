@@ -209,7 +209,6 @@ namespace HRMNS.Application.Implementation
                         }
                     }
 
-
                     // Update du lieu tao bang cong
                     string dateCheck = "";
                     string firstTime = "";
@@ -464,16 +463,367 @@ namespace HRMNS.Application.Implementation
                                                 }
                                                 else if (CheckNgayDB(dateCheck) == 5) // Ngay ki niem cty
                                                 {
-                                                    GetOvertimeInNight(firstTime, lastTime, dateCheck, "CN");
+                                                    item.OvertimeValues.AddRange(GetOvertimeInNight(firstTime, lastTime, dateCheck, "CN"));
+                                                    item.WorkingStatuses.Add(new WorkingStatus()
+                                                    {
+                                                        DayCheck = dateCheck,
+                                                        Value = "PM" // PM: Làm ca đêm ngày kỷ niệm  thử việc
+                                                    });
                                                 }
+                                                else if (CheckNgayDB(dateCheck) == 3 || CheckNgayDB(dateCheck) == 4) // ngay chu nhat + ngay nghi bu
+                                                {
+                                                    item.OvertimeValues.AddRange(GetOvertimeInNight(firstTime, lastTime, dateCheck, "CN"));
+                                                    item.WorkingStatuses.Add(new WorkingStatus()
+                                                    {
+                                                        DayCheck = dateCheck,
+                                                        Value = "TVD" // TVD: Thử việc làm thêm ca đêm chủ nhật
+                                                    });
+                                                }
+                                                else if (CheckNgayDB(dateCheck) == 1) // ngay le
+                                                {
+                                                    var ngayle = _ngaylenamRespository.FindById(dateCheck);
+                                                    if (ngayle.IslastHoliday == CommonConstants.N)
+                                                    {
+                                                        item.OvertimeValues.AddRange(GetOvertimeInNight(firstTime, lastTime, dateCheck, "NL"));
+                                                    }
+                                                    else // ngay le cuoi cung
+                                                    {
+                                                        item.OvertimeValues.AddRange(GetOvertimeInNight(firstTime, lastTime, dateCheck, "NLCC"));
+                                                    }
+
+                                                    item.WorkingStatuses.Add(new WorkingStatus()
+                                                    {
+                                                        DayCheck = dateCheck,
+                                                        Value = "PDD" // PDD: Thử việc làm đêm ngày lễ
+                                                    });
+                                                }
+                                                else if (CheckNgayDB(dateCheck) == 2) // ngay truoc le
+                                                {
+                                                    item.OvertimeValues.AddRange(GetOvertimeInNight(firstTime, lastTime, dateCheck, "NL"));
+                                                    item.WorkingStatuses.Add(new WorkingStatus()
+                                                    {
+                                                        DayCheck = dateCheck,
+                                                        Value = "PH" // PH: làm ca đêm trước ngày lễ( thử việc)
+                                                    });
+                                                }
+
+                                                // Di muon ve som
+                                                double ELLC = 0;
+                                                if (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.ParseExact("20:05:00", "HH:mm:ss", CultureInfo.InvariantCulture))
+                                                {
+                                                    ELLC += (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact("20:05:00", "HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+                                                }
+
+                                                if (DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture) < DateTime.ParseExact("08:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
+                                                {
+                                                    ELLC += (DateTime.ParseExact("08:00:00", "HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+                                                }
+
+                                                item.EL_LC_Statuses.Add(new EL_LC_Status()
+                                                {
+                                                    DayCheck_EL = dateCheck,
+                                                    Value_EL = ELLC
+                                                });
+                                            }
+                                        }
+                                        else if (_chamCongLog.FirstIn.NullString() == "" && _chamCongLog.LastOut.NullString() == "")
+                                        {
+                                            if (CheckNgayDB(dateCheck) == 1) // ngay le
+                                            {
+                                                item.WorkingStatuses.Add(new WorkingStatus()
+                                                {
+                                                    DayCheck = dateCheck,
+                                                    Value = "NH" // NH: NationALHoliday/ Nghỉ lễ
+                                                });
                                             }
                                         }
                                         #endregion
                                     }
                                 }
-                                else
+                                else // HD Chinh thuc
                                 {
+                                    // check ca lam viec
+                                    _caLamViec = item.lstNhanVienCaLamViec.FirstOrDefault(x => string.Compare(dateCheck, x.BatDau_TheoCa) >= 0 && string.Compare(dateCheck, x.KetThuc_TheoCa) <= 0);
 
+                                    if (_caLamViec != null)
+                                    {
+                                        // get data cham cong log 
+                                        _chamCongLog = _chamCongRespository.FindAll(x => dateCheck == x.Ngay_ChamCong && item.MaNV.ToUpper().Contains(x.ID_NV.ToUpper())).FirstOrDefault();
+
+                                        // get first time and last time
+                                        firstTime = _chamCongLog.FirstIn_Time_Update.NullString() == "" ? _chamCongLog.FirstIn_Time.NullString() : _chamCongLog.FirstIn_Time_Update.NullString();
+                                        lastTime = _chamCongLog.Last_Out_Time_Update.NullString() == "" ? _chamCongLog.Last_Out_Time.NullString() : _chamCongLog.Last_Out_Time_Update.NullString();
+
+                                        // Co du lieu cham cong
+                                        if (_chamCongLog.FirstIn.NullString() == "IN" && _chamCongLog.LastOut.NullString() == "OUT")
+                                        {
+                                            #region CHINH THUC + CA NGAY
+                                            if (_caLamViec.MaCaLaviec == CommonConstants.CA_NGAY)
+                                            {
+                                                if (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) < DateTime.ParseExact("08:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
+                                                {
+                                                    firstTime = "08:00:00";
+                                                }
+
+                                                if (CheckNgayDB(dateCheck) == 0) // ngay thuong
+                                                {
+                                                    string newBeginOT = "17:45:00";
+                                                    if (string.Compare(lastTime, newBeginOT) > 0)
+                                                    {
+                                                        if (item.BoPhan != "SP")
+                                                        {
+                                                            newBeginOT = "17:30:00";
+                                                        }
+
+                                                        double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + newBeginOT, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+
+                                                        item.OvertimeValues.Add(new OvertimeValue()
+                                                        {
+                                                            DayCheckOT = dateCheck,
+                                                            DMOvertime = "150",
+                                                            ValueOT = timeOT
+                                                        });
+                                                    }
+
+                                                    item.WorkingStatuses.Add(new WorkingStatus()
+                                                    {
+                                                        DayCheck = dateCheck,
+                                                        Value = "DS" // DS: Day Shift/ Ca ngày 
+                                                    });
+                                                }
+                                                else if (CheckNgayDB(dateCheck) == 5) // Ngay ki niem cty
+                                                {
+                                                    double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + firstTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+                                                    timeOT = timeOT <= 8 ? timeOT - 0.5 : timeOT - 1.5;
+
+                                                    item.WorkingStatuses.Add(new WorkingStatus()
+                                                    {
+                                                        DayCheck = dateCheck,
+                                                        Value = "MD" // làm ca ngày chính thức ngay ki niem
+                                                    });
+
+                                                    item.OvertimeValues.Add(new OvertimeValue()
+                                                    {
+                                                        DayCheckOT = dateCheck,
+                                                        DMOvertime = "200", // nhu OT chu nhat
+                                                        ValueOT = timeOT
+                                                    });
+                                                }
+                                                else if (CheckNgayDB(dateCheck) == 3 || CheckNgayDB(dateCheck) == 4) // ngay chu nhat or nghi bu ngay le
+                                                {
+                                                    double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + firstTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+                                                    timeOT = timeOT <= 8 ? timeOT - 0.5 : timeOT - 1.5;
+
+                                                    item.WorkingStatuses.Add(new WorkingStatus()
+                                                    {
+                                                        DayCheck = dateCheck,
+                                                        Value = "DS"
+                                                    });
+
+                                                    item.OvertimeValues.Add(new OvertimeValue()
+                                                    {
+                                                        DayCheckOT = dateCheck,
+                                                        DMOvertime = "200", // nhu OT chu nhat
+                                                        ValueOT = timeOT
+                                                    });
+                                                }
+                                                else if (CheckNgayDB(dateCheck) == 1) // ngay le
+                                                {
+                                                    double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + firstTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+                                                    timeOT = timeOT <= 8 ? timeOT - 0.5 : timeOT - 1.5;
+
+                                                    item.WorkingStatuses.Add(new WorkingStatus()
+                                                    {
+                                                        DayCheck = dateCheck,
+                                                        Value = "DS"
+                                                    });
+
+                                                    item.OvertimeValues.Add(new OvertimeValue()
+                                                    {
+                                                        DayCheckOT = dateCheck,
+                                                        DMOvertime = "300",
+                                                        ValueOT = timeOT
+                                                    });
+                                                }
+                                                else if (CheckNgayDB(dateCheck) == 2) // ngay truoc le
+                                                {
+                                                    string newBeginOT = "17:45:00";
+                                                    if (string.Compare(lastTime, newBeginOT) > 0)
+                                                    {
+                                                        if (item.BoPhan != "SP")
+                                                        {
+                                                            newBeginOT = "17:30:00";
+                                                        }
+
+                                                        double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + newBeginOT, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+
+                                                        item.OvertimeValues.Add(new OvertimeValue()
+                                                        {
+                                                            DayCheckOT = dateCheck,
+                                                            DMOvertime = "150",
+                                                            ValueOT = timeOT
+                                                        });
+                                                    }
+
+                                                    item.WorkingStatuses.Add(new WorkingStatus()
+                                                    {
+                                                        DayCheck = dateCheck,
+                                                        Value = "DS" // DS: Day Shift/ Ca ngày
+                                                    });
+                                                }
+
+                                                // Di muon ve som
+                                                double ELLC = 0;
+                                                if (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.ParseExact("08:05:00", "HH:mm:ss", CultureInfo.InvariantCulture))
+                                                {
+                                                    ELLC += (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact("08:05:00", "HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+                                                }
+
+                                                if (DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture) < DateTime.ParseExact("17:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
+                                                {
+                                                    ELLC += (DateTime.ParseExact("17:00:00", "HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+                                                }
+
+                                                item.EL_LC_Statuses.Add(new EL_LC_Status()
+                                                {
+                                                    DayCheck_EL = dateCheck,
+                                                    Value_EL = ELLC
+                                                });
+
+                                            }
+                                            #endregion
+
+                                            #region CHINH THUC + CA DEM
+                                            else
+                                            {
+                                                if (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) < DateTime.ParseExact("20:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
+                                                {
+                                                    firstTime = "20:00:00";
+                                                }
+
+                                                if (DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.ParseExact("08:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
+                                                {
+                                                    lastTime = "08:00:00";
+                                                }
+
+                                                if (CheckNgayDB(dateCheck) == 0) // ngay thuong
+                                                {
+                                                    string newBeginOT = "05:30:00";
+                                                    if (string.Compare(lastTime, newBeginOT) > 0)
+                                                    {
+                                                        double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + newBeginOT, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+
+                                                        if (timeOT > 0 && timeOT <= 0.5)
+                                                        {
+                                                            item.OvertimeValues.Add(new OvertimeValue()
+                                                            {
+                                                                DayCheckOT = dateCheck,
+                                                                DMOvertime = "200", // 200 % : 5H30 -> 6H
+                                                                ValueOT = timeOT
+                                                            });
+                                                        }
+                                                        else if (timeOT > 0.5)
+                                                        {
+                                                            item.OvertimeValues.Add(new OvertimeValue()
+                                                            {
+                                                                DayCheckOT = dateCheck,
+                                                                DMOvertime = "200", // 200 % : 5H30 -> 6H
+                                                                ValueOT = 0.5
+                                                            });
+
+                                                            item.OvertimeValues.Add(new OvertimeValue()
+                                                            {
+                                                                DayCheckOT = dateCheck,
+                                                                DMOvertime = "150", // 150 % :6h -> 8H
+                                                                ValueOT = timeOT - 0.5 // tru di 0.5h cua 5-6h
+                                                            });
+                                                        }
+                                                    }
+
+                                                    item.WorkingStatuses.Add(new WorkingStatus()
+                                                    {
+                                                        DayCheck = dateCheck,
+                                                        Value = "NS" // NS: Night Shift/ Ca đêm
+                                                    });
+                                                }
+                                                else if (CheckNgayDB(dateCheck) == 5) // Ngay ki niem cty
+                                                {
+                                                    item.OvertimeValues.AddRange(GetOvertimeInNight(firstTime, lastTime, dateCheck, "CN"));
+                                                    item.WorkingStatuses.Add(new WorkingStatus()
+                                                    {
+                                                        DayCheck = dateCheck,
+                                                        Value = "BM" // BM: Làm ca đêm ngày kỷ niệm chính thức
+                                                    });
+                                                }
+                                                else if (CheckNgayDB(dateCheck) == 3 || CheckNgayDB(dateCheck) == 4) // ngay chu nhat + ngay nghi bu
+                                                {
+                                                    item.OvertimeValues.AddRange(GetOvertimeInNight(firstTime, lastTime, dateCheck, "CN"));
+                                                    item.WorkingStatuses.Add(new WorkingStatus()
+                                                    {
+                                                        DayCheck = dateCheck,
+                                                        Value = "D" // TVD: Thử việc làm thêm ca đêm chủ nhật
+                                                    });
+                                                }
+                                                else if (CheckNgayDB(dateCheck) == 1) // ngay le
+                                                {
+                                                    var ngayle = _ngaylenamRespository.FindById(dateCheck);
+                                                    if (ngayle.IslastHoliday == CommonConstants.N)
+                                                    {
+                                                        item.OvertimeValues.AddRange(GetOvertimeInNight(firstTime, lastTime, dateCheck, "NL"));
+                                                    }
+                                                    else // ngay le cuoi cung
+                                                    {
+                                                        item.OvertimeValues.AddRange(GetOvertimeInNight(firstTime, lastTime, dateCheck, "NLCC"));
+                                                    }
+
+                                                    item.WorkingStatuses.Add(new WorkingStatus()
+                                                    {
+                                                        DayCheck = dateCheck,
+                                                        Value = "NHD" // NHD: làm ca đêm ngày lễ
+                                                    });
+                                                }
+                                                else if (CheckNgayDB(dateCheck) == 2) // ngay truoc le
+                                                {
+                                                    item.OvertimeValues.AddRange(GetOvertimeInNight(firstTime, lastTime, dateCheck, "NL"));
+                                                    item.WorkingStatuses.Add(new WorkingStatus()
+                                                    {
+                                                        DayCheck = dateCheck,
+                                                        Value = "BH" // BH: làm ca đêm trước ngày lễ( chính thức)
+                                                    });
+                                                }
+
+                                                // Di muon ve som
+                                                double ELLC = 0;
+                                                if (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.ParseExact("20:05:00", "HH:mm:ss", CultureInfo.InvariantCulture))
+                                                {
+                                                    ELLC += (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact("20:05:00", "HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+                                                }
+
+                                                if (DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture) < DateTime.ParseExact("08:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
+                                                {
+                                                    ELLC += (DateTime.ParseExact("08:00:00", "HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+                                                }
+
+                                                item.EL_LC_Statuses.Add(new EL_LC_Status()
+                                                {
+                                                    DayCheck_EL = dateCheck,
+                                                    Value_EL = ELLC
+                                                });
+                                            }
+                                            #endregion
+                                        }
+                                        else if (_chamCongLog.FirstIn.NullString() == "" && _chamCongLog.LastOut.NullString() == "")
+                                        {
+                                            if (CheckNgayDB(dateCheck) == 1) // ngay le
+                                            {
+                                                item.WorkingStatuses.Add(new WorkingStatus()
+                                                {
+                                                    DayCheck = dateCheck,
+                                                    Value = "NH" // NH: NationALHoliday/ Nghỉ lễ
+                                                });
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
