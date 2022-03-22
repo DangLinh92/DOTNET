@@ -1014,13 +1014,13 @@ namespace HRMNS.Data.EF
                     new SETTING_TIME_DIMUON_VESOM()
                     {
                         Danhmuc_CaLviec = "CN_WHC",
-                        Time_LateCome = "08:10:00",
+                        Time_LateCome = "08:05:00",
                         Time_EarlyLeave = "17:00:00"
                     },
                     new SETTING_TIME_DIMUON_VESOM()
                     {
                         Danhmuc_CaLviec = "CD_WHC",
-                        Time_LateCome = "20:10:00",
+                        Time_LateCome = "20:05:00",
                         Time_EarlyLeave = "08:00:00"
                     },
                 });

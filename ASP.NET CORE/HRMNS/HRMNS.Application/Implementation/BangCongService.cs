@@ -237,127 +237,238 @@ namespace HRMNS.Application.Implementation
                                         // get data cham cong log 
                                         _chamCongLog = _chamCongRespository.FindAll(x => dateCheck == x.Ngay_ChamCong && item.MaNV.ToUpper().Contains(x.ID_NV.ToUpper())).FirstOrDefault();
 
-                                        if (_caLamViec.MaCaLaviec == CommonConstants.CA_NGAY)
+                                        // get first time and last time
+                                        firstTime = _chamCongLog.FirstIn_Time_Update.NullString() == "" ? _chamCongLog.FirstIn_Time.NullString() : _chamCongLog.FirstIn_Time_Update.NullString();
+                                        lastTime = _chamCongLog.Last_Out_Time_Update.NullString() == "" ? _chamCongLog.Last_Out_Time.NullString() : _chamCongLog.Last_Out_Time_Update.NullString();
+
+                                        // Co du lieu cham cong
+                                        if (_chamCongLog.FirstIn.NullString() == "IN" && _chamCongLog.LastOut.NullString() == "OUT")
                                         {
-                                            // Co du lieu cham cong
-                                            if (_chamCongLog.FirstIn.NullString() == "IN" && _chamCongLog.LastOut.NullString() == "OUT")
+                                            #region THU VIEC + CA NGAY
+                                            if (_caLamViec.MaCaLaviec == CommonConstants.CA_NGAY)
                                             {
                                                 // 1. CHECK NGAY CONG : thu viec + ca ngay 
+                                                if (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) < DateTime.ParseExact("08:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
+                                                {
+                                                    firstTime = "08:00:00";
+                                                }
 
                                                 if (CheckNgayDB(dateCheck) == 0) // ngay thuong
                                                 {
+                                                    string newBeginOT = "17:45:00";
+                                                    if (string.Compare(lastTime, newBeginOT) > 0)
+                                                    {
+                                                        if (item.BoPhan != "SP")
+                                                        {
+                                                            newBeginOT = "17:30:00";
+                                                        }
+
+                                                        var clviec = item.lstNhanVienCaLamViec.FindAll(x =>
+                                                        string.Compare(dateCheck, x.BatDau_TheoCa) >= 0 &&
+                                                        string.Compare(dateCheck, x.KetThuc_TheoCa) <= 0 &&
+                                                        x.MaCaLaviec == CommonConstants.CA_NGAY && x.DM_NgayLViec == "NT").OrderByDescending(x => x.Time_BatDau).FirstOrDefault();
+
+                                                        double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + newBeginOT, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+
+                                                        item.OvertimeValues.Add(new OvertimeValue()
+                                                        {
+                                                            DayCheckOT = dateCheck,
+                                                            DMOvertime = clviec.HeSo_OT.NullString(),
+                                                            ValueOT = timeOT
+                                                        });
+                                                    }
+
+                                                    item.WorkingStatuses.Add(new WorkingStatus()
+                                                    {
+                                                        DayCheck = dateCheck,
+                                                        Value = "PD" // PD: Probation Day shift/Thử việc ca ngày
+                                                    });
+
+
+                                                }
+                                                else if (CheckNgayDB(dateCheck) == 5) // Ngay ki niem cty
+                                                {
+                                                    var clviec = item.lstNhanVienCaLamViec.FirstOrDefault(x =>
+                                                        string.Compare(dateCheck, x.BatDau_TheoCa) >= 0 &&
+                                                        string.Compare(dateCheck, x.KetThuc_TheoCa) <= 0 &&
+                                                        x.MaCaLaviec == CommonConstants.CA_NGAY && x.DM_NgayLViec == "CN");
+
+                                                    double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + firstTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+                                                    timeOT = timeOT <= 8 ? timeOT - 0.5 : timeOT - 1.5;
+
+                                                    item.WorkingStatuses.Add(new WorkingStatus()
+                                                    {
+                                                        DayCheck = dateCheck,
+                                                        Value = "PMD" // Làm ca ngày thử việc ngay ki niem
+                                                    });
+
+                                                    item.OvertimeValues.Add(new OvertimeValue()
+                                                    {
+                                                        DayCheckOT = dateCheck,
+                                                        DMOvertime = clviec.HeSo_OT.NullString(), // nhu OT chu nhat
+                                                        ValueOT = timeOT
+                                                    });
+                                                }
+                                                else if (CheckNgayDB(dateCheck) == 3 || CheckNgayDB(dateCheck) == 4) // ngay chu nhat or nghi bu ngay le
+                                                {
+                                                    var clviec = item.lstNhanVienCaLamViec.FirstOrDefault(x =>
+                                                         string.Compare(dateCheck, x.BatDau_TheoCa) >= 0 &&
+                                                         string.Compare(dateCheck, x.KetThuc_TheoCa) <= 0 &&
+                                                         x.MaCaLaviec == CommonConstants.CA_NGAY && x.DM_NgayLViec == "CN");
+
+                                                    double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + firstTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+                                                    timeOT = timeOT <= 8 ? timeOT - 0.5 : timeOT - 1.5;
+
+                                                    item.WorkingStatuses.Add(new WorkingStatus()
+                                                    {
+                                                        DayCheck = dateCheck,
+                                                        Value = "TV" // TV: Thử việc làm thêm ngày chủ nhật/ Probation
+                                                    });
+
+                                                    item.OvertimeValues.Add(new OvertimeValue()
+                                                    {
+                                                        DayCheckOT = dateCheck,
+                                                        DMOvertime = clviec.HeSo_OT.NullString(), // nhu OT chu nhat
+                                                        ValueOT = timeOT
+                                                    });
+                                                }
+                                                else if (CheckNgayDB(dateCheck) == 1) // ngay le
+                                                {
+                                                    var clviec = item.lstNhanVienCaLamViec.FirstOrDefault(x =>
+                                                     string.Compare(dateCheck, x.BatDau_TheoCa) >= 0 &&
+                                                     string.Compare(dateCheck, x.KetThuc_TheoCa) <= 0 &&
+                                                     x.MaCaLaviec == CommonConstants.CA_NGAY &&
+                                                     (x.DM_NgayLViec == "NL" || x.DM_NgayLViec == "NLCC"));
+
+                                                    double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + firstTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+                                                    timeOT = timeOT <= 8 ? timeOT - 0.5 : timeOT - 1.5;
+
+                                                    item.WorkingStatuses.Add(new WorkingStatus()
+                                                    {
+                                                        DayCheck = dateCheck,
+                                                        Value = "PD" // PD: Probation Day shift/Thử việc ca ngày
+                                                    });
+
+                                                    item.OvertimeValues.Add(new OvertimeValue()
+                                                    {
+                                                        DayCheckOT = dateCheck,
+                                                        DMOvertime = clviec.HeSo_OT.NullString(),
+                                                        ValueOT = timeOT
+                                                    });
+                                                }
+                                                else if (CheckNgayDB(dateCheck) == 2) // ngay truoc le
+                                                {
+                                                    var clviec = item.lstNhanVienCaLamViec.FirstOrDefault(x =>
+                                                     string.Compare(dateCheck, x.BatDau_TheoCa) >= 0 &&
+                                                     string.Compare(dateCheck, x.KetThuc_TheoCa) <= 0 &&
+                                                     x.MaCaLaviec == CommonConstants.CA_NGAY &&
+                                                     (x.DM_NgayLViec == "TNL"));
+
+                                                    string newBeginOT = "17:45:00";
+                                                    if (string.Compare(lastTime, newBeginOT) > 0)
+                                                    {
+                                                        if (item.BoPhan != "SP")
+                                                        {
+                                                            newBeginOT = "17:30:00";
+                                                        }
+
+                                                        double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + newBeginOT, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+
+                                                        item.OvertimeValues.Add(new OvertimeValue()
+                                                        {
+                                                            DayCheckOT = dateCheck,
+                                                            DMOvertime = clviec.HeSo_OT.NullString(),
+                                                            ValueOT = timeOT
+                                                        });
+                                                    }
+
                                                     item.WorkingStatuses.Add(new WorkingStatus()
                                                     {
                                                         DayCheck = dateCheck,
                                                         Value = "PD" // PD: Probation Day shift/Thử việc ca ngày
                                                     });
                                                 }
-                                                else if (CheckNgayDB(dateCheck) == 5) // Ngay ki niem cty
+
+                                                // Di muon ve som
+                                                double ELLC = 0;
+                                                if (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.ParseExact("08:05:00", "HH:mm:ss", CultureInfo.InvariantCulture))
                                                 {
-                                                    item.WorkingStatuses.Add(new WorkingStatus()
-                                                    {
-                                                        DayCheck = dateCheck,
-                                                        Value = "PMD" // Làm ca ngày thử việc ngay ki niem
-                                                    });
+                                                    ELLC += (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact("08:05:00", "HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
                                                 }
-                                                else if (CheckNgayDB(dateCheck) == 3) // ngay chu nhat
+
+                                                if (DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture) < DateTime.ParseExact("17:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
                                                 {
-                                                    item.WorkingStatuses.Add(new WorkingStatus()
-                                                    {
-                                                        DayCheck = dateCheck,
-                                                        Value = "TV" // TV: Thử việc làm thêm ngày chủ nhật/ Probation
-                                                    });
+                                                    ELLC += (DateTime.ParseExact("17:00:00", "HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
                                                 }
-                                                else
+
+                                                item.EL_LC_Statuses.Add(new EL_LC_Status()
                                                 {
-                                                    firstTime = _chamCongLog.FirstIn_Time_Update.NullString() == "" ? _chamCongLog.FirstIn_Time.NullString() : _chamCongLog.FirstIn_Time_Update.NullString();
-                                                    lastTime = _chamCongLog.Last_Out_Time_Update.NullString() == "" ? _chamCongLog.Last_Out_Time.NullString() : _chamCongLog.Last_Out_Time_Update.NullString();
+                                                    DayCheck_EL = dateCheck,
+                                                    Value_EL = ELLC
+                                                });
+                                            }
+                                            #endregion
 
-                                                    if (CheckNgayDB(dateCheck) == 1) // ngay le
+                                            #region THU VIEC + CA DEM
+                                            else
+                                            {
+                                                if (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) < DateTime.ParseExact("20:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
+                                                {
+                                                    firstTime = "20:00:00";
+                                                }
+
+                                                if (DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.ParseExact("08:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
+                                                {
+                                                    lastTime = "08:00:00";
+                                                }
+
+                                                if (CheckNgayDB(dateCheck) == 0) // ngay thuong
+                                                {
+                                                    string newBeginOT = "05:30:00";
+                                                    if (string.Compare(lastTime, newBeginOT) > 0)
                                                     {
-                                                        var clviec = item.lstNhanVienCaLamViec.FirstOrDefault(x =>
-                                                         string.Compare(dateCheck, x.BatDau_TheoCa) >= 0 &&
-                                                         string.Compare(dateCheck, x.KetThuc_TheoCa) <= 0 &&
-                                                         x.MaCaLaviec == CommonConstants.CA_NGAY &&
-                                                         (x.DM_NgayLViec == "NL" || x.DM_NgayLViec == "NLCC"));
+                                                        double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + newBeginOT, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
 
-                                                        if (string.Compare(firstTime, "08:00:00") < 0)
+                                                        if (timeOT > 0 && timeOT <= 0.5)
                                                         {
-                                                            firstTime = "08:00:00";
-                                                        }
-
-                                                        double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + firstTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
-                                                        if (timeOT > 11)
-                                                        {
-                                                            timeOT = 10.5;
-                                                        }
-
-                                                        item.OvertimeValues.Add(new OvertimeValue()
-                                                        {
-                                                            DayCheckOT = dateCheck,
-                                                            DMOvertime = clviec.HeSo_OT.NullString(),
-                                                            ValueOT = timeOT.NullString()
-                                                        });
-                                                    }
-                                                    else if (CheckNgayDB(dateCheck) == 2) // ngay truoc le
-                                                    {
-                                                        item.WorkingStatuses.Add(new WorkingStatus()
-                                                        {
-                                                            DayCheck = dateCheck,
-                                                            Value = "PD" // PD: Probation Day shift/Thử việc ca ngày
-                                                        });
-
-                                                        var clviec = item.lstNhanVienCaLamViec.FirstOrDefault(x =>
-                                                         string.Compare(dateCheck, x.BatDau_TheoCa) >= 0 &&
-                                                         string.Compare(dateCheck, x.KetThuc_TheoCa) <= 0 &&
-                                                         x.MaCaLaviec == CommonConstants.CA_NGAY &&
-                                                         (x.DM_NgayLViec == "TNL"));
-
-                                                        string newBeginOT = "17:30:00";
-                                                        if (string.Compare(lastTime, newBeginOT) >= 0)
-                                                        {
-                                                            if (item.BoPhan == "SP")
+                                                            item.OvertimeValues.Add(new OvertimeValue()
                                                             {
-                                                                newBeginOT = "17:45:00";
-                                                            }
-
-                                                            double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + newBeginOT, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+                                                                DayCheckOT = dateCheck,
+                                                                DMOvertime = "200", // 200 % : 5H30 -> 6H
+                                                                ValueOT = timeOT
+                                                            });
+                                                        }
+                                                        else if (timeOT > 0.5)
+                                                        {
+                                                            item.OvertimeValues.Add(new OvertimeValue()
+                                                            {
+                                                                DayCheckOT = dateCheck,
+                                                                DMOvertime = "200", // 200 % : 5H30 -> 6H
+                                                                ValueOT = 0.5
+                                                            });
 
                                                             item.OvertimeValues.Add(new OvertimeValue()
                                                             {
                                                                 DayCheckOT = dateCheck,
-                                                                DMOvertime = clviec.HeSo_OT.NullString(),
-                                                                ValueOT = timeOT.NullString()
+                                                                DMOvertime = "150", // 150 % :6h -> 8H
+                                                                ValueOT = timeOT - 0.5 // tru di 0.5h cua 5-6h
                                                             });
                                                         }
                                                     }
-                                                    else if (CheckNgayDB(dateCheck) == 4) // ngay nghi bu le
+
+                                                    item.WorkingStatuses.Add(new WorkingStatus()
                                                     {
-                                                        if (string.Compare(firstTime, "08:00:00") < 0)
-                                                        {
-                                                            firstTime = "08:00:00";
-                                                        }
-
-                                                        double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + firstTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
-                                                        if (timeOT > 11)
-                                                        {
-                                                            timeOT = 10.5;
-                                                        }
-
-                                                        item.OvertimeValues.Add(new OvertimeValue()
-                                                        {
-                                                            DayCheckOT = dateCheck,
-                                                            DMOvertime = "200", // nhu OT chu nhat
-                                                            ValueOT = timeOT.NullString()
-                                                        });
-                                                    }
+                                                        DayCheck = dateCheck,
+                                                        Value = "PN" // PN: Probation Night shift/Thử việc ca đêm
+                                                    });
+                                                }
+                                                else if (CheckNgayDB(dateCheck) == 5) // Ngay ki niem cty
+                                                {
+                                                    GetOvertimeInNight(firstTime, lastTime, dateCheck, "CN");
                                                 }
                                             }
                                         }
-                                        else
-                                        {
-
-                                        }
+                                        #endregion
                                     }
                                 }
                                 else
@@ -377,6 +488,572 @@ namespace HRMNS.Application.Implementation
 
 
             throw new NotImplementedException();
+        }
+
+        private List<OvertimeValue> GetOvertimeInNight(string firstTime, string lastTime, string dateCheck, string ngayLviec)
+        {
+            // 20:00 -> 22:00
+            // 22:00 -> 23:59
+            // 00:00 -> 06:00
+            // 06:00 -> 08:00
+
+            List<OvertimeValue> lstResult = new List<OvertimeValue>();
+
+            if (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) >= DateTime.ParseExact("20:00:00", "HH:mm:ss", CultureInfo.InvariantCulture) &&
+            DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture) <= DateTime.ParseExact("22:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
+            {
+                double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + firstTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+                if (ngayLviec == "CN") // ngay chu nhat
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "200",
+                        ValueOT = timeOT
+                    });
+                }
+                else if (ngayLviec == "NLCC" || ngayLviec == "NL") // Ngay le, ngay le cuoi cung
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "300",
+                        ValueOT = timeOT
+                    });
+                }
+            }
+            else if (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) >= DateTime.ParseExact("22:00:00", "HH:mm:ss", CultureInfo.InvariantCulture) &&
+               DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture) <= DateTime.ParseExact("23:59:59", "HH:mm:ss", CultureInfo.InvariantCulture))
+            {
+                double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + firstTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+                if (ngayLviec == "NLCC" || ngayLviec == "NL") // ngay chu nhat
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "390",
+                        ValueOT = timeOT
+                    });
+                }
+                else if (ngayLviec == "CN")
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "270",
+                        ValueOT = timeOT
+                    });
+                }
+            }
+            else if (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) >= DateTime.ParseExact("00:00:00", "HH:mm:ss", CultureInfo.InvariantCulture) &&
+                     DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture) <= DateTime.ParseExact("06:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
+            {
+                double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + firstTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+
+                if (ngayLviec == "NLCC") // ngay le cuoi cung
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "200",
+                        ValueOT = timeOT - 0.5
+                    });
+                }
+                else if (ngayLviec == "NL") // NGAY LE
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "390",
+                        ValueOT = timeOT - 0.5
+                    });
+                }
+                else if (ngayLviec == "CN")
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "270",
+                        ValueOT = timeOT - 0.5 // O.5H di an
+                    });
+                }
+            }
+            else if (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) >= DateTime.ParseExact("06:00:00", "HH:mm:ss", CultureInfo.InvariantCulture) &&
+                     DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.ParseExact("06:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
+            {
+                double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + firstTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+                if (ngayLviec == "NLCC") // ngay le cuoi cung
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "150",
+                        ValueOT = timeOT
+                    });
+                }
+                else if (ngayLviec == "NL") // NGAY LE
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "300",
+                        ValueOT = timeOT
+                    });
+                }
+                else if (ngayLviec == "CN")
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "200",
+                        ValueOT = timeOT
+                    });
+                }
+            }
+            else if (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) >= DateTime.ParseExact("20:00:00", "HH:mm:ss", CultureInfo.InvariantCulture) &&
+                    DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture) <= DateTime.ParseExact("23:59:59", "HH:mm:ss", CultureInfo.InvariantCulture))
+            {
+                double timeOT1 = (DateTime.ParseExact(dateCheck + " " + "22:00:00", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + firstTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours; // 20 ->22
+                double timeOT2 = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + "22:00:00", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours; // 22 -> 00
+
+                if (ngayLviec == "CN") // ngay chu nhat
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "200",
+                        ValueOT = timeOT1
+                    });
+                }
+                else if (ngayLviec == "NLCC" || ngayLviec == "NL") // Ngay le, ngay le cuoi cung
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "300",
+                        ValueOT = timeOT1
+                    });
+                }
+
+                if (ngayLviec == "NLCC" || ngayLviec == "NL")
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "390",
+                        ValueOT = timeOT2
+                    });
+                }
+                else if (ngayLviec == "CN")
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "270",
+                        ValueOT = timeOT2
+                    });
+                }
+            }
+            else if (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) >= DateTime.ParseExact("20:00:00", "HH:mm:ss", CultureInfo.InvariantCulture) && // 20 -> 06
+                   DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture) <= DateTime.ParseExact("06:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
+            {
+                double timeOT1 = (DateTime.ParseExact(dateCheck + " " + "22:00:00", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + firstTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours; // 20 ->22
+                double timeOT2 = 2; // 22 -> 00
+                double timeOT3 = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + "00:00:00", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours; // 00 -> 06
+
+                if (ngayLviec == "CN") // ngay chu nhat
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "200",
+                        ValueOT = timeOT1
+                    });
+                }
+                else if (ngayLviec == "NLCC" || ngayLviec == "NL") // Ngay le, ngay le cuoi cung
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "300",
+                        ValueOT = timeOT1
+                    });
+                }
+
+                if (ngayLviec == "NLCC" || ngayLviec == "NL")
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "390",
+                        ValueOT = timeOT2
+                    });
+                }
+                else if (ngayLviec == "CN")
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "270",
+                        ValueOT = timeOT2
+                    });
+                }
+
+                if (ngayLviec == "NLCC") // ngay le cuoi cung
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "200",
+                        ValueOT = timeOT3 - 0.5
+                    });
+                }
+                else if (ngayLviec == "NL") // NGAY LE
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "390",
+                        ValueOT = timeOT3 - 0.5
+                    });
+                }
+                else if (ngayLviec == "CN")
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "270",
+                        ValueOT = timeOT3 - 0.5 // O.5H di an
+                    });
+                }
+            }
+            else if (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) >= DateTime.ParseExact("20:00:00", "HH:mm:ss", CultureInfo.InvariantCulture) && // 20 -> 08
+                    DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.ParseExact("06:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
+            {
+                double timeOT1 = (DateTime.ParseExact(dateCheck + " " + "22:00:00", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + firstTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours; // 20 ->22
+                double timeOT2 = 2; // 22 -> 00
+                double timeOT3 = 4.5; // 00 -> 06 , 5h - tru 0.5 di an
+                double timeOT4 = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + "06:00:00", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours; // 06 -> 08
+
+                // 20 -> 22
+                if (ngayLviec == "CN") // ngay chu nhat
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "200",
+                        ValueOT = timeOT1
+                    });
+                }
+                else if (ngayLviec == "NLCC" || ngayLviec == "NL") // Ngay le, ngay le cuoi cung
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "300",
+                        ValueOT = timeOT1
+                    });
+                }
+
+                // 22-> 0
+                if (ngayLviec == "NLCC" || ngayLviec == "NL")
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "390",
+                        ValueOT = timeOT2
+                    });
+                }
+                else if (ngayLviec == "CN")
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "270",
+                        ValueOT = timeOT2
+                    });
+                }
+
+                // 0 -> 6
+                if (ngayLviec == "NLCC") // ngay le cuoi cung
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "200",
+                        ValueOT = timeOT3 - 0.5
+                    });
+                }
+                else if (ngayLviec == "NL") // NGAY LE
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "390",
+                        ValueOT = timeOT3 - 0.5
+                    });
+                }
+                else if (ngayLviec == "CN")
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "270",
+                        ValueOT = timeOT3 - 0.5 // O.5H di an
+                    });
+                }
+
+                // 6-8h
+                if (ngayLviec == "NLCC") // ngay le cuoi cung
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "150",
+                        ValueOT = timeOT4
+                    });
+                }
+                else if (ngayLviec == "NL") // NGAY LE
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "300",
+                        ValueOT = timeOT4
+                    });
+                }
+                else if (ngayLviec == "CN")
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "200",
+                        ValueOT = timeOT4
+                    });
+                }
+            }
+            else if (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) >= DateTime.ParseExact("22:00:00", "HH:mm:ss", CultureInfo.InvariantCulture) && // 22 -> 06
+                 DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture) <= DateTime.ParseExact("06:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
+            {
+                double timeOT1 = (DateTime.ParseExact(dateCheck + " " + "23:59:59", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + firstTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours; // 22-> 00
+                double timeOT2 = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + "00:00:00", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours; // 00 -> 06
+
+                // 22 -> 0
+                if (ngayLviec == "NLCC" || ngayLviec == "NL") // ngay chu nhat
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "390",
+                        ValueOT = timeOT1
+                    });
+                }
+                else if (ngayLviec == "CN")
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "270",
+                        ValueOT = timeOT1
+                    });
+                }
+
+                // 00 -> 06
+                if (ngayLviec == "NLCC") // ngay le cuoi cung
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "200",
+                        ValueOT = timeOT2 - 0.5
+                    });
+                }
+                else if (ngayLviec == "NL") // NGAY LE
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "390",
+                        ValueOT = timeOT2 - 0.5
+                    });
+                }
+                else if (ngayLviec == "CN")
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "270",
+                        ValueOT = timeOT2 - 0.5 // O.5H di an
+                    });
+                }
+            }
+            else if (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) >= DateTime.ParseExact("22:00:00", "HH:mm:ss", CultureInfo.InvariantCulture) && // 22 -> 08
+                 DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.ParseExact("06:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
+            {
+                double timeOT2 = (DateTime.ParseExact(dateCheck + " " + "23:59:59", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + firstTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours; // 22 -> 00
+                double timeOT3 = 4.5; // 00 -> 06 , 5h - tru 0.5 di an
+                double timeOT4 = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + "06:00:00", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours; // 06 -> 08
+
+                // 22-> 0
+                if (ngayLviec == "NLCC" || ngayLviec == "NL")
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "390",
+                        ValueOT = timeOT2
+                    });
+                }
+                else if (ngayLviec == "CN")
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "270",
+                        ValueOT = timeOT2
+                    });
+                }
+
+                // 0 -> 6
+                if (ngayLviec == "NLCC") // ngay le cuoi cung
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "200",
+                        ValueOT = timeOT3 - 0.5
+                    });
+                }
+                else if (ngayLviec == "NL") // NGAY LE
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "390",
+                        ValueOT = timeOT3 - 0.5
+                    });
+                }
+                else if (ngayLviec == "CN")
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "270",
+                        ValueOT = timeOT3 - 0.5 // O.5H di an
+                    });
+                }
+
+                // 6-8h
+                if (ngayLviec == "NLCC") // ngay le cuoi cung
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "150",
+                        ValueOT = timeOT4
+                    });
+                }
+                else if (ngayLviec == "NL") // NGAY LE
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "300",
+                        ValueOT = timeOT4
+                    });
+                }
+                else if (ngayLviec == "CN")
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "200",
+                        ValueOT = timeOT4
+                    });
+                }
+            }
+            else if (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) >= DateTime.ParseExact("00:00:00", "HH:mm:ss", CultureInfo.InvariantCulture) && // 00 -> 08
+               DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.ParseExact("06:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
+            {
+                double timeOT2 = (DateTime.ParseExact(dateCheck + " " + "06:00:00", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + firstTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours; // 00 -> 06
+                double timeOT4 = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + "06:00:00", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours; // 06 -> 08
+
+                // 0 -> 6
+                if (ngayLviec == "NLCC") // ngay le cuoi cung
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "200",
+                        ValueOT = timeOT2 - 0.5
+                    });
+                }
+                else if (ngayLviec == "NL") // NGAY LE
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "390",
+                        ValueOT = timeOT2 - 0.5
+                    });
+                }
+                else if (ngayLviec == "CN")
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "270",
+                        ValueOT = timeOT2 - 0.5 // O.5H di an
+                    });
+                }
+
+                // 6-8h
+                if (ngayLviec == "NLCC") // ngay le cuoi cung
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "150",
+                        ValueOT = timeOT4
+                    });
+                }
+                else if (ngayLviec == "NL") // NGAY LE
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "300",
+                        ValueOT = timeOT4
+                    });
+                }
+                else if (ngayLviec == "CN")
+                {
+                    lstResult.Add(new OvertimeValue()
+                    {
+                        DayCheckOT = dateCheck,
+                        DMOvertime = "200",
+                        ValueOT = timeOT4
+                    });
+                }
+            }
+
+            List<OvertimeValue> overtimes = new List<OvertimeValue>();
+            OvertimeValue oval;
+            foreach (var item in lstResult)
+            {
+                if (overtimes.Any(x => x.DMOvertime != item.DMOvertime))
+                {
+                    oval = overtimes.Find(x => x.DMOvertime != item.DMOvertime);
+                    oval.ValueOT += item.ValueOT;
+                }
+                else
+                {
+                    overtimes.Add(item);
+                }
+            }
+
+            return overtimes;
         }
 
         public void Update(AttendanceRecordViewModel attendance)

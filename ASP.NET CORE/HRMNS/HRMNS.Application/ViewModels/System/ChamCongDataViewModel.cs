@@ -92,13 +92,13 @@ namespace HRMNS.Application.ViewModels.System
     public class EL_LC_Status
     {
         public string DayCheck_EL { get; set; }
-        public string Value_EL { get; set; } // ky hieu cham cong
+        public double Value_EL { get; set; } // ky hieu cham cong
     }
 
     public class OvertimeValue
     {
         public string DMOvertime { get; set; }
         public string DayCheckOT { get; set; }
-        public string ValueOT { get; set; }
+        public double ValueOT { get; set; }
     }
 }
