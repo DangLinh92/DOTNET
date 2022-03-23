@@ -24,7 +24,7 @@ namespace HRMS.Areas.Admin.Controllers
         IDMucNgaylamviecService _dmNgayLviecService;
         INgayLeNamService _ngayLeNamService;
 
-        public DangKyOTController(IOvertimeService overtimeService, INgayLeNamService ngayLeNamService, IDMucNgaylamviecService dmNgayLviecService, IWebHostEnvironment hostEnvironment, ILogger<DangKyOTNhanVienViewModel> logger)
+        public DangKyOTController(IOvertimeService overtimeService, INgayLeNamService ngayLeNamService, IDMucNgaylamviecService dmNgayLviecService, IWebHostEnvironment hostEnvironment, ILogger<DangKyOTController> logger)
         {
             _ngayLeNamService = ngayLeNamService;
             _dmNgayLviecService = dmNgayLviecService;

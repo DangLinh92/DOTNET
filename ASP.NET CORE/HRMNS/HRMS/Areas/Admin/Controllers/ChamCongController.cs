@@ -141,7 +141,7 @@ namespace HRMS.Areas.Admin.Controllers
 
                 if (result.ReturnInt == 0)
                 {
-                    return new OkObjectResult("");
+                    return new OkObjectResult(filePath);
                 }
                 else
                 {
