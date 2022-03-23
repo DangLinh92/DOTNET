@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AssemblyName>VOC.Data.EF</AssemblyName>
+    <RootNamespace>VOC.Data.EF</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.16" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.16" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.16" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.16">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.16" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="3.1.16" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.16" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VOC.Data\VOC.Data.csproj" />
+    <ProjectReference Include="..\VOC.Utilities\VOC.Utilities.csproj" />
+    <ProjectReference Include="..\VOC.Infrastructure\VOC.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="SQLStoreproc\" />
+  </ItemGroup>
+
+</Project>

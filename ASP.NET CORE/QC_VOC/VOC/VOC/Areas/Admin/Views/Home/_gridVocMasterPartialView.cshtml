@@ -1,0 +1,186 @@
+﻿@model List<VOC_MSTViewModel>
+<table class="table table-bordered table-hover mb-0 table-striped custom-table datatable" id="vocMstDataTable">
+    <thead>
+        <tr>
+            <th>
+                접수처
+                (HQ, WTC, WHC)
+            </th>
+            <th>
+                부품 생산지
+                (HQ, WTC, WHC)
+            </th>
+            <th>
+                접수부서
+                (영업, 품질)
+            </th>
+            <th>
+                접수일자1
+                (년/월/일)
+            </th>
+            <th>
+                불량(SPL)
+                접수일자
+            </th>
+            <th>
+                불량(SPL) 접수일자
+                (주차), ISO8601
+            </th>
+            <th>고객사</th>
+            <th>
+                SET Model
+                (고객사)
+            </th>
+            <th>
+                발생공정
+                (고객사)
+            </th>
+            <th>기종명 (Full name)</th>
+            <th>불량명/현상 (고객사)</th>
+            <th>불량률 (불량수/투입수)</th>
+            <th>
+                부품 구분1
+                (SAW, 모듈)
+            </th>
+            <th>부품 구분2 (샘플, 양산품)</th>
+            <th>부품 생산일자 (마킹)</th>
+            <th>
+                불량명
+                (불량분석 결과)
+            </th>
+            <th>
+                VOC Count
+                (진성 유/무)
+            </th>
+            <th>불량원인 (근본원인)</th>
+            <th>원인구분 (5M+1E)</th>
+            <th>고객통보 불량원인</th>
+            <th>대책서 최종 승인자</th>
+            <th>대책서 회신 담당자</th>
+            <th>대책서 회신일자</th>
+            <th>
+                VOC상태
+                (Close, Open)
+            </th>
+            <th>
+                VOC 종결 일자
+            </th>
+            <th>
+                VOC 처리시간 (TAT)
+            </th>
+            <th class="text-right no-sort"></th>
+        </tr>
+        <tr>
+            <th>
+                Received site
+            </th>
+            <th>
+                Place of origin
+                (HQ, WTC, WHC)
+            </th>
+            <th>
+                Received dept.
+                (Sales, Quality)
+            </th>
+            <th>
+                Received date(YYYY-MM-DD)
+            </th>
+            <th>
+                SPL Received date(YYYY-MM-DD)
+            </th>
+            <th>
+                SPL Received date(week),ISO8601
+            </th>
+            <th>Customer</th>
+            <th>
+                SET Model(Customer)
+            </th>
+            <th>
+                Process(Customer)
+            </th>
+            <th>Model(Full name)</th>
+            <th>Defect name/Phenomenon(Customer)</th>
+            <th>
+                Defect rate
+                (defect qty./input qty.)
+            </th>
+            <th>
+                Parts classification1
+                (SAW, Module)
+            </th>
+            <th>
+                Parts classification2
+                (Sample, Mass product)
+            </th>
+            <th>Prodution date(Marking)</th>
+            <th>
+                Defect name
+                (Analysis result)
+            </th>
+            <th>
+                VOC Count
+            </th>
+            <th>Defect cause (Root cause)</th>
+            <th>Defect classification(5M+1E)</th>
+            <th>Customer Response</th>
+            <th>8D Report_Final approver</th>
+            <th>8D Report_Sender</th>
+            <th>8D Rport_sent date</th>
+            <th>
+                VOC State
+                (Close, Open)
+            </th>
+            <th>
+                VOC Finishing date
+            </th>
+            <th>
+                VOC TAT
+            </th>
+            <th class="text-right no-sort">Action</th>
+        </tr>
+    </thead>
+    <tbody id="tbl-content">
+        @foreach (var voc in Model)
+        {
+            <tr>
+                <td>@voc.Received_site</td>
+                <td>@voc.PlaceOfOrigin</td>
+                <td>@voc.ReceivedDept</td>
+                <td>@voc.ReceivedDate</td>
+                <td>@voc.SPLReceivedDate</td>
+                <td>@voc.SPLReceivedDateWeek</td>
+                <td>@voc.Customer</td>
+                <td>@voc.SETModelCustomer</td>
+                <td>@voc.ProcessCustomer</td>
+                <td>@voc.ModelFullname</td>
+                <td>@voc.DefectNameCus</td>
+                <td>@voc.DefectRate</td>
+                <td>@voc.PartsClassification</td>
+                <td>@voc.PartsClassification2</td>
+                <td>@voc.ProdutionDateMarking</td>
+                <td>@voc.AnalysisResult</td>
+                <td>@voc.VOCCount</td>
+                <td>@voc.DefectCause</td>
+                <td>@voc.DefectClassification</td>
+                <td>@voc.CustomerResponse</td>
+                <td>@voc.Report_FinalApprover</td>
+                <td>@voc.Report_Sender</td>
+                <td>@voc.Rport_sentDate</td>
+                <td>@voc.VOCState</td>
+                <td>@voc.VOCFinishingDate</td>
+                <td>@voc.VOC_TAT</td>
+
+                <td class="text-right">
+                    <div class="dropdown dropdown-action">
+                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item edit-employee" href="#" data-toggle="modal" data-target="#add_employee" data-id="@voc.Id"><i class="fa fa-edit m-r-5"></i> Edit</a>
+                            <a class="dropdown-item updateCode_employee" href="#" data-toggle="modal" data-target="#updateCode_employee" data-id="@voc.Id"><i class="fa fa-edit m-r-5"></i> Edit Code</a>
+                            <a class="dropdown-item delete-employee" href="#" data-toggle="modal" data-target="#delete_employee" data-id="@voc.Id"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

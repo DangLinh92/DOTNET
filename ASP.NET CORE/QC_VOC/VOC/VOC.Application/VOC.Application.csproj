@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VOC.Data.EF\VOC.Data.EF.csproj" />
+    <ProjectReference Include="..\VOC.Data\VOC.Data.csproj" />
+    <ProjectReference Include="..\VOC.Utilities\VOC.Utilities.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="EPPlus.Core" Version="1.5.4" />
+  </ItemGroup>
+
+</Project>

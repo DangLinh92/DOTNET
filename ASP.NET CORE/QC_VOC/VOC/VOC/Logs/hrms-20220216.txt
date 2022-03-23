@@ -1,0 +1,959 @@
+2022-02-16T09:19:29.6850489+07:00  [FTL] Unable to start Kestrel. (fc6a528d)
+System.InvalidOperationException: Unable to configure HTTPS endpoint. No server certificate was specified, and the default developer certificate could not be found or is out of date.
+To generate a developer certificate run 'dotnet dev-certs https'. To trust the certificate (Windows and macOS only) run 'dotnet dev-certs https --trust'.
+For more information on configuring HTTPS see https://go.microsoft.com/fwlink/?linkid=848054.
+   at Microsoft.AspNetCore.Hosting.ListenOptionsHttpsExtensions.UseHttps(ListenOptions listenOptions, Action`1 configureOptions)
+   at Microsoft.AspNetCore.Hosting.ListenOptionsHttpsExtensions.UseHttps(ListenOptions listenOptions)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.AddressesStrategy.BindAsync(AddressBindContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindAsync(IServerAddressesFeature addresses, KestrelServerOptions serverOptions, ILogger logger, Func`2 createBinding)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServer.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.RunAsync(IHost host, CancellationToken token)
+2022-02-16T09:20:32.2230843+07:00  [FTL] Unable to start Kestrel. (fc6a528d)
+System.InvalidOperationException: Unable to configure HTTPS endpoint. No server certificate was specified, and the default developer certificate could not be found or is out of date.
+To generate a developer certificate run 'dotnet dev-certs https'. To trust the certificate (Windows and macOS only) run 'dotnet dev-certs https --trust'.
+For more information on configuring HTTPS see https://go.microsoft.com/fwlink/?linkid=848054.
+   at Microsoft.AspNetCore.Hosting.ListenOptionsHttpsExtensions.UseHttps(ListenOptions listenOptions, Action`1 configureOptions)
+   at Microsoft.AspNetCore.Hosting.ListenOptionsHttpsExtensions.UseHttps(ListenOptions listenOptions)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.AddressesStrategy.BindAsync(AddressBindContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindAsync(IServerAddressesFeature addresses, KestrelServerOptions serverOptions, ILogger logger, Func`2 createBinding)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServer.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.RunAsync(IHost host, CancellationToken token)
+2022-02-16T09:21:47.7922395+07:00  [FTL] Unable to start Kestrel. (fc6a528d)
+System.InvalidOperationException: Unable to configure HTTPS endpoint. No server certificate was specified, and the default developer certificate could not be found or is out of date.
+To generate a developer certificate run 'dotnet dev-certs https'. To trust the certificate (Windows and macOS only) run 'dotnet dev-certs https --trust'.
+For more information on configuring HTTPS see https://go.microsoft.com/fwlink/?linkid=848054.
+   at Microsoft.AspNetCore.Hosting.ListenOptionsHttpsExtensions.UseHttps(ListenOptions listenOptions, Action`1 configureOptions)
+   at Microsoft.AspNetCore.Hosting.ListenOptionsHttpsExtensions.UseHttps(ListenOptions listenOptions)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.AddressesStrategy.BindAsync(AddressBindContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindAsync(IServerAddressesFeature addresses, KestrelServerOptions serverOptions, ILogger logger, Func`2 createBinding)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServer.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.RunAsync(IHost host, CancellationToken token)
+2022-02-16T09:25:24.9090289+07:00  [FTL] Unable to start Kestrel. (fc6a528d)
+System.InvalidOperationException: Unable to configure HTTPS endpoint. No server certificate was specified, and the default developer certificate could not be found or is out of date.
+To generate a developer certificate run 'dotnet dev-certs https'. To trust the certificate (Windows and macOS only) run 'dotnet dev-certs https --trust'.
+For more information on configuring HTTPS see https://go.microsoft.com/fwlink/?linkid=848054.
+   at Microsoft.AspNetCore.Hosting.ListenOptionsHttpsExtensions.UseHttps(ListenOptions listenOptions, Action`1 configureOptions)
+   at Microsoft.AspNetCore.Hosting.ListenOptionsHttpsExtensions.UseHttps(ListenOptions listenOptions)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.AddressesStrategy.BindAsync(AddressBindContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindAsync(IServerAddressesFeature addresses, KestrelServerOptions serverOptions, ILogger logger, Func`2 createBinding)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServer.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.RunAsync(IHost host, CancellationToken token)
+2022-02-16T09:25:44.1065981+07:00  [FTL] Unable to start Kestrel. (fc6a528d)
+System.InvalidOperationException: Unable to configure HTTPS endpoint. No server certificate was specified, and the default developer certificate could not be found or is out of date.
+To generate a developer certificate run 'dotnet dev-certs https'. To trust the certificate (Windows and macOS only) run 'dotnet dev-certs https --trust'.
+For more information on configuring HTTPS see https://go.microsoft.com/fwlink/?linkid=848054.
+   at Microsoft.AspNetCore.Hosting.ListenOptionsHttpsExtensions.UseHttps(ListenOptions listenOptions, Action`1 configureOptions)
+   at Microsoft.AspNetCore.Hosting.ListenOptionsHttpsExtensions.UseHttps(ListenOptions listenOptions)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.AddressesStrategy.BindAsync(AddressBindContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindAsync(IServerAddressesFeature addresses, KestrelServerOptions serverOptions, ILogger logger, Func`2 createBinding)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServer.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.RunAsync(IHost host, CancellationToken token)
+2022-02-16T09:40:35.4089481+07:00  [FTL] Unable to start Kestrel. (fc6a528d)
+System.InvalidOperationException: Unable to configure HTTPS endpoint. No server certificate was specified, and the default developer certificate could not be found or is out of date.
+To generate a developer certificate run 'dotnet dev-certs https'. To trust the certificate (Windows and macOS only) run 'dotnet dev-certs https --trust'.
+For more information on configuring HTTPS see https://go.microsoft.com/fwlink/?linkid=848054.
+   at Microsoft.AspNetCore.Hosting.ListenOptionsHttpsExtensions.UseHttps(ListenOptions listenOptions, Action`1 configureOptions)
+   at Microsoft.AspNetCore.Hosting.ListenOptionsHttpsExtensions.UseHttps(ListenOptions listenOptions)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.AddressesStrategy.BindAsync(AddressBindContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindAsync(IServerAddressesFeature addresses, KestrelServerOptions serverOptions, ILogger logger, Func`2 createBinding)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServer.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.RunAsync(IHost host, CancellationToken token)
+2022-02-16T09:44:36.1018912+07:00  [FTL] Unable to start Kestrel. (fc6a528d)
+System.InvalidOperationException: Unable to configure HTTPS endpoint. No server certificate was specified, and the default developer certificate could not be found or is out of date.
+To generate a developer certificate run 'dotnet dev-certs https'. To trust the certificate (Windows and macOS only) run 'dotnet dev-certs https --trust'.
+For more information on configuring HTTPS see https://go.microsoft.com/fwlink/?linkid=848054.
+   at Microsoft.AspNetCore.Hosting.ListenOptionsHttpsExtensions.UseHttps(ListenOptions listenOptions, Action`1 configureOptions)
+   at Microsoft.AspNetCore.Hosting.ListenOptionsHttpsExtensions.UseHttps(ListenOptions listenOptions)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.AddressesStrategy.BindAsync(AddressBindContext context)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindAsync(IServerAddressesFeature addresses, KestrelServerOptions serverOptions, ILogger logger, Func`2 createBinding)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServer.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.RunAsync(IHost host, CancellationToken token)
+2022-02-16T09:49:28.1790176+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T09:49:28.1869682+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T09:49:28.1888101+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T09:49:28.1899774+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T09:49:31.2989222+07:00 0HMFGURPLOHHE:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T09:50:04.2783080+07:00 0HMFGURPLOHHH:00000003 [INF] User logged in. (fdce0db4)
+2022-02-16T10:18:01.1989170+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T10:18:01.2068381+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T10:18:01.2084657+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T10:18:01.2101380+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T10:18:02.8470673+07:00 0HMFGVBO7JIP4:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T10:18:08.4175778+07:00 0HMFGVBO7JIP7:00000004 [INF] User logged in. (fdce0db4)
+2022-02-16T10:54:35.9616137+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T10:54:35.9693237+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T10:54:35.9710708+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T10:54:35.9722145+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T10:54:37.2309538+07:00 0HMFH0068MQHK:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T10:54:55.2307559+07:00 0HMFH0068MQHL:00000005 [INF] User logged in. (fdce0db4)
+2022-02-16T10:55:00.3803452+07:00 0HMFH0068MQHO:0000000C [ERR] An unhandled exception has occurred while executing the request. (48a46595)
+System.InvalidOperationException: Unable to resolve service for type 'VOC.Application.Interfaces.IKeKhaiBaoHiemService' while attempting to activate 'VOC.Areas.Admin.Controllers.NhanVienController'.
+   at Microsoft.Extensions.DependencyInjection.ActivatorUtilities.GetService(IServiceProvider sp, Type type, Type requiredBy, Boolean isDefaultParameterRequired)
+   at lambda_method(Closure , IServiceProvider , Object[] )
+   at Microsoft.AspNetCore.Mvc.Controllers.ControllerActivatorProvider.<>c__DisplayClass4_0.<CreateActivator>b__0(ControllerContext controllerContext)
+   at Microsoft.AspNetCore.Mvc.Controllers.ControllerFactoryProvider.<>c__DisplayClass5_0.<CreateControllerFactory>g__CreateController|0(ControllerContext controllerContext)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|24_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.InvokeFilterPipelineAsync()
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.MigrationsEndPointMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.DatabaseErrorPageMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.DatabaseErrorPageMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddleware.Invoke(HttpContext context)
+2022-02-16T10:57:33.6162663+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T10:57:33.6242702+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T10:57:33.6258209+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T10:57:33.6270912+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T10:57:34.8103657+07:00 0HMFH01R5G9UD:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T10:57:39.7900782+07:00 0HMFH01R5G9UF:00000004 [INF] User logged in. (fdce0db4)
+2022-02-16T11:26:23.3189467+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T11:26:23.3259637+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T11:26:23.3279777+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T11:26:23.3294924+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T11:26:24.7111264+07:00 0HMFH0HUMQFL3:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T11:26:41.5851716+07:00 0HMFH0HUMQFL8:00000004 [INF] User logged in. (fdce0db4)
+2022-02-16T11:27:11.0711762+07:00 0HMFH0HUMQFL5:00000022 [ERR] An unhandled exception has occurred while executing the request. (48a46595)
+AutoMapper.AutoMapperMappingException: Missing type map configuration or unsupported mapping.
+
+Mapping types:
+KeKhaiBaoHiemViewModel -> HR_KEKHAIBAOHIEM
+VOC.Application.ViewModels.HR.KeKhaiBaoHiemViewModel -> VOC.Data.Entities.HR_KEKHAIBAOHIEM
+   at lambda_method(Closure , KeKhaiBaoHiemViewModel , HR_KEKHAIBAOHIEM , ResolutionContext )
+   at VOC.Application.Implementation.KeKhaiBaoHiemService.Add(KeKhaiBaoHiemViewModel bhxhVm) in E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC.Application\Implementation\KeKhaiBaoHiemService.cs:line 29
+   at VOC.Areas.Admin.Controllers.NhanVienController.UpdateKeKhaiBH(KeKhaiBaoHiemViewModel data) in E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC\Areas\Admin\Controllers\NhanVienController.cs:line 1094
+   at lambda_method(Closure , Object , Object[] )
+   at Microsoft.Extensions.Internal.ObjectMethodExecutor.Execute(Object target, Object[] parameters)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.SyncActionResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeNextActionFilterAsync()
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|24_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.InvokeFilterPipelineAsync()
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.MigrationsEndPointMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.DatabaseErrorPageMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.DatabaseErrorPageMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddleware.Invoke(HttpContext context)
+2022-02-16T11:32:04.3930296+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T11:32:04.4016260+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T11:32:04.4032823+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T11:32:04.4344598+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T11:32:05.9302984+07:00 0HMFH0L4DI419:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T11:32:16.7533196+07:00 0HMFH0L4DI41B:00000004 [INF] User logged in. (fdce0db4)
+2022-02-16T11:33:36.5111575+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T11:33:36.5201184+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T11:33:36.5220087+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T11:33:36.5234020+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T11:33:37.4482410+07:00 0HMFH0LVNDPNA:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T11:33:48.9386551+07:00 0HMFH0LVNDPND:00000004 [INF] User logged in. (fdce0db4)
+2022-02-16T11:36:52.9189071+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T11:36:52.9262150+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T11:36:52.9279051+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T11:36:52.9292947+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T11:36:54.3939214+07:00 0HMFH0NQD1E8N:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T11:36:58.3789139+07:00 0HMFH0NQD1E8S:00000005 [INF] User logged in. (fdce0db4)
+2022-02-16T11:38:31.7146538+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T11:38:31.7221111+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T11:38:31.7234159+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T11:38:31.7244604+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T11:38:32.6373583+07:00 0HMFH0ONMU9QA:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T11:38:36.7365426+07:00 0HMFH0ONMU9QD:00000004 [INF] User logged in. (fdce0db4)
+2022-02-16T11:39:28.3757028+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T11:39:28.3835359+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T11:39:28.3848511+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T11:39:28.3858956+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T11:39:29.5111733+07:00 0HMFH0P8L6VHT:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T11:39:34.0569264+07:00 0HMFH0P8L6VHT:00000007 [INF] User logged in. (fdce0db4)
+2022-02-16T11:48:44.6879717+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T11:48:44.6967969+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T11:48:44.6987098+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T11:48:44.7001370+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T11:48:45.9194709+07:00 0HMFH0UEDLART:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T11:48:52.9053932+07:00 0HMFH0UEDLAS1:00000004 [INF] User logged in. (fdce0db4)
+2022-02-16T11:51:46.4870206+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T11:51:46.4954296+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T11:51:46.4975902+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T11:51:46.4989780+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T11:51:47.9452934+07:00 0HMFH104M842J:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T11:51:53.2233988+07:00 0HMFH104M842J:00000008 [INF] User logged in. (fdce0db4)
+2022-02-16T11:54:57.3633983+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T11:54:57.3707867+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T11:54:57.3722046+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T11:54:57.3975033+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T11:54:58.8055148+07:00 0HMFH11TISN3R:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T11:55:11.1535058+07:00 0HMFH11TISN3R:00000007 [INF] User logged in. (fdce0db4)
+2022-02-16T12:05:46.0887344+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T12:05:46.0972350+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T12:05:46.0993272+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T12:05:46.1011513+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T12:05:47.1371083+07:00 0HMFH17UPF75J:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T12:05:53.9109610+07:00 0HMFH17UPF75M:00000004 [INF] User logged in. (fdce0db4)
+2022-02-16T12:10:33.2063395+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T12:10:33.2143035+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T12:10:33.2158529+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T12:10:33.2169153+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T12:10:34.3426168+07:00 0HMFH1AKC212O:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T12:10:38.6854428+07:00 0HMFH1AKC212P:00000004 [INF] User logged in. (fdce0db4)
+2022-02-16T12:14:36.1668646+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T12:14:36.1743221+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T12:14:36.1762841+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T12:14:36.1781671+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T12:14:37.1826235+07:00 0HMFH1CSON5L6:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T12:14:42.4329273+07:00 0HMFH1CSON5L8:00000005 [INF] User logged in. (fdce0db4)
+2022-02-16T12:15:13.3198575+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T12:15:13.3280700+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T12:15:13.3301099+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T12:15:13.3315808+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T12:15:14.5563224+07:00 0HMFH1D7SBBIJ:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T12:15:19.5577292+07:00 0HMFH1D7SBBIN:00000004 [INF] User logged in. (fdce0db4)
+2022-02-16T12:16:07.8210495+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T12:16:07.8289923+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T12:16:07.8304077+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T12:16:07.8317520+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T12:16:09.1027199+07:00 0HMFH1DO59E32:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T12:16:12.8193581+07:00 0HMFH1DO59E35:00000004 [INF] User logged in. (fdce0db4)
+2022-02-16T12:18:17.2588024+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T12:18:17.2679918+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T12:18:17.2694242+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T12:18:17.2711347+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T12:18:18.5213546+07:00 0HMFH1EUN7TSC:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T12:18:23.6432713+07:00 0HMFH1EUN7TSC:00000007 [INF] User logged in. (fdce0db4)
+2022-02-16T12:19:55.6848719+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T12:19:55.6931690+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T12:19:55.6950647+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T12:19:55.6964736+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T12:19:56.8309765+07:00 0HMFH1FS1E5KM:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T12:20:01.5588798+07:00 0HMFH1FS1E5KN:00000004 [INF] User logged in. (fdce0db4)
+2022-02-16T12:58:59.7315773+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T12:58:59.7403087+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T12:58:59.7424107+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T12:58:59.7443576+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T12:59:01.1336354+07:00 0HMFH25ML2VGO:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T13:01:46.6464633+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T13:01:46.6541567+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T13:01:46.6559855+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T13:01:46.6573843+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T13:01:47.6514203+07:00 0HMFH278AE46O:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T13:01:56.5298591+07:00 0HMFH278AE46O:00000007 [INF] User logged in. (fdce0db4)
+2022-02-16T13:04:13.4534323+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T13:04:13.4610684+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T13:04:13.4627120+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T13:04:13.4642884+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T13:04:14.7821703+07:00 0HMFH28K59R63:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T13:04:19.6847956+07:00 0HMFH28K59R65:00000005 [INF] User logged in. (fdce0db4)
+2022-02-16T13:16:20.2600680+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T13:16:20.2678923+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T13:16:20.2700366+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T13:16:20.2936360+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T13:16:21.6815922+07:00 0HMFH2FCOLOHH:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T13:16:25.8127646+07:00 0HMFH2FCOLOHK:00000004 [INF] User logged in. (fdce0db4)
+2022-02-16T13:17:19.8203288+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T13:17:19.8276373+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T13:17:19.8295187+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T13:17:19.8311947+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T13:17:21.1983946+07:00 0HMFH2FUH9V0E:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T13:17:25.4831467+07:00 0HMFH2FUH9V0E:00000006 [INF] User logged in. (fdce0db4)
+2022-02-16T13:19:34.7142510+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T13:19:34.7220772+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T13:19:34.7236953+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T13:19:34.7248790+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T13:19:36.1479623+07:00 0HMFH2H6NOJI8:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T13:19:40.8488303+07:00 0HMFH2H6NOJI8:00000006 [INF] User logged in. (fdce0db4)
+2022-02-16T13:21:25.6568959+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T13:21:25.6645917+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T13:21:25.6661348+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T13:21:25.6679065+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T13:21:27.0336223+07:00 0HMFH2I7PPAJK:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T13:21:31.0718269+07:00 0HMFH2I7PPAJK:00000006 [INF] User logged in. (fdce0db4)
+2022-02-16T13:21:59.0202893+07:00 0HMFH2I7PPAJK:00000031 [ERR] Failed executing DbCommand ("113"ms) [Parameters=["@p10='?' (DbType = Int32), @p0='?' (Size = 50), @p1='?' (Size = 50), @p2='?' (Size = 50), @p3='?' (Size = 50), @p4='?' (Size = 50), @p5='?' (Size = 50), @p6='?' (Size = 50), @p7='?' (DbType = Double), @p8='?' (Size = 50), @p9='?' (Size = 50)"], CommandType='Text', CommandTimeout='30']"
+""SET NOCOUNT ON;
+UPDATE [HR_KEKHAIBAOHIEM] SET [CheDoBH] = @p0, [DateCreated] = @p1, [DateModified] = @p2, [MaNV] = @p3, [NgayBatDau] = @p4, [NgayKetThuc] = @p5, [NgayThanhToan] = @p6, [SoTienThanhToan] = @p7, [UserCreated] = @p8, [UserModified] = @p9
+WHERE [Id] = @p10;
+SELECT @@ROWCOUNT;" (627a98df)
+2022-02-16T13:21:59.1517140+07:00 0HMFH2I7PPAJK:00000031 [ERR] An exception occurred in the database while saving changes for context type '"VOC.Data.EF.AppDBContext"'."
+""Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while updating the entries. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): The UPDATE statement conflicted with the FOREIGN KEY constraint \"FK_HR_KEKHAIBAOHIEM_HR_CHEDOBH_CheDoBH\". The conflict occurred in database \"HRMSDB\", table \"dbo.HR_CHEDOBH\", column 'Id'.
+The statement has been terminated.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at Microsoft.Data.SqlClient.SqlDataReader.get_MetaData()
+   at Microsoft.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption, Boolean shouldCacheForAlwaysEncrypted)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean isAsync, Int32 timeout, Task& task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry, String method)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at Microsoft.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.ExecuteReader()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReader(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.Execute(IRelationalConnection connection)
+ClientConnectionId:21b722eb-cd34-4917-8c9d-f7f8d26f3a36
+Error Number:547,State:0,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.Execute(IRelationalConnection connection)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.Execute(IEnumerable`1 commandBatches, IRelationalConnection connection)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChanges(IList`1 entries)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(IList`1 entriesToSave)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(DbContext _, Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChanges(Boolean acceptAllChangesOnSuccess)" (170f029e)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while updating the entries. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): The UPDATE statement conflicted with the FOREIGN KEY constraint "FK_HR_KEKHAIBAOHIEM_HR_CHEDOBH_CheDoBH". The conflict occurred in database "HRMSDB", table "dbo.HR_CHEDOBH", column 'Id'.
+The statement has been terminated.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at Microsoft.Data.SqlClient.SqlDataReader.get_MetaData()
+   at Microsoft.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption, Boolean shouldCacheForAlwaysEncrypted)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean isAsync, Int32 timeout, Task& task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry, String method)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at Microsoft.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.ExecuteReader()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReader(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.Execute(IRelationalConnection connection)
+ClientConnectionId:21b722eb-cd34-4917-8c9d-f7f8d26f3a36
+Error Number:547,State:0,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.Execute(IRelationalConnection connection)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.Execute(IEnumerable`1 commandBatches, IRelationalConnection connection)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChanges(IList`1 entries)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(IList`1 entriesToSave)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(DbContext _, Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChanges(Boolean acceptAllChangesOnSuccess)
+2022-02-16T13:21:59.5487218+07:00 0HMFH2I7PPAJK:00000031 [ERR] An unhandled exception has occurred while executing the request. (48a46595)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while updating the entries. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): The UPDATE statement conflicted with the FOREIGN KEY constraint "FK_HR_KEKHAIBAOHIEM_HR_CHEDOBH_CheDoBH". The conflict occurred in database "HRMSDB", table "dbo.HR_CHEDOBH", column 'Id'.
+The statement has been terminated.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at Microsoft.Data.SqlClient.SqlDataReader.get_MetaData()
+   at Microsoft.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption, Boolean shouldCacheForAlwaysEncrypted)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean isAsync, Int32 timeout, Task& task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry, String method)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at Microsoft.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.ExecuteReader()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReader(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.Execute(IRelationalConnection connection)
+ClientConnectionId:21b722eb-cd34-4917-8c9d-f7f8d26f3a36
+Error Number:547,State:0,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.Execute(IRelationalConnection connection)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.Execute(IEnumerable`1 commandBatches, IRelationalConnection connection)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChanges(IList`1 entries)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(IList`1 entriesToSave)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(DbContext _, Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChanges(Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChanges()
+   at VOC.Data.EF.AppDBContext.SaveChanges() in E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC.Data.EF\AppDBContext.cs:line 92
+   at VOC.Data.EF.EFUnitOfWork.Commit() in E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC.Data.EF\EFUnitOfWork.cs:line 17
+   at VOC.Application.Implementation.KeKhaiBaoHiemService.Save() in E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC.Application\Implementation\KeKhaiBaoHiemService.cs:line 63
+   at VOC.Areas.Admin.Controllers.NhanVienController.UpdateKeKhaiBH(KeKhaiBaoHiemViewModel data) in E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC\Areas\Admin\Controllers\NhanVienController.cs:line 1118
+   at lambda_method(Closure , Object , Object[] )
+   at Microsoft.Extensions.Internal.ObjectMethodExecutor.Execute(Object target, Object[] parameters)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.SyncActionResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeNextActionFilterAsync()
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|24_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.InvokeFilterPipelineAsync()
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.MigrationsEndPointMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.DatabaseErrorPageMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.DatabaseErrorPageMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddleware.Invoke(HttpContext context)
+2022-02-16T13:22:45.9314971+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T13:22:45.9391483+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T13:22:45.9406447+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T13:22:45.9416912+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T13:22:47.5912804+07:00 0HMFH2IVOFAOV:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T13:22:51.7067104+07:00 0HMFH2IVOFAOV:00000007 [INF] User logged in. (fdce0db4)
+2022-02-16T13:26:32.2735826+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T13:26:32.2819556+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T13:26:32.2838830+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T13:26:32.2860049+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T13:26:33.5454917+07:00 0HMFH2L34934T:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T13:26:39.9077474+07:00 0HMFH2L349351:00000004 [INF] User logged in. (fdce0db4)
+2022-02-16T13:43:27.3192000+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T13:43:27.3269461+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T13:43:27.3283921+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T13:43:27.3297266+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T13:43:28.7412281+07:00 0HMFH2UHLEO1R:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T13:43:33.3678251+07:00 0HMFH2UHLEO1V:00000004 [INF] User logged in. (fdce0db4)
+2022-02-16T13:51:33.7469717+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T13:51:33.7553841+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T13:51:33.7572748+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T13:51:33.7584736+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T13:51:34.8523376+07:00 0HMFH332I2TCP:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T13:51:39.4810990+07:00 0HMFH332I2TCU:00000005 [INF] User logged in. (fdce0db4)
+2022-02-16T14:05:39.8175587+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T14:05:39.8253874+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T14:05:39.8268734+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T14:05:39.8283321+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T14:05:41.2695256+07:00 0HMFH3AUP3QVF:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T14:05:45.8136163+07:00 0HMFH3AUP3QVK:00000004 [INF] User logged in. (fdce0db4)
+2022-02-16T14:22:38.7230493+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T14:22:38.7296831+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T14:22:38.7306990+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T14:22:38.7321600+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T14:22:40.4420865+07:00 0HMFH3KEFGD3B:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T14:25:12.4028555+07:00 0HMFH3KEFGD3E:00000004 [INF] User logged in. (fdce0db4)
+2022-02-16T14:44:39.0942284+07:00 0HMFH3KEFGD3O:00000001 [ERR] Failed executing DbCommand ("126"ms) [Parameters=["@p0='?' (Size = 50)"], CommandType='Text', CommandTimeout='30']"
+""SET NOCOUNT ON;
+DELETE FROM [HR_NHANVIEN]
+WHERE [Id] = @p0;
+SELECT @@ROWCOUNT;" (627a98df)
+2022-02-16T14:44:39.2181113+07:00 0HMFH3KEFGD3O:00000001 [ERR] An exception occurred in the database while saving changes for context type '"VOC.Data.EF.AppDBContext"'."
+""Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while updating the entries. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): The DELETE statement conflicted with the REFERENCE constraint \"FK_HR_HOPDONG_HR_NHANVIEN_MaNV\". The conflict occurred in database \"HRMSDB\", table \"dbo.HR_HOPDONG\", column 'MaNV'.
+The statement has been terminated.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at Microsoft.Data.SqlClient.SqlDataReader.get_MetaData()
+   at Microsoft.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption, Boolean shouldCacheForAlwaysEncrypted)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean isAsync, Int32 timeout, Task& task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry, String method)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at Microsoft.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.ExecuteReader()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReader(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.Execute(IRelationalConnection connection)
+ClientConnectionId:dc580321-2349-4f10-8ebc-66c81a8410e9
+Error Number:547,State:0,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.Execute(IRelationalConnection connection)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.Execute(IEnumerable`1 commandBatches, IRelationalConnection connection)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChanges(IList`1 entries)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(IList`1 entriesToSave)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(DbContext _, Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChanges(Boolean acceptAllChangesOnSuccess)" (170f029e)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while updating the entries. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): The DELETE statement conflicted with the REFERENCE constraint "FK_HR_HOPDONG_HR_NHANVIEN_MaNV". The conflict occurred in database "HRMSDB", table "dbo.HR_HOPDONG", column 'MaNV'.
+The statement has been terminated.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at Microsoft.Data.SqlClient.SqlDataReader.get_MetaData()
+   at Microsoft.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption, Boolean shouldCacheForAlwaysEncrypted)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean isAsync, Int32 timeout, Task& task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry, String method)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at Microsoft.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.ExecuteReader()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReader(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.Execute(IRelationalConnection connection)
+ClientConnectionId:dc580321-2349-4f10-8ebc-66c81a8410e9
+Error Number:547,State:0,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.Execute(IRelationalConnection connection)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.Execute(IEnumerable`1 commandBatches, IRelationalConnection connection)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChanges(IList`1 entries)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(IList`1 entriesToSave)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(DbContext _, Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChanges(Boolean acceptAllChangesOnSuccess)
+2022-02-16T14:44:39.6757070+07:00 0HMFH3KEFGD3O:00000001 [ERR] An unhandled exception has occurred while executing the request. (48a46595)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while updating the entries. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): The DELETE statement conflicted with the REFERENCE constraint "FK_HR_HOPDONG_HR_NHANVIEN_MaNV". The conflict occurred in database "HRMSDB", table "dbo.HR_HOPDONG", column 'MaNV'.
+The statement has been terminated.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at Microsoft.Data.SqlClient.SqlDataReader.get_MetaData()
+   at Microsoft.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption, Boolean shouldCacheForAlwaysEncrypted)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean isAsync, Int32 timeout, Task& task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry, String method)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at Microsoft.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.ExecuteReader()
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReader(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.Execute(IRelationalConnection connection)
+ClientConnectionId:dc580321-2349-4f10-8ebc-66c81a8410e9
+Error Number:547,State:0,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.Execute(IRelationalConnection connection)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.Execute(IEnumerable`1 commandBatches, IRelationalConnection connection)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChanges(IList`1 entries)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(IList`1 entriesToSave)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(DbContext _, Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChanges(Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChanges()
+   at VOC.Data.EF.AppDBContext.SaveChanges() in E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC.Data.EF\AppDBContext.cs:line 92
+   at VOC.Data.EF.EFUnitOfWork.Commit() in E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC.Data.EF\EFUnitOfWork.cs:line 17
+   at VOC.Application.Implementation.NhanVienService.Save() in E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC.Application\Implementation\NhanVienService.cs:line 79
+   at VOC.Areas.Admin.Controllers.NhanVienController.Delete(String Id) in E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC\Areas\Admin\Controllers\NhanVienController.cs:line 228
+   at lambda_method(Closure , Object , Object[] )
+   at Microsoft.Extensions.Internal.ObjectMethodExecutor.Execute(Object target, Object[] parameters)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.SyncActionResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeNextActionFilterAsync()
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|24_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.InvokeFilterPipelineAsync()
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.MigrationsEndPointMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.DatabaseErrorPageMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.DatabaseErrorPageMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddleware.Invoke(HttpContext context)
+2022-02-16T14:50:47.8924456+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T14:50:47.9004437+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T14:50:47.9021974+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T14:50:47.9034575+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T14:50:49.2999108+07:00 0HMFH445SA6VA:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T14:50:57.1028124+07:00 0HMFH445SA6VE:00000004 [INF] User logged in. (fdce0db4)
+2022-02-16T15:06:00.7946865+07:00 0HMFH445SA6VK:00000021 [ERR] Failed executing DbCommand ("95"ms) [Parameters=["@p0='?' (Size = 50)"], CommandType='Text', CommandTimeout='30']"
+""SET NOCOUNT ON;
+DELETE FROM [HR_NHANVIEN]
+WHERE [Id] = @p0;
+SELECT @@ROWCOUNT;" (627a98df)
+2022-02-16T15:06:00.9147331+07:00 0HMFH445SA6VK:00000021 [ERR] An exception occurred in the database while saving changes for context type '"VOC.Data.EF.AppDBContext"'."
+""Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while updating the entries. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): The DELETE statement conflicted with the REFERENCE constraint \"FK_HR_HOPDONG_HR_NHANVIEN_MaNV\". The conflict occurred in database \"HRMSDB\", table \"dbo.HR_HOPDONG\", column 'MaNV'.
+The statement has been terminated.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at Microsoft.Data.SqlClient.SqlDataReader.get_MetaData()
+   at Microsoft.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption, Boolean shouldCacheForAlwaysEncrypted)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean isAsync, Int32 timeout, Task& task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry, String method)
+   at Microsoft.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReader(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.Execute(IRelationalConnection connection)
+ClientConnectionId:ad9a4a74-1972-4205-a529-b3fdad4a000e
+Error Number:547,State:0,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.Execute(IRelationalConnection connection)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.Execute(IEnumerable`1 commandBatches, IRelationalConnection connection)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChanges(IList`1 entries)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(IList`1 entriesToSave)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(DbContext _, Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChanges(Boolean acceptAllChangesOnSuccess)" (170f029e)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while updating the entries. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): The DELETE statement conflicted with the REFERENCE constraint "FK_HR_HOPDONG_HR_NHANVIEN_MaNV". The conflict occurred in database "HRMSDB", table "dbo.HR_HOPDONG", column 'MaNV'.
+The statement has been terminated.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at Microsoft.Data.SqlClient.SqlDataReader.get_MetaData()
+   at Microsoft.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption, Boolean shouldCacheForAlwaysEncrypted)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean isAsync, Int32 timeout, Task& task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry, String method)
+   at Microsoft.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReader(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.Execute(IRelationalConnection connection)
+ClientConnectionId:ad9a4a74-1972-4205-a529-b3fdad4a000e
+Error Number:547,State:0,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.Execute(IRelationalConnection connection)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.Execute(IEnumerable`1 commandBatches, IRelationalConnection connection)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChanges(IList`1 entries)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(IList`1 entriesToSave)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(DbContext _, Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChanges(Boolean acceptAllChangesOnSuccess)
+2022-02-16T15:06:01.2620066+07:00 0HMFH445SA6VK:00000021 [ERR] An unhandled exception has occurred while executing the request. (48a46595)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while updating the entries. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): The DELETE statement conflicted with the REFERENCE constraint "FK_HR_HOPDONG_HR_NHANVIEN_MaNV". The conflict occurred in database "HRMSDB", table "dbo.HR_HOPDONG", column 'MaNV'.
+The statement has been terminated.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at Microsoft.Data.SqlClient.SqlDataReader.get_MetaData()
+   at Microsoft.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption, Boolean shouldCacheForAlwaysEncrypted)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean isAsync, Int32 timeout, Task& task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry, String method)
+   at Microsoft.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReader(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.Execute(IRelationalConnection connection)
+ClientConnectionId:ad9a4a74-1972-4205-a529-b3fdad4a000e
+Error Number:547,State:0,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.Execute(IRelationalConnection connection)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.Execute(IEnumerable`1 commandBatches, IRelationalConnection connection)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChanges(IList`1 entries)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(IList`1 entriesToSave)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(DbContext _, Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChanges(Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChanges()
+   at VOC.Data.EF.AppDBContext.SaveChanges() in E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC.Data.EF\AppDBContext.cs:line 92
+   at VOC.Data.EF.EFUnitOfWork.Commit() in E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC.Data.EF\EFUnitOfWork.cs:line 17
+   at VOC.Application.Implementation.NhanVienService.Save() in E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC.Application\Implementation\NhanVienService.cs:line 79
+   at VOC.Areas.Admin.Controllers.NhanVienController.Delete(String Id) in E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC\Areas\Admin\Controllers\NhanVienController.cs:line 228
+   at lambda_method(Closure , Object , Object[] )
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.SyncActionResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeNextActionFilterAsync()
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|24_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.InvokeFilterPipelineAsync()
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.MigrationsEndPointMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.DatabaseErrorPageMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.DatabaseErrorPageMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddleware.Invoke(HttpContext context)
+2022-02-16T15:07:19.4747122+07:00 0HMFH445SA6VK:00000022 [ERR] Failed executing DbCommand ("78"ms) [Parameters=["@p0='?' (Size = 50)"], CommandType='Text', CommandTimeout='30']"
+""SET NOCOUNT ON;
+DELETE FROM [HR_NHANVIEN]
+WHERE [Id] = @p0;
+SELECT @@ROWCOUNT;" (627a98df)
+2022-02-16T15:07:19.5404041+07:00 0HMFH445SA6VK:00000022 [ERR] An exception occurred in the database while saving changes for context type '"VOC.Data.EF.AppDBContext"'."
+""Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while updating the entries. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): The DELETE statement conflicted with the REFERENCE constraint \"FK_HR_HOPDONG_HR_NHANVIEN_MaNV\". The conflict occurred in database \"HRMSDB\", table \"dbo.HR_HOPDONG\", column 'MaNV'.
+The statement has been terminated.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at Microsoft.Data.SqlClient.SqlDataReader.get_MetaData()
+   at Microsoft.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption, Boolean shouldCacheForAlwaysEncrypted)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean isAsync, Int32 timeout, Task& task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry, String method)
+   at Microsoft.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReader(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.Execute(IRelationalConnection connection)
+ClientConnectionId:ad9a4a74-1972-4205-a529-b3fdad4a000e
+Error Number:547,State:0,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.Execute(IRelationalConnection connection)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.Execute(IEnumerable`1 commandBatches, IRelationalConnection connection)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChanges(IList`1 entries)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(IList`1 entriesToSave)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(DbContext _, Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChanges(Boolean acceptAllChangesOnSuccess)" (170f029e)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while updating the entries. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): The DELETE statement conflicted with the REFERENCE constraint "FK_HR_HOPDONG_HR_NHANVIEN_MaNV". The conflict occurred in database "HRMSDB", table "dbo.HR_HOPDONG", column 'MaNV'.
+The statement has been terminated.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at Microsoft.Data.SqlClient.SqlDataReader.get_MetaData()
+   at Microsoft.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption, Boolean shouldCacheForAlwaysEncrypted)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean isAsync, Int32 timeout, Task& task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry, String method)
+   at Microsoft.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReader(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.Execute(IRelationalConnection connection)
+ClientConnectionId:ad9a4a74-1972-4205-a529-b3fdad4a000e
+Error Number:547,State:0,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.Execute(IRelationalConnection connection)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.Execute(IEnumerable`1 commandBatches, IRelationalConnection connection)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChanges(IList`1 entries)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(IList`1 entriesToSave)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(DbContext _, Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChanges(Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChanges()
+   at VOC.Data.EF.AppDBContext.SaveChanges() in E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC.Data.EF\AppDBContext.cs:line 92
+   at VOC.Data.EF.EFUnitOfWork.Commit() in E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC.Data.EF\EFUnitOfWork.cs:line 17
+   at VOC.Application.Implementation.NhanVienService.Save() in E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC.Application\Implementation\NhanVienService.cs:line 79
+   at VOC.Areas.Admin.Controllers.NhanVienController.Delete(String Id) in E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC\Areas\Admin\Controllers\NhanVienController.cs:line 228
+   at lambda_method(Closure , Object , Object[] )
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.SyncActionResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeNextActionFilterAsync()
+2022-02-16T15:07:19.9637445+07:00 0HMFH445SA6VK:00000022 [ERR] An unhandled exception has occurred while executing the request. (48a46595)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while updating the entries. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): The DELETE statement conflicted with the REFERENCE constraint "FK_HR_HOPDONG_HR_NHANVIEN_MaNV". The conflict occurred in database "HRMSDB", table "dbo.HR_HOPDONG", column 'MaNV'.
+The statement has been terminated.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at Microsoft.Data.SqlClient.SqlDataReader.get_MetaData()
+   at Microsoft.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption, Boolean shouldCacheForAlwaysEncrypted)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean isAsync, Int32 timeout, Task& task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry, String method)
+   at Microsoft.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReader(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.Execute(IRelationalConnection connection)
+ClientConnectionId:ad9a4a74-1972-4205-a529-b3fdad4a000e
+Error Number:547,State:0,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.Execute(IRelationalConnection connection)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.Execute(IEnumerable`1 commandBatches, IRelationalConnection connection)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChanges(IList`1 entries)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(IList`1 entriesToSave)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(DbContext _, Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChanges(Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChanges()
+   at VOC.Data.EF.AppDBContext.SaveChanges() in E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC.Data.EF\AppDBContext.cs:line 92
+   at VOC.Data.EF.EFUnitOfWork.Commit() in E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC.Data.EF\EFUnitOfWork.cs:line 17
+   at VOC.Application.Implementation.NhanVienService.Save() in E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC.Application\Implementation\NhanVienService.cs:line 79
+   at VOC.Areas.Admin.Controllers.NhanVienController.Delete(String Id) in E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC\Areas\Admin\Controllers\NhanVienController.cs:line 228
+   at lambda_method(Closure , Object , Object[] )
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.SyncActionResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeNextActionFilterAsync()
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|24_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.InvokeFilterPipelineAsync()
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.MigrationsEndPointMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.DatabaseErrorPageMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.DatabaseErrorPageMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddleware.Invoke(HttpContext context)
+2022-02-16T15:09:27.5483162+07:00 0HMFH445SA6VK:00000036 [ERR] Failed executing DbCommand ("85"ms) [Parameters=["@p0='?' (Size = 50)"], CommandType='Text', CommandTimeout='30']"
+""SET NOCOUNT ON;
+DELETE FROM [HR_NHANVIEN]
+WHERE [Id] = @p0;
+SELECT @@ROWCOUNT;" (627a98df)
+2022-02-16T15:09:27.6176799+07:00 0HMFH445SA6VK:00000036 [ERR] An exception occurred in the database while saving changes for context type '"VOC.Data.EF.AppDBContext"'."
+""Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while updating the entries. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): The DELETE statement conflicted with the REFERENCE constraint \"FK_HR_HOPDONG_HR_NHANVIEN_MaNV\". The conflict occurred in database \"HRMSDB\", table \"dbo.HR_HOPDONG\", column 'MaNV'.
+The statement has been terminated.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at Microsoft.Data.SqlClient.SqlDataReader.get_MetaData()
+   at Microsoft.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption, Boolean shouldCacheForAlwaysEncrypted)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean isAsync, Int32 timeout, Task& task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry, String method)
+   at Microsoft.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReader(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.Execute(IRelationalConnection connection)
+ClientConnectionId:ad9a4a74-1972-4205-a529-b3fdad4a000e
+Error Number:547,State:0,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.Execute(IRelationalConnection connection)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.Execute(IEnumerable`1 commandBatches, IRelationalConnection connection)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChanges(IList`1 entries)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(IList`1 entriesToSave)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(DbContext _, Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChanges(Boolean acceptAllChangesOnSuccess)" (170f029e)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while updating the entries. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): The DELETE statement conflicted with the REFERENCE constraint "FK_HR_HOPDONG_HR_NHANVIEN_MaNV". The conflict occurred in database "HRMSDB", table "dbo.HR_HOPDONG", column 'MaNV'.
+The statement has been terminated.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at Microsoft.Data.SqlClient.SqlDataReader.get_MetaData()
+   at Microsoft.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption, Boolean shouldCacheForAlwaysEncrypted)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean isAsync, Int32 timeout, Task& task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry, String method)
+   at Microsoft.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReader(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.Execute(IRelationalConnection connection)
+ClientConnectionId:ad9a4a74-1972-4205-a529-b3fdad4a000e
+Error Number:547,State:0,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.Execute(IRelationalConnection connection)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.Execute(IEnumerable`1 commandBatches, IRelationalConnection connection)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChanges(IList`1 entries)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(IList`1 entriesToSave)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(DbContext _, Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChanges(Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChanges()
+   at VOC.Data.EF.AppDBContext.SaveChanges() in E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC.Data.EF\AppDBContext.cs:line 92
+   at VOC.Data.EF.EFUnitOfWork.Commit() in E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC.Data.EF\EFUnitOfWork.cs:line 17
+   at VOC.Application.Implementation.NhanVienService.Save() in E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC.Application\Implementation\NhanVienService.cs:line 79
+   at VOC.Areas.Admin.Controllers.NhanVienController.Delete(String Id) in E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC\Areas\Admin\Controllers\NhanVienController.cs:line 228
+   at lambda_method(Closure , Object , Object[] )
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.SyncActionResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeNextActionFilterAsync()
+2022-02-16T15:09:27.8649110+07:00 0HMFH445SA6VK:00000036 [ERR] An unhandled exception has occurred while executing the request. (48a46595)
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while updating the entries. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): The DELETE statement conflicted with the REFERENCE constraint "FK_HR_HOPDONG_HR_NHANVIEN_MaNV". The conflict occurred in database "HRMSDB", table "dbo.HR_HOPDONG", column 'MaNV'.
+The statement has been terminated.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at Microsoft.Data.SqlClient.SqlDataReader.get_MetaData()
+   at Microsoft.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption, Boolean shouldCacheForAlwaysEncrypted)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean isAsync, Int32 timeout, Task& task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry, String method)
+   at Microsoft.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReader(RelationalCommandParameterObject parameterObject)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.Execute(IRelationalConnection connection)
+ClientConnectionId:ad9a4a74-1972-4205-a529-b3fdad4a000e
+Error Number:547,State:0,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.Execute(IRelationalConnection connection)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.Execute(IEnumerable`1 commandBatches, IRelationalConnection connection)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalDatabase.SaveChanges(IList`1 entries)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(IList`1 entriesToSave)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(DbContext _, Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChanges(Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChanges(Boolean acceptAllChangesOnSuccess)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChanges()
+   at VOC.Data.EF.AppDBContext.SaveChanges() in E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC.Data.EF\AppDBContext.cs:line 92
+   at VOC.Data.EF.EFUnitOfWork.Commit() in E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC.Data.EF\EFUnitOfWork.cs:line 17
+   at VOC.Application.Implementation.NhanVienService.Save() in E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC.Application\Implementation\NhanVienService.cs:line 79
+   at VOC.Areas.Admin.Controllers.NhanVienController.Delete(String Id) in E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC\Areas\Admin\Controllers\NhanVienController.cs:line 228
+   at lambda_method(Closure , Object , Object[] )
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.SyncActionResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeNextActionFilterAsync()
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|24_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.InvokeFilterPipelineAsync()
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.MigrationsEndPointMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.DatabaseErrorPageMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.DatabaseErrorPageMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddleware.Invoke(HttpContext context)
+2022-02-16T15:59:59.7096983+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T15:59:59.7217367+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T15:59:59.7238919+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T15:59:59.7256935+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T16:00:00.9565222+07:00 0HMFH5AR34DBB:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T16:00:05.7655137+07:00 0HMFH5AR34DBB:00000006 [INF] User logged in. (fdce0db4)
+2022-02-16T16:15:43.1930490+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-02-16T16:15:43.2006067+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-02-16T16:15:43.2020085+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-02-16T16:15:43.2034476+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\VOC\VOC" (b5d60022)
+2022-02-16T16:15:44.6657200+07:00 0HMFH5JKCREP0:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-02-16T16:15:49.7028239+07:00 0HMFH5JKCREP4:00000004 [INF] User logged in. (fdce0db4)

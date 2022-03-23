@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+        <meta name="description" content="HR - Bootstrap Admin Template">
+		<meta name="keywords" content="admin, estimates, bootstrap, business, corporate, creative, management, minimal, modern, accounts, invoice, html5, responsive, CRM, Projects">
+        <meta name="author" content="Dreamguys - Bootstrap Admin Template">
+        <meta name="robots" content="noindex, nofollow">
+        <title>Compose - HRMS admin template</title>
+		
+		<!-- Favicon -->
+        <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.png">
+		
+		<!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+		
+		<!-- Fontawesome CSS -->
+        <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+		
+		<!-- Lineawesome CSS -->
+		<link rel="stylesheet" href="assets/css/line-awesome.min.css">
+		
+		<!-- Select2 CSS -->
+		<link rel="stylesheet" href="assets/css/select2.min.css">
+		
+		<!-- Summernote CSS -->
+		<link rel="stylesheet" href="assets/plugins/summernote/dist/summernote-bs4.css">
+		
+		<!-- Main CSS -->
+        <link rel="stylesheet" href="assets/css/style.css">
+    </head>
+    <body>
+		<!-- Main Wrapper -->
+        <div class="main-wrapper">
+		
+			<!-- Header -->
+            <div class="header">
+			
+				<!-- Logo -->
+                <div class="header-left">
+                    <a href="index.html" class="logo">
+						<img src="assets/img/logo.png" width="40" height="40" alt="">
+					</a>
+                </div>
+				<!-- /Logo -->
+				
+				<a id="toggle_btn" href="javascript:void(0);">
+					<span class="bar-icon">
+						<span></span>
+						<span></span>
+						<span></span>
+					</span>
+				</a>
+				
+				<!-- Header Search -->
+                <div class="page-search-box">
+					<div class="input-group">
+						<input type="text" class="form-control" placeholder="Search">
+						<div class="input-group-append">
+						  	<button class="btn btn-outline-secondary" type="button">
+								<i class="fa fa-search"></i>
+							</button>
+						</div>
+					</div>
+                </div>
+				<!-- /Header Search -->
+				
+				<a id="mobile_btn" class="mobile_btn" href="#sidebar"><i class="fa fa-bars"></i></a>
+				
+				<!-- Header Menu -->
+				<ul class="nav user-menu">
+				
+					<!-- Notifications -->
+					<li class="nav-item dropdown">
+						<a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+							<i class="fa fa-bell-o"></i> <span class="badge badge-pill">3</span>
+						</a>
+						<div class="dropdown-menu notifications">
+							<div class="topnav-dropdown-header">
+								<span class="notification-title">Notifications</span>
+								<a href="javascript:void(0)" class="clear-noti"> Clear All </a>
+							</div>
+							<div class="noti-content">
+								<ul class="notification-list">
+									<li class="notification-message">
+										<a href="activities.html">
+											<div class="media">
+												<span class="avatar">
+													<img alt="" src="assets/img/profiles/avatar-02.jpg">
+												</span>
+												<div class="media-body">
+													<p class="noti-details"><span class="noti-title">John Doe</span> added new task <span class="noti-title">Patient appointment booking</span></p>
+													<p class="noti-time"><span class="notification-time">4 mins ago</span></p>
+												</div>
+											</div>
+										</a>
+									</li>
+									<li class="notification-message">
+										<a href="activities.html">
+											<div class="media">
+												<span class="avatar">
+													<img alt="" src="assets/img/profiles/avatar-03.jpg">
+												</span>
+												<div class="media-body">
+													<p class="noti-details"><span class="noti-title">Tarah Shropshire</span> changed the task name <span class="noti-title">Appointment booking with payment gateway</span></p>
+													<p class="noti-time"><span class="notification-time">6 mins ago</span></p>
+												</div>
+											</div>
+										</a>
+									</li>
+									<li class="notification-message">
+										<a href="activities.html">
+											<div class="media">
+												<span class="avatar">
+													<img alt="" src="assets/img/profiles/avatar-06.jpg">
+												</span>
+												<div class="media-body">
+													<p class="noti-details"><span class="noti-title">Misty Tison</span> added <span class="noti-title">Domenic Houston</span> and <span class="noti-title">Claire Mapes</span> to project <span class="noti-title">Doctor available module</span></p>
+													<p class="noti-time"><span class="notification-time">8 mins ago</span></p>
+												</div>
+											</div>
+										</a>
+									</li>
+									<li class="notification-message">
+										<a href="activities.html">
+											<div class="media">
+												<span class="avatar">
+													<img alt="" src="assets/img/profiles/avatar-17.jpg">
+												</span>
+												<div class="media-body">
+													<p class="noti-details"><span class="noti-title">Rolland Webber</span> completed task <span class="noti-title">Patient and Doctor video conferencing</span></p>
+													<p class="noti-time"><span class="notification-time">12 mins ago</span></p>
+												</div>
+											</div>
+										</a>
+									</li>
+									<li class="notification-message">
+										<a href="activities.html">
+											<div class="media">
+												<span class="avatar">
+													<img alt="" src="assets/img/profiles/avatar-13.jpg">
+												</span>
+												<div class="media-body">
+													<p class="noti-details"><span class="noti-title">Bernardo Galaviz</span> added new task <span class="noti-title">Private chat module</span></p>
+													<p class="noti-time"><span class="notification-time">2 days ago</span></p>
+												</div>
+											</div>
+										</a>
+									</li>
+								</ul>
+							</div>
+							<div class="topnav-dropdown-footer">
+								<a href="activities.html">View all Notifications</a>
+							</div>
+						</div>
+					</li>
+					<!-- /Notifications -->
+
+					<li class="nav-item dropdown has-arrow main-drop">
+						<a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+							<span class="user-img"><img src="assets/img/profiles/avatar-21.jpg" alt=""></span>
+						</a>
+						<div class="dropdown-menu">
+							<a class="dropdown-item" href="profile.html">My Profile</a>
+							<a class="dropdown-item" href="settings.html">Settings</a>
+							<a class="dropdown-item" href="login.html">Logout</a>
+						</div>
+					</li>
+				</ul>
+				<!-- /Header Menu -->
+				
+				<!-- Mobile Menu -->
+				<div class="dropdown mobile-user-menu">
+					<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+					<div class="dropdown-menu dropdown-menu-right">
+						<a class="dropdown-item" href="profile.html">My Profile</a>
+						<a class="dropdown-item" href="settings.html">Settings</a>
+						<a class="dropdown-item" href="login.html">Logout</a>
+					</div>
+				</div>
+				<!-- /Mobile Menu -->
+				
+            </div>
+			<!-- /Header -->
+			
+			<!-- Sidebar -->
+            <div class="sidebar" id="sidebar">
+                <div class="sidebar-inner slimscroll">
+					<div class="sidebar-menu">
+						<ul>
+							<li> 
+								<a href="inbox.html"><i class="la la-home"></i> <span>Back to Inbox</span></a>
+							</li>
+							<li> 
+								<a href="inbox.html">Inbox <span class="mail-count">(21)</span></a>
+							</li>
+							<li> 
+								<a href="#">Starred</a>
+							</li>
+							<li> 
+								<a href="#">Sent Mail</a>
+							</li>
+							<li> 
+								<a href="#">Draft <span class="mail-count">(8)</span></a>
+							</li>
+							<li> 
+								<a href="#">Trash</a>
+							</li>
+							<li class="menu-title">Label <a href="#"><i class="fa fa-plus"></i></a></li>
+							<li> 
+								<a href="#"><i class="fa fa-circle text-success mail-label"></i> Work</a>
+							</li>
+							<li> 
+								<a href="#"><i class="fa fa-circle text-danger mail-label"></i> Office</a>
+							</li>
+							<li> 
+								<a href="#"><i class="fa fa-circle text-warning mail-label"></i> Personal</a>
+							</li>
+						</ul>
+					</div>
+                </div>
+            </div>
+			<!-- /Sidebar -->
+			
+			<!-- Page Wrapper -->
+            <div class="page-wrapper">
+			
+				<!-- Page Content -->
+                <div class="content container-fluid">
+				
+					<!-- Page Header -->
+					<div class="page-header">
+						<div class="row">
+							<div class="col-sm-12">
+								<h3 class="page-title">Compose</h3>
+								<ul class="breadcrumb">
+									<li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+									<li class="breadcrumb-item active">Compose</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<!-- /Page Header -->
+					
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card">
+								<div class="card-body">
+									<form>
+										<div class="form-group">
+											<input type="email" placeholder="To" class="form-control">
+										</div>
+										<div class="row">
+											<div class="col-md-6">
+												<div class="form-group">
+													<input type="email" placeholder="Cc" class="form-control">
+												</div>
+											</div>
+											<div class="col-md-6">
+												<div class="form-group">
+													<input type="email" placeholder="Bcc" class="form-control">
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<input type="text" placeholder="Subject" class="form-control">
+										</div>
+										<div class="form-group">
+											<textarea rows="4" class="form-control summernote" placeholder="Enter your message here"></textarea>
+										</div>
+										<div class="form-group mb-0">
+											<div class="text-center">
+												<button class="btn btn-primary"><span>Send</span> <i class="fa fa-send m-l-5"></i></button>
+												<button class="btn btn-success m-l-5" type="button"><span>Draft</span> <i class="fa fa-floppy-o m-l-5"></i></button>
+												<button class="btn btn-success m-l-5" type="button"><span>Delete</span> <i class="fa fa-trash-o m-l-5"></i></button>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+                </div>
+				<!-- /Page Content -->
+				
+            </div>
+			<!-- /Page Wrapper -->
+			
+        </div>
+		<!-- /Main Wrapper -->
+		
+		<!-- jQuery -->
+        <script src="assets/js/jquery-3.6.0.min.js"></script>
+		
+		<!-- Bootstrap Core JS -->
+        <script src="assets/js/bootstrap.bundle.min.js"></script>
+		
+		<!-- Slimscroll JS -->
+		<script src="assets/js/jquery.slimscroll.min.js"></script>
+		
+		<!-- Summernote JS -->
+		<script src="assets/plugins/summernote/dist/summernote-bs4.min.js"></script>
+		
+		<!-- Select2 JS -->
+		<script src="assets/js/select2.min.js"></script>
+		
+		<!-- Custom JS -->
+		<script src="assets/js/app.js"></script>
+		
+    </body>
+</html>
