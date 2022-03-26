@@ -121,10 +121,9 @@ namespace VOC
                     "default",
                     "{area:exists}/{controller=Login}/{action=Index}/{id?}");
 
-                routes.MapControllerRoute(
-                    "Deptdefault",
-                    "{controller=Home}/{action=Index}");
-
+                //routes.MapControllerRoute(
+                //    "Deptdefault",
+                //    "{controller=Home}/{action=Index}");
             });
         }
     }

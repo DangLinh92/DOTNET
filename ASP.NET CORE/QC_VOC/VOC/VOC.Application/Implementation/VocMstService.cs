@@ -4,7 +4,10 @@ using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
+using System.Linq;
 using System.Text;
+using System.Threading;
 using VOC.Application.Interfaces;
 using VOC.Application.ViewModels.System;
 using VOC.Application.ViewModels.VOC;
@@ -97,9 +100,14 @@ namespace VOC.Application.Implementation
                     table.Columns.Add("VOC_TAT");
 
                     DataRow row = null;
-                    for (int i = worksheet.Dimension.Start.Row + 4; i <= worksheet.Dimension.End.Row; i++)
+                    for (int i = worksheet.Dimension.Start.Row + 3; i <= worksheet.Dimension.End.Row; i++) // Start.Row = 2
                     {
                         row = table.NewRow();
+
+                        if (worksheet.Cells[i, 3].Text.NullString() == "" || worksheet.Cells[i, 4].Text.NullString() == "")
+                        {
+                            continue;
+                        }
 
                         row["Received_site"] = worksheet.Cells[i, 3].Text.NullString();
                         row["PlaceOfOrigin"] = worksheet.Cells[i, 4].Text.NullString();
@@ -131,7 +139,9 @@ namespace VOC.Application.Implementation
                         table.Rows.Add(row);
                     }
 
-                    resultDB = _vocRepository.ExecProceduce("PKG_BUSINESS.PUT_VOC", new Dictionary<string, string>(), "A_DATA", table);
+                    Dictionary<string, string> dic = new Dictionary<string, string>();
+                    dic.Add("A_USER", GetUserId());
+                    resultDB = _vocRepository.ExecProceduce("PKG_BUSINESS.PUT_VOC", dic, "A_DATA", table);
                 }
                 return resultDB;
             }
@@ -153,6 +163,271 @@ namespace VOC.Application.Implementation
             function.UserModified = GetUserId();
             var entity = _mapper.Map<VOC_MST>(function);
             _vocRepository.Update(entity);
+        }
+
+        public List<VOC_MSTViewModel> SearchByTime(string fromTime, string toTime)
+        {
+            return _mapper.Map<List<VOC_MSTViewModel>>(_vocRepository.FindAll(x => string.Compare(x.ReceivedDate, fromTime) >= 0 && string.Compare(x.ReceivedDate, toTime) <= 0).OrderBy(x => x.ReceivedDate));
+        }
+
+
+
+        public List<VOCSiteModelByTimeLst> ReportByWeek(int fromWeek, int toWeek, string year)
+        {
+            string startTime = year + "-01-01";
+            string endTime = DateTime.Parse(startTime).AddYears(1).AddDays(-1).ToString("yyyy-MM-dd");
+            int fromW = 0;
+            int toW = GetWeekOfYear(DateTime.Parse(endTime)) - 1;
+
+            List<VOC_MSTViewModel> lstVoc = _mapper.Map<List<VOC_MSTViewModel>>(_vocRepository.FindAll(x => string.Compare(x.ReceivedDate, startTime) >= 0 && string.Compare(x.ReceivedDate, endTime) <= 0).OrderBy(x => x.ReceivedDate));
+            lstVoc = lstVoc.FindAll(x => x.VOCCount.NullString().ToUpper() == "Y" && GetWeekOfYear(DateTime.Parse(x.SPLReceivedDate.NullOtherString(x.ReceivedDate))) - 1 >= fromW &&
+                                         GetWeekOfYear(DateTime.Parse(x.SPLReceivedDate.NullOtherString(x.ReceivedDate))) - 1 <= toW);
+
+            List<string> Classifications = new List<string>();
+
+            // GET SAW, MODULE,...
+            foreach (var item in lstVoc)
+            {
+                if (!Classifications.Contains(item.PartsClassification))
+                {
+                    Classifications.Add(item.PartsClassification);
+                }
+            }
+
+            var groupList = lstVoc.FindAll(x => x.VOCCount.NullString().ToUpper() == "Y").GroupBy(x => (x.PlaceOfOrigin, x.SPLReceivedDateWeek, x.PartsClassification)).Select(gr => (gr, Total: gr.Count()));
+
+            List<VOCSiteModelByTimeLst> results = new List<VOCSiteModelByTimeLst>();
+            VOCSiteModelByTimeLst voc = null;
+
+            foreach (var c in Classifications)
+            {
+                foreach (var group in groupList)
+                {
+                    if (results.Any(x => x.DivisionLst == group.gr.Key.PlaceOfOrigin))
+                    {
+                        voc = results.FindLast(x => x.DivisionLst == group.gr.Key.PlaceOfOrigin);
+                    }
+                    else
+                    {
+                        voc = new VOCSiteModelByTimeLst();
+                        voc.DivisionLst = group.gr.Key.PlaceOfOrigin;
+                        voc.PartsClassifications.AddRange(Classifications);
+                    }
+
+                    if (voc != null && voc.DivisionLst == group.gr.Key.PlaceOfOrigin) // WHC, WTC, HQ
+                    {
+                        foreach (var item in group.gr)
+                        {
+                            if (item.PartsClassification.NullString() == c) // SAW, MODULE
+                            {
+                                if (!voc.vOCSiteModelByTimes.Any(x => x.Classification == c && x.Time == item.SPLReceivedDateWeek))
+                                {
+                                    voc.vOCSiteModelByTimes.Add(new VOCSiteModelByTime()
+                                    {
+                                        Classification = item.PartsClassification,
+                                        Qty = group.Total.IfNullIsZero(),
+                                        Time = item.SPLReceivedDateWeek
+                                    });
+                                }
+                            }
+                        }
+                    }
+
+                    if (!results.Any(x => x.DivisionLst == group.gr.Key.PlaceOfOrigin))
+                    {
+                        results.Add(voc);
+                    }
+                }
+            }
+
+            foreach (var item in results)
+            {
+                for (int i = fromW; i <= toW; i++)
+                {
+                    if (!item.TimeHeader.Contains("W" + i))
+                    {
+                        item.TimeHeader.Add("W" + i);
+                    }
+                }
+
+                item.TimeHeader.Sort(delegate (string x, string y)
+                {
+                    if (x == null && y == null) return 0;
+                    else if (x == null) return -1;
+                    else if (y == null) return 1;
+                    else return int.Parse(x.Substring(1)).CompareTo(int.Parse(y.Substring(1)));
+                });
+
+                item.vOCSiteModelByTimes.Sort(delegate (VOCSiteModelByTime x, VOCSiteModelByTime y)
+                {
+                    if (x.Time == null && y.Time == null) return 0;
+                    else if (x.Time == null) return -1;
+                    else if (y.Time == null) return 1;
+                    else return int.Parse(x.Time.Substring(1)).CompareTo(int.Parse(y.Time.Substring(1)));
+                });
+            }
+
+            foreach (var item in results)
+            {
+                foreach (var cl in item.PartsClassifications)
+                {
+                    var qtys = item.vOCSiteModelByTimes.GroupBy(x => x.Classification).Select(gr => (gr, Qty: gr.Sum(x => int.Parse(x.Qty.IfNullIsZero()))));
+
+                    foreach (var q in qtys)
+                    {
+                        foreach (var k in q.gr)
+                        {
+                            if (k.Classification == cl)
+                            {
+                                item.vOCSiteModelByTimes.Insert(0, new VOCSiteModelByTime()
+                                {
+                                    Time = year + "년 누적",
+                                    Classification = cl,
+                                    Qty = q.Qty.IfNullIsZero()
+                                });
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!item.TimeHeader.Contains(year + "년 누적"))
+                    {
+                        item.TimeHeader.Insert(0, year + "년 누적");
+                    }
+                }
+            }
+
+            List<VOCSiteModelByTime> lstModuleByTime;
+            VOCSiteModelByTime vOC;
+            foreach (var item in results)
+            {
+                lstModuleByTime = new List<VOCSiteModelByTime>();
+                for (int k = 0; k < item.PartsClassifications.Count; k++)
+                {
+                    for (int i = 0; i < item.TimeHeader.Count; i++)
+                    {
+                        vOC = item.vOCSiteModelByTimes.FirstOrDefault(x => x.Classification == item.PartsClassifications[k] && x.Time == item.TimeHeader[i]);
+                        if (vOC != null)
+                        {
+                            lstModuleByTime.Add(vOC);
+                        }
+                        else
+                        {
+                            lstModuleByTime.Add(new VOCSiteModelByTime()
+                            {
+                                Classification = item.PartsClassifications[k],
+                                Qty = "0",
+                                Time = item.TimeHeader[i]
+                            });
+                        }
+                    }
+                }
+                item.vOCSiteModelByTimes = lstModuleByTime.FindAll(x => x.Time.NullString().Contains(year) || (int.Parse(x.Time.NullString().Substring(1)) >= fromWeek && int.Parse(x.Time.NullString().Substring(1)) <= toWeek));
+            }
+
+            foreach (var item in results)
+            {
+                item.TimeHeader = item.TimeHeader.FindAll(x => x.NullString().Contains(year) || (int.Parse(x.Substring(1)) >= fromWeek && int.Parse(x.Substring(1)) <= toWeek));
+            }
+
+            return results.OrderBy(x => x.DivisionLst).ToList();
+        }
+
+        /// <summary>
+        /// US calendar
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        internal int GetWeekOfYear(DateTime date)
+        {
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+            var calendar = CultureInfo.CurrentCulture.Calendar;
+            var formatRules = CultureInfo.CurrentCulture.DateTimeFormat;
+            int week = calendar.GetWeekOfYear(date, formatRules.CalendarWeekRule, formatRules.FirstDayOfWeek);
+            return week;
+        }
+
+        public List<VOCSiteModelByTimeLst> ReportInit()
+        {
+            int fromW = GetWeekOfYear(DateTime.Now) - 2 >= 0 ? GetWeekOfYear(DateTime.Now) - 2 : 0;
+            int toW = GetWeekOfYear(DateTime.Now) - 1 >= 0 ? GetWeekOfYear(DateTime.Now) - 1 : 0;
+            return ReportByWeek(fromW, toW, DateTime.Now.Year.ToString());
+        }
+
+        /// <summary>
+        /// ▶ 22년 Total VOC 건수그래프 (제품 생산 Site 기준)
+        /// </summary>
+        /// <param name="year"></param>
+        /// <returns></returns>
+        public TotalVOCSiteModel ReportByYear(string year)
+        {
+            string startTime = year + "-01-01";
+            string endTime = DateTime.Parse(startTime).AddYears(1).AddDays(-1).ToString("yyyy-MM-dd");
+
+            List<VOC_MSTViewModel> lstVoc = _mapper.Map<List<VOC_MSTViewModel>>(_vocRepository.FindAll(x => string.Compare(x.ReceivedDate, startTime) >= 0 && string.Compare(x.ReceivedDate, endTime) <= 0).OrderBy(x => x.ReceivedDate));
+
+            var groupList = lstVoc.GroupBy(x => (x.PlaceOfOrigin, x.PartsClassification)).Select(gr => (gr, Total: gr.Count()));
+
+            TotalVOCSiteModel totalVOCSite = new TotalVOCSiteModel()
+            {
+                Year = year
+            };
+
+
+            foreach (var item in lstVoc)
+            {
+                if (!totalVOCSite.PartsClassification.Contains(item.PartsClassification))
+                {
+                    totalVOCSite.PartsClassification.Add(item.PartsClassification);
+                }
+
+                if (!totalVOCSite.Divisions.Contains(item.PlaceOfOrigin))
+                {
+                    totalVOCSite.Divisions.Add(item.PlaceOfOrigin);
+                }
+            }
+
+            TotalVOCSiteModelItem modelItem = null;
+            foreach (var group in groupList)
+            {
+                modelItem = new TotalVOCSiteModelItem()
+                {
+                    Classification = group.gr.Key.PartsClassification,
+                    Division = group.gr.Key.PlaceOfOrigin,
+                    Qty = group.Total.IfNullIsZero()
+                };
+
+                totalVOCSite.totalVOCSiteModelItems.Add(modelItem);
+            }
+
+            foreach (var item in totalVOCSite.Divisions)
+            {
+                foreach (var sub in totalVOCSite.PartsClassification)
+                {
+                    if (!totalVOCSite.totalVOCSiteModelItems.Any(x => x.Classification == sub && x.Division == item))
+                    {
+                        modelItem = new TotalVOCSiteModelItem()
+                        {
+                            Classification = sub,
+                            Division = item,
+                            Qty = "0"
+                        };
+
+                        totalVOCSite.totalVOCSiteModelItems.Add(modelItem);
+                    }
+                }
+            }
+
+            totalVOCSite.Divisions.Sort();
+            totalVOCSite.totalVOCSiteModelItems.Sort(delegate (TotalVOCSiteModelItem x, TotalVOCSiteModelItem y)
+            {
+                if (x.Division == null && y.Division == null) return 0;
+                else if (x.Division == null) return -1;
+                else if (y.Division == null) return 1;
+                else return x.Division.CompareTo(y.Division);
+            });
+
+            return totalVOCSite;
         }
     }
 }

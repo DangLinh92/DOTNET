@@ -1,0 +1,76 @@
+﻿@model List<VOCSiteModelByTimeLst>
+
+<div class="row">
+    <div class="col-sm-12">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item active"><i class="fa fa-caret-right"></i> <strong>[HQ 주간보고용] 진성 불량 그래프 (불량 SPL 접수일자 기준 / 제품 생산 Site 기준)</strong></li>
+        </ul>
+    </div>
+</div>
+<!-- Statistics Widget -->
+<div class="row">
+
+    @foreach (var item in Model)
+    {
+        <div class="col-md-12 col-lg-12 col-xl-4 d-flex">
+            <div class="card flex-fill dash-statistics">
+                <div class="card-header">
+                    <div class="card-title mb-0">@item.DivisionLst</div>
+                </div>
+                <div class="card-body">
+                    <div class="chartjs-wrapper-demo">
+                        <canvas id="@string.Format("chartstacked{0}",item.DivisionLst)" class="h-300"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<!-- /Statistics Widget -->
+<!-- weekly report data -->
+<div class="row" id="rowWeekArea">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4 d-flex">
+            <div class="card card-table flex-fill">
+                <div class="card-header">
+                    <h3 class="card-title mb-0">@item.DivisionLst</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover mb-0 table-striped custom-table datatable">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    @foreach (string timeHeader in item.TimeHeader)
+                                    {
+                                        <th>
+                                            @timeHeader
+                                        </th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var Classifi in item.PartsClassifications)
+                                {
+                                    <tr>
+                                        <td>@Classifi</td>
+                                        @foreach (VOCSiteModelByTime row in item.vOCSiteModelByTimes)
+                                        {
+                                            @if (row.Classification == Classifi)
+                                            {
+                                                <td>
+                                                    @row.Qty
+                                                </td>
+                                            }
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

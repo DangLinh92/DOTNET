@@ -16,6 +16,14 @@ namespace VOC.Application.Interfaces
 
         List<VOC_MSTViewModel> GetAll(string filter);
 
+        List<VOC_MSTViewModel> SearchByTime(string fromTime, string toTime);
+
+        List<VOCSiteModelByTimeLst> ReportByWeek(int fromWeek, int toWeek,string year);
+
+        TotalVOCSiteModel ReportByYear(string year);
+
+        List<VOCSiteModelByTimeLst> ReportInit();
+
         VOC_MSTViewModel GetById(int id);
 
         void Update(VOC_MSTViewModel function);

@@ -342,10 +342,12 @@ namespace VOC.Data.EF.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("DateCreated")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("DateModified")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("EngsNotation")
                         .HasColumnType("nvarchar(250)")
@@ -356,10 +358,12 @@ namespace VOC.Data.EF.Migrations
                         .HasMaxLength(250);
 
                     b.Property<string>("UserCreated")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("UserModified")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.HasKey("Id");
 
@@ -386,10 +390,12 @@ namespace VOC.Data.EF.Migrations
                         .HasMaxLength(500);
 
                     b.Property<string>("DateCreated")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("DateModified")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("DefectCause")
                         .HasColumnType("nvarchar(500)")
@@ -472,10 +478,12 @@ namespace VOC.Data.EF.Migrations
                         .HasMaxLength(50);
 
                     b.Property<string>("UserCreated")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("UserModified")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("VOCCount")
                         .HasColumnType("nvarchar(50)")

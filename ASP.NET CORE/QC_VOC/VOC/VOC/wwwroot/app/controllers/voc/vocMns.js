@@ -84,15 +84,79 @@
     }
 
     function InitDataTable() {
-        var table = $('#vocMstDataTable');
-        if (table) {
-            table.DataTable().destroy();
-        }
+        let myVar = setInterval(function () {
+            var table = $('#vocMstDataTable');
+            if (table) {
+                table.DataTable().destroy();
+            }
 
-        $('#vocMstDataTable').DataTable({
-            "order": [26, 'asc']
-        });
-        $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
-        $('select[name="vocMstDataTable_length"]').removeClass('form-control-sm');
+            $('#vocMstDataTable').DataTable({
+                scrollY: 400,
+                scrollX: true,
+                scrollCollapse: true,
+                paging: false,
+                fixedColumns: {
+                    left: 5
+                },
+                select: true,
+                initComplete: function () {
+                    var api = this.api();
+
+                    // For each column
+                    api
+                        .columns()
+                        .eq(0)
+                        .each(function (colIdx) {
+                            // Set the header cell to contain the input element
+                            var cell = $('.filters th').eq(
+                                $(api.column(colIdx).header()).index()
+                            );
+                            var title = $(cell).text();
+                            $(cell).html('<input type="text" placeholder="' + title + '" />');
+
+                            // On every keypress in this input
+                            $(
+                                'input',
+                                $('.filters th').eq($(api.column(colIdx).header()).index())
+                            )
+                                .off('keyup change')
+                                .on('keyup change', function (e) {
+                                    e.stopPropagation();
+
+                                    // Get the search value
+                                    $(this).attr('title', $(this).val());
+                                    var regexr = '({search})'; //$(this).parents('th').find('select').val();
+
+                                    var cursorPosition = this.selectionStart;
+                                    // Search the column for that value
+                                    api
+                                        .column(colIdx)
+                                        .search(
+                                            this.value != ''
+                                                ? regexr.replace('{search}', '(((' + this.value + ')))')
+                                                : '',
+                                            this.value != '',
+                                            this.value == ''
+                                        )
+                                        .draw();
+
+                                    $(this)
+                                        .focus()[0]
+                                        .setSelectionRange(cursorPosition, cursorPosition);
+                                });
+                        });
+                }
+                , columnDefs: [{
+                    render: function (data, type, full, meta) {
+                        return "<div class='text-wrap width-100'>" + data + "</div>";
+                    },
+                    targets: '_all'
+                }],
+                "order": [[4, 'asc']]
+            });
+            $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
+            $('select[name="vocMstDataTable_length"]').removeClass('form-control-sm');
+            clearInterval(myVar);
+        }, 500);
     }
 }

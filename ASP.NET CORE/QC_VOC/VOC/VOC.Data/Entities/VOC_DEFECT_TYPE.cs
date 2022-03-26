@@ -26,9 +26,16 @@ namespace VOC.Data.Entities
 
         [StringLength(250)]
         public string KoreanNotation { get; set; }
+        [StringLength(50)]
         public string DateCreated { get; set; }
+
+        [StringLength(50)]
         public string DateModified { get; set; }
+
+        [StringLength(50)]
         public string UserCreated { get; set; }
+
+        [StringLength(50)]
         public string UserModified { get; set; }
     }
 }

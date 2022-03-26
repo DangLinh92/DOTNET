@@ -6,6 +6,14 @@ namespace VOC.Data.EF.Extensions
 {
     public static class StringExtension
     {
+        public static string NullOtherString(this object result,string result2)
+        {
+            if (result == null)
+                return result2;
+            else
+                return result.ToString().Trim();
+        }
+
         public static string NullString(this object result)
         {
             if (result == null)

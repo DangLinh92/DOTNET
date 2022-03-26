@@ -1,72 +1,74 @@
 ﻿@model List<VOC_MSTViewModel>
+
+
 <table class="table table-bordered table-hover mb-0 table-striped custom-table datatable" id="vocMstDataTable">
     <thead>
         <tr>
             <th>
-                접수처
+                접수처<br />
                 (HQ, WTC, WHC)
             </th>
             <th>
-                부품 생산지
+                부품 생산지<br />
                 (HQ, WTC, WHC)
             </th>
             <th>
-                접수부서
+                접수부서<br />
                 (영업, 품질)
             </th>
             <th>
-                접수일자1
+                접수일자1<br />
                 (년/월/일)
             </th>
             <th>
-                불량(SPL)
+                불량(SPL)<br />
                 접수일자
             </th>
             <th>
-                불량(SPL) 접수일자
+                불량(SPL) 접수일자<br />
                 (주차), ISO8601
             </th>
             <th>고객사</th>
             <th>
-                SET Model
+                SET Model<br />
                 (고객사)
             </th>
             <th>
-                발생공정
+                발생공정<br />
                 (고객사)
             </th>
-            <th>기종명 (Full name)</th>
+            <th>기종명 <br />(Full name)</th>
             <th>불량명/현상 (고객사)</th>
-            <th>불량률 (불량수/투입수)</th>
+            <th>불량률<br />(불량수/투입수)</th>
             <th>
-                부품 구분1
+                부품 구분1<br />
                 (SAW, 모듈)
             </th>
-            <th>부품 구분2 (샘플, 양산품)</th>
+            <th>부품 구분2 <br />(샘플, 양산품)</th>
             <th>부품 생산일자 (마킹)</th>
             <th>
-                불량명
+                불량명<br />
                 (불량분석 결과)
             </th>
             <th>
-                VOC Count
+                VOC Count<br />
                 (진성 유/무)
             </th>
-            <th>불량원인 (근본원인)</th>
-            <th>원인구분 (5M+1E)</th>
+            <th>불량원인 <br />(근본원인)</th>
+            <th>원인구분<br />(5M+1E)</th>
             <th>고객통보 불량원인</th>
             <th>대책서 최종 승인자</th>
             <th>대책서 회신 담당자</th>
             <th>대책서 회신일자</th>
             <th>
-                VOC상태
+                VOC상태<br />
                 (Close, Open)
             </th>
             <th>
                 VOC 종결 일자
             </th>
             <th>
-                VOC 처리시간 (TAT)
+                VOC 처리시간<br />(TAT)
             </th>
             <th class="text-right no-sort"></th>
         </tr>
@@ -75,21 +77,21 @@
                 Received site
             </th>
             <th>
-                Place of origin
+                Place of origin<br />
                 (HQ, WTC, WHC)
             </th>
             <th>
-                Received dept.
+                Received dept.<br />
                 (Sales, Quality)
             </th>
             <th>
-                Received date(YYYY-MM-DD)
+                Received date<br />(YYYY-MM-DD)
             </th>
             <th>
-                SPL Received date(YYYY-MM-DD)
+                SPL Received date<br />(YYYY-MM-DD)
             </th>
             <th>
-                SPL Received date(week),ISO8601
+                SPL Received date<br />(week),ISO8601
             </th>
             <th>Customer</th>
             <th>
@@ -99,20 +101,20 @@
                 Process(Customer)
             </th>
             <th>Model(Full name)</th>
-            <th>Defect name/Phenomenon(Customer)</th>
+            <th>Defect name/<br />Phenomenon(Customer)</th>
             <th>
-                Defect rate
+                Defect rate<br />
                 (defect qty./input qty.)
             </th>
             <th>
-                Parts classification1
+                Parts classification1<br />
                 (SAW, Module)
             </th>
             <th>
-                Parts classification2
+                Parts classification2<br />
                 (Sample, Mass product)
             </th>
-            <th>Prodution date(Marking)</th>
+            <th>Prodution date<br />(Marking)</th>
             <th>
                 Defect name
                 (Analysis result)
@@ -120,14 +122,14 @@
             <th>
                 VOC Count
             </th>
-            <th>Defect cause (Root cause)</th>
-            <th>Defect classification(5M+1E)</th>
+            <th>Defect cause <br />(Root cause)</th>
+            <th>Defect classification<br />(5M+1E)</th>
             <th>Customer Response</th>
             <th>8D Report_Final approver</th>
             <th>8D Report_Sender</th>
             <th>8D Rport_sent date</th>
             <th>
-                VOC State
+                VOC State<br />
                 (Close, Open)
             </th>
             <th>
@@ -175,7 +177,6 @@
                         <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                         <div class="dropdown-menu dropdown-menu-right">
                             <a class="dropdown-item edit-employee" href="#" data-toggle="modal" data-target="#add_employee" data-id="@voc.Id"><i class="fa fa-edit m-r-5"></i> Edit</a>
-                            <a class="dropdown-item updateCode_employee" href="#" data-toggle="modal" data-target="#updateCode_employee" data-id="@voc.Id"><i class="fa fa-edit m-r-5"></i> Edit Code</a>
                             <a class="dropdown-item delete-employee" href="#" data-toggle="modal" data-target="#delete_employee" data-id="@voc.Id"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
                         </div>
                     </div>

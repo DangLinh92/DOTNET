@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Text.Json;
 using System.Threading.Tasks;
 using VOC.Application.Interfaces;
 using VOC.Application.ViewModels.VOC;
@@ -21,7 +22,7 @@ namespace VOC.Areas.Admin.Controllers
     {
         private readonly IWebHostEnvironment _hostingEnvironment;
         private IVocMstService _vocMstService;
-        
+
 
         public HomeController(IVocMstService vocMstService, ILogger<HomeController> logger, IWebHostEnvironment hostingEnvironment)
         {
@@ -33,6 +34,13 @@ namespace VOC.Areas.Admin.Controllers
         public IActionResult Index()
         {
             VocInfomationsModel model = new VocInfomationsModel();
+            string startTime = DateTime.Now.Year + "-01-01";
+            string endTime = DateTime.Parse(startTime).AddYears(1).AddDays(-1).ToString("yyyy-MM-dd");
+            model.vOC_MSTViews.AddRange(_vocMstService.SearchByTime(startTime, endTime));
+
+            model.vOCSiteModelByTimeLsts.AddRange(_vocMstService.ReportInit());
+            model.totalVOCSitesView = _vocMstService.ReportByYear(DateTime.Now.Year.ToString());
+
             return View(model);
         }
 
@@ -79,7 +87,7 @@ namespace VOC.Areas.Admin.Controllers
                 }
             }
 
-            _logger.LogError("Upload file: "+CommonConstants.NotFoundObjectResult_Msg);
+            _logger.LogError("Upload file: " + CommonConstants.NotFoundObjectResult_Msg);
             return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
         }
     }

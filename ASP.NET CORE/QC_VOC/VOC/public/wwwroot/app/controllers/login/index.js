@@ -44,7 +44,7 @@
             url: '/admin/login/authen',
             success: function (res) {
                 if (res.Success) {
-                    window.location.href = "/Admin/Home/Index";
+                    window.location.href = "/admin/home/index";
                 }
                 else {
                     hrms.notify(res.Message, 'error', 'alert', function () { });

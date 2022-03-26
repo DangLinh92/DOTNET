@@ -167,9 +167,17 @@ namespace VOC.Data.Entities
         // VOC 처리시간 (TAT)
         [StringLength(50)]
         public string VOC_TAT { get; set; }
+
+        [StringLength(50)]
         public string DateCreated { get; set; }
+
+        [StringLength(50)]
         public string DateModified { get; set; }
+
+        [StringLength(50)]
         public string UserCreated { get; set; }
+
+        [StringLength(50)]
         public string UserModified { get; set; }
     }
 }
