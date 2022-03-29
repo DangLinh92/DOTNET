@@ -1,0 +1,199 @@
+﻿<div id="addEdi_Voc" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add-Edit VOC</h5>
+                <input type="hidden" id="hdTypeAddEdit" />
+                <input type="hidden" id="hdId"/>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="frmAddEditVoc">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Received site <span class="text-danger">*</span></label>
+                                <select id="cboReceived_site" class="select" name="Received_site" required>
+                                    <option value="WHC">WHC</option>
+                                    <option value="WTC">WTC</option>
+                                    <option value="HQ">HQ</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Place of origin <span class="text-danger">*</span></label>
+                                <select id="cboPlaceOfOrigin" class="select" name="PlaceOfOrigin" required>
+                                    <option value="WHC">WHC</option>
+                                    <option value="WTC">WTC</option>
+                                    <option value="HQ">HQ</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Received dept</label>
+                                <select id="cboReceivedDept" class="select">
+                                    <option value="Quality">Quality</option>
+                                    <option value="Sales">Sales</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Received date<span class="text-danger">*</span></label>
+                                <div class="cal-icon"><input id="txtReceivedDate" name="ReceivedDate" class="form-control datetimepicker" type="text" required></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">SPL Received date</label>
+                                <div class="cal-icon"><input id="txtSPLReceiveddate" class="form-control datetimepicker" type="text"></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Customer</label>
+                                <input id="txtCustomer" class="form-control" type="text">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">SET Model (Customer)</label>
+                                <input id="txtSetModel" class="form-control" type="text">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Process (Customer)</label>
+                                <input id="txtProcessCustomer" class="form-control" type="text">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Model (Full name) </label>
+                                <input id="txtModelFullName" class="form-control" type="text">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Defect name/Phenomenon (Customer)</label>
+                                <input id="txtDefectName" class="form-control" type="text">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Defect rate </label>
+                                <input id="txtDefectRate" class="form-control" type="text">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">PBA FAE Result </label>
+                                <input id="txtPBA" class="form-control" type="text">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Parts classification1 (SAW, Module)<span class="text-danger">*</span></label>
+                                <select id="cboPassClass1" name="PartsClassification" class="select" required>
+                                    <option value="SAW">SAW</option>
+                                    <option value="Module">Module</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Parts classification2 (Sample, Mass product)</label>
+                                <input id="txtClassification2" type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>VOC Count <span class="text-danger">*</span></label>
+                                <select id="cboVocCount" name="VOCCount" class="select" required>
+                                    <option value="N" selected>N</option>
+                                    <option value="Y">Y</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">
+                                    Defect name(Analysis result)
+                                </label>
+                                <select class="select" id="cboDefactType">
+                                    <option value="">...Choose option</option>
+                                    <option value="1">Delta Infotech</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Prodution date (Marking)</label>
+                                <textarea id="txtMarking" rows="5" cols="5" class="form-control" placeholder="Enter text here"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Defect cause (Root cause)</label>
+                                <textarea id="txtDefectCause" rows="5" cols="5" class="form-control" placeholder="Enter text here"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Defect classification (5M+1E)</label>
+                                <textarea id="txtDefectClassification" rows="5" cols="5" class="form-control" placeholder="Enter text here"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Customer Response</label>
+                                <textarea id="txtCustomerResponse" rows="5" cols="5" class="form-control" placeholder="Enter text here"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">8D Report_Final approver</label>
+                                <input id="txtFinalApprove" type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">8D Report_Sender</label>
+                                <input id="txtReportSender" type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">8D Rport_sent date</label>
+                                <div class="cal-icon"><input id="txtReportSentDate" class="form-control datetimepicker" type="text"></div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>VOC State  <span class="text-danger">*</span></label>
+                                <select id="cboVocState" name="VOCState" class="select" required>
+                                    <option value="Open" selected>Open</option>
+                                    <option value="Close">Close</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">VOC Finishing date</label>
+                                <div class="cal-icon"><input id="txtVocFinishDate" name="VOCFinishingDate" class="form-control datetimepicker" type="text"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="submit-section">
+                        <button id="btnSaveVoc" class="btn btn-primary submit-btn">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

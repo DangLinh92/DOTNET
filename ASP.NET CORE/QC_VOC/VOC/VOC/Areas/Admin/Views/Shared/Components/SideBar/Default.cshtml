@@ -11,7 +11,7 @@
                     <a href="/Admin/Home/Index" target="_self"><i class="la la-dashboard"></i> <span> Home</span></a>
                 </li>
 
-                @foreach (var item in Model.Where(x => string.IsNullOrEmpty(x.ParentId)))
+                @*@foreach (var item in Model.Where(x => string.IsNullOrEmpty(x.ParentId)))
                 {
                     <li class="menu-title">
                         <span>@item.Name</span>
@@ -42,7 +42,7 @@
                             }
                         }
                     }
-                }
+                }*@
 
             </ul>
         </div>

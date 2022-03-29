@@ -21,12 +21,14 @@ namespace VOC.Application.Implementation
     public class VocMstService : BaseService, IVocMstService
     {
         private IRespository<VOC_MST, int> _vocRepository;
+        private IRespository<VOC_DEFECT_TYPE, int> _vocDefectTypeRepository;
         private IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public VocMstService(IRespository<VOC_MST, int> vocRepository, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public VocMstService(IRespository<VOC_MST, int> vocRepository, IRespository<VOC_DEFECT_TYPE, int> vocDefectTypeRepository, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _vocRepository = vocRepository;
+            _vocDefectTypeRepository = vocDefectTypeRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
@@ -113,8 +115,24 @@ namespace VOC.Application.Implementation
                         row["PlaceOfOrigin"] = worksheet.Cells[i, 4].Text.NullString();
                         row["ReceivedDept"] = worksheet.Cells[i, 5].Text.NullString();
                         row["ReceivedDate"] = worksheet.Cells[i, 6].Text.NullString();
+
+                        if (!DateTime.TryParse(worksheet.Cells[i, 7].Text.NullString(), out _))
+                        {
+                            resultDB.ReturnInt = -1;
+                            resultDB.ReturnString = "Received date is format (YYYY-MM-DD) : " + worksheet.Cells[i, 7].Text.NullString();
+                            return resultDB;
+                        }
+
                         row["SPLReceivedDate"] = worksheet.Cells[i, 7].Text.NullString();
-                        row["SPLReceivedDateWeek"] = worksheet.Cells[i, 8].Text.NullString();
+
+                        if (!int.TryParse(worksheet.Cells[i, 8].Text.NullString().ToUpper().Substring(1), out _))
+                        {
+                            resultDB.ReturnInt = -1;
+                            resultDB.ReturnString = "SPL Received date (week) Invalid : " + worksheet.Cells[i, 8].Text.NullString().ToUpper();
+                            return resultDB;
+                        }
+
+                        row["SPLReceivedDateWeek"] = worksheet.Cells[i, 8].Text.NullString().ToUpper();
                         row["Customer"] = worksheet.Cells[i, 9].Text.NullString();
                         row["SETModelCustomer"] = worksheet.Cells[i, 10].Text.NullString();
                         row["ProcessCustomer"] = worksheet.Cells[i, 11].Text.NullString();
@@ -126,7 +144,7 @@ namespace VOC.Application.Implementation
                         row["PartsClassification2"] = worksheet.Cells[i, 17].Text.NullString();
                         row["ProdutionDateMarking"] = worksheet.Cells[i, 18].Text.NullString();
                         row["AnalysisResult"] = worksheet.Cells[i, 19].Text.NullString();
-                        row["VOCCount"] = worksheet.Cells[i, 20].Text.NullString();
+                        row["VOCCount"] = worksheet.Cells[i, 20].Text.NullString().ToUpper();
                         row["DefectCause"] = worksheet.Cells[i, 21].Text.NullString();
                         row["DefectClassification"] = worksheet.Cells[i, 22].Text.NullString();
                         row["CustomerResponse"] = worksheet.Cells[i, 23].Text.NullString();
@@ -158,30 +176,40 @@ namespace VOC.Application.Implementation
             _unitOfWork.Commit();
         }
 
-        public void Update(VOC_MSTViewModel function)
+        public void Update(VOC_MSTViewModel model)
         {
-            function.UserModified = GetUserId();
-            var entity = _mapper.Map<VOC_MST>(function);
+            model.UserModified = GetUserId();
+            var entity = _mapper.Map<VOC_MST>(model);
             _vocRepository.Update(entity);
         }
 
         public List<VOC_MSTViewModel> SearchByTime(string fromTime, string toTime)
         {
-            return _mapper.Map<List<VOC_MSTViewModel>>(_vocRepository.FindAll(x => string.Compare(x.ReceivedDate, fromTime) >= 0 && string.Compare(x.ReceivedDate, toTime) <= 0).OrderBy(x => x.ReceivedDate));
+            var lst = _mapper.Map<List<VOC_MSTViewModel>>(_vocRepository.FindAll(x => string.Compare(x.ReceivedDate, fromTime) >= 0 && string.Compare(x.ReceivedDate, toTime) <= 0).OrderBy(x => x.ReceivedDate));
+            var lstType = _mapper.Map<List<VOC_DefectTypeViewModel>>(_vocDefectTypeRepository.FindAll());
+            foreach (var item in lst)
+            {
+                foreach (var type in lstType)
+                {
+                    if (item.AnalysisResult.NullString().Contains(type.EngsNotation.NullString()))
+                    {
+                        item.AnalysisResult += " [" + type.KoreanNotation + "]";
+                    }
+                }
+            }
+            return lst;
         }
-
-
 
         public List<VOCSiteModelByTimeLst> ReportByWeek(int fromWeek, int toWeek, string year)
         {
             string startTime = year + "-01-01";
             string endTime = DateTime.Parse(startTime).AddYears(1).AddDays(-1).ToString("yyyy-MM-dd");
             int fromW = 0;
-            int toW = GetWeekOfYear(DateTime.Parse(endTime)) - 1;
+            int toW = DateTime.Parse(endTime).GetWeekOfYear() - 1;
 
             List<VOC_MSTViewModel> lstVoc = _mapper.Map<List<VOC_MSTViewModel>>(_vocRepository.FindAll(x => string.Compare(x.ReceivedDate, startTime) >= 0 && string.Compare(x.ReceivedDate, endTime) <= 0).OrderBy(x => x.ReceivedDate));
-            lstVoc = lstVoc.FindAll(x => x.VOCCount.NullString().ToUpper() == "Y" && GetWeekOfYear(DateTime.Parse(x.SPLReceivedDate.NullOtherString(x.ReceivedDate))) - 1 >= fromW &&
-                                         GetWeekOfYear(DateTime.Parse(x.SPLReceivedDate.NullOtherString(x.ReceivedDate))) - 1 <= toW);
+            lstVoc = lstVoc.FindAll(x => x.VOCCount.NullString().ToUpper() == "Y" && DateTime.Parse(x.SPLReceivedDate.NullOtherString(x.ReceivedDate)).GetWeekOfYear() - 1 >= fromW &&
+                                         DateTime.Parse(x.SPLReceivedDate.NullOtherString(x.ReceivedDate)).GetWeekOfYear() - 1 <= toW);
 
             List<string> Classifications = new List<string>();
 
@@ -338,19 +366,19 @@ namespace VOC.Application.Implementation
         /// </summary>
         /// <param name="date"></param>
         /// <returns></returns>
-        internal int GetWeekOfYear(DateTime date)
-        {
-            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
-            var calendar = CultureInfo.CurrentCulture.Calendar;
-            var formatRules = CultureInfo.CurrentCulture.DateTimeFormat;
-            int week = calendar.GetWeekOfYear(date, formatRules.CalendarWeekRule, formatRules.FirstDayOfWeek);
-            return week;
-        }
+        //internal int GetWeekOfYear(DateTime date)
+        //{
+        //    Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+        //    var calendar = CultureInfo.CurrentCulture.Calendar;
+        //    var formatRules = CultureInfo.CurrentCulture.DateTimeFormat;
+        //    int week = calendar.GetWeekOfYear(date, formatRules.CalendarWeekRule, formatRules.FirstDayOfWeek);
+        //    return week;
+        //}
 
         public List<VOCSiteModelByTimeLst> ReportInit()
         {
-            int fromW = GetWeekOfYear(DateTime.Now) - 2 >= 0 ? GetWeekOfYear(DateTime.Now) - 2 : 0;
-            int toW = GetWeekOfYear(DateTime.Now) - 1 >= 0 ? GetWeekOfYear(DateTime.Now) - 1 : 0;
+            int fromW = DateTime.Now.GetWeekOfYear() - 2 >= 0 ? DateTime.Now.GetWeekOfYear() - 2 : 0;
+            int toW = DateTime.Now.GetWeekOfYear() - 1 >= 0 ? DateTime.Now.GetWeekOfYear() - 1 : 0;
             return ReportByWeek(fromW, toW, DateTime.Now.Year.ToString());
         }
 
@@ -372,7 +400,6 @@ namespace VOC.Application.Implementation
             {
                 Year = year
             };
-
 
             foreach (var item in lstVoc)
             {
@@ -428,6 +455,11 @@ namespace VOC.Application.Implementation
             });
 
             return totalVOCSite;
+        }
+
+        public List<VOC_DefectTypeViewModel> GetDefectType()
+        {
+            return _mapper.Map<List<VOC_DefectTypeViewModel>>(_vocDefectTypeRepository.FindAll());
         }
     }
 }

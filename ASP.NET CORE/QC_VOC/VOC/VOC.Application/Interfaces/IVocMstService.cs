@@ -26,6 +26,8 @@ namespace VOC.Application.Interfaces
 
         VOC_MSTViewModel GetById(int id);
 
+        List<VOC_DefectTypeViewModel> GetDefectType();
+
         void Update(VOC_MSTViewModel function);
 
         void Delete(int id);

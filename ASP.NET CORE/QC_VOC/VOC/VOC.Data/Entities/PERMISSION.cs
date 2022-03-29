@@ -20,6 +20,8 @@ namespace VOC.Data.Entities
         public bool CanRead { get; set; }
         public bool CanUpdate { get; set; }
         public bool CanDelete { get; set; }
+        public bool CanImport { set; get; }
+        public bool CanExport { set; get; }
 
         [ForeignKey("RoleId")]
         public virtual APP_ROLE AppRole { get; set; }

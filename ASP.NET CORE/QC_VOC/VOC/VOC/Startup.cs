@@ -18,6 +18,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
 using System;
+using Microsoft.AspNetCore.Authorization;
+using VOC.Authorization;
 
 namespace VOC
 {
@@ -78,6 +80,9 @@ namespace VOC
             // Service
             services.AddTransient<IFunctionService, FunctionService>();
             services.AddTransient<IVocMstService, VocMstService>();
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IRoleService, RoleService>();
+            services.AddTransient<IAuthorizationHandler, BaseResourceAuthorizationHandler>();
 
             services.AddMvc().AddNewtonsoftJson(options =>
             {

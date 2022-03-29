@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
+using System.Threading;
 
 namespace VOC.Data.EF.Extensions
 {
     public static class StringExtension
     {
-        public static string NullOtherString(this object result,string result2)
+        public static string NullOtherString(this object result, string result2)
         {
             if (result == null)
                 return result2;
@@ -48,6 +50,18 @@ namespace VOC.Data.EF.Extensions
             {
                 return "";
             }
+        }
+    }
+
+    public static class DateTimeEx
+    {
+        public static int GetWeekOfYear(this DateTime date)
+        {
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+            var calendar = CultureInfo.CurrentCulture.Calendar;
+            var formatRules = CultureInfo.CurrentCulture.DateTimeFormat;
+            int week = calendar.GetWeekOfYear(date, formatRules.CalendarWeekRule, formatRules.FirstDayOfWeek);
+            return week;
         }
     }
 }

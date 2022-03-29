@@ -1,4 +1,7 @@
-﻿@model VocInfomationsModel
+﻿@using Microsoft.AspNetCore.Authorization
+@using VOC.Authorization
+@inject IAuthorizationService AuthorizationService
+@model VocInfomationsModel
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -23,8 +26,9 @@
         $(document).ready(function () {
 
             $('#rowWeekArea').find('table').each(function () {
-                $(this).DataTable({
+                var tableWeek =  $(this).DataTable({
                     "searching": false,
+                    "ordering": false,
                     paging: false,
                     info: false,
                     select: {
@@ -32,6 +36,31 @@
                         items: 'cell'
                     }
                 });
+
+                tableWeek.on('select', function (e, dt, type, indexes) {
+
+                    var col = tableWeek.cell({ selected: true }).index().column;
+                    var row = tableWeek.cell({ selected: true }).index().row;
+
+                    var header = tableWeek.column(col).header();
+                    var rowData = tableWeek.rows(row).data().toArray();
+                    var time = $(header).text().trim();
+                    var classitify = rowData[0][0];
+                    var place = $(tableWeek.column(0).header()).text().trim();
+
+                    console.log(time, classitify, place);
+
+                    var table = new $.fn.dataTable.Api('#vocMstDataTable');
+                    table.columns().search('').draw();
+
+                    if (!time.includes('년 누적')) {
+
+                        table.columns(5).search(time).draw();
+                    }
+                    table.columns(1).search(place).draw();
+                    table.columns(12).search(classitify).draw();
+                    table.columns(16).search('Y').draw();
+                })
             });
 
             $('#vocMstDataTable thead tr:nth-child(2)')
@@ -107,6 +136,16 @@
             $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
             $('select[name="vocMstDataTable_length"]').removeClass('form-control-sm');
         });
+
+        $('#txtTimeTo').datetimepicker({
+            format: 'YYYY',//'DD/MM/YYYY',
+            icons: {
+                up: "fa fa-angle-up",
+                down: "fa fa-angle-down",
+                next: 'fa fa-angle-right',
+                previous: 'fa fa-angle-left'
+            }
+        });
     </script>
     <script src="~/app/controllers/voc/chart-voc.js"></script>
     <script src="~/app/controllers/voc/apexChart-voc.js"></script>
@@ -134,6 +173,11 @@
         table.datatable td {
             width: 100px;
             word-break: break-word;
+        }
+
+        #btnAddVoc {
+            background-color: dodgerblue;
+            color: white;
         }
     </style>
 }
@@ -169,11 +213,31 @@
             <div class="col">
             </div>
             <div class="col-auto float-right ml-auto">
+                @{
+                    var pCreate = await AuthorizationService.AuthorizeAsync(User, "HOME", Operations.Create);
+                    var pImport = await AuthorizationService.AuthorizeAsync(User, "HOME", Operations.Import);
+                    var pExport = await AuthorizationService.AuthorizeAsync(User, "HOME", Operations.Export);
+                }
+
+                @if (pCreate.Succeeded)
+                {
+                    <a href="#" id="btnAddVoc" class="btn" data-toggle="modal" data-target="#addEdi_Voc"><i class="fa fa-plus"></i> Add VOC</a>
+                }
                 <div class="btn-group">
                     <button type="button" class="btn btn-info dropdown-toggle" id="btnManagement" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Management</button>
                     <div class="dropdown-menu" style="">
-                        <a class="dropdown-item" href="~/templates/GLOBAL_VOC_MasterLIST_Template.xlsx">Get VOC Template</a>
-                        <a class="dropdown-item" href="#" id="btn-importVOC">Import VOC</a>
+
+                        @if (pImport.Succeeded)
+                        {
+                            <a class="dropdown-item" href="~/templates/GLOBAL_VOC_MasterLIST_Template.xlsx">Get VOC Template</a>
+                            <a class="dropdown-item" href="#" id="btn-importVOC">Import VOC</a>
+                        }
+
+                        @if (pExport.Succeeded)
+                        {
+                            <a class="dropdown-item" href="#" id="btn-exportVOC">Export VOC</a>
+                        }
+
                     </div>
                 </div>
             </div>
@@ -181,35 +245,33 @@
     </div>
 
     <!-- Search Filter -->
-    <form id="frmSearch" method="post" data-ajax="true" data-ajax-url="/Admin/ChamCong/Search" data-ajax-update="#gridVocMst" data-ajax-mode='replace' data-ajax-success="onSuccess" data-ajax-begin="onBeginAjax">
-        <div class="row filter-row">
-            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-            </div>
-            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-            </div>
-            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-            </div>
-            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-                <div class="form-group form-focus">
+    <div class="row filter-row">
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            @*<div class="form-group form-focus">
                     <div class="cal-icon">
                         <input id="txtTimeFrom" name="fromTime" class="form-control floating datetimepicker" type="text">
                     </div>
                     <label class="focus-label">From</label>
+                </div>*@
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            <div class="form-group form-focus">
+                <div class="cal-icon">
+                    <input id="txtTimeTo" name="toTime" class="form-control floating datetimepicker" type="text">
                 </div>
-            </div>
-            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-                <div class="form-group form-focus">
-                    <div class="cal-icon">
-                        <input id="txtTimeTo" name="toTime" class="form-control floating datetimepicker" type="text">
-                    </div>
-                    <label class="focus-label">To</label>
-                </div>
-            </div>
-            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-                <button id="btnSearch" type="submit" class="btn btn-success btn-block"> Search </button>
+                <label class="focus-label">YEAR</label>
             </div>
         </div>
-    </form>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            <button id="btnSearch" class="btn btn-success btn-block"> Search </button>
+        </div>
+    </div>
     <!-- /Search Filter -->
 
     <div class="row">
@@ -222,4 +284,31 @@
 
 </div>
 <partial name="_importExcelModelView" />
+<partial name="_addeditvocmodelview" />
+
+
+<div class="modal custom-modal fade" id="delete_vocModel" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header">
+                    <h3>Delete VOC</h3>
+                    <p>Are you sure want to delete?</p>
+                    <input type="hidden" id="txtId" />
+                </div>
+                <div class="modal-btn delete-action">
+                    <div class="row">
+                        <div class="col-6">
+                            <a href="javascript:void(0);" class="btn btn-primary continue-btn" id="btnDelete">Delete</a>
+                        </div>
+                        <div class="col-6">
+                            <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- /Page Content -->

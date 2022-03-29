@@ -38,10 +38,10 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-bordered table-hover mb-0 table-striped custom-table datatable">
+                        <table class="table table-bordered table-hover mb-0 table-striped custom-table datatable" id="@string.Format("table_{0}",item.DivisionLst)">
                             <thead>
                                 <tr>
-                                    <th></th>
+                                    <th>@item.DivisionLst</th>
                                     @foreach (string timeHeader in item.TimeHeader)
                                     {
                                         <th>

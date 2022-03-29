@@ -1,5 +1,7 @@
-﻿@model List<VOC_MSTViewModel>
-
+﻿@using Microsoft.AspNetCore.Authorization
+@using VOC.Authorization
+@inject IAuthorizationService AuthorizationService
+@model List<VOC_MSTViewModel>
 
 <table class="table table-bordered table-hover mb-0 table-striped custom-table datatable" id="vocMstDataTable">
     <thead>
@@ -174,10 +176,22 @@
 
                 <td class="text-right">
                     <div class="dropdown dropdown-action">
+                        @{
+                            var pDelete = await AuthorizationService.AuthorizeAsync(User, "HOME", Operations.Delete);
+                            var pUpdate = await AuthorizationService.AuthorizeAsync(User, "HOME", Operations.Update);
+                        }
+
                         <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                         <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item edit-employee" href="#" data-toggle="modal" data-target="#add_employee" data-id="@voc.Id"><i class="fa fa-edit m-r-5"></i> Edit</a>
-                            <a class="dropdown-item delete-employee" href="#" data-toggle="modal" data-target="#delete_employee" data-id="@voc.Id"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                            @if (pUpdate.Succeeded)
+                            {
+                                <a class="dropdown-item edit-voc" href="#" data-toggle="modal" data-target="#addEdi_Voc" data-id="@voc.Id"><i class="fa fa-edit m-r-5"></i> Edit</a>
+                            }
+
+                            @if (pDelete.Succeeded)
+                            {
+                                <a class="dropdown-item delete-voc" href="#" data-toggle="modal" data-target="#delete_vocModel" data-id="@voc.Id"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                            }
                         </div>
                     </div>
                 </td>
