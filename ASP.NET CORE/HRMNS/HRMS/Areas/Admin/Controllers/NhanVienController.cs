@@ -235,7 +235,7 @@ namespace HRMS.Areas.Admin.Controllers
             {
                 // add a new worksheet to the empty workbook
                 ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Employee");
-                worksheet.Cells["A1"].LoadFromCollection(nhanviens, true, TableStyles.Light1);
+                worksheet.Cells["A1"].LoadFromCollection(nhanviens, true, TableStyles.Light11);
                 worksheet.Cells.AutoFitColumns();
                 package.Save(); //Save the workbook.
             }
