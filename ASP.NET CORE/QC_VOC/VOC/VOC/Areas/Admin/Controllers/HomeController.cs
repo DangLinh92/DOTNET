@@ -44,7 +44,17 @@ namespace VOC.Areas.Admin.Controllers
                 model.vOC_MSTViews.AddRange(_vocMstService.SearchByTime(startTime, endTime));
 
                 model.vOCSiteModelByTimeLsts.AddRange(_vocMstService.ReportInit());
+
+                // VE BIEU DO TOTAL THEO NAM
                 model.totalVOCSitesView = _vocMstService.ReportByYear(DateTime.Now.Year.ToString());
+
+
+                // VE BIEU DO PARETO CHO DEFECT NAME
+                model.paretoDataDefectName.AddRange(_vocMstService.ReportDefectByYear(DateTime.Now.Year.ToString(), "SAW"));
+                model.paretoDataDefectName.AddRange(_vocMstService.ReportDefectByYear(DateTime.Now.Year.ToString(), "Module"));
+
+                // Ve Bieu Do PPM
+                _vocMstService.ReportPPMByYear(DateTime.Now.Year.ToString());
             }
             else
             {
@@ -55,7 +65,13 @@ namespace VOC.Areas.Admin.Controllers
                 int endWeek = DateTime.Parse(endTime).GetWeekOfYear() - 1;
 
                 model.vOCSiteModelByTimeLsts.AddRange(_vocMstService.ReportByWeek(endWeek - 4, endWeek, year.ToString()));
+
+                // VE BIEU DO TOTAL THEO NAM
                 model.totalVOCSitesView = _vocMstService.ReportByYear(year.ToString());
+
+                // VE BIEU DO PARETO CHO DEFECT NAME
+                model.paretoDataDefectName.AddRange(_vocMstService.ReportDefectByYear(year.ToString(), "SAW"));
+                model.paretoDataDefectName.AddRange(_vocMstService.ReportDefectByYear(year.ToString(), "Module"));
             }
 
             return View(model);
@@ -171,7 +187,7 @@ namespace VOC.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult ExportExcel(string year)
         {
-            if (!int.TryParse(year,out _))
+            if (!int.TryParse(year, out _))
             {
                 return new BadRequestObjectResult("Year :" + year + " invalid!");
             }
@@ -193,7 +209,7 @@ namespace VOC.Areas.Admin.Controllers
 
             string startTime = year + "-01-01";
             string endTime = DateTime.Parse(startTime).AddYears(1).AddDays(-1).ToString("yyyy-MM-dd");
-           var vocs = _vocMstService.SearchByTime(startTime, endTime);
+            var vocs = _vocMstService.SearchByTime(startTime, endTime);
 
             using (ExcelPackage package = new ExcelPackage(file))
             {

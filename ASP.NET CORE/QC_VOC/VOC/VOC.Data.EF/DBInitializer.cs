@@ -101,6 +101,266 @@ namespace VOC.Data.EF
                 });
             }
 
+            if (_context.VocPPM.Count() == 0)
+            {
+                _context.VocPPM.AddRange(new List<VOC_PPM>() { 
+                    // CSP
+                    // SEVT
+                    new VOC_PPM()
+                    {
+                        Year = 2022,
+                        Month = 1,
+                        Module = "CSP",
+                        Customer = "SEVT",
+                        Type = "Input",
+                        Value = 1933047,
+                        TargetValue = 5
+                    },
+                    new VOC_PPM()
+                    {
+                        Year = 2022,
+                        Month = 2,
+                        Module = "CSP",
+                        Customer = "SEVT",
+                        Type = "Input",
+                        Value = 550748,
+                        TargetValue = 5
+                    },
+                    new VOC_PPM()
+                    {
+                        Year = 2022,
+                        Month = 3,
+                        Module = "CSP",
+                        Customer = "SEVT",
+                        Type = "Input",
+                        Value = 7619202,
+                        TargetValue = 5
+                    },
+
+                    new VOC_PPM()
+                    {
+                        Year = 2022,
+                        Month = 1,
+                        Module = "CSP",
+                        Customer = "SEVT",
+                        Type = "Defect",
+                        Value = 11,
+                        TargetValue = 5
+                    },
+                    new VOC_PPM()
+                    {
+                        Year = 2022,
+                        Month = 2,
+                        Module = "CSP",
+                        Customer = "SEVT",
+                        Type = "Defect",
+                        Value = 2,
+                        TargetValue = 5
+                    },
+                    new VOC_PPM()
+                    {
+                        Year = 2022,
+                        Month = 3,
+                        Module = "CSP",
+                        Customer = "SEVT",
+                        Type = "Defect",
+                        Value = 40,
+                        TargetValue = 5
+                    },
+
+                    // SEV
+                     new VOC_PPM()
+                    {
+                        Year = 2022,
+                        Month = 1,
+                        Module = "CSP",
+                        Customer = "SEV",
+                        Type = "Input",
+                        Value = 1542788,
+                        TargetValue = 5
+                    },
+                    new VOC_PPM()
+                    {
+                        Year = 2022,
+                        Month = 2,
+                        Module = "CSP",
+                        Customer = "SEV",
+                        Type = "Input",
+                        Value = 1149092,
+                        TargetValue = 5
+                    },
+                    new VOC_PPM()
+                    {
+                        Year = 2022,
+                        Month = 3,
+                        Module = "CSP",
+                        Customer = "SEV",
+                        Type = "Input",
+                        Value = 3576318,
+                        TargetValue = 5
+                    },
+
+                    new VOC_PPM()
+                    {
+                        Year = 2022,
+                        Month = 1,
+                        Module = "CSP",
+                        Customer = "SEV",
+                        Type = "Defect",
+                        Value = 3,
+                        TargetValue = 5
+                    },
+                    new VOC_PPM()
+                    {
+                        Year = 2022,
+                        Month = 2,
+                        Module = "CSP",
+                        Customer = "SEV",
+                        Type = "Defect",
+                        Value = 4,
+                        TargetValue = 5
+                    },
+                    new VOC_PPM()
+                    {
+                        Year = 2022,
+                        Month = 3,
+                        Module = "CSP",
+                        Customer = "SEV",
+                        Type = "Defect",
+                        Value = 44,
+                        TargetValue = 5
+                    },
+
+                    // ------------
+                    // LFEM
+                    // SEVT
+                    new VOC_PPM()
+                    {
+                        Year = 2022,
+                        Month = 1,
+                        Module = "LFEM",
+                        Customer = "SEVT",
+                        Type = "Input",
+                        Value = 3883385,
+                        TargetValue = 5
+                    },
+                    new VOC_PPM()
+                    {
+                        Year = 2022,
+                        Month = 2,
+                        Module = "LFEM",
+                        Customer = "SEVT",
+                        Type = "Input",
+                        Value = 3561247,
+                        TargetValue = 5
+                    },
+                    new VOC_PPM()
+                    {
+                        Year = 2022,
+                        Month = 3,
+                        Module = "LFEM",
+                        Customer = "SEVT",
+                        Type = "Input",
+                        Value = 7953018,
+                        TargetValue = 5
+                    },
+
+                    new VOC_PPM()
+                    {
+                        Year = 2022,
+                        Month = 1,
+                        Module = "LFEM",
+                        Customer = "SEVT",
+                        Type = "Defect",
+                        Value = 29,
+                        TargetValue = 5
+                    },
+                    new VOC_PPM()
+                    {
+                        Year = 2022,
+                        Month = 2,
+                        Module = "LFEM",
+                        Customer = "SEVT",
+                        Type = "Defect",
+                        Value = 17,
+                        TargetValue = 5
+                    },
+                    new VOC_PPM()
+                    {
+                        Year = 2022,
+                        Month = 3,
+                        Module = "LFEM",
+                        Customer = "SEVT",
+                        Type = "Defect",
+                        Value = 62,
+                        TargetValue = 5
+                    },
+
+                    // SEV
+                     new VOC_PPM()
+                    {
+                        Year = 2022,
+                        Month = 1,
+                        Module = "LFEM",
+                        Customer = "SEV",
+                        Type = "Input",
+                        Value = 1711854,
+                        TargetValue = 5
+                    },
+                    new VOC_PPM()
+                    {
+                        Year = 2022,
+                        Month = 2,
+                        Module = "LFEM",
+                        Customer = "SEV",
+                        Type = "Input",
+                        Value = 1921296,
+                        TargetValue = 5
+                    },
+                    new VOC_PPM()
+                    {
+                        Year = 2022,
+                        Month = 3,
+                        Module = "LFEM",
+                        Customer = "SEV",
+                        Type = "Input",
+                        Value = 3328655,
+                        TargetValue = 5
+                    },
+
+                    new VOC_PPM()
+                    {
+                        Year = 2022,
+                        Month = 1,
+                        Module = "LFEM",
+                        Customer = "SEV",
+                        Type = "Defect",
+                        Value = 7,
+                        TargetValue = 5
+                    },
+                    new VOC_PPM()
+                    {
+                        Year = 2022,
+                        Month = 2,
+                        Module = "LFEM",
+                        Customer = "SEV",
+                        Type = "Defect",
+                        Value = 4,
+                        TargetValue = 5
+                    },
+                    new VOC_PPM()
+                    {
+                        Year = 2022,
+                        Month = 3,
+                        Module = "LFEM",
+                        Customer = "SEV",
+                        Type = "Defect",
+                        Value = 23,
+                        TargetValue = 5
+                    },
+                });
+            }
+
             await _context.SaveChangesAsync();
         }
     }

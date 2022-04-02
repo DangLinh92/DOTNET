@@ -63,5 +63,10 @@ namespace VOC.Data.EF.Extensions
             int week = calendar.GetWeekOfYear(date, formatRules.CalendarWeekRule, formatRules.FirstDayOfWeek);
             return week;
         }
+
+        public static string GeMonthOfYear(this DateTime date)
+        {
+            return date.ToString("yyMM");
+        }
     }
 }

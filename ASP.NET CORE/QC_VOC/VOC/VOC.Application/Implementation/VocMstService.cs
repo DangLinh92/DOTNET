@@ -22,13 +22,15 @@ namespace VOC.Application.Implementation
     {
         private IRespository<VOC_MST, int> _vocRepository;
         private IRespository<VOC_DEFECT_TYPE, int> _vocDefectTypeRepository;
+        private IRespository<VOC_PPM, int> _vocPPMRepository;
         private IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public VocMstService(IRespository<VOC_MST, int> vocRepository, IRespository<VOC_DEFECT_TYPE, int> vocDefectTypeRepository, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public VocMstService(IRespository<VOC_MST, int> vocRepository, IRespository<VOC_PPM, int> vocPPMRepository, IRespository<VOC_DEFECT_TYPE, int> vocDefectTypeRepository, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _vocRepository = vocRepository;
             _vocDefectTypeRepository = vocDefectTypeRepository;
+            _vocPPMRepository = vocPPMRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
@@ -187,17 +189,192 @@ namespace VOC.Application.Implementation
         {
             var lst = _mapper.Map<List<VOC_MSTViewModel>>(_vocRepository.FindAll(x => string.Compare(x.ReceivedDate, fromTime) >= 0 && string.Compare(x.ReceivedDate, toTime) <= 0).OrderBy(x => x.ReceivedDate));
             var lstType = _mapper.Map<List<VOC_DefectTypeViewModel>>(_vocDefectTypeRepository.FindAll());
-            foreach (var item in lst)
+            //foreach (var item in lst)
+            //{
+            //    foreach (var type in lstType)
+            //    {
+            //        if (item.AnalysisResult.NullString().Contains(type.EngsNotation.NullString()))
+            //        {
+            //            item.AnalysisResult += " [" + type.KoreanNotation + "]";
+            //        }
+            //    }
+            //}
+            return lst;
+        }
+
+        public List<VOCSiteModelByTimeLst> ReportByMonth(string year)
+        {
+            string startTime = year + "-01-01";
+            string endTime = DateTime.Parse(startTime).AddYears(1).AddDays(-1).ToString("yyyy-MM-dd");
+
+            List<VOC_MSTViewModel> lstVoc = _mapper.Map<List<VOC_MSTViewModel>>(
+                _vocRepository.FindAll(x => x.VOCCount == "Y" &&
+                string.Compare(x.ReceivedDate, startTime) >= 0 &&
+                string.Compare(x.ReceivedDate, endTime) <= 0).OrderBy(x => x.ReceivedDate));
+
+            List<string> Classifications = new List<string>();
+
+            // GET SAW, MODULE,...
+            foreach (var item in lstVoc)
             {
-                foreach (var type in lstType)
+                if (!Classifications.Contains(item.PartsClassification.NullString()))
                 {
-                    if (item.AnalysisResult.NullString().Contains(type.EngsNotation.NullString()))
+                    Classifications.Add(item.PartsClassification.NullString());
+                }
+            }
+
+            var groupList = lstVoc.GroupBy(x => (x.PlaceOfOrigin, x.SPLReceivedDateMonth, x.PartsClassification)).Select(gr => (gr, Total: gr.Count()));
+
+            List<VOCSiteModelByTimeLst> results = new List<VOCSiteModelByTimeLst>();
+            VOCSiteModelByTimeLst voc = null;
+
+            foreach (var c in Classifications)
+            {
+                foreach (var group in groupList)
+                {
+                    if (results.Any(x => x.DivisionLst == group.gr.Key.PlaceOfOrigin))
                     {
-                        item.AnalysisResult += " [" + type.KoreanNotation + "]";
+                        voc = results.FindLast(x => x.DivisionLst == group.gr.Key.PlaceOfOrigin);
+                    }
+                    else
+                    {
+                        voc = new VOCSiteModelByTimeLst();
+                        voc.DivisionLst = group.gr.Key.PlaceOfOrigin;
+                        voc.PartsClassifications.AddRange(Classifications);
+                    }
+
+                    if (voc != null && voc.DivisionLst == group.gr.Key.PlaceOfOrigin) // WHC, WTC, HQ
+                    {
+                        foreach (var item in group.gr)
+                        {
+                            if (item.PartsClassification.NullString() == c) // SAW, MODULE
+                            {
+                                if (!voc.vOCSiteModelByTimes.Any(x => x.Classification == c && x.Time == item.SPLReceivedDateMonth))
+                                {
+                                    voc.vOCSiteModelByTimes.Add(new VOCSiteModelByTime()
+                                    {
+                                        Classification = item.PartsClassification,
+                                        Qty = group.Total.IfNullIsZero(),
+                                        Time = item.SPLReceivedDateMonth
+                                    });
+                                }
+                            }
+                        }
+                    }
+
+                    if (!results.Any(x => x.DivisionLst == group.gr.Key.PlaceOfOrigin))
+                    {
+                        results.Add(voc);
                     }
                 }
             }
-            return lst;
+
+            foreach (var item in results)
+            {
+                for (int i = 0; i < 12; i++)
+                {
+                    if (!item.TimeHeader.Contains(DateTime.Parse(startTime).AddMonths(i).ToString("yyMM")))
+                    {
+                        item.TimeHeader.Add(DateTime.Parse(startTime).AddMonths(i).ToString("yyMM"));
+                    }
+                }
+
+                item.TimeHeader.Sort(delegate (string x, string y)
+                {
+                    if (x == null && y == null) return 0;
+                    else if (x == null) return -1;
+                    else if (y == null) return 1;
+                    else return int.Parse(x.Substring(1)).CompareTo(int.Parse(y.Substring(1)));
+                });
+
+                item.vOCSiteModelByTimes.Sort(delegate (VOCSiteModelByTime x, VOCSiteModelByTime y)
+                {
+                    if (x.Time == null && y.Time == null) return 0;
+                    else if (x.Time == null) return -1;
+                    else if (y.Time == null) return 1;
+                    else return int.Parse(x.Time.Substring(1)).CompareTo(int.Parse(y.Time.Substring(1)));
+                });
+            }
+
+            foreach (var item in results)
+            {
+                foreach (var cl in item.PartsClassifications)
+                {
+                    var qtys = item.vOCSiteModelByTimes.GroupBy(x => x.Classification).Select(gr => (gr, Qty: gr.Sum(x => int.Parse(x.Qty.IfNullIsZero()))));
+
+                    foreach (var q in qtys)
+                    {
+                        foreach (var k in q.gr)
+                        {
+                            if (k.Classification == cl)
+                            {
+                                item.vOCSiteModelByTimes.Insert(0, new VOCSiteModelByTime()
+                                {
+                                    Time = year + "년 누적",
+                                    Classification = cl,
+                                    Qty = q.Qty.IfNullIsZero()
+                                });
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!item.TimeHeader.Contains(year + "년 누적"))
+                    {
+                        item.TimeHeader.Insert(0, year + "년 누적");
+                    }
+                }
+            }
+
+            List<VOCSiteModelByTime> lstModuleByTime;
+            VOCSiteModelByTime vOC;
+            foreach (var item in results)
+            {
+                lstModuleByTime = new List<VOCSiteModelByTime>();
+                for (int k = 0; k < item.PartsClassifications.Count; k++)
+                {
+                    for (int i = 0; i < item.TimeHeader.Count; i++)
+                    {
+                        vOC = item.vOCSiteModelByTimes.FirstOrDefault(x => x.Classification == item.PartsClassifications[k] && x.Time == item.TimeHeader[i]);
+                        if (vOC != null)
+                        {
+                            lstModuleByTime.Add(vOC);
+                        }
+                        else
+                        {
+                            lstModuleByTime.Add(new VOCSiteModelByTime()
+                            {
+                                Classification = item.PartsClassifications[k],
+                                Qty = "0",
+                                Time = item.TimeHeader[i]
+                            });
+                        }
+                    }
+                }
+
+                //if (DateTime.Now.Year.ToString() == year)
+                //{
+                //    item.vOCSiteModelByTimes = lstModuleByTime.FindAll(x => x.Time.NullString().Contains(year) || string.Compare(x.Time.NullString(), DateTime.Now.ToString("yyMM")) <= 0);
+                //}
+                //else
+                //{
+                //    item.vOCSiteModelByTimes = lstModuleByTime;
+                //}
+
+                item.vOCSiteModelByTimes = lstModuleByTime;
+            }
+
+            //if (DateTime.Now.Year.ToString() == year)
+            //{
+            //    foreach (var item in results)
+            //    {
+
+            //        item.TimeHeader = item.TimeHeader.FindAll(x => x.NullString().Contains(year) || string.Compare(x.NullString(), DateTime.Now.ToString("yyMM")) <= 0);
+
+            //    }
+            //}
+
+            return results.FindAll(x => x.DivisionLst == "WHC").ToList();// results.OrderBy(x=>x.DivisionLst);
         }
 
         public List<VOCSiteModelByTimeLst> ReportByWeek(int fromWeek, int toWeek, string year)
@@ -379,7 +556,7 @@ namespace VOC.Application.Implementation
         {
             int fromW = DateTime.Now.GetWeekOfYear() - 2 >= 0 ? DateTime.Now.GetWeekOfYear() - 2 : 0;
             int toW = DateTime.Now.GetWeekOfYear() - 1 >= 0 ? DateTime.Now.GetWeekOfYear() - 1 : 0;
-            return ReportByWeek(fromW, toW, DateTime.Now.Year.ToString());
+            return ReportByMonth(DateTime.Now.Year.ToString());//ReportByWeek(fromW, toW, DateTime.Now.Year.ToString());
         }
 
         /// <summary>
@@ -460,6 +637,439 @@ namespace VOC.Application.Implementation
         public List<VOC_DefectTypeViewModel> GetDefectType()
         {
             return _mapper.Map<List<VOC_DefectTypeViewModel>>(_vocDefectTypeRepository.FindAll());
+        }
+
+        public List<VOCSiteModelByTimeLst> ReportVOCFinish(int fromWeek, int toWeek, string year)
+        {
+            string startTime = year + "-01-01";
+            string endTime = DateTime.Parse(startTime).AddYears(1).AddDays(-1).ToString("yyyy-MM-dd");
+            int fromW = 0;
+            int toW = DateTime.Parse(endTime).GetWeekOfYear() - 1;
+
+            List<VOC_MSTViewModel> lstVoc = _mapper.Map<List<VOC_MSTViewModel>>(_vocRepository.FindAll(x => string.Compare(x.ReceivedDate, startTime) >= 0 && string.Compare(x.ReceivedDate, endTime) <= 0).OrderBy(x => x.ReceivedDate));
+
+            var groupList = lstVoc.GroupBy(x => (x.PlaceOfOrigin, x.VOCCount, x.VOCFinishingWeek)).Select(gr => (gr, Total: gr.Count()));
+
+            List<string> Classifications = new List<string>();
+
+            // GET voc count Y/N
+            foreach (var item in lstVoc)
+            {
+                if (!Classifications.Contains(item.VOCCount.NullString().ToUpper()))
+                {
+                    Classifications.Add(item.VOCCount.NullString().ToUpper());
+                }
+            }
+
+            List<VOCSiteModelByTimeLst> results = new List<VOCSiteModelByTimeLst>();
+            VOCSiteModelByTimeLst voc = null;
+
+            foreach (var c in Classifications)
+            {
+                foreach (var group in groupList)
+                {
+                    if (results.Any(x => x.DivisionLst == group.gr.Key.PlaceOfOrigin))
+                    {
+                        voc = results.FindLast(x => x.DivisionLst == group.gr.Key.PlaceOfOrigin);
+                    }
+                    else
+                    {
+                        voc = new VOCSiteModelByTimeLst();
+                        voc.DivisionLst = group.gr.Key.PlaceOfOrigin;
+                        voc.PartsClassifications.AddRange(Classifications);
+                    }
+
+                    if (voc != null && voc.DivisionLst == group.gr.Key.PlaceOfOrigin) // WHC, WTC, HQ
+                    {
+                        foreach (var item in group.gr)
+                        {
+                            if (item.VOCCount.NullString().ToUpper() == c) // Y/N
+                            {
+                                if (!voc.vOCSiteModelByTimes.Any(x => x.Classification.NullString().ToUpper() == c && x.Time == item.VOCFinishingWeek.NullString()))
+                                {
+                                    voc.vOCSiteModelByTimes.Add(new VOCSiteModelByTime()
+                                    {
+                                        Classification = item.VOCCount.NullString().ToUpper(),
+                                        Qty = group.Total.IfNullIsZero(),
+                                        Time = item.VOCFinishingWeek.NullString()
+                                    });
+                                }
+                            }
+                        }
+                    }
+
+                    if (!results.Any(x => x.DivisionLst == group.gr.Key.PlaceOfOrigin))
+                    {
+                        results.Add(voc);
+                    }
+                }
+            }
+
+            foreach (var item in results)
+            {
+                for (int i = fromW; i <= toW; i++)
+                {
+                    if (!item.TimeHeader.Contains("W" + i))
+                    {
+                        item.TimeHeader.Add("W" + i);
+                    }
+                }
+
+                item.TimeHeader.Sort(delegate (string x, string y)
+                {
+                    if (x == null && y == null) return 0;
+                    else if (x == null) return -1;
+                    else if (y == null) return 1;
+                    else return int.Parse(x.Substring(1)).CompareTo(int.Parse(y.Substring(1)));
+                });
+
+                item.vOCSiteModelByTimes.Sort(delegate (VOCSiteModelByTime x, VOCSiteModelByTime y)
+                {
+                    if (x.Time == null && y.Time == null) return 0;
+                    else if (x.Time == null) return -1;
+                    else if (y.Time == null) return 1;
+                    else return int.Parse(x.Time.Substring(1)).CompareTo(int.Parse(y.Time.Substring(1)));
+                });
+            }
+
+            foreach (var item in results)
+            {
+                foreach (var cl in item.PartsClassifications)
+                {
+                    var qtys = item.vOCSiteModelByTimes.GroupBy(x => x.Classification).Select(gr => (gr, Qty: gr.Sum(x => int.Parse(x.Qty.IfNullIsZero()))));
+
+                    foreach (var q in qtys)
+                    {
+                        foreach (var k in q.gr)
+                        {
+                            if (k.Classification == cl)
+                            {
+                                item.vOCSiteModelByTimes.Insert(0, new VOCSiteModelByTime()
+                                {
+                                    Time = year + "년 누적",
+                                    Classification = cl,
+                                    Qty = q.Qty.IfNullIsZero()
+                                });
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!item.TimeHeader.Contains(year + "년 누적"))
+                    {
+                        item.TimeHeader.Insert(0, year + "년 누적");
+                    }
+                }
+            }
+
+            List<VOCSiteModelByTime> lstModuleByTime;
+            VOCSiteModelByTime vOC;
+
+            foreach (var item in results)
+            {
+                lstModuleByTime = new List<VOCSiteModelByTime>();
+
+                for (int k = 0; k < item.PartsClassifications.Count; k++)
+                {
+                    for (int i = 0; i < item.TimeHeader.Count; i++)
+                    {
+                        vOC = item.vOCSiteModelByTimes.FirstOrDefault(x => x.Classification == item.PartsClassifications[k] && x.Time == item.TimeHeader[i]);
+                        if (vOC != null)
+                        {
+                            lstModuleByTime.Add(vOC);
+                        }
+                        else
+                        {
+                            lstModuleByTime.Add(new VOCSiteModelByTime()
+                            {
+                                Classification = item.PartsClassifications[k],
+                                Qty = "0",
+                                Time = item.TimeHeader[i]
+                            });
+                        }
+                    }
+                }
+
+                item.vOCSiteModelByTimes = lstModuleByTime.FindAll(x => x.Time.NullString().Contains(year) || (int.Parse(x.Time.NullString().Substring(1)) >= fromW && int.Parse(x.Time.NullString().Substring(1)) <= toW));
+            }
+
+            List<VOCSiteModelByTime> lstTemp;
+            int qtyTem = 0;
+            VOCSiteModelByTime objTemp;
+            foreach (var item in results)
+            {
+                item.TimeHeader = item.TimeHeader.FindAll(x => x.NullString().Contains(year) || (int.Parse(x.Substring(1)) >= fromWeek && int.Parse(x.Substring(1)) <= toWeek));
+
+                lstTemp = new List<VOCSiteModelByTime>();
+                foreach (var t in item.vOCSiteModelByTimes)
+                {
+                    objTemp = new VOCSiteModelByTime();
+                    objTemp.CopyPropertiesFrom(t, new List<string>() { });
+                    lstTemp.Add(objTemp);
+                }
+                qtyTem = 0;
+
+                // cong don tich luy theo thoi gian
+                for (int i = 0; i < lstTemp.Count; i++)
+                {
+                    if (lstTemp[i].Classification == "Y" && !lstTemp[i].Time.NullString().Contains(year))
+                    {
+                        qtyTem = int.Parse(lstTemp[i].Qty);
+
+                        foreach (var sub2 in lstTemp.ToList())
+                        {
+                            if (!lstTemp[i].Time.Contains(year) &&
+                                !sub2.Time.Contains(year) &&
+                                int.Parse(lstTemp[i].Time.NullString().Substring(1)) > int.Parse(sub2.Time.NullString().Substring(1)) &&
+                                lstTemp[i].Classification == sub2.Classification)
+                            {
+                                qtyTem += int.Parse(sub2.Qty);
+                            }
+                        }
+
+                        item.vOCSiteModelByTimes[i].Qty = qtyTem.IfNullIsZero();
+                        int yearY = int.Parse(item.vOCSiteModelByTimes.FirstOrDefault(x => x.Classification == "Y" && x.Time.NullString().Contains(year))?.Qty.IfNullIsZero());
+                        int yearN = int.Parse(item.vOCSiteModelByTimes.FirstOrDefault(x => x.Classification == "N" && x.Time.NullString().Contains(year))?.Qty.IfNullIsZero());
+                        item.vOCSiteModelByTimes.FirstOrDefault(x => x.Classification == "N" && x.Time == lstTemp[i].Time.NullString()).Qty = (yearY + yearN - int.Parse(qtyTem.IfNullIsZero())).IfNullIsZero();
+                    }
+
+                }
+
+                item.vOCSiteModelByTimes = item.vOCSiteModelByTimes.FindAll(x => x.Time.NullString().Contains(year) || (int.Parse(x.Time.NullString().Substring(1)) >= fromWeek && int.Parse(x.Time.NullString().Substring(1)) <= toWeek));
+            }
+
+            foreach (var item in results)
+            {
+                for (int i = 0; i < item.PartsClassifications.Count; i++)
+                {
+                    if (item.PartsClassifications[i] == "Y")
+                    {
+                        item.PartsClassifications[i] = "Complete";
+                    }
+                    else
+                    {
+                        item.PartsClassifications[i] = "Progress";
+                    }
+                }
+
+                for (int i = 0; i < item.vOCSiteModelByTimes.Count; i++)
+                {
+                    if (item.vOCSiteModelByTimes[i].Classification == "Y")
+                    {
+                        item.vOCSiteModelByTimes[i].Classification = "Complete";
+                    }
+                    else
+                    {
+                        item.vOCSiteModelByTimes[i].Classification = "Progress";
+                    }
+                }
+            }
+            return results.Where(x => x.DivisionLst == "WHC").ToList();
+        }
+
+        /// <summary>
+        /// Ve bieu do pareto theo defect 
+        /// </summary>
+        /// <param name="year"></param>
+        /// <returns></returns>
+        public List<TotalVOCSiteModel> ReportDefectByYear(string year, string classification)
+        {
+            string startTime = year + "-01-01";
+            string endTime = DateTime.Parse(startTime).AddYears(1).AddDays(-1).ToString("yyyy-MM-dd");
+
+            List<VOC_MSTViewModel> lstVoc = _mapper.Map<List<VOC_MSTViewModel>>(
+                _vocRepository.FindAll(x => x.VOCCount == "Y" && x.PartsClassification == classification &&
+                 string.Compare(x.ReceivedDate, startTime) >= 0 && string.Compare(x.ReceivedDate, endTime) <= 0).OrderBy(x => x.ReceivedDate));
+
+            var groupList = lstVoc.GroupBy(x => (x.PlaceOfOrigin, x.AnalysisResult)).Select(gr => (gr, Total: gr.Count()));
+
+            TotalVOCSiteModel totalVOCSite = new TotalVOCSiteModel()
+            {
+                Year = year
+            };
+
+            foreach (var item in lstVoc)
+            {
+                if (!totalVOCSite.PartsClassification.Contains(item.AnalysisResult))
+                {
+                    totalVOCSite.PartsClassification.Add(item.AnalysisResult);
+                }
+
+                if (!totalVOCSite.Divisions.Contains(item.PlaceOfOrigin))
+                {
+                    totalVOCSite.Divisions.Add(item.PlaceOfOrigin);
+                }
+            }
+
+            TotalVOCSiteModelItem modelItem = null;
+            foreach (var group in groupList)
+            {
+                modelItem = new TotalVOCSiteModelItem()
+                {
+                    Classification = group.gr.Key.AnalysisResult,
+                    Division = group.gr.Key.PlaceOfOrigin,
+                    Qty = group.Total.IfNullIsZero()
+                };
+
+                totalVOCSite.totalVOCSiteModelItems.Add(modelItem);
+            }
+
+            foreach (var item in totalVOCSite.Divisions)
+            {
+                foreach (var sub in totalVOCSite.PartsClassification)
+                {
+                    if (!totalVOCSite.totalVOCSiteModelItems.Any(x => x.Classification == sub && x.Division == item))
+                    {
+                        modelItem = new TotalVOCSiteModelItem()
+                        {
+                            Classification = sub,
+                            Division = item,
+                            Qty = "0"
+                        };
+
+                        totalVOCSite.totalVOCSiteModelItems.Add(modelItem);
+                    }
+                }
+            }
+
+            totalVOCSite.totalVOCSiteModelItems.Sort(delegate (TotalVOCSiteModelItem x, TotalVOCSiteModelItem y)
+            {
+                int dv = string.Compare(x.Division, y.Division);
+
+                if (dv != 0)
+                {
+                    return dv;
+                }
+
+                if (x.Qty == null && y.Qty == null) return 0;
+                else if (x.Qty == null) return 1;
+                else if (y.Qty == null) return -1;
+                else return -int.Parse(x.Qty).CompareTo(int.Parse(y.Qty));
+            });
+
+            List<TotalVOCSiteModel> result = new List<TotalVOCSiteModel>();
+            TotalVOCSiteModel totalVOC = new TotalVOCSiteModel()
+            {
+                Year = year
+            };
+
+            foreach (var div in totalVOCSite.Divisions)
+            {
+                if (div == "WHC")
+                {
+                    totalVOC = new TotalVOCSiteModel()
+                    {
+                        Year = year
+                    };
+                    totalVOC.Divisions.Add(div);
+
+                    foreach (var sub in totalVOCSite.totalVOCSiteModelItems)
+                    {
+                        if (sub.Division == div && int.Parse(sub.Qty.IfNullIsZero()) > 0)
+                        {
+                            totalVOC.totalVOCSiteModelItems.Add(sub);
+                            if (!totalVOC.PartsClassification.Contains(sub.Classification))
+                            {
+                                totalVOC.PartsClassification.Add(sub.Classification);
+                            }
+
+                        }
+                    }
+
+                    result.Add(totalVOC);
+                }
+            }
+
+            return result;
+        }
+
+        public List<VOCPPM_Ex> ReportPPMByYear(string year)
+        {
+            List<VOCPPM_Ex> lstVocPPMex = new List<VOCPPM_Ex>();
+            int iyear = int.Parse(year);
+            var lst = _vocPPMRepository.FindAll(x=>x.Year == iyear);
+            var lstPPM = _mapper.Map<List<VocPPMViewModel>>(lst);
+            var lstGroup = lstPPM.GroupBy(x => (x.Module, x.Customer)).Select(gr => (gr, Total: gr.Count()));
+            VOCPPM_Ex vOCPPM_Ex = new VOCPPM_Ex();
+            VOCPPM_Customer vOCPPM_Customer;
+            foreach (var group in lstGroup)
+            {
+                if (!lstVocPPMex.Any(x => x.Module == group.gr.Key.Module))
+                {
+                    vOCPPM_Ex = new VOCPPM_Ex()
+                    {
+                        Module = group.gr.Key.Module, // csp, lfem
+                        Year = year
+                    };
+                }
+                else
+                {
+                    vOCPPM_Ex = lstVocPPMex.FirstOrDefault(x => x.Module == group.gr.Key.Module);
+                }
+
+                foreach (var item in group.gr)
+                {
+                    if (!vOCPPM_Ex.vOCPPM_Customers.Any(x => x.Customer == item.Customer))
+                    {
+                        vOCPPM_Customer = new VOCPPM_Customer()
+                        {
+                            Customer = item.Customer,
+                        };
+                    }
+                    else
+                    {
+                        vOCPPM_Customer = vOCPPM_Ex.vOCPPM_Customers.FirstOrDefault(x => x.Customer == item.Customer);
+                    }
+
+                    vOCPPM_Customer.vocPPMModels.Add(item);
+                    var lstGr = vOCPPM_Customer.vocPPMModels.GroupBy(x => x.Type).Select(gr => (gr, ToTal: gr.Sum(g => g.Value)));
+                    foreach (var subGr in lstGr)
+                    {
+                        if (subGr.gr.Key == "Input")
+                        {
+                            vOCPPM_Customer.ToTal_Input = subGr.ToTal;
+                        }
+                        else
+                        {
+                            vOCPPM_Customer.ToTal_Defect = subGr.ToTal;
+                        }
+                    }
+                    vOCPPM_Customer.ToTal_PPM = Math.Round((vOCPPM_Customer.ToTal_Defect / vOCPPM_Customer.ToTal_Input) * Math.Pow(10, 6), 1);
+                    vOCPPM_Customer.ToTal_PPM_Target = item.TargetValue;
+
+                    if (!vOCPPM_Ex.vOCPPM_Customers.Any(x => x.Customer == item.Customer))
+                    {
+                        vOCPPM_Ex.vOCPPM_Customers.Add(vOCPPM_Customer);
+                    }
+                }
+
+                if (!lstVocPPMex.Any(x => x.Module == vOCPPM_Ex.Module))
+                {
+                    lstVocPPMex.Add(vOCPPM_Ex);
+                }
+            }
+
+            foreach (var item in lstVocPPMex)
+            {
+                item.vOCPPM_Customers.Sort(delegate (VOCPPM_Customer x, VOCPPM_Customer y)
+                {
+
+                    if (x.Customer == null && y.Customer == null) return 0;
+                    else if (x.Customer == null) return -1;
+                    else if (y.Customer == null) return 1;
+                    else return x.Customer.CompareTo(y.Customer);
+                });
+
+                foreach (var sub in item.vOCPPM_Customers)
+                {
+                    sub.vocPPMModels.Sort(delegate (VocPPMViewModel x, VocPPMViewModel y)
+                    {
+                         return x.Month.CompareTo(y.Month);
+                    });
+                }
+            }
+
+            return lstVocPPMex;
         }
     }
 }

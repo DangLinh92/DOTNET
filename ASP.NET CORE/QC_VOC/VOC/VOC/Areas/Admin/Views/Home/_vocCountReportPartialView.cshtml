@@ -1,44 +1,36 @@
 ﻿@model List<VOCSiteModelByTimeLst>
-
 <div class="row">
     <div class="col-sm-12">
         <ul class="breadcrumb">
-            <li class="breadcrumb-item active"><i class="fa fa-caret-right"></i> <strong>[HQ 주간보고용] 진성 불량 그래프 (불량 SPL 접수일자 기준 / 제품 생산 Site 기준)</strong></li>
+            <li class="breadcrumb-item active"><i class="fa fa-caret-right"></i><strong>VOC Count(진성 유/무)</strong></li>
         </ul>
     </div>
 </div>
-<!-- Statistics Widget -->
-<div class="row">
 
-    @foreach (var item in Model)
-    {
-        <div class="col-md-12">
-            <div class="card">
+@foreach (var item in Model)
+{
+    <div class="row">
+        <!-- Chart -->
+        <div class="col-md-6 d-flex">
+            <div class="card flex-fill">
                 <div class="card-header">
-                    <div class="card-title mb-0">@item.DivisionLst</div>
+                    <h5 class="card-title mb-0">VOC Count(진성 유/무)</h5>
                 </div>
                 <div class="card-body">
-                    <div class="chartjs-wrapper-demo">
-                        <canvas id="@string.Format("chartstacked{0}",item.DivisionLst)" class="h-300"></canvas>
-                    </div>
+                    <div id="s-col-stacked-Count_WHC"></div>
                 </div>
             </div>
         </div>
-    }
-</div>
-<!-- /Statistics Widget -->
-<!-- weekly report data -->
-<div class="row" id="rowWeekArea" style="display:none">
-    @foreach (var item in Model)
-    {
-        <div class="col-md-4 d-flex">
+        <!-- /Chart -->
+        <!-- DATA -->
+        <div class="col-md-6 d-flex">
             <div class="card card-table flex-fill">
                 <div class="card-header">
-                    <h3 class="card-title mb-0">@item.DivisionLst</h3>
+                    <h3 class="card-title mb-0">VOC Count(진성 유/무)</h3>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-bordered table-hover mb-0 table-striped custom-table datatable" id="@string.Format("table_{0}",item.DivisionLst)">
+                        <table class="table table-bordered table-hover mb-0 table-striped custom-table datatable" id="@string.Format("tableCount_{0}",item.DivisionLst)">
                             <thead>
                                 <tr>
                                     <th>@item.DivisionLst</th>
@@ -72,5 +64,6 @@
                 </div>
             </div>
         </div>
-    }
-</div>
+    </div>
+}
+

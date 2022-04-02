@@ -20,7 +20,15 @@ namespace VOC.Application.Interfaces
 
         List<VOCSiteModelByTimeLst> ReportByWeek(int fromWeek, int toWeek,string year);
 
+        List<VOCSiteModelByTimeLst> ReportByMonth(string year);
+
+        List<VOCSiteModelByTimeLst> ReportVOCFinish(int fromWeek, int toWeek, string year);
+
+        List<TotalVOCSiteModel> ReportDefectByYear(string year,string classification);
+
         TotalVOCSiteModel ReportByYear(string year);
+
+        List<VOCPPM_Ex> ReportPPMByYear(string year);
 
         List<VOCSiteModelByTimeLst> ReportInit();
 

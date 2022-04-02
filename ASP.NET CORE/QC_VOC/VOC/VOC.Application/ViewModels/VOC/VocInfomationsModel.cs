@@ -12,11 +12,29 @@ namespace VOC.Application.ViewModels.VOC
             vOC_MSTViews = new List<VOC_MSTViewModel>();
             vOC_DefectTypeViews = new List<VOC_DefectTypeViewModel>();
             vOCSiteModelByTimeLsts = new List<VOCSiteModelByTimeLst>();
+            paretoDataDefectName = new List<TotalVOCSiteModel>();
         }
         public List<VOC_MSTViewModel> vOC_MSTViews { get; set; }
         public List<VOC_DefectTypeViewModel> vOC_DefectTypeViews { get; set; }
         public TotalVOCSiteModel totalVOCSitesView { get; set; }
         public List<VOCSiteModelByTimeLst> vOCSiteModelByTimeLsts { get; set; }
+
+        public List<VOCSiteModelByTimeLst> vOCSiteModelByTimeFinishedLsts { get; set; }
+
+        public List<TotalVOCSiteModel> paretoDataDefectName { get; set; } // ve bieu do pareto cho defect
+
+        public TotalVOC_ParetoView TotalVOC_ParetoView { get; set; }
+    }
+
+    public class TotalVOC_ParetoView
+    {
+        public TotalVOC_ParetoView()
+        {
+            paretoDataDefectName = new List<TotalVOCSiteModel>();
+        }
+
+        public TotalVOCSiteModel totalVOCSitesView { get; set; }
+        public List<TotalVOCSiteModel> paretoDataDefectName { get; set; }
     }
 
     public class TotalVOCSiteModel
@@ -72,5 +90,32 @@ namespace VOC.Application.ViewModels.VOC
         public string Classification { get; set; }
         public string Qty { get; set; }
         public string Time { get; set; } // week, year
+    }
+
+
+    public class VOCPPM_Ex
+    {
+        public VOCPPM_Ex()
+        {
+            vOCPPM_Customers = new List<VOCPPM_Customer>();
+        }
+
+        public string Module { get; set; } // csp/ lfem
+        public string Year { get; set; }
+        public List<VOCPPM_Customer> vOCPPM_Customers { get; set; }
+    }
+
+    public class VOCPPM_Customer
+    {
+        public VOCPPM_Customer()
+        {
+            vocPPMModels = new List<VocPPMViewModel>();
+        }
+        public string Customer { get; set; }
+        public double ToTal_Input { get; set; }
+        public double ToTal_Defect { get; set; }
+        public double ToTal_PPM { get; set; }
+        public double ToTal_PPM_Target { get; set; }
+        public List<VocPPMViewModel> vocPPMModels { get; set; }
     }
 }

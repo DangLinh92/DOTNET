@@ -12,7 +12,7 @@ namespace VOC.Application.AutoMapper
             CreateMap<FUNCTION, FunctionViewModel>();
             CreateMap<VOC_DEFECT_TYPE, VOC_DefectTypeViewModel>();
             CreateMap<VOC_MST, VOC_MSTViewModel>();
-
+            CreateMap<VOC_PPM, VocPPMViewModel>();
         }
     }
 }

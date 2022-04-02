@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using VOC.Data.EF.Extensions;
 
 namespace VOC.Application.ViewModels.VOC
 {
@@ -119,6 +120,37 @@ namespace VOC.Application.ViewModels.VOC
         // VOC 종결 일자
         [StringLength(50)]
         public string VOCFinishingDate { get; set; }
+
+        public string VOCFinishingWeek
+        {
+            get
+            {
+                if (DateTime.TryParse(VOCFinishingDate, out _))
+                    return "W" + (DateTime.Parse(VOCFinishingDate).GetWeekOfYear() - 1);
+
+                if (DateTime.TryParse(SPLReceivedDate, out _))
+                    return "W" + (DateTime.Parse(SPLReceivedDate).GetWeekOfYear() - 1);
+
+                if (DateTime.TryParse(ReceivedDate, out _))
+                    return "W" + (DateTime.Parse(ReceivedDate).GetWeekOfYear() - 1);
+
+                return "W-1";
+            }
+        }
+
+        public string SPLReceivedDateMonth
+        {
+            get
+            {
+                if (DateTime.TryParse(SPLReceivedDateWeek, out _))
+                    return (DateTime.Parse(SPLReceivedDateWeek).GeMonthOfYear());
+
+                if (DateTime.TryParse(ReceivedDate, out _))
+                    return (DateTime.Parse(ReceivedDate).GeMonthOfYear());
+
+                return "0";
+            }
+        }
 
         // VOC 처리시간 (TAT)
         [StringLength(50)]
