@@ -146,4 +146,140 @@ $(function () {
             }
         });
     }
+
+    // ve bieu do line PPM
+    /* LINE CHART */
+
+    let lineColor = ['#664dc9', '#44c4fa', '#38cb89', '#3e80eb', '#ffab00', '#ef4b4b'];
+    let ctx7 = document.getElementById('chartLine_All');
+    let _mlabels = ['22年', '1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+    let datasetall = [];
+    let _index = 0;
+    for (m of chardataPPM.dataChartsAll) {
+
+        let obj = {
+            label: m.Module + ' 실적',
+            data: m.lstData,
+            borderWidth: 1.2,
+            fill: false,
+            borderColor: lineColor[_index],
+        };
+
+        let targetObj = {
+            label: m.Module + ' 목표',
+            data: [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5],
+            borderWidth: 1,
+            fill: false,
+            borderColor: lineColor[_index+2],
+        };
+
+        datasetall.push(obj);
+        datasetall.push(targetObj);
+        _index += 1;
+    }
+
+    
+    new Chart(ctx7, {
+        type: 'line',
+        data: {
+            labels: _mlabels,
+            datasets: datasetall
+        },
+        plugins: [ChartDataLabels],
+        options: {
+            maintainAspectRatio: false,
+            legend: {
+                display: true,
+                labels: {
+                    display: true
+                }
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true,
+                        fontSize: 10,
+                        max: 80
+                    }
+                }],
+                xAxes: [{
+                    ticks: {
+                        beginAtZero: true,
+                        fontSize: 11
+                    }
+                }]
+            }
+        }
+    });
+
+
+
+    for (ppm of chardataPPM.dataChartsItem) {
+
+        for (m of ppm) {
+
+            let ctx8 = document.getElementById('chartLine_' + m.Customer + m.Module);
+            let mlabels = ['Total 년', '1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월']
+            new Chart(ctx8, {
+                type: 'line',
+                data: {
+                    labels: mlabels,
+                    datasets: [{
+                        label: 'Wisol',
+                        data: m.lstData,
+                        borderColor: '#EC7063',
+                        borderWidth: 1.2,
+                        fill: false,
+                        datalabels: {
+                            color: '#17202A',
+                            labels: {
+                                title: {
+                                    font: {
+                                        weight: 'bold'
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        label: 'Target',
+                        data: [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5],
+                        borderColor: '#44c4fa',
+                        borderWidth: 1,
+                        fill: false,
+                        datalabels: {
+                            color: '#0000'
+                        }
+                    }]
+                },
+                plugins: [ChartDataLabels],
+                options: {
+                    maintainAspectRatio: false,
+                    legend: {
+                        display: true,
+                        labels: {
+                            display: true
+                        }
+                    },
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 10,
+                                max: 80
+                            }
+                        }],
+                        xAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                fontSize: 11
+                            }
+                        }]
+                    }
+                }
+            });
+        }
+
+    }
+
 });

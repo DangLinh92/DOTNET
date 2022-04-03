@@ -28,7 +28,7 @@ namespace VOC.Application.Interfaces
 
         TotalVOCSiteModel ReportByYear(string year);
 
-        List<VOCPPM_Ex> ReportPPMByYear(string year);
+        PPMDataChartAll ReportPPMByYear(string year);
 
         List<VOCSiteModelByTimeLst> ReportInit();
 

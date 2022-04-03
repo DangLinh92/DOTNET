@@ -54,7 +54,7 @@ namespace VOC.Areas.Admin.Controllers
                 model.paretoDataDefectName.AddRange(_vocMstService.ReportDefectByYear(DateTime.Now.Year.ToString(), "Module"));
 
                 // Ve Bieu Do PPM
-                _vocMstService.ReportPPMByYear(DateTime.Now.Year.ToString());
+                model.VocPPMView = _vocMstService.ReportPPMByYear(DateTime.Now.Year.ToString());
             }
             else
             {
@@ -72,6 +72,8 @@ namespace VOC.Areas.Admin.Controllers
                 // VE BIEU DO PARETO CHO DEFECT NAME
                 model.paretoDataDefectName.AddRange(_vocMstService.ReportDefectByYear(year.ToString(), "SAW"));
                 model.paretoDataDefectName.AddRange(_vocMstService.ReportDefectByYear(year.ToString(), "Module"));
+
+                model.VocPPMView = _vocMstService.ReportPPMByYear(DateTime.Now.Year.ToString());
             }
 
             return View(model);

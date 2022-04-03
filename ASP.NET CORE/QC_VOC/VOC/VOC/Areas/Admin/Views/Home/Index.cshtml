@@ -15,6 +15,7 @@
         var chartdataInit = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.vOCSiteModelByTimeLsts))');
         var chartdataTotalInit = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.totalVOCSitesView))');
         var chartdataByDefectName = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.paretoDataDefectName))');
+        var chardataPPM = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.VocPPMView))');
 
         var controller = new vocController();
         controller.initialize();
@@ -135,8 +136,8 @@
             width: 100px;
         }
 
-        .h-200{
-            height:200px;
+        .h-200 {
+            height: 200px;
         }
 
         table.datatable td {
@@ -186,6 +187,8 @@
     @await Html.PartialAsync("_weeklyReportPartialView", Model.vOCSiteModelByTimeLsts)
 
     @await Html.PartialAsync("_vocWorseDefectPartialView", Model.paretoDataDefectName)
+
+    @await Html.PartialAsync("_vocPPMPartialView", Model.VocPPMView)
 
     <div class="row">
         <div class="col-sm-12">

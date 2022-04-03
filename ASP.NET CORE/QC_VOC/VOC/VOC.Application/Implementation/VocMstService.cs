@@ -983,11 +983,11 @@ namespace VOC.Application.Implementation
             return result;
         }
 
-        public List<VOCPPM_Ex> ReportPPMByYear(string year)
+        public PPMDataChartAll ReportPPMByYear(string year)
         {
             List<VOCPPM_Ex> lstVocPPMex = new List<VOCPPM_Ex>();
             int iyear = int.Parse(year);
-            var lst = _vocPPMRepository.FindAll(x=>x.Year == iyear);
+            var lst = _vocPPMRepository.FindAll(x => x.Year == iyear);
             var lstPPM = _mapper.Map<List<VocPPMViewModel>>(lst);
             var lstGroup = lstPPM.GroupBy(x => (x.Module, x.Customer)).Select(gr => (gr, Total: gr.Count()));
             VOCPPM_Ex vOCPPM_Ex = new VOCPPM_Ex();
@@ -1049,6 +1049,17 @@ namespace VOC.Application.Implementation
                 }
             }
 
+            VocPPMViewModel vocPPM;
+            List<string> types;
+            lstVocPPMex.Sort(delegate (VOCPPM_Ex x, VOCPPM_Ex y)
+            {
+
+                if (x.Module == null && y.Module == null) return 0;
+                else if (x.Module == null) return -1;
+                else if (y.Module == null) return 1;
+                else return x.Module.CompareTo(y.Module);
+            });
+
             foreach (var item in lstVocPPMex)
             {
                 item.vOCPPM_Customers.Sort(delegate (VOCPPM_Customer x, VOCPPM_Customer y)
@@ -1062,14 +1073,154 @@ namespace VOC.Application.Implementation
 
                 foreach (var sub in item.vOCPPM_Customers)
                 {
+                    types = new List<string>();
+                    types.AddRange(sub.vocPPMModels.Select(x => x.Type).Distinct());
+
+                    for (int month = 1; month <= 12; month++)
+                    {
+                        foreach (var type in types)
+                        {
+                            if (!sub.vocPPMModels.Any(x => x.Month == month && x.Type == type))
+                            {
+                                vocPPM = new VocPPMViewModel();
+                                vocPPM.CopyPropertiesFrom(sub.vocPPMModels.FirstOrDefault(x => x.Type == type), new List<string>() { });
+                                vocPPM.Value = 0;
+                                vocPPM.Month = month;
+                                vocPPM.Year = int.Parse(item.Year.IfNullIsZero());
+                                sub.vocPPMModels.Add(vocPPM);
+                            }
+                        }
+
+                    }
+
                     sub.vocPPMModels.Sort(delegate (VocPPMViewModel x, VocPPMViewModel y)
                     {
-                         return x.Month.CompareTo(y.Month);
+                        return x.Month.CompareTo(y.Month);
                     });
                 }
             }
 
-            return lstVocPPMex;
+            PPMByMonth pPMByMonth;
+            foreach (var item in lstVocPPMex)
+            {
+                foreach (var sub in item.vOCPPM_Customers)
+                {
+                    sub.pPMByMonths.Clear();
+
+                    for (int month = 1; month <= 12; month++)
+                    {
+                        pPMByMonth = new PPMByMonth()
+                        {
+                            Month = month,
+                            Year = int.Parse(item.Year.IfNullIsZero()),
+                            Target = sub.ToTal_PPM_Target,
+                        };
+
+                        if (sub.vocPPMModels.FirstOrDefault(x => x.Month == month && x.Type == "Input")?.Value > 0)
+                        {
+                            pPMByMonth.PPM = Math.Round(Math.Pow(10, 6) * sub.vocPPMModels.FirstOrDefault(x => x.Month == month && x.Type == "Defect").Value / sub.vocPPMModels.FirstOrDefault(x => x.Month == month && x.Type == "Input").Value, 1);
+                        }
+                        else
+                        {
+                            pPMByMonth.PPM = 0;
+                        }
+
+                        sub.pPMByMonths.Add(pPMByMonth);
+                    }
+                    pPMByMonth = new PPMByMonth()
+                    {
+                        Month = 0,// TOTAL
+                        Year = int.Parse(item.Year.IfNullIsZero()),
+                        Target = sub.ToTal_PPM_Target,
+                        PPM = sub.ToTal_PPM
+                    };
+                    sub.pPMByMonths.Insert(0, pPMByMonth);
+                }
+            }
+
+            Dictionary<string, List<PPMDataChart>> dic = new Dictionary<string, List<PPMDataChart>>();
+            PPMDataChart pPMDataChart;
+            List<PPMDataChart> pPMDataCharts;
+            List<double> lstTotalInput = new List<double>() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            List<double> lstTotalDefect = new List<double>() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            List<double> lstTotalPPM = new List<double>() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+            double totalPPM;
+            string customer = "";
+            foreach (var item in lstVocPPMex)
+            {
+                customer = "";
+                pPMDataCharts = new List<PPMDataChart>();
+
+                lstTotalInput = new List<double>() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+                lstTotalDefect = new List<double>() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+                foreach (var cus in item.vOCPPM_Customers)
+                {
+                    customer += cus.Customer + "+";
+                    pPMDataChart = new PPMDataChart()
+                    {
+                        Module = item.Module,
+                        Customer = cus.Customer,
+                    };
+                    pPMDataChart.lstData = cus.pPMByMonths.Select(x => x.PPM).ToList();
+                    pPMDataCharts.Add(pPMDataChart);
+
+                    for (int month = 1; month <= 12; month++)
+                    {
+                        lstTotalInput[month - 1] += cus.vocPPMModels.FirstOrDefault(x => x.Type == "Input" && x.Month == month).Value;
+                        lstTotalDefect[month - 1] += cus.vocPPMModels.FirstOrDefault(x => x.Type == "Defect" && x.Month == month).Value;
+                    }
+                }
+
+                if (lstTotalInput.Sum() > 0)
+                {
+                    totalPPM = Math.Round(Math.Pow(10, 6) * (lstTotalDefect.Sum() / lstTotalInput.Sum()), 1);
+                }
+                else
+                {
+                    totalPPM = 0;
+                }
+                lstTotalPPM[0] = totalPPM;
+                for (int i = 1; i <= 12; i++)
+                {
+                    lstTotalPPM[i] = lstTotalInput[i - 1] > 0 ? Math.Round(Math.Pow(10, 6) * (lstTotalDefect[i - 1] / lstTotalInput[i - 1]), 1) : 0;
+                }
+
+                pPMDataChart = new PPMDataChart()
+                {
+                    Module = item.Module,
+                    Customer = customer.Substring(0,customer.Length-1),
+                    lstData = lstTotalPPM
+                };
+                pPMDataCharts.Insert(0, pPMDataChart);
+
+                dic.Add(item.Module, pPMDataCharts);
+            }
+
+            List<List<PPMDataChart>> result = new List<List<PPMDataChart>>();
+            List<PPMDataChart> lstChartAll = new List<PPMDataChart>();
+            foreach (var item in dic.Values)
+            {
+                result.Add(item);
+                foreach (var sub in item)
+                {
+                    if (sub.Customer.Contains("+"))
+                    {
+                        lstChartAll.Add(sub);
+                    }
+                }
+            }
+
+            PPMDataChartAll pPMDataChartAll = new PPMDataChartAll()
+            {
+                dataChartsItem = result,
+                dataChartsAll = lstChartAll
+            };
+
+            
+
+            return pPMDataChartAll;
         }
     }
 }

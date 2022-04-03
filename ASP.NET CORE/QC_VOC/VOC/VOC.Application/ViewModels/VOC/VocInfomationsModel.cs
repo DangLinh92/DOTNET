@@ -23,18 +23,7 @@ namespace VOC.Application.ViewModels.VOC
 
         public List<TotalVOCSiteModel> paretoDataDefectName { get; set; } // ve bieu do pareto cho defect
 
-        public TotalVOC_ParetoView TotalVOC_ParetoView { get; set; }
-    }
-
-    public class TotalVOC_ParetoView
-    {
-        public TotalVOC_ParetoView()
-        {
-            paretoDataDefectName = new List<TotalVOCSiteModel>();
-        }
-
-        public TotalVOCSiteModel totalVOCSitesView { get; set; }
-        public List<TotalVOCSiteModel> paretoDataDefectName { get; set; }
+        public PPMDataChartAll VocPPMView { get; set; }
     }
 
     public class TotalVOCSiteModel
@@ -110,6 +99,7 @@ namespace VOC.Application.ViewModels.VOC
         public VOCPPM_Customer()
         {
             vocPPMModels = new List<VocPPMViewModel>();
+            pPMByMonths = new List<PPMByMonth>();
         }
         public string Customer { get; set; }
         public double ToTal_Input { get; set; }
@@ -117,5 +107,42 @@ namespace VOC.Application.ViewModels.VOC
         public double ToTal_PPM { get; set; }
         public double ToTal_PPM_Target { get; set; }
         public List<VocPPMViewModel> vocPPMModels { get; set; }
+        public List<PPMByMonth> pPMByMonths { get; set; }
+    }
+
+    public class PPMByMonth
+    {
+        public int Year { get; set; }
+
+        public int Month { get; set; }
+
+        public double PPM { get; set; }
+
+        public double Target { get; set; }
+    }
+
+    public class PPMDataChart
+    {
+        public PPMDataChart()
+        {
+            lstData = new List<double>();
+        }
+
+        public string Module { get; set; } // csp/ lfem
+        public string Customer { get; set; }
+        public List<double> lstData { get; set; }
+    }
+
+    public class PPMDataChartAll
+    {
+        public PPMDataChartAll()
+        {
+            dataChartsItem = new List<List<PPMDataChart>>();
+            dataChartsAll = new List<PPMDataChart>();
+        }
+        public List<List<PPMDataChart>> dataChartsItem { get; set; }
+
+        public List<PPMDataChart> dataChartsAll { get; set; }
+
     }
 }

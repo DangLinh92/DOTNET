@@ -45,6 +45,7 @@ namespace VOC.Data.EF.Extensions
 
         public static void CopyPropertiesFrom(this object self, object parent, List<string> arrIgnorr)
         {
+            if (parent == null) return;
             var fromProperties = parent.GetType().GetProperties();
             var toProperties = self.GetType().GetProperties();
 

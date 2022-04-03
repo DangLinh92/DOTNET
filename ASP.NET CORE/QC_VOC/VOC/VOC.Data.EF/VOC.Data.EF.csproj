@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="SQLStoreproc\**" />
+    <EmbeddedResource Remove="SQLStoreproc\**" />
+    <None Remove="SQLStoreproc\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.16" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.16" />
@@ -24,10 +30,6 @@
     <ProjectReference Include="..\VOC.Data\VOC.Data.csproj" />
     <ProjectReference Include="..\VOC.Utilities\VOC.Utilities.csproj" />
     <ProjectReference Include="..\VOC.Infrastructure\VOC.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="SQLStoreproc\" />
   </ItemGroup>
 
 </Project>

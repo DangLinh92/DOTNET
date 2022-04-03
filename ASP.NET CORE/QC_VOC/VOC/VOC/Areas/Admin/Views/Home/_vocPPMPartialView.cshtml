@@ -1,0 +1,46 @@
+﻿@model PPMDataChartAll
+<div class="row">
+    <div class="col-sm-12">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item active"><i class="fa fa-caret-right"></i> <strong>고객(사) GMES 불량율 Data Trend 관리(CSP + LFEM)</strong></li>
+        </ul>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title mb-0">
+                    K1 고객 불량 (월별 목표 대비 실적)
+                </div>
+            </div>
+            <div class="card-body">
+                <div>
+                    <canvas id="chartLine_All"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    @foreach (var item in Model.dataChartsItem)
+    {
+        <div class="col-md-6">
+            @foreach (var sub in item)
+            {
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title mb-0">@sub.Module (@sub.Customer)</div>
+                    </div>
+                    <div class="card-body">
+                        <div>
+                            <canvas id="@string.Format("chartLine_{0}{1}",sub.Customer,sub.Module)" style="height:180px"></canvas>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
