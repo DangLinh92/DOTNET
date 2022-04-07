@@ -216,6 +216,9 @@ namespace HRMNS.Application.Implementation
                     HopDong_NV hopDong_NV;
                     NhanVien_CaLamViec _caLamViec;
                     CHAM_CONG_LOG _chamCongLog;
+                    bool isRegistedOT;
+                    string kyhieuChamCongDB;
+
                     for (int i = 1; i <= DateTime.Parse(endMonth).Day; i++) // day 1 -> 31 or end month
                     {
                         dateCheck = (new DateTime(DateTime.Parse(endMonth).Year, DateTime.Parse(endMonth).Month, i)).ToString("yyyy-MM-dd");
@@ -223,6 +226,9 @@ namespace HRMNS.Application.Implementation
                         {
                             // check hop dong
                             hopDong_NV = item.lstHopDong.FirstOrDefault(x => string.Compare(dateCheck, x.NgayHieuLucHD) >= 0 && string.Compare(dateCheck, x.NgayHetHLHD) <= 0);
+                            isRegistedOT = item.lstDangKyOT.Any(x => x.NgayOT == dateCheck);
+
+                            kyhieuChamCongDB = item.lstChamCongDB.FirstOrDefault(x => string.Compare(dateCheck, x.NgayBatDau) >= 0 && string.Compare(dateCheck, x.NgayKetThuc) <= 0)?.KyHieuChamCong;
 
                             if (hopDong_NV != null)
                             {
@@ -280,10 +286,8 @@ namespace HRMNS.Application.Implementation
                                                     item.WorkingStatuses.Add(new WorkingStatus()
                                                     {
                                                         DayCheck = dateCheck,
-                                                        Value = "PD" // PD: Probation Day shift/Thử việc ca ngày
+                                                        Value = kyhieuChamCongDB.NullString() == "" ? "PD" : kyhieuChamCongDB.NullString() // PD: Probation Day shift/Thử việc ca ngày
                                                     });
-
-
                                                 }
                                                 else if (CheckNgayDB(dateCheck) == 5) // Ngay ki niem cty
                                                 {
@@ -298,7 +302,7 @@ namespace HRMNS.Application.Implementation
                                                     item.WorkingStatuses.Add(new WorkingStatus()
                                                     {
                                                         DayCheck = dateCheck,
-                                                        Value = "PMD" // Làm ca ngày thử việc ngay ki niem
+                                                        Value = kyhieuChamCongDB.NullString() == "" ? "PMD" : kyhieuChamCongDB.NullString() // Làm ca ngày thử việc ngay ki niem
                                                     });
 
                                                     item.OvertimeValues.Add(new OvertimeValue()
@@ -321,14 +325,15 @@ namespace HRMNS.Application.Implementation
                                                     item.WorkingStatuses.Add(new WorkingStatus()
                                                     {
                                                         DayCheck = dateCheck,
-                                                        Value = "TV" // TV: Thử việc làm thêm ngày chủ nhật/ Probation
+                                                        Value = kyhieuChamCongDB.NullString() == "" ? "TV" : kyhieuChamCongDB.NullString() // TV: Thử việc làm thêm ngày chủ nhật/ Probation
                                                     });
 
                                                     item.OvertimeValues.Add(new OvertimeValue()
                                                     {
                                                         DayCheckOT = dateCheck,
                                                         DMOvertime = clviec.HeSo_OT.NullString(), // nhu OT chu nhat
-                                                        ValueOT = timeOT
+                                                        ValueOT = timeOT,
+                                                        Registered = isRegistedOT
                                                     });
                                                 }
                                                 else if (CheckNgayDB(dateCheck) == 1) // ngay le
@@ -345,14 +350,15 @@ namespace HRMNS.Application.Implementation
                                                     item.WorkingStatuses.Add(new WorkingStatus()
                                                     {
                                                         DayCheck = dateCheck,
-                                                        Value = "PD" // PD: Probation Day shift/Thử việc ca ngày
+                                                        Value = kyhieuChamCongDB.NullString() == "" ? "PD" : kyhieuChamCongDB.NullString(), // PD: Probation Day shift/Thử việc ca ngày
                                                     });
 
                                                     item.OvertimeValues.Add(new OvertimeValue()
                                                     {
                                                         DayCheckOT = dateCheck,
                                                         DMOvertime = clviec.HeSo_OT.NullString(),
-                                                        ValueOT = timeOT
+                                                        ValueOT = timeOT,
+                                                        Registered = isRegistedOT
                                                     });
                                                 }
                                                 else if (CheckNgayDB(dateCheck) == 2) // ngay truoc le
@@ -377,14 +383,15 @@ namespace HRMNS.Application.Implementation
                                                         {
                                                             DayCheckOT = dateCheck,
                                                             DMOvertime = clviec.HeSo_OT.NullString(),
-                                                            ValueOT = timeOT
+                                                            ValueOT = timeOT,
+                                                            Registered = isRegistedOT
                                                         });
                                                     }
 
                                                     item.WorkingStatuses.Add(new WorkingStatus()
                                                     {
                                                         DayCheck = dateCheck,
-                                                        Value = "PD" // PD: Probation Day shift/Thử việc ca ngày
+                                                        Value = kyhieuChamCongDB.NullString() == "" ? "PD" : kyhieuChamCongDB.NullString() // PD: Probation Day shift/Thử việc ca ngày
                                                     });
                                                 }
 
@@ -434,7 +441,8 @@ namespace HRMNS.Application.Implementation
                                                             {
                                                                 DayCheckOT = dateCheck,
                                                                 DMOvertime = "200", // 200 % : 5H30 -> 6H
-                                                                ValueOT = timeOT
+                                                                ValueOT = timeOT,
+                                                                Registered = isRegistedOT
                                                             });
                                                         }
                                                         else if (timeOT > 0.5)
@@ -443,14 +451,16 @@ namespace HRMNS.Application.Implementation
                                                             {
                                                                 DayCheckOT = dateCheck,
                                                                 DMOvertime = "200", // 200 % : 5H30 -> 6H
-                                                                ValueOT = 0.5
+                                                                ValueOT = 0.5,
+                                                                Registered = isRegistedOT
                                                             });
 
                                                             item.OvertimeValues.Add(new OvertimeValue()
                                                             {
                                                                 DayCheckOT = dateCheck,
                                                                 DMOvertime = "150", // 150 % :6h -> 8H
-                                                                ValueOT = timeOT - 0.5 // tru di 0.5h cua 5-6h
+                                                                ValueOT = timeOT - 0.5, // tru di 0.5h cua 5-6h
+                                                                Registered = isRegistedOT
                                                             });
                                                         }
                                                     }
@@ -458,25 +468,25 @@ namespace HRMNS.Application.Implementation
                                                     item.WorkingStatuses.Add(new WorkingStatus()
                                                     {
                                                         DayCheck = dateCheck,
-                                                        Value = "PN" // PN: Probation Night shift/Thử việc ca đêm
+                                                        Value = kyhieuChamCongDB.NullString() == "" ? "PN" : kyhieuChamCongDB.NullString() // PN: Probation Night shift/Thử việc ca đêm
                                                     });
                                                 }
                                                 else if (CheckNgayDB(dateCheck) == 5) // Ngay ki niem cty
                                                 {
-                                                    item.OvertimeValues.AddRange(GetOvertimeInNight(firstTime, lastTime, dateCheck, "CN"));
+                                                    item.OvertimeValues.AddRange(GetOvertimeInNight(firstTime, lastTime, dateCheck, "CN", isRegistedOT));
                                                     item.WorkingStatuses.Add(new WorkingStatus()
                                                     {
                                                         DayCheck = dateCheck,
-                                                        Value = "PM" // PM: Làm ca đêm ngày kỷ niệm  thử việc
+                                                        Value = kyhieuChamCongDB.NullString() == "" ? "PM" : kyhieuChamCongDB.NullString() // PM: Làm ca đêm ngày kỷ niệm  thử việc
                                                     });
                                                 }
                                                 else if (CheckNgayDB(dateCheck) == 3 || CheckNgayDB(dateCheck) == 4) // ngay chu nhat + ngay nghi bu
                                                 {
-                                                    item.OvertimeValues.AddRange(GetOvertimeInNight(firstTime, lastTime, dateCheck, "CN"));
+                                                    item.OvertimeValues.AddRange(GetOvertimeInNight(firstTime, lastTime, dateCheck, "CN", isRegistedOT));
                                                     item.WorkingStatuses.Add(new WorkingStatus()
                                                     {
                                                         DayCheck = dateCheck,
-                                                        Value = "TVD" // TVD: Thử việc làm thêm ca đêm chủ nhật
+                                                        Value = kyhieuChamCongDB.NullString() == "" ? "TVD" : kyhieuChamCongDB.NullString() // TVD: Thử việc làm thêm ca đêm chủ nhật
                                                     });
                                                 }
                                                 else if (CheckNgayDB(dateCheck) == 1) // ngay le
@@ -484,26 +494,26 @@ namespace HRMNS.Application.Implementation
                                                     var ngayle = _ngaylenamRespository.FindById(dateCheck);
                                                     if (ngayle.IslastHoliday == CommonConstants.N)
                                                     {
-                                                        item.OvertimeValues.AddRange(GetOvertimeInNight(firstTime, lastTime, dateCheck, "NL"));
+                                                        item.OvertimeValues.AddRange(GetOvertimeInNight(firstTime, lastTime, dateCheck, "NL", isRegistedOT));
                                                     }
                                                     else // ngay le cuoi cung
                                                     {
-                                                        item.OvertimeValues.AddRange(GetOvertimeInNight(firstTime, lastTime, dateCheck, "NLCC"));
+                                                        item.OvertimeValues.AddRange(GetOvertimeInNight(firstTime, lastTime, dateCheck, "NLCC", isRegistedOT));
                                                     }
 
                                                     item.WorkingStatuses.Add(new WorkingStatus()
                                                     {
                                                         DayCheck = dateCheck,
-                                                        Value = "PDD" // PDD: Thử việc làm đêm ngày lễ
+                                                        Value = kyhieuChamCongDB.NullString() == "" ? "PDD" : kyhieuChamCongDB.NullString() // PDD: Thử việc làm đêm ngày lễ
                                                     });
                                                 }
                                                 else if (CheckNgayDB(dateCheck) == 2) // ngay truoc le
                                                 {
-                                                    item.OvertimeValues.AddRange(GetOvertimeInNight(firstTime, lastTime, dateCheck, "NL"));
+                                                    item.OvertimeValues.AddRange(GetOvertimeInNight(firstTime, lastTime, dateCheck, "NL", isRegistedOT));
                                                     item.WorkingStatuses.Add(new WorkingStatus()
                                                     {
                                                         DayCheck = dateCheck,
-                                                        Value = "PH" // PH: làm ca đêm trước ngày lễ( thử việc)
+                                                        Value = kyhieuChamCongDB.NullString() == "" ? "PH" : kyhieuChamCongDB.NullString() // PH: làm ca đêm trước ngày lễ( thử việc)
                                                     });
                                                 }
 
@@ -533,14 +543,14 @@ namespace HRMNS.Application.Implementation
                                                 item.WorkingStatuses.Add(new WorkingStatus()
                                                 {
                                                     DayCheck = dateCheck,
-                                                    Value = "NH" // NH: NationALHoliday/ Nghỉ lễ
+                                                    Value = kyhieuChamCongDB.NullString() == "" ? "NH" : kyhieuChamCongDB.NullString() // NH: NationALHoliday/ Nghỉ lễ
                                                 });
                                             }
                                         }
                                         #endregion
                                     }
                                 }
-                                else // HD Chinh thuc
+                                else // HD Chinh thuc or tviec 100%
                                 {
                                     // check ca lam viec
                                     _caLamViec = item.lstNhanVienCaLamViec.FirstOrDefault(x => string.Compare(dateCheck, x.BatDau_TheoCa) >= 0 && string.Compare(dateCheck, x.KetThuc_TheoCa) <= 0);
@@ -581,14 +591,15 @@ namespace HRMNS.Application.Implementation
                                                         {
                                                             DayCheckOT = dateCheck,
                                                             DMOvertime = "150",
-                                                            ValueOT = timeOT
+                                                            ValueOT = timeOT,
+                                                            Registered = isRegistedOT
                                                         });
                                                     }
 
                                                     item.WorkingStatuses.Add(new WorkingStatus()
                                                     {
                                                         DayCheck = dateCheck,
-                                                        Value = "DS" // DS: Day Shift/ Ca ngày 
+                                                        Value = kyhieuChamCongDB.NullString() == "" ? "DS" : kyhieuChamCongDB.NullString() // DS: Day Shift/ Ca ngày 
                                                     });
                                                 }
                                                 else if (CheckNgayDB(dateCheck) == 5) // Ngay ki niem cty
@@ -599,14 +610,15 @@ namespace HRMNS.Application.Implementation
                                                     item.WorkingStatuses.Add(new WorkingStatus()
                                                     {
                                                         DayCheck = dateCheck,
-                                                        Value = "MD" // làm ca ngày chính thức ngay ki niem
+                                                        Value = kyhieuChamCongDB.NullString() == "" ? "MD" : kyhieuChamCongDB.NullString() // làm ca ngày chính thức ngay ki niem
                                                     });
 
                                                     item.OvertimeValues.Add(new OvertimeValue()
                                                     {
                                                         DayCheckOT = dateCheck,
                                                         DMOvertime = "200", // nhu OT chu nhat
-                                                        ValueOT = timeOT
+                                                        ValueOT = timeOT,
+                                                        Registered = isRegistedOT
                                                     });
                                                 }
                                                 else if (CheckNgayDB(dateCheck) == 3 || CheckNgayDB(dateCheck) == 4) // ngay chu nhat or nghi bu ngay le
@@ -617,14 +629,15 @@ namespace HRMNS.Application.Implementation
                                                     item.WorkingStatuses.Add(new WorkingStatus()
                                                     {
                                                         DayCheck = dateCheck,
-                                                        Value = "DS"
+                                                        Value = kyhieuChamCongDB.NullString() == "" ? "DS" : kyhieuChamCongDB.NullString()
                                                     });
 
                                                     item.OvertimeValues.Add(new OvertimeValue()
                                                     {
                                                         DayCheckOT = dateCheck,
                                                         DMOvertime = "200", // nhu OT chu nhat
-                                                        ValueOT = timeOT
+                                                        ValueOT = timeOT,
+                                                        Registered = isRegistedOT
                                                     });
                                                 }
                                                 else if (CheckNgayDB(dateCheck) == 1) // ngay le
@@ -635,14 +648,15 @@ namespace HRMNS.Application.Implementation
                                                     item.WorkingStatuses.Add(new WorkingStatus()
                                                     {
                                                         DayCheck = dateCheck,
-                                                        Value = "DS"
+                                                        Value = kyhieuChamCongDB.NullString() == "" ? "DS" : kyhieuChamCongDB.NullString()
                                                     });
 
                                                     item.OvertimeValues.Add(new OvertimeValue()
                                                     {
                                                         DayCheckOT = dateCheck,
                                                         DMOvertime = "300",
-                                                        ValueOT = timeOT
+                                                        ValueOT = timeOT,
+                                                        Registered = isRegistedOT
                                                     });
                                                 }
                                                 else if (CheckNgayDB(dateCheck) == 2) // ngay truoc le
@@ -661,14 +675,15 @@ namespace HRMNS.Application.Implementation
                                                         {
                                                             DayCheckOT = dateCheck,
                                                             DMOvertime = "150",
-                                                            ValueOT = timeOT
+                                                            ValueOT = timeOT,
+                                                            Registered = isRegistedOT
                                                         });
                                                     }
 
                                                     item.WorkingStatuses.Add(new WorkingStatus()
                                                     {
                                                         DayCheck = dateCheck,
-                                                        Value = "DS" // DS: Day Shift/ Ca ngày
+                                                        Value = kyhieuChamCongDB.NullString() == "" ? "DS" : kyhieuChamCongDB.NullString() // DS: Day Shift/ Ca ngày
                                                     });
                                                 }
 
@@ -719,7 +734,8 @@ namespace HRMNS.Application.Implementation
                                                             {
                                                                 DayCheckOT = dateCheck,
                                                                 DMOvertime = "200", // 200 % : 5H30 -> 6H
-                                                                ValueOT = timeOT
+                                                                ValueOT = timeOT,
+                                                                Registered = isRegistedOT
                                                             });
                                                         }
                                                         else if (timeOT > 0.5)
@@ -728,14 +744,16 @@ namespace HRMNS.Application.Implementation
                                                             {
                                                                 DayCheckOT = dateCheck,
                                                                 DMOvertime = "200", // 200 % : 5H30 -> 6H
-                                                                ValueOT = 0.5
+                                                                ValueOT = 0.5,
+                                                                Registered = isRegistedOT
                                                             });
 
                                                             item.OvertimeValues.Add(new OvertimeValue()
                                                             {
                                                                 DayCheckOT = dateCheck,
                                                                 DMOvertime = "150", // 150 % :6h -> 8H
-                                                                ValueOT = timeOT - 0.5 // tru di 0.5h cua 5-6h
+                                                                ValueOT = timeOT - 0.5, // tru di 0.5h cua 5-6h
+                                                                Registered = isRegistedOT
                                                             });
                                                         }
                                                     }
@@ -743,25 +761,25 @@ namespace HRMNS.Application.Implementation
                                                     item.WorkingStatuses.Add(new WorkingStatus()
                                                     {
                                                         DayCheck = dateCheck,
-                                                        Value = "NS" // NS: Night Shift/ Ca đêm
+                                                        Value = kyhieuChamCongDB.NullString() == "" ? "NS" : kyhieuChamCongDB.NullString() // NS: Night Shift/ Ca đêm
                                                     });
                                                 }
                                                 else if (CheckNgayDB(dateCheck) == 5) // Ngay ki niem cty
                                                 {
-                                                    item.OvertimeValues.AddRange(GetOvertimeInNight(firstTime, lastTime, dateCheck, "CN"));
+                                                    item.OvertimeValues.AddRange(GetOvertimeInNight(firstTime, lastTime, dateCheck, "CN", isRegistedOT));
                                                     item.WorkingStatuses.Add(new WorkingStatus()
                                                     {
                                                         DayCheck = dateCheck,
-                                                        Value = "BM" // BM: Làm ca đêm ngày kỷ niệm chính thức
+                                                        Value = kyhieuChamCongDB.NullString() == "" ? "BM" : kyhieuChamCongDB.NullString() // BM: Làm ca đêm ngày kỷ niệm chính thức
                                                     });
                                                 }
                                                 else if (CheckNgayDB(dateCheck) == 3 || CheckNgayDB(dateCheck) == 4) // ngay chu nhat + ngay nghi bu
                                                 {
-                                                    item.OvertimeValues.AddRange(GetOvertimeInNight(firstTime, lastTime, dateCheck, "CN"));
+                                                    item.OvertimeValues.AddRange(GetOvertimeInNight(firstTime, lastTime, dateCheck, "CN", isRegistedOT));
                                                     item.WorkingStatuses.Add(new WorkingStatus()
                                                     {
                                                         DayCheck = dateCheck,
-                                                        Value = "D" // TVD: Thử việc làm thêm ca đêm chủ nhật
+                                                        Value = kyhieuChamCongDB.NullString() == "" ? "D" : kyhieuChamCongDB.NullString() // TVD: Thử việc làm thêm ca đêm chủ nhật
                                                     });
                                                 }
                                                 else if (CheckNgayDB(dateCheck) == 1) // ngay le
@@ -769,26 +787,26 @@ namespace HRMNS.Application.Implementation
                                                     var ngayle = _ngaylenamRespository.FindById(dateCheck);
                                                     if (ngayle.IslastHoliday == CommonConstants.N)
                                                     {
-                                                        item.OvertimeValues.AddRange(GetOvertimeInNight(firstTime, lastTime, dateCheck, "NL"));
+                                                        item.OvertimeValues.AddRange(GetOvertimeInNight(firstTime, lastTime, dateCheck, "NL", isRegistedOT));
                                                     }
                                                     else // ngay le cuoi cung
                                                     {
-                                                        item.OvertimeValues.AddRange(GetOvertimeInNight(firstTime, lastTime, dateCheck, "NLCC"));
+                                                        item.OvertimeValues.AddRange(GetOvertimeInNight(firstTime, lastTime, dateCheck, "NLCC", isRegistedOT));
                                                     }
 
                                                     item.WorkingStatuses.Add(new WorkingStatus()
                                                     {
                                                         DayCheck = dateCheck,
-                                                        Value = "NHD" // NHD: làm ca đêm ngày lễ
+                                                        Value = kyhieuChamCongDB.NullString() == "" ? "NHD" : kyhieuChamCongDB.NullString() // NHD: làm ca đêm ngày lễ
                                                     });
                                                 }
                                                 else if (CheckNgayDB(dateCheck) == 2) // ngay truoc le
                                                 {
-                                                    item.OvertimeValues.AddRange(GetOvertimeInNight(firstTime, lastTime, dateCheck, "NL"));
+                                                    item.OvertimeValues.AddRange(GetOvertimeInNight(firstTime, lastTime, dateCheck, "NL", isRegistedOT));
                                                     item.WorkingStatuses.Add(new WorkingStatus()
                                                     {
                                                         DayCheck = dateCheck,
-                                                        Value = "BH" // BH: làm ca đêm trước ngày lễ( chính thức)
+                                                        Value = kyhieuChamCongDB.NullString() == "" ? "BH" : kyhieuChamCongDB.NullString() // BH: làm ca đêm trước ngày lễ( chính thức)
                                                     });
                                                 }
 
@@ -819,7 +837,7 @@ namespace HRMNS.Application.Implementation
                                                 item.WorkingStatuses.Add(new WorkingStatus()
                                                 {
                                                     DayCheck = dateCheck,
-                                                    Value = "NH" // NH: NationALHoliday/ Nghỉ lễ
+                                                    Value = kyhieuChamCongDB.NullString() == "" ? "NH" : kyhieuChamCongDB.NullString() // NH: NationALHoliday/ Nghỉ lễ
                                                 });
                                             }
                                         }
@@ -840,7 +858,7 @@ namespace HRMNS.Application.Implementation
             throw new NotImplementedException();
         }
 
-        private List<OvertimeValue> GetOvertimeInNight(string firstTime, string lastTime, string dateCheck, string ngayLviec)
+        private List<OvertimeValue> GetOvertimeInNight(string firstTime, string lastTime, string dateCheck, string ngayLviec, bool isRegistedOT)
         {
             // 20:00 -> 22:00
             // 22:00 -> 23:59
@@ -859,7 +877,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "200",
-                        ValueOT = timeOT
+                        ValueOT = timeOT,
+                        Registered = isRegistedOT
                     });
                 }
                 else if (ngayLviec == "NLCC" || ngayLviec == "NL") // Ngay le, ngay le cuoi cung
@@ -868,7 +887,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "300",
-                        ValueOT = timeOT
+                        ValueOT = timeOT,
+                        Registered = isRegistedOT
                     });
                 }
             }
@@ -882,7 +902,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "390",
-                        ValueOT = timeOT
+                        ValueOT = timeOT,
+                        Registered = isRegistedOT
                     });
                 }
                 else if (ngayLviec == "CN")
@@ -891,7 +912,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "270",
-                        ValueOT = timeOT
+                        ValueOT = timeOT,
+                        Registered = isRegistedOT
                     });
                 }
             }
@@ -906,7 +928,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "200",
-                        ValueOT = timeOT - 0.5
+                        ValueOT = timeOT - 0.5,
+                        Registered = isRegistedOT
                     });
                 }
                 else if (ngayLviec == "NL") // NGAY LE
@@ -915,7 +938,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "390",
-                        ValueOT = timeOT - 0.5
+                        ValueOT = timeOT - 0.5,
+                        Registered = isRegistedOT
                     });
                 }
                 else if (ngayLviec == "CN")
@@ -924,7 +948,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "270",
-                        ValueOT = timeOT - 0.5 // O.5H di an
+                        ValueOT = timeOT - 0.5, // O.5H di an
+                        Registered = isRegistedOT
                     });
                 }
             }
@@ -938,7 +963,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "150",
-                        ValueOT = timeOT
+                        ValueOT = timeOT,
+                        Registered = isRegistedOT
                     });
                 }
                 else if (ngayLviec == "NL") // NGAY LE
@@ -947,7 +973,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "300",
-                        ValueOT = timeOT
+                        ValueOT = timeOT,
+                        Registered = isRegistedOT
                     });
                 }
                 else if (ngayLviec == "CN")
@@ -956,7 +983,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "200",
-                        ValueOT = timeOT
+                        ValueOT = timeOT,
+                        Registered = isRegistedOT
                     });
                 }
             }
@@ -972,7 +1000,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "200",
-                        ValueOT = timeOT1
+                        ValueOT = timeOT1,
+                        Registered = isRegistedOT
                     });
                 }
                 else if (ngayLviec == "NLCC" || ngayLviec == "NL") // Ngay le, ngay le cuoi cung
@@ -981,7 +1010,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "300",
-                        ValueOT = timeOT1
+                        ValueOT = timeOT1,
+                        Registered = isRegistedOT
                     });
                 }
 
@@ -991,7 +1021,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "390",
-                        ValueOT = timeOT2
+                        ValueOT = timeOT2,
+                        Registered = isRegistedOT
                     });
                 }
                 else if (ngayLviec == "CN")
@@ -1000,7 +1031,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "270",
-                        ValueOT = timeOT2
+                        ValueOT = timeOT2,
+                        Registered = isRegistedOT
                     });
                 }
             }
@@ -1017,7 +1049,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "200",
-                        ValueOT = timeOT1
+                        ValueOT = timeOT1,
+                        Registered = isRegistedOT
                     });
                 }
                 else if (ngayLviec == "NLCC" || ngayLviec == "NL") // Ngay le, ngay le cuoi cung
@@ -1026,7 +1059,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "300",
-                        ValueOT = timeOT1
+                        ValueOT = timeOT1,
+                        Registered = isRegistedOT
                     });
                 }
 
@@ -1036,7 +1070,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "390",
-                        ValueOT = timeOT2
+                        ValueOT = timeOT2,
+                        Registered = isRegistedOT
                     });
                 }
                 else if (ngayLviec == "CN")
@@ -1045,7 +1080,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "270",
-                        ValueOT = timeOT2
+                        ValueOT = timeOT2,
+                        Registered = isRegistedOT
                     });
                 }
 
@@ -1055,7 +1091,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "200",
-                        ValueOT = timeOT3 - 0.5
+                        ValueOT = timeOT3 - 0.5,
+                        Registered = isRegistedOT
                     });
                 }
                 else if (ngayLviec == "NL") // NGAY LE
@@ -1064,7 +1101,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "390",
-                        ValueOT = timeOT3 - 0.5
+                        ValueOT = timeOT3 - 0.5,
+                        Registered = isRegistedOT
                     });
                 }
                 else if (ngayLviec == "CN")
@@ -1073,7 +1111,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "270",
-                        ValueOT = timeOT3 - 0.5 // O.5H di an
+                        ValueOT = timeOT3 - 0.5, // O.5H di an
+                        Registered = isRegistedOT
                     });
                 }
             }
@@ -1092,7 +1131,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "200",
-                        ValueOT = timeOT1
+                        ValueOT = timeOT1,
+                        Registered = isRegistedOT
                     });
                 }
                 else if (ngayLviec == "NLCC" || ngayLviec == "NL") // Ngay le, ngay le cuoi cung
@@ -1101,7 +1141,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "300",
-                        ValueOT = timeOT1
+                        ValueOT = timeOT1,
+                        Registered = isRegistedOT
                     });
                 }
 
@@ -1112,7 +1153,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "390",
-                        ValueOT = timeOT2
+                        ValueOT = timeOT2,
+                        Registered = isRegistedOT
                     });
                 }
                 else if (ngayLviec == "CN")
@@ -1121,7 +1163,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "270",
-                        ValueOT = timeOT2
+                        ValueOT = timeOT2,
+                        Registered = isRegistedOT
                     });
                 }
 
@@ -1132,7 +1175,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "200",
-                        ValueOT = timeOT3 - 0.5
+                        ValueOT = timeOT3 - 0.5,
+                        Registered = isRegistedOT
                     });
                 }
                 else if (ngayLviec == "NL") // NGAY LE
@@ -1141,7 +1185,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "390",
-                        ValueOT = timeOT3 - 0.5
+                        ValueOT = timeOT3 - 0.5,
+                        Registered = isRegistedOT
                     });
                 }
                 else if (ngayLviec == "CN")
@@ -1150,7 +1195,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "270",
-                        ValueOT = timeOT3 - 0.5 // O.5H di an
+                        ValueOT = timeOT3 - 0.5, // O.5H di an
+                        Registered = isRegistedOT
                     });
                 }
 
@@ -1161,7 +1207,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "150",
-                        ValueOT = timeOT4
+                        ValueOT = timeOT4,
+                        Registered = isRegistedOT
                     });
                 }
                 else if (ngayLviec == "NL") // NGAY LE
@@ -1170,7 +1217,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "300",
-                        ValueOT = timeOT4
+                        ValueOT = timeOT4,
+                        Registered = isRegistedOT
                     });
                 }
                 else if (ngayLviec == "CN")
@@ -1179,7 +1227,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "200",
-                        ValueOT = timeOT4
+                        ValueOT = timeOT4,
+                        Registered = isRegistedOT
                     });
                 }
             }
@@ -1196,7 +1245,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "390",
-                        ValueOT = timeOT1
+                        ValueOT = timeOT1,
+                        Registered = isRegistedOT
                     });
                 }
                 else if (ngayLviec == "CN")
@@ -1205,7 +1255,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "270",
-                        ValueOT = timeOT1
+                        ValueOT = timeOT1,
+                        Registered = isRegistedOT
                     });
                 }
 
@@ -1216,7 +1267,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "200",
-                        ValueOT = timeOT2 - 0.5
+                        ValueOT = timeOT2 - 0.5,
+                        Registered = isRegistedOT
                     });
                 }
                 else if (ngayLviec == "NL") // NGAY LE
@@ -1225,7 +1277,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "390",
-                        ValueOT = timeOT2 - 0.5
+                        ValueOT = timeOT2 - 0.5,
+                        Registered = isRegistedOT
                     });
                 }
                 else if (ngayLviec == "CN")
@@ -1234,7 +1287,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "270",
-                        ValueOT = timeOT2 - 0.5 // O.5H di an
+                        ValueOT = timeOT2 - 0.5, // O.5H di an
+                        Registered = isRegistedOT
                     });
                 }
             }
@@ -1252,7 +1306,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "390",
-                        ValueOT = timeOT2
+                        ValueOT = timeOT2,
+                        Registered = isRegistedOT
                     });
                 }
                 else if (ngayLviec == "CN")
@@ -1261,7 +1316,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "270",
-                        ValueOT = timeOT2
+                        ValueOT = timeOT2,
+                        Registered = isRegistedOT
                     });
                 }
 
@@ -1272,7 +1328,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "200",
-                        ValueOT = timeOT3 - 0.5
+                        ValueOT = timeOT3 - 0.5,
+                        Registered = isRegistedOT
                     });
                 }
                 else if (ngayLviec == "NL") // NGAY LE
@@ -1281,7 +1338,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "390",
-                        ValueOT = timeOT3 - 0.5
+                        ValueOT = timeOT3 - 0.5,
+                        Registered = isRegistedOT
                     });
                 }
                 else if (ngayLviec == "CN")
@@ -1290,7 +1348,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "270",
-                        ValueOT = timeOT3 - 0.5 // O.5H di an
+                        ValueOT = timeOT3 - 0.5, // O.5H di an
+                        Registered = isRegistedOT
                     });
                 }
 
@@ -1301,7 +1360,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "150",
-                        ValueOT = timeOT4
+                        ValueOT = timeOT4,
+                        Registered = isRegistedOT
                     });
                 }
                 else if (ngayLviec == "NL") // NGAY LE
@@ -1310,7 +1370,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "300",
-                        ValueOT = timeOT4
+                        ValueOT = timeOT4,
+                        Registered = isRegistedOT
                     });
                 }
                 else if (ngayLviec == "CN")
@@ -1319,7 +1380,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "200",
-                        ValueOT = timeOT4
+                        ValueOT = timeOT4,
+                        Registered = isRegistedOT
                     });
                 }
             }
@@ -1336,7 +1398,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "200",
-                        ValueOT = timeOT2 - 0.5
+                        ValueOT = timeOT2 - 0.5,
+                        Registered = isRegistedOT
                     });
                 }
                 else if (ngayLviec == "NL") // NGAY LE
@@ -1345,7 +1408,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "390",
-                        ValueOT = timeOT2 - 0.5
+                        ValueOT = timeOT2 - 0.5,
+                        Registered = isRegistedOT
                     });
                 }
                 else if (ngayLviec == "CN")
@@ -1354,7 +1418,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "270",
-                        ValueOT = timeOT2 - 0.5 // O.5H di an
+                        ValueOT = timeOT2 - 0.5, // O.5H di an
+                        Registered = isRegistedOT
                     });
                 }
 
@@ -1365,7 +1430,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "150",
-                        ValueOT = timeOT4
+                        ValueOT = timeOT4,
+                        Registered = isRegistedOT
                     });
                 }
                 else if (ngayLviec == "NL") // NGAY LE
@@ -1374,7 +1440,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "300",
-                        ValueOT = timeOT4
+                        ValueOT = timeOT4,
+                        Registered = isRegistedOT
                     });
                 }
                 else if (ngayLviec == "CN")
@@ -1383,7 +1450,8 @@ namespace HRMNS.Application.Implementation
                     {
                         DayCheckOT = dateCheck,
                         DMOvertime = "200",
-                        ValueOT = timeOT4
+                        ValueOT = timeOT4,
+                        Registered = isRegistedOT
                     });
                 }
             }

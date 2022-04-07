@@ -14,6 +14,8 @@ namespace HRMNS.Application.ViewModels.System
             OvertimeValues = new List<OvertimeValue>();
             lstHopDong = new List<HopDong_NV>();
             lstNhanVienCaLamViec = new List<NhanVien_CaLamViec>();
+            lstDangKyOT = new List<DangKyOT>();
+            lstChamCongDB = new List<ChamCongDB>();
         }
 
         public string MaNV { get; set; }
@@ -100,5 +102,6 @@ namespace HRMNS.Application.ViewModels.System
         public string DMOvertime { get; set; }
         public string DayCheckOT { get; set; }
         public double ValueOT { get; set; }
+        public bool Registered { get; set; }
     }
 }
