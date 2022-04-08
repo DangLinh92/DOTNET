@@ -25,16 +25,6 @@
             }
         },
         colors: ['#44c4fa', '#ffab00'],
-        responsive: [{
-            breakpoint: 200,
-            options: {
-                legend: {
-                    position: 'bottom',
-                    offsetX: -5,
-                    offsetY: 0
-                }
-            }
-        }],
         plotOptions: {
             bar: {
                 horizontal: false,
@@ -46,8 +36,12 @@
             categories: chartdataTotalInit["Divisions"],
         },
         legend: {
-            position: 'right',
-            offsetY: 5
+            position: 'top',
+            horizontalAlign: 'left',
+            offsetY: 0
+        },
+        grid: {
+            show: false,
         },
         fill: {
             opacity: 1

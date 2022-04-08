@@ -13,6 +13,7 @@ namespace VOC.Application.ViewModels.VOC
             vOC_DefectTypeViews = new List<VOC_DefectTypeViewModel>();
             vOCSiteModelByTimeLsts = new List<VOCSiteModelByTimeLst>();
             paretoDataDefectName = new List<TotalVOCSiteModel>();
+            vOCPPMs = new List<VOCPPM_Ex>();
         }
         public List<VOC_MSTViewModel> vOC_MSTViews { get; set; }
         public List<VOC_DefectTypeViewModel> vOC_DefectTypeViews { get; set; }
@@ -24,6 +25,8 @@ namespace VOC.Application.ViewModels.VOC
         public List<TotalVOCSiteModel> paretoDataDefectName { get; set; } // ve bieu do pareto cho defect
 
         public PPMDataChartAll VocPPMView { get; set; }
+
+        public List<VOCPPM_Ex> vOCPPMs { get; set; }
     }
 
     public class TotalVOCSiteModel
@@ -126,11 +129,16 @@ namespace VOC.Application.ViewModels.VOC
         public PPMDataChart()
         {
             lstData = new List<double>();
+            dataTargetAll = new List<double>();
         }
 
         public string Module { get; set; } // csp/ lfem
         public string Customer { get; set; }
+        public int Year { get; set; }
+
         public List<double> lstData { get; set; }
+
+        public List<double> dataTargetAll { get; set; }
     }
 
     public class PPMDataChartAll
@@ -139,10 +147,12 @@ namespace VOC.Application.ViewModels.VOC
         {
             dataChartsItem = new List<List<PPMDataChart>>();
             dataChartsAll = new List<PPMDataChart>();
+
         }
+        public int Year { get; set; }
+
         public List<List<PPMDataChart>> dataChartsItem { get; set; }
 
         public List<PPMDataChart> dataChartsAll { get; set; }
-
     }
 }

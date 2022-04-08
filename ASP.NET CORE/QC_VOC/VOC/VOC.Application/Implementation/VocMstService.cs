@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
@@ -23,14 +24,16 @@ namespace VOC.Application.Implementation
         private IRespository<VOC_MST, int> _vocRepository;
         private IRespository<VOC_DEFECT_TYPE, int> _vocDefectTypeRepository;
         private IRespository<VOC_PPM, int> _vocPPMRepository;
+        private IRespository<VOC_PPM_YEAR, int> _vocPPMYearRepository;
         private IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public VocMstService(IRespository<VOC_MST, int> vocRepository, IRespository<VOC_PPM, int> vocPPMRepository, IRespository<VOC_DEFECT_TYPE, int> vocDefectTypeRepository, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public VocMstService(IRespository<VOC_MST, int> vocRepository, IRespository<VOC_PPM_YEAR, int> vocPPMYearRepository, IRespository<VOC_PPM, int> vocPPMRepository, IRespository<VOC_DEFECT_TYPE, int> vocDefectTypeRepository, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _vocRepository = vocRepository;
             _vocDefectTypeRepository = vocDefectTypeRepository;
             _vocPPMRepository = vocPPMRepository;
+            _vocPPMYearRepository = vocPPMYearRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
@@ -116,25 +119,34 @@ namespace VOC.Application.Implementation
                         row["Received_site"] = worksheet.Cells[i, 3].Text.NullString();
                         row["PlaceOfOrigin"] = worksheet.Cells[i, 4].Text.NullString();
                         row["ReceivedDept"] = worksheet.Cells[i, 5].Text.NullString();
+
+                        if (!DateTime.TryParse(worksheet.Cells[i, 6].Text.NullString(), out _))
+                        {
+                            resultDB.ReturnInt = -1;
+                            resultDB.ReturnString = "Received date is format (YYYY-MM-DD) : " + worksheet.Cells[i, 6].Text.NullString();
+                            return resultDB;
+                        }
+
                         row["ReceivedDate"] = worksheet.Cells[i, 6].Text.NullString();
+                        row["SPLReceivedDate"] = worksheet.Cells[i, 7].Text.NullString();
 
                         if (!DateTime.TryParse(worksheet.Cells[i, 7].Text.NullString(), out _))
                         {
-                            resultDB.ReturnInt = -1;
-                            resultDB.ReturnString = "Received date is format (YYYY-MM-DD) : " + worksheet.Cells[i, 7].Text.NullString();
-                            return resultDB;
+                            row["SPLReceivedDateWeek"] = DateTime.Parse(worksheet.Cells[i, 6].Text.NullString()).GetWeekOfYear() - 1;
                         }
-
-                        row["SPLReceivedDate"] = worksheet.Cells[i, 7].Text.NullString();
-
-                        if (!int.TryParse(worksheet.Cells[i, 8].Text.NullString().ToUpper().Substring(1), out _))
+                        else
                         {
-                            resultDB.ReturnInt = -1;
-                            resultDB.ReturnString = "SPL Received date (week) Invalid : " + worksheet.Cells[i, 8].Text.NullString().ToUpper();
-                            return resultDB;
+                            if (!int.TryParse(worksheet.Cells[i, 8].Text.NullString().ToUpper().Substring(1), out _))
+                            {
+                                resultDB.ReturnInt = -1;
+                                resultDB.ReturnString = "SPL Received date (week) Invalid : " + worksheet.Cells[i, 8].Text.NullString().ToUpper();
+                                return resultDB;
+                            }
+
+                            row["SPLReceivedDateWeek"] = worksheet.Cells[i, 8].Text.NullString().ToUpper();
                         }
 
-                        row["SPLReceivedDateWeek"] = worksheet.Cells[i, 8].Text.NullString().ToUpper();
+
                         row["Customer"] = worksheet.Cells[i, 9].Text.NullString();
                         row["SETModelCustomer"] = worksheet.Cells[i, 10].Text.NullString();
                         row["ProcessCustomer"] = worksheet.Cells[i, 11].Text.NullString();
@@ -983,10 +995,12 @@ namespace VOC.Application.Implementation
             return result;
         }
 
-        public PPMDataChartAll ReportPPMByYear(string year)
+        public PPMDataChartAll ReportPPMByYear(string year, out List<VOCPPM_Ex> pMDataCharts)
         {
-            List<VOCPPM_Ex> lstVocPPMex = new List<VOCPPM_Ex>();
             int iyear = int.Parse(year);
+
+            List<VOCPPM_Ex> lstVocPPMex = new List<VOCPPM_Ex>();
+
             var lst = _vocPPMRepository.FindAll(x => x.Year == iyear);
             var lstPPM = _mapper.Map<List<VocPPMViewModel>>(lst);
             var lstGroup = lstPPM.GroupBy(x => (x.Module, x.Customer)).Select(gr => (gr, Total: gr.Count()));
@@ -1034,7 +1048,15 @@ namespace VOC.Application.Implementation
                             vOCPPM_Customer.ToTal_Defect = subGr.ToTal;
                         }
                     }
-                    vOCPPM_Customer.ToTal_PPM = Math.Round((vOCPPM_Customer.ToTal_Defect / vOCPPM_Customer.ToTal_Input) * Math.Pow(10, 6), 1);
+                    if (vOCPPM_Customer.ToTal_Input > 0)
+                    {
+                        vOCPPM_Customer.ToTal_PPM = Math.Round((vOCPPM_Customer.ToTal_Defect / vOCPPM_Customer.ToTal_Input) * Math.Pow(10, 6), 0);
+                    }
+                    else
+                    {
+                        vOCPPM_Customer.ToTal_PPM = 0;
+                    }
+
                     vOCPPM_Customer.ToTal_PPM_Target = item.TargetValue;
 
                     if (!vOCPPM_Ex.vOCPPM_Customers.Any(x => x.Customer == item.Customer))
@@ -1118,7 +1140,7 @@ namespace VOC.Application.Implementation
 
                         if (sub.vocPPMModels.FirstOrDefault(x => x.Month == month && x.Type == "Input")?.Value > 0)
                         {
-                            pPMByMonth.PPM = Math.Round(Math.Pow(10, 6) * sub.vocPPMModels.FirstOrDefault(x => x.Month == month && x.Type == "Defect").Value / sub.vocPPMModels.FirstOrDefault(x => x.Month == month && x.Type == "Input").Value, 1);
+                            pPMByMonth.PPM = Math.Round(Math.Pow(10, 6) * sub.vocPPMModels.FirstOrDefault(x => x.Month == month && x.Type == "Defect").Value / sub.vocPPMModels.FirstOrDefault(x => x.Month == month && x.Type == "Input").Value, 0);
                         }
                         else
                         {
@@ -1138,12 +1160,15 @@ namespace VOC.Application.Implementation
                 }
             }
 
+            pMDataCharts = lstVocPPMex;
+
             Dictionary<string, List<PPMDataChart>> dic = new Dictionary<string, List<PPMDataChart>>();
             PPMDataChart pPMDataChart;
             List<PPMDataChart> pPMDataCharts;
             List<double> lstTotalInput = new List<double>() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             List<double> lstTotalDefect = new List<double>() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             List<double> lstTotalPPM = new List<double>() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            List<double> dataTargetAll = new List<double>() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
             double totalPPM;
             string customer = "";
@@ -1154,6 +1179,20 @@ namespace VOC.Application.Implementation
 
                 lstTotalInput = new List<double>() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
                 lstTotalDefect = new List<double>() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+                lstTotalPPM = new List<double>() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+                dataTargetAll = new List<double>() { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+                foreach (var cus in item.vOCPPM_Customers)
+                {
+                    foreach (var pM in cus.pPMByMonths)
+                    {
+                        if (pM.Month >= 0 && pM.Month <= 12)
+                        {
+                            dataTargetAll[pM.Month] = pM.Target;
+                        }
+                    }
+                    break;
+                }
 
                 foreach (var cus in item.vOCPPM_Customers)
                 {
@@ -1162,20 +1201,37 @@ namespace VOC.Application.Implementation
                     {
                         Module = item.Module,
                         Customer = cus.Customer,
+                        Year = iyear,
+                        dataTargetAll = dataTargetAll
                     };
                     pPMDataChart.lstData = cus.pPMByMonths.Select(x => x.PPM).ToList();
                     pPMDataCharts.Add(pPMDataChart);
 
                     for (int month = 1; month <= 12; month++)
                     {
-                        lstTotalInput[month - 1] += cus.vocPPMModels.FirstOrDefault(x => x.Type == "Input" && x.Month == month).Value;
-                        lstTotalDefect[month - 1] += cus.vocPPMModels.FirstOrDefault(x => x.Type == "Defect" && x.Month == month).Value;
+                        if(cus.vocPPMModels.FirstOrDefault(x => x.Type == "Input" && x.Month == month) != null)
+                        {
+                            lstTotalInput[month - 1] += cus.vocPPMModels.FirstOrDefault(x => x.Type == "Input" && x.Month == month).Value;
+                        }
+                        else
+                        {
+                            lstTotalInput[month - 1] += 0;
+                        }
+                        
+                        if(cus.vocPPMModels.FirstOrDefault(x => x.Type == "Defect" && x.Month == month) != null)
+                        {
+                            lstTotalDefect[month - 1] += cus.vocPPMModels.FirstOrDefault(x => x.Type == "Defect" && x.Month == month).Value;
+                        }
+                        else
+                        {
+                            lstTotalDefect[month - 1] += 0;
+                        }
                     }
                 }
 
                 if (lstTotalInput.Sum() > 0)
                 {
-                    totalPPM = Math.Round(Math.Pow(10, 6) * (lstTotalDefect.Sum() / lstTotalInput.Sum()), 1);
+                    totalPPM = Math.Round(Math.Pow(10, 6) * (lstTotalDefect.Sum() / lstTotalInput.Sum()), 0);
                 }
                 else
                 {
@@ -1184,14 +1240,16 @@ namespace VOC.Application.Implementation
                 lstTotalPPM[0] = totalPPM;
                 for (int i = 1; i <= 12; i++)
                 {
-                    lstTotalPPM[i] = lstTotalInput[i - 1] > 0 ? Math.Round(Math.Pow(10, 6) * (lstTotalDefect[i - 1] / lstTotalInput[i - 1]), 1) : 0;
+                    lstTotalPPM[i] = lstTotalInput[i - 1] > 0 ? Math.Round(Math.Pow(10, 6) * (lstTotalDefect[i - 1] / lstTotalInput[i - 1]), 0) : 0;
                 }
 
                 pPMDataChart = new PPMDataChart()
                 {
                     Module = item.Module,
-                    Customer = customer.Substring(0,customer.Length-1),
-                    lstData = lstTotalPPM
+                    Customer = customer.Substring(0, customer.Length - 1),
+                    lstData = lstTotalPPM,
+                    Year = iyear,
+                    dataTargetAll = dataTargetAll
                 };
                 pPMDataCharts.Insert(0, pPMDataChart);
 
@@ -1200,27 +1258,147 @@ namespace VOC.Application.Implementation
 
             List<List<PPMDataChart>> result = new List<List<PPMDataChart>>();
             List<PPMDataChart> lstChartAll = new List<PPMDataChart>();
+            PPMDataChart pPMData;
             foreach (var item in dic.Values)
             {
                 result.Add(item);
                 foreach (var sub in item)
                 {
-                    if (sub.Customer.Contains("+"))
+                    if (sub.Customer != null && sub.Customer.Contains("+"))
                     {
-                        lstChartAll.Add(sub);
+                        pPMData = new PPMDataChart()
+                        {
+                            Customer = sub.Customer,
+                            Module = sub.Module,
+                            Year = sub.Year,
+                            dataTargetAll = sub.dataTargetAll.ToList(),
+                            lstData = sub.lstData.ToList()
+                        };
+                        lstChartAll.Add(pPMData);
                     }
                 }
             }
 
             PPMDataChartAll pPMDataChartAll = new PPMDataChartAll()
             {
+                dataChartsAll = lstChartAll,
                 dataChartsItem = result,
-                dataChartsAll = lstChartAll
+                Year = iyear
             };
 
-            
+            VOC_PPM_YEAR entity;
+            if (year == DateTime.Now.Year.ToString())
+            {
+                foreach (var item in pPMDataChartAll.dataChartsAll)
+                {
+                    if (_vocPPMYearRepository.FindAll(x => x.Year == iyear && x.Module == item.Module).Any())
+                    {
+                        entity = _vocPPMYearRepository.FindAll(x => x.Year == iyear && x.Module == item.Module).FirstOrDefault();
+                        entity.ValuePPM = item.lstData[0];
+                        _vocPPMYearRepository.Update(entity);
+                    }
+                    else
+                    {
+                        entity = new VOC_PPM_YEAR()
+                        {
+                            Year = int.Parse(year),
+                            Module = item.Module,
+                            ValuePPM = item.lstData[0]
+                        };
+                        _vocPPMYearRepository.Add(entity);
+                    }
+                }
+
+                _unitOfWork.Commit();
+            }
+
+            foreach (var item in pPMDataChartAll.dataChartsAll)
+            {
+                var lstPPMYear = _vocPPMYearRepository.FindAll(x => x.Year >= iyear - 3 && x.Module == item.Module && x.Year < iyear).OrderByDescending(x => x.Year);
+
+                foreach (var sub in lstPPMYear)
+                {
+                    item.dataTargetAll.Insert(0, sub.TargetPPM);
+                    item.lstData.Insert(0, sub.ValuePPM);
+                }
+            }
 
             return pPMDataChartAll;
+        }
+
+        public GmesDataViewModel GetGmesData()
+        {
+            GmesDataViewModel gmes = new GmesDataViewModel();
+            gmes.vocPPMViewModels = _mapper.Map<List<VocPPMViewModel>>(_vocPPMRepository.FindAll().OrderByDescending(x => x.Year).OrderByDescending(x => x.Month));
+            gmes.vocPPMYearViewModels = _mapper.Map<List<VocPPMYearViewModel>>(_vocPPMYearRepository.FindAll().OrderByDescending(x => x.Year));
+            return gmes;
+        }
+
+        public VocPPMYearViewModel UpdatePPMByYear(bool isAdd, VocPPMYearViewModel model)
+        {
+            if (isAdd)
+            {
+                var entity = _mapper.Map<VOC_PPM_YEAR>(model);
+                entity.UserCreated = GetUserId();
+                _vocPPMYearRepository.Add(entity);
+            }
+            else
+            {
+                var entity = _vocPPMYearRepository.FindById(model.Id);
+                entity.CopyPropertiesFrom(model, new List<string>() { "Id", "DateCreated", "DateModified", "UserCreated", "UserModified" });
+                entity.UserModified = GetUserId();
+                _vocPPMYearRepository.Update(entity);
+            }
+
+            return model;
+        }
+
+        public void DeletePPMByYear(int Id)
+        {
+            _vocPPMYearRepository.Remove(Id);
+        }
+
+        public VocPPMViewModel UpdatePPMByYearMonth(bool isAdd, VocPPMViewModel model)
+        {
+            if (isAdd)
+            {
+                var entity = _mapper.Map<VOC_PPM>(model);
+                entity.UserCreated = GetUserId();
+                _vocPPMRepository.Add(entity);
+            }
+            else
+            {
+                var entity = _vocPPMRepository.FindById(model.Id);
+                entity.CopyPropertiesFrom(model, new List<string>() { "Id", "DateCreated", "DateModified", "UserCreated", "UserModified" });
+                entity.UserModified = GetUserId();
+                _vocPPMRepository.Update(entity);
+            }
+            return model;
+        }
+
+        public void DeletePPMByYearMonth(int Id)
+        {
+            _vocPPMRepository.Remove(Id);
+        }
+
+        public VocPPMYearViewModel GetPPMByYear(int id)
+        {
+           return _mapper.Map<VocPPMYearViewModel>(_vocPPMYearRepository.FindById(id));
+        }
+
+        public VocPPMViewModel GetPPMByYearMonth(int id)
+        {
+            return _mapper.Map<VocPPMViewModel>(_vocPPMRepository.FindById(id));
+        }
+
+        public double GetTargetPPMByYear(int year)
+        {
+           var entity = _vocPPMYearRepository.FindAll(x => x.Year == year).FirstOrDefault();
+            if(entity != null)
+            {
+                return entity.TargetPPM;
+            }
+            return 0;
         }
     }
 }

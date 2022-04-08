@@ -8,13 +8,13 @@
 </div>
 
 <div class="row">
-    <div class="col-md-12 col-lg-12 col-xl-4 d-flex">
-    </div>
+    @*<div class="col-md-12 col-lg-12 col-xl-4 d-flex">
+    </div>*@
     <!-- Chart total by year-->
-    <div class="col-md-12 col-lg-12 col-xl-4 d-flex">
+    <div class="col-md-12 col-lg-12 col-xl-7 d-flex">
         <div class="card flex-fill dash-statistics">
             <div class="card-header">
-                <h5 class="card-title mb-0">@Model.Year.ToString().Substring(2)년 VOC</h5>
+                <h5 class="card-title mb-0">@Model.Year.ToString().Substring(2)년 VOC 접수 건수(Graph)</h5>
             </div>
             <div class="card-body">
                 <div id="s-col-stacked"></div>
@@ -23,10 +23,10 @@
     </div>
     <!-- /Chart -->
     <!-- data -->
-    <div class="col-md-4 d-flex">
+    <div class="col-md-5 d-flex">
         <div class="card card-table flex-fill">
             <div class="card-header">
-                <h3 class="card-title mb-0">@Model.Year.ToString().Substring(2)년 VOC</h3>
+                <h3 class="card-title mb-0">@Model.Year.ToString().Substring(2)년 VOC 접수 건수(Data)</h3>
             </div>
             <div class="card-body">
                 <div class="table-responsive">

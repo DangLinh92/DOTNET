@@ -11,6 +11,22 @@ namespace VOC.Data.Entities
     [Table("VOC_PPM")]
     public class VOC_PPM : DomainEntity<int>, IDateTracking
     {
+        public VOC_PPM()
+        {
+
+        }
+        public VOC_PPM(int id, string module, string customer, string type, int year, int month, double value, double target)
+        {
+            Id = id;
+            Module = module;
+            Customer = customer;
+            Type = type;
+            Year = year;
+            Month = month;
+            Value = value;
+            TargetValue = target;
+        }
+
         [StringLength(50)]
         public string Module { get; set; } // CSP,LFEM
 

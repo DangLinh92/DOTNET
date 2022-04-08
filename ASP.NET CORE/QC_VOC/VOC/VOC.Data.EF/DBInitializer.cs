@@ -123,7 +123,7 @@ namespace VOC.Data.EF
                         Module = "CSP",
                         Customer = "SEVT",
                         Type = "Input",
-                        Value = 550748,
+                        Value = 575613,
                         TargetValue = 5
                     },
                     new VOC_PPM()
@@ -133,7 +133,7 @@ namespace VOC.Data.EF
                         Module = "CSP",
                         Customer = "SEVT",
                         Type = "Input",
-                        Value = 7619202,
+                        Value = 7741296,
                         TargetValue = 5
                     },
 
@@ -164,7 +164,7 @@ namespace VOC.Data.EF
                         Module = "CSP",
                         Customer = "SEVT",
                         Type = "Defect",
-                        Value = 40,
+                        Value = 42,
                         TargetValue = 5
                     },
 
@@ -196,7 +196,7 @@ namespace VOC.Data.EF
                         Module = "CSP",
                         Customer = "SEV",
                         Type = "Input",
-                        Value = 3576318,
+                        Value = 443786,
                         TargetValue = 5
                     },
 
@@ -227,7 +227,7 @@ namespace VOC.Data.EF
                         Module = "CSP",
                         Customer = "SEV",
                         Type = "Defect",
-                        Value = 44,
+                        Value = 1,
                         TargetValue = 5
                     },
 
@@ -251,7 +251,7 @@ namespace VOC.Data.EF
                         Module = "LFEM",
                         Customer = "SEVT",
                         Type = "Input",
-                        Value = 3561247,
+                        Value = 3709188,
                         TargetValue = 5
                     },
                     new VOC_PPM()
@@ -261,7 +261,7 @@ namespace VOC.Data.EF
                         Module = "LFEM",
                         Customer = "SEVT",
                         Type = "Input",
-                        Value = 7953018,
+                        Value = 7708822,
                         TargetValue = 5
                     },
 
@@ -292,7 +292,7 @@ namespace VOC.Data.EF
                         Module = "LFEM",
                         Customer = "SEVT",
                         Type = "Defect",
-                        Value = 62,
+                        Value = 82,
                         TargetValue = 5
                     },
 
@@ -314,7 +314,7 @@ namespace VOC.Data.EF
                         Module = "LFEM",
                         Customer = "SEV",
                         Type = "Input",
-                        Value = 1921296,
+                        Value = 1765679,
                         TargetValue = 5
                     },
                     new VOC_PPM()
@@ -324,7 +324,7 @@ namespace VOC.Data.EF
                         Module = "LFEM",
                         Customer = "SEV",
                         Type = "Input",
-                        Value = 3328655,
+                        Value = 1636533,
                         TargetValue = 5
                     },
 
@@ -355,9 +355,59 @@ namespace VOC.Data.EF
                         Module = "LFEM",
                         Customer = "SEV",
                         Type = "Defect",
-                        Value = 23,
+                        Value = 5,
                         TargetValue = 5
                     },
+                });
+            }
+
+            if (_context.VocPPMYear.Count() == 0)
+            {
+                _context.VocPPMYear.AddRange(new List<VOC_PPM_YEAR>()
+                {
+                    new VOC_PPM_YEAR()
+                    {
+                        Module = "CSP",
+                        Year = 2019,
+                        ValuePPM = 0,
+                        TargetPPM = 0
+                    },
+                    new VOC_PPM_YEAR()
+                    {
+                        Module = "CSP",
+                        Year = 2020,
+                        ValuePPM = 14,
+                        TargetPPM = 14
+                    },
+                    new VOC_PPM_YEAR()
+                    {
+                        Module = "CSP",
+                        Year = 2021,
+                        ValuePPM = 8.6,
+                        TargetPPM = 12
+                    },
+
+                    new VOC_PPM_YEAR()
+                    {
+                        Module = "LFEM",
+                        Year = 2019,
+                        ValuePPM = 8.4,
+                        TargetPPM = 9.4
+                    },
+                    new VOC_PPM_YEAR()
+                    {
+                        Module = "LFEM",
+                        Year = 2020,
+                        ValuePPM = 6.9,
+                        TargetPPM = 8
+                    },
+                    new VOC_PPM_YEAR()
+                    {
+                        Module = "LFEM",
+                        Year = 2021,
+                        ValuePPM = 6.6,
+                        TargetPPM = 8
+                    }
                 });
             }
 

@@ -1,0 +1,393 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@using VOC.Authorization
+@inject IAuthorizationService AuthorizationService
+@model List<VOCPPM_Ex>
+<!-- LFEM -->
+<div class="row">
+    <div class="col-sm-12">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item active"><i class="fa fa-caret-right"></i> <strong>고객(사) GMES 불량율 Data Trend 관리(LFEM)</strong></li>
+        </ul>
+    </div>
+</div>
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col">
+        </div>
+        <div class="col-auto float-right ml-auto">
+            @{
+                var pCreate = await AuthorizationService.AuthorizeAsync(User, "HOME", Operations.Create);
+            }
+
+            @if (pCreate.Succeeded)
+            {
+                <a href="/admin/ppm/index" id="btnAddPPM" class="btn"><i class="fa fa-plus"></i> Add PPM</a>
+            }
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-table">
+            <div class="card-header">
+                <h3 class="card-title mb-0">
+                    SEV Customer GMES Data(LFEM)
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover mb-0 table-striped custom-table datatable" id="vocLFemSevDataTable" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th colspan="2"></th>
+                                <th>Total 년</th>
+                                @for (int i = 1; i <= 12; i++)
+                                {
+                                    @if (DateTime.Now.Month == i)
+                                    {
+                                        <th style="background-color: #FCF3CF;color:red">@string.Format("{0}월", i)</th>
+                                    }
+                                    else
+                                    {
+                                        <th>@string.Format("{0}월", i)</th>
+                                    }
+                                }
+                            </tr>
+                        </thead>
+
+                        <tbody id="tbl-content-LFemSevtDataTable">
+                            @foreach (var lfem in Model.Where(x => x.Module == "LFEM").ToList())
+                            {
+                                @foreach (var item in lfem.vOCPPM_Customers.Where(x => x.Customer == "SEV").ToList())
+                                {
+                                    @foreach (var type in item.vocPPMModels.Select(x => x.Type).Distinct().OrderByDescending(x => x).ToList())
+                                    {
+                                        <tr>
+                                            @if (type == "Input")
+                                            {
+                                                <td rowspan="3">Wisol @lfem.Year.ToString().Substring(2, 2) 년 GMES</td>
+                                            }
+
+                                            <td>@type 수량</td>
+                                            <td>@item.vocPPMModels.Where(x => x.Type == type).Sum(x => x.Value)</td>
+                                            @{
+                                                @foreach (var voc in item.vocPPMModels)
+                                                {
+                                                    if (voc.Type == type)
+                                                    {
+                                                        <td>@voc.Value</td>
+                                                    }
+                                                }
+                                            }
+                                        </tr>
+                                    }
+
+                                    @for (int i = 1; i <= 2; i++)
+                                    {
+                                        <tr>
+                                            @if (i == 2)
+                                            {
+                                                <td>@lfem.Year.ToString().Substring(2, 2)년 target</td>
+                                            }
+
+                                            <td>
+                                                PPM
+                                            </td>
+                                            @foreach (var ppm in item.pPMByMonths)
+                                            {
+                                                @if (i == 1)
+                                                {
+                                                    <td style="color:red">@ppm.PPM</td>
+                                                }
+                                                else
+                                                {
+                                                    <td style="color:deepskyblue">@ppm.Target</td>
+                                                }
+                                            }
+                                        </tr>
+                                    }
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-table">
+            <div class="card-header">
+                <h3 class="card-title mb-0">
+                    SEVT Customer GMES Data(LFEM)
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover mb-0 table-striped custom-table datatable" id="vocLFemSevtDataTable" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th colspan="2"></th>
+                                <th>Total 년</th>
+                                @for (int i = 1; i <= 12; i++)
+                                {
+                                    @if (DateTime.Now.Month == i)
+                                    {
+                                        <th style="background-color: #FCF3CF;color:red">@string.Format("{0}월", i)</th>
+                                    }
+                                    else
+                                    {
+                                        <th>@string.Format("{0}월", i)</th>
+                                    }
+                                }
+                            </tr>
+                        </thead>
+
+                        <tbody id="tbl-content-LFemSevtDataTable">
+                            @foreach (var lfem in Model.Where(x => x.Module == "LFEM").ToList())
+                            {
+                                @foreach (var item in lfem.vOCPPM_Customers.Where(x => x.Customer == "SEVT").ToList())
+                                {
+                                    @foreach (var type in item.vocPPMModels.Select(x => x.Type).Distinct().OrderByDescending(x => x).ToList())
+                                    {
+                                        <tr>
+                                            @if (type == "Input")
+                                            {
+                                                <td rowspan="3">Wisol @lfem.Year.ToString().Substring(2, 2) 년 GMES</td>
+                                            }
+                                            <td>@type 수량</td>
+                                            <td>@item.vocPPMModels.Where(x => x.Type == type).Sum(x => x.Value)</td>
+                                            @{
+                                                @foreach (var voc in item.vocPPMModels)
+                                                {
+                                                    if (voc.Type == type)
+                                                    {
+                                                        <td>@voc.Value</td>
+                                                    }
+                                                }
+                                            }
+                                        </tr>
+                                    }
+
+                                    @for (int i = 1; i <= 2; i++)
+                                    {
+                                        <tr>
+                                            @if (i == 2)
+                                            {
+                                                <td>@lfem.Year.ToString().Substring(2, 2)년 target</td>
+                                            }
+
+                                            <td>
+                                                PPM
+                                            </td>
+                                            @foreach (var ppm in item.pPMByMonths)
+                                            {
+                                                @if (i == 1)
+                                                {
+                                                    <td style="color:red">@ppm.PPM</td>
+                                                }
+                                                else
+                                                {
+                                                    <td style="color:deepskyblue">@ppm.Target</td>
+                                                }
+                                            }
+                                        </tr>
+                                    }
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CSP -->
+<div class="row">
+    <div class="col-sm-12">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item active"><i class="fa fa-caret-right"></i> <strong>고객(사) GMES 불량율 Data Trend 관리(CSP )</strong></li>
+        </ul>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-table">
+            <div class="card-header">
+                <h3 class="card-title mb-0">
+                    SEV Customer GMES Data(CSP)
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover mb-0 table-striped custom-table datatable" id="vocCSPSevDataTable" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th colspan="2"></th>
+                                <th>Total 년</th>
+                                @for (int i = 1; i <= 12; i++)
+                                {
+                                    @if (DateTime.Now.Month == i)
+                                    {
+                                        <th style="background-color: #FCF3CF;color:red">@string.Format("{0}월", i)</th>
+                                    }
+                                    else
+                                    {
+                                        <th>@string.Format("{0}월", i)</th>
+                                    }
+                                }
+                            </tr>
+                        </thead>
+
+                        <tbody id="tbl-content-LFemSevtDataTable">
+                            @foreach (var lfem in Model.Where(x => x.Module == "CSP").ToList())
+                            {
+                                @foreach (var item in lfem.vOCPPM_Customers.Where(x => x.Customer == "SEV").ToList())
+                                {
+                                    @foreach (var type in item.vocPPMModels.Select(x => x.Type).Distinct().OrderByDescending(x => x).ToList())
+                                    {
+                                        <tr>
+                                            @if (type == "Input")
+                                            {
+                                                <td rowspan="3">Wisol @lfem.Year.ToString().Substring(2, 2) 년 GMES</td>
+                                            }
+
+                                            <td>@type 수량</td>
+                                            <td>@item.vocPPMModels.Where(x => x.Type == type).Sum(x => x.Value)</td>
+                                            @{
+                                                @foreach (var voc in item.vocPPMModels)
+                                                {
+                                                    if (voc.Type == type)
+                                                    {
+                                                        <td>@voc.Value</td>
+                                                    }
+                                                }
+                                            }
+                                        </tr>
+                                    }
+
+                                    @for (int i = 1; i <= 2; i++)
+                                    {
+                                        <tr>
+                                            @if (i == 2)
+                                            {
+                                                <td>@lfem.Year.ToString().Substring(2, 2)년 target</td>
+                                            }
+
+                                            <td>
+                                                PPM
+                                            </td>
+                                            @foreach (var ppm in item.pPMByMonths)
+                                            {
+                                                @if (i == 1)
+                                                {
+                                                    <td style="color:red">@ppm.PPM</td>
+                                                }
+                                                else
+                                                {
+                                                    <td style="color:deepskyblue">@ppm.Target</td>
+                                                }
+                                            }
+                                        </tr>
+                                    }
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-table">
+            <div class="card-header">
+                <h3 class="card-title mb-0">
+                    SEVT Customer GMES Data(CSP)
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover mb-0 table-striped custom-table datatable" id="vocCSPSevtDataTable" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th colspan="2"></th>
+                                <th>Total 년</th>
+                                @for (int i = 1; i <= 12; i++)
+                                {
+                                    @if (DateTime.Now.Month == i)
+                                    {
+                                        <th style="background-color: #FCF3CF;color:red">@string.Format("{0}월", i)</th>
+                                    }
+                                    else
+                                    {
+                                        <th>@string.Format("{0}월", i)</th>
+                                    }
+                                }
+                            </tr>
+                        </thead>
+
+                        <tbody id="tbl-content-LFemSevtDataTable">
+                            @foreach (var lfem in Model.Where(x => x.Module == "CSP").ToList())
+                            {
+                                @foreach (var item in lfem.vOCPPM_Customers.Where(x => x.Customer == "SEVT").ToList())
+                                {
+                                    @foreach (var type in item.vocPPMModels.Select(x => x.Type).Distinct().OrderByDescending(x => x).ToList())
+                                    {
+                                        <tr>
+                                            @if (type == "Input")
+                                            {
+                                                <td rowspan="3">Wisol @lfem.Year.ToString().Substring(2, 2) 년 GMES</td>
+                                            }
+                                            <td>@type 수량</td>
+                                            <td>@item.vocPPMModels.Where(x => x.Type == type).Sum(x => x.Value)</td>
+                                            @{
+                                                @foreach (var voc in item.vocPPMModels)
+                                                {
+                                                    if (voc.Type == type)
+                                                    {
+                                                        <td>@voc.Value</td>
+                                                    }
+                                                }
+                                            }
+                                        </tr>
+                                    }
+
+                                    @for (int i = 1; i <= 2; i++)
+                                    {
+                                        <tr>
+                                            @if (i == 2)
+                                            {
+                                                <td>@lfem.Year.ToString().Substring(2, 2)년 target</td>
+                                            }
+
+                                            <td>
+                                                PPM
+                                            </td>
+                                            @foreach (var ppm in item.pPMByMonths)
+                                            {
+                                                @if (i == 1)
+                                                {
+                                                    <td style="color:red">@ppm.PPM</td>
+                                                }
+                                                else
+                                                {
+                                                    <td style="color:deepskyblue">@ppm.Target</td>
+                                                }
+                                            }
+                                        </tr>
+                                    }
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

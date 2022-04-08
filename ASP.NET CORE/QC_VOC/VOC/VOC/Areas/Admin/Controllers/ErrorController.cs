@@ -20,6 +20,12 @@ namespace VOC.Areas.Admin.Controllers
                 model.Title = "Oops! Page not found!";
                 model.Message = "The page you requested was not found.";
             }
+            else
+            {
+                model.Code = "404";
+                model.Title = "Oops! Error!";
+                model.Message = id;
+            }
             return View(model);
         }
     }

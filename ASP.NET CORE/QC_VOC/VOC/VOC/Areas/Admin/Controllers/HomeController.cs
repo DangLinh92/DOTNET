@@ -54,7 +54,9 @@ namespace VOC.Areas.Admin.Controllers
                 model.paretoDataDefectName.AddRange(_vocMstService.ReportDefectByYear(DateTime.Now.Year.ToString(), "Module"));
 
                 // Ve Bieu Do PPM
-                model.VocPPMView = _vocMstService.ReportPPMByYear(DateTime.Now.Year.ToString());
+                List<VOCPPM_Ex> pMDataCharts;
+                model.VocPPMView = _vocMstService.ReportPPMByYear(DateTime.Now.Year.ToString(), out pMDataCharts);
+                model.vOCPPMs = pMDataCharts;
             }
             else
             {
@@ -73,7 +75,10 @@ namespace VOC.Areas.Admin.Controllers
                 model.paretoDataDefectName.AddRange(_vocMstService.ReportDefectByYear(year.ToString(), "SAW"));
                 model.paretoDataDefectName.AddRange(_vocMstService.ReportDefectByYear(year.ToString(), "Module"));
 
-                model.VocPPMView = _vocMstService.ReportPPMByYear(DateTime.Now.Year.ToString());
+                // Ve Bieu Do PPM
+                List<VOCPPM_Ex> pMDataCharts;
+                model.VocPPMView = _vocMstService.ReportPPMByYear(year.ToString(), out pMDataCharts);
+                model.vOCPPMs = pMDataCharts;
             }
 
             return View(model);
@@ -115,6 +120,10 @@ namespace VOC.Areas.Admin.Controllers
                         model.VOC_TAT = DateTime.Parse(model.VOCFinishingDate).Subtract(DateTime.Parse(model.SPLReceivedDate)).Days.NullString();
                     }
                 }
+                else if (DateTime.TryParse(model.ReceivedDate, out _))
+                {
+                    model.SPLReceivedDateWeek = "W" + (DateTime.Parse(model.ReceivedDate).GetWeekOfYear() - 1).NullString();
+                }
 
                 _vocMstService.Add(model);
             }
@@ -132,9 +141,14 @@ namespace VOC.Areas.Admin.Controllers
                         item.VOC_TAT = DateTime.Parse(item.VOCFinishingDate).Subtract(DateTime.Parse(item.SPLReceivedDate)).Days.NullString();
                     }
                 }
+                else if (DateTime.TryParse(item.ReceivedDate, out _))
+                {
+                    item.SPLReceivedDateWeek = "W" + (DateTime.Parse(item.ReceivedDate).GetWeekOfYear() - 1).NullString();
+                }
 
                 _vocMstService.Update(item);
             }
+
             _vocMstService.Save();
             return new OkObjectResult(model);
         }

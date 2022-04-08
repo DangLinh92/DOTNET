@@ -32,6 +32,7 @@ namespace VOC.Data.EF
         public virtual DbSet<VOC_MST> VocMaster { get; set; }
         public virtual DbSet<VOC_DEFECT_TYPE> VocDefectType { get; set; }
         public virtual DbSet<VOC_PPM> VocPPM { get; set; }
+        public virtual DbSet<VOC_PPM_YEAR> VocPPMYear { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -50,6 +51,7 @@ namespace VOC.Data.EF
             builder.AddConfiguration(new VOCMstConfiguration());
             builder.AddConfiguration(new VOCDefectTypeConfiguration());
             builder.AddConfiguration(new VOCPPMConfiguration());
+            builder.AddConfiguration(new VOCPPMYearConfiguration());
 
             //base.OnModelCreating(builder);
         }

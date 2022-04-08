@@ -1,6 +1,9 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using VOC.Data.Entities
 @using VOC.Extensions
+@using Microsoft.AspNetCore.Authorization
+@using VOC.Authorization
+@inject IAuthorizationService AuthorizationService
 @inject SignInManager<APP_USER> SignInManager
 @inject UserManager<APP_USER> UserManager
 
@@ -12,6 +15,12 @@
     <span>@User.GetSpecificClaim("FullName")</span>
 </a>
 <div class="dropdown-menu">
+
+    @if (!User.IsInRole("Staff"))
+    {
+    <a class="dropdown-item" href="/admin/account/register">Register</a>
+    }
+    <a class="dropdown-item" href="/admin/account/resetpassword?userName=@User.GetSpecificClaim("UserName")">Reset password</a>
     <form action="/Admin/Account/Logout" method="post" id="logoutForm">
         <button type="submit" class="dropdown-item">Logout</button>
     </form>

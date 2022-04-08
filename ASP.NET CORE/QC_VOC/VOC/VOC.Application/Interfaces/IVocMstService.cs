@@ -18,23 +18,37 @@ namespace VOC.Application.Interfaces
 
         List<VOC_MSTViewModel> SearchByTime(string fromTime, string toTime);
 
-        List<VOCSiteModelByTimeLst> ReportByWeek(int fromWeek, int toWeek,string year);
+        List<VOCSiteModelByTimeLst> ReportByWeek(int fromWeek, int toWeek, string year);
 
         List<VOCSiteModelByTimeLst> ReportByMonth(string year);
 
         List<VOCSiteModelByTimeLst> ReportVOCFinish(int fromWeek, int toWeek, string year);
 
-        List<TotalVOCSiteModel> ReportDefectByYear(string year,string classification);
+        List<TotalVOCSiteModel> ReportDefectByYear(string year, string classification);
 
         TotalVOCSiteModel ReportByYear(string year);
 
-        PPMDataChartAll ReportPPMByYear(string year);
+        PPMDataChartAll ReportPPMByYear(string year, out List<VOCPPM_Ex> pMDataCharts);
 
         List<VOCSiteModelByTimeLst> ReportInit();
 
         VOC_MSTViewModel GetById(int id);
 
         List<VOC_DefectTypeViewModel> GetDefectType();
+
+        GmesDataViewModel GetGmesData();
+
+        VocPPMYearViewModel UpdatePPMByYear(bool isAdd, VocPPMYearViewModel model);
+
+        VocPPMYearViewModel GetPPMByYear(int id);
+
+        double GetTargetPPMByYear (int year);
+
+        VocPPMViewModel UpdatePPMByYearMonth(bool isAdd, VocPPMViewModel model);
+        VocPPMViewModel GetPPMByYearMonth(int id);
+
+        void DeletePPMByYear(int Id);
+        void DeletePPMByYearMonth(int Id);
 
         void Update(VOC_MSTViewModel function);
 
