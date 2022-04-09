@@ -1,0 +1,115 @@
+﻿@model VOC_CHART
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts
+{
+    <script src="https://cdn.datatables.net/select/1.3.4/js/dataTables.select.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedcolumns/4.0.2/js/dataTables.fixedColumns.min.js"></script>
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+    <script>
+     
+        var chartdataInit = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.vOCSiteModelByTimeLsts))');
+        var chartdataTotalInit = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.totalVOCSitesView))');
+        var chartdataByDefectName = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.paretoDataDefectName))');
+
+        $('#cboCustomer').val(@Model.Customer);
+        $('#cboCustomer').trigger('change');
+
+        onSuccess = function () { };
+
+        $('#txtYear').datetimepicker({
+            format: 'YYYY',//YYYY-MM-DD,
+            icons:
+            {
+                up: "fa fa-angle-up",
+                down: "fa fa-angle-down",
+                next: 'fa fa-angle-right',
+                previous: 'fa fa-angle-left'
+            }
+        });
+
+    </script>
+    <script src="~/app/controllers/voc/chart-voc.js"></script>
+    <script src="~/app/controllers/voc/apexChart-voc.js"></script>
+    <script src="~/app/controllers/voc/chart-voc-Mns.js"></script>
+    <script>
+        var chartVoc = new chartVoc();
+        chartVoc.DrawChart();
+
+        var apexVoc = new apexChartTotalYearController();
+        apexVoc.DrawChart();
+
+        var controller = new chartVocMnsController();
+        controller.initialize();
+    </script>
+}
+
+<div class="content container-fluid">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <h5 class="page-title">Wisol VOC</h5>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+            <div class="card dash-widget">
+                <div class="card-body" style="height:48px;text-align:justify">
+                    <h4 style="display:inline;float:left">접수 건수</h4><i>(Tiếp nhận)</i>:
+                    <h4 id="tagReceiveCount" style="display:inline;float:right">@Model.vocProgessInfo.ReceiveCount</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+            <div class="card dash-widget">
+                <div class="card-body" style="height: 48px; text-align: justify">
+                    <h4 style="display:inline;float:left">완료</h4><i>(Hoàn thành)</i>:
+                    <h4 id="tagCloseCount" style="display:inline;float:right">@Model.vocProgessInfo.CloseCount</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+            <div class="card dash-widget">
+                <div class="card-body" style="height: 48px; text-align: justify">
+                    <h4 style="display:inline;float:left">진행중</h4><i>(Đang xử lý)</i>:
+                    <h4 id="tagProgressCount" style="display:inline;float:right">@Model.vocProgessInfo.ProgressCount</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+            <div class="form-group form-focus select-focus">
+                <div class="cal-icon"><input id="txtYear" name="Year" value="@Model.Year" class="form-control datetimepicker" type="text" required></div>
+                <label class="focus-label">접수 년도/Năm</label>
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+            <div class="form-group form-focus select-focus">
+                <select id="cboCustomer" class="select floating">
+                </select>
+                <label class="focus-label">고객/khách hàng</label>
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+            <div class="form-group form-focus select-focus">
+                <select id="cboSide" class="select floating">
+                    <!option value="WHC" @(Model.Side == "WHC" ? "selected" : "")>WHC</!option>
+                    <!option value="WTC" @(Model.Side == "WTC" ? "selected" : "")>WTC</!option>
+                    <!option value="HQ" @(Model.Side == "HQ" ? "selected" : "")>HQ</!option>
+                </select>
+                <label class="focus-label">생산지/ Nơi sản xuất</label>
+            </div>
+        </div>
+    </div>
+
+    @await Html.PartialAsync("_totalVOCByYearPartialView", Model)
+    @await Html.PartialAsync("_vocWorseDefectPartialView", Model.paretoDataDefectName)
+</div>
+

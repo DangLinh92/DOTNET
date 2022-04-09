@@ -1,0 +1,300 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@using VOC.Authorization
+@inject IAuthorizationService AuthorizationService
+@model VocInfomationsModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+@section Scripts
+{
+    <script src="https://cdn.datatables.net/select/1.3.4/js/dataTables.select.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedcolumns/4.0.2/js/dataTables.fixedColumns.min.js"></script>
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/app/controllers/voc/vocMns.js"></script>
+    <script>
+        var chartdataInit = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.vOCSiteModelByTimeLsts))');
+        var chartdataTotalInit = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.totalVOCSitesView))');
+        var chartdataByDefectName = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.paretoDataDefectName))');
+        var chardataPPM = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.VocPPMView))');
+
+        var controller = new vocController();
+        controller.initialize();
+
+        onSuccess = controller.doAftersearch;
+        onBeginAjax = controller.beginSearch;
+
+        $(document).ready(function () {
+
+            $('#rowWeekArea').find('table').each(function () {
+                var tableWeek =  $(this).DataTable({
+                    "searching": false,
+                    "ordering": false,
+                    paging: false,
+                    info: false,
+                    select: {
+                        style: 'os',
+                        items: 'cell'
+                    }
+                });
+
+                tableWeek.on('select', function (e, dt, type, indexes) {
+
+                    var col = tableWeek.cell({ selected: true }).index().column;
+                    var row = tableWeek.cell({ selected: true }).index().row;
+
+                    var header = tableWeek.column(col).header();
+                    var rowData = tableWeek.rows(row).data().toArray();
+                    var time = $(header).text().trim();
+                    var classitify = rowData[0][0];
+                    var place = $(tableWeek.column(0).header()).text().trim();
+
+                    console.log(time, classitify, place);
+
+                    var table = new $.fn.dataTable.Api('#vocMstDataTable');
+                    table.columns().search('').draw();
+
+                    if (!time.includes('년 누적')) {
+
+                        table.columns(5).search(time).draw();
+                    }
+                    table.columns(1).search(place).draw();
+                    table.columns(12).search(classitify).draw();
+                    table.columns(16).search('Y').draw();
+                })
+            });
+
+            var table = $('#vocMstDataTable').DataTable({
+                scrollY: 400,
+                scrollX: true,
+                scrollCollapse: true,
+                paging: false,
+                select: true,
+                fixedColumns: {
+                    leftColumns: 5
+                },
+                initComplete: function () {
+                    this.api().columns([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25]).every(function () {
+                        var column = this;
+                        var select = $('<select><option value="">All</option></select>')
+                            .appendTo($(column.header()))
+                            .on('change', function () {
+                                var val = $.fn.dataTable.util.escapeRegex(
+                                    $(this).val()
+                                );
+
+                                column
+                                    .search(val ? '^' + val + '$' : '', true, false)
+                                    .draw();
+                            });
+
+                        column.data().unique().sort().each(function (d, j) {
+                            select.append('<option value="' + d + '">' + d + '</option>')
+                        });
+                    });
+                }
+                , columnDefs: [{
+                    render: function (data, type, full, meta) {
+                        return "<div class='text-wrap width-100'>" + data + "</div>";
+                    },
+                    targets: '_all'
+                }],
+                "order": [[4, 'asc']]
+            });
+            table.columns.adjust().draw();
+
+            $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
+            $('select[name="vocMstDataTable_length"]').removeClass('form-control-sm');
+        });
+
+        $('#txtTimeTo').datetimepicker({
+            format: 'YYYY',//'DD/MM/YYYY',
+            icons: {
+                up: "fa fa-angle-up",
+                down: "fa fa-angle-down",
+                next: 'fa fa-angle-right',
+                previous: 'fa fa-angle-left'
+            }
+        });
+    </script>
+    <script src="~/app/controllers/voc/chart-voc.js"></script>
+    <script src="~/app/controllers/voc/apexChart-voc.js"></script>
+}
+
+@section Styles{
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/keytable/2.6.4/css/keyTable.dataTables.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/4.0.2/css/fixedColumns.dataTables.min.css" />
+
+    <style>
+
+        .text-wrap {
+            white-space: normal;
+        }
+
+        .width-100 {
+            width: 100px;
+        }
+
+        .h-200 {
+            height: 200px;
+        }
+
+        table.datatable td {
+            width: 100px;
+            word-break: break-word;
+        }
+
+        #btnAddVoc, #btnAddPPM {
+            background-color: dodgerblue;
+            color: white;
+        }
+
+        td {
+            white-space: nowrap;
+        }
+
+        th:first-child {
+            position: -webkit-sticky;
+            position: sticky;
+            left: 0;
+            z-index: 2;
+        }
+    </style>
+}
+<div class="content container-fluid">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="page-title">GLOBAL VOC Master</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item active">Dashboard</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+
+    @await Html.PartialAsync("_totalVOCByYearPartialView", Model.totalVOCSitesView)
+
+    @await Html.PartialAsync("_weeklyReportPartialView", Model.vOCSiteModelByTimeLsts)
+
+    @await Html.PartialAsync("_vocWorseDefectPartialView", Model.paretoDataDefectName)
+
+    @await Html.PartialAsync("_vocPPMPartialView", Model.VocPPMView)
+
+    <div class="row">
+        <div class="col-sm-12">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item active"><i class="fa fa-caret-right"></i> <strong>[GLOBAL VOC Master LIST]</strong></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+            </div>
+            <div class="col-auto float-right ml-auto">
+                @{
+                    var pCreate = await AuthorizationService.AuthorizeAsync(User, "HOME", Operations.Create);
+                    var pImport = await AuthorizationService.AuthorizeAsync(User, "HOME", Operations.Import);
+                    var pExport = await AuthorizationService.AuthorizeAsync(User, "HOME", Operations.Export);
+                }
+
+                @if (pCreate.Succeeded)
+                {
+                    <a href="#" id="btnAddVoc" class="btn" data-toggle="modal" data-target="#addEdi_Voc"><i class="fa fa-plus"></i> Add VOC</a>
+                }
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info dropdown-toggle" id="btnManagement" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Management</button>
+                    <div class="dropdown-menu" style="">
+
+                        @if (pImport.Succeeded)
+                        {
+                            <a class="dropdown-item" href="~/templates/GLOBAL_VOC_MasterLIST_Template.xlsx">Get VOC Template</a>
+                            <a class="dropdown-item" href="#" id="btn-importVOC">Import VOC</a>
+                        }
+
+                        @if (pExport.Succeeded)
+                        {
+                            <a class="dropdown-item" href="#" id="btn-exportVOC">Export VOC</a>
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Filter -->
+    <div class="row filter-row">
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            @*<div class="form-group form-focus">
+                    <div class="cal-icon">
+                        <input id="txtTimeFrom" name="fromTime" class="form-control floating datetimepicker" type="text">
+                    </div>
+                    <label class="focus-label">From</label>
+                </div>*@
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            <div class="form-group form-focus">
+                <div class="cal-icon">
+                    <input id="txtTimeTo" name="toTime" class="form-control datetimepicker" type="text">
+                </div>
+                <label class="focus-label">YEAR</label>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            <button id="btnSearch" class="btn btn-success btn-block"> Search </button>
+        </div>
+    </div>
+    <!-- /Search Filter -->
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive" id="gridVocMst">
+                @await Html.PartialAsync("_gridVocMasterPartialView", Model.vOC_MSTViews)
+            </div>
+        </div>
+    </div>
+
+    @await Html.PartialAsync("_gridGMES_CSPPartialView", Model.vOCPPMs)
+
+</div>
+<partial name="_importExcelModelView" />
+<partial name="_addeditvocmodelview" />
+
+
+<div class="modal custom-modal fade" id="delete_vocModel" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header">
+                    <h3>Delete VOC</h3>
+                    <p>Are you sure want to delete?</p>
+                    <input type="hidden" id="txtId" />
+                </div>
+                <div class="modal-btn delete-action">
+                    <div class="row">
+                        <div class="col-6">
+                            <a href="javascript:void(0);" class="btn btn-primary continue-btn" id="btnDelete">Delete</a>
+                        </div>
+                        <div class="col-6">
+                            <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- /Page Content -->

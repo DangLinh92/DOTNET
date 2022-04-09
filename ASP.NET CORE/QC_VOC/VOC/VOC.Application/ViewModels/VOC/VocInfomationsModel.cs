@@ -14,19 +14,46 @@ namespace VOC.Application.ViewModels.VOC
             vOCSiteModelByTimeLsts = new List<VOCSiteModelByTimeLst>();
             paretoDataDefectName = new List<TotalVOCSiteModel>();
             vOCPPMs = new List<VOCPPM_Ex>();
+            vOC_CHART = new VOC_CHART();
         }
+
         public List<VOC_MSTViewModel> vOC_MSTViews { get; set; }
         public List<VOC_DefectTypeViewModel> vOC_DefectTypeViews { get; set; }
         public TotalVOCSiteModel totalVOCSitesView { get; set; }
         public List<VOCSiteModelByTimeLst> vOCSiteModelByTimeLsts { get; set; }
-
-        public List<VOCSiteModelByTimeLst> vOCSiteModelByTimeFinishedLsts { get; set; }
-
         public List<TotalVOCSiteModel> paretoDataDefectName { get; set; } // ve bieu do pareto cho defect
 
         public PPMDataChartAll VocPPMView { get; set; }
-
         public List<VOCPPM_Ex> vOCPPMs { get; set; }
+        public VOC_CHART vOC_CHART { get; set; }
+    }
+
+    public class VocProgessInfo
+    {
+        public int ReceiveCount { get; set; }
+        public int CloseCount { get; set; }
+        public int ProgressCount { get; set; }
+    }
+
+    public class VOC_CHART
+    {
+        public VOC_CHART()
+        {
+            vOCSiteModelByTimeLsts = new List<VOCSiteModelByTimeLst>();
+            paretoDataDefectName = new List<TotalVOCSiteModel>();
+        }
+
+        public List<VOCSiteModelByTimeLst> vOCSiteModelByTimeLsts { get; set; }
+
+        public TotalVOCSiteModel totalVOCSitesView { get; set; }
+
+        public List<TotalVOCSiteModel> paretoDataDefectName { get; set; }
+
+        public VocProgessInfo vocProgessInfo { get; set; }
+
+        public int Year { get; set; }
+        public string Customer { get; set; }
+        public string Side { get; set; }
     }
 
     public class TotalVOCSiteModel

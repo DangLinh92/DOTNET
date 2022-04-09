@@ -1,0 +1,79 @@
+﻿@model VOC_CHART
+
+<div class="row">
+    <!-- Chart total by year-->
+    <div class="col-md-4 d-flex">
+        <div class="card flex-fill dash-statistics">
+            <div class="card-header">
+                <h5 id="vocYearTitle" class="card-title mb-0">@Model.totalVOCSitesView.Year.ToString().Substring(2)년 VOC 접수 건수</h5>
+            </div>
+            <div class="card-body">
+                <div id="s-col-stacked"></div>
+            </div>
+        </div>
+    </div>
+
+    @foreach (var item in Model.vOCSiteModelByTimeLsts)
+    {
+        <div class="col-md-8 d-flex">
+            <div class="card flex-fill dash-statistics">
+                <div class="card-header">
+                    <div id="vocByMonthTitle" class="card-title mb-0">@item.DivisionLst 진성 VOC 건수</div>
+                </div>
+                <div class="card-body">
+                    <div class="chartjs-wrapper-demo">
+                        <canvas id="chartstacked_ByYear" style="height:250px"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- /Chart -->
+    <!-- data -->
+    @*<div class="col-md-6 d-flex">
+            <div class="card card-table flex-fill">
+                <div class="card-header">
+                    <h3 class="card-title mb-0">@Model.Year.ToString().Substring(2)년 VOC 접수 건수(Data)</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover mb-0 table-striped custom-table datatable">
+                            <thead>
+                                <tr>
+                                    <th>구분</th>
+                                    @foreach (var item in Model.Divisions)
+                                    {
+                                        <th>@item</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    @foreach (var item in Model.PartsClassification)
+                                    {
+                                        <tr>
+                                            <td>@item</td>
+                                            @foreach (TotalVOCSiteModelItem voc in Model.totalVOCSiteModelItems)
+                                            {
+                                                if (voc.Classification == item)
+                                                {
+                                                    <td>@voc.Qty</td>
+                                                }
+                                            }
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <strong style="float:left">Total: @Model.Total</strong>
+                    <i style="float:right">
+                        ※ 와이솔 제품 아닌 경우, 카운트하지 않음.
+                    </i>
+                </div>
+            </div>
+        </div>*@
+</div>

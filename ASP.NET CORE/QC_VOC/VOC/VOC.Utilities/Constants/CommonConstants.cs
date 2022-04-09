@@ -55,5 +55,7 @@ namespace VOC.Utilities.Constants
         public const string END_CD = "05:00:00";
 
         public const string ZERO_TIME = "00:00:00";
+
+        public const string WHC = "WHC";
     }
 }

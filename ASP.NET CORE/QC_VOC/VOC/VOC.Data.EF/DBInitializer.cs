@@ -97,7 +97,14 @@ namespace VOC.Data.EF
             {
                 _context.Functions.AddRange(new List<FUNCTION>()
                 {
-                    new FUNCTION() {Id = "HOME", Name = "Home",ParentId = null,SortOrder = 1,Status = Status.Active,URL = "/Admin/Home/Index",IconCss = "la la-dashboard"  },
+                    new FUNCTION() {Id = "Main", Name = "Main",ParentId = null,SortOrder = 1,Status = Status.Active,URL = "",IconCss = ""  },
+                    new FUNCTION() {Id = "VOC", Name = "VOC",ParentId = "Main",SortOrder = 1,Status = Status.Active,URL = "/admin/Voc/Index",IconCss = "la la-dashboard"  },
+                    new FUNCTION() {Id = "K1", Name = "K1",ParentId = "Main",SortOrder = 2,Status = Status.Active,URL = "/admin/k1/Index",IconCss = "la la-cube"  },
+                    new FUNCTION() {Id = "Onsite", Name = "Onsite",ParentId = "Main",SortOrder = 3,Status = Status.Active,URL = "/Admin/onsite/Index",IconCss = "la la-edit"  },
+                    new FUNCTION() {Id = "Upload", Name = "Upload",ParentId = "Main",SortOrder = 4,Status = Status.Active,URL = "/Admin/ppm/Index",IconCss = "la la-object-group"  },
+                    new FUNCTION() {Id = "uVoc", Name = "VOC",ParentId = "Upload",SortOrder = 1,Status = Status.Active,URL = "#",IconCss = ""  },
+                    new FUNCTION() {Id = "uK1", Name = "K1",ParentId = "Upload",SortOrder = 2,Status = Status.Active,URL = "#",IconCss = ""  },
+                    new FUNCTION() {Id = "uOnsite", Name = "Onsite",ParentId = "Upload",SortOrder = 3,Status = Status.Active,URL = "#",IconCss = ""  },
                 });
             }
 

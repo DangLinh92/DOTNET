@@ -46,12 +46,12 @@ namespace VOC.Areas.Admin.Controllers
                 model.vOCSiteModelByTimeLsts.AddRange(_vocMstService.ReportInit());
 
                 // VE BIEU DO TOTAL THEO NAM
-                model.totalVOCSitesView = _vocMstService.ReportByYear(DateTime.Now.Year.ToString());
+                model.totalVOCSitesView = _vocMstService.ReportByYear(DateTime.Now.Year.ToString(),"");
 
 
                 // VE BIEU DO PARETO CHO DEFECT NAME
-                model.paretoDataDefectName.AddRange(_vocMstService.ReportDefectByYear(DateTime.Now.Year.ToString(), "SAW"));
-                model.paretoDataDefectName.AddRange(_vocMstService.ReportDefectByYear(DateTime.Now.Year.ToString(), "Module"));
+                model.paretoDataDefectName.AddRange(_vocMstService.ReportDefectByYear(DateTime.Now.Year.ToString(), "SAW","","WHC"));
+                model.paretoDataDefectName.AddRange(_vocMstService.ReportDefectByYear(DateTime.Now.Year.ToString(), "Module", "", "WHC"));
 
                 // Ve Bieu Do PPM
                 List<VOCPPM_Ex> pMDataCharts;
@@ -66,14 +66,14 @@ namespace VOC.Areas.Admin.Controllers
 
                 int endWeek = DateTime.Parse(endTime).GetWeekOfYear() - 1;
 
-                model.vOCSiteModelByTimeLsts.AddRange(_vocMstService.ReportByWeek(endWeek - 4, endWeek, year.ToString()));
+                model.vOCSiteModelByTimeLsts.AddRange(_vocMstService.ReportByMonth(year.ToString(),"",""));
 
                 // VE BIEU DO TOTAL THEO NAM
-                model.totalVOCSitesView = _vocMstService.ReportByYear(year.ToString());
+                model.totalVOCSitesView = _vocMstService.ReportByYear(year.ToString(),"");
 
                 // VE BIEU DO PARETO CHO DEFECT NAME
-                model.paretoDataDefectName.AddRange(_vocMstService.ReportDefectByYear(year.ToString(), "SAW"));
-                model.paretoDataDefectName.AddRange(_vocMstService.ReportDefectByYear(year.ToString(), "Module"));
+                model.paretoDataDefectName.AddRange(_vocMstService.ReportDefectByYear(year.ToString(), "SAW", "", "WHC"));
+                model.paretoDataDefectName.AddRange(_vocMstService.ReportDefectByYear(year.ToString(), "Module", "", "WHC"));
 
                 // Ve Bieu Do PPM
                 List<VOCPPM_Ex> pMDataCharts;
