@@ -1,0 +1,50 @@
+﻿<div id="addEdiPPMByYear" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add-Edit PPM By Year</h5>
+                <input type="hidden" id="hdTypeAddEdit" />
+                <input type="hidden" id="hdId" />
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="frmAddEditPPMByYear">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">CSP/LFEM<span class="text-danger">*</span></label>
+                                <select id="cboModule" class="select" name="Module" required>
+                                    <option value="CSP" selected>CSP</option>
+                                    <option value="LFEM">LFEM</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Year<span class="text-danger">*</span></label>
+                                <div class="cal-icon"><input id="txtYear" name="Year" class="form-control datetimepicker" type="text" required></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">ActualValue</label>
+                                <input id="txtActualValue" name="ValuePPM" class="form-control" type="number">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Target PPM<span class="text-danger">*</span></label>
+                                <input id="txtTargetPPM" class="form-control" name="TargetPPM" type="number" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="submit-section">
+                        <button id="btnSavePPMByYear" class="btn btn-primary submit-btn">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

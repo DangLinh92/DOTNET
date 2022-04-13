@@ -27,7 +27,7 @@
 
             $.ajax({
                 type: "GET",
-                url: "/Admin/PPM/GetPPMByYear",
+                url: "/admin/k1/GetPPMByYear",
                 dataType: "json",
                 data:
                 {
@@ -75,10 +75,10 @@
             var url = '';
 
             if (type == 'year') {
-                url = '/admin/ppm/DeletePPMByYear';
+                url = '/admin/k1/DeletePPMByYear';
             }
             else {
-                url = '/admin/ppm/DeletePPMByYearMonth';
+                url = '/admin/k1/DeletePPMByYearMonth';
             }
 
             $.ajax({
@@ -128,7 +128,7 @@
 
                 $.ajax({
                     type: "POST",
-                    url: "/Admin/PPM/UpdatePPMByYear?action=" + action,
+                    url: "/admin/k1/UpdatePPMByYear?action=" + action,
                     dataType: "json",
                     data: data,
                     success: function (response) {
@@ -163,7 +163,7 @@
 
             $.ajax({
                 type: "GET",
-                url: "/Admin/PPM/GetTargetByYear",
+                url: "/admin/k1/GetTargetByYear",
                 dataType: "json",
                 success: function (target) {
                     $('#txtTargetppm_gmes').val(target);
@@ -186,7 +186,7 @@
 
             $.ajax({
                 type: "GET",
-                url: "/Admin/PPM/GetPPMByYearMonth",
+                url: "/admin/k1/GetPPMByYearMonth",
                 dataType: "json",
                 data:
                 {
@@ -254,7 +254,7 @@
 
                 $.ajax({
                     type: "POST",
-                    url: "/Admin/PPM/UpdatePPM?action=" + action,
+                    url: "/admin/k1/UpdatePPM?action=" + action,
                     dataType: "json",
                     data: data,
                     success: function (response) {

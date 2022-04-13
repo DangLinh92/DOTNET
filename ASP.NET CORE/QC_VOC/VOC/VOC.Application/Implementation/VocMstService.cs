@@ -749,7 +749,7 @@ namespace VOC.Application.Implementation
             return result;
         }
 
-        public PPMDataChartAll ReportPPMByYear(string year, out List<VOCPPM_Ex> pMDataCharts)
+        public PPMDataChartAll ReportPPMByYear(string year, string module, out List<VOCPPM_Ex> pMDataCharts)
         {
             int iyear = int.Parse(year);
 
@@ -1037,7 +1037,8 @@ namespace VOC.Application.Implementation
             {
                 dataChartsAll = lstChartAll,
                 dataChartsItem = result,
-                Year = iyear
+                Year = iyear,
+                Module = module
             };
 
             VOC_PPM_YEAR entity;
@@ -1099,7 +1100,7 @@ namespace VOC.Application.Implementation
             else
             {
                 var entity = _vocPPMYearRepository.FindById(model.Id);
-                entity.CopyPropertiesFrom(model, new List<string>() { "Id", "DateCreated", "DateModified", "UserCreated", "UserModified" });
+                entity.CopyPropertiesFrom(model, new List<string>() { "Id", "DateCreated", "DateModified", "UserCreated", "UserModified", "VOCFinishingWeek", "SPLReceivedDateMonth" });
                 entity.UserModified = GetUserId();
                 _vocPPMYearRepository.Update(entity);
             }
@@ -1123,7 +1124,7 @@ namespace VOC.Application.Implementation
             else
             {
                 var entity = _vocPPMRepository.FindById(model.Id);
-                entity.CopyPropertiesFrom(model, new List<string>() { "Id", "DateCreated", "DateModified", "UserCreated", "UserModified" });
+                entity.CopyPropertiesFrom(model, new List<string>() { "Id", "DateCreated", "DateModified", "UserCreated", "UserModified", "VOCFinishingWeek", "SPLReceivedDateMonth" });
                 entity.UserModified = GetUserId();
                 _vocPPMRepository.Update(entity);
             }
@@ -1180,6 +1181,9 @@ namespace VOC.Application.Implementation
             info.ReceiveCount = lstVoc.Count();
             info.CloseCount = lstVoc.Where(x => x.VOCState == "Close").Count();
             info.ProgressCount = info.ReceiveCount - info.CloseCount;
+            info.lstVocProgress = lstVoc.Where(x => x.VOCState != "Close").ToList();
+            info.lstVocComplete = lstVoc.Where(x => x.VOCCount == "Y").ToList();
+
             return info;
         }
 

@@ -55,7 +55,7 @@ namespace VOC.Areas.Admin.Controllers
 
                 // Ve Bieu Do PPM
                 List<VOCPPM_Ex> pMDataCharts;
-                model.VocPPMView = _vocMstService.ReportPPMByYear(DateTime.Now.Year.ToString(), out pMDataCharts);
+                model.VocPPMView = _vocMstService.ReportPPMByYear(DateTime.Now.Year.ToString(),CommonConstants.CSP, out pMDataCharts);
                 model.vOCPPMs = pMDataCharts;
             }
             else
@@ -77,7 +77,7 @@ namespace VOC.Areas.Admin.Controllers
 
                 // Ve Bieu Do PPM
                 List<VOCPPM_Ex> pMDataCharts;
-                model.VocPPMView = _vocMstService.ReportPPMByYear(year.ToString(), out pMDataCharts);
+                model.VocPPMView = _vocMstService.ReportPPMByYear(year.ToString(), CommonConstants.CSP, out pMDataCharts);
                 model.vOCPPMs = pMDataCharts;
             }
 
@@ -130,7 +130,7 @@ namespace VOC.Areas.Admin.Controllers
             else
             {
                 var item = _vocMstService.GetById(Id);
-                item.CopyPropertiesFrom(model, new List<string>() { "Id", "DateCreated", "DateModified", "UserCreated", "UserModified" });
+                item.CopyPropertiesFrom(model, new List<string>() { "Id", "DateCreated", "DateModified", "UserCreated", "UserModified", "VOCFinishingWeek", "SPLReceivedDateMonth" });
 
                 if (DateTime.TryParse(item.SPLReceivedDate, out _))
                 {

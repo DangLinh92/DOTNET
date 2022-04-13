@@ -35,7 +35,7 @@ namespace VOC.Application.AutoMapper
             c.Rport_sentDate,
             c.VOCState,
             c.VOCFinishingDate,
-            c.VOC_TAT, c.PBA_FAE_Result));
+            c.VOC_TAT, c.PBA_FAE_Result,c.LinkReport));
 
             CreateMap<VOC_DefectTypeViewModel, VOC_DEFECT_TYPE>()
                .ConstructUsing(c => new VOC_DEFECT_TYPE(c.EngsNotation, c.KoreanNotation));

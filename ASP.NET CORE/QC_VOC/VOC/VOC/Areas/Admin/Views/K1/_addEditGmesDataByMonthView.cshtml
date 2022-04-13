@@ -1,0 +1,68 @@
+﻿<div id="addEdiGmesDataByMonth" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add-Edit Gmes Data By Month</h5>
+                <input type="hidden" id="hdTypeAddEdit_GmesData" />
+                <input type="hidden" id="hdId_GmesData" />
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="frmAddEditPPMByYearMonth">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">CSP/LFEM<span class="text-danger">*</span></label>
+                                <select id="cboModule_gmes" class="select" name="Module" required>
+                                    <option value="CSP">CSP</option>
+                                    <option value="LFEM">LFEM</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Customer<span class="text-danger">*</span></label>
+                                <select id="cboCustomer_gmes" class="select" name="Customer" required>
+                                    <option value="SEV">SEV</option>
+                                    <option value="SEVT">SEVT</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Type<span class="text-danger">*</span></label>
+                                <select id="cboType_gmes" class="select" name="Type" required>
+                                    <option value="Input">Input</option>
+                                    <option value="Defect">Defect</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Year-Month<span class="text-danger">*</span></label>
+                                <div class="cal-icon"><input id="txtYear_gmes" name="Year" class="form-control" type="text" required></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">ActualValue</label>
+                                <input id="txtActualValue_gmes" name="ValuePPM" class="form-control" type="number">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Target PPM<span class="text-danger">*</span></label>
+                                <input id="txtTargetppm_gmes" class="form-control" name="TargetPPM" type="number" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="submit-section">
+                        <button id="btnSaveGmesByMonth" class="btn btn-primary submit-btn">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

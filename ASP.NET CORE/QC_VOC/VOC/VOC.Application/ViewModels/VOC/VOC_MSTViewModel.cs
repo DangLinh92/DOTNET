@@ -89,6 +89,7 @@ namespace VOC.Application.ViewModels.VOC
         [StringLength(50)]
         public string VOCCount { get; set; }
 
+
         // 불량원인 (근본원인)
         [StringLength(500)]
         public string DefectCause { get; set; }
@@ -155,6 +156,9 @@ namespace VOC.Application.ViewModels.VOC
         // VOC 처리시간 (TAT)
         [StringLength(50)]
         public string VOC_TAT { get; set; }
+
+        [StringLength(1000)]
+        public string LinkReport { get; set; }
 
         public string DateCreated { get; set; }
         public string DateModified { get; set; }

@@ -6,6 +6,24 @@
 
     function registerEvents() {
 
+        // preview file
+        $('body').on('click', '.view-issue', function (e) {
+            e.preventDefault();
+            //var url =  $(this).data('id');
+            //$('#ifrDocument').attr('src', url);
+            $('#previewFile_Voc').modal('show');
+        });
+
+
+        // upload file for issue
+        $('body').on('click', '.upload-issue', function (e) {
+            e.preventDefault();
+            $("#fileInputExcel").val(null);
+            var vocId = $(this).data('id');
+            $('#hd-ImportType').val(vocId);
+            $('#import_Voc').modal('show');
+        });
+
         // Import excel
         // 1. import voc
         $('#btn-importVOC').on('click', function () {
@@ -55,8 +73,17 @@
             // Adding one more key to FormData object  
             var type = $('#hd-ImportType').val();
 
+            var url = '';
+
+            if (type == '') {
+                url = '/Admin/Voc/ImportExcel?param=' + type;
+            }
+            else {
+                url = '/Admin/Voc/UpLoadExcel?vocId=' + type; // for upload excel
+            }
+
             $.ajax({
-                url: '/Admin/Home/ImportExcel?param=' + type,
+                url: url,
                 type: 'POST',
                 data: fileData,
                 processData: false,  // tell jQuery not to process the data
@@ -85,7 +112,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "/Admin/Home/ExportExcel",
+                url: "/Admin/Voc/ExportExcel",
                 data: {
                     year: year
                 },
@@ -103,7 +130,7 @@
             var year = $('#txtTimeTo').val();
 
             sessionStorage.setItem("yearSearch", year);
-            var url = "/admin/home/index?year=" + year;
+            var url = "/admin/voc/uploadlist?year=" + year;
             window.location = url;
 
         });
@@ -131,7 +158,7 @@
 
             $.ajax({
                 type: "GET",
-                url: "/Admin/Home/GetById",
+                url: "/Admin/Voc/GetById",
                 dataType: "json",
                 data: {
                     Id: that
@@ -139,7 +166,6 @@
                 success: function (voc) {
 
                     if (voc) {
-
                         $('#hdId').val(that);
                         $('#cboReceived_site').val(voc.Received_site);
                         $('#cboReceived_site').trigger('change');
@@ -224,7 +250,7 @@
                 var addEdit = $('#hdTypeAddEdit').val();
 
                 $.ajax({
-                    url: '/Admin/Home/SaveVoc?Id=' + code + '&action=' + addEdit,
+                    url: '/Admin/Voc/SaveVoc?Id=' + code + '&action=' + addEdit,
                     type: 'POST',
                     dataType: 'json',
                     data: {
@@ -281,7 +307,7 @@
             var that = $('#txtId').val();
             $.ajax({
                 type: "POST",
-                url: "/Admin/Home/Delete",
+                url: "/Admin/Voc/Delete",
                 dataType: "json",
                 data: {
                     Id: that
@@ -325,7 +351,7 @@
 
         function initSelectOptionDefectType() {
             $.ajax({
-                url: '/admin/home/GetDefectType',
+                url: '/admin/voc/GetDefectType',
                 type: 'GET',
                 dataType: 'json',
                 async: false,

@@ -1,8 +1,112 @@
-﻿
+﻿@model VocInfomationsModel
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
+@section Scripts
+{
+    <script src="https://cdn.datatables.net/select/1.3.4/js/dataTables.select.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedcolumns/4.0.2/js/dataTables.fixedColumns.min.js"></script>
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+    <script>
 
-<h1>Index</h1>
+         var chardataPPM = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.VocPPMView))');
 
+        onSuccess = function () { };
+
+        $('#txtYear').datetimepicker({
+            format: 'YYYY',//YYYY-MM-DD,
+            icons:
+            {
+                up: "fa fa-angle-up",
+                down: "fa fa-angle-down",
+                next: 'fa fa-angle-right',
+                previous: 'fa fa-angle-left'
+            }
+        });
+
+    </script>
+    <script src="~/app/controllers/ppm/chartjs-ppm.js"></script>
+    <script src="~/app/controllers/ppm/chartjsPPM_Mns.js"></script>
+    <script>
+        var chartjsPPM = new chartjsPPM_Controller();
+        chartjsPPM.DrawChart($('#cboSite').val());
+
+        var ppmMns = new chartPPMMnsController();
+        ppmMns.initialize();
+    </script>
+}
+<div class="content container-fluid">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <h5 class="page-title">K1 고객 불량율</h5>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <i class="fa fa-caret-right"></i> <strong>고객(사) GMES 불량율 Data Trend 관리(CSP + LFEM)</strong><br />
+            <i>※ Unit [PPM]</i>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2"></div>
+        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2"></div>
+        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2"></div>
+        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2"></div>
+        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+            <div class="form-group form-focus select-focus">
+                <div class="cal-icon"><input id="txtYear" name="Year" value="@Model.VocPPMView.Year" class="form-control datetimepicker" type="text" required></div>
+                <label class="focus-label">접수 년도/Năm</label>
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+            <div class="form-group form-focus select-focus">
+                <select id="cboSite" class="select floating">
+                    <!option value="CSP" @(Model.VocPPMView.Module == "CSP" ? "selected" : "")>CSP</!option>
+                    <!option value="LFEM" @(Model.VocPPMView.Module == "LFEM" ? "selected" : "")>LFEM</!option>
+                </select>
+                <label class="focus-label">CSP/LFEM</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <div>
+                        <canvas id="chartLine_All" style="height:270px"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @{
+            int i = 0;
+            @foreach (var item in Model.VocPPMView.dataChartsItem)
+            {
+                @foreach (var sub in item.Where(x => x.Module == Model.VocPPMView.Module))
+                {
+                    i = i + 1;
+                    <div class="col-md-6">
+
+                        <div class="card">
+                            <div class="card-body">
+                                <div>
+                                    <canvas id="@string.Format("chartLine_{0}",i)" style="height:270px"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                }
+            }
+        }
+    </div>
+</div>

@@ -57,5 +57,7 @@ namespace VOC.Utilities.Constants
         public const string ZERO_TIME = "00:00:00";
 
         public const string WHC = "WHC";
+        public const string CSP = "CSP";
+        public const string LFEM = "LFEM";
     }
 }

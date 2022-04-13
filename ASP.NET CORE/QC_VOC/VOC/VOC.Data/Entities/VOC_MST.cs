@@ -22,7 +22,7 @@ namespace VOC.Data.Entities
             string produtiondatemarking, string analysisresult, string voccount, string defectcause,
             string defectclassification, string customerresponse,
             string report_finalapprover, string report_sender, string rport_sentdate, string vocstate,
-            string vocfinishingdate, string voc_tat,string pba_fae_result)
+            string vocfinishingdate, string voc_tat,string pba_fae_result,string link)
         {
             Received_site = received_site;
             PlaceOfOrigin = placeoforigin;
@@ -51,6 +51,7 @@ namespace VOC.Data.Entities
             VOCFinishingDate = vocfinishingdate;
             VOC_TAT = voc_tat;
             PBA_FAE_Result = pba_fae_result;
+            LinkReport = link;
         }
 
         // 접수처 (HQ, WTC, WHC)
@@ -167,6 +168,9 @@ namespace VOC.Data.Entities
         // VOC 처리시간 (TAT)
         [StringLength(50)]
         public string VOC_TAT { get; set; }
+
+        [StringLength(1000)]
+        public string LinkReport { get; set; }
 
         [StringLength(50)]
         public string DateCreated { get; set; }

@@ -30,9 +30,18 @@ namespace VOC.Application.ViewModels.VOC
 
     public class VocProgessInfo
     {
+        public VocProgessInfo()
+        {
+            lstVocProgress = new List<VOC_MSTViewModel>();
+            lstVocComplete = new List<VOC_MSTViewModel>();
+        }
+
         public int ReceiveCount { get; set; }
         public int CloseCount { get; set; }
         public int ProgressCount { get; set; }
+
+        public List<VOC_MSTViewModel> lstVocProgress { get; set; }
+        public List<VOC_MSTViewModel> lstVocComplete { get; set; }
     }
 
     public class VOC_CHART
@@ -177,6 +186,8 @@ namespace VOC.Application.ViewModels.VOC
 
         }
         public int Year { get; set; }
+
+        public string Module { get; set; }
 
         public List<List<PPMDataChart>> dataChartsItem { get; set; }
 

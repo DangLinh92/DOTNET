@@ -22,7 +22,7 @@ namespace VOC.Application.Interfaces
 
         TotalVOCSiteModel ReportByYear(string year, string customer);
         List<VOCSiteModelByTimeLst> ReportByMonth(string year, string customer, string side);
-        PPMDataChartAll ReportPPMByYear(string year, out List<VOCPPM_Ex> pMDataCharts);
+        PPMDataChartAll ReportPPMByYear(string year,string module, out List<VOCPPM_Ex> pMDataCharts);
 
         List<VOCSiteModelByTimeLst> ReportInit();
 
