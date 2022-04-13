@@ -914,6 +914,98 @@ namespace VOC.Application.Implementation
                 }
             }
 
+            List<VocPPMViewModel> lstVocPPMModelALL;
+            List<PPMByMonth> lstPPMMonthsALL;
+            VOCPPM_Customer _customer;
+            double totalInput = 0;
+            double totalDefect = 0;
+            double targetTotal = 0;
+            foreach (var item in lstVocPPMex)
+            {
+                lstVocPPMModelALL = new List<VocPPMViewModel>();
+                lstPPMMonthsALL = new List<PPMByMonth>();
+                _customer = new VOCPPM_Customer();
+                totalInput = 0;
+                totalDefect = 0;
+                targetTotal = 0;
+
+                for (int i = 1; i <= 12; i++)
+                {
+                    if (item.vOCPPM_Customers.Count == 2)
+                    {
+                        VOCPPM_Customer cus1 = item.vOCPPM_Customers[0];
+                        VOCPPM_Customer cus2 = item.vOCPPM_Customers[1];
+
+                        VocPPMViewModel ppmCheck1 = cus1.vocPPMModels.FirstOrDefault(x => x.Month == i && x.Type == "Input");
+                        VocPPMViewModel ppmCheck2 = cus2.vocPPMModels.FirstOrDefault(x => x.Month == i && x.Type == "Input");
+
+                        VocPPMViewModel ppm1 = new VocPPMViewModel()
+                        {
+                            Customer = cus1.Customer + "+" + cus2.Customer,
+                            Module = item.Module,
+                            Month = i,
+                            Value = ppmCheck1.Value + ppmCheck2.Value,
+                            Type = "Input",
+                            TargetValue = ppmCheck1.TargetValue,
+                            Year = ppmCheck1.Year
+                        };
+
+                        totalInput += ppm1.Value;
+
+                        VocPPMViewModel ppmCheck3 = cus1.vocPPMModels.FirstOrDefault(x => x.Month == i && x.Type == "Defect");
+                        VocPPMViewModel ppmCheck4 = cus2.vocPPMModels.FirstOrDefault(x => x.Month == i && x.Type == "Defect");
+
+                        VocPPMViewModel ppm2 = new VocPPMViewModel()
+                        {
+                            Customer = cus1.Customer + "+" + cus2.Customer,
+                            Module = item.Module,
+                            Month = i,
+                            Value = ppmCheck3.Value + ppmCheck4.Value,
+                            Type = "Defect",
+                            TargetValue = ppmCheck3.TargetValue,
+                            Year = ppmCheck3.Year
+                        };
+
+                        totalDefect += ppm2.Value;
+
+                        lstVocPPMModelALL.Add(ppm2);// defect
+                        lstVocPPMModelALL.Add(ppm1); // input
+
+                        PPMByMonth pMByMonth = new PPMByMonth()
+                        {
+                            Year = ppmCheck3.Year,
+                            Month = i,
+                            Target = ppmCheck3.TargetValue
+                        };
+                        pMByMonth.PPM = ppm1.Value > 0 ? Math.Round(Math.Pow(10, 6) * (ppm2.Value / ppm1.Value), 0) : 0;
+                        lstPPMMonthsALL.Add(pMByMonth);
+
+                        targetTotal = pMByMonth.Target;
+                    }
+
+                }
+
+
+                _customer.Customer = lstVocPPMModelALL.FirstOrDefault()?.Customer;
+                _customer.ToTal_Defect = totalDefect;
+                _customer.ToTal_Input = totalInput;
+                _customer.ToTal_PPM = totalInput > 0 ? Math.Round(Math.Pow(10, 6) * (totalDefect / totalInput), 0) : 0;
+                _customer.ToTal_PPM_Target = targetTotal;
+                _customer.vocPPMModels.AddRange(lstVocPPMModelALL);
+
+                PPMByMonth pMByMonthTotal = new PPMByMonth()
+                {
+                    Year = iyear,
+                    Month = 0,
+                    Target = targetTotal,
+                    PPM = _customer.ToTal_PPM
+                };
+                lstPPMMonthsALL.Insert(0, pMByMonthTotal);
+                _customer.pPMByMonths.AddRange(lstPPMMonthsALL);
+
+                item.vOCPPM_Customers.Insert(0, _customer);
+            }
+
             pMDataCharts = lstVocPPMex;
 
             Dictionary<string, List<PPMDataChart>> dic = new Dictionary<string, List<PPMDataChart>>();
@@ -938,6 +1030,11 @@ namespace VOC.Application.Implementation
 
                 foreach (var cus in item.vOCPPM_Customers)
                 {
+                    if (cus.Customer.Contains("+"))
+                    {
+                        continue;
+                    }
+
                     foreach (var pM in cus.pPMByMonths)
                     {
                         if (pM.Month >= 0 && pM.Month <= 12)
@@ -950,6 +1047,11 @@ namespace VOC.Application.Implementation
 
                 foreach (var cus in item.vOCPPM_Customers)
                 {
+                    if (cus.Customer.Contains("+"))
+                    {
+                        continue;
+                    }
+
                     customer += cus.Customer + "+";
                     pPMDataChart = new PPMDataChart()
                     {

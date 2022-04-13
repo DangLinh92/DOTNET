@@ -57,6 +57,7 @@ namespace VOC.Areas.Admin.Controllers
             {
                 model.VocPPMView = _vocMstService.ReportPPMByYear(year.ToString(), site, out pMDataCharts);
             }
+
             model.vOCPPMs = pMDataCharts;
             return model;
         }

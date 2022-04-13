@@ -138,7 +138,11 @@
 
                 if (m.Module == _module) {
                     _i = _i + 1;
-                    let ctx8 = document.getElementById('chartLine_' + _i);
+                    let elId = 'chartLine_' + _i;
+                    if (_module == 'LFEM') {
+                        elId = 'chartLine_lfem_' + _i;
+                    }
+                    let ctx8 = document.getElementById(elId);
                     let mlabels = ['Total 년', '1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월']
                     let ctx8Chart = new Chart(ctx8, {
                         type: 'line',
