@@ -44,6 +44,9 @@ namespace VOC.Application.ViewModels.VOC
         [StringLength(10)]
         public string Not_Measure { get; set; }
 
+        [StringLength(10)]
+        public string Result { get; set; }
+
         [StringLength(500)]
         public string Note { get; set; }
 

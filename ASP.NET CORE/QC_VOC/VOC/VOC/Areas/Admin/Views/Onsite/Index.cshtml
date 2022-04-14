@@ -1,8 +1,113 @@
-﻿
+﻿@model VocOnsiteList
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
+@section Scripts
+{
+    <script src="https://cdn.datatables.net/select/1.3.4/js/dataTables.select.min.js"></script>
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+    <script>
 
-<h1>Index</h1>
+
+        onSuccess = function () { };
+
+        $('#txtYear').datetimepicker({
+            format: 'YYYY',//YYYY-MM-DD,
+            icons:
+            {
+                up: "fa fa-angle-up",
+                down: "fa fa-angle-down",
+                next: 'fa fa-angle-right',
+                previous: 'fa fa-angle-left'
+            }
+        });
+
+    </script>
+}
+<div class="content container-fluid">
+
+    <!-- Page Header -->
+    <div class="page-header" style="display:none">
+        <div class="row">
+            <div class="col-sm-12">
+                <h5 class="page-title">Total SEV SEVT onsite result</h5>
+            </div>
+        </div>
+    </div>
+
+    <form action="/admin/onsite/Search" method="post">
+        <div class="row filter-row">
+            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2"></div>
+            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2"></div>
+            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                <div class="form-group form-focus select-focus">
+                    <div class="cal-icon"><input id="txtYear" name="year" value="@Model.Year" class="form-control datetimepicker" type="text"></div>
+                    <label class="focus-label">접수 년도/Năm</label>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                <div class="form-group form-focus select-focus">
+                    <select id="cboCustomer" class="select floating" name="customer">
+                        <!option value="SEV" @(Model.Customer == "SEV" ? "selected" : "")>SEV</!option>
+                        <!option value="SEVT" @(Model.Customer == "SEVT" ? "selected" : "")>SEVT</!option>
+                        <!option value="SEV-result" @(Model.Customer == "SEV-result" ? "selected" : "")>SEV-세부 results</!option>
+                        <!option value="SEVT-result" @(Model.Customer == "SEVT-result" ? "selected" : "")>SEVT-세부 results</!option>
+                    </select>
+                    <label class="focus-label">Customer</label>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                <div class="form-group form-focus select-focus">
+                    <select id="cboPart" class="select floating" name="part">
+                        <!option value="ALL" @(Model.Part == "ALL" ? "selected" : "")>ALL</!option>
+                        <!option value="CSP" @(Model.Part == "CSP" ? "selected" : "")>CSP</!option>
+                        <!option value="LFEM" @(Model.Part == "LFEM" ? "selected" : "")>LFEM</!option>
+                    </select>
+                    <label class="focus-label">Part</label>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                <button id="btnSearch" type="submit" class="btn btn-success btn-block"> Search </button>
+            </div>
+        </div>
+    </form>
+
+    <div class="row area-all">
+        <div class="col-md-12 d-flex">
+            <div class="card card-table flex-fill">
+                <div class="card-header">
+
+                    @if (!Model.Customer.Contains("result"))
+                    {
+                        <h3 class="card-title mb-0">
+                            @Model.Customer 에서 시료 분석 결과
+                        </h3>
+                    }
+                    else if (Model.Customer == "SEV-result")
+                    {<h3 class="card-title mb-0">
+                            SEV - 세부 results
+                        </h3>
+                    }
+                    else if (Model.Customer == "SEVT-result")
+                    {
+                        <h3 class="card-title mb-0">
+                            SEVT - 세부 results
+                        </h3>
+                    }
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover mb-0 table-striped custom-table datatable" id="vocOnsiteTable">
+                            <thead>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 

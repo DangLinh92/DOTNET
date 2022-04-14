@@ -59,5 +59,8 @@ namespace VOC.Utilities.Constants
         public const string WHC = "WHC";
         public const string CSP = "CSP";
         public const string LFEM = "LFEM";
+        public const string ALL = "ALL";
+        public const string SEV = "SEV";
+        public const string SEVT = "SEVT";
     }
 }

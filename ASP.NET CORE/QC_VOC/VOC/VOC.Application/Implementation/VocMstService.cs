@@ -985,7 +985,6 @@ namespace VOC.Application.Implementation
 
                 }
 
-
                 _customer.Customer = lstVocPPMModelALL.FirstOrDefault()?.Customer;
                 _customer.ToTal_Defect = totalDefect;
                 _customer.ToTal_Input = totalInput;

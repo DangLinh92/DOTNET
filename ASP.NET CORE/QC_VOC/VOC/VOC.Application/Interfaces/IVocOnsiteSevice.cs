@@ -7,6 +7,6 @@ namespace VOC.Application.Interfaces
 {
     public interface IVocOnsiteSevice
     {
-        List<VocOnsiteList> SumDataOnsite(int year,string timeWeek);
+        List<VocOnsiteModel> SumDataOnsite(int year,string customer, string part);
     }
 }

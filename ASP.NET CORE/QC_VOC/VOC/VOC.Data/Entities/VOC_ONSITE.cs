@@ -47,6 +47,9 @@ namespace VOC.Data.Entities
         [StringLength(10)]
         public string Not_Measure { get; set; }
 
+        [StringLength(10)]
+        public string Result { get; set; }
+
         [StringLength(50)]
         public string ProductionDate { get; set; }
 

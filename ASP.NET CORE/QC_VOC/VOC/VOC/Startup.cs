@@ -82,6 +82,7 @@ namespace VOC
             services.AddTransient<IVocMstService, VocMstService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IRoleService, RoleService>();
+            services.AddTransient<IVocOnsiteSevice, VocOnsiteService>();
             services.AddTransient<IAuthorizationHandler, BaseResourceAuthorizationHandler>();
 
             services.AddMvc().AddNewtonsoftJson(options =>

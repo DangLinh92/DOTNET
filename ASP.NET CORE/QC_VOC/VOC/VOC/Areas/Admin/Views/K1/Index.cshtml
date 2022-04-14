@@ -27,19 +27,36 @@
 
     </script>
     <script src="~/app/controllers/ppm/chartjs-ppm.js"></script>
-    <script src="~/app/controllers/ppm/chartjsPPM_Mns.js"></script>
+    @*<script src="~/app/controllers/ppm/chartjsPPM_Mns.js"></script>*@
     <script>
+        var site = $('#cboSite').val();
         var chartjsPPM = new chartjsPPM_Controller();
-        chartjsPPM.DrawChart($('#cboSite').val());
+        chartjsPPM.DrawChart(site);
 
-        var ppmMns = new chartPPMMnsController();
-        ppmMns.initialize();
+        //var ppmMns = new chartPPMMnsController();
+        //ppmMns.initialize();
+        
+        if (site == 'ALL') {
+            $('.area-all').css('display', true);
+            $('.area-csp').css('display', 'none');
+            $('.area-lfem').css('display', 'none');
+        }
+        else if (site == 'CSP') {
+            $('.area-all').css('display', 'none');
+            $('.area-csp').css('display', true);
+            $('.area-lfem').css('display', 'none');
+        }
+        else{
+            $('.area-all').css('display', 'none');
+            $('.area-csp').css('display', 'none');
+            $('.area-lfem').css('display', true);
+        }
     </script>
 }
 <div class="content container-fluid">
 
     <!-- Page Header -->
-    <div class="page-header">
+    <div class="page-header" style="display:none">
         <div class="row">
             <div class="col-sm-12">
                 <h5 class="page-title">K1 고객 불량율</h5>
@@ -49,33 +66,37 @@
 
     <div class="row">
         <div class="col-sm-12">
-            <i class="fa fa-caret-right"></i> <strong>고객(사) GMES 불량율 Data Trend 관리(CSP + LFEM)</strong><br />
+            <i class="fa fa-caret-right"></i> <strong>고객(사) GMES 불량율 Data Trend 관리</strong><br />
             <i>※ Unit [PPM]</i>
         </div>
     </div>
+    <form action="/admin/k1/Search" method="post">
+        <div class="row filter-row">
+            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2"></div>
+            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2"></div>
+            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2"></div>
 
-    <div class="row">
-        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2"></div>
-        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2"></div>
-        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2"></div>
-        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2"></div>
-        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
-            <div class="form-group form-focus select-focus">
-                <div class="cal-icon"><input id="txtYear" name="Year" value="@Model.VocPPMView.Year" class="form-control datetimepicker" type="text" required></div>
-                <label class="focus-label">접수 년도/Năm</label>
+            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                <div class="form-group form-focus select-focus">
+                    <div class="cal-icon"><input id="txtYear" name="year" value="@Model.VocPPMView.Year" class="form-control datetimepicker" type="text"></div>
+                    <label class="focus-label">접수 년도/Năm</label>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                <div class="form-group form-focus select-focus">
+                    <select id="cboSite" class="select floating" name="site">
+                        <!option value="ALL" @(Model.VocPPMView.Module == "ALL" ? "selected" : "")>ALL</!option>
+                        <!option value="CSP" @(Model.VocPPMView.Module == "CSP" ? "selected" : "")>CSP</!option>
+                        <!option value="LFEM" @(Model.VocPPMView.Module == "LFEM" ? "selected" : "")>LFEM</!option>
+                    </select>
+                    <label class="focus-label">CSP/LFEM</label>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                <button id="btnSearch" type="submit" class="btn btn-success btn-block"> Search </button>
             </div>
         </div>
-        <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
-            <div class="form-group form-focus select-focus">
-                <select id="cboSite" class="select floating">
-                    <!option value="ALL" @(Model.VocPPMView.Module == "ALL" ? "selected" : "")>ALL</!option>
-                    <!option value="CSP" @(Model.VocPPMView.Module == "CSP" ? "selected" : "")>CSP</!option>
-                    <!option value="LFEM" @(Model.VocPPMView.Module == "LFEM" ? "selected" : "")>LFEM</!option>
-                </select>
-                <label class="focus-label">CSP/LFEM</label>
-            </div>
-        </div>
-    </div>
+    </form>
 
     <div class="row area-all">
         <div class="col-md-12">
@@ -87,28 +108,6 @@
                 </div>
             </div>
         </div>
-
-        @*@{
-                int j = 0;
-                @foreach (var item in Model.VocPPMView.dataChartsItem)
-                {
-                    @foreach (var sub in item.Where(x => x.Module == Model.VocPPMView.Module))
-                    {
-                        j = j + 1;
-                        <div class="col-md-6">
-
-                            <div class="card">
-                                <div class="card-body">
-                                    <div>
-                                        <canvas id="@string.Format("chartLine_{0}",j)" style="height:270px"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    }
-                }
-            }*@
     </div>
 
     <div class="row area-all">
@@ -194,7 +193,7 @@
                         <div class="card card-table">
                             <div class="card-header">
                                 <h3 class="card-title mb-0">
-                                    @sub.Customer Customer GMES Data(CSP)
+                                    @sub.Customer Customer GMES Data
                                 </h3>
                             </div>
                             <div class="card-body">
@@ -301,7 +300,7 @@
                         <div class="card card-table">
                             <div class="card-header">
                                 <h3 class="card-title mb-0">
-                                    @sub.Customer Customer GMES Data(LFEM)
+                                    @sub.Customer Customer GMES Data
                                 </h3>
                             </div>
                             <div class="card-body">

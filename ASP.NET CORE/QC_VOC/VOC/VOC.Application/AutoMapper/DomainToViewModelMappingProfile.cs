@@ -14,6 +14,7 @@ namespace VOC.Application.AutoMapper
             CreateMap<VOC_MST, VOC_MSTViewModel>();
             CreateMap<VOC_PPM, VocPPMViewModel>();
             CreateMap<VOC_PPM_YEAR, VocPPMYearViewModel>();
+            CreateMap<VOC_ONSITE, VocOnsiteViewModel>();
         }
     }
 }

@@ -26,7 +26,7 @@ namespace VOC.Areas.Admin.Controllers
 
         public IActionResult Index(int year)
         {
-            VocInfomationsModel model = GetData(year, CommonConstants.CSP);
+            VocInfomationsModel model = GetData(year, CommonConstants.ALL);
             return View(model);
         }
 
@@ -36,13 +36,21 @@ namespace VOC.Areas.Admin.Controllers
         /// <param name="year"></param>
         /// <param name="site">CSP/LFEM</param>
         /// <returns></returns>
-        [HttpGet]
+        [HttpPost]
         public IActionResult Search(int year, string site)
         {
             VocInfomationsModel model = GetData(year, site.NullString(), true);
-            return new OkObjectResult(model);
+            return View("Index", model);
+            //return new OkObjectResult(model);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="year"></param>
+        /// <param name="site">CSP/LFEM/ALL</param>
+        /// <param name="isSearch"></param>
+        /// <returns></returns>
         private VocInfomationsModel GetData(int year, string site, bool isSearch = false)
         {
             VocInfomationsModel model = new VocInfomationsModel();

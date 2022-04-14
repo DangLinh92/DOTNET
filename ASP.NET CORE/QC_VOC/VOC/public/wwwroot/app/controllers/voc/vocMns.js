@@ -6,6 +6,24 @@
 
     function registerEvents() {
 
+        // preview file
+        $('body').on('click', '.view-issue', function (e) {
+            e.preventDefault();
+            //var url =  $(this).data('id');
+            //$('#ifrDocument').attr('src', url);
+            $('#previewFile_Voc').modal('show');
+        });
+
+
+        // upload file for issue
+        $('body').on('click', '.upload-issue', function (e) {
+            e.preventDefault();
+            $("#fileInputExcel").val(null);
+            var vocId = $(this).data('id');
+            $('#hd-ImportType').val(vocId);
+            $('#import_Voc').modal('show');
+        });
+
         // Import excel
         // 1. import voc
         $('#btn-importVOC').on('click', function () {
@@ -55,8 +73,17 @@
             // Adding one more key to FormData object  
             var type = $('#hd-ImportType').val();
 
+            var url = '';
+
+            if (type == '') {
+                url = '/Admin/Voc/ImportExcel?param=' + type;
+            }
+            else {
+                url = '/Admin/Voc/UpLoadExcel?vocId=' + type; // for upload excel
+            }
+
             $.ajax({
-                url: '/Admin/Voc/ImportExcel?param=' + type,
+                url: url,
                 type: 'POST',
                 data: fileData,
                 processData: false,  // tell jQuery not to process the data
@@ -138,8 +165,7 @@
                 },
                 success: function (voc) {
 
-                    if (voc)
-                    {
+                    if (voc) {
                         $('#hdId').val(that);
                         $('#cboReceived_site').val(voc.Received_site);
                         $('#cboReceived_site').trigger('change');

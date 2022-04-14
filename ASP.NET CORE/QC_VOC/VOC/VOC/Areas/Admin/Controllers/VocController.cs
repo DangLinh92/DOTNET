@@ -37,11 +37,12 @@ namespace VOC.Areas.Admin.Controllers
             return View(model.vOC_CHART);
         }
 
-        [HttpGet]
+        [HttpPost]
         public IActionResult Search(int year, string customer, string side)
         {
             VocInfomationsModel model = GetData(year, customer.NullString(), side.NullString(), true);
-            return new OkObjectResult(model.vOC_CHART);
+            return View("Index",model.vOC_CHART);
+            //return new OkObjectResult(model.vOC_CHART);
         }
 
         private VocInfomationsModel GetData(int year, string customer, string side, bool isSearch = false)

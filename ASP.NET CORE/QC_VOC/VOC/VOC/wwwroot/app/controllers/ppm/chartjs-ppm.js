@@ -113,18 +113,22 @@
                 maintainAspectRatio: false,
 
                 scales: {
-                    yAxes: [{
+                    y: {
                         ticks: {
                             beginAtZero: true,
                             fontSize: 10,
+                        }, grid: {
+                            display: false
                         }
-                    }],
-                    xAxes: [{
+                    },
+                    x: {
                         ticks: {
                             beginAtZero: true,
                             fontSize: 11
+                        }, grid: {
+                            display: false
                         }
-                    }]
+                    }
                 }
             }
         });
@@ -208,18 +212,24 @@
                             maintainAspectRatio: false,
 
                             scales: {
-                                yAxes: [{
+                                y: {
                                     ticks: {
                                         beginAtZero: true,
                                         fontSize: 10,
+                                    },
+                                    grid: {
+                                        display: false
                                     }
-                                }],
-                                xAxes: [{
+                                },
+                                x: {
                                     ticks: {
                                         beginAtZero: true,
                                         fontSize: 11
+                                    },
+                                    grid: {
+                                        display: false
                                     }
-                                }]
+                                }
                             }
                         }
                     });

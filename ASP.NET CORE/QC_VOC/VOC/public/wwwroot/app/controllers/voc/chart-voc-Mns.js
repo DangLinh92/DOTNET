@@ -1,7 +1,7 @@
 ﻿var chartVocMnsController = function () {
     this.initialize = function () {
         GetCustomer();
-        registerEvents();
+        //registerEvents();
     }
 
     function registerEvents() {
@@ -89,10 +89,45 @@
                             dta.push(dataItem);
                         }
 
+                        let dtaComplete = [];
+                        for (item of response.vocProgessInfo.lstVocComplete) {
+
+                            let dataItem = [];
+                            dataItem.push(item.Received_site);
+                            dataItem.push(item.PlaceOfOrigin);
+                            dataItem.push(item.ReceivedDept);
+                            dataItem.push(item.ReceivedDate);
+                            dataItem.push(item.SPLReceivedDate);
+                            dataItem.push(item.SPLReceivedDateWeek);
+                            dataItem.push(item.Customer);
+                            dataItem.push(item.SETModelCustomer);
+                            dataItem.push(item.ProcessCustomer);
+                            dataItem.push(item.ModelFullname);
+                            dataItem.push(item.DefectNameCus);
+                            dataItem.push(item.DefectRate);
+                            dataItem.push(item.PartsClassification);
+                            dataItem.push(item.PartsClassification2);
+                            dataItem.push(item.ProdutionDateMarking);
+                            dataItem.push(item.AnalysisResult);
+                            dataItem.push(item.VOCCount);
+                            dataItem.push(item.DefectCause);
+                            dataItem.push(item.DefectClassification);
+                            dataItem.push(item.CustomerResponse);
+                            dataItem.push(item.Report_FinalApprover);
+                            dataItem.push(item.Report_Sender);
+                            dataItem.push(item.Rport_sentDate);
+                            dataItem.push(item.VOCState);
+                            dataItem.push(item.VOCFinishingDate);
+                            dataItem.push(item.VOC_TAT);
+                            dtaComplete.push(dataItem);
+                        }
+
                         chartVoc.DrawChart();
                         apexVoc.DrawChart();
 
-                        ReInitDataTable(dta);
+                        ReInitDataTable(dta, '#vocMstDataTable');
+                        ReInitDataTable(dtaComplete, '#vocMstCompleteDataTable');
+
                     }
                 },
                 error: function (status) {
@@ -112,6 +147,8 @@
                     render += "<option value='" + item.trim() + "'>" + item + "</option >"
                 });
                 $('#cboCustomer').html(render);
+                $('#cboCustomer').val(selectCustomer);
+                $('#cboCustomer').trigger('change');
             },
             error: function (status) {
                 hrms.notify(status.responseText, 'error', 'alert', function () { });
@@ -119,20 +156,21 @@
         });
     }
 
-    function ReInitDataTable(datas) {
+    function ReInitDataTable(datas, idTable) {
 
-        var table = $('#vocMstDataTable');
+        var table = $(idTable);
         if (table) {
             table.DataTable().destroy();
         }
 
-        var newTable = $('#vocMstDataTable').DataTable({
+        var newTable = $(idTable).DataTable({
             data: datas,
             scrollY: 400,
             scrollX: true,
             scrollCollapse: true,
             paging: false,
             select: true,
+            "searching": false,
             fixedColumns: {
                 leftColumns: 5
             },
@@ -145,8 +183,5 @@
             "order": [[0, 'asc']]
         });
         newTable.columns.adjust().draw();
-
-        $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
-        $('select[name="vocMstDataTable_length"]').removeClass('form-control-sm');
     }
 }

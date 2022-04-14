@@ -134,54 +134,52 @@
                 <tbody id="tbl-content">
                     @foreach (var voc in Model)
                     {
-                        <tr>
-                            <td>@voc.Received_site</td>
-                            <td>@voc.PlaceOfOrigin</td>
-                            <td>@voc.ReceivedDept</td>
-                            <td>@voc.ReceivedDate</td>
-                            <td>@voc.SPLReceivedDate</td>
-                            <td>@voc.SPLReceivedDateWeek</td>
-                            <td>@voc.Customer</td>
-                            <td>@voc.SETModelCustomer</td>
-                            <td>@voc.ProcessCustomer</td>
-                            <td>@voc.ModelFullname</td>
-                            <td>@voc.DefectNameCus</td>
-                            <td>@voc.DefectRate</td>
-                            <td>@voc.PartsClassification</td>
-                            <td>@voc.PartsClassification2</td>
-                            <td>@voc.ProdutionDateMarking</td>
-                            <td>@voc.AnalysisResult</td>
-                            <td>@voc.VOCCount</td>
-                            <td>@voc.DefectCause</td>
-                            <td>@voc.DefectClassification</td>
-                            <td>@voc.CustomerResponse</td>
-                            <td>@voc.Report_FinalApprover</td>
-                            <td>@voc.Report_Sender</td>
-                            <td>@voc.Rport_sentDate</td>
-                            <td>@voc.VOCState</td>
-                            <td>@voc.VOCFinishingDate</td>
-                            <td>@voc.VOC_TAT</td>
+                    <tr>
+                        <td>@voc.Received_site</td>
+                        <td>@voc.PlaceOfOrigin</td>
+                        <td>@voc.ReceivedDept</td>
+                        <td>@voc.ReceivedDate</td>
+                        <td>@voc.SPLReceivedDate</td>
+                        <td>@voc.SPLReceivedDateWeek</td>
+                        <td>@voc.Customer</td>
+                        <td>@voc.SETModelCustomer</td>
+                        <td>@voc.ProcessCustomer</td>
+                        <td>@voc.ModelFullname</td>
+                        <td>@voc.DefectNameCus</td>
+                        <td>@voc.DefectRate</td>
+                        <td>@voc.PartsClassification</td>
+                        <td>@voc.PartsClassification2</td>
+                        <td>@voc.ProdutionDateMarking</td>
+                        <td>@voc.AnalysisResult</td>
+                        <td>@voc.VOCCount</td>
+                        <td>@voc.DefectCause</td>
+                        <td>@voc.DefectClassification</td>
+                        <td>@voc.CustomerResponse</td>
+                        <td>@voc.Report_FinalApprover</td>
+                        <td>@voc.Report_Sender</td>
+                        <td>@voc.Rport_sentDate</td>
+                        <td>@voc.VOCState</td>
+                        <td>@voc.VOCFinishingDate</td>
+                        <td>@voc.VOC_TAT</td>
 
-                            <td class="text-right">
-                                <div class="dropdown dropdown-action">
-                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                    <div class="dropdown-menu dropdown-menu-right">
+                        <td class="text-right">
+                            <div class="dropdown dropdown-action">
+                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                <div class="dropdown-menu dropdown-menu-right">
 
-                                        @if (string.IsNullOrEmpty(voc.LinkReport))
+                                    @if (string.IsNullOrEmpty(voc.LinkReport))
                                         {
-                                            <a class="dropdown-item upload-issue" href="#" data-toggle="modal" data-target="#uploadIssue" data-id="@voc.Id"><i class="fa fa-upload m-r-5"></i> Upload</a>
+                                    <a class="dropdown-item upload-issue" href="#" data-toggle="modal" data-target="#uploadIssue" data-id="@voc.Id"><i class="fa fa-upload m-r-5"></i> Upload</a>
                                         }
                                         else
                                         {
-                                            <a class="dropdown-item upload-issue" href="#" data-id="@voc.Id"><i class="fa fa-upload m-r-5"></i> Upload</a>
-                                            <a class="dropdown-item download-issue" href="@voc.LinkReport" data-id="@voc.Id"><i class="fa fa-download m-r-5"></i> Download</a>
-                                            <a class="dropdown-item view-issue" href="#" data-id="@voc.LinkReport"><i class="fa fa-eye m-r-5"></i> View</a>
+                                    <a class="dropdown-item download-issue" href="@voc.LinkReport" data-id="@voc.Id"><i class="fa fa-file-powerpoint-o m-r-5"></i> Report</a>
+                                    <a class="dropdown-item upload-issue" href="#" data-id="@voc.Id"><i class="fa fa-upload m-r-5"></i> Upload</a>
                                         }
-
-                                    </div>
                                 </div>
-                            </td>
-                        </tr>
+                            </div>
+                        </td>
+                    </tr>
                     }
                 </tbody>
             </table>

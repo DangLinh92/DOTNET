@@ -1,6 +1,6 @@
 ﻿var chartPPMMnsController = function () {
     this.initialize = function () {
-        registerEvents();
+        // registerEvents();
     }
 
     function registerEvents() {
@@ -22,6 +22,12 @@
             SearchDataChart(year, side);
         });
 
+        $('#btnSearch').on('click', function () {
+            var year = $('#txtYear').val();
+            var side = $('#cboSite').val();
+            SearchDataChart(year, side);
+        });
+
         function SearchDataChart(year, site) {
             $.ajax({
                 type: "GET",
@@ -31,10 +37,10 @@
                     site: site
                 },
                 success: function (response) {
-                    if (chardataPPM) {
-                        chardataPPM = response.VocPPMView;
-                        chartjsPPM.DrawChart(site);
-                    }
+                    //if (chardataPPM) {
+                    //    chardataPPM = response.VocPPMView;
+                    //    chartjsPPM.DrawChart(site);
+                    //}
                 },
                 error: function (status) {
                     hrms.notify(status.responseText, 'error', 'alert', function () { });

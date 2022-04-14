@@ -99,11 +99,11 @@ namespace VOC.Data.EF
                 {
                     new FUNCTION() {Id = "Main", Name = "Main",ParentId = null,SortOrder = 1,Status = Status.Active,URL = "",IconCss = ""  },
                     new FUNCTION() {Id = "VOC", Name = "VOC Report",ParentId = "Main",SortOrder = 1,Status = Status.Active,URL = "/admin/Voc/Index",IconCss = "la la-dashboard"  },
-                    new FUNCTION() {Id = "K1", Name = "K1 고객 불량율",ParentId = "Main",SortOrder = 2,Status = Status.Active,URL = "/admin/k1/Index",IconCss = "la la-cube"  },
+                    new FUNCTION() {Id = "K1", Name = "K1 불량율",ParentId = "Main",SortOrder = 2,Status = Status.Active,URL = "/admin/k1/Index",IconCss = "la la-cube"  },
                     new FUNCTION() {Id = "Onsite", Name = "Onsite 불량마킹정보",ParentId = "Main",SortOrder = 3,Status = Status.Active,URL = "/Admin/onsite/Index",IconCss = "la la-edit"  },
                     new FUNCTION() {Id = "Upload", Name = "Upload VOC",ParentId = "Main",SortOrder = 4,Status = Status.Active,URL = "/Admin/ppm/Index",IconCss = "la la-object-group"  },
                     new FUNCTION() {Id = "uVoc", Name = "VOC",ParentId = "Upload",SortOrder = 1,Status = Status.Active,URL = "/admin/Voc/UploadList",IconCss = ""  },
-                    new FUNCTION() {Id = "uK1", Name = "K1 고객 불량율",ParentId = "Upload",SortOrder = 2,Status = Status.Active,URL = "/admin/k1/UploadList",IconCss = ""  },
+                    new FUNCTION() {Id = "uK1", Name = "K1 불량율",ParentId = "Upload",SortOrder = 2,Status = Status.Active,URL = "/admin/k1/UploadList",IconCss = ""  },
                     new FUNCTION() {Id = "uOnsite", Name = "Onsite",ParentId = "Upload",SortOrder = 3,Status = Status.Active,URL = "/admin/Onsite/UploadList",IconCss = ""  },
                 });
             }
@@ -436,7 +436,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-02-15",
                         SetModel = "A326",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                     new VOC_ONSITE()
                     {
@@ -451,7 +452,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-12-07",
                         SetModel = "A325",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                     new VOC_ONSITE()
                     {
@@ -466,7 +468,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-01-08",
                         SetModel = "A325",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                     new VOC_ONSITE()
                     {
@@ -481,7 +484,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-01-25",
                         SetModel = "A325",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                     new VOC_ONSITE()
                     {
@@ -496,7 +500,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-02-09",
                         SetModel = "A135",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                     new VOC_ONSITE()
                     {
@@ -511,7 +516,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-02-14",
                         SetModel = "F1001",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                     new VOC_ONSITE()
                     {
@@ -526,7 +532,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-02-05",
                         SetModel = "A135F",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                     new VOC_ONSITE()
                     {
@@ -541,7 +548,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-02-15",
                         SetModel = "A135F",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                     new VOC_ONSITE()
                     {
@@ -556,7 +564,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-03-05",
                         SetModel = "A325",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                     new VOC_ONSITE()
                     {
@@ -571,7 +580,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-03-06",
                         SetModel = "A325",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                     new VOC_ONSITE()
                     {
@@ -586,7 +596,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-02-13",
                         SetModel = "A326",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                     new VOC_ONSITE()
                     {
@@ -601,7 +612,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-01-17",
                         SetModel = "A326",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                     new VOC_ONSITE()
                     {
@@ -616,7 +628,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-01-07",
                         SetModel = "A536",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                     new VOC_ONSITE()
                     {
@@ -631,7 +644,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-01-06",
                         SetModel = "A336",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                     new VOC_ONSITE()
                     {
@@ -646,7 +660,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-02-12",
                         SetModel = "A326",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                     new VOC_ONSITE()
                     {
@@ -661,7 +676,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-03-14",
                         SetModel = "A325",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                     new VOC_ONSITE()
                     {
@@ -676,7 +692,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-03-05",
                         SetModel = "A325",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
 
                     // SEVT
@@ -693,7 +710,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-12-11",
                         SetModel = "A135",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                     new VOC_ONSITE()
                     {
@@ -708,7 +726,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-11-09",
                         SetModel = "A127",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                     new VOC_ONSITE()
                     {
@@ -723,7 +742,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-12-17",
                         SetModel = "A135",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
 
                     new VOC_ONSITE()
@@ -739,7 +759,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-12-02",
                         SetModel = "A536",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                     new VOC_ONSITE()
                     {
@@ -754,7 +775,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-12-18",
                         SetModel = "A536",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                     new VOC_ONSITE()
                     {
@@ -769,7 +791,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-12-22",
                         SetModel = "A536",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                      new VOC_ONSITE()
                     {
@@ -784,7 +807,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-12-24",
                         SetModel = "A235",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
 
                     new VOC_ONSITE()
@@ -800,7 +824,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-01-30",
                         SetModel = "A235",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                         new VOC_ONSITE()
                     {
@@ -815,7 +840,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-02-08",
                         SetModel = "A235",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                      new VOC_ONSITE()
                     {
@@ -830,7 +856,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2020-10-29",
                         SetModel = "A235",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                     new VOC_ONSITE()
                     {
@@ -845,7 +872,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-01-25",
                         SetModel = "A235",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                     new VOC_ONSITE()
                     {
@@ -860,7 +888,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2020-12-12",
                         SetModel = "A235",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                      new VOC_ONSITE()
                     {
@@ -875,7 +904,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-01-18",
                         SetModel = "A235",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                      new VOC_ONSITE()
                     {
@@ -890,7 +920,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2020-12-15",
                         SetModel = "A235",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                     new VOC_ONSITE()
                     {
@@ -905,7 +936,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2020-12-14",
                         SetModel = "A235",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                      new VOC_ONSITE()
                     {
@@ -920,7 +952,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-02-25",
                         SetModel = "A235",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                      new VOC_ONSITE()
                     {
@@ -935,7 +968,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-02-23",
                         SetModel = "A235",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                      new VOC_ONSITE()
                     {
@@ -950,7 +984,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-01-30",
                         SetModel = "A235",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                       new VOC_ONSITE()
                     {
@@ -965,7 +1000,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-02-13",
                         SetModel = "A235",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                      new VOC_ONSITE()
                     {
@@ -980,7 +1016,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2020-11-06",
                         SetModel = "A235",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                       new VOC_ONSITE()
                     {
@@ -995,7 +1032,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-02-16",
                         SetModel = "A235",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                        new VOC_ONSITE()
                     {
@@ -1010,7 +1048,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-01-11",
                         SetModel = "A235",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                     new VOC_ONSITE()
                     {
@@ -1025,7 +1064,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2020-11-05",
                         SetModel = "A235",
                         OK = "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
 
                     new VOC_ONSITE()
@@ -1312,7 +1352,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-12-20",
                         SetModel = "A525",
                         OK="OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                    new VOC_ONSITE()
                     {
@@ -1327,7 +1368,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-12-21",
                         SetModel = "A536",
                         OK="OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                    new VOC_ONSITE()
                     {
@@ -1342,7 +1384,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-12-21",
                         SetModel = "A536",
                         OK="OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                    new VOC_ONSITE()
                     {
@@ -1357,7 +1400,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-01-08",
                         SetModel = "A536",
                         OK="OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                    new VOC_ONSITE()
                     {
@@ -1372,7 +1416,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-12-27",
                         SetModel = "G990",
                         OK="OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                    new VOC_ONSITE()
                     {
@@ -1387,7 +1432,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-02-23",
                         SetModel = "A525",
                         OK="OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                    new VOC_ONSITE()
                     {
@@ -1402,7 +1448,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-12-03",
                         SetModel = "A536",
                         OK="OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                    new VOC_ONSITE()
                     {
@@ -1417,7 +1464,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-02-12",
                         SetModel = "A536",
                         OK="OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                     new VOC_ONSITE()
                     {
@@ -1432,7 +1480,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-12-29",
                         SetModel = "A536",
                         OK="OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
 
                     new VOC_ONSITE()
@@ -1584,7 +1633,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-03-04",
                         SetModel = "A235",
                         OK= "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                       new VOC_ONSITE()
                     {
@@ -1599,7 +1649,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-03-03",
                         SetModel = "A235",
                         OK= "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                     new VOC_ONSITE()
                     {
@@ -1614,7 +1665,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-02-25",
                         SetModel = "A235",
                         OK= "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                      new VOC_ONSITE()
                     {
@@ -1629,7 +1681,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-02-23",
                         SetModel = "A536",
                         OK= "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                       new VOC_ONSITE()
                     {
@@ -1644,7 +1697,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-01-25",
                         SetModel = "A536",
                         OK= "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
                         new VOC_ONSITE()
                     {
@@ -1659,7 +1713,8 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-01-25",
                         SetModel = "A536",
                         OK= "OK",
-                        Qty = 1
+                        Qty = 1,
+                        Result = "OK"
                     },
 
                     new VOC_ONSITE()
@@ -1704,7 +1759,7 @@ namespace VOC.Data.EF
                         Marking = "L1AWW21I",
                         ProductionDate = "2022-01-18",
                         SetModel = "A536",
-                       Not_Measure = "NM",
+                        Not_Measure = "NM",
                         Qty = 1
                     },
                 });
