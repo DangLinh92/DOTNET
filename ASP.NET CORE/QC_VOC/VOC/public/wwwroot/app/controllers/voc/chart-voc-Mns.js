@@ -137,6 +137,30 @@
         }
     }
 
+    // export excel
+    $('#btnExportData').on('click', function () {
+
+        var year = $('#txtYear').val();
+
+        if (!year) {
+            year = new Date().getFullYear();
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "/Admin/Voc/ExportExcel",
+            data: {
+                year: year
+            },
+            success: function (response) {
+                window.location.href = response;
+            },
+            error: function (status) {
+                hrms.notify(status.responseText, 'error', 'alert', function () { });
+            }
+        });
+    });
+
     function GetCustomer() {
         $.ajax({
             url: '/Admin/Voc/GetCustomer',

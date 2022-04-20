@@ -11,6 +11,33 @@ namespace VOC.Data.Entities
     [Table("VOC_ONSITE")]
     public class VOC_ONSITE : DomainEntity<int>, IDateTracking
     {
+        public VOC_ONSITE()
+        {
+
+        }
+
+        public VOC_ONSITE(int id,int month,string week,string date,string part,string customer_code, string wisol_model, string customer,int qty, 
+            string marking, string setModel, string ok,string ng,string not_measure, string result,string productiondate,string note)
+        {
+            Id = id;
+            Month = month;
+            Week = week;
+            Date = date;
+            Part = part;
+            Customer_Code = customer_code;
+            Wisol_Model = wisol_model;
+            Customer = customer;
+            Qty = qty;
+            Marking = marking;
+            SetModel = setModel;
+            OK = ok;
+            NG = ng;
+            Not_Measure = not_measure;
+            Result = result;
+            ProductionDate = productiondate;
+            Note = note;
+        }
+
         public int Month { get; set; }
 
         [StringLength(50)]

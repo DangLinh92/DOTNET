@@ -24,7 +24,7 @@ namespace VOC.Areas.Admin.Controllers
 
         public IActionResult Index()
         {
-            GmesDataViewModel gmes = _vocMstService.GetGmesData();
+            GmesDataViewModel gmes = _vocMstService.GetGmesData(0,0);
             return View(gmes);
         }
 

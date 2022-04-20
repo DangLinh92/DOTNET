@@ -36,52 +36,53 @@ namespace VOC.Areas.Admin.Controllers
 
         public IActionResult Index(int year)
         {
-            VocInfomationsModel model = new VocInfomationsModel();
-            if (year <= 0 || year == DateTime.Now.Year)
-            {
-                string startTime = DateTime.Now.Year + "-01-01";
-                string endTime = DateTime.Parse(startTime).AddYears(1).AddDays(-1).ToString("yyyy-MM-dd");
-                model.vOC_MSTViews.AddRange(_vocMstService.SearchByTime(startTime, endTime));
+            return View();
+            //VocInfomationsModel model = new VocInfomationsModel();
+            //if (year <= 0 || year == DateTime.Now.Year)
+            //{
+            //    string startTime = DateTime.Now.Year + "-01-01";
+            //    string endTime = DateTime.Parse(startTime).AddYears(1).AddDays(-1).ToString("yyyy-MM-dd");
+            //    model.vOC_MSTViews.AddRange(_vocMstService.SearchByTime(startTime, endTime));
 
-                model.vOCSiteModelByTimeLsts.AddRange(_vocMstService.ReportInit());
+            //    model.vOCSiteModelByTimeLsts.AddRange(_vocMstService.ReportInit());
 
-                // VE BIEU DO TOTAL THEO NAM
-                model.totalVOCSitesView = _vocMstService.ReportByYear(DateTime.Now.Year.ToString(),"");
+            //    // VE BIEU DO TOTAL THEO NAM
+            //    model.totalVOCSitesView = _vocMstService.ReportByYear(DateTime.Now.Year.ToString(),"");
 
 
-                // VE BIEU DO PARETO CHO DEFECT NAME
-                model.paretoDataDefectName.AddRange(_vocMstService.ReportDefectByYear(DateTime.Now.Year.ToString(), "SAW","","WHC"));
-                model.paretoDataDefectName.AddRange(_vocMstService.ReportDefectByYear(DateTime.Now.Year.ToString(), "Module", "", "WHC"));
+            //    // VE BIEU DO PARETO CHO DEFECT NAME
+            //    model.paretoDataDefectName.AddRange(_vocMstService.ReportDefectByYear(DateTime.Now.Year.ToString(), "SAW","","WHC"));
+            //    model.paretoDataDefectName.AddRange(_vocMstService.ReportDefectByYear(DateTime.Now.Year.ToString(), "Module", "", "WHC"));
 
-                // Ve Bieu Do PPM
-                List<VOCPPM_Ex> pMDataCharts;
-                model.VocPPMView = _vocMstService.ReportPPMByYear(DateTime.Now.Year.ToString(),CommonConstants.CSP, out pMDataCharts);
-                model.vOCPPMs = pMDataCharts;
-            }
-            else
-            {
-                string startTime = year + "-01-01";
-                string endTime = DateTime.Parse(startTime).AddYears(1).AddDays(-1).ToString("yyyy-MM-dd");
-                model.vOC_MSTViews.AddRange(_vocMstService.SearchByTime(startTime, endTime));
+            //    // Ve Bieu Do PPM
+            //    List<VOCPPM_Ex> pMDataCharts;
+            //    model.VocPPMView = _vocMstService.ReportPPMByYear(DateTime.Now.Year.ToString(),CommonConstants.CSP, out pMDataCharts);
+            //    model.vOCPPMs = pMDataCharts;
+            //}
+            //else
+            //{
+            //    string startTime = year + "-01-01";
+            //    string endTime = DateTime.Parse(startTime).AddYears(1).AddDays(-1).ToString("yyyy-MM-dd");
+            //    model.vOC_MSTViews.AddRange(_vocMstService.SearchByTime(startTime, endTime));
 
-                int endWeek = DateTime.Parse(endTime).GetWeekOfYear() - 1;
+            //    int endWeek = DateTime.Parse(endTime).GetWeekOfYear() - 1;
 
-                model.vOCSiteModelByTimeLsts.AddRange(_vocMstService.ReportByMonth(year.ToString(),"",""));
+            //    model.vOCSiteModelByTimeLsts.AddRange(_vocMstService.ReportByMonth(year.ToString(),"",""));
 
-                // VE BIEU DO TOTAL THEO NAM
-                model.totalVOCSitesView = _vocMstService.ReportByYear(year.ToString(),"");
+            //    // VE BIEU DO TOTAL THEO NAM
+            //    model.totalVOCSitesView = _vocMstService.ReportByYear(year.ToString(),"");
 
-                // VE BIEU DO PARETO CHO DEFECT NAME
-                model.paretoDataDefectName.AddRange(_vocMstService.ReportDefectByYear(year.ToString(), "SAW", "", "WHC"));
-                model.paretoDataDefectName.AddRange(_vocMstService.ReportDefectByYear(year.ToString(), "Module", "", "WHC"));
+            //    // VE BIEU DO PARETO CHO DEFECT NAME
+            //    model.paretoDataDefectName.AddRange(_vocMstService.ReportDefectByYear(year.ToString(), "SAW", "", "WHC"));
+            //    model.paretoDataDefectName.AddRange(_vocMstService.ReportDefectByYear(year.ToString(), "Module", "", "WHC"));
 
-                // Ve Bieu Do PPM
-                List<VOCPPM_Ex> pMDataCharts;
-                model.VocPPMView = _vocMstService.ReportPPMByYear(year.ToString(), CommonConstants.CSP, out pMDataCharts);
-                model.vOCPPMs = pMDataCharts;
-            }
+            //    // Ve Bieu Do PPM
+            //    List<VOCPPM_Ex> pMDataCharts;
+            //    model.VocPPMView = _vocMstService.ReportPPMByYear(year.ToString(), CommonConstants.CSP, out pMDataCharts);
+            //    model.vOCPPMs = pMDataCharts;
+            //}
 
-            return View(model);
+            //return View(model);
         }
 
         [HttpGet]

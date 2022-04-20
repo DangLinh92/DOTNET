@@ -27,6 +27,11 @@ namespace VOC.Application.Implementation
             _httpContextAccessor = httpContextAccessor;
         }
 
+        public List<VocOnsiteViewModel> GetAllOnsiteByTime(string fromTime, string toTime)
+        {
+            return _mapper.Map<List<VocOnsiteViewModel>>(_vocRepository.FindAll(x => string.Compare(x.Date, fromTime) >= 0 && string.Compare(x.Date, toTime) <= 0).OrderByDescending(x => x.DateModified));
+        }
+
         public List<VocOnsiteModel> SumDataOnsite(int year, string customer, string part)
         {
             List<VocOnsiteViewModel> lstOnsite;
@@ -51,7 +56,7 @@ namespace VOC.Application.Implementation
 
                 if (customer.Contains("result"))
                 {
-                    var lstGroup = lstOnsite.GroupBy(x => (x.Customer, x.Date, x.Week, x.Month, x.Part)).Select(gr => (gr, Total: gr.Count()));
+                    var lstGroup = lstOnsite.GroupBy(x => (x.Customer, x.Date, x.Week, x.Month, x.Part)).Select(gr => (gr, Total: gr.Sum(x => x.Qty)));
 
                     VocOnsiteModel vocOnsite;
                     List<VocOnsiteViewModel> itemOnsites;
@@ -73,13 +78,13 @@ namespace VOC.Application.Implementation
                             itemOnsites.Add(onsite);
                         }
 
-                        vocOnsite.lstVocOnsite.AddRange(itemOnsites.OrderBy(x => x.Wisol_Model).ThenBy(x => x.Customer_Code));
+                        vocOnsite.lstVocOnsite.AddRange(itemOnsites.OrderBy(x => x.ProductionDate));
                         lstVocOnsite.Add(vocOnsite);
                     }
                 }
                 else
                 {
-                    var lstGroup = lstOnsite.GroupBy(x => (x.Customer, x.Date, x.Week, x.Month, x.Part, x.Customer_Code, x.Wisol_Model)).Select(gr => (gr, Total: gr.Count()));
+                    var lstGroup = lstOnsite.GroupBy(x => (x.Customer, x.Date, x.Week, x.Month, x.Part, x.Customer_Code, x.Wisol_Model)).Select(gr => (gr, Total: gr.Sum(x => x.Qty)));
 
                     VocOnsiteModel vocOnsite;
                     List<VocOnsiteViewModel> itemOnsites;
@@ -113,12 +118,90 @@ namespace VOC.Application.Implementation
                             }
                         }
 
-                        vocOnsite.lstVocOnsite.AddRange(itemOnsites.OrderBy(x => x.Customer_Code).ThenBy(x => x.Wisol_Model));
+                        vocOnsite.lstVocOnsite.AddRange(itemOnsites.OrderBy(x => x.ProductionDate));
                         lstVocOnsite.Add(vocOnsite);
                     }
                 }
             }
-            return lstVocOnsite.OrderBy(x=>x.Date).ToList();
+            return lstVocOnsite.OrderBy(x => x.Date).ToList();
+        }
+
+        public VocOnsiteViewModel UpdateVocOnsite(VocOnsiteViewModel vm)
+        {
+            VOC_ONSITE entity = _mapper.Map<VOC_ONSITE>(vm);
+            entity.UserModified = GetUserId();
+            entity.Month = DateTime.Parse(vm.Date).Month;
+            int w = (DateTime.Parse(vm.Date).GetWeekOfYear() - 1);
+            entity.Week = "W" + (w <= 9 ? "0" + w : "" + w);
+
+            if (entity.Result == "OK")
+            {
+                entity.OK = "OK";
+                entity.NG = "";
+                entity.Not_Measure = "";
+            }
+            else if (entity.Result == "NG")
+            {
+                entity.NG = "NG";
+                entity.OK = "";
+                entity.Not_Measure = "";
+            }
+            else
+            {
+                entity.Not_Measure = "NM";
+                entity.NG = "";
+                entity.OK = "";
+            }
+
+            _vocRepository.Update(entity);
+            return vm;
+        }
+
+        public VocOnsiteViewModel AddVocOnsite(VocOnsiteViewModel vm)
+        {
+            VOC_ONSITE entity = _mapper.Map<VOC_ONSITE>(vm);
+            entity.UserModified = GetUserId();
+            entity.UserCreated = GetUserId();
+            entity.Month = DateTime.Parse(vm.Date).Month;
+            int w = (DateTime.Parse(vm.Date).GetWeekOfYear() - 1);
+            entity.Week = "W" + (w <= 9 ? "0" + w : "" + w);
+
+            if (entity.Result == "OK")
+            {
+                entity.OK = "OK";
+                entity.NG = "";
+                entity.Not_Measure = "";
+            }
+            else if (entity.Result == "NG")
+            {
+                entity.NG = "NG";
+                entity.OK = "";
+                entity.Not_Measure = "";
+            }
+            else
+            {
+                entity.Not_Measure = "NM";
+                entity.NG = "";
+                entity.OK = "";
+            }
+
+            _vocRepository.Add(entity);
+            return vm;
+        }
+
+        public void DeleteVocOnsite(int id)
+        {
+            _vocRepository.Remove(id);
+        }
+
+        public VocOnsiteViewModel FindById(int id)
+        {
+            return _mapper.Map<VocOnsiteViewModel>(_vocRepository.FindById(id));
+        }
+
+        public void Save()
+        {
+            _unitOfWork.Commit();
         }
     }
 }

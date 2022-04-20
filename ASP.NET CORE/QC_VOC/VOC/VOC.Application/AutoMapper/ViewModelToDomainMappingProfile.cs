@@ -35,7 +35,7 @@ namespace VOC.Application.AutoMapper
             c.Rport_sentDate,
             c.VOCState,
             c.VOCFinishingDate,
-            c.VOC_TAT, c.PBA_FAE_Result,c.LinkReport));
+            c.VOC_TAT, c.PBA_FAE_Result, c.LinkReport));
 
             CreateMap<VOC_DefectTypeViewModel, VOC_DEFECT_TYPE>()
                .ConstructUsing(c => new VOC_DEFECT_TYPE(c.EngsNotation, c.KoreanNotation));
@@ -45,6 +45,9 @@ namespace VOC.Application.AutoMapper
 
             CreateMap<VocPPMViewModel, VOC_PPM>()
               .ConstructUsing(c => new VOC_PPM(c.Id, c.Module, c.Customer, c.Type, c.Year, c.Month, c.Value, c.TargetValue));
+
+            CreateMap<VocOnsiteViewModel, VOC_ONSITE>()
+             .ConstructUsing(c => new VOC_ONSITE(c.Id, c.Month, c.Week,c.Date, c.Part, c.Customer_Code, c.Wisol_Model, c.Customer, c.Qty, c.Marking, c.SetModel, c.OK, c.NG, c.Not_Measure, c.Result, c.ProductionDate, c.Note));
         }
     }
 }

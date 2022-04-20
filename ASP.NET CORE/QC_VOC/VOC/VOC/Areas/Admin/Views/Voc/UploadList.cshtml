@@ -128,9 +128,9 @@
             </div>
             <div class="col-auto float-right ml-auto">
                 @{
-                    var pCreate = await AuthorizationService.AuthorizeAsync(User, "HOME", Operations.Create);
-                    var pImport = await AuthorizationService.AuthorizeAsync(User, "HOME", Operations.Import);
-                    var pExport = await AuthorizationService.AuthorizeAsync(User, "HOME", Operations.Export);
+                    var pCreate = await AuthorizationService.AuthorizeAsync(User, "uVoc", Operations.Create);
+                    var pImport = await AuthorizationService.AuthorizeAsync(User, "uVoc", Operations.Import);
+                    var pExport = await AuthorizationService.AuthorizeAsync(User, "uVoc", Operations.Export);
                 }
 
                 @if (pCreate.Succeeded)

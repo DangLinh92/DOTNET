@@ -5,11 +5,12 @@
 }
 @section Scripts
 {
+    <script src="~/js/jquery.table.marge.js"></script>
     <script src="https://cdn.datatables.net/select/1.3.4/js/dataTables.select.min.js"></script>
     <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
     <script>
 
-
+        var model = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.vocOnsiteModels))');
         onSuccess = function () { };
 
         $('#txtYear').datetimepicker({
@@ -23,16 +24,102 @@
             }
         });
 
+
+
+        $(document).ready(function () {
+
+            const d = new Date();
+            let month = d.getMonth() + 1;
+
+            $('#m_1').removeClass('active');
+            $('#m_2').removeClass('active');
+            $('#m_3').removeClass('active');
+            $('#m_4').removeClass('active');
+            $('#m_5').removeClass('active');
+            $('#m_6').removeClass('active');
+            $('#m_7').removeClass('active');
+            $('#m_8').removeClass('active');
+            $('#m_9').removeClass('active');
+            $('#m_10').removeClass('active');
+            $('#m_11').removeClass('active');
+            $('#m_12').removeClass('active');
+
+            for (let i = 1; i <= 12; i++) {
+                if (month == i) {
+                    //$('#m_' + i).addClass('active');
+                    $('#m_'+i).click();
+                    break;
+                }
+            }
+
+            // merge cell 
+            for (let m = 1; m <= 12; m++) {
+
+                if (model.filter(x => x.Month == m).length > 0)
+                {
+                    if ($('#cboCustomer').val().includes('result'))
+                    {
+                        $('#vocOnsiteTable_' + m).margetable({
+                            type: 2,
+                            colindex: [0, 1, 2, 3, 4, 5, 6, 7, 10, 11]// column 1, 2
+                        });
+                    }
+                    else
+                    {
+                        console.log($('#vocOnsiteTable_' + m));
+                        $('#vocOnsiteTable_' + m).margetable({
+                            type: 2,
+                            colindex: [0, 1, 2, 3, 4, 5]// column 1, 2
+                        });
+                    }
+                }
+            }
+
+            // export excel
+            $('#btnExportData').on('click', function () {
+
+                var year = $('#txtYear').val();
+
+                if (!year) {
+                    year = new Date().getFullYear();
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Admin/Onsite/ExportExcel",
+                    data: {
+                        year: year
+                    },
+                    success: function (response) {
+                        window.location.href = response;
+                    },
+                    error: function (status) {
+                        hrms.notify(status.responseText, 'error', 'alert', function () { });
+                    }
+                });
+            });
+        });
+
     </script>
 }
-<div class="content container-fluid">
 
-    <!-- Page Header -->
-    <div class="page-header" style="display:none">
-        <div class="row">
-            <div class="col-sm-12">
-                <h5 class="page-title">Total SEV SEVT onsite result</h5>
-            </div>
+@section Styles{
+    <style>
+        table tr th {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        table tr td {
+            text-align: center;
+            vertical-align: middle !important;
+        }
+    </style>
+}
+<div class="content container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+           <a href="#" style="float:right" id="btnExportData" class="btn"><i class="fa fa-file"></i> Export Excel</a><br />
         </div>
     </div>
 
@@ -97,13 +184,57 @@
                     }
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover mb-0 table-striped custom-table datatable" id="vocOnsiteTable">
-                            <thead>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
+                    <ul class="nav nav-tabs nav-tabs-solid">
+                        <li class="nav-item"><a id="m_1" class="nav-link active" href="#W01-04" data-toggle="tab">January</a></li>
+                        <li class="nav-item"><a id="m_2" class="nav-link" href="#W05-08" data-toggle="tab">February</a></li>
+                        <li class="nav-item"><a id="m_3" class="nav-link" href="#W09-12" data-toggle="tab">March</a></li>
+                        <li class="nav-item"><a id="m_4" class="nav-link" href="#W13-16" data-toggle="tab">April</a></li>
+                        <li class="nav-item"><a id="m_5" class="nav-link" href="#W17-20" data-toggle="tab">May</a></li>
+                        <li class="nav-item"><a id="m_6" class="nav-link" href="#W21-24" data-toggle="tab">June</a></li>
+                        <li class="nav-item"><a id="m_7" class="nav-link" href="#W25-28" data-toggle="tab">July</a></li>
+                        <li class="nav-item"><a id="m_8" class="nav-link" href="#W29-32" data-toggle="tab">August</a></li>
+                        <li class="nav-item"><a id="m_9" class="nav-link" href="#W33-36" data-toggle="tab">September</a></li>
+                        <li class="nav-item"><a id="m_10" class="nav-link" href="#W37-40" data-toggle="tab">October</a></li>
+                        <li class="nav-item"><a id="m_11" class="nav-link" href="#W41-44" data-toggle="tab">November</a></li>
+                        <li class="nav-item"><a id="m_12" class="nav-link" href="#W45-48" data-toggle="tab">December</a></li>
+                    </ul>
+                    <div class="tab-content" style="padding-top:0px!important">
+                        <div class="tab-pane show active" id="W01-04">
+                            @await Html.PartialAsync("_gridOnsiteByWeekView", new VocOnsiteListByWeek(Model, 1))
+                        </div>
+                        <div class="tab-pane" id="W05-08">
+                            @await Html.PartialAsync("_gridOnsiteByWeekView", new VocOnsiteListByWeek(Model, 2))
+                        </div>
+                        <div class="tab-pane" id="W09-12">
+                            @await Html.PartialAsync("_gridOnsiteByWeekView", new VocOnsiteListByWeek(Model, 3))
+                        </div>
+                        <div class="tab-pane" id="W13-16">
+                            @await Html.PartialAsync("_gridOnsiteByWeekView", new VocOnsiteListByWeek(Model, 4))
+                        </div>
+                        <div class="tab-pane" id="W17-20">
+                            @await Html.PartialAsync("_gridOnsiteByWeekView", new VocOnsiteListByWeek(Model, 5))
+                        </div>
+                        <div class="tab-pane" id="W21-24">
+                            @await Html.PartialAsync("_gridOnsiteByWeekView", new VocOnsiteListByWeek(Model, 6))
+                        </div>
+                        <div class="tab-pane" id="W25-28">
+                            @await Html.PartialAsync("_gridOnsiteByWeekView", new VocOnsiteListByWeek(Model, 7))
+                        </div>
+                        <div class="tab-pane" id="W29-32">
+                            @await Html.PartialAsync("_gridOnsiteByWeekView", new VocOnsiteListByWeek(Model, 8))
+                        </div>
+                        <div class="tab-pane" id="W33-36">
+                            @await Html.PartialAsync("_gridOnsiteByWeekView", new VocOnsiteListByWeek(Model, 9))
+                        </div>
+                        <div class="tab-pane" id="W37-40">
+                            @await Html.PartialAsync("_gridOnsiteByWeekView", new VocOnsiteListByWeek(Model, 10))
+                        </div>
+                        <div class="tab-pane" id="W41-44">
+                            @await Html.PartialAsync("_gridOnsiteByWeekView", new VocOnsiteListByWeek(Model, 11))
+                        </div>
+                        <div class="tab-pane" id="W45-48">
+                            @await Html.PartialAsync("_gridOnsiteByWeekView", new VocOnsiteListByWeek(Model, 12))
+                        </div>
                     </div>
                 </div>
             </div>

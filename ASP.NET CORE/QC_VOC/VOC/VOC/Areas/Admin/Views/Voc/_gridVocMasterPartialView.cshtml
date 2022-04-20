@@ -222,8 +222,8 @@
                 <td class="text-right">
                     <div class="dropdown dropdown-action">
                         @{
-                            var pDelete = await AuthorizationService.AuthorizeAsync(User, "HOME", Operations.Delete);
-                            var pUpdate = await AuthorizationService.AuthorizeAsync(User, "HOME", Operations.Update);
+                            var pDelete = await AuthorizationService.AuthorizeAsync(User, "uVoc", Operations.Delete);
+                            var pUpdate = await AuthorizationService.AuthorizeAsync(User, "uVoc", Operations.Update);
                         }
 
                         <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>

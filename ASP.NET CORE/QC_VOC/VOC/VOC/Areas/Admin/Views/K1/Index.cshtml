@@ -27,15 +27,15 @@
 
     </script>
     <script src="~/app/controllers/ppm/chartjs-ppm.js"></script>
-    @*<script src="~/app/controllers/ppm/chartjsPPM_Mns.js"></script>*@
+    <script src="~/app/controllers/ppm/chartjsPPM_Mns.js"></script>
     <script>
         var site = $('#cboSite').val();
         var chartjsPPM = new chartjsPPM_Controller();
         chartjsPPM.DrawChart(site);
 
-        //var ppmMns = new chartPPMMnsController();
-        //ppmMns.initialize();
-        
+        var ppmMns = new chartPPMMnsController();
+        ppmMns.initialize();
+
         if (site == 'ALL') {
             $('.area-all').css('display', true);
             $('.area-csp').css('display', 'none');
@@ -46,7 +46,7 @@
             $('.area-csp').css('display', true);
             $('.area-lfem').css('display', 'none');
         }
-        else{
+        else {
             $('.area-all').css('display', 'none');
             $('.area-csp').css('display', 'none');
             $('.area-lfem').css('display', true);
@@ -54,19 +54,9 @@
     </script>
 }
 <div class="content container-fluid">
-
-    <!-- Page Header -->
-    <div class="page-header" style="display:none">
-        <div class="row">
-            <div class="col-sm-12">
-                <h5 class="page-title">K1 고객 불량율</h5>
-            </div>
-        </div>
-    </div>
-
     <div class="row">
         <div class="col-sm-12">
-            <i class="fa fa-caret-right"></i> <strong>고객(사) GMES 불량율 Data Trend 관리</strong><br />
+            <i class="fa fa-caret-right"></i> <strong>고객(사) GMES 불량율 Data Trend 관리</strong> <a href="#" style="float:right" id="btnExportData" class="btn"><i class="fa fa-file"></i> Export Excel</a><br />
             <i>※ Unit [PPM]</i>
         </div>
     </div>

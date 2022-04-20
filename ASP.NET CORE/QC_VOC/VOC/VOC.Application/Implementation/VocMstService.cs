@@ -124,12 +124,21 @@ namespace VOC.Application.Implementation
                         if (!DateTime.TryParse(worksheet.Cells[i, 6].Text.NullString(), out _))
                         {
                             resultDB.ReturnInt = -1;
-                            resultDB.ReturnString = "Received date is format (YYYY-MM-DD) : " + worksheet.Cells[i, 6].Text.NullString();
+                            resultDB.ReturnString = "Received date is format (YYYY-MM-dd) : " + worksheet.Cells[i, 6].Text.NullString();
                             return resultDB;
                         }
 
-                        row["ReceivedDate"] = worksheet.Cells[i, 6].Text.NullString();
-                        row["SPLReceivedDate"] = worksheet.Cells[i, 7].Text.NullString();
+                        DateTime.TryParse(worksheet.Cells[i, 6].Text.NullString(), out DateTime dt);
+                        row["ReceivedDate"] = dt.ToString("yyyy-MM-dd");
+
+                        if (DateTime.TryParse(worksheet.Cells[i, 7].Text.NullString(), out DateTime splDt))
+                        {
+                            row["SPLReceivedDate"] = splDt.ToString("yyyy-MM-dd");
+                        }
+                        else
+                        {
+                            row["SPLReceivedDate"] = worksheet.Cells[i, 7].Text.NullString();
+                        }
 
                         if (!DateTime.TryParse(worksheet.Cells[i, 7].Text.NullString(), out _))
                         {
@@ -811,7 +820,7 @@ namespace VOC.Application.Implementation
                         vOCPPM_Customer.ToTal_PPM = 0;
                     }
 
-                    vOCPPM_Customer.ToTal_PPM_Target = item.TargetValue;
+                    vOCPPM_Customer.ToTal_PPM_Target = _vocPPMYearRepository.FindAll(x => x.Year == iyear && x.Module == item.Module).FirstOrDefault().TargetPPM;//item.TargetValue;
 
                     if (!vOCPPM_Ex.vOCPPM_Customers.Any(x => x.Customer == item.Customer))
                     {
@@ -863,6 +872,12 @@ namespace VOC.Application.Implementation
                                 vocPPM.Value = 0;
                                 vocPPM.Month = month;
                                 vocPPM.Year = int.Parse(item.Year.IfNullIsZero());
+
+                                var vppm = _vocPPMRepository.FindAll(x => x.Year == iyear && x.Month == month && x.Type == type && x.Customer == sub.Customer && x.Module == item.Module).FirstOrDefault();
+                                if (vppm != null)
+                                {
+                                    vocPPM.TargetValue = vppm.TargetValue;
+                                }
                                 sub.vocPPMModels.Add(vocPPM);
                             }
                         }
@@ -980,11 +995,11 @@ namespace VOC.Application.Implementation
                         pMByMonth.PPM = ppm1.Value > 0 ? Math.Round(Math.Pow(10, 6) * (ppm2.Value / ppm1.Value), 0) : 0;
                         lstPPMMonthsALL.Add(pMByMonth);
 
-                        targetTotal = pMByMonth.Target;
+                        // targetTotal = pMByMonth.Target;
                     }
-
                 }
 
+                targetTotal = _vocPPMYearRepository.FindAll(x => x.Year == iyear && x.Module == item.Module).FirstOrDefault().TargetPPM;
                 _customer.Customer = lstVocPPMModelALL.FirstOrDefault()?.Customer;
                 _customer.ToTal_Defect = totalDefect;
                 _customer.ToTal_Input = totalInput;
@@ -1182,11 +1197,21 @@ namespace VOC.Application.Implementation
             return pPMDataChartAll;
         }
 
-        public GmesDataViewModel GetGmesData()
+        public GmesDataViewModel GetGmesData(int year, int month)
         {
             GmesDataViewModel gmes = new GmesDataViewModel();
-            gmes.vocPPMViewModels = _mapper.Map<List<VocPPMViewModel>>(_vocPPMRepository.FindAll().OrderByDescending(x => x.Year).OrderByDescending(x => x.Month));
-            gmes.vocPPMYearViewModels = _mapper.Map<List<VocPPMYearViewModel>>(_vocPPMYearRepository.FindAll().OrderByDescending(x => x.Year));
+
+            if (year == 0 || month == 0)
+            {
+                gmes.vocPPMViewModels = _mapper.Map<List<VocPPMViewModel>>(_vocPPMRepository.FindAll().OrderByDescending(x => x.Year).OrderByDescending(x => x.Month));
+                gmes.vocPPMYearViewModels = _mapper.Map<List<VocPPMYearViewModel>>(_vocPPMYearRepository.FindAll().OrderByDescending(x => x.Year));
+            }
+            else
+            {
+                gmes.vocPPMViewModels = _mapper.Map<List<VocPPMViewModel>>(_vocPPMRepository.FindAll(x => x.Year == year && x.Month == month).OrderByDescending(x => x.Year).OrderByDescending(x => x.Month));
+                gmes.vocPPMYearViewModels = _mapper.Map<List<VocPPMYearViewModel>>(_vocPPMYearRepository.FindAll(x => x.Year == year).OrderByDescending(x => x.Year));
+            }
+
             return gmes;
         }
 

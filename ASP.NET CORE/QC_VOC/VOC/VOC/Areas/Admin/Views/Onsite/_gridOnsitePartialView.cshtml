@@ -1,0 +1,68 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@using VOC.Authorization
+@inject IAuthorizationService AuthorizationService
+@model List<VocOnsiteViewModel>
+
+@{
+    var pUpdate = await AuthorizationService.AuthorizeAsync(User, "uOnsite", Operations.Update);
+    var pDelete = await AuthorizationService.AuthorizeAsync(User, "uOnsite", Operations.Delete);
+}
+
+<table class="table table-bordered table-hover mb-0 table-striped custom-table datatable" id="vocOnsiteDataTable" style="width:100%">
+    <thead>
+        <tr>
+            <th>Month</th>
+            <th>Week</th>
+            <th>Date</th>
+            <th>Customer</th>
+            <th>Part</th>
+            <th>Quantity</th>
+            <th>Wisol Model</th>
+            <th>Customer Code</th>
+            <th>Marking</th>
+            <th>Production date</th>
+            <th>Set model</th>
+            <th>Result</th>
+            <th>Note</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="tbl-content-vocOnsiteDataTable">
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Month</td>
+                <td>@item.Week</td>
+                <td>@item.Date</td>
+                <td>@item.Customer</td>
+                <td>@item.Part</td>
+                <td>@item.Qty</td>
+                <td>@item.Wisol_Model</td>
+                <td>@item.Customer_Code</td>
+                <td>@item.Marking</td>
+                <td>@item.ProductionDate</td>
+                <td>@item.SetModel</td>
+                <td>@item.Result</td>
+                <td>@item.Note</td>
+
+                <td class="text-right">
+                    <div class="dropdown dropdown-action">
+                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                        <div class="dropdown-menu dropdown-menu-right">
+
+                            @if (pUpdate.Succeeded)
+                            {
+                                <a class="dropdown-item edit-vocOnsite" href="#" data-toggle="modal" data-target="#addEditOnsite" data-id="@item.Id"><i class="fa fa-edit m-r-5"></i> Edit</a>
+                            }
+
+                            @if (pDelete.Succeeded)
+                            {
+                                <a class="dropdown-item delete-vocOnsite" href="#" data-toggle="modal" data-target="#delete_onsite" data-id="@item.Id"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                            }
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

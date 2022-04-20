@@ -1,0 +1,101 @@
+﻿<div id="addEditOnsite" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add-Edit Onsite</h5>
+                <input type="hidden" id="hdTypeAddEdit" />
+                <input type="hidden" id="hdId" />
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="frmAddEditOnsite">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Customer<span class="text-danger">*</span></label>
+                                <select id="cboCustomer" class="select" name="Customer" required>
+                                    <option value="SEV" selected>SEV</option>
+                                    <option value="SEVT">SEVT</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Date<span class="text-danger">*</span></label>
+                                <div class="cal-icon"><input id="txtDate" name="Date" class="form-control datetimepicker" type="text" required></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Part<span class="text-danger">*</span></label>
+                                <select id="cboPart" class="select" name="Part" required>
+                                    <option value="CSP" selected>CSP</option>
+                                    <option value="LFEM">LFEM</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Wisol Model<span class="text-danger">*</span></label>
+                                <input id="txtWisol_Model" name="Wisol_Model" class="form-control" type="text" required>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Customer Code<span class="text-danger">*</span></label>
+                                <input id="txtCustomer_Code" class="form-control" name="Customer_Code" type="text" required>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Marking</label>
+                                <input id="txtMarking" name="Marking" class="form-control" type="text">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Production date</label>
+                                <div class="cal-icon">
+                                    <input id="txtProductionDate" class="form-control datetimepicker" name="ProductionDate" type="text">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Set model</label>
+                                <input id="txtSetModel" name="SetModel" class="form-control" type="text">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Quantity<span class="text-danger">*</span></label>
+                                <input id="txtQty" name="Qty" class="form-control" type="number" required>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Result<span class="text-danger">*</span></label>
+                                <select id="cboResult" class="select" name="Result" required>
+                                    <option value="" selected>Other</option>
+                                    <option value="OK">OK</option>
+                                    <option value="NG">NG</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Note</label>
+                                <textarea rows="5" cols="5" class="form-control" id="txtNote" name="Note" placeholder="Enter text here"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="submit-section">
+                        <button id="btnSaveOnsite" class="btn btn-primary submit-btn">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

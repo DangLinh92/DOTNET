@@ -203,7 +203,7 @@
             <div class="card dash-widget">
                 <div class="card-body" style="height:48px;text-align:justify">
                     <h4 style="display:inline;float:left">접수 건수</h4><i>(Tiếp nhận)</i>:
-                    <h4 id="tagReceiveCount" style="display:inline;float:right">@Model.vocProgessInfo.ReceiveCount</h4>
+                    <h5 id="tagReceiveCount" style="display:inline;float:right">@Model.vocProgessInfo.ReceiveCount</h5>
                 </div>
             </div>
         </div>
@@ -211,7 +211,7 @@
             <div class="card dash-widget">
                 <div class="card-body" style="height: 48px; text-align: justify">
                     <h4 style="display:inline;float:left">완료</h4><i>(Hoàn thành)</i>:
-                    <h4 id="tagCloseCount" style="display:inline;float:right">@Model.vocProgessInfo.CloseCount</h4>
+                    <h5 id="tagCloseCount" style="display:inline;float:right">@Model.vocProgessInfo.CloseCount</h5>
                 </div>
             </div>
         </div>
@@ -219,7 +219,7 @@
             <div class="card dash-widget">
                 <div class="card-body" style="height: 48px; text-align: justify">
                     <h4 style="display:inline;float:left">진행중</h4><i>(Đang xử lý)</i>:
-                    <h4 id="tagProgressCount" style="display:inline;float:right">@Model.vocProgessInfo.ProgressCount</h4>
+                    <h5 id="tagProgressCount" style="display:inline;float:right">@Model.vocProgessInfo.ProgressCount</h5>
                 </div>
             </div>
         </div>
@@ -229,6 +229,7 @@
         <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
         </div>
         <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+            <a href="#" id="btnExportData" class="btn"><i class="fa fa-file"></i> Export Excel</a>
         </div>
     </div>
 

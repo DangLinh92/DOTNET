@@ -45,7 +45,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="wwwroot\export-files\K1 고객 불량율 %28CSP LFEM 목표 대비 실적%29 SEV.SEVT VOC건수 추가.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Update="wwwroot\templates\EmployeeTemplate.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\templates\GLOBAL_VOC_MasterLIST_Template.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\templates\K1.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\templates\K1고객 불량율.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

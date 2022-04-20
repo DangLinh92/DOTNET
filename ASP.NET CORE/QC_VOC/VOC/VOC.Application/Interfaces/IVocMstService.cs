@@ -30,7 +30,7 @@ namespace VOC.Application.Interfaces
 
         List<VOC_DefectTypeViewModel> GetDefectType();
 
-        GmesDataViewModel GetGmesData();
+        GmesDataViewModel GetGmesData(int year, int month);
 
         VocPPMYearViewModel UpdatePPMByYear(bool isAdd, VocPPMYearViewModel model);
 

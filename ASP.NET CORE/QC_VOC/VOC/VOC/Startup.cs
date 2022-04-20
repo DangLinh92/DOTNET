@@ -20,6 +20,7 @@ using Newtonsoft.Json.Serialization;
 using System;
 using Microsoft.AspNetCore.Authorization;
 using VOC.Authorization;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace VOC
 {
@@ -95,6 +96,12 @@ namespace VOC
             {
                 x.MultipartBodyLengthLimit = 209715200;
             });
+
+            //Set Session Timeout. Default is 20 minutes.
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -119,6 +126,8 @@ namespace VOC
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseSession();
 
             app.UseEndpoints(routes =>
             {

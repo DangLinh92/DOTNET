@@ -280,7 +280,7 @@ namespace VOC.Areas.Admin.Controllers
             using (ExcelPackage package = new ExcelPackage(file))
             {
                 // add a new worksheet to the empty workbook
-                ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Employee");
+                ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("VOC Master LIST");
                 worksheet.Cells["A1"].LoadFromCollection(vocs, true, TableStyles.Light11);
                 worksheet.Cells.AutoFitColumns();
                 package.Save(); //Save the workbook.

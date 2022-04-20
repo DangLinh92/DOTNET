@@ -1081,6 +1081,7 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-12-24",
                         SetModel = "A536",
                         Not_Measure = "NM",
+                        Note = "Không test được bằng máy cũ",
                         Qty = 1
                     },
                     new VOC_ONSITE()
@@ -1096,6 +1097,7 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-01-03",
                         SetModel = "A536",
                         Not_Measure = "NM",
+                        Note = "Không test được bằng máy cũ",
                         Qty = 1
                     },
                     new VOC_ONSITE()
@@ -1111,6 +1113,7 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-12-24",
                         SetModel = "A536",
                        Not_Measure = "NM",
+                       Note = "Không test được bằng máy cũ",
                         Qty = 1
                     },
                      new VOC_ONSITE()
@@ -1126,6 +1129,7 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-12-22",
                         SetModel = "A536",
                          Not_Measure = "NM",
+                         Note = "Không test được bằng máy cũ",
                         Qty = 1
                     },
                     new VOC_ONSITE()
@@ -1141,6 +1145,7 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-02-01",
                         SetModel = "A536",
                          Not_Measure = "NM",
+                         Note = "Không test được bằng máy cũ",
                         Qty = 1
                     },
                      new VOC_ONSITE()
@@ -1156,6 +1161,7 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-12-03",
                         SetModel = "A536",
                         Not_Measure = "NM",
+                        Note = "Không test được bằng máy cũ",
                         Qty = 1
                     },
                       new VOC_ONSITE()
@@ -1171,6 +1177,7 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-02-21",
                         SetModel = "A536",
                          Not_Measure = "NM",
+                         Note = "Không test được bằng máy cũ",
                         Qty = 1
                     },
                        new VOC_ONSITE()
@@ -1186,6 +1193,7 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-01-04",
                         SetModel = "A536",
                          Not_Measure = "NM",
+                         Note = "Không test được bằng máy cũ",
                         Qty = 1
                     },
                      new VOC_ONSITE()
@@ -1201,6 +1209,7 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-02-11",
                         SetModel = "A536",
                          Not_Measure = "NM",
+                         Note = "Không test được bằng máy cũ",
                         Qty = 1
                     },
                       new VOC_ONSITE()
@@ -1216,6 +1225,7 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-02-10",
                         SetModel = "A536",
                          Not_Measure = "NM",
+                         Note = "Không test được bằng máy cũ",
                         Qty = 1
                     },
                         new VOC_ONSITE()
@@ -1231,6 +1241,7 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-12-24",
                         SetModel = "A536",
                          Not_Measure = "NM",
+                         Note = "Không test được bằng máy cũ",
                         Qty = 1
                     },
                       new VOC_ONSITE()
@@ -1246,6 +1257,7 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-01-06",
                         SetModel = "A536",
                          Not_Measure = "NM",
+                         Note = "Không test được bằng máy cũ",
                         Qty = 1
                     },
                         new VOC_ONSITE()
@@ -1261,6 +1273,7 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-12-24",
                         SetModel = "A536",
                         Not_Measure = "NM",
+                        Note = "Không test được bằng máy cũ",
                         Qty = 1
                     },
                     new VOC_ONSITE()
@@ -1276,6 +1289,7 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-11-19",
                         SetModel = "A536",
                          Not_Measure = "NM",
+                         Note = "Không test được bằng máy cũ",
                         Qty = 1
                     },
                     new VOC_ONSITE()
@@ -1291,6 +1305,7 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-11-11",
                         SetModel = "A536",
                          Not_Measure = "NM",
+                         Note = "Không test được bằng máy cũ",
                         Qty = 1
                     },
                     new VOC_ONSITE()
@@ -1306,6 +1321,7 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-01-24",
                         SetModel = "A536",
                          Not_Measure = "NM",
+                         Note = "Không test được bằng máy cũ",
                         Qty = 1
                     },
                     new VOC_ONSITE()
@@ -1321,6 +1337,7 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-01-25",
                         SetModel = "A536",
                          Not_Measure = "NM",
+                         Note = "Không test được bằng máy cũ",
                         Qty = 1
                     },
                     new VOC_ONSITE()
@@ -1336,6 +1353,7 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-11-23",
                         SetModel = "A536",
                          Not_Measure = "NM",
+                         Note = "Không test được bằng máy cũ",
                         Qty = 1
                     },
 
@@ -1497,6 +1515,7 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-12-24",
                         SetModel = "A125",
                         Not_Measure="NM",
+                         Note = "Không test được bằng máy cũ",
                         Qty = 1
                     },
                     new VOC_ONSITE()
@@ -1512,6 +1531,7 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-12-23",
                         SetModel = "A125",
                         Not_Measure="NM",
+                         Note = "Không test được bằng máy cũ",
                         Qty = 1
                     },
                     new VOC_ONSITE()
@@ -1527,6 +1547,7 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-01-09",
                         SetModel = "A536",
                         Not_Measure="NM",
+                         Note = "Không test được bằng máy cũ",
                         Qty = 1
                     },
                     new VOC_ONSITE()
@@ -1542,6 +1563,7 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-12-18",
                         SetModel = "A536",
                         Not_Measure="NM",
+                         Note = "Không test được bằng máy cũ",
                         Qty = 1
                     },
                     new VOC_ONSITE()
@@ -1557,6 +1579,7 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-01-14",
                         SetModel = "A536",
                         Not_Measure="NM",
+                         Note = "Không test được bằng máy cũ",
                         Qty = 1
                     },
                     new VOC_ONSITE()
@@ -1572,6 +1595,7 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-01-24",
                         SetModel = "A536",
                         Not_Measure="NM",
+                         Note = "Không test được bằng máy cũ",
                         Qty = 1
                     },
                     new VOC_ONSITE()
@@ -1587,6 +1611,7 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-01-24",
                         SetModel = "A536",
                         Not_Measure="NM",
+                         Note = "Không test được bằng máy cũ",
                         Qty = 1
                     },
                     new VOC_ONSITE()
@@ -1602,6 +1627,7 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-12-27",
                         SetModel = "A125",
                         Not_Measure="NM",
+                         Note = "Không test được bằng máy cũ",
                         Qty = 1
                     },
                     new VOC_ONSITE()
@@ -1617,6 +1643,7 @@ namespace VOC.Data.EF
                         ProductionDate = "2021-11-13",
                         SetModel = "G991",
                         Not_Measure="NM",
+                         Note = "Không test được bằng máy cũ",
                         Qty = 1
                     },
 
@@ -1730,6 +1757,7 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-02-10",
                         SetModel = "S901",
                          Not_Measure = "NM",
+                         Note = "Không test được bằng máy cũ",
                         Qty = 1
                     },
                      new VOC_ONSITE()
@@ -1745,6 +1773,7 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-02-24",
                         SetModel = "S901",
                        Not_Measure = "NM",
+                       Note = "Không test được bằng máy cũ",
                         Qty = 1
                     },
                     new VOC_ONSITE()
@@ -1760,6 +1789,7 @@ namespace VOC.Data.EF
                         ProductionDate = "2022-01-18",
                         SetModel = "A536",
                         Not_Measure = "NM",
+                        Note = "Không test được bằng máy cũ",
                         Qty = 1
                     },
                 });

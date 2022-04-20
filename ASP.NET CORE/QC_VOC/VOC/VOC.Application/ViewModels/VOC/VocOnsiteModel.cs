@@ -4,6 +4,19 @@ using System.Text;
 
 namespace VOC.Application.ViewModels.VOC
 {
+    public class VocOnsiteListByWeek
+    {
+        public VocOnsiteListByWeek(VocOnsiteList list,int month)
+        {
+            vocOnsiteList = list;
+            Month = month;
+        }
+
+        public VocOnsiteList vocOnsiteList { get; set; }
+        public string fromWeek { get; set; }
+        public string toWeek { get; set; }
+        public int Month { get; set; }
+    }
     public class VocOnsiteList
     {
         public VocOnsiteList()
@@ -22,8 +35,9 @@ namespace VOC.Application.ViewModels.VOC
 
     public class VocOnsiteSumWeek
     {
+        public int Month { get; set; }
         public string Time { get; set; }
-        public string Customer { get; set; }
+        public string Part { get; set; }
         public int QTY { get; set; }
         public int OK { get; set; }
         public int NG { get; set; }

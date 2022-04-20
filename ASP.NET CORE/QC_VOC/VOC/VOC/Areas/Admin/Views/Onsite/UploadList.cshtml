@@ -1,0 +1,142 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@using VOC.Authorization
+@inject IAuthorizationService AuthorizationService
+
+@model List<VocOnsiteViewModel>
+@{
+    ViewData["Title"] = "UploadList";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+@section Scripts
+{
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/app/controllers/onsite/vocOnsiteMns.js"></script>
+    <script>
+
+        var controller = new vocOnsiteController();
+        controller.initialize();
+
+        onSuccess = function () { };
+
+        $(document).ready(function () {
+
+            $('#vocOnsiteDataTable').DataTable();
+
+            $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
+            $('select[name="vocOnsiteDataTable_length"]').removeClass('form-control-sm');
+
+            var searchTime = '@ViewBag.SearchTime';
+
+            if (searchTime) {
+                $('#txtTimeFrom').val(searchTime.split('^')[0]);
+                $('#txtTimeTo').val(searchTime.split('^')[1]);
+            }
+            else
+            {
+                $('#txtTimeFrom').val('');
+                $('#txtTimeTo').val('');
+            }
+        });
+    </script>
+}
+
+@section Styles{
+    <style>
+        #btnAddOnsite {
+            background-color: dodgerblue;
+            color: white;
+        }
+    </style>
+}
+@{
+   var pCreate = await AuthorizationService.AuthorizeAsync(User, "uOnsite", Operations.Create);
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <h5 class="page-title">SEV-SEVT-세부 results</h5>
+            </div>
+        </div>
+        <div class="row align-items-center">
+            <div class="col">
+            </div>
+            <div class="col-auto float-right ml-auto">
+                @if(pCreate.Succeeded)
+                {
+                    <a href="#" id="btnAddOnsite" class="btn" data-toggle="modal" data-target="#addEditOnsite"><i class="fa fa-plus"></i> Add Onsite</a>
+                }
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Filter -->
+    <form action="/admin/onsite/SearchUpload" method="post">
+        <div class="row filter-row">
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus">
+                    <div class="cal-icon">
+                        <input id="txtTimeFrom" name="fromTime" class="form-control floating datetimepicker" type="text">
+                    </div>
+                    <label class="focus-label">From</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus">
+                    <div class="cal-icon">
+                        <input id="txtTimeTo" name="toTime" class="form-control floating datetimepicker" type="text">
+                    </div>
+                    <label class="focus-label">YEAR</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <button id="btnSearch" type="submit" class="btn btn-success btn-block"> Search </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- /Search Filter -->
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive" id="gridVocOnsite">
+                @await Html.PartialAsync("_gridOnsitePartialView", Model)
+            </div>
+        </div>
+    </div>
+</div>
+<partial name="_addEditOnsiteView" />
+
+<div class="modal custom-modal fade" id="delete_onsite" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header">
+                    <h3>Delete Onsite Data</h3>
+                    <p>Are you sure want to delete?</p>
+                    <input type="hidden" id="txtId" />
+                </div>
+                <div class="modal-btn delete-action">
+                    <div class="row">
+                        <div class="col-6">
+                            <a href="javascript:void(0);" class="btn btn-primary continue-btn" id="btnDelete">Delete</a>
+                        </div>
+                        <div class="col-6">
+                            <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

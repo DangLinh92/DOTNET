@@ -14,5 +14,7 @@ namespace VOC.Application.ViewModels.VOC
 
         public List<VocPPMYearViewModel> vocPPMYearViewModels { get; set; }
         public List<VocPPMViewModel> vocPPMViewModels { get; set; }
+
+        public string Year { get; set; }
     }
 }
