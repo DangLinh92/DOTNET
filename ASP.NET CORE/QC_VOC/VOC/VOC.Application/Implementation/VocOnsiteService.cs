@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using VOC.Application.Interfaces;
@@ -10,6 +12,7 @@ using VOC.Data.EF.Extensions;
 using VOC.Data.Entities;
 using VOC.Infrastructure.Interfaces;
 using VOC.Utilities.Constants;
+using VOC.Utilities.Dtos;
 
 namespace VOC.Application.Implementation
 {
@@ -202,6 +205,117 @@ namespace VOC.Application.Implementation
         public void Save()
         {
             _unitOfWork.Commit();
+        }
+
+        public ResultDB ImportExcel(string filePath, string param)
+        {
+            ResultDB resultDB = new ResultDB();
+            try
+            {
+                using (var packet = new ExcelPackage(new System.IO.FileInfo(filePath)))
+                {
+                    ExcelWorksheet worksheet = packet.Workbook.Worksheets[1];
+
+                    DataTable table = new DataTable();
+                    table.Columns.Add("Month");
+                    table.Columns.Add("Week");
+                    table.Columns.Add("Date");
+                    table.Columns.Add("Customer");
+                    table.Columns.Add("Part");
+                    table.Columns.Add("Qty");
+                    table.Columns.Add("Wisol_Model");
+                    table.Columns.Add("Customer_Code");
+                    table.Columns.Add("Marking");
+                    table.Columns.Add("ProductionDate");
+                    table.Columns.Add("SetModel");
+                    table.Columns.Add("Result");
+                    table.Columns.Add("Note");
+                    table.Columns.Add("OK");
+                    table.Columns.Add("NG");
+                    table.Columns.Add("Not_Measure");
+
+                    DataRow row = null;
+                    for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++) // Start.Row = 1
+                    {
+                        row = table.NewRow();
+
+                        if (worksheet.Cells[i, 1].Text.NullString() == "" ||
+                            worksheet.Cells[i, 2].Text.NullString() == "" ||
+                            worksheet.Cells[i, 3].Text.NullString() == "" ||
+                            worksheet.Cells[i, 4].Text.NullString() == "" ||
+                            worksheet.Cells[i, 5].Text.NullString() == "" ||
+                            worksheet.Cells[i, 6].Text.NullString() == "")
+                        {
+                            resultDB.ReturnInt = -1;
+                            resultDB.ReturnString = "Data is not empty";
+                            return resultDB;
+                        }
+
+                        if (!worksheet.Cells[i, 2].Text.NullString().Contains("W"))
+                        {
+                            resultDB.ReturnInt = -1;
+                            resultDB.ReturnString = "Add 'W' to week";
+                            return resultDB;
+                        }
+
+                        row["Month"] = worksheet.Cells[i, 1].Text.NullString();
+                        row["Week"] = worksheet.Cells[i, 2].Text.NullString();
+
+                        if (!DateTime.TryParse(worksheet.Cells[i, 3].Text.NullString(), out _))
+                        {
+                            resultDB.ReturnInt = -1;
+                            resultDB.ReturnString = "Received date is format (YYYY-MM-dd) : " + worksheet.Cells[i, 3].Text.NullString();
+                            return resultDB;
+                        }
+
+                        DateTime.TryParse(worksheet.Cells[i, 3].Text.NullString(), out DateTime dt);
+                        row["Date"] = dt.ToString("yyyy-MM-dd");
+
+                        row["Customer"] = worksheet.Cells[i, 4].Text.NullString();
+                        row["Part"] = worksheet.Cells[i, 5].Text.NullString();
+                        row["Qty"] = worksheet.Cells[i, 6].Text.NullString();
+                        row["Wisol_Model"] = worksheet.Cells[i, 7].Text.NullString();
+                        row["Customer_Code"] = worksheet.Cells[i, 8].Text.NullString();
+                        row["Marking"] = worksheet.Cells[i, 9].Text.NullString();
+                        row["ProductionDate"] = worksheet.Cells[i, 10].Text.NullString();
+                        row["SetModel"] = worksheet.Cells[i, 11].Text.NullString();
+                        row["Result"] = worksheet.Cells[i, 12].Text.NullString();
+                        row["Note"] = worksheet.Cells[i, 13].Text.NullString();
+
+                        if (worksheet.Cells[i, 12].Text.NullString() == "OK")
+                        {
+                            row["OK"] = "OK";
+                            row["NG"] = "";
+                            row["Not_Measure"] = "";
+                        }
+                        else if (worksheet.Cells[i, 12].Text.NullString() == "NG")
+                        {
+                            row["NG"] = "NG";
+                            row["OK"] = "";
+                            row["Not_Measure"] = "";
+                        }
+                        else
+                        {
+                            row["Not_Measure"] = "NM";
+                            row["NG"] = "";
+                            row["OK"] = "";
+                        }
+
+                        table.Rows.Add(row);
+                    }
+
+                    Dictionary<string, string> dic = new Dictionary<string, string>();
+                    dic.Add("A_USER", GetUserId());
+                    resultDB = _vocRepository.ExecProceduce("PKG_BUSINESS.PUT_VOC_ONSITE", dic, "A_DATA", table);
+                }
+                return resultDB;
+            }
+            catch (Exception ex)
+            {
+                resultDB.ReturnInt = -1;
+                resultDB.ReturnString = ex.Message;
+                return resultDB;
+            }
         }
     }
 }

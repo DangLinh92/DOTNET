@@ -70,6 +70,133 @@ namespace VOC.Application.Implementation
 
         public ResultDB ImportExcel(string filePath, string param)
         {
+            if (param == "K1_Month")
+            {
+                return ImportK1Month(filePath);
+            }
+            else if (param == "K1_Year")
+            {
+                return ImportK1Year(filePath);
+            }
+            return ImportVoc(filePath);
+        }
+
+        private ResultDB ImportK1Month(string filePath)
+        {
+            ResultDB resultDB = new ResultDB();
+            try
+            {
+                using (var packet = new ExcelPackage(new System.IO.FileInfo(filePath)))
+                {
+                    ExcelWorksheet worksheet = packet.Workbook.Worksheets[1];
+
+                    DataTable table = new DataTable();
+                    table.Columns.Add("Module");
+                    table.Columns.Add("Customer");
+                    table.Columns.Add("Type");
+                    table.Columns.Add("Year");
+                    table.Columns.Add("Month");
+                    table.Columns.Add("Value");
+                    table.Columns.Add("TargetValue");
+
+                    DataRow row = null;
+                    for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++) // Start.Row = 1
+                    {
+                        row = table.NewRow();
+
+                        if (worksheet.Cells[i, 1].Text.NullString() == "" ||
+                            worksheet.Cells[i, 2].Text.NullString() == "" ||
+                            worksheet.Cells[i, 3].Text.NullString() == "" ||
+                            worksheet.Cells[i, 4].Text.NullString() == "" ||
+                            worksheet.Cells[i, 5].Text.NullString() == "" ||
+                            worksheet.Cells[i, 6].Text.NullString() == "" ||
+                            worksheet.Cells[i, 7].Text.NullString() == "")
+                        {
+                            resultDB.ReturnInt = -1;
+                            resultDB.ReturnString = "Data is not empty";
+                            return resultDB;
+                        }
+
+                        row["Module"] = worksheet.Cells[i, 1].Text.NullString();
+                        row["Customer"] = worksheet.Cells[i, 2].Text.NullString();
+                        row["Type"] = worksheet.Cells[i, 3].Text.NullString();
+                        row["Value"] = worksheet.Cells[i, 4].Text.NullString();
+                        row["TargetValue"] = worksheet.Cells[i, 5].Text.NullString();
+                        row["Year"] = worksheet.Cells[i, 6].Text.NullString();
+                        row["Month"] = worksheet.Cells[i, 7].Text.NullString();
+                       
+                        table.Rows.Add(row);
+                    }
+
+                    Dictionary<string, string> dic = new Dictionary<string, string>();
+                    dic.Add("A_USER", GetUserId());
+                    resultDB = _vocRepository.ExecProceduce("PKG_BUSINESS.PUT_VOC_PPM", dic, "A_DATA", table);
+                }
+                return resultDB;
+            }
+            catch (Exception ex)
+            {
+                resultDB.ReturnInt = -1;
+                resultDB.ReturnString = ex.Message;
+                return resultDB;
+            }
+        }
+
+        private ResultDB ImportK1Year(string filePath)
+        {
+            ResultDB resultDB = new ResultDB();
+            try
+            {
+                using (var packet = new ExcelPackage(new System.IO.FileInfo(filePath)))
+                {
+                    ExcelWorksheet worksheet = packet.Workbook.Worksheets[1];
+
+                    DataTable table = new DataTable();
+                    table.Columns.Add("Year");
+                    table.Columns.Add("Module");
+                    table.Columns.Add("TargetPPM");
+
+                    DataRow row = null;
+                    for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++) // Start.Row = 1
+                    {
+                        row = table.NewRow();
+
+                        if (worksheet.Cells[i, 1].Text.NullString() == "" ||
+                            worksheet.Cells[i, 2].Text.NullString() == "" ||
+                            worksheet.Cells[i, 3].Text.NullString() == "")
+                        {
+                            resultDB.ReturnInt = -1;
+                            resultDB.ReturnString = "Data is not empty";
+                            return resultDB;
+                        }
+
+                        row["Module"] = worksheet.Cells[i, 1].Text.NullString();
+                        row["TargetPPM"] = worksheet.Cells[i, 2].Text.NullString();
+                        row["Year"] = worksheet.Cells[i, 3].Text.NullString();
+                        table.Rows.Add(row);
+                    }
+
+                    Dictionary<string, string> dic = new Dictionary<string, string>();
+                    dic.Add("A_USER", GetUserId());
+                    resultDB = _vocRepository.ExecProceduce("PKG_BUSINESS.PUT_VOC_PPM_YEAR", dic, "A_DATA", table);
+                }
+                return resultDB;
+            }
+            catch (Exception ex)
+            {
+                resultDB.ReturnInt = -1;
+                resultDB.ReturnString = ex.Message;
+                return resultDB;
+            }
+        }
+
+        /// <summary>
+        /// Import VOC
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        private ResultDB ImportVoc(string filePath)
+        {
             ResultDB resultDB = new ResultDB();
             try
             {
@@ -820,7 +947,14 @@ namespace VOC.Application.Implementation
                         vOCPPM_Customer.ToTal_PPM = 0;
                     }
 
-                    vOCPPM_Customer.ToTal_PPM_Target = _vocPPMYearRepository.FindAll(x => x.Year == iyear && x.Module == item.Module).FirstOrDefault().TargetPPM;//item.TargetValue;
+                    if (_vocPPMYearRepository.FindAll(x => x.Year == iyear && x.Module == item.Module).FirstOrDefault() != null)
+                    {
+                        vOCPPM_Customer.ToTal_PPM_Target = _vocPPMYearRepository.FindAll(x => x.Year == iyear && x.Module == item.Module).FirstOrDefault().TargetPPM;//item.TargetValue;
+                    }
+                    else
+                    {
+                        vOCPPM_Customer.ToTal_PPM_Target = item.TargetValue;
+                    }
 
                     if (!vOCPPM_Ex.vOCPPM_Customers.Any(x => x.Customer == item.Customer))
                     {
@@ -998,8 +1132,11 @@ namespace VOC.Application.Implementation
                         // targetTotal = pMByMonth.Target;
                     }
                 }
-
-                targetTotal = _vocPPMYearRepository.FindAll(x => x.Year == iyear && x.Module == item.Module).FirstOrDefault().TargetPPM;
+                if (_vocPPMYearRepository.FindAll(x => x.Year == iyear && x.Module == item.Module).FirstOrDefault() != null)
+                {
+                    targetTotal = _vocPPMYearRepository.FindAll(x => x.Year == iyear && x.Module == item.Module).FirstOrDefault().TargetPPM;
+                }
+                   
                 _customer.Customer = lstVocPPMModelALL.FirstOrDefault()?.Customer;
                 _customer.ToTal_Defect = totalDefect;
                 _customer.ToTal_Input = totalInput;

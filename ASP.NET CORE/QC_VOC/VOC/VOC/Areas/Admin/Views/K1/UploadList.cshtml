@@ -81,6 +81,7 @@
     var pCreate = await AuthorizationService.AuthorizeAsync(User, "uK1", Operations.Create);
     var pDelete = await AuthorizationService.AuthorizeAsync(User, "uK1", Operations.Delete);
     var pUpdate = await AuthorizationService.AuthorizeAsync(User, "uK1", Operations.Update);
+    var pImport = await AuthorizationService.AuthorizeAsync(User, "uK1", Operations.Import);
 }
 
 <div class="content container-fluid">
@@ -92,6 +93,28 @@
             </div>
         </div>
     </div>
+
+    @if (pImport.Succeeded)
+    {
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                </div>
+                <div class="col-auto float-right ml-auto">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-info dropdown-toggle" id="btnManagement" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Upload Data</button>
+                        <div class="dropdown-menu" style="">
+                            <a class="dropdown-item" href="~/templates/Customer_GMES_Data.xlsx">Get K1 Template By Month</a>
+                            <a class="dropdown-item" href="#" id="btn-importK1Month">Import K1 By Month</a>
+                            <a class="dropdown-item" href="~/templates/Customer_GMES_DataByYear.xlsx">Get K1 Template By Year</a>
+                            <a class="dropdown-item" href="#" id="btn-importK1Year">Import K1 By Year</a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 
     <div class="row">
         <div class="col-md-5">
@@ -163,13 +186,14 @@
                                 <div class="cal-icon"><input id="txtYearMonth" style="margin-top:5px" value="@Model.Year" name="yearMonth" class="form-control datetimepicker" type="text"></div>
                                 <label class="focus-label">Year-Month</label>
                             </div>
-                            <button id="btnSearch" type="submit" style="margin:10px" class="btn btn-success"> Search </button>
+                            @if (pCreate.Succeeded)
+                            {
+                                <a href="#" id="btnGmes" class="btn" data-toggle="modal" data-target="#addEdiGmesDataByMonth"><i class="fa fa-plus"></i> Add</a>
+                            }
+                            <button id="btnSearch" type="submit" class="btn btn-success"> Search </button>
                         </form>
 
-                        @if (pCreate.Succeeded)
-                        {
-                            <a href="#" id="btnGmes" class="btn" style="float: right; height: 47px; padding-top: 10px; margin-top: 9px;" data-toggle="modal" data-target="#addEdiGmesDataByMonth"><i class="fa fa-plus"></i> Add</a>
-                        }
+                       
                     </div>
 
                 </div>
@@ -227,6 +251,7 @@
 </div>
 <partial name="_addEditPPM_ByYearView" />
 <partial name="_addEditGmesDataByMonthView" />
+<partial name="_importExcelModelView" />
 
 <div class="modal custom-modal fade" id="delete_ppm" role="dialog">
     <div class="modal-dialog modal-dialog-centered">

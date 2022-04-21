@@ -64,11 +64,17 @@
             <div class="col">
             </div>
             <div class="col-auto float-right ml-auto">
-                @if(pCreate.Succeeded)
+                @if (pCreate.Succeeded)
                 {
                     <a href="#" id="btnAddOnsite" class="btn" data-toggle="modal" data-target="#addEditOnsite"><i class="fa fa-plus"></i> Add Onsite</a>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-info dropdown-toggle" id="btnManagement" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Upload Data</button>
+                        <div class="dropdown-menu" style="">
+                            <a class="dropdown-item" href="~/templates/OnsiteData.xlsx">Get Onsite Data Template</a>
+                            <a class="dropdown-item" href="#" id="btn-importOnsite">Import Onsite Data</a>
+                        </div>
+                    </div>
                 }
-
             </div>
         </div>
     </div>
@@ -115,6 +121,7 @@
     </div>
 </div>
 <partial name="_addEditOnsiteView" />
+<partial name="_importExcelModelView" />
 
 <div class="modal custom-modal fade" id="delete_onsite" role="dialog">
     <div class="modal-dialog modal-dialog-centered">

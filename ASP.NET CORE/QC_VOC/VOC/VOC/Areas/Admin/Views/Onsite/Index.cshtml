@@ -75,6 +75,11 @@
                 }
             }
 
+            $('#vocOnsiteTable_' + $('#txtYear').val()).margetable({
+                type: 2,
+                colindex: [0, 1, 2, 3, 4, 5]// column 1, 2
+            });
+
             // export excel
             $('#btnExportData').on('click', function () {
 
@@ -185,7 +190,8 @@
                 </div>
                 <div class="card-body">
                     <ul class="nav nav-tabs nav-tabs-solid">
-                        <li class="nav-item"><a id="m_1" class="nav-link active" href="#W01-04" data-toggle="tab">January</a></li>
+                        <li class="nav-item"><a id="m_1" class="nav-link" href="#W00-00" data-toggle="tab" style="font-weight: bold;">[접수 년도-@Model.Year]</a></li>
+                        <li class="nav-item"><a id="m_1" class="nav-link" href="#W01-04" data-toggle="tab">January</a></li>
                         <li class="nav-item"><a id="m_2" class="nav-link" href="#W05-08" data-toggle="tab">February</a></li>
                         <li class="nav-item"><a id="m_3" class="nav-link" href="#W09-12" data-toggle="tab">March</a></li>
                         <li class="nav-item"><a id="m_4" class="nav-link" href="#W13-16" data-toggle="tab">April</a></li>
@@ -199,7 +205,10 @@
                         <li class="nav-item"><a id="m_12" class="nav-link" href="#W45-48" data-toggle="tab">December</a></li>
                     </ul>
                     <div class="tab-content" style="padding-top:0px!important">
-                        <div class="tab-pane show active" id="W01-04">
+                        <div class="tab-pane" id="W00-00">
+                            @await Html.PartialAsync("_gridOnsiteByWeekView", new VocOnsiteListByWeek(Model, Model.Year))
+                        </div>
+                        <div class="tab-pane" id="W01-04">
                             @await Html.PartialAsync("_gridOnsiteByWeekView", new VocOnsiteListByWeek(Model, 1))
                         </div>
                         <div class="tab-pane" id="W05-08">
