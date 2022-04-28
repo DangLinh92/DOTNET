@@ -137,23 +137,27 @@
                 {
                     <a href="#" id="btnAddVoc" class="btn" data-toggle="modal" data-target="#addEdi_Voc"><i class="fa fa-plus"></i> Add VOC</a>
                 }
-                <div class="btn-group">
-                    <button type="button" class="btn btn-info dropdown-toggle" id="btnManagement" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Management</button>
-                    <div class="dropdown-menu" style="">
 
-                        @if (pImport.Succeeded)
-                        {
-                            <a class="dropdown-item" href="~/templates/GLOBAL_VOC_MasterLIST_Template.xlsx">Get VOC Template</a>
-                            <a class="dropdown-item" href="#" id="btn-importVOC">Import VOC</a>
-                        }
+                @if (pImport.Succeeded || pExport.Succeeded)
+                {
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-info dropdown-toggle" id="btnManagement" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Management</button>
+                        <div class="dropdown-menu" style="">
 
-                        @if (pExport.Succeeded)
-                        {
-                            <a class="dropdown-item" href="#" id="btn-exportVOC">Export VOC</a>
-                        }
+                            @if (pImport.Succeeded)
+                            {
+                                <a class="dropdown-item" href="~/templates/GLOBAL_VOC_MasterLIST_Template.xlsx">Get VOC Template</a>
+                                <a class="dropdown-item" href="#" id="btn-importVOC">Import VOC</a>
+                            }
 
+                            @if (pExport.Succeeded)
+                            {
+                                <a class="dropdown-item" href="#" id="btn-exportVOC">Export VOC</a>
+                            }
+
+                        </div>
                     </div>
-                </div>
+                }
             </div>
         </div>
     </div>

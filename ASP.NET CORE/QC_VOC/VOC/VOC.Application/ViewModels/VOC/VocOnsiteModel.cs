@@ -6,16 +6,18 @@ namespace VOC.Application.ViewModels.VOC
 {
     public class VocOnsiteListByWeek
     {
-        public VocOnsiteListByWeek(VocOnsiteList list,int month)
+        public VocOnsiteListByWeek(VocOnsiteList list,int month,string model = "")
         {
             vocOnsiteList = list;
             Month = month;
+            WisolModel = model;
         }
 
         public VocOnsiteList vocOnsiteList { get; set; }
         public string fromWeek { get; set; }
         public string toWeek { get; set; }
         public int Month { get; set; }
+        public string WisolModel { get; set; }
     }
     public class VocOnsiteList
     {
@@ -28,6 +30,8 @@ namespace VOC.Application.ViewModels.VOC
         public int Year { get; set; }
         public string Customer { get; set; }
         public string Part { get; set; }
+
+        public string WisolModel { get; set; } // wisol model
 
         public List<VocOnsiteSumWeek> vocOnsiteSumWeeks { get; set; }
         public List<VocOnsiteModel> vocOnsiteModels { get; set; }

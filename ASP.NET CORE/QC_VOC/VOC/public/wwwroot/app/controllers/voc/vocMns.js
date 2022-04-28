@@ -9,11 +9,29 @@
         // preview file
         $('body').on('click', '.view-issue', function (e) {
             e.preventDefault();
-            //var url =  $(this).data('id');
-            //$('#ifrDocument').attr('src', url);
+            var url = $(this).data('id');
+            var urlData = url.substring(0, url.lastIndexOf('.')) + '.pdf#toolbar=0';
+            var obj = '<object id="previewFile-obj" data="' + urlData +'" style="width:100%;height:100%"></object>'
+            $('#previewFile-result').html(obj);
+            $('#previewFile-result').on("contextmenu", function (e) {
+                e.preventDefault();
+                return false;
+            });
             $('#previewFile_Voc').modal('show');
         });
 
+        $('body').on('click', '.view-issue1', function (e) {
+            e.preventDefault();
+            var url = $(this).data('id');
+            var urlData = url.substring(0, url.lastIndexOf('.')) + '.pdf#toolbar=0';
+            var obj = '<object id="previewFile-obj" data="' + urlData + '" style="width:100%;height:100%"></object>'
+            $('#previewFile-result').html(obj);
+            $('#previewFile-result').on("contextmenu", function (e) {
+                e.preventDefault();
+                return false;
+            });
+            $('#previewFile_Voc').modal('show');
+        });
 
         // upload file for issue
         $('body').on('click', '.upload-issue', function (e) {

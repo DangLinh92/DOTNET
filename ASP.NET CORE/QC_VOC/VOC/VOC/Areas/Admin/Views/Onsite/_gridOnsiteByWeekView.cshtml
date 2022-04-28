@@ -27,56 +27,111 @@
                 </tr>
             </thead>
             <tbody>
-                @{
+                @if (Model.WisolModel == "")
+                {
                     int number = 0;
                     string wisolModel = "";
-                }
-                @foreach (var onsite in Model.vocOnsiteList.vocOnsiteModels.Where(x => x.Month == Model.Month).OrderBy(x => x.Date).ThenBy(x => x.Week).ThenBy(x => x.Part))
-                {
-                    number = 0;
 
-                    @foreach (var item in onsite.lstVocOnsite.Where(x => x.Month == Model.Month))
+                    @foreach (var onsite in Model.vocOnsiteList.vocOnsiteModels.Where(x => x.Month == Model.Month).OrderBy(x => x.Date).ThenBy(x => x.Week).ThenBy(x => x.Part))
                     {
-                        if (wisolModel == item.Wisol_Model)
+                        number = 0;
+
+                        @foreach (var item in onsite.lstVocOnsite.Where(x => x.Month == Model.Month))
                         {
-                            number += 1;
-                        }
-                        else
-                        {
-                            number = 1;
-                        }
-
-                        wisolModel = item.Wisol_Model;
-
-                        <tr>
-                            <td>@onsite.Month</td>
-                            <td>@onsite.Week</td>
-                            <td>@onsite.Date</td>
-                            <td>@onsite.Customer</td>
-                            <td>@onsite.Part</td>
-                            <td>@onsite.Qty</td>
-                            <th>#@number</th>
-                            <td>@item.Wisol_Model</td>
-                            <td>@item.Customer_Code</td>
-                            <td>@item.Marking</td>
-                            <td>@item.ProductionDate</td>
-                            <td>@item.SetModel</td>
-
-                            @if (item.Result != "OK" && item.Result != "NG")
+                            if (wisolModel == item.Wisol_Model)
                             {
-                                <td style="color:red">@item.Note</td>
-                            }
-                            else if (item.Result == "NG")
-                            {
-                                <td style="color:red">@item.Note</td>
+                                number += 1;
                             }
                             else
                             {
-                                <td>@item.Result</td>
+                                number = 1;
                             }
-                        </tr>
+
+                            wisolModel = item.Wisol_Model;
+
+                            <tr>
+                                <td>@onsite.Month</td>
+                                <td>@onsite.Week</td>
+                                <td>@onsite.Date</td>
+                                <td>@onsite.Customer</td>
+                                <td>@onsite.Part</td>
+                                <td>@onsite.Qty</td>
+                                <th>#@number</th>
+                                <td>@item.Wisol_Model</td>
+                                <td>@item.Customer_Code</td>
+                                <td>@item.Marking</td>
+                                <td>@item.ProductionDate</td>
+                                <td>@item.SetModel</td>
+
+                                @if (item.Result != "OK" && item.Result != "NG")
+                                {
+                                    <td style="color:red">@item.Note</td>
+                                }
+                                else if (item.Result == "NG")
+                                {
+                                    <td style="color:red">@item.Note</td>
+                                }
+                                else
+                                {
+                                    <td>@item.Result</td>
+                                }
+                            </tr>
+                        }
                     }
                 }
+                else
+                {
+                    int number = 0;
+                    string wisolModel = "";
+
+                    @foreach (var onsite in Model.vocOnsiteList.vocOnsiteModels.OrderBy(x => x.Date).ThenBy(x => x.Week).ThenBy(x => x.Part))
+                    {
+                        number = 0;
+
+                        @foreach (var item in onsite.lstVocOnsite.Where(x => x.Wisol_Model == Model.WisolModel))
+                        {
+                            if (wisolModel == item.Wisol_Model)
+                            {
+                                number += 1;
+                            }
+                            else
+                            {
+                                number = 1;
+                            }
+
+                            wisolModel = item.Wisol_Model;
+
+                            <tr>
+                                <td>@onsite.Month</td>
+                                <td>@onsite.Week</td>
+                                <td>@onsite.Date</td>
+                                <td>@onsite.Customer</td>
+                                <td>@onsite.Part</td>
+                                <td>@onsite.Qty</td>
+                                <th>#@number</th>
+                                <td>@item.Wisol_Model</td>
+                                <td>@item.Customer_Code</td>
+                                <td>@item.Marking</td>
+                                <td>@item.ProductionDate</td>
+                                <td>@item.SetModel</td>
+
+                                @if (item.Result != "OK" && item.Result != "NG")
+                                {
+                                    <td style="color:red">@item.Note</td>
+                                }
+                                else if (item.Result == "NG")
+                                {
+                                    <td style="color:red">@item.Note</td>
+                                }
+                                else
+                                {
+                                    <td>@item.Result</td>
+                                }
+                            </tr>
+                        }
+                    }
+                }
+
             </tbody>
         </table>
     }
@@ -119,59 +174,143 @@
                     int yearOKLFEM = 0;
                     int yearNGLFEM = 0;
 
+                    int monthLfemTotal = 0;
+                    int monthLfemOK = 0;
+                    int monthLfemNG = 0;
+                    int monthCspTotal = 0;
+                    int monthCspOK = 0;
+                    int monthCspNG = 0;
+
+                    int month = 0;
+
                     string[] monthArr = { "-", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
                 }
                 @foreach (var item in Model.vocOnsiteList.vocOnsiteModels.OrderBy(x => x.Date).ThenBy(x => x.Week).ThenBy(x => x.Part))
                 {
-                    @if (i == Model.vocOnsiteList.vocOnsiteModels.Count() - 1)
+                    if (month != item.Month && month > 0)
                     {
-                        @if (item.Week != "")
-                        {
-                            @foreach (var sum in Model.vocOnsiteList.vocOnsiteSumWeeks)
-                            {
-                                if (sum.Time == item.Week)
-                                {
-                                    if (item.Month == Model.vocOnsiteList.vocOnsiteModels.OrderByDescending(x => x.Month).FirstOrDefault().Month)
-                                    {
-                                        @foreach (var item1 in Model.vocOnsiteList.vocOnsiteModels)
-                                        {
-                                            if (item1.Part == "CSP")
-                                            {
-                                                yearTotalCSP += item1.Qty;
-                                                yearOKCSP += item1.OK;
-                                                yearNGCSP += item1.NG;
-                                            }
-                                            else
-                                            {
-                                                yearTotalLFEM += item1.Qty;
-                                                yearOKLFEM += item1.OK;
-                                                yearNGLFEM += item1.NG;
-                                            }
-                                        }
+                        <tr style="font-weight:bold">
+                            <td colspan="5">@monthArr[month]</td>
+                            <td>CSP</td>
+                            <td>@monthCspTotal</td>
+                            <td>@monthCspOK</td>
+                            <td>@monthCspNG</td>
+                            <td></td>
+                        </tr>
+                        <tr style="font-weight:bold">
+                            <td colspan="5">@monthArr[month]</td>
+                            <td>LFEM</td>
+                            <td>@monthLfemTotal</td>
+                            <td>@monthLfemOK</td>
+                            <td>@monthLfemNG</td>
+                            <td></td>
+                        </tr>
 
-                                        // year
-                                        <tr style="font-weight: bold; background-color: #FEF5E7;">
-                                            <td colspan="5">Total @Model.vocOnsiteList.Year</td>
-                                            <td>CSP</td>
-                                            <td>@yearTotalCSP</td>
-                                            <td>@yearOKCSP</td>
-                                            <td>@yearNGCSP</td>
-                                            <td></td>
-                                        </tr>
-                                        <tr style="font-weight: bold; background-color: #FEF5E7;">
-                                            <td colspan="5">Total @Model.vocOnsiteList.Year</td>
-                                            <td>LFEM</td>
-                                            <td>@yearTotalLFEM</td>
-                                            <td>@yearOKLFEM</td>
-                                            <td>@yearNGLFEM</td>
-                                            <td></td>
-                                        </tr>
-                                    }
-                                }
-                            }
+                        monthLfemTotal = 0;
+                        monthLfemOK = 0;
+                        monthLfemNG = 0;
+                        monthCspTotal = 0;
+                        monthCspOK = 0;
+                        monthCspNG = 0;
+                    }
+
+                    if (item.Month == month || month == 0)
+                    {
+                        if (item.Part == "CSP")
+                        {
+                            monthCspTotal += item.Qty;
+                            monthCspOK += item.OK;
+                            monthCspNG += item.NG;
+                        }
+                        else
+                        {
+                            monthLfemTotal += item.Qty;
+                            monthLfemOK += item.OK;
+                            monthLfemNG += item.NG;
+                        }
+                    }
+                    else
+                    {
+                        if (item.Part == "CSP")
+                        {
+                            monthCspTotal = item.Qty;
+                            monthCspOK = item.OK;
+                            monthCspNG = item.NG;
+
+                            monthLfemTotal = 0;
+                            monthLfemOK = 0;
+                            monthLfemNG = 0;
+                        }
+                        else
+                        {
+                            monthCspTotal = 0;
+                            monthCspOK = 0;
+                            monthCspNG = 0;
+
+                            monthLfemTotal = item.Qty;
+                            monthLfemOK = item.OK;
+                            monthLfemNG = item.NG;
                         }
                     }
 
+                    @if (i == Model.vocOnsiteList.vocOnsiteModels.Count() - 1)
+                    {
+                        if (item.Month == Model.vocOnsiteList.vocOnsiteModels.OrderByDescending(x => x.Month).FirstOrDefault().Month)
+                        {
+                            @foreach (var item1 in Model.vocOnsiteList.vocOnsiteModels)
+                            {
+                                if (item1.Part == "CSP")
+                                {
+                                    yearTotalCSP += item1.Qty;
+                                    yearOKCSP += item1.OK;
+                                    yearNGCSP += item1.NG;
+                                }
+                                else
+                                {
+                                    yearTotalLFEM += item1.Qty;
+                                    yearOKLFEM += item1.OK;
+                                    yearNGLFEM += item1.NG;
+                                }
+                            }
+
+                            <tr style="font-weight:bold">
+                                <td colspan="5">@monthArr[month]</td>
+                                <td>CSP</td>
+                                <td>@monthCspTotal</td>
+                                <td>@monthCspOK</td>
+                                <td>@monthCspNG</td>
+                                <td></td>
+                            </tr>
+                            <tr style="font-weight:bold">
+                                <td colspan="5">@monthArr[month]</td>
+                                <td>LFEM</td>
+                                <td>@monthLfemTotal</td>
+                                <td>@monthLfemOK</td>
+                                <td>@monthLfemNG</td>
+                                <td></td>
+                            </tr>
+
+                            // year
+                            <tr style="font-weight: bold; background-color: #FEF5E7;">
+                                <td colspan="5">Total @Model.vocOnsiteList.Year</td>
+                                <td>CSP</td>
+                                <td>@yearTotalCSP</td>
+                                <td>@yearOKCSP</td>
+                                <td>@yearNGCSP</td>
+                                <td></td>
+                            </tr>
+                            <tr style="font-weight: bold; background-color: #FEF5E7;">
+                                <td colspan="5">Total @Model.vocOnsiteList.Year</td>
+                                <td>LFEM</td>
+                                <td>@yearTotalLFEM</td>
+                                <td>@yearOKLFEM</td>
+                                <td>@yearNGLFEM</td>
+                                <td></td>
+                            </tr>
+                        }
+                    }
+
+                    month = item.Month;
                     i += 1;
                 }
 
@@ -243,26 +382,6 @@
                                     <td>@sum.NG</td>
                                     <td></td>
                                 </tr>
-
-                                if (item.Month != month && month > 0)
-                                {
-                                    <tr style="font-weight:bold">
-                                        <td colspan="5">@monthArr[month]</td>
-                                        <td>CSP</td>
-                                        <td>@monthCspTotal</td>
-                                        <td>@monthCspOK</td>
-                                        <td>@monthCspNG</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr style="font-weight:bold">
-                                        <td colspan="5">@monthArr[month]</td>
-                                        <td>LFEM</td>
-                                        <td>@monthLfemTotal</td>
-                                        <td>@monthLfemOK</td>
-                                        <td>@monthLfemNG</td>
-                                        <td></td>
-                                    </tr>
-                                }
                             }
                         }
                     }
@@ -350,65 +469,65 @@
                                         <td>@sum.NG</td>
                                         <td></td>
                                     </tr>
-
-                                    if (item.Month > 0)
-                                    {
-                                        <tr style="font-weight:bold">
-                                            <td colspan="5">@monthArr[item.Month]</td>
-                                            <td>CSP</td>
-                                            <td>@monthCspTotal</td>
-                                            <td>@monthCspOK</td>
-                                            <td>@monthCspNG</td>
-                                            <td></td>
-                                        </tr>
-                                        <tr style="font-weight:bold">
-                                            <td colspan="5">@monthArr[item.Month]</td>
-                                            <td>LFEM</td>
-                                            <td>@monthLfemTotal</td>
-                                            <td>@monthLfemOK</td>
-                                            <td>@monthLfemNG</td>
-                                            <td></td>
-                                        </tr>
-                                    }
-
-                                    if (item.Month == Model.vocOnsiteList.vocOnsiteModels.OrderByDescending(x => x.Month).FirstOrDefault().Month)
-                                    {
-                                        @foreach (var item1 in Model.vocOnsiteList.vocOnsiteModels)
-                                        {
-                                            if (item1.Part == "CSP")
-                                            {
-                                                yearTotalCSP += item1.Qty;
-                                                yearOKCSP += item1.OK;
-                                                yearNGCSP += item1.NG;
-                                            }
-                                            else
-                                            {
-                                                yearTotalLFEM += item1.Qty;
-                                                yearOKLFEM += item1.OK;
-                                                yearNGLFEM += item1.NG;
-                                            }
-                                        }
-
-                                        // year
-                                        <tr style="font-weight: bold; background-color: #FEF5E7;">
-                                            <td colspan="5">Total @Model.vocOnsiteList.Year</td>
-                                            <td>CSP</td>
-                                            <td>@yearTotalCSP</td>
-                                            <td>@yearOKCSP</td>
-                                            <td>@yearNGCSP</td>
-                                            <td></td>
-                                        </tr>
-                                        <tr style="font-weight: bold; background-color: #FEF5E7;">
-                                            <td colspan="5">Total @Model.vocOnsiteList.Year</td>
-                                            <td>LFEM</td>
-                                            <td>@yearTotalLFEM</td>
-                                            <td>@yearOKLFEM</td>
-                                            <td>@yearNGLFEM</td>
-                                            <td></td>
-                                        </tr>
-                                    }
                                 }
                             }
+
+                            if (item.Month > 0)
+                            {
+                                <tr style="font-weight: bold; background-color: #FEF5E7;">
+                                    <td colspan="5">@monthArr[item.Month]</td>
+                                    <td>CSP</td>
+                                    <td>@monthCspTotal</td>
+                                    <td>@monthCspOK</td>
+                                    <td>@monthCspNG</td>
+                                    <td></td>
+                                </tr>
+                                <tr style="font-weight: bold; background-color: #FEF5E7;">
+                                    <td colspan="5">@monthArr[item.Month]</td>
+                                    <td>LFEM</td>
+                                    <td>@monthLfemTotal</td>
+                                    <td>@monthLfemOK</td>
+                                    <td>@monthLfemNG</td>
+                                    <td></td>
+                                </tr>
+                            }
+
+                            @*if (item.Month == Model.vocOnsiteList.vocOnsiteModels.OrderByDescending(x => x.Month).FirstOrDefault().Month)
+                            {
+                                @foreach (var item1 in Model.vocOnsiteList.vocOnsiteModels)
+                                {
+                                    if (item1.Part == "CSP")
+                                    {
+                                        yearTotalCSP += item1.Qty;
+                                        yearOKCSP += item1.OK;
+                                        yearNGCSP += item1.NG;
+                                    }
+                                    else
+                                    {
+                                        yearTotalLFEM += item1.Qty;
+                                        yearOKLFEM += item1.OK;
+                                        yearNGLFEM += item1.NG;
+                                    }
+                                }
+
+                                // year
+                                <tr style="font-weight: bold; background-color: #FEF5E7;">
+                                    <td colspan="5">Total @Model.vocOnsiteList.Year</td>
+                                    <td>CSP</td>
+                                    <td>@yearTotalCSP</td>
+                                    <td>@yearOKCSP</td>
+                                    <td>@yearNGCSP</td>
+                                    <td></td>
+                                </tr>
+                                <tr style="font-weight: bold; background-color: #FEF5E7;">
+                                    <td colspan="5">Total @Model.vocOnsiteList.Year</td>
+                                    <td>LFEM</td>
+                                    <td>@yearTotalLFEM</td>
+                                    <td>@yearOKLFEM</td>
+                                    <td>@yearNGLFEM</td>
+                                    <td></td>
+                                </tr>
+                            }*@
                         }
                     }
 

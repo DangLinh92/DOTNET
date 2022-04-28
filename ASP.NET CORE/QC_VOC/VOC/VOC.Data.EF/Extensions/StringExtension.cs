@@ -51,6 +51,15 @@ namespace VOC.Data.EF.Extensions
                 return "";
             }
         }
+
+        public static int ToInt(this string obj)
+        {
+            if (string.IsNullOrEmpty(obj))
+            {
+                return 0;
+            }
+            return int.Parse(obj);
+        }
     }
 
     public static class DateTimeEx

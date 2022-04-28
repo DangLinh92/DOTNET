@@ -34,24 +34,25 @@ namespace VOC.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            var lst = GetData(DateTime.Now.Year, CommonConstants.SEV, CommonConstants.ALL);
+            var lst = GetData(DateTime.Now.Year, CommonConstants.SEV, CommonConstants.ALL,"");
             return View(lst);
         }
 
         [HttpPost]
-        public IActionResult Search(int year, string customer, string part)
+        public IActionResult Search(int year, string customer, string part,string wisolModel)
         {
-            var lst = GetData(year, customer, part);
+            var lst = GetData(year, customer, part, wisolModel);
             return View("Index", lst);
         }
 
-        private VocOnsiteList GetData(int year, string customer, string part)
+        private VocOnsiteList GetData(int year, string customer, string part,string wisolModel)
         {
             VocOnsiteList vocOnsiteList = new VocOnsiteList()
             {
                 Customer = customer,
                 Year = year,
-                Part = part
+                Part = part,
+                WisolModel = wisolModel.NullString()
             };
 
             vocOnsiteList.vocOnsiteModels = _vocOnsiteService.SumDataOnsite(year, customer, part);
@@ -230,6 +231,13 @@ namespace VOC.Areas.Admin.Controllers
 
             _logger.LogError("Upload file: " + CommonConstants.NotFoundObjectResult_Msg);
             return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
+        }
+
+        [HttpGet]
+        public IActionResult GetModel()
+        {
+            var lst = _vocOnsiteService.GetModel();
+            return new OkObjectResult(lst);
         }
     }
 }

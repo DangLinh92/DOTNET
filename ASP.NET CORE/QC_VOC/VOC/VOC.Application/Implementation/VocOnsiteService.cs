@@ -317,5 +317,11 @@ namespace VOC.Application.Implementation
                 return resultDB;
             }
         }
+
+        public List<string> GetModel()
+        {
+           var lst = _vocRepository.FindAll().Select(x => x.Wisol_Model).Distinct().ToList();
+            return lst;
+        }
     }
 }

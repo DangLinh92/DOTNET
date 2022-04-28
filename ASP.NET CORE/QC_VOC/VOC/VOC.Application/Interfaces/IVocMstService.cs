@@ -24,8 +24,6 @@ namespace VOC.Application.Interfaces
         List<VOCSiteModelByTimeLst> ReportByMonth(string year, string customer, string side);
         PPMDataChartAll ReportPPMByYear(string year,string module, out List<VOCPPM_Ex> pMDataCharts);
 
-        List<VOCSiteModelByTimeLst> ReportInit();
-
         VOC_MSTViewModel GetById(int id);
 
         List<VOC_DefectTypeViewModel> GetDefectType();

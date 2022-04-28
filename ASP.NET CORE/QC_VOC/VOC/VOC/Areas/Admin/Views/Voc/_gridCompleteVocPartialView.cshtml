@@ -87,7 +87,7 @@
                         <th>
                             VOC TAT
                         </th>
-                        <th>Attack File</th>
+                        <th>File</th>
                     </tr>
                     <tr>
                         <th>
@@ -139,7 +139,18 @@
                     @foreach (var voc in Model)
                     {
                         <tr>
-                            <td>@voc.Received_site</td>
+                            <td>
+                                @voc.Received_site
+
+                                <ul class="team-members" style="float:right">
+                                    @if (!string.IsNullOrEmpty(voc.LinkReport))
+                                    {
+                                        <li>
+                                            <a class="view-issue" href="#" data-id="@voc.LinkReport" style="border:none"><i class="fa fa-file-powerpoint-o m-r-5" style="margin:7px;"></i> Report</a>
+                                        </li>
+                                    }
+                                </ul>
+                            </td>
                             <td>@voc.PlaceOfOrigin</td>
                             <td>@voc.ReceivedDept</td>
                             <td>@voc.ReceivedDate</td>
@@ -166,26 +177,58 @@
                             <td>@voc.VOCFinishingDate</td>
                             <td>@voc.VOC_TAT</td>
 
-                            <td class="text-right">
-                                <div class="dropdown dropdown-action">
-                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                    <div class="dropdown-menu dropdown-menu-right">
+                            @*<td class="text-right">
+                                    <div class="dropdown dropdown-action">
+                                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                        <div class="dropdown-menu dropdown-menu-right">
 
-                                        @if (string.IsNullOrEmpty(voc.LinkReport) && pUpdate.Succeeded)
-                                        {
-                                            <a class="dropdown-item upload-issue" href="#" data-toggle="modal" data-target="#uploadIssue" data-id="@voc.Id"><i class="fa fa-upload m-r-5"></i> Upload</a>
-                                        }
-                                        else
-                                        {
-                                            <a class="dropdown-item download-issue" href="@voc.LinkReport" data-id="@voc.Id"><i class="fa fa-file-powerpoint-o m-r-5"></i> Report</a>
-
-                                            @if (pUpdate.Succeeded)
+                                            @if (string.IsNullOrEmpty(voc.LinkReport) && pUpdate.Succeeded)
                                             {
-                                                <a class="dropdown-item upload-issue" href="#" data-id="@voc.Id"><i class="fa fa-upload m-r-5"></i> Upload</a>
+                                                <a class="dropdown-item upload-issue" href="#" data-toggle="modal" data-target="#uploadIssue" data-id="@voc.Id"><i class="fa fa-upload m-r-5"></i> Upload</a>
                                             }
-                                        }
+                                            else
+                                            {
+                                                <a class="dropdown-item download-issue" href="@voc.LinkReport" data-id="@voc.Id"><i class="fa fa-file-powerpoint-o m-r-5"></i> Report</a>
+
+                                                @if (pUpdate.Succeeded)
+                                                {
+                                                    <a class="dropdown-item upload-issue" href="#" data-id="@voc.Id"><i class="fa fa-upload m-r-5"></i> Upload</a>
+                                                }
+                                            }
+                                        </div>
                                     </div>
-                                </div>
+                                </td>*@
+                            <td>
+                                @if (pUpdate.Succeeded)
+                                {
+                                    <ul class="team-members">
+
+                                        @if (!string.IsNullOrEmpty(voc.LinkReport))
+                                        {
+                                            <li>
+                                                <a class="view-issue1" href="#" data-id="@voc.LinkReport" style="border:none"><i class="fa fa-eye m-r-5" style="margin:7px;"></i> View</a>
+                                            </li>
+                                            <li>
+                                                <a class="download-issue" target="_blank" href="@voc.LinkReport" download data-id="@voc.Id" style="border:none"><i class="fa fa-file-powerpoint-o m-r-5" style="margin:7px;"></i> Report</a>
+                                            </li>
+                                        }
+
+                                        <li>
+                                            <a class="upload-issue" href="#" data-id="@voc.Id" style="border:none"><i class="fa fa-upload m-r-5" style="margin:7px;"></i> Upload</a>
+                                        </li>
+                                    </ul>
+                                }
+                                else
+                                {
+                                    <ul class="team-members" style="float:right">
+                                        @if (!string.IsNullOrEmpty(voc.LinkReport))
+                                        {
+                                            <li>
+                                                <a class="view-issue1" href="#" data-id="@voc.LinkReport" style="border:none"><i class="fa fa-file-powerpoint-o m-r-5" style="margin:7px;"></i> Report</a>
+                                            </li>
+                                        }
+                                    </ul>
+                                }
                             </td>
                         </tr>
                     }

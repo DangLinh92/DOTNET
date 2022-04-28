@@ -15,6 +15,8 @@ namespace VOC.Application.Interfaces
         VocOnsiteViewModel AddVocOnsite(VocOnsiteViewModel vm);
 
         VocOnsiteViewModel FindById(int id);
+
+        List<string> GetModel();
         void DeleteVocOnsite(int id);
         void Save();
     }

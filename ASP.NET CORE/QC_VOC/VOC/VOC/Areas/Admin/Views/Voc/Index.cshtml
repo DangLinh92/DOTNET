@@ -1,7 +1,14 @@
-﻿@model VOC_CHART
+﻿@using Microsoft.AspNetCore.Authorization
+@using VOC.Authorization
+@inject IAuthorizationService AuthorizationService
+@model VOC_CHART
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    var pUpdate = await AuthorizationService.AuthorizeAsync(User, "uVoc", Operations.Export);
 }
 
 @section Scripts
@@ -18,6 +25,12 @@
        var selectCustomer = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.Customer))');
 
         onSuccess = function () { };
+
+        window.onload = function () {
+            document.addEventListener("contextmenu", function (e) {
+                e.preventDefault();
+            },false);
+        }
 
         $(document).ready(function () {
 
@@ -58,7 +71,7 @@
                     targets: '_all'
                 },
                     {
-                        "targets": [1, 2, 4, 5, 7, 8, 13, 17, 18, 19, 20, 21, 22, 25],
+                        "targets": [2, 4, 5, 7, 8, 13, 17, 18, 19, 20, 21, 22, 25],
                         "visible": false,
                         "searchable": false
                     }],
@@ -79,7 +92,8 @@
                 select: true,
                 "searching": false,
                 //fixedColumns: {
-                //    leftColumns: 5
+                //    left: 0,
+                //    right: 1
                 //},
                 initComplete: function () {
                     this.api().columns([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]).every(function () {
@@ -109,7 +123,7 @@
                 }
                 ,
                 {
-                    "targets": [1,2, 4, 5, 7, 8, 13,17,18,19,20,21,22,25],
+                    "targets": [2, 4, 5, 7, 8, 13,17,18,19,20,21,22,25],
                     "visible": false,
                     "searchable": false
                 }
@@ -182,6 +196,10 @@
             width: 100px;
         }
 
+        .width-30 {
+            width: 30px;
+        }
+
         .h-200 {
             height: 200px;
         }
@@ -247,7 +265,10 @@
         <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
         </div>
         <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
-            <a href="#" id="btnExportData" class="btn"><i class="fa fa-file"></i> Export Excel</a>
+            @if (pUpdate.Succeeded)
+            {
+                <a href="#" id="btnExportData" class="btn"><i class="fa fa-file"></i> Export Excel</a>
+            }
         </div>
     </div>
 
@@ -274,6 +295,7 @@
             <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
                 <div class="form-group form-focus select-focus">
                     <select id="cboSide" class="select floating" name="side">
+                        <!option value="ALL" @(Model.Side == "ALL" ? "selected" : "")>ALL</!option>
                         <!option value="WHC" @(Model.Side == "WHC" ? "selected" : "")>WHC</!option>
                         <!option value="WTC" @(Model.Side == "WTC" ? "selected" : "")>WTC</!option>
                         <!option value="HQ" @(Model.Side == "HQ" ? "selected" : "")>HQ</!option>
@@ -292,3 +314,4 @@
     @await Html.PartialAsync("_gridCompleteVocPartialView", Model.vocProgessInfo.lstVocComplete)
 </div>
 <partial name="_importExcelModelView" />
+<partial name="_documentPreviewPartialView" />

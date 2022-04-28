@@ -33,7 +33,7 @@ namespace VOC.Areas.Admin.Controllers
 
         public IActionResult Index(int year)
         {
-            VocInfomationsModel model = GetData(year, "", CommonConstants.WHC);
+            VocInfomationsModel model = GetData(year, "", CommonConstants.ALL);
             return View(model.vOC_CHART);
         }
 
@@ -57,7 +57,7 @@ namespace VOC.Areas.Admin.Controllers
                 model.vOC_MSTViews.AddRange(_vocMstService.SearchByTime(startTime, endTime));
 
                 // REPORT BY MONTH
-                model.vOCSiteModelByTimeLsts.AddRange(_vocMstService.ReportInit());
+                model.vOCSiteModelByTimeLsts.AddRange(_vocMstService.ReportByMonth(DateTime.Now.Year.ToString(), "", CommonConstants.ALL));
 
                 // VE BIEU DO TOTAL THEO NAM
                 model.totalVOCSitesView = _vocMstService.ReportByYear(DateTime.Now.Year.ToString(), customer);
@@ -73,7 +73,7 @@ namespace VOC.Areas.Admin.Controllers
                 model.vOC_CHART.vocProgessInfo = _vocMstService.GetProgressInfo(DateTime.Now.Year, customer, side);
                 model.vOC_CHART.Year = DateTime.Now.Year;
                 model.vOC_CHART.Customer = "";
-                model.vOC_CHART.Side = CommonConstants.WHC;
+                model.vOC_CHART.Side = CommonConstants.ALL;
             }
             else
             {
@@ -319,6 +319,8 @@ namespace VOC.Areas.Admin.Controllers
                     string url = "";
                     if (System.IO.File.Exists(filePath))
                     {
+                        ConvertPPTToPdf.ConvertToPdf(filePath);
+
                         VOC_MSTViewModel voc = _vocMstService.GetById(int.Parse(vocId));
 
                         url = $"{Request.Scheme}://{Request.Host}/uploaded/voc_issue/{newName}";
