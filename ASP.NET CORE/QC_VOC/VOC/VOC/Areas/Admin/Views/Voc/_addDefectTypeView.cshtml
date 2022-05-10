@@ -1,0 +1,37 @@
+﻿<div id="addDefectType" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Defect Type</h5>
+                <input type="hidden" id="hdTypeAddEdit" />
+                <input type="hidden" id="hdId" />
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="frmAddDefectTypec">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-form-label">Defect Name(Eng)<span class="text-danger">*</span></label>
+                                <input id="txtEngName" type="text" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-form-label">Defect Name(Korean)</label>
+                                <input id="txtKoreaName" type="text" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="submit-section">
+                        <button id="btnSaveDefect" class="btn btn-primary submit-btn">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

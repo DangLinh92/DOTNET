@@ -280,7 +280,7 @@ namespace VOC.Application.Implementation
                                 return resultDB;
                             }
 
-                            row["SPLReceivedDateWeek"] = "W"+ worksheet.Cells[i, 8].Text.NullString().ToUpper();
+                            row["SPLReceivedDateWeek"] = worksheet.Cells[i, 8].Text.NullString().ToUpper();
                         }
 
                         row["Customer"] = worksheet.Cells[i, 9].Text.NullString();
@@ -548,7 +548,7 @@ namespace VOC.Application.Implementation
 
                             byTime.Qty = (byTime.Qty.ToInt() + sub.Qty.ToInt()).IfNullIsZero();
 
-                            if(byTimes.FirstOrDefault(x => x.Classification == sub.Classification && x.Time == sub.Time) == null)
+                            if (byTimes.FirstOrDefault(x => x.Classification == sub.Classification && x.Time == sub.Time) == null)
                             {
                                 byTimes.Add(byTime);
                             }
@@ -1547,6 +1547,16 @@ namespace VOC.Application.Implementation
         {
             List<string> lst = _vocRepository.FindAll(x => x.Customer != "").Select(x => x.Customer).Distinct().ToList();
             return lst;
+        }
+
+        public VOC_DefectTypeViewModel AddDefectType(VOC_DefectTypeViewModel model)
+        {
+            var entity = _mapper.Map<VOC_DEFECT_TYPE>(model);
+            entity.UserCreated = GetUserId();
+            entity.DateCreated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            entity.DateModified = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            _vocDefectTypeRepository.Add(entity);
+            return model;
         }
     }
 }

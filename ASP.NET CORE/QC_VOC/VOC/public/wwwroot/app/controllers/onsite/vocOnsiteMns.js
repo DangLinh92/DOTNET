@@ -5,6 +5,42 @@
 
     function registerEvents() {
 
+        // update day
+        $('#btn-UpdateLastDay').on('click', function (e) {
+            e.preventDefault();
+            $('#update-LastDay-Model').modal('show');
+        });
+
+        $('#btnUpdateDay').on('click', function (e) {
+
+            e.preventDefault();
+            var dateUpdate = $('#txtUpdateDate').val();
+
+            if (dateUpdate != '') {
+                $.ajax({
+                    url: "/Admin/onsite/UpdateDay",
+                    type: 'POST',
+                    data:
+                    {
+                        date: dateUpdate
+                    },
+                    success: function (data)
+                    {
+                        $('#update-LastDay-Model').modal('hide');
+                        hrms.notify("Update date success!", 'Success', 'alert', function () {});
+                    },
+                    error: function (status)
+                    {
+                        hrms.notify(status.responseText, 'error', 'alert', function () { });
+                    }
+                });
+            }
+            else {
+                alert('Last Updat is required!');
+            }
+        });
+        //
+
         // 1. import onsite
         $('#btn-importOnsite').on('click', function () {
             $("#fileInputExcel").val(null);

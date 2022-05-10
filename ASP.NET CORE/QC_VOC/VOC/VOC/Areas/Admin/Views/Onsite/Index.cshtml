@@ -35,6 +35,88 @@
         GetModel();
 
         function Register() {
+
+            // export excel
+            $('#btnExportData').on('click', function () {
+
+                var year = $('#txtYear').val();
+
+                if (!year) {
+                    year = new Date().getFullYear();
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Admin/Onsite/ExportExcel",
+                    data: {
+                        year: year
+                    },
+                    success: function (response) {
+                        window.location.href = response;
+                    },
+                    error: function (status) {
+                        hrms.notify(status.responseText, 'error', 'alert', function () { });
+                    }
+                });
+            });
+
+            $('input:radio[name=sev-sevt]').change(function () {
+
+                if (this.value == 'SEV')
+                {
+                    $('#cboCustomerSevt').val('SEVT_ALL');
+                    $('#cboCustomerSevt').prop('disabled', true);
+                    $('#cboCustomerSevt').trigger('change');
+
+                    $('#cboCustomerSev').prop('disabled', false);
+                    $('#cboCustomerSev').trigger('change');
+                }
+                else if (this.value == 'SEVT')
+                {
+                    $('#cboCustomerSev').val('SEV_ALL');
+                    $('#cboCustomerSev').prop('disabled', true);
+                    $('#cboCustomerSev').trigger('change');
+
+                    $('#cboCustomerSevt').prop('disabled', false);
+                    $('#cboCustomerSevt').trigger('change');
+                }
+            });
+
+            $('#cboCustomerSev').on('change', function ()
+            {
+                if ($('input:radio[name=sev-sevt]:checked').val() == 'SEV')
+                {
+                    if ($('#cboCustomerSev').val().includes('result'))
+                    {
+                        $('#cboModel').prop('disabled', false);
+                    }
+                    else
+                    {
+                        $('#cboModel').prop('disabled', true);
+                        $('#cboModel').val('');
+                        $('#cboModel').trigger('change');
+                    }
+                }
+            });
+
+            $('#cboCustomerSevt').on('change', function () {
+
+                if ($('input:radio[name=sev-sevt]:checked').val() == 'SEVT') {
+
+                    if ($('#cboCustomerSevt').val().includes('result'))
+                    {
+                        $('#cboModel').prop('disabled', false);
+                    }
+                    else
+                    {
+                        $('#cboModel').prop('disabled', true);
+                        $('#cboModel').val('');
+                        $('#cboModel').trigger('change');
+                    }
+                }
+            });
+
+            //
             const d = new Date();
             let month = d.getMonth() + 1;
 
@@ -63,7 +145,7 @@
             for (let m = 1; m <= 12; m++) {
 
                 if (model.filter(x => x.Month == m).length > 0) {
-                    if ($('#cboCustomer').val().includes('result')) {
+                    if ($('#cboCustomerSevt').val().includes('result') || $('#cboCustomerSev').val().includes('result')) {
                         $('#vocOnsiteTable_' + m).margetable({
                             type: 2,
                             colindex: [0, 1, 2, 3, 4, 5, 6, 7, 10, 11]// column 1, 2
@@ -79,12 +161,10 @@
                 }
             }
 
-            if (!$('#cboCustomer').val().includes('result')) {
-                $('#vocOnsiteTable_' + $('#txtYear').val()).margetable({
-                    type: 2,
-                    colindex: [0, 1, 2, 3, 4, 5]// column 1, 2
-                });
-            }
+            $('#vocOnsiteTable_' + $('#txtYear').val()).margetable({
+                type: 2,
+                colindex: [0, 1, 2, 3, 4, 5]// column 1, 2
+            });
 
             // merge table search
             for (let onsite of model) {
@@ -96,46 +176,12 @@
                     break;
                 }
             }
-
-            // export excel
-            $('#btnExportData').on('click', function () {
-
-                var year = $('#txtYear').val();
-
-                if (!year) {
-                    year = new Date().getFullYear();
-                }
-
-                $.ajax({
-                    type: "POST",
-                    url: "/Admin/Onsite/ExportExcel",
-                    data: {
-                        year: year
-                    },
-                    success: function (response) {
-                        window.location.href = response;
-                    },
-                    error: function (status) {
-                        hrms.notify(status.responseText, 'error', 'alert', function () { });
-                    }
-                });
-            });
-
-            $('#cboCustomer').on('change', function () {
-                if ($('#cboCustomer').val().includes('result')) {
-                    $('#cboModel').prop('disabled', false);
-                }
-                else {
-                    $('#cboModel').prop('disabled', true);
-                    $('#cboModel').val('');
-                    $('#cboModel').trigger('change');
-                }
-            });
         }
 
         function GetModel() {
 
-            if ($('#cboCustomer').val().includes('result')) {
+            if ($('#cboCustomerSevt').val().includes('result') || $('#cboCustomerSev').val().includes('result'))
+            {
                 $('#cboModel').prop('disabled', false);
             }
             else
@@ -189,14 +235,22 @@
         <div class="col-sm-12">
             @if (pUpdate.Succeeded)
             {
-                <a href="#" style="float:right" id="btnExportData" class="btn"><i class="fa fa-file"></i> Export Excel</a><br />
+            <a href="#" style="float:right" id="btnExportData" class="btn"><i class="fa fa-file"></i> Export Excel</a><br />
             }
+
+            <div class="radio">
+                <label>
+                    <input type="radio" name="sev-sevt" id="rdoSev" value="SEV" @(Model.Customer != null && Model.Customer.StartsWith("SEV") ? "checked" : "")> SEV
+                </label>
+                <label style="margin-left:10px">
+                    <input type="radio" name="sev-sevt" id="rdoSevt" value="SEVT" @(Model.Customer != null && Model.Customer.StartsWith("SEVT") ? "checked" : "")> SEVT
+                </label>
+            </div>
         </div>
     </div>
 
     <form action="/admin/onsite/Search" method="post">
         <div class="row filter-row">
-            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2"></div>
             <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
                 <div class="form-group form-focus select-focus">
                     <div class="cal-icon"><input id="txtYear" name="year" value="@Model.Year" class="form-control datetimepicker" type="text"></div>
@@ -205,13 +259,22 @@
             </div>
             <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
                 <div class="form-group form-focus select-focus">
-                    <select id="cboCustomer" class="select floating" name="customer">
+                    <select id="cboCustomerSev" class="select floating" name="customer_sev" @(Model.Customer.StartsWith("SEVT") ? "disabled" : "")>
+                        <!option value="SEV_ALL" @(Model.Customer == "SEV_ALL" ? "selected" : "")>ALL</!option>
                         <!option value="SEV" @(Model.Customer == "SEV" ? "selected" : "")>SEV</!option>
-                        <!option value="SEVT" @(Model.Customer == "SEVT" ? "selected" : "")>SEVT</!option>
                         <!option value="SEV-result" @(Model.Customer == "SEV-result" ? "selected" : "")>SEV-세부 results</!option>
+                    </select>
+                    <label class="focus-label">SEV</label>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                <div class="form-group form-focus select-focus">
+                    <select id="cboCustomerSevt" class="select floating" name="customer_sevt" @(!Model.Customer.StartsWith("SEVT") ? "disabled" : "")>
+                        <!option value="SEVT_ALL" @(Model.Customer == "SEVT_ALL" ? "selected" : "")>ALL</!option>
+                        <!option value="SEVT" @(Model.Customer == "SEVT" ? "selected" : "")>SEVT</!option>
                         <!option value="SEVT-result" @(Model.Customer == "SEVT-result" ? "selected" : "")>SEVT-세부 results</!option>
                     </select>
-                    <label class="focus-label">Customer</label>
+                    <label class="focus-label">SEVT</label>
                 </div>
             </div>
             <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
@@ -236,7 +299,12 @@
             </div>
         </div>
     </form>
-
+    <div class="row">
+        <div class="card-body" style="height:30px; text-align: justify; margin-bottom:5px">
+            <span style="display:inline;">Update day: </span>
+            <span id="tagLastUpdateDay" style="display:inline;">@ViewBag.UpdateDayOnsite</span>
+        </div>
+    </div>
     <div class="row area-all">
         <div class="col-md-12 d-flex">
             <div class="card card-table flex-fill">
@@ -244,27 +312,27 @@
 
                     @if (!Model.Customer.Contains("result"))
                     {
-                        <h3 class="card-title mb-0">
-                            @Model.Customer 에서 시료 분석 결과
-                        </h3>
+                    <h3 class="card-title mb-0">
+                        @Model.Customer 에서 시료 분석 결과(Kết quả phân tích mẫu tại @Model.Customer)
+                    </h3>
                     }
                     else if (Model.Customer == "SEV-result")
                     {<h3 class="card-title mb-0">
-                            SEV - 세부 results
-                        </h3>
+                        SEV - 세부 results
+                    </h3>
                     }
                     else if (Model.Customer == "SEVT-result")
                     {
-                        <h3 class="card-title mb-0">
-                            SEVT - 세부 results
-                        </h3>
+                    <h3 class="card-title mb-0">
+                        SEVT - 세부 results
+                    </h3>
                     }
                 </div>
                 <div class="card-body">
                     <ul class="nav nav-tabs nav-tabs-solid">
                         @if (Model.WisolModel != "")
                         {
-                            <li class="nav-item"><a id="m_0" class="nav-link" href="#Wsearch" data-toggle="tab">Result</a></li>
+                        <li class="nav-item"><a id="m_0" class="nav-link" href="#Wsearch" data-toggle="tab">Result</a></li>
                         }
                         <li class="nav-item"><a id="m_1" class="nav-link" href="#W00-00" data-toggle="tab" style="font-weight: bold;">@Model.Year</a></li>
                         <li class="nav-item"><a id="m_1" class="nav-link" href="#W01-04" data-toggle="tab">January</a></li>
@@ -283,9 +351,9 @@
                     <div class="tab-content" style="padding-top:0px!important">
                         @if (Model.WisolModel != "")
                         {
-                            <div class="tab-pane" id="Wsearch">
-                                @await Html.PartialAsync("_gridOnsiteByWeekView", new VocOnsiteListByWeek(Model, 13, Model.WisolModel))
-                            </div>
+                        <div class="tab-pane" id="Wsearch">
+                            @await Html.PartialAsync("_gridOnsiteByWeekView", new VocOnsiteListByWeek(Model, 13, Model.WisolModel))
+                        </div>
                         }
                         <div class="tab-pane" id="W00-00">
                             @await Html.PartialAsync("_gridOnsiteByWeekView", new VocOnsiteListByWeek(Model, Model.Year))

@@ -6,12 +6,79 @@
 
     function registerEvents() {
 
+        // update defect type
+        $('#btnAddDefectType').on('click', function (e) {
+            e.preventDefault();
+            $('#addDefectType').modal('show');
+        });
+
+        $('#btnSaveDefect').on('click', function (e) {
+            e.preventDefault();
+
+            var nameEng = $('#txtEngName').val();
+            var nameKr = $('#txtKoreaName').val();
+
+            $.ajax({
+                url: "/Admin/Voc/AddDefectType",
+                type: 'POST',
+                data:
+                {
+                    nameEng: nameEng,
+                    nameKr: nameKr
+                },
+                success: function (data)
+                {
+                    $('#addDefectType').modal('hide');
+                    hrms.notify("Update date success!", 'Success', 'alert', function () {});
+                },
+                error: function (status)
+                {
+                    hrms.notify(status.responseText, 'error', 'alert', function () { });
+                }
+            });
+        });
+
+        // update day
+        $('#btn-UpdateLastDay').on('click', function (e) {
+            e.preventDefault();
+            $('#update-LastDay-Model').modal('show');
+        });
+
+        $('#btnUpdateDay').on('click', function (e) {
+
+            e.preventDefault();
+            var dateUpdate = $('#txtUpdateDate').val();
+
+            if (dateUpdate != '') {
+                $.ajax({
+                    url: "/Admin/Voc/UpdateDay",
+                    type: 'POST',
+                    data: {
+                        date: dateUpdate
+                    },
+                    success: function (data) {
+
+                        $('#update-LastDay-Model').modal('hide');
+                        hrms.notify("Update date success!", 'Success', 'alert', function () {
+                        });
+                    },
+                    error: function (status) {
+                        hrms.notify(status.responseText, 'error', 'alert', function () { });
+                    }
+                });
+            }
+            else {
+                alert('Last Updat is required!');
+            }
+        });
+        // 
+
         // preview file
         $('body').on('click', '.view-issue', function (e) {
             e.preventDefault();
             var url = $(this).data('id');
             var urlData = url.substring(0, url.lastIndexOf('.')) + '.pdf#toolbar=0';
-            var obj = '<object id="previewFile-obj" data="' + urlData +'" style="width:100%;height:100%"></object>'
+            var obj = '<object id="previewFile-obj" data="' + urlData + '" style="width:100%;height:100%"></object>'
             $('#previewFile-result').html(obj);
             $('#previewFile-result').on("contextmenu", function (e) {
                 e.preventDefault();

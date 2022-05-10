@@ -63,7 +63,7 @@
 <div class="content container-fluid">
     <div class="row">
         <div class="col-sm-12">
-            <i class="fa fa-caret-right"></i> <strong>고객(사) GMES 불량율 Data Trend 관리</strong>
+            <i class="fa fa-caret-right"></i> <strong>고객(사) GMES 불량율 Data Trend 관리 (Chiều hướng PPM trên hệ thống GMES của khách hàng)</strong>
             @if (pExport.Succeeded)
             {
                 <a href="#" style="float:right" id="btnExportData" class="btn"><i class="fa fa-file"></i> Export Excel</a><br />
@@ -73,9 +73,17 @@
     </div>
     <form action="/admin/k1/Search" method="post">
         <div class="row filter-row">
+            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+            </div>
             <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2"></div>
-            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2"></div>
-            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2"></div>
+            <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                <div class="card dash-widget">
+                    <div class="card-body" style="height: 48px; text-align: justify">
+                        <span style="display:inline;float:left">Update day: </span>
+                        <span id="tagLastUpdateDay" style="display:inline;float:right">@ViewBag.UpdateDayK1</span>
+                    </div>
+                </div>
+            </div>
 
             <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
                 <div class="form-group form-focus select-focus">
@@ -116,7 +124,7 @@
             <div class="card card-table flex-fill">
                 <div class="card-header">
                     <h3 class="card-title mb-0">
-                        K1 고객 불량 (월별 목표 대비 실적)
+                        K1 고객 불량 (월별 목표 대비 실적)/Hiệu suất PPM của khách hàng so với mục tiêu
                     </h3>
                     <i>※ Unit [PPM]</i>
                 </div>
@@ -152,14 +160,14 @@
                                 {
                                     <tr>
                                         <td rowspan="2">@item.Module</td>
-                                        <td style="color: Highlight">목표(target)</td>
+                                        <td style="color: Highlight">목표(mục tiêu)</td>
                                         @foreach (var target in item.dataTargetAll)
                                         {
                                             <td style="color: Highlight">@target</td>
                                         }
                                     </tr>
                                     <tr>
-                                        <td style="color:red">실적</td>
+                                        <td style="color:red">실적(thực tế)</td>
                                         @foreach (var ppm in item.lstData)
                                         {
                                             <td style="color:red">@ppm</td>

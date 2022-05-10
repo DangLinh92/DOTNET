@@ -61,6 +61,8 @@ namespace VOC.Utilities.Constants
         public const string LFEM = "LFEM";
         public const string ALL = "ALL";
         public const string SEV = "SEV";
+        public const string SEV_ALL = "SEV_ALL";
         public const string SEVT = "SEVT";
+        public const string SEVT_ALL = "SEVT_ALL";
     }
 }

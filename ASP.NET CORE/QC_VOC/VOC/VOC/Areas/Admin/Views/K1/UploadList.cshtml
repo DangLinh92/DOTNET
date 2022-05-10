@@ -108,7 +108,7 @@
                             <a class="dropdown-item" href="#" id="btn-importK1Month">Import K1 By Month</a>
                             <a class="dropdown-item" href="~/templates/Customer_GMES_DataByYear.xlsx">Get K1 Template By Year</a>
                             <a class="dropdown-item" href="#" id="btn-importK1Year">Import K1 By Year</a>
-
+                            <a class="dropdown-item" href="#" id="btn-UpdateLastDay">Last Day Update</a>
                         </div>
                     </div>
                 </div>
@@ -267,6 +267,31 @@
                     <div class="row">
                         <div class="col-6">
                             <a href="javascript:void(0);" class="btn btn-primary continue-btn" id="btnDelete">Delete</a>
+                        </div>
+                        <div class="col-6">
+                            <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal custom-modal fade" id="update-LastDay-Model" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header">
+                    <h3>Update day</h3>
+                    <div class="cal-icon">
+                        <input id="txtUpdateDate" class="form-control datetimepicker" type="text">
+                    </div>
+                </div>
+                <div class="modal-btn delete-action">
+                    <div class="row">
+                        <div class="col-6">
+                            <a href="javascript:void(0);" class="btn btn-primary continue-btn" id="btnUpdateDay">Update</a>
                         </div>
                         <div class="col-6">
                             <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>

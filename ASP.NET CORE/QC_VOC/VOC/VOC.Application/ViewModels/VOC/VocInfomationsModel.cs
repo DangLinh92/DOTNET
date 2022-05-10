@@ -40,6 +40,8 @@ namespace VOC.Application.ViewModels.VOC
         public int CloseCount { get; set; }
         public int ProgressCount { get; set; }
 
+        public string LastUpdateDay { get; set; }
+
         public List<VOC_MSTViewModel> lstVocProgress { get; set; }
         public List<VOC_MSTViewModel> lstVocComplete { get; set; }
     }

@@ -41,7 +41,7 @@ namespace VOC.Areas.Admin.Controllers
         public IActionResult Search(int year, string customer, string side)
         {
             VocInfomationsModel model = GetData(year, customer.NullString(), side.NullString(), true);
-            return View("Index",model.vOC_CHART);
+            return View("Index", model.vOC_CHART);
             //return new OkObjectResult(model.vOC_CHART);
         }
 
@@ -71,6 +71,8 @@ namespace VOC.Areas.Admin.Controllers
                 model.vOC_CHART.paretoDataDefectName = model.paretoDataDefectName;
 
                 model.vOC_CHART.vocProgessInfo = _vocMstService.GetProgressInfo(DateTime.Now.Year, customer, side);
+                model.vOC_CHART.vocProgessInfo.LastUpdateDay = GetUpdateDay();
+
                 model.vOC_CHART.Year = DateTime.Now.Year;
                 model.vOC_CHART.Customer = "";
                 model.vOC_CHART.Side = CommonConstants.ALL;
@@ -97,6 +99,8 @@ namespace VOC.Areas.Admin.Controllers
                 model.vOC_CHART.paretoDataDefectName = model.paretoDataDefectName;
 
                 model.vOC_CHART.vocProgessInfo = _vocMstService.GetProgressInfo(year, customer, side);
+                model.vOC_CHART.vocProgessInfo.LastUpdateDay = GetUpdateDay();
+
                 model.vOC_CHART.Year = year;
                 model.vOC_CHART.Customer = customer;
                 model.vOC_CHART.Side = side;
@@ -286,6 +290,70 @@ namespace VOC.Areas.Admin.Controllers
                 package.Save(); //Save the workbook.
             }
             return new OkObjectResult(fileUrl);
+        }
+
+        [HttpPost]
+        public IActionResult UpdateDay(string date)
+        {
+            string folder = _hostingEnvironment.WebRootPath + $@"\uploaded\updateDay";
+            if (!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+            }
+
+            string filePath = Path.Combine(folder, "updateLastDay.txt");
+            FileInfo file = new FileInfo(filePath);
+
+            if (file.Exists)
+            {
+                file.Delete();
+            }
+
+            using (StreamWriter sw = file.CreateText())
+            {
+                sw.WriteLine(date);
+            }
+
+            return new OkObjectResult(date);
+        }
+
+        [HttpPost]
+        public IActionResult AddDefectType(string nameEng, string nameKr)
+        {
+            if (string.IsNullOrEmpty(nameEng))
+            {
+                return new BadRequestObjectResult("Empty name");
+            }
+            VOC_DefectTypeViewModel model = new VOC_DefectTypeViewModel()
+            {
+                KoreanNotation = nameKr,
+                EngsNotation = nameEng
+            };
+            _vocMstService.AddDefectType(model);
+            _vocMstService.Save();
+            return new OkObjectResult(model);
+        }
+
+        public string GetUpdateDay()
+        {
+            string folder = _hostingEnvironment.WebRootPath + $@"\uploaded\updateDay";
+            string filePath = Path.Combine(folder, "updateLastDay.txt");
+            FileInfo file = new FileInfo(filePath);
+
+            string date = "";
+            if (file.Exists)
+            {
+                using (StreamReader sr = file.OpenText())
+                {
+                    string s = "";
+                    while ((s = sr.ReadLine()) != null)
+                    {
+                        date += s;
+                    }
+                }
+            }
+
+            return date.Trim();
         }
 
         [HttpPost]

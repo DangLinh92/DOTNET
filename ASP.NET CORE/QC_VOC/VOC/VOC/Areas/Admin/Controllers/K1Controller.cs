@@ -75,6 +75,7 @@ namespace VOC.Areas.Admin.Controllers
             }
 
             model.vOCPPMs = pMDataCharts;
+            ViewBag.UpdateDayK1 = GetUpdateDay();
             return model;
         }
 
@@ -610,6 +611,53 @@ namespace VOC.Areas.Admin.Controllers
 
             _logger.LogError("Upload file: " + CommonConstants.NotFoundObjectResult_Msg);
             return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
+        }
+
+        [HttpPost]
+        public IActionResult UpdateDay(string date)
+        {
+            string folder = _hostingEnvironment.WebRootPath + $@"\uploaded\updateDay";
+            if (!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+            }
+
+            string filePath = Path.Combine(folder, "updateLastDayK1.txt");
+            FileInfo file = new FileInfo(filePath);
+
+            if (file.Exists)
+            {
+                file.Delete();
+            }
+
+            using (StreamWriter sw = file.CreateText())
+            {
+                sw.WriteLine(date);
+            }
+
+            return new OkObjectResult(date);
+        }
+
+        public string GetUpdateDay()
+        {
+            string folder = _hostingEnvironment.WebRootPath + $@"\uploaded\updateDay";
+            string filePath = Path.Combine(folder, "updateLastDayK1.txt");
+            FileInfo file = new FileInfo(filePath);
+
+            string date = "";
+            if (file.Exists)
+            {
+                using (StreamReader sr = file.OpenText())
+                {
+                    string s = "";
+                    while ((s = sr.ReadLine()) != null)
+                    {
+                        date += s;
+                    }
+                }
+            }
+
+            return date.Trim();
         }
     }
 }

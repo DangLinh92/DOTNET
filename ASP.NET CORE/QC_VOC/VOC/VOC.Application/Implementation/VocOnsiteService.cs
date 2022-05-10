@@ -47,6 +47,10 @@ namespace VOC.Application.Implementation
                 {
                     _customer = customer.Split('-')[0];
                 }
+                else if (customer.EndsWith("ALL"))
+                {
+                    _customer = customer.Split('_')[0];
+                }
 
                 if (part == CommonConstants.ALL)
                 {
@@ -57,7 +61,7 @@ namespace VOC.Application.Implementation
                     lstOnsite = _mapper.Map<List<VocOnsiteViewModel>>(_vocRepository.FindAll(x => x.Date.StartsWith(year + "") && x.Part == part && x.Customer == _customer).ToList());
                 }
 
-                if (customer.Contains("result"))
+                if (customer.Contains("result") || customer.EndsWith("ALL"))
                 {
                     var lstGroup = lstOnsite.GroupBy(x => (x.Customer, x.Date, x.Week, x.Month, x.Part)).Select(gr => (gr, Total: gr.Sum(x => x.Qty)));
 
@@ -78,6 +82,14 @@ namespace VOC.Application.Implementation
                         itemOnsites = new List<VocOnsiteViewModel>();
                         foreach (var onsite in item.gr)
                         {
+                            if (onsite.Result == "OK")
+                            {
+                                vocOnsite.OK += onsite.Qty;
+                            }
+                            else if (onsite.Result == "NG")
+                            {
+                                vocOnsite.NG += onsite.Qty;
+                            }
                             itemOnsites.Add(onsite);
                         }
 

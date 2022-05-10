@@ -34,19 +34,30 @@ namespace VOC.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            var lst = GetData(DateTime.Now.Year, CommonConstants.SEV, CommonConstants.ALL,"");
+            var lst = GetData(DateTime.Now.Year, CommonConstants.SEV_ALL, "", CommonConstants.ALL, "");
             return View(lst);
         }
 
         [HttpPost]
-        public IActionResult Search(int year, string customer, string part,string wisolModel)
+        public IActionResult Search(int year, string customer_sev, string customer_sevt, string part, string wisolModel)
         {
-            var lst = GetData(year, customer, part, wisolModel);
+            var lst = GetData(year, customer_sev, customer_sevt, part, wisolModel);
             return View("Index", lst);
         }
 
-        private VocOnsiteList GetData(int year, string customer, string part,string wisolModel)
+        private VocOnsiteList GetData(int year, string customer_sev, string customer_sevt, string part, string wisolModel)
         {
+            string customer = "";
+            if (!string.IsNullOrEmpty(customer_sev))
+            {
+                customer = customer_sev;
+            }
+
+            if (!string.IsNullOrEmpty(customer_sevt))
+            {
+                customer = customer_sevt;
+            }
+
             VocOnsiteList vocOnsiteList = new VocOnsiteList()
             {
                 Customer = customer,
@@ -80,6 +91,9 @@ namespace VOC.Areas.Admin.Controllers
                 vocOnsiteList.vocOnsiteSumWeeks.Add(sumWeek);
             }
             vocOnsiteList.vocOnsiteSumWeeks = vocOnsiteList.vocOnsiteSumWeeks.OrderBy(x => x.Time).ToList();
+
+            ViewBag.UpdateDayOnsite = GetUpdateDay();
+
             return vocOnsiteList;
         }
 
@@ -238,6 +252,53 @@ namespace VOC.Areas.Admin.Controllers
         {
             var lst = _vocOnsiteService.GetModel();
             return new OkObjectResult(lst);
+        }
+
+        [HttpPost]
+        public IActionResult UpdateDay(string date)
+        {
+            string folder = _hostingEnvironment.WebRootPath + $@"\uploaded\updateDay";
+            if (!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+            }
+
+            string filePath = Path.Combine(folder, "updateLastDayOnsite.txt");
+            FileInfo file = new FileInfo(filePath);
+
+            if (file.Exists)
+            {
+                file.Delete();
+            }
+
+            using (StreamWriter sw = file.CreateText())
+            {
+                sw.WriteLine(date);
+            }
+
+            return new OkObjectResult(date);
+        }
+
+        public string GetUpdateDay()
+        {
+            string folder = _hostingEnvironment.WebRootPath + $@"\uploaded\updateDay";
+            string filePath = Path.Combine(folder, "updateLastDayOnsite.txt");
+            FileInfo file = new FileInfo(filePath);
+
+            string date = "";
+            if (file.Exists)
+            {
+                using (StreamReader sr = file.OpenText())
+                {
+                    string s = "";
+                    while ((s = sr.ReadLine()) != null)
+                    {
+                        date += s;
+                    }
+                }
+            }
+
+            return date.Trim();
         }
     }
 }
