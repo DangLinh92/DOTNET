@@ -4,6 +4,7 @@
     let idleTimeout;
 
     const resetIdleTimeout = function () {
+        console.log(idleTimeout);
         if (idleTimeout) clearTimeout(idleTimeout);
         idleTimeout = setTimeout(() => document.getElementById('logoutForm').submit(), idleDurationSecs * 1000);
     };
