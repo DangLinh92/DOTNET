@@ -1,5 +1,6 @@
 ﻿using HRMNS.Application.Interfaces;
 using HRMNS.Application.ViewModels.Time_Attendance;
+using HRMNS.Data.EF.Extensions;
 using HRMNS.Data.Enums;
 using HRMNS.Utilities.Common;
 using HRMNS.Utilities.Constants;
@@ -104,6 +105,12 @@ namespace HRMS.Areas.Admin.Controllers
             }
         }
 
+        /// <summary>
+        /// Dang ky ca lam viec cho nhan vien
+        /// </summary>
+        /// <param name="calamviec"></param>
+        /// <param name="action"></param>
+        /// <returns></returns>
         [HttpPost]
         public IActionResult RegisterNhanVienCalamViec(NhanVien_CalamViecViewModel calamviec, [FromQuery] string action)
         {
@@ -122,14 +129,29 @@ namespace HRMS.Areas.Admin.Controllers
                         itemCheck.Danhmuc_CaLviec = calamviec.Danhmuc_CaLviec;
                         itemCheck.BatDau_TheoCa = calamviec.BatDau_TheoCa;
                         itemCheck.KetThuc_TheoCa = calamviec.KetThuc_TheoCa;
-                        _nvienCalamviecService.Update(itemCheck);
+
+                        var calaviecActive = _settingTimeCalamviec.GetByCaLamViecAndStatus(Status.Active.ToString(), itemCheck.Danhmuc_CaLviec);
+                        if (calaviecActive != null)
+                        {
+                            if (itemCheck.KetThuc_TheoCa.CompareDateTime(itemCheck.BatDau_TheoCa) >= 0 && 
+                                itemCheck.BatDau_TheoCa.InRangeDateTime(calaviecActive.NgayBatDau, calaviecActive.NgayKetThuc) && 
+                                itemCheck.KetThuc_TheoCa.InRangeDateTime(calaviecActive.NgayBatDau, calaviecActive.NgayKetThuc))
+                            {
+                                _nvienCalamviecService.Update(itemCheck);
+                                _nvienCalamviecService.Save();
+                            }
+                        }
+                        else
+                        {
+                            return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
+                        }
                     }
                     else
                     {
                         calamviec.Approved = CommonConstants.No_Approved;
                         _nvienCalamviecService.Add(calamviec);
+                        _nvienCalamviecService.Save();
                     }
-                    _nvienCalamviecService.Save();
 
                     return new OkObjectResult(calamviec);
                 }
@@ -139,8 +161,23 @@ namespace HRMS.Areas.Admin.Controllers
                     itemCheck.Danhmuc_CaLviec = calamviec.Danhmuc_CaLviec;
                     itemCheck.BatDau_TheoCa = calamviec.BatDau_TheoCa;
                     itemCheck.KetThuc_TheoCa = calamviec.KetThuc_TheoCa;
-                    _nvienCalamviecService.Update(itemCheck);
-                    _nvienCalamviecService.Save();
+
+                    var calaviecActive = _settingTimeCalamviec.GetByCaLamViecAndStatus(Status.Active.ToString(), itemCheck.Danhmuc_CaLviec);
+                    if (calaviecActive != null)
+                    {
+                        if (itemCheck.KetThuc_TheoCa.CompareDateTime(itemCheck.BatDau_TheoCa) >= 0 &&
+                            itemCheck.BatDau_TheoCa.InRangeDateTime(calaviecActive.NgayBatDau, calaviecActive.NgayKetThuc) &&
+                            itemCheck.KetThuc_TheoCa.InRangeDateTime(calaviecActive.NgayBatDau, calaviecActive.NgayKetThuc))
+                        {
+                            _nvienCalamviecService.Update(itemCheck);
+                            _nvienCalamviecService.Save();
+                        }
+                    }
+                    else
+                    {
+                        return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
+                    }
+
                     return new OkObjectResult(itemCheck);
                 }
             }
@@ -179,6 +216,7 @@ namespace HRMS.Areas.Admin.Controllers
                         obj.CaLamViec = shift.CaLamViec;
                         obj.NgayBatDau = shift.NgayBatDau;
                         obj.NgayKetThuc = shift.NgayKetThuc;
+
                         obj.NgayBatDauDangKy = shift.NgayBatDauDangKy;
                         obj.NgayKetThucDangKy = shift.NgayKetThucDangKy;
                         obj.Status = shift.Status;
@@ -194,31 +232,29 @@ namespace HRMS.Areas.Admin.Controllers
                     obj.CaLamViec = shift.CaLamViec;
                     obj.NgayBatDau = shift.NgayBatDau;
                     obj.NgayKetThuc = shift.NgayKetThuc;
+
                     obj.NgayBatDauDangKy = shift.NgayBatDauDangKy;
                     obj.NgayKetThucDangKy = shift.NgayKetThucDangKy;
                     obj.Status = shift.Status;
                     _settingTimeCalamviec.Update(obj);
                 }
 
-                if (shift.Status == Status.Active.ToString() && (shift.Id == 0 || (obj != null && shift.Id != obj.Id)))
+                if(obj.NgayKetThuc.CompareDateTime(obj.NgayBatDau) >= 0 && obj.NgayKetThucDangKy.CompareDateTime(obj.NgayBatDauDangKy) >= 0)
                 {
-                    var oldItem = _settingTimeCalamviec.GetByStatus(shift.Status);
-                    if (oldItem != null)
-                    {
-                        oldItem.Status = Status.InActive.ToString();
-                        _settingTimeCalamviec.Update(oldItem);
-                    }
+                    _settingTimeCalamviec.Save();
+                    return new OkObjectResult(shift);
                 }
-
-                _settingTimeCalamviec.Save();
-                return new OkObjectResult(shift);
+                else
+                {
+                    return new BadRequestObjectResult(CommonConstants.InvalidParam);
+                }
             }
         }
 
         [HttpGet]
         public IActionResult GetTimeSettingCaLamViec()
         {
-            var lst = _settingTimeCalamviec.GetAll("", x => x.DM_CA_LVIEC).Take(10);
+            var lst = _settingTimeCalamviec.GetAll("", x => x.DM_CA_LVIEC).OrderByDescending(x=>x.NgayBatDau).Take(10);
             return new OkObjectResult(lst);
         }
 

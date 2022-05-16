@@ -21,6 +21,11 @@ namespace HRMNS.Data.Entities
         public bool CanUpdate { get; set; }
         public bool CanDelete { get; set; }
 
+        public bool ApproveL1 { get; set; } // GROUP
+        public bool ApproveL2 { get; set; } // KOREA
+        public bool ApproveL3 { get; set; } // HR
+
+
         [ForeignKey("RoleId")]
         public virtual APP_ROLE AppRole { get; set; }
 

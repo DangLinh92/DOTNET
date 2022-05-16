@@ -16,7 +16,6 @@ namespace HRMNS.Data.Entities
         public string FullName { get; set; }
         public DateTime? BirthDay { get; set; }
 
-       
         public string Avatar { get; set; }
 
         [StringLength(50)]
@@ -33,5 +32,8 @@ namespace HRMNS.Data.Entities
         public Status Status { get; set; }
 
         public string ShowPass { get; set; }
+
+        [StringLength(50)]
+        public string Department { get; set; }
     }
 }

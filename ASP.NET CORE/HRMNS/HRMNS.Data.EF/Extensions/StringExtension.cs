@@ -41,5 +41,37 @@ namespace HRMNS.Data.EF.Extensions
                 return "";
             }
         }
+
+        /// <summary>
+        /// so sanh 2 date time string 
+        /// </summary>
+        /// <param name="date1">yyyy-MM-dd</param>
+        /// <param name="date2">yyyy-MM-dd</param>
+        /// <returns>
+        /// -1 : date1 < date2
+        /// 0 : date1 = date2
+        /// 1 : date1 > date2
+        /// </returns>
+        public static int CompareDateTime(this string date1,string date2)
+        {
+            return date1.CompareTo(date2);
+        }
+
+        /// <summary>
+        /// Kiểm tra date1 có năm trong date2 và date3 không
+        /// </summary>
+        /// <param name="date1"></param>
+        /// <param name="date2"></param>
+        /// <param name="date3"></param>
+        /// <returns></returns>
+        public static bool InRangeDateTime(this string date1,string date2,string date3)
+        {
+            if(date2.CompareTo(date1) <= 0 && date3.CompareTo(date1) >= 0)
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }

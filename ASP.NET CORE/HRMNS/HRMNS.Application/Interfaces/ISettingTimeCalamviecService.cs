@@ -26,6 +26,8 @@ namespace HRMNS.Application.Interfaces
 
         SettingTimeCalamviecViewModel GetByStatus(string status, params Expression<Func<SETTING_TIME_CA_LVIEC, object>>[] includeProperties);
 
+        SettingTimeCalamviecViewModel GetByCaLamViecAndStatus(string status,string caLamViec, params Expression<Func<SETTING_TIME_CA_LVIEC, object>>[] includeProperties);
+
         void Save();
     }
 }

@@ -20,6 +20,7 @@ namespace HRMNS.Utilities.Constants
         public const string Delete_Action = "Delete";
         public const string ConflictObjectResult_Msg = "Object has existed!";
         public const string NotFoundObjectResult_Msg = "Not Found Object";
+        public const string InvalidParam = "Tham số không hợp lệ";
         public const string IsDelete = "Y";
 
         public const string DefaultAvatar = "/img/profiles/avatar-02.jpg";

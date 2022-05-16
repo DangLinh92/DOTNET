@@ -88,5 +88,11 @@ namespace HRMNS.Application.Implementation
             var obj = _settingTimeClviecRepository.FindAll(x => x.Status == status, includeProperties).OrderByDescending(x => x.DateModified).FirstOrDefault();
             return _mapper.Map<SettingTimeCalamviecViewModel>(obj);
         }
+
+        public SettingTimeCalamviecViewModel GetByCaLamViecAndStatus(string status, string caLamViec, params Expression<Func<SETTING_TIME_CA_LVIEC, object>>[] includeProperties)
+        {
+            var obj = _settingTimeClviecRepository.FindAll(x => x.Status == status && x.CaLamViec == caLamViec, includeProperties).OrderByDescending(x => x.DateModified).FirstOrDefault();
+            return _mapper.Map<SettingTimeCalamviecViewModel>(obj);
+        }
     }
 }

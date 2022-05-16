@@ -23,13 +23,15 @@ namespace HRMNS.Application.Implementation
     {
         private IRespository<NHANVIEN_CALAMVIEC, int> _nhanvienClviecRepository;
         private IRespository<DM_CA_LVIEC, string> _dmCalamviecResponsitory;
+        private IRespository<SETTING_TIME_CA_LVIEC,int> _settingTimeCalamviec;
         private IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public NhanVien_CalamviecService(IRespository<NHANVIEN_CALAMVIEC, int> respository, IRespository<DM_CA_LVIEC, string> dmCalamviecRespository, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public NhanVien_CalamviecService(IRespository<NHANVIEN_CALAMVIEC, int> respository, IRespository<DM_CA_LVIEC, string> dmCalamviecRespository, IRespository<SETTING_TIME_CA_LVIEC,int> settingTimeCalamviec, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _nhanvienClviecRepository = respository;
             _dmCalamviecResponsitory = dmCalamviecRespository;
+            _settingTimeCalamviec = settingTimeCalamviec;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
@@ -136,7 +138,7 @@ namespace HRMNS.Application.Implementation
 
                         row["MaNV"] = worksheet.Cells[i, 1].Text.NullString().ToUpper();
 
-                        dmCalviec = worksheet.Cells[i, 2].Text.NullString();
+                        dmCalviec = worksheet.Cells[i, 3].Text.NullString();
                         if (lstDmCalamViec.Any(x => dmCalviec.Contains(x.TenCaLamViec)))
                         {
                             row["Danhmuc_CaLviec"] = lstDmCalamViec.FirstOrDefault(x => dmCalviec.Contains(x.TenCaLamViec))?.Id.NullString();
@@ -146,21 +148,31 @@ namespace HRMNS.Application.Implementation
                             throw new Exception("Not found danh muc ca lam viec");
                         }
 
-                        row["BatDau_TheoCa"] = worksheet.Cells[i, 3].Text.NullString();
-                        row["KetThuc_TheoCa"] = worksheet.Cells[i, 4].Text.NullString();
+                        var calaviecActive = _settingTimeCalamviec.FindAll(x => x.Status == Status.Active.ToString() && x.CaLamViec == row["Danhmuc_CaLviec"].NullString()).OrderByDescending(x => x.DateModified).FirstOrDefault();
 
-                        if (string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), worksheet.Cells[i, 3].Text.NullString()) >= 0 && string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), worksheet.Cells[i, 4].Text.NullString()) <= 0)
+                        if(calaviecActive != null)
                         {
-                            row["Status"] = Status.Active.ToString();
-                        }
-                        else if (string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), worksheet.Cells[i, 3].Text.NullString()) < 0)
-                        {
-                            row["Status"] = Status.New.ToString();
+                            row["BatDau_TheoCa"] = calaviecActive.NgayBatDau;
+                            row["KetThuc_TheoCa"] = calaviecActive.NgayKetThuc;
+
+                            if (string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), calaviecActive.NgayBatDau) >= 0 && string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), calaviecActive.NgayKetThuc) <= 0)
+                            {
+                                row["Status"] = Status.Active.ToString();
+                            }
+                            else if (string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), calaviecActive.NgayBatDau) < 0)
+                            {
+                                row["Status"] = Status.New.ToString();
+                            }
+                            else
+                            {
+                                row["Status"] = Status.InActive.ToString();
+                            }
                         }
                         else
                         {
-                            row["Status"] = Status.InActive.ToString();
+                            throw new Exception("Not found ca lam viec");
                         }
+
                         table.Rows.Add(row);
                     }
 
