@@ -34,6 +34,7 @@ namespace HRMNS.Utilities.Constants
 
         public const string No_Approved = "N";
         public const string Approved = "Y";
+        public const string Request = "R";
 
         public const string IMPORT_BASIC_EMP = "basic_emp";
         public const string IMPORT_DETAIL_EMP = "detail_emp";
@@ -56,5 +57,17 @@ namespace HRMNS.Utilities.Constants
         public const string END_CD = "05:00:00";
 
         public const string ZERO_TIME = "00:00:00";
+
+        public const string roleApprove1 = "GrLeader";
+        public const string roleApprove2 = "KRManager";
+        public const string roleApprove3 = "HR";
+
+        public const string AssLeader_Role = "AssLeader";
+
+        public const string NgayLe = "NL";
+        public const string NgayLeCuoiCung = "NLCC";
+        public const string TruocNgayLe = "TNL";
+        public const string ChuNhat = "CN";
+        public const string NgayThuong = "NT";
     }
 }

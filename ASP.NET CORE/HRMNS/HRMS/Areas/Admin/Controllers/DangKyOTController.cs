@@ -1,5 +1,6 @@
 ﻿using HRMNS.Application.Interfaces;
 using HRMNS.Application.ViewModels.Time_Attendance;
+using HRMNS.Data.EF.Extensions;
 using HRMNS.Utilities.Common;
 using HRMNS.Utilities.Constants;
 using HRMNS.Utilities.Dtos;
@@ -35,7 +36,26 @@ namespace HRMS.Areas.Admin.Controllers
 
         public IActionResult Index()
         {
-            var lst = _overtimeService.GetAll("", x => x.HR_NHANVIEN, y => y.DM_NGAY_LAMVIEC);
+            List<DangKyOTNhanVienViewModel> lst = _overtimeService.GetAll("", x => x.HR_NHANVIEN, y => y.DM_NGAY_LAMVIEC);
+
+            if (UserRole == CommonConstants.AssLeader_Role)
+            {
+                lst = lst.Where(x => x.HR_NHANVIEN.MaBoPhan == Department && x.ApproveLV3 != CommonConstants.Approved).ToList();
+            }
+            else if (UserRole == CommonConstants.roleApprove1) // leader 
+            {
+                lst = lst.
+                    Where(x => x.HR_NHANVIEN.MaBoPhan == Department && (x.Approve == CommonConstants.Request || x.ApproveLV2 == CommonConstants.Request || x.ApproveLV3 != CommonConstants.Approved)).OrderByDescending(x => x.DateModified).ToList();
+            }
+            else if (UserRole == CommonConstants.roleApprove2) // korea manager
+            {
+                lst = lst.
+                    Where(x => x.HR_NHANVIEN.MaBoPhan == Department && x.Approve == CommonConstants.Approved && x.ApproveLV3 != CommonConstants.Approved).OrderByDescending(x => x.DateModified).ToList();
+            }
+            else if (UserRole == CommonConstants.roleApprove3 || UserRole == CommonConstants.AppRole.AdminRole) // hr approve
+            {
+                lst = lst.Where(x => x.ApproveLV2 == CommonConstants.Approved && x.ApproveLV3 == CommonConstants.Request).OrderByDescending(x => x.DateModified).ToList();
+            }
             return View(lst);
         }
 
@@ -60,7 +80,9 @@ namespace HRMS.Areas.Admin.Controllers
                     }
                     else
                     {
-                        overtime.Approve = CommonConstants.No_Approved;
+                        overtime.Approve = CommonConstants.Request;
+                        overtime.ApproveLV2 = CommonConstants.Request;
+                        overtime.ApproveLV3 = CommonConstants.Request;
                         UpdateDMNgayLviec(overtime);
                         _overtimeService.Add(overtime);
                     }
@@ -81,7 +103,9 @@ namespace HRMS.Areas.Admin.Controllers
 
                         if (itemCheck == null)
                         {
-                            overtime.Approve = CommonConstants.No_Approved;
+                            overtime.Approve = CommonConstants.Request;
+                            overtime.ApproveLV2 = CommonConstants.Request;
+                            overtime.ApproveLV3 = CommonConstants.Request;
                             UpdateDMNgayLviec(overtime);
                             _overtimeService.Add(overtime);
                             _overtimeService.Save();
@@ -103,31 +127,31 @@ namespace HRMS.Areas.Admin.Controllers
         // Update Ngay lam viec là ngay le, ngay truoc le, ngay le cuoi cung,ngay thuong, chu nhat  ....
         private void UpdateDMNgayLviec(DangKyOTNhanVienViewModel obj)
         {
-            var lstNgayLeNam = _ngayLeNamService.GetAll("");
+            var lstNgayLeNam = _ngayLeNamService.GetAll(obj.NgayOT);
             var itemcheck = lstNgayLeNam.FirstOrDefault(x => x.Id == obj.NgayOT);
             var afterOneDay = DateTime.Parse(obj.NgayOT).AddDays(1).ToString("yyyy-MM-dd");
             var itemcheck2 = lstNgayLeNam.FirstOrDefault(x => x.Id == afterOneDay);
 
             if (itemcheck != null)
             {
-                obj.DM_NgayLViec = "NL";
+                obj.DM_NgayLViec = CommonConstants.NgayLe;
 
                 if (itemcheck.IslastHoliday == CommonConstants.Y)
                 {
-                    obj.DM_NgayLViec = "NLCC";
+                    obj.DM_NgayLViec = CommonConstants.NgayLeCuoiCung;
                 }
             }
             else if (itemcheck2 != null)
             {
-                obj.DM_NgayLViec = "TNL";
+                obj.DM_NgayLViec = CommonConstants.TruocNgayLe;
             }
             else if (DateTime.Parse(obj.NgayOT).DayOfWeek == DayOfWeek.Sunday)
             {
-                obj.DM_NgayLViec = "CN";
+                obj.DM_NgayLViec = CommonConstants.ChuNhat;
             }
             else
             {
-                obj.DM_NgayLViec = "NT";
+                obj.DM_NgayLViec = CommonConstants.NgayThuong;
             }
         }
 
@@ -147,49 +171,56 @@ namespace HRMS.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Approve(int Id,string dept, string status,string action)
+        public IActionResult Approve(List<int> lstID, string action)
         {
-            if(Id > 0)// approve single
+            List<DangKyOTNhanVienViewModel> lstOT = _overtimeService.GetAll("").Where(x => lstID.Contains(x.Id)).ToList();
+
+            if (action == "approve")
             {
-                if (action == CommonConstants.Approved)
+                foreach (var item in lstOT)
                 {
-                    _overtimeService.ApproveSingle(Id, true);
-                }
-                else
-                {
-                    _overtimeService.ApproveSingle(Id, false);
+                    if (UserRole == CommonConstants.roleApprove1)
+                    {
+                        item.Approve = CommonConstants.Approved;
+                    }
+                    else if (UserRole == CommonConstants.roleApprove2)
+                    {
+                        item.ApproveLV2 = CommonConstants.Approved;
+                    }
+                    else if (UserRole == CommonConstants.roleApprove3 || UserRole == CommonConstants.AppRole.AdminRole)
+                    {
+                        item.ApproveLV3 = CommonConstants.Approved;
+                    }
                 }
             }
-            else
+            else if (action == "unapprove")
             {
-                if (action == CommonConstants.Approved)
+                foreach (var item in lstOT)
                 {
-                    if (status != CommonConstants.No_Approved || string.IsNullOrEmpty(dept))
+                    if (UserRole == CommonConstants.roleApprove1)
                     {
-                        return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
+                        item.Approve = CommonConstants.No_Approved;
                     }
-
-                    _overtimeService.Approve(dept, status, true);
-                }
-                else
-                {
-                    if (status != CommonConstants.Approved || string.IsNullOrEmpty(dept))
+                    else if (UserRole == CommonConstants.roleApprove2)
                     {
-                        return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
+                        item.ApproveLV2 = CommonConstants.No_Approved;
                     }
-
-                    _overtimeService.Approve(dept, status, false);
+                    else if (UserRole == CommonConstants.roleApprove3 || UserRole == CommonConstants.AppRole.AdminRole)
+                    {
+                        item.ApproveLV3 = CommonConstants.No_Approved;
+                    }
                 }
             }
-            
+
+            _overtimeService.UpdateRange(lstOT);
             _overtimeService.Save();
-            return new OkObjectResult(Id);
+            return new OkObjectResult(lstID);
         }
 
         [HttpPost]
         public IActionResult Search(string department, string status, string timeFrom, string timeTo)
         {
-            var lst = _overtimeService.Search(department, status, timeFrom, timeTo, x => x.HR_NHANVIEN, y => y.DM_NGAY_LAMVIEC);
+            var lst = _overtimeService.Search(UserRole, department, status, timeFrom, timeTo, x => x.HR_NHANVIEN, y => y.DM_NGAY_LAMVIEC);
             return PartialView("_gridOvertimePartialView", lst);
         }
 

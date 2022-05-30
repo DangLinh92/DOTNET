@@ -17,6 +17,7 @@ namespace HRMNS.Application.Interfaces
         DangKyChamCongDacBietViewModel Add(DangKyChamCongDacBietViewModel hopDongVm);
 
         void Update(DangKyChamCongDacBietViewModel hopDongVm);
+        void UpdateRange(List<DangKyChamCongDacBietViewModel> hopDongVm);
 
         void Delete(int id);
 
@@ -25,7 +26,7 @@ namespace HRMNS.Application.Interfaces
         DangKyChamCongDacBietViewModel GetById(int id);
         DangKyChamCongDacBietViewModel GetSingle(Expression<Func<DANGKY_CHAMCONG_DACBIET, bool>> predicate);
 
-        List<DangKyChamCongDacBietViewModel> Search(string dept,string fromDate,string toDate, params Expression<Func<DANGKY_CHAMCONG_DACBIET, object>>[] includeProperties);
+        List<DangKyChamCongDacBietViewModel> Search(string dept, string fromDate, string toDate, params Expression<Func<DANGKY_CHAMCONG_DACBIET, object>>[] includeProperties);
 
         void Save();
     }

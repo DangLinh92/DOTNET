@@ -1,0 +1,6 @@
+2022-05-21T10:58:32.7464566+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-05-21T10:58:32.7530060+07:00  [INF] Hosting environment: "Production" (c3307c92)
+2022-05-21T10:58:32.7532426+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\QC_VOC\VOC\public" (b5d60022)
+2022-05-21T10:58:32.7670670+07:00 80000008-0001-fb00-b63f-84710c7967bb [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-05-21T11:06:48.4225384+07:00 80000012-0003-fc00-b63f-84710c7967bb [INF] User logged in. (fdce0db4)
+2022-05-21T11:27:30.2765527+07:00  [INF] Application is shutting down... (90f52c38)

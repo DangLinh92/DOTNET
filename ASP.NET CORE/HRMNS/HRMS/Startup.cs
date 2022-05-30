@@ -6,9 +6,12 @@ using HRMNS.Data.EF;
 using HRMNS.Data.EF.Repositories;
 using HRMNS.Data.Entities;
 using HRMNS.Data.IRepositories;
+using HRMS.Authorization;
 using HRMS.Helpers;
+using HRMS.HostedService;
 using HRMS.Infrastructure.Interfaces;
 using HRMS.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -113,8 +116,9 @@ namespace HRMS
 
             services.AddTransient<IDM_DCChamCongService, DM_DCChamCongService>();
             services.AddTransient<IDCChamCongService, DCChamCongService>();
-
-
+            services.AddTransient<IRoleAndPermisstionService, RoleAndPermisstionService>();
+            services.AddTransient<IAuthorizationHandler, BaseResourceAuthorizationHandler>();
+            services.AddTransient<IBackgroundService, HmrsBackgroundService>();
             services.AddMvc().AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();// not change format json
@@ -125,6 +129,8 @@ namespace HRMS
             {
                 x.MultipartBodyLengthLimit = 209715200;
             });
+
+            services.AddHostedService<MyBackgroundService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -157,9 +163,9 @@ namespace HRMS
                     "default",
                     "{area:exists}/{controller=Login}/{action=Index}/{id?}");
 
-                routes.MapControllerRoute(
-                    "Deptdefault",
-                    "{controller=Account}/{action=Login}/{id?}");
+                //routes.MapControllerRoute(
+                //    "Deptdefault",
+                //    "{controller=Account}/{action=Login}/{id?}");
 
             });
         }

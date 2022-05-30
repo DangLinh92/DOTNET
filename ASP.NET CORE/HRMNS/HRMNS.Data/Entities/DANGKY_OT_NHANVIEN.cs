@@ -15,13 +15,14 @@ namespace HRMNS.Data.Entities
         {
 
         }
-        public DANGKY_OT_NHANVIEN(string ngayOT,string maNV,string ngayLviec,string approve,string pass)
+        public DANGKY_OT_NHANVIEN(string ngayOT,string maNV,string ngayLviec,string approve,string approveLV2,string approveLV3)
         {
             NgayOT = ngayOT;
             MaNV = maNV;
             DM_NgayLViec = ngayLviec;
             Approve = approve;
-            Passed = pass;
+            ApproveLV2 = approveLV2;
+            ApproveLV3 = approveLV3;
         }
 
         [StringLength(50)]
@@ -36,8 +37,11 @@ namespace HRMNS.Data.Entities
         [StringLength(50)]
         public string Approve { get; set; }
 
-        [StringLength(2)]
-        public string Passed { get; set; }
+        [StringLength(50)]
+        public string ApproveLV2 { get; set; }
+
+        [StringLength(50)]
+        public string ApproveLV3 { get; set; }
 
         [StringLength(50)]
         public string DateCreated { get; set; }
@@ -50,7 +54,6 @@ namespace HRMNS.Data.Entities
 
         [StringLength(50)]
         public string UserModified { get; set; }
-
 
         [ForeignKey("DM_NgayLViec")]
         public virtual DM_NGAY_LAMVIEC DM_NGAY_LAMVIEC { get; set; }

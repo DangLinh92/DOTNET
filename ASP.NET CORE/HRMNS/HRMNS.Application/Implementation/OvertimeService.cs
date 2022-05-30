@@ -61,7 +61,7 @@ namespace HRMNS.Application.Implementation
         {
             if (keyword == "")
             {
-                var lst = _overtimeRepository.FindAll(x => x.Passed != CommonConstants.Y, includeProperties).OrderByDescending(x => x.DateModified);
+                var lst = _overtimeRepository.FindAll(includeProperties).OrderByDescending(x => x.DateModified);
                 return _mapper.Map<List<DangKyOTNhanVienViewModel>>(lst);
             }
             else
@@ -97,6 +97,8 @@ namespace HRMNS.Application.Implementation
                     table.Columns.Add("MaNV");
                     table.Columns.Add("DM_NgayLViec");
                     table.Columns.Add("Approve");
+                    table.Columns.Add("ApproveLV2");
+                    table.Columns.Add("ApproveLV3");
 
                     DataRow row = null;
                     for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
@@ -111,7 +113,9 @@ namespace HRMNS.Application.Implementation
                         row["MaNV"] = worksheet.Cells[i, 1].Text.NullString().ToUpper();
                         row["NgayOT"] = worksheet.Cells[i, 3].Text.NullString();
                         row["DM_NgayLViec"] = UpdateDMNgayLviec(worksheet.Cells[i, 3].Text.NullString());
-                        row["Approve"] = CommonConstants.No_Approved;
+                        row["Approve"] = CommonConstants.Request;
+                        row["ApproveLV2"] = CommonConstants.Request;
+                        row["ApproveLV3"] = CommonConstants.Request;
                         table.Rows.Add(row);
                     }
 
@@ -129,32 +133,43 @@ namespace HRMNS.Application.Implementation
 
         private string UpdateDMNgayLviec(string NgayOT)
         {
+            DateTime dOT;
+            try
+            {
+                dOT = DateTime.Parse(NgayOT);
+            }
+            catch (Exception)
+            {
+
+                dOT = DateTime.Now;
+            }
+
             string DM_NgayLViec = "";
-            var lstNgayLeNam = _mapper.Map<List<NgayLeNamViewModel>>(_ngaylenamRepository.FindAll(x => x.Id.Contains(DateTime.Now.Year.ToString())).OrderBy(x => x.Id));
+            var lstNgayLeNam = _mapper.Map<List<NgayLeNamViewModel>>(_ngaylenamRepository.FindAll(x => x.Id.Contains(dOT.Year.ToString())).OrderBy(x => x.Id));
             var itemcheck = lstNgayLeNam.FirstOrDefault(x => x.Id == NgayOT);
             var afterOneDay = DateTime.Parse(NgayOT).AddDays(1).ToString("yyyy-MM-dd");
             var itemcheck2 = lstNgayLeNam.FirstOrDefault(x => x.Id == afterOneDay);
 
             if (itemcheck != null)
             {
-                DM_NgayLViec = "NL";
+                DM_NgayLViec = CommonConstants.NgayLe;
 
                 if (itemcheck.IslastHoliday == CommonConstants.Y)
                 {
-                    DM_NgayLViec = "NLCC";
+                    DM_NgayLViec = CommonConstants.NgayLeCuoiCung;
                 }
             }
             else if (itemcheck2 != null)
             {
-                DM_NgayLViec = "TNL";
+                DM_NgayLViec = CommonConstants.TruocNgayLe;
             }
             else if (DateTime.Parse(NgayOT).DayOfWeek == DayOfWeek.Sunday)
             {
-                DM_NgayLViec = "CN";
+                DM_NgayLViec = CommonConstants.ChuNhat;
             }
             else
             {
-                DM_NgayLViec = "NT";
+                DM_NgayLViec = CommonConstants.NgayThuong;
             }
             return DM_NgayLViec;
         }
@@ -164,96 +179,63 @@ namespace HRMNS.Application.Implementation
             _unitOfWork.Commit();
         }
 
-        public List<DangKyOTNhanVienViewModel> Search(string dept, string status, string timeFrom, string timeTo, params Expression<Func<DANGKY_OT_NHANVIEN, object>>[] includeProperties)
+        public List<DangKyOTNhanVienViewModel> Search(string role, string dept, string status, string timeFrom, string timeTo, params Expression<Func<DANGKY_OT_NHANVIEN, object>>[] includeProperties)
         {
+            List<DangKyOTNhanVienViewModel> lstOT = new List<DangKyOTNhanVienViewModel>();
             if (!string.IsNullOrEmpty(timeFrom) && !string.IsNullOrEmpty(timeTo))
             {
-                if (string.IsNullOrEmpty(dept) && string.IsNullOrEmpty(status))
-                {
-                    var lst = _overtimeRepository.FindAll(x => string.Compare(x.NgayOT, timeFrom) >= 0 && string.Compare(x.NgayOT, timeTo) <= 0, includeProperties).OrderByDescending(x => x.DateModified);
-                    return _mapper.Map<List<DangKyOTNhanVienViewModel>>(lst);
-                }
+                lstOT = _mapper.Map<List<DangKyOTNhanVienViewModel>>(_overtimeRepository.FindAll(x => string.Compare(x.NgayOT, timeFrom) >= 0 && string.Compare(x.NgayOT, timeTo) <= 0, includeProperties).OrderByDescending(x => x.DateModified));
+            }
+            else
+            {
+                lstOT = _mapper.Map<List<DangKyOTNhanVienViewModel>>(_overtimeRepository.FindAll(includeProperties).OrderByDescending(x => x.DateModified));
+            }
 
-                if (!string.IsNullOrEmpty(dept) && string.IsNullOrEmpty(status))
-                {
-                    var lst = _overtimeRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && (string.Compare(x.NgayOT, timeFrom) >= 0 && string.Compare(x.NgayOT, timeTo) <= 0), includeProperties).OrderByDescending(x => x.DateModified);
-                    return _mapper.Map<List<DangKyOTNhanVienViewModel>>(lst);
-                }
+            if (!string.IsNullOrEmpty(dept))
+            {
+                lstOT = lstOT.Where(x => x.HR_NHANVIEN.MaBoPhan == dept).ToList();
+            }
 
-                if (string.IsNullOrEmpty(dept) && !string.IsNullOrEmpty(status))
+            if (string.IsNullOrEmpty(status))
+            {
+                if (role == CommonConstants.AssLeader_Role)
                 {
-                    if (status != CommonConstants.No_Approved && status != CommonConstants.Approved)
-                    {
-                        var lst = _overtimeRepository.FindAll(x => x.Approve == status && (string.Compare(x.NgayOT, timeFrom) >= 0 && string.Compare(x.NgayOT, timeTo) <= 0), includeProperties).OrderByDescending(x => x.DateModified);
-                        return _mapper.Map<List<DangKyOTNhanVienViewModel>>(lst);
-                    }
-                    else
-                    {
-                        string[] itemCheck = status == CommonConstants.No_Approved ? new string[] { "", null } : new string[] { status };
-                        var lst = _overtimeRepository.FindAll(x => (x.Approve == status || itemCheck.Contains(x.Approve)) && (string.Compare(x.NgayOT, timeFrom) >= 0 && string.Compare(x.NgayOT, timeTo) <= 0), includeProperties).OrderByDescending(x => x.DateModified);
-                        return _mapper.Map<List<DangKyOTNhanVienViewModel>>(lst);
-                    }
+                    lstOT = lstOT.Where(x => x.ApproveLV3 != CommonConstants.Approved).ToList();
                 }
-
-                if (!string.IsNullOrEmpty(dept) && !string.IsNullOrEmpty(status))
+                else if (role == CommonConstants.roleApprove1) // leader approve
                 {
-                    if (status != CommonConstants.No_Approved && status != CommonConstants.Approved)
-                    {
-                        var lst = _overtimeRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && x.Approve == status && (string.Compare(x.NgayOT, timeFrom) >= 0 && string.Compare(x.NgayOT, timeTo) <= 0), includeProperties).OrderByDescending(x => x.DateModified);
-                        return _mapper.Map<List<DangKyOTNhanVienViewModel>>(lst);
-                    }
-                    else
-                    {
-                        string[] itemCheck = status == CommonConstants.No_Approved ? new string[] { "", null } : new string[] { status };
-                        var lst = _overtimeRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && (x.Approve == status || itemCheck.Contains(x.Approve)) && (string.Compare(x.NgayOT, timeFrom) >= 0 && string.Compare(x.NgayOT, timeTo) <= 0), includeProperties).OrderByDescending(x => x.DateModified);
-                        return _mapper.Map<List<DangKyOTNhanVienViewModel>>(lst);
-                    }
+                    lstOT = lstOT.Where(x => x.ApproveLV3 != CommonConstants.Approved && (x.Approve == CommonConstants.Approved || x.Approve == CommonConstants.No_Approved || x.Approve == CommonConstants.Request)).ToList();
+                }
+                else if (role == CommonConstants.roleApprove2) // korea mnger
+                {
+                    lstOT = lstOT.Where(x => x.Approve == CommonConstants.Approved && x.ApproveLV3 != CommonConstants.Approved).ToList();
+                }
+                else if (role == CommonConstants.roleApprove3 || role == CommonConstants.AppRole.AdminRole)
+                {
+                    lstOT = lstOT.Where(x => x.ApproveLV2 == CommonConstants.Approved).ToList();
                 }
             }
             else
             {
-                if (string.IsNullOrEmpty(dept) && string.IsNullOrEmpty(status))
+                if (role == CommonConstants.AssLeader_Role)
                 {
-                    return GetAll("", x => x.HR_NHANVIEN, y => y.DM_NGAY_LAMVIEC);
+                    lstOT = lstOT.Where(x => x.Approve == status && x.ApproveLV3 != CommonConstants.Approved).ToList();
                 }
-
-                if (!string.IsNullOrEmpty(dept) && string.IsNullOrEmpty(status))
+                else if (role == CommonConstants.roleApprove1) // leader approve
                 {
-                    return GetAll(dept, x => x.HR_NHANVIEN, y => y.DM_NGAY_LAMVIEC);
+                    lstOT = lstOT.Where(x => x.Approve == status && x.ApproveLV3 != CommonConstants.Approved).ToList();
                 }
-
-                if (string.IsNullOrEmpty(dept) && !string.IsNullOrEmpty(status))
+                else if (role == CommonConstants.roleApprove2) // korea mnger
                 {
-                    if (status != CommonConstants.No_Approved && status != CommonConstants.Approved)
-                    {
-                        var lst = _overtimeRepository.FindAll(x => x.Approve == status, includeProperties).OrderByDescending(x => x.DateModified);
-                        return _mapper.Map<List<DangKyOTNhanVienViewModel>>(lst);
-                    }
-                    else
-                    {
-                        string[] itemCheck = status == CommonConstants.No_Approved ? new string[] { "", null } : new string[] { status };
-                        var lst = _overtimeRepository.FindAll(x => x.Approve == status || itemCheck.Contains(x.Approve), includeProperties).OrderByDescending(x => x.DateModified);
-                        return _mapper.Map<List<DangKyOTNhanVienViewModel>>(lst);
-                    }
+                    lstOT = lstOT.Where(x => x.Approve == CommonConstants.Approved && x.ApproveLV2 == status && x.ApproveLV3 != CommonConstants.Approved).ToList();
                 }
-
-                if (!string.IsNullOrEmpty(dept) && !string.IsNullOrEmpty(status))
+                else if (role == CommonConstants.roleApprove3 || role == CommonConstants.AppRole.AdminRole)
                 {
-                    if (status != CommonConstants.No_Approved && status != CommonConstants.Approved)
-                    {
-                        var lst = _overtimeRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && x.Approve == status, includeProperties).OrderByDescending(x => x.DateModified);
-                        return _mapper.Map<List<DangKyOTNhanVienViewModel>>(lst);
-                    }
-                    else
-                    {
-                        string[] itemCheck = status == CommonConstants.No_Approved ? new string[] { "", null } : new string[] { status };
-                        var lst = _overtimeRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && (x.Approve == status || itemCheck.Contains(x.Approve)), includeProperties).OrderByDescending(x => x.DateModified);
-                        return _mapper.Map<List<DangKyOTNhanVienViewModel>>(lst);
-                    }
+                    lstOT = lstOT.Where(x => x.ApproveLV2 == CommonConstants.Approved && x.ApproveLV3 == status).ToList();
                 }
             }
 
-            return new List<DangKyOTNhanVienViewModel>();
+            return lstOT;
         }
 
         public void Update(DangKyOTNhanVienViewModel overtimeVm)
@@ -282,24 +264,71 @@ namespace HRMNS.Application.Implementation
             }
         }
 
-        public void Approve(string dept, string status, bool isApprove)
+        public void Approve(string dept, string status, string role, bool isApprove)
         {
-            var lst = _overtimeRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && x.Approve == status || x.Approve == null, y => y.HR_NHANVIEN).ToList();
+            List<DANGKY_OT_NHANVIEN> lstOT = new List<DANGKY_OT_NHANVIEN>();
 
-            foreach (var item in lst)
+            if (role == CommonConstants.roleApprove1)
             {
-                item.Approve = isApprove ? CommonConstants.Approved : CommonConstants.No_Approved;
+                lstOT = _overtimeRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && x.Approve == status || x.Approve == null, y => y.HR_NHANVIEN).ToList();
+            }
+            else if (role == CommonConstants.roleApprove2)
+            {
+                lstOT = _overtimeRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && x.ApproveLV2 == status || x.ApproveLV2 == null, y => y.HR_NHANVIEN).ToList();
+            }
+            else if (role == CommonConstants.roleApprove3 || role == CommonConstants.AppRole.AdminRole)
+            {
+                lstOT = _overtimeRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && x.ApproveLV3 == status || x.ApproveLV3 == null, y => y.HR_NHANVIEN).ToList();
+            }
+
+            foreach (var item in lstOT)
+            {
+                if (role == CommonConstants.roleApprove1)
+                {
+                    item.Approve = isApprove ? CommonConstants.Approved : CommonConstants.No_Approved;
+                }
+                else if (role == CommonConstants.roleApprove2)
+                {
+                    item.ApproveLV2 = isApprove ? CommonConstants.Approved : CommonConstants.No_Approved;
+                }
+                else if (role == CommonConstants.roleApprove3 || role == CommonConstants.AppRole.AdminRole)
+                {
+                    item.ApproveLV3 = isApprove ? CommonConstants.Approved : CommonConstants.No_Approved;
+                }
+
                 item.HR_NHANVIEN = null;
             }
-            _overtimeRepository.UpdateRange(lst);
+            _overtimeRepository.UpdateRange(lstOT);
         }
 
-        public void ApproveSingle(int Id, bool isApprove)
+        public void ApproveSingle(int Id, string role, bool isApprove)
         {
             var obj = _overtimeRepository.FindById(Id);
-            obj.Approve = isApprove ? CommonConstants.Approved : CommonConstants.No_Approved;
+
+            if (role == CommonConstants.roleApprove1)
+            {
+                obj.Approve = isApprove ? CommonConstants.Approved : CommonConstants.No_Approved;
+            }
+            else if (role == CommonConstants.roleApprove2)
+            {
+                obj.ApproveLV2 = isApprove ? CommonConstants.Approved : CommonConstants.No_Approved;
+            }
+            else if (role == CommonConstants.roleApprove3 || role == CommonConstants.AppRole.AdminRole)
+            {
+                obj.ApproveLV3 = isApprove ? CommonConstants.Approved : CommonConstants.No_Approved;
+            }
+
             _overtimeRepository.Update(obj);
         }
 
+        public void UpdateRange(List<DangKyOTNhanVienViewModel> OTVms)
+        {
+            var lstEntity = _mapper.Map<List<DANGKY_OT_NHANVIEN>>(OTVms);
+            foreach (var item in lstEntity)
+            {
+                item.UserModified = GetUserId();
+            }
+            _overtimeRepository.UpdateRange(lstEntity);
+        }
     }
 }

@@ -2,6 +2,7 @@
 using HRMNS.Application.Interfaces;
 using HRMNS.Application.ViewModels.Time_Attendance;
 using HRMNS.Data.Entities;
+using HRMNS.Utilities.Constants;
 using HRMS.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -80,7 +81,7 @@ namespace HRMNS.Application.Implementation
                     return GetAll(includeProperties);
                 }
 
-                return _mapper.Map<List<DangKyChamCongDacBietViewModel>>(_chamCongDbRepository.FindAll(x => string.Compare(x.NgayBatDau, fromDate) >= 0 && string.Compare(x.NgayKetThuc, toDate) <= 0, includeProperties).OrderByDescending(x => x.DateModified));
+                return _mapper.Map<List<DangKyChamCongDacBietViewModel>>(_chamCongDbRepository.FindAll(x => x.DateCreated.CompareTo(fromDate) >= 0 && x.DateCreated.CompareTo(toDate) <= 0, includeProperties).OrderByDescending(x => x.DateModified));
             }
             else
             {
@@ -89,13 +90,23 @@ namespace HRMNS.Application.Implementation
                     return _mapper.Map<List<DangKyChamCongDacBietViewModel>>(_chamCongDbRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept, includeProperties).OrderByDescending(x => x.DateModified));
                 }
 
-                return _mapper.Map<List<DangKyChamCongDacBietViewModel>>(_chamCongDbRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && string.Compare(x.NgayBatDau, fromDate) >= 0 && string.Compare(x.NgayKetThuc, toDate) <= 0, includeProperties).OrderByDescending(x => x.DateModified));
+                return _mapper.Map<List<DangKyChamCongDacBietViewModel>>(_chamCongDbRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && x.DateCreated.CompareTo(fromDate) >= 0 && x.DateCreated.CompareTo(toDate) <= 0, includeProperties).OrderByDescending(x => x.DateCreated));
             }
         }
 
         public DangKyChamCongDacBietViewModel GetSingle(Expression<Func<DANGKY_CHAMCONG_DACBIET, bool>> predicate)
         {
             return _mapper.Map<DangKyChamCongDacBietViewModel>(_chamCongDbRepository.FindSingle(predicate));
+        }
+
+        public void UpdateRange(List<DangKyChamCongDacBietViewModel> chamCongVms)
+        {
+            var lstEntity = _mapper.Map<List<DANGKY_CHAMCONG_DACBIET>>(chamCongVms);
+            foreach (var item in lstEntity)
+            {
+                item.UserModified = GetUserId();
+            }
+            _chamCongDbRepository.UpdateRange(lstEntity);
         }
     }
 }

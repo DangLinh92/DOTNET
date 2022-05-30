@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using HRMNS.Data.EF.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -13,5 +14,10 @@ namespace HRMS.Areas.Admin.Controllers
     public class AdminBaseController : Controller
     {
         public ILogger _logger;
+        public string Department { get => User.Claims.FirstOrDefault(x => x.Type == "Deparment").Value.NullString(); }
+        public string UserRole 
+        { 
+            get => User.Claims.FirstOrDefault(x => x.Type == "Roles").Value.NullString().Split(';')[0]; 
+        }
     }
 }

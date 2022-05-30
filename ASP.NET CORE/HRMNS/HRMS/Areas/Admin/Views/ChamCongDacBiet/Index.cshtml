@@ -1,10 +1,19 @@
-﻿@model List<DangKyChamCongDacBietViewModel>
+﻿@using Microsoft.AspNetCore.Authorization
+@using HRMS.Authorization
+@inject IAuthorizationService AuthorizationService
+@model List<DangKyChamCongDacBietViewModel>
 @{
     ViewData["Title"] = "Register TimeKeeping";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 @section Scripts
 {
+    <script src="https://cdn.datatables.net/select/1.3.4/js/dataTables.select.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedcolumns/4.0.2/js/dataTables.fixedColumns.min.js"></script>
+    <script>
+        var deparment = JSON.parse('@Html.Raw(JsonSerializer.Serialize(User.FindFirst(x=>x.Type == "Deparment").Value+""))');
+        var roleUsers = JSON.parse('@Html.Raw(JsonSerializer.Serialize(User.FindFirst(x => x.Type == "Roles").Value + ""))');
+    </script>
     <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
     <script src="~/app/controllers/chamcong_dacbiet/chamCongDacBietMns.js"></script>
     <script>
@@ -15,17 +24,94 @@
         onBeginAjax = controller.beginSearch;
 
         $(document).ready(function () {
-            $('#chamCongDacBietDataTable').DataTable({
-                "order": [7, 'asc']
+
+            var table = $('#chamCongDacBietDataTable').DataTable({
+                scrollY: 600,
+                scrollX: true,
+                scrollCollapse: true,
+                paging: false,
+                select: true,
+                "searching": true,
+                initComplete: function () {
+                    this.api().columns([1, 2, 3, 4, 5, 6, 8, 9, 10]).every(function () {
+                        var column = this;
+                        var select = $('<select><option value="">All</option></select>')
+                            .appendTo($(column.header()))
+                            .on('change', function () {
+                                var val = $.fn.dataTable.util.escapeRegex(
+                                    $(this).val()
+                                );
+                                column
+                                    .search(val ? '^' + val + '$' : '', true, false)
+                                    .draw();
+                            });
+
+                        column.data().unique().sort().each(function (d, j) {
+                            if (d == '<span class="badge bg-inverse-success">Yes</span>') {
+                                select.append('<option value="Yes">Yes</option>');
+                            }
+                            else if (d == '<span class="badge bg-inverse-warning">Request</span>') {
+                                select.append('<option value="Request">Request</option>');
+                            }
+                            else if (d == '<span class="badge bg-inverse-danger">No</span>') {
+                                select.append('<option value="No">No</option>')
+                            }
+                            else {
+                                select.append('<option value="' + d + '">' + d + '</option>');
+                            }
+                        });
+                    });
+                }
+                , columnDefs: [{
+                    targets: 0,
+                    className: 'dt-body-center',
+                    render: function (data, type, full, meta) {
+                        return '<input type="checkbox" name="id[]" value="' + $('<div/>').text(data).html() + '">';
+                    }
+                }],
+                "order": [[10, 'asc']]
             });
+            table.columns.adjust().draw();
+            table.order([11, 'asc']).draw();
+
             $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
             $('select[name="chamCongDacBietDataTable_length"]').removeClass('form-control-sm');
+
+            // Handle click on "Select all" control
+            $('#chamCongDacBietDataTable-select-all').on('click', function () {
+                // Get all rows with search applied
+                var rows = table.rows({ 'search': 'applied' }).nodes();
+                // Check/uncheck checkboxes for all rows in the table
+                $('input[type="checkbox"]', rows).prop('checked', this.checked);
+            });
+
+            // Handle click on checkbox to set state of "Select all" control
+            $('#chamCongDacBietDataTable tbody').on('change', 'input[type="checkbox"]', function () {
+                // If checkbox is not checked
+                if (!this.checked) {
+                    var el = $('#chamCongDacBietDataTable-select-all').get(0);
+                    // If "Select all" control is checked and has 'indeterminate' property
+                    if (el && el.checked && ('indeterminate' in el)) {
+                        // Set visual state of "Select all" control
+                        // as 'indeterminate'
+                        el.indeterminate = true;
+                    }
+                }
+            });
 
             // init select 2 jquery
             $(".nested").select2({
                 tags: true
             });
         });
+
+        let resizeObserver = new ResizeObserver(() => {
+            $($.fn.dataTable.tables(true)).DataTable()
+                .columns.adjust();
+        });
+
+        resizeObserver.observe($('#content_id_chamcongDB')[0]);
+
     </script>
 }
 @section Styles{
@@ -40,10 +126,14 @@
             min-width: 150px;
             border-radius: 50px;
         }
+
+        .width-100 {
+            width: 100px;
+        }
     </style>
 }
 <!-- Page Content -->
-<div class="content container-fluid">
+<div class="content container-fluid" id="content_id_chamcongDB">
     <!-- Page Header -->
     <div class="page-header">
         <div class="row align-items-center">
@@ -54,14 +144,20 @@
                     <li class="breadcrumb-item active">Register Timekeeping</li>
                 </ul>
             </div>
-            <div class="col-auto float-right ml-auto">
-                <a href="#" id="btnCreate" class="btn add-btn" data-toggle="modal" data-target="#addEditChamCongDacBietModel"><i class="fa fa-plus"></i> Register</a>
-            </div>
+            @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+             (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "AssLeader" ||
+             User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" ||
+             User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin"))
+            {
+                <div class="col-auto float-right ml-auto">
+                    <a href="#" id="btnCreate" class="btn add-btn" data-toggle="modal" data-target="#addEditChamCongDacBietModel"><i class="fa fa-plus"></i> Register</a>
+                </div>
+            }
         </div>
     </div>
     <!-- /Page Header -->
     <!-- Search Filter -->
-    <form id="frmSearch" method="post" data-ajax="true" data-ajax-url="/Admin/ChamCongDacBiet/Search" data-ajax-update="#gridChamCongDBIndex" data-ajax-mode='replace'  data-ajax-success="onSuccess" data-ajax-begin="onBeginAjax">
+    <form id="frmSearch" method="post" data-ajax="true" data-ajax-url="/Admin/ChamCongDacBiet/Search" data-ajax-update="#gridChamCongDBIndex" data-ajax-mode='replace' data-ajax-success="onSuccess" data-ajax-begin="onBeginAjax">
         <div class="row filter-row">
             <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
             </div>
@@ -70,10 +166,6 @@
             <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
                 <div class="form-group form-focus select-focus">
                     <select class="select floating" id="cboDepartment" name="department">
-                        <option value=""> -- Select -- </option>
-                        <option value="New">New</option>
-                        <option value="Active">Active</option>
-                        <option value="InActive">InActive</option>
                     </select>
                     <label class="focus-label">Deparment</label>
                 </div>
@@ -83,7 +175,7 @@
                     <div class="cal-icon">
                         <input class="form-control floating datetimepicker" type="text" id="searchFromTime" name="timeFrom">
                     </div>
-                    <label class="focus-label">From</label>
+                    <label class="focus-label">Approved From</label>
                 </div>
             </div>
             <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
@@ -91,7 +183,7 @@
                     <div class="cal-icon">
                         <input class="form-control floating datetimepicker" type="text" id="searchToTime" name="timeTo">
                     </div>
-                    <label class="focus-label">To</label>
+                    <label class="focus-label">Approved To</label>
                 </div>
             </div>
             <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
@@ -100,6 +192,30 @@
         </div>
     </form>
     <!-- /Search Filter -->
+
+    <div class="row filter-row" style="margin-bottom:10px">
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+     (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "GrLeader" ||
+     User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "KRManager" ||
+     User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" ||
+     User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin"))
+            {
+                <a href="#" style="min-width: 120px" class="btn btn-info" id="btnApprove" data-target="#approve_overtime">  Approve</a>
+                <a href="#" class="btn btn-info" id="btnUnApprove" data-target="#unapprove_overtime">UnApprove</a>
+            }
+        </div>
+    </div>
 
     <div class="row">
         <div class="col-md-12">
@@ -110,7 +226,6 @@
     </div>
 </div>
 <!-- /Page Content -->
-
 <!-- Delete overtime -->
 <div class="modal custom-modal fade" id="delete_chamcongDB" role="dialog">
     <div class="modal-dialog modal-dialog-centered">
@@ -136,5 +251,53 @@
     </div>
 </div>
 <!-- Delete Expense Modal -->
+
+<div class="modal custom-modal fade" id="approve_overtime" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header">
+                    <input type="hidden" id="hiIdApprove" />
+                    <h3>Approve</h3>
+                    <p>Are you sure want to approve?</p>
+                </div>
+                <div class="modal-btn delete-action">
+                    <div class="row">
+                        <div class="col-6">
+                            <a href="javascript:void(0);" class="btn btn-primary continue-btn" id="btn-approve_overtime">Approve</a>
+                        </div>
+                        <div class="col-6">
+                            <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal custom-modal fade" id="unapprove_overtime" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header">
+                    <input type="hidden" id="hiIdUnApprove" />
+                    <h3>UnApprove</h3>
+                    <p>Are you sure want to unapprove?</p>
+                </div>
+                <div class="modal-btn delete-action">
+                    <div class="row">
+                        <div class="col-6">
+                            <a href="javascript:void(0);" class="btn btn-primary continue-btn" id="btn-Unapprove_overtime">UnApprove</a>
+                        </div>
+                        <div class="col-6">
+                            <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <partial name="_chamCongDacBietModelView" />

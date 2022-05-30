@@ -35,13 +35,15 @@ namespace VOC.Areas.Admin.Controllers
         public IActionResult Index()
         {
             var lst = GetData(DateTime.Now.Year, CommonConstants.SEV_ALL, "", CommonConstants.ALL, "");
+            ViewBag.ActiveMonth = DateTime.Now.Month.NullString();
             return View(lst);
         }
 
         [HttpPost]
-        public IActionResult Search(int year, string customer_sev, string customer_sevt, string part, string wisolModel)
+        public IActionResult Search(int year, string customer_sev, string customer_sevt, string part, string wisolModel,string monthActive)
         {
             var lst = GetData(year, customer_sev, customer_sevt, part, wisolModel);
+            ViewBag.ActiveMonth = monthActive;
             return View("Index", lst);
         }
 

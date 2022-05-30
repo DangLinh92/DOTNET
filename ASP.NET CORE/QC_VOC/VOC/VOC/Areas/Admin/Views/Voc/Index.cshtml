@@ -40,7 +40,7 @@
                 scrollCollapse: true,
                 paging: false,
                 select: true,
-                "searching": false,
+                "searching": true,
                 //fixedColumns: {
                 //    leftColumns: 5
                 //},
@@ -90,7 +90,7 @@
                 scrollCollapse: true,
                 paging: false,
                 select: true,
-                "searching": false,
+                "searching": true,
                 //fixedColumns: {
                 //    left: 0,
                 //    right: 1
@@ -104,14 +104,26 @@
                                 var val = $.fn.dataTable.util.escapeRegex(
                                     $(this).val()
                                 );
-
                                 column
                                     .search(val ? '^' + val + '$' : '', true, false)
                                     .draw();
                             });
-
                         column.data().unique().sort().each(function (d, j) {
-                            select.append('<option value="' + d + '">' + d + '</option>')
+
+                            if (d.includes('Report')) {
+                                if (d.startsWith('HQ')) {
+                                    select.append('<option value="HQ">HQ</option>');
+                                }
+                                else if (d.startsWith('WHC')) {
+                                    select.append('<option value="WHC">WHC</option>');
+                                }
+                                else if (d.startsWith('WTC')) {
+                                    select.append('<option value="WTC">WTC</option>');
+                                }
+                            }
+                            else {
+                                select.append('<option value="' + d + '">' + d + '</option>');
+                            }
                         });
                     });
                 }

@@ -34,21 +34,9 @@ namespace HRMNS.Data.EF
                 });
                 await _roleManager.CreateAsync(new APP_ROLE()
                 {
-                    Name = "Staff",
-                    NormalizedName = "Staff",
-                    Description = "Staff"
-                });
-                await _roleManager.CreateAsync(new APP_ROLE()
-                {
                     Name = "HR",
                     NormalizedName = "HR",
                     Description = "Human Resources"
-                });
-                await _roleManager.CreateAsync(new APP_ROLE()
-                {
-                    Name = "HRS",
-                    NormalizedName = "HRS",
-                    Description = "Human Resources Of Deparment"
                 });
                 await _roleManager.CreateAsync(new APP_ROLE()
                 {
@@ -62,7 +50,29 @@ namespace HRMNS.Data.EF
                     NormalizedName = "GA",
                     Description = "General Administration"
                 });
+
+                await _roleManager.CreateAsync(new APP_ROLE()
+                {
+                    Name = "GrLeader",
+                    NormalizedName = "GroupLeader",
+                    Description = "Group Leader"
+                });
+
+                await _roleManager.CreateAsync(new APP_ROLE()
+                {
+                    Name = "AssLeader",
+                    NormalizedName = "AssLeader",
+                    Description = "Assistance Leader"
+                });
+
+                await _roleManager.CreateAsync(new APP_ROLE()
+                {
+                    Name = "KRManager",
+                    NormalizedName = "KRManager",
+                    Description = "Korea Manager"
+                });
             }
+
             if (!_userManager.Users.Any())
             {
                 await _userManager.CreateAsync(new APP_USER()
@@ -114,6 +124,7 @@ namespace HRMNS.Data.EF
                     new FUNCTION() {Id = "DOCUMENT_SUB",Name = "Documents",ParentId = "OTHER",SortOrder = 1,Status = Status.Active,URL = "/admin/documentall/index",IconCss = "la la-file-text"  },
                     new FUNCTION() {Id = "CALENDAR",Name = "Calendar",ParentId = "OTHER",SortOrder = 2,Status = Status.Active,URL = "/admin/calendar/index",IconCss = "la la-table"  },
                     new FUNCTION() {Id = "SETTINGS",Name = "Settings",ParentId = "OTHER",SortOrder = 3,Status = Status.Active,URL = "/admin/settings/index",IconCss = "la la-cog"  },
+                    new FUNCTION() {Id = "ROLE_PERMISSTION",Name = "Roles & Permissions",ParentId = "SETTINGS",SortOrder = 1,Status = Status.Active,URL = "/admin/roleandpermisstion/index",IconCss = "la la-key"  },
                 });
             }
 
@@ -778,7 +789,7 @@ namespace HRMNS.Data.EF
                         HeSo_OT = 100
                     },
                     new CA_LVIEC(){
-                        Danhmuc_CaLviec = "CN_WHC",// ca ngay
+                        Danhmuc_CaLviec = "CN_WHC",// ot ca ngay
                         DM_NgayLViec = "NT",// ngay thuong
                         TenCa = "Overtime ca ngày, ngày thường",
                         Time_BatDau = "17:30:00",
@@ -1219,7 +1230,7 @@ namespace HRMNS.Data.EF
                        PhanLoaiDM = 1,
                        KyHieuChamCong = "PH/L"
                     },
-                        new DANGKY_CHAMCONG_CHITIET()
+                     new DANGKY_CHAMCONG_CHITIET()
                     {
                        TenChiTiet = "Khám Thai",
                        PhanLoaiDM = 1,

@@ -168,7 +168,9 @@
             success: function (response) {
                 var render = "<option value=''>All</option>";
                 $.each(response, function (i, item) {
-                    render += "<option value='" + item.trim() + "'>" + item + "</option >"
+                    if (item) {
+                        render += "<option value='" + item.trim() + "'>" + item + "</option >";
+                    }
                 });
                 $('#cboCustomer').html(render);
                 $('#cboCustomer').val(selectCustomer);

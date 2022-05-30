@@ -141,15 +141,10 @@
                         <tr>
                             <td>
                                 @voc.Received_site
-
-                                <ul class="team-members" style="float:right">
-                                    @if (!string.IsNullOrEmpty(voc.LinkReport))
-                                    {
-                                        <li>
-                                            <a class="view-issue" href="#" data-id="@voc.LinkReport" style="border:none"><i class="fa fa-file-powerpoint-o m-r-5" style="margin:7px;"></i> Report</a>
-                                        </li>
-                                    }
-                                </ul>
+                                @if (!string.IsNullOrEmpty(voc.LinkReport))
+                                {
+                                    <ul class="team-members" style="float:right"><li><a class="view-issue" href="#" data-id="@voc.LinkReport" style="border:none"><i class="fa fa-file-powerpoint-o m-r-5" style="margin:7px;"></i> Report</a></li></ul>
+                                }
                             </td>
                             <td>@voc.PlaceOfOrigin</td>
                             <td>@voc.ReceivedDept</td>

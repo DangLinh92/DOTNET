@@ -541,7 +541,7 @@
             $('#approve_nhanVien_calviec').modal('show');
         });
 
-         // Click unapprove nhan vien ca lam viec tren gridview
+        // Click unapprove nhan vien ca lam viec tren gridview
         $('body').on('click', '.unapprove-nv-calviec', function (e) {
             e.preventDefault();
 
@@ -605,11 +605,18 @@
             dataType: 'json',
             async: false,
             success: function (response) {
-                var render = "<option value=''>--Select department--</option>";
-                $.each(response, function (i, item) {
-                    render += "<option value='" + item.Id + "'>" + item.TenBoPhan + "</option >"
-                });
-                $('#cboDepartment').html(render);
+
+                if (deparment != '') {
+                    var render = "<option value='" + deparment + "'>" + deparment + "</option >";
+                    $('#cboDepartment').html(render);
+                }
+                else {
+                    var render = "<option value=''>--Select department--</option>";
+                    $.each(response, function (i, item) {
+                        render += "<option value='" + item.Id + "'>" + item.TenBoPhan + "</option >"
+                    });
+                    $('#cboDepartment').html(render);
+                }
             },
             error: function (status) {
                 console.log(status);
@@ -628,13 +635,39 @@
                 $('#hTimeFrom').text(response.NgayBatDau);
                 $('#hTimeTo').text(response.NgayKetThuc);
 
-                $('#hRegisterTimeFrom').text(response.NgayBatDauDangKy)
-                $('#hRegisterTimeTo').text(response.NgayKetThucDangKy)
+                $('#hRegisterTimeFrom').text(response.NgayBatDauDangKy);
+                $('#hRegisterTimeTo').text(response.NgayKetThucDangKy);
+
+                var today = GetToDayDate();
+                if (today >= response.NgayBatDauDangKy && today <= response.NgayKetThucDangKy)
+                {
+                    $('#divCreateData').css('display', true);
+                }
+                else
+                {
+                    if (roleUsers.includes('Admin') || roleUsers.includes('HR'))
+                    {
+                        $('#divCreateData').css('display', true);
+                    }
+                    else
+                    {
+                        $('#divCreateData').css('display', 'none');
+                    }
+                }
             },
             error: function (status) {
                 console.log(status);
                 hrms.notify('Cannot loading data', 'error', 'alert', function () { });
             }
         });
+    }
+
+    function GetToDayDate() {
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        var yyyy = today.getFullYear();
+
+        return today = yyyy + '-' + mm + '-' + dd;
     }
 }

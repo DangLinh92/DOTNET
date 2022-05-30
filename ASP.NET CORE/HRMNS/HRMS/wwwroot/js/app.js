@@ -409,7 +409,7 @@ $(document).ready(function() {
 	
 	// Small Sidebar
 
-	$(document).on('click', '#toggle_btn', function() {
+	$(document).on('click', '#toggle_btn', function () {
 		if($('body').hasClass('mini-sidebar')) {
 			$('body').removeClass('mini-sidebar');
 			$('.subdrop + ul').slideDown();

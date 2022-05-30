@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using HRMNS.Application.ViewModels.HR;
+using HRMNS.Application.ViewModels.System;
 using HRMNS.Application.ViewModels.Time_Attendance;
 using HRMNS.Data.Entities;
 using System;
@@ -44,7 +45,7 @@ namespace HRMNS.Application.AutoMapper
             .ConstructUsing(c => new SETTING_TIME_CA_LVIEC(c.CaLamViec, c.NgayBatDau, c.NgayKetThuc, c.NgayBatDauDangKy, c.NgayKetThucDangKy, c.Status));
 
             CreateMap<DangKyOTNhanVienViewModel, DANGKY_OT_NHANVIEN>()
-            .ConstructUsing(c => new DANGKY_OT_NHANVIEN(c.NgayOT, c.MaNV, c.DM_NgayLViec, c.Approve, c.Passed));
+            .ConstructUsing(c => new DANGKY_OT_NHANVIEN(c.NgayOT, c.MaNV, c.DM_NgayLViec, c.Approve, c.ApproveLV2, c.ApproveLV3));
 
             CreateMap<NgayLeNamViewModel, NGAY_LE_NAM>()
             .ConstructUsing(c => new NGAY_LE_NAM(c.Id, c.TenNgayLe, c.KyHieuChamCong, c.IslastHoliday));
@@ -56,7 +57,7 @@ namespace HRMNS.Application.AutoMapper
                .ConstructUsing(c => new DANGKY_CHAMCONG_CHITIET(c.Id, c.TenChiTiet, c.PhanLoaiDM, c.KyHieuChamCong));
 
             CreateMap<DangKyChamCongDacBietViewModel, DANGKY_CHAMCONG_DACBIET>()
-             .ConstructUsing(c => new DANGKY_CHAMCONG_DACBIET(c.MaNV, c.MaChamCong_ChiTiet, c.NoiDung, c.NgayBatDau, c.NgayKetThuc,c.Approve));
+             .ConstructUsing(c => new DANGKY_CHAMCONG_DACBIET(c.MaNV, c.MaChamCong_ChiTiet, c.NoiDung, c.NgayBatDau, c.NgayKetThuc, c.Approve, c.ApproveLV2, c.ApproveLV3));
 
             CreateMap<DMDangKyChamCongViewModel, DM_DANGKY_CHAMCONG>()
             .ConstructUsing(c => new DM_DANGKY_CHAMCONG(c.Id, c.TieuDe));
@@ -65,8 +66,13 @@ namespace HRMNS.Application.AutoMapper
           .ConstructUsing(c => new DM_DIEUCHINH_CHAMCONG(c.Id, c.TieuDe));
 
             CreateMap<DCChamCongViewModel, DC_CHAM_CONG>()
-           .ConstructUsing(c => new DC_CHAM_CONG(c.Id,c.DM_DieuChinhCong,c.MaNV,c.NgayCanDieuChinh_From,c.NgayCanDieuChinh_To,c.NoiDungDC,c.GiaTriBoXung,c.TrangThaiChiTra));
+           .ConstructUsing(c => new DC_CHAM_CONG(c.Id, c.DM_DieuChinhCong, c.MaNV, c.NgayCanDieuChinh_From, c.NgayCanDieuChinh_To, c.NoiDungDC, c.GiaTriBoXung, c.TrangThaiChiTra));
 
+            CreateMap<RoleViewModel, APP_ROLE>()
+          .ConstructUsing(c => new APP_ROLE(c.Name, c.Description));
+
+            CreateMap<PermisstionViewModel, PERMISSION>()
+         .ConstructUsing(c => new PERMISSION(c.Id, c.RoleId, c.FunctionId, c.CanCreate, c.CanRead, c.CanUpdate, c.CanDelete, c.ApproveL1, c.ApproveL2, c.ApproveL3));
         }
     }
 }

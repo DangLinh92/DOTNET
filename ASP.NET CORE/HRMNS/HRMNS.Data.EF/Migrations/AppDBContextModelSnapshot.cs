@@ -69,6 +69,10 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
+                    b.Property<string>("Department")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
@@ -454,6 +458,14 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
+                    b.Property<string>("ApproveLV2")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("ApproveLV3")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<string>("DateCreated")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
@@ -506,6 +518,14 @@ namespace HRMNS.Data.EF.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Approve")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("ApproveLV2")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("ApproveLV3")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
@@ -1694,6 +1714,15 @@ namespace HRMNS.Data.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("ApproveL1")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("ApproveL2")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("ApproveL3")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("CanCreate")
                         .HasColumnType("bit");

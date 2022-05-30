@@ -1,4 +1,5 @@
-﻿using HRMNS.Data.Entities;
+﻿using HRMNS.Data.EF.Extensions;
+using HRMNS.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using System;
@@ -31,7 +32,9 @@ namespace HRMS.Helpers
                 new Claim("FullName",user.FullName),
                 new Claim("Avatar",user.Avatar??string.Empty),
                 new Claim("Roles",string.Join(";",roles)),
-                new Claim("UserId",user.Id.ToString())
+                new Claim("UserId",user.Id.ToString()),
+                new Claim("UserName",user.UserName.NullString()),
+                new Claim("Deparment",user.Department.NullString()),
             });
             return principal;
         }

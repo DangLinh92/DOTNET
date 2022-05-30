@@ -49,7 +49,25 @@ namespace HRMNS.Application.Implementation
 
         public List<NgayLeNamViewModel> GetAll(string keyword)
         {
-            return _mapper.Map<List<NgayLeNamViewModel>>(_ngaylenamRepository.FindAll(x => x.Id.Contains(DateTime.Now.Year.ToString())).OrderBy(x => x.Id));
+            if (keyword == "")
+            {
+                return _mapper.Map<List<NgayLeNamViewModel>>(_ngaylenamRepository.FindAll(x => x.Id.Contains(DateTime.Now.Year.ToString())).OrderBy(x => x.Id));
+            }
+            else
+            {
+                DateTime time;
+                try
+                {
+                    time = DateTime.Parse(keyword);
+                }
+                catch (Exception)
+                {
+
+                    time = DateTime.Now;
+                }
+
+                return _mapper.Map<List<NgayLeNamViewModel>>(_ngaylenamRepository.FindAll(x => x.Id.Contains(time.Year.ToString())).OrderBy(x => x.Id));
+            }
         }
 
         public NgayLeNamViewModel GetById(string id, params Expression<Func<NGAY_LE_NAM, object>>[] includeProperties)

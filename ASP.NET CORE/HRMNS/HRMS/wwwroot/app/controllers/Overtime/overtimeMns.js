@@ -70,8 +70,7 @@
                 dataType: 'json',
                 async: false,
                 success: function (response) {
-
-                    console.log(response);
+                    // console.log(response);
 
                     var groupEmp = response.reduce(function (result, current) {
                         result[current.MaBoPhan] = result[current.MaBoPhan] || [];
@@ -79,15 +78,27 @@
                         return result;
                     }, {})
 
-                    console.log(groupEmp);
+                    // console.log(groupEmp);
 
                     var render = "<option value='' selected='selected'>Select option...</option>";
                     $.each(groupEmp, function (gr, item) {
-                        render += "<optgroup label='" + gr + "'>";
-                        $.each(item, function (j, sub) {
-                            render += "<option value='" + sub.Id + "'>" + sub.Id + "-" + sub.TenNV + "</option>"
-                        });
-                        render += "</optgroup>"
+
+                        if (deparment != '') {
+                            if (deparment == gr) {
+                                render += "<optgroup label='" + gr + "'>";
+                                $.each(item, function (j, sub) {
+                                    render += "<option value='" + sub.Id + "'>" + sub.Id + "-" + sub.TenNV + "</option>"
+                                });
+                                render += "</optgroup>"
+                            }
+                        }
+                        else {
+                            render += "<optgroup label='" + gr + "'>";
+                            $.each(item, function (j, sub) {
+                                render += "<option value='" + sub.Id + "'>" + sub.Id + "-" + sub.TenNV + "</option>"
+                            });
+                            render += "</optgroup>"
+                        }
                     });
                     $('#_txtMaNV').html(render);
                 },
@@ -190,19 +201,35 @@
 
             e.preventDefault();
 
-            var _dept = $('#cboDepartment').val();
-            var _status = $('#searchStatus').val();
             var code = $('#hiIdApprove').val();
+            var ids = [];
+
+            if (code == '0') {
+                // Iterate over all checkboxes in the table
+                let arrV = $($.fn.dataTable.tables(true)).DataTable().$('input[type="checkbox"]');
+                arrV.each(function () {
+                    // If checkbox is checked
+                    if (this.checked) {
+                        ids.push(this.value);
+                    }
+                });
+            }
+            else {
+                ids.push(code);
+            }
+
+            if (ids.length == 0) {
+                hrms.notify('error: Choose item for approve', 'error', 'alert', function () { });
+                return;
+            }
 
             $.ajax({
                 url: '/Admin/DangKyOT/Approve',
                 type: 'POST',
                 dataType: 'json',
                 data: {
-                    Id: code,
-                    dept: _dept,
-                    status: _status,
-                    action:'Y'
+                    lstID: ids,
+                    action: 'approve'
                 },
                 success: function (response) {
 
@@ -218,24 +245,41 @@
             });
         });
 
-        // Approve
+        // UnApprove
         $('#btn-Unapprove_overtime').on('click', function (e) {
 
             e.preventDefault();
 
-            var _dept = $('#cboDepartment').val();
-            var _status = $('#searchStatus').val();
             var code = $('#hiIdUnApprove').val();
+
+            var ids = [];
+
+            if (code == '0') {
+                // Iterate over all checkboxes in the table
+                let arrV = $($.fn.dataTable.tables(true)).DataTable().$('input[type="checkbox"]');
+                arrV.each(function () {
+                    // If checkbox is checked
+                    if (this.checked) {
+                        ids.push(this.value);
+                    }
+                });
+            }
+            else {
+                ids.push(code);
+            }
+
+            if (ids.length == 0) {
+                hrms.notify('error: Choose item for unapprove', 'error', 'alert', function () { });
+                return;
+            }
 
             $.ajax({
                 url: '/Admin/DangKyOT/Approve',
                 type: 'POST',
                 dataType: 'json',
                 data: {
-                    Id: code,
-                    dept: _dept,
-                    status: _status,
-                    action: 'N'
+                    lstID: ids,
+                    action: 'unapprove'
                 },
                 success: function (response) {
 
@@ -256,14 +300,7 @@
 
             e.preventDefault();
             $('#hiIdApprove').val(0);
-
-            if ($('#cboDepartment').val() == '' || $('#searchStatus').val() != 'N') {
-                hrms.notify("Duyệt theo phòng ban có status = 'Not approved yet'", 'error', 'alert', function () { });
-            }
-            else
-            {
-                $('#approve_overtime').modal('show');
-            }
+            $('#approve_overtime').modal('show');
         });
 
         // UnApprove
@@ -271,14 +308,7 @@
 
             e.preventDefault();
             $('#hiIdUnApprove').val(0);
-
-            if ($('#cboDepartment').val() == '' || $('#searchStatus').val() != 'Y') {
-                hrms.notify("Bỏ duyệt theo phòng ban có status = 'Approved'", 'error', 'alert', function () { });
-            }
-            else
-            {
-                $('#unapprove_overtime').modal('show');
-            }
+            $('#unapprove_overtime').modal('show');
         });
 
         // Import excel
@@ -355,11 +385,18 @@
             dataType: 'json',
             async: false,
             success: function (response) {
-                var render = "<option value=''>--Select department--</option>";
-                $.each(response, function (i, item) {
-                    render += "<option value='" + item.Id + "'>" + item.TenBoPhan + "</option>"
-                });
-                $('#cboDepartment').html(render);
+
+                if (deparment != '' && deparment != 'SP') {
+                    var render = "<option value='" + deparment + "'>" + deparment + "</option >";
+                    $('#cboDepartment').html(render);
+                }
+                else {
+                    var render = "<option value=''>--Select department--</option>";
+                    $.each(response, function (i, item) {
+                        render += "<option value='" + item.Id + "'>" + item.TenBoPhan + "</option >"
+                    });
+                    $('#cboDepartment').html(render);
+                }
             },
             error: function (status) {
                 console.log(status);
@@ -372,16 +409,85 @@
         InitDataTable();
     }
 
-    function InitDataTable() {
+    function InitDataTable()
+    {
         var table = $('#overtimeDataTable');
         if (table) {
             table.DataTable().destroy();
         }
 
-        $('#overtimeDataTable').DataTable({
-            "order": [6, 'asc']
+        var table = $('#overtimeDataTable').DataTable({
+            scrollY: 600,
+            scrollX: true,
+            scrollCollapse: true,
+            paging: false,
+            select: true,
+            "searching": true,
+            initComplete: function () {
+                this.api().columns([1, 2, 3, 4, 5, 6, 7, 8]).every(function () {
+                    var column = this;
+                    var select = $('<select><option value="">All</option></select>')
+                        .appendTo($(column.header()))
+                        .on('change', function () {
+                            var val = $.fn.dataTable.util.escapeRegex(
+                                $(this).val()
+                            );
+                            column
+                                .search(val ? '^' + val + '$' : '', true, false)
+                                .draw();
+                        });
+
+                    column.data().unique().sort().each(function (d, j) {
+                        if (d == '<span class="badge bg-inverse-success">Yes</span>') {
+                            select.append('<option value="Yes">Yes</option>');
+                        }
+                        else if (d == '<span class="badge bg-inverse-warning">Request</span>') {
+                            select.append('<option value="Request">Request</option>');
+                        }
+                        else if (d == '<span class="badge bg-inverse-danger">No</span>') {
+                            select.append('<option value="No">No</option>')
+                        }
+                        else {
+                            select.append('<option value="' + d + '">' + d + '</option>');
+                        }
+                    });
+                });
+            }
+            , columnDefs: [{
+                targets: 0,
+                className: 'dt-body-center',
+                render: function (data, type, full, meta) {
+                    return '<input type="checkbox" name="id[]" value="' + $('<div/>').text(data).html() + '">';
+                }
+            }],
+            "order": [8, 'asc']
         });
         $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
         $('select[name="overtimeDataTable_length"]').removeClass('form-control-sm');
+
+        table.columns.adjust().draw();
+        table.order([9, 'asc']).draw();
+
+        // Handle click on "Select all" control
+        $('#overtimeDataTable-select-all').on('click', function () {
+            // Get all rows with search applied
+            var rows = table.rows({ 'search': 'applied' }).nodes();
+            // Check/uncheck checkboxes for all rows in the table
+            $('input[type="checkbox"]', rows).prop('checked', this.checked);
+        });
+
+        // Handle click on checkbox to set state of "Select all" control
+        $('#overtimeDataTable tbody').on('change', 'input[type="checkbox"]', function () {
+            // If checkbox is not checked
+            if (!this.checked) {
+                var el = $('#overtimeDataTable-select-all').get(0);
+                // If "Select all" control is checked and has 'indeterminate' property
+                if (el && el.checked && ('indeterminate' in el)) {
+                    // Set visual state of "Select all" control
+                    // as 'indeterminate'
+                    el.indeterminate = true;
+                }
+            }
+        });
     }
 }

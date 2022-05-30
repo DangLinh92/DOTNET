@@ -23,8 +23,11 @@ namespace HRMNS.Application.ViewModels.Time_Attendance
         [StringLength(50)]
         public string Approve { get; set; }
 
-        [StringLength(2)]
-        public string Passed { get; set; }
+        [StringLength(50)]
+        public string ApproveLV2 { get; set; }
+
+        [StringLength(50)]
+        public string ApproveLV3 { get; set; }
 
         [StringLength(50)]
         public string DateCreated { get; set; }

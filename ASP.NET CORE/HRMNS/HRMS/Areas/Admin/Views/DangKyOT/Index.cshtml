@@ -1,10 +1,17 @@
-﻿@model List<DangKyOTNhanVienViewModel>
+﻿@using Microsoft.AspNetCore.Authorization
+@using HRMS.Authorization
+@inject IAuthorizationService AuthorizationService
+@model List<DangKyOTNhanVienViewModel>
 @{
     ViewData["Title"] = "Overtime";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 @section Scripts
 {
+    <script>
+        var deparment = JSON.parse('@Html.Raw(JsonSerializer.Serialize(User.FindFirst(x=>x.Type == "Deparment").Value+""))');
+        var roleUsers = JSON.parse('@Html.Raw(JsonSerializer.Serialize(User.FindFirst(x => x.Type == "Roles").Value + ""))');
+    </script>
     <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
     <script src="~/app/controllers/Overtime/overtimeMns.js"></script>
     <script>
@@ -14,17 +21,92 @@
         onSuccess = controller.doAftersearch;
 
         $(document).ready(function () {
-            $('#overtimeDataTable').DataTable({
-                "order": [6, 'asc']
+            var table = $('#overtimeDataTable').DataTable({
+                scrollY: 600,
+                scrollX: true,
+                scrollCollapse: true,
+                paging: false,
+                select: true,
+                "searching": true,
+                initComplete: function () {
+                    this.api().columns([1, 2, 3, 4, 5, 6, 7, 8]).every(function () {
+                        var column = this;
+                        var select = $('<select><option value="">All</option></select>')
+                            .appendTo($(column.header()))
+                            .on('change', function () {
+                                var val = $.fn.dataTable.util.escapeRegex(
+                                    $(this).val()
+                                );
+                                column
+                                    .search(val ? '^' + val + '$' : '', true, false)
+                                    .draw();
+                            });
+
+                        column.data().unique().sort().each(function (d, j) {
+                            if (d == '<span class="badge bg-inverse-success">Yes</span>') {
+                                select.append('<option value="Yes">Yes</option>');
+                            }
+                            else if (d == '<span class="badge bg-inverse-warning">Request</span>') {
+                                select.append('<option value="Request">Request</option>');
+                            }
+                            else if (d == '<span class="badge bg-inverse-danger">No</span>') {
+                                select.append('<option value="No">No</option>')
+                            }
+                            else {
+                                select.append('<option value="' + d + '">' + d + '</option>');
+                            }
+                        });
+                    });
+                }
+                , columnDefs: [{
+                    targets: 0,
+                    className: 'dt-body-center',
+                    render: function (data, type, full, meta) {
+                        return '<input type="checkbox" name="id[]" value="' + $('<div/>').text(data).html() + '">';
+                    }
+                }],
+                "order": [8, 'asc']
             });
             $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
             $('select[name="overtimeDataTable_length"]').removeClass('form-control-sm');
+
+            table.columns.adjust().draw();
+            table.order([9, 'asc']).draw();
+
+            // Handle click on "Select all" control
+            $('#overtimeDataTable-select-all').on('click', function () {
+                // Get all rows with search applied
+                var rows = table.rows({ 'search': 'applied' }).nodes();
+                // Check/uncheck checkboxes for all rows in the table
+                $('input[type="checkbox"]', rows).prop('checked', this.checked);
+            });
+
+            // Handle click on checkbox to set state of "Select all" control
+            $('#overtimeDataTable tbody').on('change', 'input[type="checkbox"]', function () {
+                // If checkbox is not checked
+                if (!this.checked) {
+                    var el = $('#overtimeDataTable-select-all').get(0);
+                    // If "Select all" control is checked and has 'indeterminate' property
+                    if (el && el.checked && ('indeterminate' in el)) {
+                        // Set visual state of "Select all" control
+                        // as 'indeterminate'
+                        el.indeterminate = true;
+                    }
+                }
+            });
 
             // init select 2 jquery
             $(".nested").select2({
                 tags: true
             });
         });
+
+        let resizeObserver = new ResizeObserver(() => {
+            $($.fn.dataTable.tables(true)).DataTable()
+                .columns.adjust();
+        });
+
+        resizeObserver.observe($('#content_id_overtime')[0]);
     </script>
 }
 @section Styles{
@@ -42,7 +124,7 @@
     </style>
 }
 <!-- Page Content -->
-<div class="content container-fluid">
+<div class="content container-fluid" id="content_id_overtime">
     <!-- Page Header -->
     <div class="page-header">
         <div class="row align-items-center">
@@ -54,19 +136,22 @@
                 </ul>
             </div>
             <div class="col-auto float-right ml-auto">
-                <a href="#" id="btnCreate" class="btn add-btn" data-toggle="modal" data-target="#addEditOvertimeModel"><i class="fa fa-plus"></i> Add Overtime</a>
-                <div class="btn-group">
-                    <button type="button" class="btn btn-info dropdown-toggle" id="btnManagement" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Management</button>
-                    <div class="dropdown-menu" style="">
-                        <a class="dropdown-item" href="~/templates/OvertimeTemplate.xlsx">Get Overtime File Template</a>
-                        <a class="dropdown-item" href="#" id="btn-importOvertime">Import Overtime</a>
+                @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+                (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin" || User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" || User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "AssLeader"))
+                {
+                    <a href="#" id="btnCreate" class="btn add-btn" data-toggle="modal" data-target="#addEditOvertimeModel"><i class="fa fa-plus"></i> Add Overtime</a>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-info dropdown-toggle" id="btnManagement" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Management</button>
+                        <div class="dropdown-menu" style="">
+                            <a class="dropdown-item" href="~/templates/OvertimeTemplate.xlsx">Get Overtime File Template</a>
+                            <a class="dropdown-item" href="#" id="btn-importOvertime">Import Overtime</a>
+                        </div>
                     </div>
-                </div>
+                }
             </div>
         </div>
     </div>
     <!-- /Page Header -->
-
     <!-- Search Filter -->
     <form id="frmSearch" method="post" data-ajax="true" data-ajax-url="/Admin/DangKyOT/Search" data-ajax-loading="#spinner1" data-ajax-update="#gridOvertimeIndex" data-ajax-mode='replace' data-ajax-success="onSuccess">
         <div class="row filter-row">
@@ -86,6 +171,7 @@
                 <div class="form-group form-focus select-focus">
                     <select class="select floating" id="searchStatus" name="status">
                         <option value=""> -- Select -- </option>
+                        <option value="R">Request</option>
                         <option value="N">Not approved yet</option>
                         <option value="Y">Approved</option>
                     </select>
@@ -113,8 +199,16 @@
             </div>
 
             <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-                <a href="#" style="min-width: 120px" class="btn btn-primary" id="btnApprove" data-target="#approve_overtime">  Approve</a>
-                <a href="#" class="btn btn-primary" id="btnUnApprove" data-target="#unapprove_overtime">UnApprove</a>
+
+                @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+             (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "GrLeader" ||
+             User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "KRManager" ||
+             User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" ||
+             User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin"))
+                {
+                    <a href="#" style="min-width: 120px" class="btn btn-primary" id="btnApprove" data-target="#approve_overtime">  Approve</a>
+                    <a href="#" class="btn btn-primary" id="btnUnApprove" data-target="#unapprove_overtime">UnApprove</a>
+                }
             </div>
         </div>
     </form>

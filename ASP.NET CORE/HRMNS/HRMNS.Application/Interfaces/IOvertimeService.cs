@@ -22,14 +22,15 @@ namespace HRMNS.Application.Interfaces
 
         DangKyOTNhanVienViewModel GetById(int id, params Expression<Func<DANGKY_OT_NHANVIEN, object>>[] includeProperties);
 
-        List<DangKyOTNhanVienViewModel> Search(string dept,string status,string timeFrom,string timeTo, params Expression<Func<DANGKY_OT_NHANVIEN, object>>[] includeProperties);
+        List<DangKyOTNhanVienViewModel> Search(string role,string dept,string status,string timeFrom,string timeTo, params Expression<Func<DANGKY_OT_NHANVIEN, object>>[] includeProperties);
 
         ResultDB ImportExcel(string filePath, string param);
 
         void Save();
 
-        void Approve(string dept, string status,bool isApprove);
-        void ApproveSingle(int Id, bool isApprove);
+        void Approve(string dept, string status, string role, bool isApprove);
+        void ApproveSingle(int Id, string role, bool isApprove);
+        void UpdateRange(List<DangKyOTNhanVienViewModel> OTVms);
 
         DangKyOTNhanVienViewModel CheckExist(int id, string maNV, string date);
     }

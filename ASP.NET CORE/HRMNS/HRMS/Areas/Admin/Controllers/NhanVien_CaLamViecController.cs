@@ -35,7 +35,15 @@ namespace HRMS.Areas.Admin.Controllers
 
         public IActionResult Index()
         {
-            List<NhanVien_CalamViecViewModel> nvCalamviecs = _nvienCalamviecService.GetAll("", x => x.HR_NHANVIEN, y => y.DM_CA_LVIEC);
+            List<NhanVien_CalamViecViewModel> nvCalamviecs;
+            if (Department != "")
+            {
+                nvCalamviecs = _nvienCalamviecService.GetAll("", x => x.HR_NHANVIEN, y => y.DM_CA_LVIEC).Where(x => x.HR_NHANVIEN.MaBoPhan == Department && x.Status != Status.InActive.ToString()).ToList();
+            }
+            else
+            {
+                nvCalamviecs = _nvienCalamviecService.GetAll("", x => x.HR_NHANVIEN, y => y.DM_CA_LVIEC).Where(x => x.Status != Status.InActive.ToString()).ToList(); ;
+            }
             return View(nvCalamviecs);
         }
 
@@ -133,8 +141,8 @@ namespace HRMS.Areas.Admin.Controllers
                         var calaviecActive = _settingTimeCalamviec.GetByCaLamViecAndStatus(Status.Active.ToString(), itemCheck.Danhmuc_CaLviec);
                         if (calaviecActive != null)
                         {
-                            if (itemCheck.KetThuc_TheoCa.CompareDateTime(itemCheck.BatDau_TheoCa) >= 0 && 
-                                itemCheck.BatDau_TheoCa.InRangeDateTime(calaviecActive.NgayBatDau, calaviecActive.NgayKetThuc) && 
+                            if (itemCheck.KetThuc_TheoCa.CompareDateTime(itemCheck.BatDau_TheoCa) >= 0 &&
+                                itemCheck.BatDau_TheoCa.InRangeDateTime(calaviecActive.NgayBatDau, calaviecActive.NgayKetThuc) &&
                                 itemCheck.KetThuc_TheoCa.InRangeDateTime(calaviecActive.NgayBatDau, calaviecActive.NgayKetThuc))
                             {
                                 _nvienCalamviecService.Update(itemCheck);
@@ -213,6 +221,11 @@ namespace HRMS.Areas.Admin.Controllers
                 {
                     if (obj != null)
                     {
+                        if (obj.NgayKetThuc.CompareDateTime(obj.NgayBatDau) < 0 || obj.NgayKetThucDangKy.CompareDateTime(obj.NgayBatDauDangKy) < 0)
+                        {
+                            return new BadRequestObjectResult(CommonConstants.InvalidParam);
+                        }
+
                         obj.CaLamViec = shift.CaLamViec;
                         obj.NgayBatDau = shift.NgayBatDau;
                         obj.NgayKetThuc = shift.NgayKetThuc;
@@ -229,6 +242,11 @@ namespace HRMS.Areas.Admin.Controllers
                 }
                 else
                 {
+                    if (obj.NgayKetThuc.CompareDateTime(obj.NgayBatDau) < 0 || obj.NgayKetThucDangKy.CompareDateTime(obj.NgayBatDauDangKy) < 0)
+                    {
+                        return new BadRequestObjectResult(CommonConstants.InvalidParam);
+                    }
+
                     obj.CaLamViec = shift.CaLamViec;
                     obj.NgayBatDau = shift.NgayBatDau;
                     obj.NgayKetThuc = shift.NgayKetThuc;
@@ -239,22 +257,15 @@ namespace HRMS.Areas.Admin.Controllers
                     _settingTimeCalamviec.Update(obj);
                 }
 
-                if(obj.NgayKetThuc.CompareDateTime(obj.NgayBatDau) >= 0 && obj.NgayKetThucDangKy.CompareDateTime(obj.NgayBatDauDangKy) >= 0)
-                {
-                    _settingTimeCalamviec.Save();
-                    return new OkObjectResult(shift);
-                }
-                else
-                {
-                    return new BadRequestObjectResult(CommonConstants.InvalidParam);
-                }
+                _settingTimeCalamviec.Save();
+                return new OkObjectResult(shift);
             }
         }
 
         [HttpGet]
         public IActionResult GetTimeSettingCaLamViec()
         {
-            var lst = _settingTimeCalamviec.GetAll("", x => x.DM_CA_LVIEC).OrderByDescending(x=>x.NgayBatDau).Take(10);
+            var lst = _settingTimeCalamviec.GetAll("", x => x.DM_CA_LVIEC).OrderByDescending(x => x.NgayBatDau).Take(2);
             return new OkObjectResult(lst);
         }
 

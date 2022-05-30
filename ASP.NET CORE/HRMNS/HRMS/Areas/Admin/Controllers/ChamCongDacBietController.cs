@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using HRMNS.Application.Interfaces;
 using HRMNS.Application.ViewModels.Time_Attendance;
+using HRMNS.Utilities.Constants;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,7 +26,27 @@ namespace HRMS.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            var lst = _chamCongDacBietService.GetAll(x => x.HR_NHANVIEN, y => y.DANGKY_CHAMCONG_CHITIET);
+            List<DangKyChamCongDacBietViewModel> lst = new List<DangKyChamCongDacBietViewModel>();
+            if (UserRole == CommonConstants.AssLeader_Role)
+            {
+                lst = _chamCongDacBietService.GetAll(x => x.HR_NHANVIEN, y => y.DANGKY_CHAMCONG_CHITIET).Where(x => x.HR_NHANVIEN.MaBoPhan == Department).OrderByDescending(x => x.DateModified).Take(1000).ToList();
+            }
+            else if (UserRole == CommonConstants.roleApprove1) // leader 
+            {
+                lst = _chamCongDacBietService.GetAll(x => x.HR_NHANVIEN, y => y.DANGKY_CHAMCONG_CHITIET).
+                    Where(x => x.HR_NHANVIEN.MaBoPhan == Department &&
+                    (x.Approve == CommonConstants.Request || x.ApproveLV2 == CommonConstants.Request || x.ApproveLV3 == CommonConstants.Request)).OrderByDescending(x => x.DateModified).ToList();
+            }
+            else if (UserRole == CommonConstants.roleApprove2) // korea manager
+            {
+                lst = _chamCongDacBietService.GetAll(x => x.HR_NHANVIEN, y => y.DANGKY_CHAMCONG_CHITIET).
+                    Where(x => x.HR_NHANVIEN.MaBoPhan == Department && x.Approve == CommonConstants.Approved && (x.ApproveLV2 == CommonConstants.Request || x.ApproveLV3 == CommonConstants.Request)).OrderByDescending(x => x.DateModified).ToList();
+            }
+            else if (UserRole == CommonConstants.roleApprove3 || UserRole == CommonConstants.AppRole.AdminRole) // hr approve
+            {
+                lst = _chamCongDacBietService.GetAll(x => x.HR_NHANVIEN, y => y.DANGKY_CHAMCONG_CHITIET).Where(x => x.ApproveLV2 == CommonConstants.Approved && x.ApproveLV3 == CommonConstants.Request).OrderByDescending(x => x.DateModified).ToList();
+            }
+
             return View(lst);
         }
 
@@ -36,7 +57,7 @@ namespace HRMS.Areas.Admin.Controllers
             {
                 var itemCheck = _chamCongDacBietService.GetSingle(x => x.MaNV == data.MaNV && x.MaChamCong_ChiTiet == data.MaChamCong_ChiTiet && x.NgayBatDau == data.NgayBatDau && x.NgayKetThuc == data.NgayKetThuc);
 
-                if(itemCheck != null)
+                if (itemCheck != null)
                 {
                     itemCheck.MaChamCong_ChiTiet = data.MaChamCong_ChiTiet;
                     itemCheck.NgayBatDau = data.NgayBatDau;
@@ -46,6 +67,10 @@ namespace HRMS.Areas.Admin.Controllers
                 }
                 else
                 {
+                    data.Approve = CommonConstants.Request;
+                    data.ApproveLV2 = CommonConstants.Request;
+                    data.ApproveLV3 = CommonConstants.Request;
+
                     _chamCongDacBietService.Add(data);
                 }
             }
@@ -64,10 +89,63 @@ namespace HRMS.Areas.Admin.Controllers
             return new OkObjectResult(data);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="lstID">Danh sach Id DANGKY_CHAMCONG_DACBIET</param>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult ApproveAction(List<int> lstID, string action)
+        {
+            List<DangKyChamCongDacBietViewModel> lstChamCongDB = _chamCongDacBietService.GetAll().Where(x => lstID.Contains(x.Id)).ToList();
+
+            if (action == "approve")
+            {
+                foreach (var item in lstChamCongDB)
+                {
+                    if (UserRole == CommonConstants.roleApprove1)
+                    {
+                        item.Approve = CommonConstants.Approved;
+                    }
+                    else if (UserRole == CommonConstants.roleApprove2)
+                    {
+                        item.ApproveLV2 = CommonConstants.Approved;
+                    }
+                    else if (UserRole == CommonConstants.roleApprove3 || UserRole == CommonConstants.AppRole.AdminRole)
+                    {
+                        item.ApproveLV3 = CommonConstants.Approved;
+                    }
+                }
+            }
+            else if (action == "unapprove")
+            {
+                foreach (var item in lstChamCongDB)
+                {
+                    if (UserRole == CommonConstants.roleApprove1)
+                    {
+                        item.Approve = CommonConstants.No_Approved;
+                    }
+                    else if (UserRole == CommonConstants.roleApprove2)
+                    {
+                        item.ApproveLV2 = CommonConstants.No_Approved;
+                    }
+                    else if (UserRole == CommonConstants.roleApprove3 || UserRole == CommonConstants.AppRole.AdminRole)
+                    {
+                        item.ApproveLV3 = CommonConstants.No_Approved;
+                    }
+                }
+            }
+
+            _chamCongDacBietService.UpdateRange(lstChamCongDB);
+            _chamCongDacBietService.Save();
+            return new OkObjectResult(lstID);
+        }
+
         [HttpGet]
         public IActionResult GetById(int id)
         {
-           return new OkObjectResult( _chamCongDacBietService.GetById(id));
+            return new OkObjectResult(_chamCongDacBietService.GetById(id));
         }
 
         [HttpPost]
@@ -78,10 +156,41 @@ namespace HRMS.Areas.Admin.Controllers
             return new OkObjectResult(id);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="department"></param>
+        /// <param name="timeFrom">Thoi gian tao from</param>
+        /// <param name="timeTo">Thoi gian tao to</param>
+        /// <returns></returns>
         [HttpPost]
         public IActionResult Search(string department, string timeFrom, string timeTo)
         {
-           var lst = _chamCongDacBietService.Search(department, timeFrom, timeTo, x => x.HR_NHANVIEN, y => y.DANGKY_CHAMCONG_CHITIET);
+            var lst = _chamCongDacBietService.Search(department, timeFrom, timeTo, x => x.HR_NHANVIEN, y => y.DANGKY_CHAMCONG_CHITIET);
+
+            if (UserRole == CommonConstants.AssLeader_Role)
+            {
+                lst = lst.OrderByDescending(x => x.DateModified).ToList();
+            }
+            else if (UserRole == CommonConstants.roleApprove1) // leader 
+            {
+                lst = lst.Where(x => x.Approve == CommonConstants.Request || x.Approve == CommonConstants.Approved || x.Approve == CommonConstants.No_Approved).OrderByDescending(x => x.DateModified).ToList();
+            }
+            else if (UserRole == CommonConstants.roleApprove2) // korea manager
+            {
+                lst = lst.
+                    Where(x => x.Approve == CommonConstants.Approved &&
+                    (x.ApproveLV2 == CommonConstants.Request ||
+                    x.ApproveLV2 == CommonConstants.Approved ||
+                    x.ApproveLV2 == CommonConstants.No_Approved)).
+                    OrderByDescending(x => x.DateModified).ToList();
+            }
+            else if (UserRole == CommonConstants.roleApprove3 || UserRole == CommonConstants.AppRole.AdminRole) // hr approve
+            {
+                lst = lst
+                    .Where(x => x.ApproveLV2 == CommonConstants.Approved && (x.ApproveLV3 == CommonConstants.Request || x.ApproveLV3 == CommonConstants.Approved || x.ApproveLV3 == CommonConstants.No_Approved)).OrderByDescending(x => x.DateModified).ToList();
+            }
+
             return PartialView("_gridChamCongDacBietPartialView", lst);
         }
 

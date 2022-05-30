@@ -49,6 +49,8 @@ namespace HRMNS.Application.AutoMapper
             CreateMap<ATTENDANCE_OVERTIME, AttendanceOvertimeViewModel>();
             CreateMap<ATTENDANCE_RECORD, AttendanceRecordViewModel>();
             CreateMap<KY_HIEU_CHAM_CONG, KyHieuChamCongViewModel>();
+            CreateMap<APP_ROLE, RoleViewModel>();
+            CreateMap<PERMISSION, PermisstionViewModel>();
 
         }
     }

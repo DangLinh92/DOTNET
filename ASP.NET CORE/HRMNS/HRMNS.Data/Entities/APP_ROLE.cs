@@ -14,7 +14,6 @@ namespace HRMNS.Data.Entities
         {
 
         }
-
         public APP_ROLE(string name,string description) : base(name)
         {
             this.Description = description;

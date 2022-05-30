@@ -1,7 +1,8 @@
 ﻿@model List<DangKyChamCongDacBietViewModel>
-<table class="table table-striped custom-table datatable" id="chamCongDacBietDataTable">
+<table class="table table-bordered table-hover mb-0 table-striped custom-table datatable" id="chamCongDacBietDataTable" style="width:100%">
     <thead>
         <tr>
+            <th><input type="checkbox" name="select_all" value="1" id="chamCongDacBietDataTable-select-all"> All</th>
             <th>User Id</th>
             <th>User Name</th>
             <th>Department</th>
@@ -9,30 +10,170 @@
             <th>Begin Time</th>
             <th>End Time</th>
             <th class="text-nowrap">Content</th>
+            @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+           (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "GrLeader"))
+            {
+                <th class="text-nowrap" style="color:red">Leader Approve(lv1) </th>
+            }
+            else
+            {
+                <th class="text-nowrap">Leader Approve(lv1) </th>
+            }
+
+            @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+      (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "KRManager"))
+            {
+                <th class="text-nowrap" style="color:red">KR Manager Approve(lv2)</th>
+            }
+            else
+            {
+                <th class="text-nowrap">KR Manager Approve(lv2)</th>
+            }
+
+            @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+                        (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" ||
+                        User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin"))
+            {
+                <th class="text-nowrap" style="color:red">HR Approve(lv3)</th>
+            }
+            else
+            {
+                <th class="text-nowrap">HR Approve(lv3)</th>
+            }
             <th class="text-right no-sort">Action</th>
+        </tr>
+        <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th class="text-nowrap"></th>
+            <th class="text-nowrap"></th>
+            <th class="text-nowrap"></th>
+            <th class="text-nowrap"></th>
+            <th class="text-right no-sort"></th>
         </tr>
     </thead>
     <tbody id="tbl-content">
         @foreach (var item in Model)
         {
             <tr>
-                   <td>@item.MaNV</td>
-                   <td>@item.HR_NHANVIEN?.TenNV</td>
-                   <td>@item.HR_NHANVIEN?.MaBoPhan</td>
-                   <td>@item.DANGKY_CHAMCONG_CHITIET?.TenChiTiet</td>
-                   <td>@item.NgayBatDau</td>
-                   <td>@item.NgayKetThuc</td>
-                   <td>@item.NoiDung</td>
-                   <td class="text-right">
-                       <div class="dropdown dropdown-action">
-                           <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                           <div class="dropdown-menu dropdown-menu-right">
-                               <a class="dropdown-item edit-ChamCongDB" href="#" data-toggle="modal" data-target="#addEditChamCongDacBietModel" data-id="@item.Id"><i class="fa fa-edit m-r-5"></i> Edit</a>
-                               <a class="dropdown-item delete-ChamCongDB" href="#" data-toggle="modal" data-target="#delete_chamcongDB" data-id="@item.Id"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
-                           </div>
-                       </div>
-                   </td>
+                <td>@item.Id</td>
+                <td>@item.MaNV</td>
+                <td>@item.HR_NHANVIEN?.TenNV</td>
+                <td>@item.HR_NHANVIEN?.MaBoPhan</td>
+                <td>@item.DANGKY_CHAMCONG_CHITIET?.TenChiTiet</td>
+                <td>@item.NgayBatDau</td>
+                <td>@item.NgayKetThuc</td>
+                <td>@item.NoiDung</td>
+                <td>
+                    @if (item.Approve == CommonConstants.Approved)
+                    {
+                        <span class="badge bg-inverse-success">Yes</span>
+                    }
+                    else if (item.Approve == CommonConstants.No_Approved)
+                    {
+                        <span class="badge bg-inverse-danger">No</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-inverse-warning">Request</span>
+                    }
+                </td>
+                <td>
+                    @if (item.ApproveLV2 == CommonConstants.Approved)
+                    {
+                        <span class="badge bg-inverse-success">Yes</span>
+                    }
+                    else if (item.ApproveLV2 == CommonConstants.No_Approved)
+                    {
+                        <span class="badge bg-inverse-danger">No</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-inverse-warning">Request</span>
+                    }
+                </td>
+                <td>
+                    @if (item.ApproveLV3 == CommonConstants.Approved)
+                    {
+                        <span class="badge bg-inverse-success">Yes</span>
+                    }
+                    else if (item.ApproveLV3 == CommonConstants.No_Approved)
+                    {
+                        <span class="badge bg-inverse-danger">No</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-inverse-warning">Request</span>
+                    }
+                </td>
+                <td class="text-right">
+                    <div class="dropdown dropdown-action">
+                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item edit-ChamCongDB" href="#" data-toggle="modal" data-target="#addEditChamCongDacBietModel" data-id="@item.Id"><i class="fa fa-edit m-r-5"></i> Edit</a>
+                            <a class="dropdown-item delete-ChamCongDB" href="#" data-toggle="modal" data-target="#delete_chamcongDB" data-id="@item.Id"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                            @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+                         (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "GrLeader"))
+                            {
+                                if (item.Approve == CommonConstants.No_Approved)
+                                {
+                                    <a class="dropdown-item approve-nv-overtime" href="#" data-toggle="modal" data-target="#approve_overtime" data-id="@item.Id"><i class="fa fa-thumbs-up m-r-5"></i> Approve</a>
+                                }
+                                else if (item.Approve == CommonConstants.Approved)
+                                {
+                                    <a class="dropdown-item unapprove-nv-overtime" href="#" data-toggle="modal" data-target="#unapprove_overtime" data-id="@item.Id"><i class="fa fa-thumbs-down m-r-5"></i> UnApprove</a>
+                                }
+                                else
+                                {
+                                    <a class="dropdown-item approve-nv-overtime" href="#" data-toggle="modal" data-target="#approve_overtime" data-id="@item.Id"><i class="fa fa-thumbs-up m-r-5"></i> Approve</a>
+                                    <a class="dropdown-item unapprove-nv-overtime" href="#" data-toggle="modal" data-target="#unapprove_overtime" data-id="@item.Id"><i class="fa fa-thumbs-down m-r-5"></i> UnApprove</a>
+                                }
+                            }
+                            else
+                     if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+                        (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "KRManager"))
+                            {
+                                if (item.ApproveLV2 == CommonConstants.No_Approved)
+                                {
+                                    <a class="dropdown-item approve-nv-overtime" href="#" data-toggle="modal" data-target="#approve_overtime" data-id="@item.Id"><i class="fa fa-thumbs-up m-r-5"></i> Approve</a>
+                                }
+                                else if (item.ApproveLV2 == CommonConstants.Approved)
+                                {
+                                    <a class="dropdown-item unapprove-nv-overtime" href="#" data-toggle="modal" data-target="#unapprove_overtime" data-id="@item.Id"><i class="fa fa-thumbs-down m-r-5"></i> UnApprove</a>
+                                }
+                                else
+                                {
+                                    <a class="dropdown-item approve-nv-overtime" href="#" data-toggle="modal" data-target="#approve_overtime" data-id="@item.Id"><i class="fa fa-thumbs-up m-r-5"></i> Approve</a>
+                                    <a class="dropdown-item unapprove-nv-overtime" href="#" data-toggle="modal" data-target="#unapprove_overtime" data-id="@item.Id"><i class="fa fa-thumbs-down m-r-5"></i> UnApprove</a>
+                                }
+                            }
+                            else if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+                               (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" ||
+                               User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin"))
+                            {
+                                if (item.ApproveLV3 == CommonConstants.No_Approved)
+                                {
+                                    <a class="dropdown-item approve-nv-overtime" href="#" data-toggle="modal" data-target="#approve_overtime" data-id="@item.Id"><i class="fa fa-thumbs-up m-r-5"></i> Approve</a>
+                                }
+                                else if (item.ApproveLV3 == CommonConstants.Approved)
+                                {
+                                    <a class="dropdown-item unapprove-nv-overtime" href="#" data-toggle="modal" data-target="#unapprove_overtime" data-id="@item.Id"><i class="fa fa-thumbs-down m-r-5"></i> UnApprove</a>
+                                }
+                                else
+                                {
+                                    <a class="dropdown-item approve-nv-overtime" href="#" data-toggle="modal" data-target="#approve_overtime" data-id="@item.Id"><i class="fa fa-thumbs-up m-r-5"></i> Approve</a>
+                                    <a class="dropdown-item unapprove-nv-overtime" href="#" data-toggle="modal" data-target="#unapprove_overtime" data-id="@item.Id"><i class="fa fa-thumbs-down m-r-5"></i> UnApprove</a>
+                                }
+                            }
+                        </div>
+                    </div>
+                </td>
             </tr>
         }
-</tbody>
+    </tbody>
 </table>

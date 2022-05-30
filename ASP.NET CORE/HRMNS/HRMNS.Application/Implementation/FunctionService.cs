@@ -2,6 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using HRMNS.Application.Interfaces;
 using HRMNS.Application.ViewModels.System;
+using HRMNS.Data.EF.Extensions;
 using HRMNS.Data.Entities;
 using HRMNS.Data.Enums;
 using HRMNS.Data.IRepositories;
@@ -30,17 +31,19 @@ namespace HRMNS.Application.Implementation
 
         public void Add(FunctionViewModel function)
         {
-            throw new NotImplementedException();
+            var entity = _mapper.Map<FUNCTION>(function);
+            _functionRepository.Add(entity);
         }
 
         public bool CheckExistedId(string id)
         {
-            throw new NotImplementedException();
+            return _functionRepository.FindById(id) != null;
         }
 
         public void Delete(string id)
         {
-            throw new NotImplementedException();
+            var entity = _functionRepository.FindById(id);
+            _functionRepository.Remove(entity);
         }
 
         public void Dispose()
@@ -69,7 +72,7 @@ namespace HRMNS.Application.Implementation
 
         public FunctionViewModel GetById(string id)
         {
-            throw new NotImplementedException();
+            return _mapper.Map<FunctionViewModel>(_functionRepository.FindById(id));
         }
 
         public void ReOrder(string sourceId, string targetId)
@@ -79,12 +82,14 @@ namespace HRMNS.Application.Implementation
 
         public void Save()
         {
-            throw new NotImplementedException();
+            _unitOfWork.Commit();
         }
 
         public void Update(FunctionViewModel function)
         {
-            throw new NotImplementedException();
+            var entity = _functionRepository.FindById(function.Id);
+            entity.CopyPropertiesFrom(function, new List<string>() { "Id" });
+            _functionRepository.Update(entity);
         }
 
         public void UpdateParentId(string sourceId, string targetId, Dictionary<string, int> items)
