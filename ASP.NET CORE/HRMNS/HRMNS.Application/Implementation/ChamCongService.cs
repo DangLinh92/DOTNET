@@ -146,6 +146,12 @@ namespace HRMNS.Application.Implementation
 
         public List<ChamCongLogViewModel> Search(string result, string dept, string timeFrom, string timeTo)
         {
+            if (string.IsNullOrEmpty(timeFrom.NullString()) || string.IsNullOrEmpty(timeTo))
+            {
+                timeFrom = DateTime.Now.AddDays(-5).ToString("yyyy-MM-dd");
+                timeTo = DateTime.Now.ToString("yyyy-MM-dd");
+            }
+
             if (string.IsNullOrEmpty(dept))
             {
                 if (!string.IsNullOrEmpty(timeFrom) && !string.IsNullOrEmpty(timeTo))
@@ -195,6 +201,23 @@ namespace HRMNS.Application.Implementation
                 }
             }
             return new List<ChamCongLogViewModel>();
+        }
+
+        public ChamCongLogViewModel Update(ChamCongLogViewModel model)
+        {
+            var entity = _chamCongLogRepository.FindAll(x => x.ID_NV == model.ID_NV && x.Ngay_ChamCong == model.Ngay_ChamCong).FirstOrDefault();
+
+            if(entity != null)
+            {
+                entity.FirstIn_Time = model.FirstIn_Time;
+                entity.Last_Out_Time = model.Last_Out_Time;
+                entity.FirstIn = "IN";
+                entity.LastOut = "OUT";
+                entity.UserHandle = "Y";
+                entity.UserModified = model.UserModified;
+                _chamCongLogRepository.Update(entity);
+            }
+            return model;
         }
     }
 }

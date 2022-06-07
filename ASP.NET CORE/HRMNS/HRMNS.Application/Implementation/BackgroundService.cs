@@ -40,6 +40,7 @@ namespace HRMNS.Application.Implementation
             // _logger.LogInformation("Background Service Hosted Service is working."+DateTime.Now);
             if (DateTime.Now.ToString("HH:mm:ss") == "01:00:00")
             {
+                _logger.LogInformation("DoWork: active" + DateTime.Now.ToString("HH:mm:ss"));
                 SettingTimeCaLviec();
             }
             await Task.Delay(new TimeSpan(0, 0, 1));
@@ -59,6 +60,14 @@ namespace HRMNS.Application.Implementation
                         _settingTimeCalamviec.Update(item);
                         _logger.LogInformation("f:SettingTimeCaLviec: update status = inactive of setting ca lam viec success");
                     }
+                    else if (string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), item.NgayKetThuc) <= 0 &&
+                            string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), item.NgayBatDau) >= 0 &&
+                            item.Status != Status.Active.ToString())
+                    {
+                        item.Status = Status.Active.ToString();
+                        _settingTimeCalamviec.Update(item);
+                        _logger.LogInformation("f:SettingTimeCaLviec: update status = active of setting ca lam viec success");
+                    }
                 }
 
                 var nvClviec = _nhanvienClviecRepository.FindAll().ToList();
@@ -67,6 +76,14 @@ namespace HRMNS.Application.Implementation
                     if (string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), item.KetThuc_TheoCa) > 0 && item.Status != Status.InActive.ToString())
                     {
                         item.Status = Status.InActive.ToString();
+                        _nhanvienClviecRepository.Update(item);
+                        _logger.LogInformation("f:SettingTimeCaLviec: update status = inactive of nhan vien ca lam viec success");
+                    }
+                    else if (string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), item.KetThuc_TheoCa) <= 0
+                        && string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), item.BatDau_TheoCa) >= 0 
+                        && item.Status != Status.Active.ToString())
+                    {
+                        item.Status = Status.Active.ToString();
                         _nhanvienClviecRepository.Update(item);
                         _logger.LogInformation("f:SettingTimeCaLviec: update status = inactive of nhan vien ca lam viec success");
                     }

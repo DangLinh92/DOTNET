@@ -52,5 +52,8 @@ namespace HRMNS.Data.Entities
 
         [StringLength(50)]
         public string UserModified { get; set; }
+
+        [StringLength(5)]
+        public string UserHandle { get; set; }
     }
 }

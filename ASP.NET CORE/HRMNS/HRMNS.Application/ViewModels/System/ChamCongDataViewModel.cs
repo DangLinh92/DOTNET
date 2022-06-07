@@ -88,20 +88,35 @@ namespace HRMNS.Application.ViewModels.System
     public class WorkingStatus
     {
         public string DayCheck { get; set; }
-        public string Value { get; set; } // ky hieu cham cong
+        public string Value { get; set; } = "-"; // ky hieu cham cong
     }
 
     public class EL_LC_Status
     {
         public string DayCheck_EL { get; set; }
-        public double Value_EL { get; set; } // ky hieu cham cong
+        private double _value = 0;
+        public double Value_EL
+        {
+            get => _value;
+            set => _value = Math.Round(value, 1);
+        } // ky hieu cham cong
     }
 
     public class OvertimeValue
     {
         public string DMOvertime { get; set; }
         public string DayCheckOT { get; set; }
-        public double ValueOT { get; set; }
+
+        private double _value = 0;
+        public double ValueOT
+        {
+
+            get => _value;
+            set
+            {
+                _value = Math.Round(value, 1);
+            }
+        }
         public bool Registered { get; set; }
     }
 }

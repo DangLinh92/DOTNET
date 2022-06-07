@@ -69,5 +69,9 @@ namespace HRMNS.Utilities.Constants
         public const string TruocNgayLe = "TNL";
         public const string ChuNhat = "CN";
         public const string NgayThuong = "NT";
+
+        public const string SUPPORT_DEPT = "SP";
+        public const string IN = "IN";
+        public const string OUT = "OUT";
     }
 }

@@ -1,5 +1,8 @@
-﻿using HRMNS.Application.ViewModels.Time_Attendance;
+﻿using HRMNS.Application.Interfaces;
+using HRMNS.Application.ViewModels.Time_Attendance;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,57 +12,27 @@ namespace HRMS.Areas.Admin.Controllers
 {
     public class BangCongController : AdminBaseController
     {
+        private IBangCongService _bangCongService;
+        private readonly IWebHostEnvironment _hostingEnvironment;
+
+        public BangCongController(IBangCongService bangCongService, IWebHostEnvironment hostEnvironment, ILogger<NhanVien_CaLamViecController> logger)
+        {
+            _bangCongService = bangCongService;
+            _hostingEnvironment = hostEnvironment;
+            _logger = logger;
+        }
+
         public IActionResult Index()
         {
-            var lst = new List<AttendanceRecordViewModel>()
-            {
-                new AttendanceRecordViewModel()
-                {
-                    MaNV = "H2105001",
-                    HR_NHANVIEN = new HRMNS.Application.ViewModels.HR.NhanVienViewModel()
-                    {
-                        Id = "H2105001",
-                        TenNV = "LE VAN DANG",
-                        NgayVao = "2021-05-20",
-                        HR_BO_PHAN_DETAIL = new HRMNS.Application.ViewModels.HR.BoPhanDetailViewModel()
-                        {
-                            TenBoPhanChiTiet = "Support PI"
-                        },
-                    },
-                    Time_Check = "2022-03-17"
-                },
-                 new AttendanceRecordViewModel()
-                {
-                    MaNV = "H2105002",
-                    HR_NHANVIEN = new HRMNS.Application.ViewModels.HR.NhanVienViewModel()
-                    {
-                        Id = "H2105002",
-                        TenNV = "LE VAN DANG",
-                        NgayVao = "2021-05-20",
-                        HR_BO_PHAN_DETAIL = new HRMNS.Application.ViewModels.HR.BoPhanDetailViewModel()
-                        {
-                            TenBoPhanChiTiet = "Support PI"
-                        },
-                    },
-                    Time_Check = "2022-03-18"
-                },
-                  new AttendanceRecordViewModel()
-                {
-                    MaNV = "H2105003",
-                    HR_NHANVIEN = new HRMNS.Application.ViewModels.HR.NhanVienViewModel()
-                    {
-                        Id = "H2105003",
-                        TenNV = "LE VAN DANG",
-                        NgayVao = "2021-05-20",
-                        HR_BO_PHAN_DETAIL = new HRMNS.Application.ViewModels.HR.BoPhanDetailViewModel()
-                        {
-                            TenBoPhanChiTiet = "Support PI"
-                        },
-                    },
-                    Time_Check = "2022-03-19"
-                }
-            };
-            return View(lst);
+            var lst1 = _bangCongService.GetDataReport("2022-05","");
+            return View(lst1);
+        }
+
+        [HttpPost]
+        public IActionResult Search(string department,string timeTo)
+        {
+            var lst = _bangCongService.GetDataReport(timeTo, department);
+            return PartialView("_gridBangCongPartialView", lst);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿@model List<AttendanceRecordViewModel>
+﻿@model List<ChamCongDataViewModel>
 <table class="table table-bordered mb-0 custom-table datatable" id="bangCongDataTable">
     <thead>
         <tr style="background-color:#F6DDCC">
@@ -12,14 +12,14 @@
                 @for (int i = 1; i <= 31; i++)
                 {
 
-                    if (DateTime.TryParse(Model.FirstOrDefault()?.Time_Check, out DateTime _dateCheck))
+                    if (DateTime.TryParse(Model.FirstOrDefault()?.month_Check, out DateTime _dateCheck))
                     {
                         var firstDayOfMonth = new DateTime(_dateCheck.Year, _dateCheck.Month, 1);
                         var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
 
                         if (i < 10)
                         {
-                            <th>@i</th>
+                            <th>@("0"+i)</th>
                         }
                         else
                         {
@@ -32,9 +32,9 @@
                     }
                 }
             }
-            <th class="text-right no-sort">Action</th>
+            @*<th class="text-right no-sort">Action</th>*@
         </tr>
-        <tr  style="background-color: #FBEEE6">
+        <tr style="background-color: #FBEEE6">
             <th></th>
             <th></th>
             <th></th>
@@ -43,7 +43,7 @@
             @{
                 @for (int i = 1; i <= 31; i++)
                 {
-                    if (DateTime.TryParse(Model.FirstOrDefault()?.Time_Check, out DateTime _dateCheck))
+                    if (DateTime.TryParse(Model.FirstOrDefault()?.month_Check, out DateTime _dateCheck))
                     {
                         var firstDayOfMonth = new DateTime(_dateCheck.Year, _dateCheck.Month, 1);
                         var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
@@ -69,7 +69,7 @@
                     }
                 }
             }
-            <th></th>
+            @*<th></th>*@
         </tr>
     </thead>
     <tbody id="tbl-content">
@@ -83,42 +83,35 @@
 
             <tr>
                 <td style="@style1">@item.MaNV</td>
-                <td style="@style1">@item.HR_NHANVIEN?.TenNV</td>
-                <td style="@style1">@item.HR_NHANVIEN?.NgayVao</td>
-                <td style="@style1">@item.HR_NHANVIEN?.HR_BO_PHAN_DETAIL.TenBoPhanChiTiet</td>
+                <td style="@style1">@item.TenNV</td>
+                <td style="@style1">@item.NgayVao</td>
+                <td style="@style1">@item.BoPhanDetail</td>
                 <td style="@style1">
                     <table class="table table-bordered mb-0 custom-table">
                         <tr>
                             <td>Working Status</td>
                             <td></td>
                         </tr>
-                        <tr>
-                            <td>
-                                OT
-                                (hour)
-                            </td>
-                            <td>150%</td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td>200%</td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td>210%</td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td>270%</td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td>300%</td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td>390%</td>
-                        </tr>
+                        @for (int i = 0; i < item.lstDanhMucOT.Count; i++)
+                        {
+                            if (i == 2)
+                            {
+                                <tr>
+                                    <td>
+                                        OT
+                                        (hour)
+                                    </td>
+                                    <td>@item.lstDanhMucOT[i]</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td></td>
+                                    <td>@item.lstDanhMucOT[i]</td>
+                                </tr>
+                            }
+                        }
                         <tr>
                             <td>EL/LC (hour)</td>
                             <td></td>
@@ -129,38 +122,134 @@
                 {
                     <td>
                         <table class="table table-bordered mb-0 custom-table">
-                            @for (int j = 1; j < 9; j++)
+                            @if (DateTime.TryParse(Model.FirstOrDefault()?.month_Check, out DateTime _dateCheck))
                             {
-                                if (j == 1)
+                                var firstDayOfMonth = new DateTime(_dateCheck.Year, _dateCheck.Month, 1);
+                                var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+
+                                if (i <= lastDayOfMonth.Day)
                                 {
-                                    <tr class="table-primary">
-                                        <td>@j</td>
-                                    </tr>
-                                }
-                                else if (j < 8)
-                                {
-                                    <tr>
-                                        <td>@j</td>
-                                    </tr>
-                                }
-                                else
-                                {
-                                    <tr class="table-warning">
-                                        <td>@j</td>
-                                    </tr>
+                                    // set status NH, DS, ...
+                                    foreach (var status in item.WorkingStatuses)
+                                    {
+                                        @if (DateTime.TryParse(status.DayCheck, out DateTime dayCheck))
+                                        {
+                                            if (dayCheck.Day == i)
+                                            {
+                                                var dayOfWeek = dayCheck.DayOfWeek.ToString().Substring(0, 3);
+
+                                                if (dayOfWeek == "Sun")
+                                                {
+                                                    <tr class="table-primary">
+                                                        <td>@status.Value</td>
+                                                    </tr>
+                                                }
+                                                else
+                                                {
+                                                    <tr class="table-primary">
+                                                        <td>@status.Value</td>
+                                                    </tr>
+                                                }
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                    bool isOt = false;
+                                    foreach (var ot in item.lstDanhMucOT)
+                                    {
+                                        isOt = false;
+                                        if (item.OvertimeValues.Count > 0)
+                                        {
+                                            // Set hour OT(hour)
+                                            for (int o = 0; o < item.OvertimeValues.Count; o++)
+                                            {
+                                                @if (DateTime.TryParse(item.OvertimeValues[o].DayCheckOT, out DateTime dayCheck))
+                                                {
+                                                    if (ot.Contains(item.OvertimeValues[o].DMOvertime))
+                                                    {
+                                                        if (dayCheck.Day == i)
+                                                        {
+                                                            if (item.OvertimeValues[o].Registered)
+                                                            {
+                                                                <tr class="table-warning">
+                                                                    <td>@item.OvertimeValues[o].ValueOT</td>
+                                                                </tr>
+                                                            }
+                                                            else
+                                                            {
+                                                                <tr class="table-danger">
+                                                                    <td>@item.OvertimeValues[o].ValueOT</td>
+                                                                </tr>
+                                                            }
+                                                            isOt = true;
+                                                            break;
+                                                        }
+                                                    }
+
+                                                }
+                                            }
+
+                                            if (!isOt)
+                                            {
+                                                <tr>
+                                                    <td>0</td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td>0</td>
+                                            </tr>
+                                        }
+                                    }
+
+                                    // set EL/LC (hour)
+                                    if (item.EL_LC_Statuses.Count > 0)
+                                    {
+                                        foreach (var el in item.EL_LC_Statuses)
+                                        {
+                                            @if (DateTime.TryParse(el.DayCheck_EL, out DateTime dayCheck))
+                                            {
+                                                if (dayCheck.Day == i)
+                                                {
+                                                    if (el.Value_EL > 0)
+                                                    {
+                                                        <tr class="table-primary text-danger">
+                                                            <td>@el.Value_EL</td>
+                                                        </tr>
+                                                    }
+                                                    else
+                                                    {
+                                                        <tr class="table-primary">
+                                                            <td>@el.Value_EL</td>
+                                                        </tr>
+                                                    }
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr class="table-primary">
+                                            <td>0</td>
+                                        </tr>
+                                    }
                                 }
                             }
                         </table>
                     </td>
                 }
-                <td class="text-right">
-                    <div class="dropdown dropdown-action">
-                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item edit-ChamCongDB" href="#" data-toggle="modal" data-target="#addEditChamCongDacBietModel" data-id="@item.Id"><i class="fa fa-edit m-r-5"></i> Edit</a>
+                @*<td class="text-right">
+                        <div class="dropdown dropdown-action">
+                            <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item edit-ChamCongDB" href="#" data-toggle="modal" data-target="#addEditChamCongDacBietModel" data-id="@item.MaNV"><i class="fa fa-edit m-r-5"></i> Edit</a>
+                            </div>
                         </div>
-                    </div>
-                </td>
+                    </td>*@
             </tr>
         }
     </tbody>

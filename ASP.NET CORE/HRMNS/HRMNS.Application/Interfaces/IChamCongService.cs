@@ -12,6 +12,8 @@ namespace HRMNS.Application.Interfaces
     {
         List<ChamCongLogViewModel> GetAll(string keyword);
 
+        ChamCongLogViewModel Update(ChamCongLogViewModel model);
+
         List<ChamCongLogViewModel> Search(string result,string dept,string timeFrom,string timeTo);
 
         ResultDB ImportExcel(string filePath, string param);

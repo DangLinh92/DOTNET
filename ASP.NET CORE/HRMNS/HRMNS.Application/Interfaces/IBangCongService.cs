@@ -22,6 +22,6 @@ namespace HRMNS.Application.Interfaces
 
         List<AttendanceOvertimeViewModel> GetAllAttendanceOT(params Expression<Func<ATTENDANCE_OVERTIME, object>>[] includeProperties);
 
-        List<ChamCongDataViewModel> GetDataReport(string time);
+        List<ChamCongDataViewModel> GetDataReport(string time,string dept);
     }
 }

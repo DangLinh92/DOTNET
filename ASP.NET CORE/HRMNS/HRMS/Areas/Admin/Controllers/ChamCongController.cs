@@ -1,6 +1,7 @@
 ﻿using HRMNS.Application.Interfaces;
 using HRMNS.Application.ViewModels.Time_Attendance;
 using HRMNS.Data.EF;
+using HRMNS.Data.EF.Extensions;
 using HRMNS.Utilities.Common;
 using HRMNS.Utilities.Constants;
 using HRMNS.Utilities.Dtos;
@@ -37,7 +38,7 @@ namespace HRMS.Areas.Admin.Controllers
         public IActionResult GetData()
         {
             List<ChamCongLogViewModel> chamCongLog = _chamCongService.GetAll("");
-            return View("Index",chamCongLog);
+            return View("Index", chamCongLog);
         }
 
         [HttpGet]
@@ -86,16 +87,34 @@ namespace HRMS.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Search(string result, string dept, string fromTime, string toTime)
+        public IActionResult Search(string result, string dept, string fromTime, string toTime,string maNV)
         {
+            string status = "";
+
+            if(result == "Normal" || result == "Absence")
+            {
+                status = result;
+                result = "";
+            }
+
             var lst = _chamCongService.Search(result, dept, fromTime, toTime);
+            if(!string.IsNullOrEmpty(maNV.NullString()) && lst.Any(x => maNV != null && maNV.Contains(x.ID_NV)))
+            {
+                lst = lst.Where(x => maNV.Contains(x.ID_NV)).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(status))
+            {
+                lst = lst.Where(x => x.Status.Contains(status)).ToList();
+            }
+           
             return PartialView("_gridChamCongPartialView", lst);
         }
 
         [HttpPost]
-        public IActionResult GetLogByUserId(string userId,string time)
+        public IActionResult GetLogByUserId(string userId, string time)
         {
-            ResultDB result = _bioStarDB.ShowChamCongLogInDay(userId,time);
+            ResultDB result = _bioStarDB.ShowChamCongLogInDay(userId, time);
             if (result.ReturnInt == 0)
             {
                 string data = DataTableToJson.DataTableToJSONWithJSONNet(result.ReturnDataSet.Tables[0]);
@@ -149,6 +168,33 @@ namespace HRMS.Areas.Admin.Controllers
                 }
             }
             return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
+        }
+
+        [HttpPost]
+        public IActionResult UpdateTimeChamCong(string firstTime, string lastTime, string maNV, string ngayChamCong, string tenNV)
+        {
+            if (firstTime.Split(":").Length == 2)
+            {
+                firstTime += ":00";
+            }
+
+            if (lastTime.Split(":").Length == 2)
+            {
+                lastTime += ":00";
+            }
+
+            ChamCongLogViewModel model = new ChamCongLogViewModel()
+            {
+                ID_NV = maNV,
+                Ten_NV = tenNV,
+                Ngay_ChamCong = ngayChamCong,
+                FirstIn_Time = firstTime,
+                Last_Out_Time = lastTime,
+                UserModified = UserName
+            };
+            _chamCongService.Update(model);
+            _chamCongService.Save();
+            return new OkObjectResult(model);
         }
     }
 }

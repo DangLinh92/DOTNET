@@ -97,5 +97,7 @@ namespace HRMNS.Application.ViewModels.Time_Attendance
                 return ChamCongStatus.InWorking.ToString();
             }
         }
+
+        public string UserHandle { get; set; }
     }
 }

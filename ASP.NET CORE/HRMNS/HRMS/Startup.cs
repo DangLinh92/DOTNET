@@ -113,6 +113,7 @@ namespace HRMS
 
             services.AddTransient<IDangKyChamCongChiTietService, DangKyChamCongChiTietService>();
             services.AddTransient<IDangKyChamCongDacBietService, DangKyChamCongDacBietService>();
+            services.AddTransient<IBangCongService, BangCongService>();
 
             services.AddTransient<IDM_DCChamCongService, DM_DCChamCongService>();
             services.AddTransient<IDCChamCongService, DCChamCongService>();

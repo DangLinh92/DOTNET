@@ -19,5 +19,10 @@ namespace HRMS.Areas.Admin.Controllers
         { 
             get => User.Claims.FirstOrDefault(x => x.Type == "Roles").Value.NullString().Split(';')[0]; 
         }
+
+        public string UserName
+        {
+            get => User.Claims.FirstOrDefault(x => x.Type == "UserName").Value.NullString().Split(';')[0];
+        }
     }
 }

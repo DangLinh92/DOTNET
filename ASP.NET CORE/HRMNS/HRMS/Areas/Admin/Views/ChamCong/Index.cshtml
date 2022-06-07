@@ -1,10 +1,19 @@
-﻿@model List<ChamCongLogViewModel>
+﻿@using Microsoft.AspNetCore.Authorization
+@using HRMS.Authorization
+@inject IAuthorizationService AuthorizationService
+@model List<ChamCongLogViewModel>
 @{
     ViewData["Title"] = "Time and Attendance";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 @section Scripts
 {
+    <script>
+        var deparment = JSON.parse('@Html.Raw(JsonSerializer.Serialize(User.FindFirst(x=>x.Type == "Deparment").Value+""))');
+        var roleUsers = JSON.parse('@Html.Raw(JsonSerializer.Serialize(User.FindFirst(x => x.Type == "Roles").Value + ""))');
+    </script>
+
+    <script src="https://cdn.datatables.net/select/1.3.4/js/dataTables.select.min.js"></script>
     <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
     <script src="~/app/controllers/chamcong/chamCongMns.js"></script>
     <script>
@@ -16,10 +25,13 @@
 
         $(document).ready(function () {
             $('#chamCongLogDataTable').DataTable({
-                "order": [10, 'asc']
+                select: true,
+                "order": [11, 'asc']
             });
             $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
             $('select[name="chamCongLogDataTable_length"]').removeClass('form-control-sm');
+
+            $('.bs-timepicker').timepicker();
 
             $('#btnSearch').submit();
         });
@@ -27,7 +39,6 @@
 }
 @section Styles{
     <style>
-
         #btnCreate {
             float: none;
             margin-right: 10px;
@@ -45,7 +56,7 @@
     <div class="page-header">
         <div class="row align-items-center">
             <div class="col">
-                <h3 class="page-title">Time and Attendance</h3>
+                <h3 class="page-title">Time and Attendance/Dữ Liệu Chấm Công Hàng Ngày</h3>
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/admin/home/index">Home</a></li>
                     <li class="breadcrumb-item active">Time and Attendance</li>
@@ -68,17 +79,17 @@
     <form id="frmSearch" method="post" data-ajax="true" data-ajax-url="/Admin/ChamCong/Search" data-ajax-update="#gridChamCongIndex" data-ajax-mode='replace' data-ajax-success="onSuccess" data-ajax-begin="onBeginAjax">
         <div class="row filter-row">
             <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-            </div>
-            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
                 <div class="form-group form-focus select-focus">
                     <select id="cboResultStauts" name="result" class="select floating">
-                        <option value="" selected>--Select result--</option>
+                        <option value="" selected>--All--</option>
                         <option value="Miss_In">Miss In</option>
                         <option value="Miss_Out">Miss Out</option>
                         <option value="NonWorking">Non working</option>
                         <option value="InWorking">In Working</option>
                         <option value="LateIn">Late In</option>
                         <option value="Early_Out">Early Out</option>
+                        <option value="Absence">Absence</option>
+                        <option value="Normal">Normal</option>
                     </select>
                     <label class="focus-label">Result</label>
                 </div>
@@ -88,6 +99,12 @@
                     <select id="cboBoPhan" name="dept" class="select floating">
                     </select>
                     <label class="focus-label">Deparment</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus select-focus">
+                    <input id="txtMaNV" name="maNV" class="form-control floating" type="text" />
+                    <label class="focus-label">User Id</label>
                 </div>
             </div>
             <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
@@ -211,5 +228,46 @@
     </div>
 </div>
 <!-- /Attendance Modal -->
+<!-- Edit cham cong -->
+<div id="addEditChamCongModel" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update log time</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="frmChamCongAddEdit">
+                    <div class="form-group">
+                        <label for="_txtMaNV">Mã Nhân Viên<span class="text-danger">*</span></label>
+                        <input id="_txtMaNV" class="form-control" name="maNV" type="text" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="_txtTenNV">Tên Nhân Viên<span class="text-danger">*</span></label>
+                        <input id="_txtTenNV" class="form-control" name="tenNV" type="text" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="_txtdate">Ngày Chấm Công<span class="text-danger">*</span></label>
+                        <div class="cal-icon"><input id="_txtdate" class="form-control datetimepicker" name="ngayChamCong" type="text" required></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="_txtfirstTime">Thời gian Vào<span class="text-danger">*</span></label>
+                        <div class="cal-icon"><input id="_txtfirstTime" class="form-control bs-timepicker" name="firstTime" type="text" required></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="_txtlastTime">Thời gian Ra<span class="text-danger">*</span></label>
+                        <div class="cal-icon"><input id="_txtlastTime" class="form-control bs-timepicker" name="lastTime" type="text" required></div>
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn" id="btnSave_ChamCong">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Add Expense Modal -->
 <!-- import excel model -->
 <partial name="_ImportExcelModel" />
