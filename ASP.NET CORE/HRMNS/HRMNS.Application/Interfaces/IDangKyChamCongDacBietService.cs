@@ -29,5 +29,7 @@ namespace HRMNS.Application.Interfaces
         List<DangKyChamCongDacBietViewModel> Search(string dept, string fromDate, string toDate, params Expression<Func<DANGKY_CHAMCONG_DACBIET, object>>[] includeProperties);
 
         void Save();
+
+        ResultDB ImportExcel(string filePath, string role);
     }
 }

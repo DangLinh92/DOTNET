@@ -21,12 +21,16 @@ namespace HRMNS.Application.Implementation
     public class NhanVienService : BaseService, INhanVienService
     {
         private IRespository<HR_NHANVIEN, string> _nhanvienRepository;
+        private IRespository<HR_BO_PHAN_DETAIL, int> _bophanDetailRepository;
+        private IRespository<HR_LOAIHOPDONG, int> _loaiHDRepository;
         private IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public NhanVienService(IRespository<HR_NHANVIEN, string> nhanVienRepository, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public NhanVienService(IRespository<HR_NHANVIEN, string> nhanVienRepository, IRespository<HR_LOAIHOPDONG, int> loaiHDRepository, IRespository<HR_BO_PHAN_DETAIL, int> bophanDetailRepository, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _nhanvienRepository = nhanVienRepository;
+            _bophanDetailRepository = bophanDetailRepository;
+            _loaiHDRepository = loaiHDRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
@@ -301,25 +305,26 @@ namespace HRMNS.Application.Implementation
 
                 int? loaiHd = 0;
                 string strLoaiHD = worksheet.Cells[i, 4].Value.NullString();
+                loaiHd = _loaiHDRepository.FindAll(x => x.TenLoaiHD == strLoaiHD).FirstOrDefault().Id;
 
-                switch (strLoaiHD)
-                {
-                    case "Hợp Đồng Thử Việc":
-                        loaiHd = 14;
-                        break;
-                    case "Hợp Đồng 1 năm lần 1":
-                        loaiHd = 15;
-                        break;
-                    case "Hợp Đồng 1 năm lần 2":
-                        loaiHd = 13;
-                        break;
-                    case "Hợp Đồng Không Thời Hạn":
-                        loaiHd = 16;
-                        break;
-                    default:
-                        loaiHd = 15;
-                        break;
-                }
+                //switch (strLoaiHD)
+                //{
+                //    case "Hợp Đồng Thử Việc":
+                //        loaiHd = 14;
+                //        break;
+                //    case "Hợp Đồng 1 năm lần 1":
+                //        loaiHd = 15;
+                //        break;
+                //    case "Hợp Đồng 1 năm lần 2":
+                //        loaiHd = 13;
+                //        break;
+                //    case "Hợp Đồng Không Thời Hạn":
+                //        loaiHd = 16;
+                //        break;
+                //    default:
+                //        loaiHd = 15;
+                //        break;
+                //}
 
                 HR_HOPDONG hopdong = new HR_HOPDONG()
                 {
@@ -448,138 +453,7 @@ namespace HRMNS.Application.Implementation
 
         private int? GetBoPhanChiTiet(string tenbp)
         {
-            if (tenbp.Contains("Quality Control/ QL Chất lượng (PQC)"))
-            {
-                return 85;
-            }
-
-            if (tenbp.Contains("Quality Control/ QL Chất lượng (QQC)"))
-            {
-                return 86;
-            }
-
-            if (tenbp.Contains("Quality Control/ QL Chất lượng (Reability)"))
-            {
-                return 87;
-            }
-
-            if (tenbp.Contains("SMT Manufacturing/ Sản xuất SMT"))
-            {
-                return 88;
-            }
-
-            if (tenbp.Contains("SMT Innovation Group"))
-            {
-                return 89;
-            }
-
-            if (tenbp.Contains("WLP2 Manufacturing/ Sản xuất WLP2"))
-            {
-                return 90;
-            }
-
-            if (tenbp.Contains("Warehouse"))
-            {
-                return 91;
-            }
-
-            if (tenbp.Contains("WLP1 Manufacturing/ Sản xuất WLP1"))
-            {
-                return 92;
-            }
-
-            if (tenbp.Contains("WLP1 Technology/ Kỹ thuật WLP1"))
-            {
-                return 93;
-            }
-
-            if (tenbp.Contains("WLP2 Technology/ Kỹ thuật WLP2"))
-            {
-                return 94;
-            }
-
-            if (tenbp.Contains("Quality Control/ QL Chất lượng (OQC)"))
-            {
-                return 95;
-            }
-
-            if (tenbp.Contains("SMT Technology/ Kỹ thuật SMT"))
-            {
-                return 96;
-            }
-
-            if (tenbp.Contains("Quality Control/ QL Chất lượng (CS)"))
-            {
-                return 97;
-            }
-
-            if (tenbp.Contains("Quality Control/ QL Chất lượng (IQC)"))
-            {
-                return 98;
-            }
-
-            if (tenbp.Contains("Purchasing/ Mua hàng"))
-            {
-                return 99;
-            }
-
-            if (tenbp.Contains("Quality Control/ QL Chất lượng"))
-            {
-                return 100;
-            }
-
-            if (tenbp.Contains("Accounting/ Kế toán"))
-            {
-                return 101;
-            }
-
-            if (tenbp.Contains("CSP Technology/ Kỹ thuật CSP"))
-            {
-                return 102;
-            }
-            if (tenbp.Contains("GOC"))
-            {
-                return 103;
-            }
-
-            if (tenbp.Contains("Human Resource/ HCNS"))
-            {
-                return 104;
-            }
-            if (tenbp.Contains("Human Resource/ HCNS (EHS)"))
-            {
-                return 105;
-            }
-            if (tenbp.Contains("CSP Manufacturing/ Sản xuất CSP"))
-            {
-                return 106;
-            }
-            if (tenbp.Contains("KOREA"))
-            {
-                return 107;
-            }
-            if (tenbp.Contains("LFEM  Manufacturing/ Sản xuất LFEM"))
-            {
-                return 108;
-            }
-            if (tenbp.Contains("LFEM Technology/ Kỹ thuật LFEM"))
-            {
-                return 109;
-            }
-            if (tenbp.Contains("Logistic/ XNK"))
-            {
-                return 110;
-            }
-            if (tenbp.Contains("PI"))
-            {
-                return 111;
-            }
-            if (tenbp.Contains("Human Resource/ HCNS (Utility)"))
-            {
-                return 112;
-            }
-
-            return null;
+           return _bophanDetailRepository.FindAll(x => x.TenBoPhanChiTiet == tenbp).FirstOrDefault().Id;
         }
     }
 }

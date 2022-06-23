@@ -10,18 +10,6 @@ namespace HRMNS.Application.Interfaces
 {
     public interface IBangCongService : IDisposable
     {
-        AttendanceRecordViewModel Add(AttendanceRecordViewModel viewModel);
-
-        void Update(AttendanceRecordViewModel viewModel);
-
-        List<AttendanceRecordViewModel> GetAll(params Expression<Func<ATTENDANCE_RECORD, object>>[] includeProperties);
-
-        AttendanceOvertimeViewModel AddOverTime(AttendanceOvertimeViewModel attendance);
-
-        void UpdateOverTime(AttendanceOvertimeViewModel attendance);
-
-        List<AttendanceOvertimeViewModel> GetAllAttendanceOT(params Expression<Func<ATTENDANCE_OVERTIME, object>>[] includeProperties);
-
         List<ChamCongDataViewModel> GetDataReport(string time,string dept);
     }
 }

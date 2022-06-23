@@ -6,6 +6,43 @@
 
     function registerEvents() {
 
+        $('#btnExportData').on('click', function () {
+
+            $.ajax({
+                type: "POST",
+                url: "/Admin/ChamCong/ExportExcel",
+                success: function (response) {
+                    window.location.href = response;
+                },
+                error: function (status) {
+                    hrms.notify(status.responseText, 'error', 'alert', function () { });
+                }
+            });
+        });
+
+        $('#btnExportAbsenceData').on('click', function () {
+
+            var dept = $('#cboBoPhan').val();
+            var fromTime = $('#txtTimeFrom').val();
+            var toTime = $('#txtTimeTo').val();
+
+            $.ajax({
+                type: "POST",
+                url: "/Admin/ChamCong/GetChamCongAbsenceLog",
+                data: {
+                    fromTime: fromTime,
+                    toTime: toTime,
+                    dept: dept
+                },
+                success: function (response) {
+                    window.location.href = response;
+                },
+                error: function (status) {
+                    hrms.notify(status.responseText, 'error', 'alert', function () { });
+                }
+            });
+        });
+
         // Import excel
         // 1. import even log
         $('#btn-importAttendance').on('click', function () {
@@ -133,7 +170,7 @@
 
                     $('#lblTotalTimeInDay').text(Math.abs(Difference_In_Days.toFixed(2)) + ' hrs');
                     $('#slActivity').html(render);
-                  
+
                 },
                 error: function (status) {
                     hrms.notify('error:' + status.responseText, 'error', 'alert', function () { });
@@ -197,41 +234,55 @@
     }
 
     function initSelectOptionBoPhan() {
-        $.ajax({
-            url: '/Admin/ChamCong/GetDepartment',
-            type: 'GET',
-            dataType: 'json',
-            async: false,
-            success: function (response) {
 
-                if (deparment != '' && deparment != 'SP') {
-                    var render = "";
-                    if (deparment == "WLP2") {
-                        render = "<option value='WLP 2'>" + deparment + "</option >";
-                    }
-                    else if (deparment == "WLP1") {
-                        render = "<option value='WLP 1'>" + deparment + "</option >";
-                    }
-                    else
-                    {
-                        render = "<option value='" + deparment + "'>" + deparment + "</option >";
-                    }
-                    $('#cboBoPhan').html(render);
-                }
-                else
-                {
-                    var render = "<option value=''>--All--</option>";
-                    $.each(response, function (i, item) {
-                        render += "<option value='" + item.sName + "'>" + item.sName + "</option >"
-                    });
-                    $('#cboBoPhan').html(render);
-                }
-            },
-            error: function (status) {
-                console.log(status);
-                hrms.notify('Cannot loading department data', 'error', 'alert', function () { });
+        if (deparment != '' && deparment != 'SP') {
+            var render = "";
+            if (deparment == "WLP2") {
+                render = "<option value='WLP 2'>" + deparment + "</option >";
             }
-        });
+            else if (deparment == "WLP1") {
+                render = "<option value='WLP 1'>" + deparment + "</option >";
+            }
+            else {
+                render = "<option value='" + deparment + "'>" + deparment + "</option >";
+            }
+            $('#cboBoPhan').html(render);
+        }
+        else {
+            $.ajax({
+                url: '/Admin/ChamCong/GetDepartment',
+                type: 'GET',
+                dataType: 'json',
+                async: false,
+                success: function (response) {
+
+                    if (deparment != '' && deparment != 'SP') {
+                        var render = "";
+                        if (deparment == "WLP2") {
+                            render = "<option value='WLP 2'>" + deparment + "</option >";
+                        }
+                        else if (deparment == "WLP1") {
+                            render = "<option value='WLP 1'>" + deparment + "</option >";
+                        }
+                        else {
+                            render = "<option value='" + deparment + "'>" + deparment + "</option >";
+                        }
+                        $('#cboBoPhan').html(render);
+                    }
+                    else {
+                        var render = "<option value=''>--All--</option>";
+                        $.each(response, function (i, item) {
+                            render += "<option value='" + item.sName + "'>" + item.sName + "</option >"
+                        });
+                        $('#cboBoPhan').html(render);
+                    }
+                },
+                error: function (status) {
+                    console.log(status);
+                    hrms.notify('Cannot loading department data', 'error', 'alert', function () { });
+                }
+            });
+        }
     }
 
     this.beginSearch = function () {
@@ -251,7 +302,7 @@
 
         $('#chamCongLogDataTable').DataTable({
             select: true,
-            "order": [11, 'asc']
+            "order": [12, 'asc']
         });
         $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
         $('select[name="chamCongLogDataTable_length"]').removeClass('form-control-sm');

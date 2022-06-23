@@ -16,7 +16,7 @@ namespace HRMNS.Data.Entities
             CA_LVIEC = new HashSet<CA_LVIEC>();
             NHANVIEN_CALAMVIEC = new HashSet<NHANVIEN_CALAMVIEC>();
             SETTING_TIME_DIMUON_VESOM = new HashSet<SETTING_TIME_DIMUON_VESOM>();
-            SETTING_TIME_CA_LVIEC = new HashSet<SETTING_TIME_CA_LVIEC>();
+            // SETTING_TIME_CA_LVIEC = new HashSet<SETTING_TIME_CA_LVIEC>();
         }
 
         [StringLength(100)]
@@ -46,6 +46,6 @@ namespace HRMNS.Data.Entities
 
         public virtual ICollection<SETTING_TIME_DIMUON_VESOM> SETTING_TIME_DIMUON_VESOM { get; set; }
 
-        public virtual ICollection<SETTING_TIME_CA_LVIEC> SETTING_TIME_CA_LVIEC { get; set; }
+        // public virtual ICollection<SETTING_TIME_CA_LVIEC> SETTING_TIME_CA_LVIEC { get; set; }
     }
 }

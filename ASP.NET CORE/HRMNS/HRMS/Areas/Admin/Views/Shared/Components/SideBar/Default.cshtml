@@ -1,4 +1,7 @@
-﻿@model List<FunctionViewModel>
+﻿@using Microsoft.AspNetCore.Authorization
+@using HRMS.Authorization
+@inject IAuthorizationService AuthorizationService
+@model List<FunctionViewModel>
 <div class="sidebar" id="sidebar">
     <div class="sidebar-inner slimscroll">
         <div id="sidebar-menu" class="sidebar-menu">
@@ -8,8 +11,9 @@
                 </li>
                 @*<li class="submenu">*@
                 <li>
-                    <a href="/Admin/Home/Index" target="_self"><i class="la la-dashboard"></i> <span> Home</span></a>
+                    <a href="/Admin/Home/Index" target="_self" onclick="linkClick(this)"><i class="la la-dashboard"></i> <span> Home</span></a>
                 </li>
+
 
                 @foreach (var item in Model.Where(x => string.IsNullOrEmpty(x.ParentId)))
                 {
@@ -28,9 +32,8 @@
                                     <ul style="display: none;">
                                         @foreach (var childItem in Model.Where(x => x.ParentId == subItem.Id))
                                         {
-                                            <li><a href="@childItem.URL">@childItem.Name</a></li>
+                                            <li><a href="@childItem.URL" id="@childItem.Id" data-id="@childItem.Id" onclick="linkClick(this)">@childItem.Name</a></li>
                                         }
-
                                     </ul>
                                 </li>
                             }
@@ -48,3 +51,17 @@
         </div>
     </div>
 </div>
+<script>
+    function linkClick(item) {
+        sessionStorage.setItem('activeLink', item.id);
+    }
+
+    (function () {
+        let id = sessionStorage.getItem("activeLink");
+        let element = document.getElementById(id);
+        if (element) {
+            element.classList.remove("active");
+            element.classList.add("active");
+        }
+    })();
+</script>

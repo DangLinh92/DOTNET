@@ -26,7 +26,7 @@
         $(document).ready(function () {
             $('#chamCongLogDataTable').DataTable({
                 select: true,
-                "order": [11, 'asc']
+                "order": [12, 'asc']
             });
             $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
             $('select[name="chamCongLogDataTable_length"]').removeClass('form-control-sm');
@@ -56,21 +56,27 @@
     <div class="page-header">
         <div class="row align-items-center">
             <div class="col">
-                <h3 class="page-title">Time and Attendance/Dữ Liệu Chấm Công Hàng Ngày</h3>
+                <h3 class="page-title">Time Tracking/Dữ Liệu Chấm Công Hàng Ngày</h3>
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/admin/home/index">Home</a></li>
                     <li class="breadcrumb-item active">Time and Attendance</li>
                 </ul>
             </div>
             <div class="col-auto float-right ml-auto">
-                <a href="#" id="btnGetLog" class="btn add-btn"><i class="fa fa-arrow-circle-down"></i>Get Log</a>
-                <div class="btn-group" style="display:none;">
-                    <button type="button" class="btn btn-info dropdown-toggle" id="btnManagement" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Management</button>
-                    <div class="dropdown-menu" style="">
-                        <a class="dropdown-item" href="~/templates/LogTimeTemplate.xlsx">Get Attendance Template</a>
-                        <a class="dropdown-item" href="#" id="btn-importAttendance">Import Attendance</a>
+                <a href="#" id="btnGetLog" class="btn add-btn"><i class="fa fa-arrow-circle-down"></i>Update Log Time</a>
+                @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+                    (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin" || User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" || User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "AssLeader"))
+                {
+                    <div class="btn-group" style="margin-right:5px">
+                        <button type="button" class="btn btn-info dropdown-toggle" id="btnManagement" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Management</button>
+                        <div class="dropdown-menu" style="">
+                            <a class="dropdown-item" href="~/templates/LogTimeTemplate.xlsx">Get import Template</a>
+                            <a class="dropdown-item" href="#" id="btn-importAttendance">Import Log Time</a>
+                            <a class="dropdown-item" href="#" id="btnExportData">Xuất data search</a>
+                            <a class="dropdown-item" href="#" id="btnExportAbsenceData">DS Chấm Công Lỗi</a>
+                        </div>
                     </div>
-                </div>
+                }
             </div>
         </div>
     </div>
@@ -149,12 +155,13 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
+            <div style="text-align:center"><p class="text-muted" id="lblNgayChamCong">11 Mar 2019</p></div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="card punch-status">
                             <div class="card-body">
-                                <h5 class="card-title">Timesheet <small class="text-muted" id="lblNgayChamCong">11 Mar 2019</small></h5>
+                                <h5 class="card-title">Timesheet </h5>
                                 <div class="punch-det">
                                     <h6>Punch In at</h6>
                                     <p id="lblBeginTime">Wed, 11th Mar 2019 10.00 AM</p>

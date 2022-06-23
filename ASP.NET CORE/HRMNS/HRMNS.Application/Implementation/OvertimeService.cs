@@ -246,11 +246,6 @@ namespace HRMNS.Application.Implementation
             _overtimeRepository.Update(entity);
         }
 
-        public void UpdateSingle(DangKyOTNhanVienViewModel nhanVienLVVm)
-        {
-            throw new NotImplementedException();
-        }
-
         public DangKyOTNhanVienViewModel CheckExist(int id, string maNV, string date)
         {
             if (id > 0)
@@ -262,63 +257,6 @@ namespace HRMNS.Application.Implementation
                 var obj = _overtimeRepository.FindSingle(x => x.MaNV == maNV && x.NgayOT == date);
                 return _mapper.Map<DangKyOTNhanVienViewModel>(obj);
             }
-        }
-
-        public void Approve(string dept, string status, string role, bool isApprove)
-        {
-            List<DANGKY_OT_NHANVIEN> lstOT = new List<DANGKY_OT_NHANVIEN>();
-
-            if (role == CommonConstants.roleApprove1)
-            {
-                lstOT = _overtimeRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && x.Approve == status || x.Approve == null, y => y.HR_NHANVIEN).ToList();
-            }
-            else if (role == CommonConstants.roleApprove2)
-            {
-                lstOT = _overtimeRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && x.ApproveLV2 == status || x.ApproveLV2 == null, y => y.HR_NHANVIEN).ToList();
-            }
-            else if (role == CommonConstants.roleApprove3 || role == CommonConstants.AppRole.AdminRole)
-            {
-                lstOT = _overtimeRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && x.ApproveLV3 == status || x.ApproveLV3 == null, y => y.HR_NHANVIEN).ToList();
-            }
-
-            foreach (var item in lstOT)
-            {
-                if (role == CommonConstants.roleApprove1)
-                {
-                    item.Approve = isApprove ? CommonConstants.Approved : CommonConstants.No_Approved;
-                }
-                else if (role == CommonConstants.roleApprove2)
-                {
-                    item.ApproveLV2 = isApprove ? CommonConstants.Approved : CommonConstants.No_Approved;
-                }
-                else if (role == CommonConstants.roleApprove3 || role == CommonConstants.AppRole.AdminRole)
-                {
-                    item.ApproveLV3 = isApprove ? CommonConstants.Approved : CommonConstants.No_Approved;
-                }
-
-                item.HR_NHANVIEN = null;
-            }
-            _overtimeRepository.UpdateRange(lstOT);
-        }
-
-        public void ApproveSingle(int Id, string role, bool isApprove)
-        {
-            var obj = _overtimeRepository.FindById(Id);
-
-            if (role == CommonConstants.roleApprove1)
-            {
-                obj.Approve = isApprove ? CommonConstants.Approved : CommonConstants.No_Approved;
-            }
-            else if (role == CommonConstants.roleApprove2)
-            {
-                obj.ApproveLV2 = isApprove ? CommonConstants.Approved : CommonConstants.No_Approved;
-            }
-            else if (role == CommonConstants.roleApprove3 || role == CommonConstants.AppRole.AdminRole)
-            {
-                obj.ApproveLV3 = isApprove ? CommonConstants.Approved : CommonConstants.No_Approved;
-            }
-
-            _overtimeRepository.Update(obj);
         }
 
         public void UpdateRange(List<DangKyOTNhanVienViewModel> OTVms)

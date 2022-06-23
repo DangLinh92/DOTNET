@@ -140,6 +140,139 @@
             });
         });
 
+        // open form approve
+        $('body').on('click', '.approve-nv-overtime', function (e) {
+
+            e.preventDefault();
+            $('#hiIdApprove').val($(this).data('id'));
+            $('#approve_overtime').modal('show');
+        });
+
+        // Approve
+        $('#btnApprove').on('click', function (e) {
+
+            e.preventDefault();
+            $('#hiIdApprove').val(0);
+            $('#approve_overtime').modal('show');
+        });
+
+        // UnApprove
+        $('#btnUnApprove').on('click', function (e) {
+
+            e.preventDefault();
+            $('#hiIdUnApprove').val(0);
+            $('#unapprove_overtime').modal('show');
+        });
+
+        // open form unapprove
+        $('body').on('click', '.unapprove-nv-overtime', function (e) {
+
+            e.preventDefault();
+            $('#hiIdUnApprove').val($(this).data('id'));
+            $('#unapprove_overtime').modal('show');
+        });
+
+        // Approve
+        $('#btn-approve_overtime').on('click', function (e) {
+
+            e.preventDefault();
+
+            var code = $('#hiIdApprove').val();
+            var ids = [];
+
+            if (code == '0') {
+                // Iterate over all checkboxes in the table
+                let arrV = $($.fn.dataTable.tables(true)).DataTable().$('input[type="checkbox"]');
+                arrV.each(function () {
+                    // If checkbox is checked
+                    if (this.checked) {
+                        ids.push(this.value);
+                    }
+                });
+            }
+            else
+            {
+                ids.push(code);
+            }
+
+            if (ids.length == 0) {
+                hrms.notify('error: Choose item for approve', 'error', 'alert', function () { });
+                return;
+            }
+
+            $.ajax({
+                url: '/Admin/ChamCongDacBiet/ApproveAction',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    lstID: ids,
+                    action: 'approve'
+                },
+                success: function (response) {
+
+                    $('#approve_overtime').modal('hide');
+                    hrms.notify("Update success!", 'Success', 'alert', function () {
+                        location.reload();
+                    });
+                },
+                error: function (status) {
+                    console.log(status.responseText);
+                    hrms.notify('error:' + status.responseText, 'error', 'alert', function () { });
+                }
+            });
+        });
+
+        // UnApprove
+        $('#btn-Unapprove_overtime').on('click', function (e) {
+
+            e.preventDefault();
+
+            var code = $('#hiIdUnApprove').val();
+
+            var ids = [];
+
+            if (code == '0') {
+                // Iterate over all checkboxes in the table
+                let arrV = $($.fn.dataTable.tables(true)).DataTable().$('input[type="checkbox"]');
+                arrV.each(function () {
+                    // If checkbox is checked
+                    if (this.checked) {
+                        ids.push(this.value);
+                    }
+                });
+            }
+            else
+            {
+                ids.push(code);
+            }
+
+            if (ids.length == 0) {
+                hrms.notify('error: Choose item for unapprove', 'error', 'alert', function () { });
+                return;
+            }
+
+            $.ajax({
+                url: '/Admin/ChamCongDacBiet/ApproveAction',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    lstID: ids,
+                    action: 'unapprove'
+                },
+                success: function (response) {
+
+                    $('#unapprove_overtime').modal('hide');
+                    hrms.notify("Update success!", 'Success', 'alert', function () {
+                        location.reload();
+                    });
+                },
+                error: function (status) {
+                    console.log(status.responseText);
+                    hrms.notify('error:' + status.responseText, 'error', 'alert', function () { });
+                }
+            });
+        });
+
         function resetModelAdd() {
             $('#_txtId').val(0);
             $('#_txtMaNV').val('');
@@ -168,11 +301,22 @@
 
                     var render = "<option value='' selected='selected'>Select option...</option>";
                     $.each(groupEmp, function (gr, item) {
-                        render += "<optgroup label='" + gr + "'>";
-                        $.each(item, function (j, sub) {
-                            render += "<option value='" + sub.Id + "'>" + sub.Id + "-" + sub.TenNV + "</option>"
-                        });
-                        render += "</optgroup>"
+                        if (deparment != '') {
+                            if (deparment == gr) {
+                                render += "<optgroup label='" + gr + "'>";
+                                $.each(item, function (j, sub) {
+                                    render += "<option value='" + sub.Id + "'>" + sub.Id + "-" + sub.TenNV + "</option>"
+                                });
+                                render += "</optgroup>"
+                            }
+                        }
+                        else {
+                            render += "<optgroup label='" + gr + "'>";
+                            $.each(item, function (j, sub) {
+                                render += "<option value='" + sub.Id + "'>" + sub.Id + "-" + sub.TenNV + "</option>"
+                            });
+                            render += "</optgroup>"
+                        }
                     });
                     $('#_txtMaNV').html(render);
                 },
@@ -214,6 +358,72 @@
                 }
             });
         }
+
+        // Import excel
+        // 1. import overtime
+        $('#btn-importChamCongDB').on('click', function () {
+            $("#fileInputExcel").val(null);
+            $('#hd-ImportType').val('');
+            $('#import_OvertimeModel').modal('show');
+        });
+
+        // Close import
+        $('#btnCloseImportExcel').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+            if (files.length > 0) {
+                $("#fileInputExcel").val(null);
+                $('#hd-ImportType').val('');
+                $('#import_OvertimeModel').modal('hide');
+                location.reload();
+            }
+        });
+
+        // Close import
+        $('#btnCloseImport').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+            if (files.length > 0) {
+                $("#fileInputExcel").val(null);
+                $('#hd-ImportType').val('');
+                $('#import_OvertimeModel').modal('hide');
+                location.reload();
+            }
+        });
+
+        // Click import excel
+        $('#btnImportExcel').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+
+            // Create FormData object  
+            var fileData = new FormData();
+            // Looping over all files and add it to FormData object  
+            for (var i = 0; i < files.length; i++) {
+                fileData.append("files", files[i]);
+            }
+            // Adding one more key to FormData object  
+            // fileData.append('categoryId', $('#ddlCategoryIdImportExcel').combotree('getValue'));
+            var type = $('#hd-ImportType').val();
+
+            $.ajax({
+                url: '/Admin/ChamCongDacBiet/ImportExcel?param=' + type,
+                type: 'POST',
+                data: fileData,
+                processData: false,  // tell jQuery not to process the data
+                contentType: false,  // tell jQuery not to set contentType
+                success: function (data) {
+                    $('#import_OvertimeModel').modal('hide');
+                    hrms.notify("Import success!", 'Success', 'alert', function () {
+                        location.reload();
+                    });
+                },
+                error: function (status) {
+                    hrms.notify('error: Import error!', 'error', 'alert', function () { });
+                }
+            });
+            return false;
+        });
     }
 
     function initSelectOptionBoPhan() {
@@ -223,11 +433,18 @@
             dataType: 'json',
             async: false,
             success: function (response) {
-                var render = "<option value=''>--Select department--</option>";
-                $.each(response, function (i, item) {
-                    render += "<option value='" + item.Id + "'>" + item.TenBoPhan + "</option>"
-                });
-                $('#cboDepartment').html(render);
+
+                if (deparment != '' && deparment != 'SP') {
+                    var render = "<option value='" + deparment + "'>" + deparment + "</option >";
+                    $('#cboDepartment').html(render);
+                }
+                else {
+                    var render = "<option value=''>--Select department--</option>";
+                    $.each(response, function (i, item) {
+                        render += "<option value='" + item.Id + "'>" + item.TenBoPhan + "</option >"
+                    });
+                    $('#cboDepartment').html(render);
+                }
             },
             error: function (status) {
                 console.log(status);
@@ -242,11 +459,80 @@
             table.DataTable().destroy();
         }
 
-        $('#chamCongDacBietDataTable').DataTable({
-            "order": [7, 'asc']
+        var table = $('#chamCongDacBietDataTable').DataTable({
+            scrollY: 600,
+            scrollX: true,
+            scrollCollapse: true,
+            paging: false,
+            select: true,
+            "searching": true,
+            initComplete: function () {
+                this.api().columns([1, 2, 3, 4, 5, 6, 8, 9, 10]).every(function () {
+                    var column = this;
+                    var select = $('<select><option value="">All</option></select>')
+                        .appendTo($(column.header()))
+                        .on('change', function () {
+                            var val = $.fn.dataTable.util.escapeRegex(
+                                $(this).val()
+                            );
+
+                            column
+                                .search(val ? '^' + val + '$' : '', true, false)
+                                .draw();
+                        });
+
+                    column.data().unique().sort().each(function (d, j) {
+                        if (d == '<span class="badge bg-inverse-success">Yes</span>') {
+                            select.append('<option value="Yes">Yes</option>')
+                        }
+                        else if (d == '<span class="badge bg-inverse-warning">Request</span>') {
+                            select.append('<option value="Request">Request</option>')
+                        }
+                        else if (d == '<span class="badge bg-inverse-danger">No</span>') {
+                            select.append('<option value="No">No</option>')
+                        }
+                        else {
+                            select.append('<option value="' + d + '">' + d + '</option>')
+                        }
+                    });
+                });
+            }
+            , columnDefs: [{
+                targets: 0,
+                className: 'dt-body-center',
+                render: function (data, type, full, meta) {
+                    return '<input type="checkbox" name="id[]" value="' + $('<div/>').text(data).html() + '">';
+                }
+            }],
+            "order": [[10, 'asc']]
         });
+        table.columns.adjust().draw();
+        table.order([11, 'asc']).draw();
+
         $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
         $('select[name="chamCongDacBietDataTable_length"]').removeClass('form-control-sm');
+
+        // Handle click on "Select all" control
+        $('#chamCongDacBietDataTable-select-all').on('click', function () {
+            // Get all rows with search applied
+            var rows = table.rows({ 'search': 'applied' }).nodes();
+            // Check/uncheck checkboxes for all rows in the table
+            $('input[type="checkbox"]', rows).prop('checked', this.checked);
+        });
+
+        // Handle click on checkbox to set state of "Select all" control
+        $('#chamCongDacBietDataTable tbody').on('change', 'input[type="checkbox"]', function () {
+            // If checkbox is not checked
+            if (!this.checked) {
+                var el = $('#chamCongDacBietDataTable-select-all').get(0);
+                // If "Select all" control is checked and has 'indeterminate' property
+                if (el && el.checked && ('indeterminate' in el)) {
+                    // Set visual state of "Select all" control
+                    // as 'indeterminate'
+                    el.indeterminate = true;
+                }
+            }
+        });
     }
 
     this.beginSearch = function () {

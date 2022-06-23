@@ -2,7 +2,7 @@
     this.initialize = function () {
         registerEvents();
         initSelectOptionBoPhan();
-        initActiveTime();
+        // initActiveTime();
     }
 
     function registerEvents() {
@@ -277,105 +277,105 @@
         });
 
         // Show Dang Ky Ca Lam Viec (admin)
-        $('#btn-registTimeShift').on('click', function (e) {
-            ResetFormSettingTimeCaLviec();
-            initSelectOptionSettingTimeCaLviec();
-            initSelectDMCalamviec('1');
-            $('#hd_Time_Calviec').val('Add');
-            $('#settingTimeCalamviecModel').modal('show');
-        });
+        //$('#btn-registTimeShift').on('click', function (e) {
+        //    ResetFormSettingTimeCaLviec();
+        //    initSelectOptionSettingTimeCaLviec();
+        //    initSelectDMCalamviec('1');
+        //    $('#hd_Time_Calviec').val('Add');
+        //    $('#settingTimeCalamviecModel').modal('show');
+        //});
 
-        function ResetFormSettingTimeCaLviec() {
-            $('#_txtIdSetting').val('0');
-            $('#_txtSettingDmCaLviec').val('');
-            $('#_txtSettingDmCaLviec').trigger('change');
-            $('#_txtSettingTimeTo').val('');
-            $('#_txtSettingTimeFrom').val('');
-            $('#_txtSettingTimeRegisFrom').val('');
-            $('#_txtSettingTimeRegisTo').val('');
-            $('#hd_Time_Calviec').val('');
-            $('#_txtSettingStatus').val('');
-            $('#_txtSettingStatus').trigger('change');
-            $('#btnAddSettingTime').attr('disabled', true);
+        //function ResetFormSettingTimeCaLviec() {
+        //    $('#_txtIdSetting').val('0');
+        //    $('#_txtSettingDmCaLviec').val('');
+        //    $('#_txtSettingDmCaLviec').trigger('change');
+        //    $('#_txtSettingTimeTo').val('');
+        //    $('#_txtSettingTimeFrom').val('');
+        //    $('#_txtSettingTimeRegisFrom').val('');
+        //    $('#_txtSettingTimeRegisTo').val('');
+        //    $('#hd_Time_Calviec').val('');
+        //    $('#_txtSettingStatus').val('');
+        //    $('#_txtSettingStatus').trigger('change');
+        //    $('#btnAddSettingTime').attr('disabled', true);
 
-            $('#_txtSettingDmCaLviec').attr('disabled', false);
-            $('#_txtSettingTimeTo').attr('disabled', false);
-            $('#_txtSettingTimeFrom').attr('disabled', false);
-            $('#_txtSettingTimeRegisFrom').attr('disabled', false);
-            $('#_txtSettingTimeRegisTo').attr('disabled', false);
-            $('#_txtSettingStatus').attr('disabled', false);
-        }
+        //    $('#_txtSettingDmCaLviec').attr('disabled', false);
+        //    $('#_txtSettingTimeTo').attr('disabled', false);
+        //    $('#_txtSettingTimeFrom').attr('disabled', false);
+        //    $('#_txtSettingTimeRegisFrom').attr('disabled', false);
+        //    $('#_txtSettingTimeRegisTo').attr('disabled', false);
+        //    $('#_txtSettingStatus').attr('disabled', false);
+        //}
 
         // Init data setting time lam viec
-        function initSelectOptionSettingTimeCaLviec() {
-            $.ajax({
-                url: '/Admin/NhanVien_CaLamViec/GetTimeSettingCaLamViec',
-                type: 'GET',
-                dataType: 'json',
-                async: false,
-                success: function (response) {
+        //function initSelectOptionSettingTimeCaLviec() {
+        //    $.ajax({
+        //        url: '/Admin/NhanVien_CaLamViec/GetTimeSettingCaLamViec',
+        //        type: 'GET',
+        //        dataType: 'json',
+        //        async: false,
+        //        success: function (response) {
 
-                    var render = "<option value='' selected='selected'>Select option...</option>";
-                    var ids = '';
-                    $.each(response, function (i, item) {
-                        ids = item.Id + '^' + item.CaLamViec + '^' + item.NgayBatDau + '^' + item.NgayKetThuc + '^' + item.NgayBatDauDangKy + '^' + item.NgayKetThucDangKy + '^' + item.Status;
-                        render += "<option value='" + ids + "'>" + item.DM_CA_LVIEC.TenCaLamViec + ' : [' + item.NgayBatDau + ' -> ' + item.NgayKetThuc + ']' + "</option>";
-                    });
-                    $('#_txtTimeSelect').html(render);
-                },
-                error: function (status) {
-                    console.log(status);
-                    hrms.notify('Cannot loading setting time', 'error', 'alert', function () { });
-                }
-            });
-        }
+        //            var render = "<option value='' selected='selected'>Select option...</option>";
+        //            var ids = '';
+        //            $.each(response, function (i, item) {
+        //                ids = item.Id + '^' + item.CaLamViec + '^' + item.NgayBatDau + '^' + item.NgayKetThuc + '^' + item.NgayBatDauDangKy + '^' + item.NgayKetThucDangKy + '^' + item.Status;
+        //                render += "<option value='" + ids + "'>" + item.DM_CA_LVIEC.TenCaLamViec + ' : [' + item.NgayBatDau + ' -> ' + item.NgayKetThuc + ']' + "</option>";
+        //            });
+        //            $('#_txtTimeSelect').html(render);
+        //        },
+        //        error: function (status) {
+        //            console.log(status);
+        //            hrms.notify('Cannot loading setting time', 'error', 'alert', function () { });
+        //        }
+        //    });
+        //}
 
         // Luu Setting time Ca lam viec
-        $('#btnSave_Setting_Calmviec').on('click', function (e) {
+        //$('#btnSave_Setting_Calmviec').on('click', function (e) {
 
-            if ($('#frmSettingTime_CaLviec_AddEdit').valid()) {
+        //    if ($('#frmSettingTime_CaLviec_AddEdit').valid()) {
 
-                e.preventDefault();
+        //        e.preventDefault();
 
-                var calamviec = $('#_txtSettingDmCaLviec').val();
-                var ngayBatDau = $('#_txtSettingTimeFrom').val();
-                var ngayKetThuc = $('#_txtSettingTimeTo').val();
+        //        var calamviec = $('#_txtSettingDmCaLviec').val();
+        //        var ngayBatDau = $('#_txtSettingTimeFrom').val();
+        //        var ngayKetThuc = $('#_txtSettingTimeTo').val();
 
-                var ngaybatdauDangKy = $('#_txtSettingTimeRegisFrom').val();
-                var ngayKetThucDangKy = $('#_txtSettingTimeRegisTo').val();
-                var status = $('#_txtSettingStatus').val();
+        //        var ngaybatdauDangKy = $('#_txtSettingTimeRegisFrom').val();
+        //        var ngayKetThucDangKy = $('#_txtSettingTimeRegisTo').val();
+        //        var status = $('#_txtSettingStatus').val();
 
-                var action = $('#hd_Time_Calviec').val();
-                var code = $('#_txtIdSetting').val();
+        //        var action = $('#hd_Time_Calviec').val();
+        //        var code = $('#_txtIdSetting').val();
 
-                $.ajax({
-                    url: '/Admin/NhanVien_CaLamViec/RegisNewShift?action=' + action,
-                    type: 'POST',
-                    dataType: 'json',
-                    data: {
-                        Id: code,
-                        CaLamViec: calamviec,
-                        NgayBatDau: ngayBatDau,
-                        NgayKetThuc: ngayKetThuc,
-                        NgayBatDauDangKy: ngaybatdauDangKy,
-                        NgayKetThucDangKy: ngayKetThucDangKy,
-                        Status: status
-                    },
-                    success: function (response) {
+        //        $.ajax({
+        //            url: '/Admin/NhanVien_CaLamViec/RegisNewShift?action=' + action,
+        //            type: 'POST',
+        //            dataType: 'json',
+        //            data: {
+        //                Id: code,
+        //                CaLamViec: calamviec,
+        //                NgayBatDau: ngayBatDau,
+        //                NgayKetThuc: ngayKetThuc,
+        //                NgayBatDauDangKy: ngaybatdauDangKy,
+        //                NgayKetThucDangKy: ngayKetThucDangKy,
+        //                Status: status
+        //            },
+        //            success: function (response) {
 
-                        $('#settingTimeCalamviecModel').modal('hide');
-                        hrms.notify("Update success!", 'Success', 'alert', function () {
+        //                $('#settingTimeCalamviecModel').modal('hide');
+        //                hrms.notify("Update success!", 'Success', 'alert', function () {
 
-                            location.reload();
-                        });
-                    },
-                    error: function (status) {
-                        console.log(status.responseText);
-                        hrms.notify('error:' + status.responseText, 'error', 'alert', function () { });
-                    }
-                });
-            }
-        });
+        //                    location.reload();
+        //                });
+        //            },
+        //            error: function (status) {
+        //                console.log(status.responseText);
+        //                hrms.notify('error:' + status.responseText, 'error', 'alert', function () { });
+        //            }
+        //        });
+        //    }
+        //});
 
         // change select box setting time
         $('#_txtTimeSelect').on('change', function (e) {
@@ -479,13 +479,7 @@
 
             e.preventDefault();
             $('#hiIdApprove').val(0);
-
-            if ($('#cboDepartment').val() == '' || $('#searchStatus').val() != 'N') {
-                hrms.notify("Approve theo phòng ban có status = 'Not approved yet'", 'error', 'alert', function () { });
-            }
-            else {
-                $('#approve_nhanVien_calviec').modal('show');
-            }
+            $('#approve_nhanVien_calviec').modal('show');
         });
 
         // UnApprove
@@ -493,13 +487,7 @@
 
             e.preventDefault();
             $('#hiIdUnApprove').val(0);
-
-            if ($('#cboDepartment').val() == '' || $('#searchStatus').val() != 'Y') {
-                hrms.notify("UnApprove theo phòng ban có status = 'Approved'", 'error', 'alert', function () { });
-            }
-            else {
-                $('#unapprove_nhanVien_calviec').modal('show');
-            }
+            $('#unapprove_nhanVien_calviec').modal('show');
         });
 
         // Submit approve
@@ -507,18 +495,35 @@
 
             e.preventDefault();
 
-            var _dept = $('#cboDepartment').val();
-            var _status = $('#searchStatus').val();
             var code = $('#hiIdApprove').val();
+            var ids = [];
+
+            if (code == '0') {
+                // Iterate over all checkboxes in the table
+                let arrV = $($.fn.dataTable.tables(true)).DataTable().$('input[type="checkbox"]');
+                arrV.each(function () {
+                    // If checkbox is checked
+                    if (this.checked) {
+                        ids.push(this.value);
+                    }
+                });
+            }
+            else {
+                ids.push(code);
+            }
+
+            if (ids.length == 0) {
+                hrms.notify('error: Choose item for approve', 'error', 'alert', function () { });
+                return;
+            }
 
             $.ajax({
                 url: '/Admin/NhanVien_CaLamViec/Approve',
                 type: 'POST',
                 dataType: 'json',
                 data: {
-                    dept: _dept,
-                    status: _status,
-                    Id: code
+                    lstID: ids,
+                    action: 'approve'
                 },
                 success: function (response) {
                     $('#approve_nhanVien_calviec').modal('hide');
@@ -553,19 +558,37 @@
         $('#btn-Unapprove_nv_calamviec').on('click', function (e) {
 
             e.preventDefault();
-
-            var _dept = $('#cboDepartment').val();
-            var _status = $('#searchStatus').val();
             var code = $('#hiIdUnApprove').val();
 
+            var ids = [];
+
+            if (code == '0') {
+                // Iterate over all checkboxes in the table
+                let arrV = $($.fn.dataTable.tables(true)).DataTable().$('input[type="checkbox"]');
+                arrV.each(function () {
+                    // If checkbox is checked
+                    if (this.checked) {
+                        ids.push(this.value);
+                    }
+                });
+            }
+            else
+            {
+                ids.push(code);
+            }
+
+            if (ids.length == 0) {
+                hrms.notify('error: Choose item for unapprove', 'error', 'alert', function () { });
+                return;
+            }
+
             $.ajax({
-                url: '/Admin/NhanVien_CaLamViec/UnApprove',
+                url: '/Admin/NhanVien_CaLamViec/Approve',
                 type: 'POST',
                 dataType: 'json',
                 data: {
-                    dept: _dept,
-                    status: _status,
-                    Id: code
+                    lstID: ids,
+                    action: 'unapprove'
                 },
                 success: function (response) {
                     $('#unapprove_nhanVien_calviec').modal('hide');
@@ -586,16 +609,47 @@
     }
 
     function InitDataTable() {
-        var table = $('#nvCalamviecDataTable');
-        if (table) {
-            table.DataTable().destroy();
+        var table1 = $('#nvCalamviecDataTable');
+        if (table1) {
+            table1.DataTable().destroy();
         }
 
-        $('#nvCalamviecDataTable').DataTable({
-            "order": [8, 'asc']
+        var table =  $('#nvCalamviecDataTable').DataTable({
+            select: true,
+            "searching": true,
+            columnDefs: [{
+                targets: 0,
+                className: 'dt-body-center',
+                render: function (data, type, full, meta) {
+                    return '<input type="checkbox" name="id[]" value="' + $('<div/>').text(data).html() + '">';
+                }
+            }],
+            "order": [9, 'asc']
         });
         $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
         $('select[name="nvCalamviecDataTable_length"]').removeClass('form-control-sm');
+
+        // Handle click on "Select all" control
+        $('#nvCalamviecDataTable-select-all').on('click', function () {
+            // Get all rows with search applied
+            var rows = table.rows({ 'search': 'applied' }).nodes();
+            // Check/uncheck checkboxes for all rows in the table
+            $('input[type="checkbox"]', rows).prop('checked', this.checked);
+        });
+
+        // Handle click on checkbox to set state of "Select all" control
+        $('#nvCalamviecDataTable tbody').on('change', 'input[type="checkbox"]', function () {
+            // If checkbox is not checked
+            if (!this.checked) {
+                var el = $('#nvCalamviecDataTable-select-all').get(0);
+                // If "Select all" control is checked and has 'indeterminate' property
+                if (el && el.checked && ('indeterminate' in el)) {
+                    // Set visual state of "Select all" control
+                    // as 'indeterminate'
+                    el.indeterminate = true;
+                }
+            }
+        });
     }
 
     function initSelectOptionBoPhan() {
@@ -625,42 +679,42 @@
         });
     }
 
-    function initActiveTime() {
-        $.ajax({
-            url: '/Admin/NhanVien_CaLamViec/GetActiveTime',
-            type: 'GET',
-            dataType: 'json',
-            async: false,
-            success: function (response) {
-                $('#hTimeFrom').text(response.NgayBatDau);
-                $('#hTimeTo').text(response.NgayKetThuc);
+    //function initActiveTime() {
+    //    $.ajax({
+    //        url: '/Admin/NhanVien_CaLamViec/GetActiveTime',
+    //        type: 'GET',
+    //        dataType: 'json',
+    //        async: false,
+    //        success: function (response) {
+    //            $('#hTimeFrom').text(response.NgayBatDau);
+    //            $('#hTimeTo').text(response.NgayKetThuc);
 
-                $('#hRegisterTimeFrom').text(response.NgayBatDauDangKy);
-                $('#hRegisterTimeTo').text(response.NgayKetThucDangKy);
+    //            $('#hRegisterTimeFrom').text(response.NgayBatDauDangKy);
+    //            $('#hRegisterTimeTo').text(response.NgayKetThucDangKy);
 
-                var today = GetToDayDate();
-                if (today >= response.NgayBatDauDangKy && today <= response.NgayKetThucDangKy)
-                {
-                    $('#divCreateData').css('display', true);
-                }
-                else
-                {
-                    if (roleUsers.includes('Admin') || roleUsers.includes('HR'))
-                    {
-                        $('#divCreateData').css('display', true);
-                    }
-                    else
-                    {
-                        $('#divCreateData').css('display', 'none');
-                    }
-                }
-            },
-            error: function (status) {
-                console.log(status);
-                hrms.notify('Cannot loading data', 'error', 'alert', function () { });
-            }
-        });
-    }
+    //            var today = GetToDayDate();
+    //            if (today >= response.NgayBatDauDangKy && today <= response.NgayKetThucDangKy)
+    //            {
+    //                $('#divCreateData').css('display', true);
+    //            }
+    //            else
+    //            {
+    //                if (roleUsers.includes('Admin') || roleUsers.includes('HR'))
+    //                {
+    //                    $('#divCreateData').css('display', true);
+    //                }
+    //                else
+    //                {
+    //                    $('#divCreateData').css('display', 'none');
+    //                }
+    //            }
+    //        },
+    //        error: function (status) {
+    //            console.log(status);
+    //            hrms.notify('Cannot loading data', 'error', 'alert', function () { });
+    //        }
+    //    });
+    //}
 
     function GetToDayDate() {
         var today = new Date();

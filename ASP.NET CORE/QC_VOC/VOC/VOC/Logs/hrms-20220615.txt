@@ -1,0 +1,6 @@
+2022-06-15T11:13:06.3869662+07:00  [INF] Now listening on: "http://localhost:5000" (d826f4b8)
+2022-06-15T11:13:06.3945676+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-06-15T11:13:06.3961173+07:00  [INF] Hosting environment: "Development" (c3307c92)
+2022-06-15T11:13:06.3974496+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\QC_VOC\VOC\VOC" (b5d60022)
+2022-06-15T11:13:08.1892908+07:00 0HMIEGLCP2BRO:00000001 [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-06-15T11:13:12.6938384+07:00 0HMIEGLCP2BRT:00000004 [INF] User logged in. (fdce0db4)

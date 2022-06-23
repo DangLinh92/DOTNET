@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using HRMNS.Application.Interfaces;
 using HRMNS.Application.ViewModels.Time_Attendance;
+using HRMNS.Utilities.Common;
 using HRMNS.Utilities.Constants;
+using HRMNS.Utilities.Dtos;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HRMS.Areas.Admin.Controllers
@@ -55,7 +60,7 @@ namespace HRMS.Areas.Admin.Controllers
         {
             if (action == "Add")
             {
-                var itemCheck = _chamCongDacBietService.GetSingle(x => x.MaNV == data.MaNV && x.MaChamCong_ChiTiet == data.MaChamCong_ChiTiet && x.NgayBatDau == data.NgayBatDau && x.NgayKetThuc == data.NgayKetThuc);
+                var itemCheck = _chamCongDacBietService.GetSingle(x => x.MaNV == data.MaNV && x.NgayBatDau == data.NgayBatDau && x.NgayKetThuc == data.NgayKetThuc);
 
                 if (itemCheck != null)
                 {
@@ -67,9 +72,30 @@ namespace HRMS.Areas.Admin.Controllers
                 }
                 else
                 {
-                    data.Approve = CommonConstants.Request;
-                    data.ApproveLV2 = CommonConstants.Request;
-                    data.ApproveLV3 = CommonConstants.Request;
+                    if (UserRole == CommonConstants.roleApprove3 || UserRole == CommonConstants.AppRole.AdminRole) // HR
+                    {
+                        data.Approve = CommonConstants.Approved;
+                        data.ApproveLV2 = CommonConstants.Approved;
+                        data.ApproveLV3 = CommonConstants.Approved;
+                    }
+                    else if (UserRole == CommonConstants.roleApprove1) // group leader
+                    {
+                        data.Approve = CommonConstants.Approved;
+                        data.ApproveLV2 = CommonConstants.Request;
+                        data.ApproveLV3 = CommonConstants.Request;
+                    }
+                    else if (UserRole == CommonConstants.roleApprove2) // korea 
+                    {
+                        data.Approve = CommonConstants.Approved;
+                        data.ApproveLV2 = CommonConstants.Approved;
+                        data.ApproveLV3 = CommonConstants.Request;
+                    }
+                    else // assys leader
+                    {
+                        data.Approve = CommonConstants.Request;
+                        data.ApproveLV2 = CommonConstants.Request;
+                        data.ApproveLV3 = CommonConstants.Request;
+                    }
 
                     _chamCongDacBietService.Add(data);
                 }
@@ -199,6 +225,51 @@ namespace HRMS.Areas.Admin.Controllers
         {
             var lst = _chamCongChiTietService.GetAll(x => x.DM_DANGKY_CHAMCONG);
             return new OkObjectResult(lst);
+        }
+
+        [HttpPost]
+        [RequestFormLimits(MultipartBodyLengthLimit = 209715200)]
+        [RequestSizeLimit(209715200)]
+        public IActionResult ImportExcel(IList<IFormFile> files, [FromQuery] string param)
+        {
+            if (files != null && files.Count > 0)
+            {
+                var file = files[0];
+                var filename = ContentDispositionHeaderValue
+                                   .Parse(file.ContentDisposition)
+                                   .FileName
+                                   .Trim('"');
+
+                string folder = _hostingEnvironment.WebRootPath + $@"\uploaded\excels";
+                if (!Directory.Exists(folder))
+                {
+                    Directory.CreateDirectory(folder);
+                }
+                string filePath = Path.Combine(folder, CorrelationIdGenerator.GetNextId() + filename);
+                using (FileStream fs = System.IO.File.Create(filePath))
+                {
+                    file.CopyTo(fs);
+                    fs.Flush();
+                }
+                ResultDB result = _chamCongDacBietService.ImportExcel(filePath, UserRole);
+
+                if (System.IO.File.Exists(filePath))
+                {
+                    // If file found, delete it    
+                    System.IO.File.Delete(filePath);
+                }
+
+                if (result.ReturnInt == 0)
+                {
+                    return new OkObjectResult(filePath);
+                }
+                else
+                {
+                    return new BadRequestObjectResult(result.ReturnString);
+                }
+            }
+
+            return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
         }
     }
 }

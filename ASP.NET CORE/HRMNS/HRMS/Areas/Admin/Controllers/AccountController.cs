@@ -15,12 +15,12 @@ using System.Threading.Tasks;
 
 namespace HRMS.Areas.Admin.Controllers
 {
+    
     public class AccountController : AdminBaseController
     {
         private readonly SignInManager<APP_USER> _signInManager;
         private readonly UserManager<APP_USER> _userManager;
         private readonly IEmailSender _emailSender;
-        private readonly ILogger _logger;
         private IHttpContextAccessor _httpContextAccessor;
 
         public AccountController(UserManager<APP_USER> userManager, SignInManager<APP_USER> signInManager, IEmailSender emailSender, ILogger<AccountController> logger, IHttpContextAccessor httpContextAccessor)

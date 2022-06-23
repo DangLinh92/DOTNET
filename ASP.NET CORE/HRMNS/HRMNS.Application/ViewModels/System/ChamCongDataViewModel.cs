@@ -28,6 +28,8 @@ namespace HRMNS.Application.ViewModels.System
 
         public string BoPhanDetail { get; set; }
 
+        public string VP_SX { get; set; }
+
         public List<HopDong_NV> lstHopDong { get; set; }
         public List<NhanVien_CaLamViec> lstNhanVienCaLamViec { get; set; }
 
@@ -49,6 +51,8 @@ namespace HRMNS.Application.ViewModels.System
         public string NgayOT { get; set; }
         public string Ten_NgayLV { get; set; }
         public string DM_NgayLViec { get; set; }
+
+        public string DateModified { get; set; }
     }
 
     public class ChamCongDB
@@ -57,6 +61,8 @@ namespace HRMNS.Application.ViewModels.System
         public string NgayBatDau { get; set; }
         public string NgayKetThuc { get; set; }
         public string KyHieuChamCong { get; set; }
+
+        public string DateModified { get; set; }
     }
 
     public class NhanVien_CaLamViec
@@ -71,8 +77,15 @@ namespace HRMNS.Application.ViewModels.System
         public string Time_KetThuc2 { get; set; }
         public float HeSo_OT { get; set; }
 
+        public string CaLV_DB
+        {
+            get; set;
+        }
+
         public string DM_NgayLViec { get; set; }
         public string Ten_NgayLV { get; set; }
+
+        public string DateModified { get; set; }
     }
 
     // Thong tin hop dong

@@ -39,10 +39,7 @@ namespace HRMNS.Application.AutoMapper
             .ConstructUsing(c => new HR_KEKHAIBAOHIEM(c.MaNV, c.CheDoBH, c.NgayBatDau, c.NgayKetThuc, c.NgayThanhToan, c.SoTienThanhToan));
 
             CreateMap<NhanVien_CalamViecViewModel, NHANVIEN_CALAMVIEC>()
-           .ConstructUsing(c => new NHANVIEN_CALAMVIEC(c.MaNV, c.Danhmuc_CaLviec, c.BatDau_TheoCa, c.KetThuc_TheoCa, c.Approved));
-
-            CreateMap<SettingTimeCalamviecViewModel, SETTING_TIME_CA_LVIEC>()
-            .ConstructUsing(c => new SETTING_TIME_CA_LVIEC(c.CaLamViec, c.NgayBatDau, c.NgayKetThuc, c.NgayBatDauDangKy, c.NgayKetThucDangKy, c.Status));
+           .ConstructUsing(c => new NHANVIEN_CALAMVIEC(c.MaNV, c.Danhmuc_CaLviec, c.BatDau_TheoCa, c.KetThuc_TheoCa, c.Approved, c.CaLV_DB));
 
             CreateMap<DangKyOTNhanVienViewModel, DANGKY_OT_NHANVIEN>()
             .ConstructUsing(c => new DANGKY_OT_NHANVIEN(c.NgayOT, c.MaNV, c.DM_NgayLViec, c.Approve, c.ApproveLV2, c.ApproveLV3));

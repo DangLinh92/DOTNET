@@ -80,9 +80,31 @@ namespace HRMS.Areas.Admin.Controllers
                     }
                     else
                     {
-                        overtime.Approve = CommonConstants.Request;
-                        overtime.ApproveLV2 = CommonConstants.Request;
-                        overtime.ApproveLV3 = CommonConstants.Request;
+                        if (UserRole == CommonConstants.roleApprove3 || UserRole == CommonConstants.AppRole.AdminRole)
+                        {
+                            overtime.Approve = CommonConstants.Approved;
+                            overtime.ApproveLV2 = CommonConstants.Approved;
+                            overtime.ApproveLV3 = CommonConstants.Approved;
+                        }
+                        else if (UserRole == CommonConstants.roleApprove1) // group leader manager
+                        {
+                            overtime.Approve = CommonConstants.Approved;
+                            overtime.ApproveLV2 = CommonConstants.Request;
+                            overtime.ApproveLV3 = CommonConstants.Request;
+                        }
+                        else if (UserRole == CommonConstants.roleApprove2) // korea manager
+                        {
+                            overtime.Approve = CommonConstants.Approved;
+                            overtime.ApproveLV2 = CommonConstants.Approved;
+                            overtime.ApproveLV3 = CommonConstants.Request;
+                        } 
+                        else
+                        {
+                            overtime.Approve = CommonConstants.Request;
+                            overtime.ApproveLV2 = CommonConstants.Request;
+                            overtime.ApproveLV3 = CommonConstants.Request;
+                        }
+
                         UpdateDMNgayLviec(overtime);
                         _overtimeService.Add(overtime);
                     }
@@ -103,9 +125,31 @@ namespace HRMS.Areas.Admin.Controllers
 
                         if (itemCheck == null)
                         {
-                            overtime.Approve = CommonConstants.Request;
-                            overtime.ApproveLV2 = CommonConstants.Request;
-                            overtime.ApproveLV3 = CommonConstants.Request;
+                            if (UserRole == CommonConstants.roleApprove3 || UserRole == CommonConstants.AppRole.AdminRole)
+                            {
+                                overtime.Approve = CommonConstants.Approved;
+                                overtime.ApproveLV2 = CommonConstants.Approved;
+                                overtime.ApproveLV3 = CommonConstants.Approved;
+                            }
+                            else if (UserRole == CommonConstants.roleApprove1)
+                            {
+                                overtime.Approve = CommonConstants.Approved;
+                                overtime.ApproveLV2 = CommonConstants.Request;
+                                overtime.ApproveLV3 = CommonConstants.Request;
+                            }
+                            else if (UserRole == CommonConstants.roleApprove2)
+                            {
+                                overtime.Approve = CommonConstants.Approved;
+                                overtime.ApproveLV2 = CommonConstants.Approved;
+                                overtime.ApproveLV3 = CommonConstants.Request;
+                            } // korea manager
+                            else
+                            {
+                                overtime.Approve = CommonConstants.Request;
+                                overtime.ApproveLV2 = CommonConstants.Request;
+                                overtime.ApproveLV3 = CommonConstants.Request;
+                            }
+
                             UpdateDMNgayLviec(overtime);
                             _overtimeService.Add(overtime);
                             _overtimeService.Save();

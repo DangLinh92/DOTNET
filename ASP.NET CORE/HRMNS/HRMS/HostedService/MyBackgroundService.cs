@@ -14,6 +14,7 @@ namespace HRMS.HostedService
     {
         private readonly ILogger<MyBackgroundService> _logger;
         public IServiceProvider Services { get; }
+        private int executionCount = 0;
 
         public MyBackgroundService(IServiceProvider services,
         ILogger<MyBackgroundService> logger)
@@ -29,17 +30,31 @@ namespace HRMS.HostedService
 
         private async Task DoWork(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("Background Service Hosted Service is working.");
+            _logger.LogInformation("Background Service Hosted Service is working." + DateTime.Now);
 
             while (!stoppingToken.IsCancellationRequested)
             {
                 using (var scope = Services.CreateScope())
                 {
-                    var bgService =
-                        scope.ServiceProvider
-                            .GetRequiredService<IBackgroundService>();
+                    if (DateTime.Now.ToString("HH:mm:ss").CompareTo("00:10:00") <= 0 && executionCount == 0)
+                    {
+                        _logger.LogInformation("DoWork: active " + DateTime.Now.ToString("HH:mm:ss"));
 
-                    await bgService.DoWork(stoppingToken,_logger);
+                        var bgService =
+                       scope.ServiceProvider
+                           .GetRequiredService<IBackgroundService>();
+
+                        await bgService.DoWork(stoppingToken, _logger);
+
+                        executionCount++;
+                    }
+
+                    if (DateTime.Now.ToString("HH:mm:ss").CompareTo("00:10:00") > 0 && executionCount > 0)
+                    {
+                        executionCount = 0;
+                    }
+
+                    await Task.Delay(new TimeSpan(0, 0, 1));
                 }
             }
         }

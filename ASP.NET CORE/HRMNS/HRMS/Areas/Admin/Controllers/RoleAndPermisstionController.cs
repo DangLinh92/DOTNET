@@ -25,7 +25,7 @@ namespace HRMS.Areas.Admin.Controllers
             List<RoleViewModel> roles = _roleAndPermisstionService.GetAllRole(null);
             RoleAndPermisstionViewModel model = new RoleAndPermisstionViewModel();
             model.RoleModels = roles;
-            model.Functions = _functionService.GetAll("").Where(x=>x.ParentId != null).ToList();
+            model.Functions = _functionService.GetAll("").ToList();
             string roleId = "";
             if(roles.Count > 1)
             {
@@ -42,7 +42,7 @@ namespace HRMS.Areas.Admin.Controllers
             RoleAndPermisstionViewModel model = new RoleAndPermisstionViewModel();
             model.RoleModels = roles;
             model.RoleActive = roles.FirstOrDefault(x => x.Id + "" == roleId).Name;
-            model.Functions = _functionService.GetAll("").Where(x => x.ParentId != null).ToList();
+            model.Functions = _functionService.GetAll("").ToList();
             model.PermisstionForRoleModels = _roleAndPermisstionService.GetAllPermisstion(roleId);
             return View("Index", model);
         }

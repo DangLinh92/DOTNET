@@ -7,6 +7,7 @@ using HRMNS.Data.EF.Repositories;
 using HRMNS.Data.Entities;
 using HRMNS.Data.IRepositories;
 using HRMS.Authorization;
+using HRMS.Extensions;
 using HRMS.Helpers;
 using HRMS.HostedService;
 using HRMS.Infrastructure.Interfaces;
@@ -20,14 +21,18 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -52,6 +57,8 @@ namespace HRMS
             services.AddDbContext<BioStarDBContext>(option => option.UseSqlServer(@"Data Source = 10.70.22.240;Initial Catalog = BioStar;User Id = sa;Password = qwe123!@#;Connect Timeout=3"));
 
             services.AddIdentity<APP_USER, APP_ROLE>().AddEntityFrameworkStores<AppDBContext>().AddDefaultTokenProviders();
+
+
 
             // Configure Identity
             services.Configure<IdentityOptions>(options =>
@@ -106,7 +113,7 @@ namespace HRMS
             services.AddTransient<IChamCongService, ChamCongService>();
             services.AddTransient<INhanVien_CalamviecService, NhanVien_CalamviecService>();
             services.AddTransient<IDMucCalamviecService, DMucCalamviecService>();
-            services.AddTransient<ISettingTimeCalamviecService, SettingTimeCalamviecService>();
+            // services.AddTransient<ISettingTimeCalamviecService, SettingTimeCalamviecService>();
             services.AddTransient<IOvertimeService, OvertimeService>();
             services.AddTransient<INgayLeNamService, NgayLeNamService>();
             services.AddTransient<IDMucNgaylamviecService, DMucNgaylamviecService>();
@@ -132,6 +139,25 @@ namespace HRMS
             });
 
             services.AddHostedService<MyBackgroundService>();
+
+            services.AddMemoryCache();
+
+            services.AddRazorPages().AddSessionStateTempDataProvider();
+            services.AddControllersWithViews().AddSessionStateTempDataProvider();
+            services.AddSession();
+            services.AddMinResponse();
+
+            // If using Kestrel:
+            services.Configure<KestrelServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
+
+            // If using IIS:
+            services.Configure<IISServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -149,9 +175,12 @@ namespace HRMS
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.UseSession();
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            app.UseMinResponse();
             app.UseRouting();
 
             app.UseAuthentication();
@@ -159,7 +188,6 @@ namespace HRMS
 
             app.UseEndpoints(routes =>
             {
-
                 routes.MapControllerRoute(
                     "default",
                     "{area:exists}/{controller=Login}/{action=Index}/{id?}");

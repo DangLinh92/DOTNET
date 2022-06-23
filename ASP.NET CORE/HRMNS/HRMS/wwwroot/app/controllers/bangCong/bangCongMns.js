@@ -5,7 +5,19 @@
     }
 
     function registerEvents() {
+        $('#btnExportData').on('click', function () {
 
+            $.ajax({
+                type: "POST",
+                url: "/Admin/BangCong/OutPutExcel",
+                success: function (response) {
+                    window.location.href = response;
+                },
+                error: function (status) {
+                    hrms.notify(status.responseText, 'error', 'alert', function () { });
+                }
+            });
+        });
     }
 
 
@@ -49,30 +61,12 @@
 
     function InitDataTable() {
         $('#bangCongDataTable').DataTable({
-            initComplete: function () {
-                this.api().columns().every(function () {
-                    var column = this;
-                    var select = $('<select><option value=""></option></select>')
-                        .appendTo($(column.footer()).empty())
-                        .on('change', function () {
-                            var val = $.fn.dataTable.util.escapeRegex(
-                                $(this).val()
-                            );
-
-                            column
-                                .search(val ? '^' + val + '$' : '', true, false)
-                                .draw();
-                        });
-
-                    column.data().unique().sort().each(function (d, j) {
-                        select.append('<option value="' + d + '">' + d + '</option>')
-                    });
-                });
-            },
-            scrollY: "500px",
+            scrollY: 600,
             scrollX: true,
             scrollCollapse: true,
-            paging: true,
+            paging: false,
+            select: true,
+            "searching": true,
             fixedColumns: {
                 left: 5
             },

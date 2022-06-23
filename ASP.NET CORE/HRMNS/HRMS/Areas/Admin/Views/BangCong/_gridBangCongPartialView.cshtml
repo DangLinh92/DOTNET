@@ -1,4 +1,7 @@
 ﻿@model List<ChamCongDataViewModel>
+@{
+    int dayInMonths = ViewBag.DayOfMonths;
+}
 <table class="table table-bordered mb-0 custom-table datatable" id="bangCongDataTable">
     <thead>
         <tr style="background-color:#F6DDCC">
@@ -9,7 +12,7 @@
             <th>Status</th>
             @{
 
-                @for (int i = 1; i <= 31; i++)
+                @for (int i = 1; i <= dayInMonths; i++)
                 {
 
                     if (DateTime.TryParse(Model.FirstOrDefault()?.month_Check, out DateTime _dateCheck))
@@ -30,6 +33,10 @@
                         }
 
                     }
+                    else
+                    {
+                        <th>@i</th>
+                    }
                 }
             }
             @*<th class="text-right no-sort">Action</th>*@
@@ -41,7 +48,7 @@
             <th></th>
             <th></th>
             @{
-                @for (int i = 1; i <= 31; i++)
+                @for (int i = 1; i <= dayInMonths; i++)
                 {
                     if (DateTime.TryParse(Model.FirstOrDefault()?.month_Check, out DateTime _dateCheck))
                     {
@@ -66,6 +73,11 @@
                             }
 
                         }
+                    }
+                    else
+                    {
+                        <th>
+                        </th>
                     }
                 }
             }
@@ -118,7 +130,7 @@
                         </tr>
                     </table>
                 </td>
-                @for (int i = 1; i <= 31; i++)
+                @for (int i = 1; i <= dayInMonths; i++)
                 {
                     <td>
                         <table class="table table-bordered mb-0 custom-table">
@@ -242,14 +254,6 @@
                         </table>
                     </td>
                 }
-                @*<td class="text-right">
-                        <div class="dropdown dropdown-action">
-                            <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item edit-ChamCongDB" href="#" data-toggle="modal" data-target="#addEditChamCongDacBietModel" data-id="@item.MaNV"><i class="fa fa-edit m-r-5"></i> Edit</a>
-                            </div>
-                        </div>
-                    </td>*@
             </tr>
         }
     </tbody>

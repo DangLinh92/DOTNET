@@ -1,5 +1,5 @@
 ﻿(function () {
-    const idleDurationSecs = 900;//15 minute
+    const idleDurationSecs = 1800;//30 minute
     const redirectUrl = '/Admin/Account/Logout';
     let idleTimeout;
 

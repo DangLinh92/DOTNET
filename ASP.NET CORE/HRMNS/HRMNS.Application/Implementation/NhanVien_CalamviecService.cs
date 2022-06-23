@@ -25,15 +25,13 @@ namespace HRMNS.Application.Implementation
     {
         private IRespository<NHANVIEN_CALAMVIEC, int> _nhanvienClviecRepository;
         private IRespository<DM_CA_LVIEC, string> _dmCalamviecResponsitory;
-        private IRespository<SETTING_TIME_CA_LVIEC,int> _settingTimeCalamviec;
         private IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public NhanVien_CalamviecService(IRespository<NHANVIEN_CALAMVIEC, int> respository, IRespository<DM_CA_LVIEC, string> dmCalamviecRespository, IRespository<SETTING_TIME_CA_LVIEC,int> settingTimeCalamviec, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public NhanVien_CalamviecService(IRespository<NHANVIEN_CALAMVIEC, int> respository, IRespository<DM_CA_LVIEC, string> dmCalamviecRespository, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _nhanvienClviecRepository = respository;
             _dmCalamviecResponsitory = dmCalamviecRespository;
-            _settingTimeCalamviec = settingTimeCalamviec;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
@@ -75,6 +73,12 @@ namespace HRMNS.Application.Implementation
         public List<NhanVien_CalamViecViewModel> GetAll()
         {
             var lst = _nhanvienClviecRepository.FindAll(x => x.Status == Status.Active.ToString() || x.Status == Status.New.ToString()).OrderByDescending(x => x.DateModified);
+            return _mapper.Map<List<NhanVien_CalamViecViewModel>>(lst);
+        }
+
+        public List<NhanVien_CalamViecViewModel> GetAllWithoutStatus()
+        {
+            var lst = _nhanvienClviecRepository.FindAll().OrderByDescending(x => x.DateModified);
             return _mapper.Map<List<NhanVien_CalamViecViewModel>>(lst);
         }
 
@@ -123,12 +127,14 @@ namespace HRMNS.Application.Implementation
                     DataTable table = new DataTable();
                     table.Columns.Add("MaNV");
                     table.Columns.Add("Danhmuc_CaLviec");
+                    table.Columns.Add("CaLV_DB");
                     table.Columns.Add("BatDau_TheoCa");
                     table.Columns.Add("KetThuc_TheoCa");
                     table.Columns.Add("Status");
 
                     DataRow row = null;
                     string dmCalviec = "";
+                    string calv = "";
                     for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
                     {
                         row = table.NewRow();
@@ -143,42 +149,61 @@ namespace HRMNS.Application.Implementation
                         dmCalviec = worksheet.Cells[i, 3].Text.NullString();
                         if (lstDmCalamViec.Any(x => dmCalviec.Contains(x.TenCaLamViec)))
                         {
-                            row["Danhmuc_CaLviec"] = lstDmCalamViec.FirstOrDefault(x => dmCalviec.Contains(x.TenCaLamViec))?.Id.NullString();
+                            calv = lstDmCalamViec.FirstOrDefault(x => dmCalviec.Contains(x.TenCaLamViec))?.Id.NullString();
+                            if (calv == "CD_WHC" || calv == "CN_WHC")
+                            {
+                                row["Danhmuc_CaLviec"] = calv;
+                            }
+                            else if (calv == "CD_CN") // ca dem con nho
+                            {
+                                row["Danhmuc_CaLviec"] = "CD_WHC";
+                                row["CaLV_DB"] = "CD_CN";
+                            }
+                            else if (calv == "CN_CN") // ca ngay con nho
+                            {
+                                row["Danhmuc_CaLviec"] = "CN_WHC";
+                                row["CaLV_DB"] = "CN_CN";
+                            }
+                            else if (calv == "VP_CN") // ca ngay con nho
+                            {
+                                row["Danhmuc_CaLviec"] = "CN_WHC";
+                                row["CaLV_DB"] = "VP_CN";
+                            }
+                            else if (calv == "TS")
+                            {
+                                row["Danhmuc_CaLviec"] = "CN_WHC";
+                                row["CaLV_DB"] = "TS";
+                            }
                         }
                         else
                         {
                             throw new Exception("Not found danh muc ca lam viec");
                         }
 
-                        var calaviecActive = _settingTimeCalamviec.FindAll(x => x.Status == Status.Active.ToString() && x.CaLamViec == row["Danhmuc_CaLviec"].NullString()).OrderByDescending(x => x.DateModified).FirstOrDefault();
+                        DateTime dStart = DateTime.Parse(worksheet.Cells[i, 4].Text.NullString());
+                        DateTime dEnd = DateTime.Parse(worksheet.Cells[i, 5].Text.NullString());
 
-                        if(calaviecActive != null)
+                        row["BatDau_TheoCa"] = dStart.ToString("yyyy-MM-dd");
+                        row["KetThuc_TheoCa"] = dEnd.ToString("yyyy-MM-dd");
+
+                        if (string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), dStart.ToString("yyyy-MM-dd")) >= 0 && string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), dEnd.ToString("yyyy-MM-dd")) <= 0)
                         {
-                            row["BatDau_TheoCa"] = calaviecActive.NgayBatDau;
-                            row["KetThuc_TheoCa"] = calaviecActive.NgayKetThuc;
-
-                            if (string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), calaviecActive.NgayBatDau) >= 0 && string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), calaviecActive.NgayKetThuc) <= 0)
-                            {
-                                row["Status"] = Status.Active.ToString();
-                            }
-                            else if (string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), calaviecActive.NgayBatDau) < 0)
-                            {
-                                row["Status"] = Status.New.ToString();
-                            }
-                            else
-                            {
-                                row["Status"] = Status.InActive.ToString();
-                            }
+                            row["Status"] = Status.Active.ToString();
+                        }
+                        else if (string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), dStart.ToString("yyyy-MM-dd")) < 0)
+                        {
+                            row["Status"] = Status.New.ToString();
                         }
                         else
                         {
-                            throw new Exception("Not found ca lam viec");
+                            row["Status"] = Status.InActive.ToString();
                         }
-
                         table.Rows.Add(row);
                     }
 
-                    resultDB = _nhanvienClviecRepository.ExecProceduce("PKG_BUSINESS.PUT_NHANVIEN_CALAMVIEC", new Dictionary<string, string>(), "A_DATA", table);
+                    Dictionary<string, string> dic = new Dictionary<string, string>();
+                    dic.Add("A_USER_UPDATE", GetUserId());
+                    resultDB = _nhanvienClviecRepository.ExecProceduce("PKG_BUSINESS.PUT_NHANVIEN_CALAMVIEC", dic, "A_DATA", table);
                 }
                 return resultDB;
             }
@@ -311,7 +336,7 @@ namespace HRMNS.Application.Implementation
             throw new NotImplementedException();
         }
 
-        public NhanVien_CalamViecViewModel CheckExist(int id, string maNV, string dmCa, string from, string end)
+        public NhanVien_CalamViecViewModel CheckExist(int id, string maNV, string from, string end)
         {
             if (id > 0)
             {
@@ -319,8 +344,12 @@ namespace HRMNS.Application.Implementation
             }
             else
             {
-                var obj = _nhanvienClviecRepository.FindSingle(x => x.MaNV == maNV && x.Danhmuc_CaLviec == dmCa && x.BatDau_TheoCa == from && x.KetThuc_TheoCa == end);
-                return _mapper.Map<NhanVien_CalamViecViewModel>(obj);
+                var obj = _nhanvienClviecRepository.FindSingle(x => x.MaNV.Contains(maNV) && x.BatDau_TheoCa == from && x.KetThuc_TheoCa == end);
+
+                if (obj != null)
+                    return _mapper.Map<NhanVien_CalamViecViewModel>(obj);
+
+                return null;
             }
         }
 
@@ -341,6 +370,26 @@ namespace HRMNS.Application.Implementation
             var obj = _nhanvienClviecRepository.FindById(Id);
             obj.Approved = isApprove ? CommonConstants.Approved : CommonConstants.No_Approved;
             _nhanvienClviecRepository.Update(obj);
+        }
+
+        public void UpdateRange(List<NhanVien_CalamViecViewModel> OTVms)
+        {
+            var lstEntity = _mapper.Map<List<NHANVIEN_CALAMVIEC>>(OTVms);
+            foreach (var item in lstEntity)
+            {
+                item.UserModified = GetUserId();
+            }
+            _nhanvienClviecRepository.UpdateRange(lstEntity);
+        }
+
+        public NhanVien_CalamViecViewModel FindCaLamViecByDay(string maNV, string time)
+        {
+            var obj = _nhanvienClviecRepository.FindAll(x => x.MaNV.Contains(maNV) && x.BatDau_TheoCa.CompareTo(time) <= 0 && x.KetThuc_TheoCa.CompareTo(time) >= 0,x=>x.DM_CA_LVIEC).OrderByDescending(x=>x.BatDau_TheoCa).FirstOrDefault();
+
+            if (obj != null)
+                return _mapper.Map<NhanVien_CalamViecViewModel>(obj);
+
+            return null;
         }
     }
 }

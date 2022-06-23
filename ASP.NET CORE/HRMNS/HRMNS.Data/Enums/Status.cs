@@ -10,4 +10,12 @@ namespace HRMNS.Data.Enums
         Active,
         New
     }
+
+    public enum CacheKeys
+    {
+        MenuLst,
+        BangCongLst,
+        DataChamCong,
+        BoPhanInBiosStar
+    }
 }

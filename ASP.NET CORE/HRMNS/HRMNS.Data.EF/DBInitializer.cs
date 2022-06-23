@@ -110,12 +110,12 @@ namespace HRMNS.Data.EF
                     new FUNCTION() {Id = "HR", Name = "HR",ParentId = null,SortOrder = 2,Status = Status.Active,URL = "",IconCss = ""  },
                     new FUNCTION() {Id = "NHANSU", Name = "Personnel",ParentId = "HR",SortOrder = 1,Status = Status.Active,URL = "",IconCss = "la la-user"  },
                     new FUNCTION() {Id = "NHANVIEN", Name = "Employees",ParentId = "NHANSU",SortOrder = 1,Status = Status.Active,URL = "/admin/nhanvien/index",IconCss = ""  },
-                    new FUNCTION() {Id = "TIMEKEEPING", Name = "Time & Attendance",ParentId = "NHANSU",SortOrder = 2,Status = Status.Active,URL = "/admin/chamcong/index",IconCss = ""  },
-                    new FUNCTION() {Id = "SHIFT_SCHEDULE", Name = "Shift & Schedule",ParentId = "NHANSU",SortOrder = 3,Status = Status.Active,URL = "/admin/nhanvien_calamviec/index",IconCss = ""  },
+                    new FUNCTION() {Id = "TIMEKEEPING", Name = "Time Tracking",ParentId = "NHANSU",SortOrder = 2,Status = Status.Active,URL = "/admin/chamcong/index",IconCss = ""  },
+                    new FUNCTION() {Id = "SHIFT_SCHEDULE", Name = "Shifts & Schedule",ParentId = "NHANSU",SortOrder = 3,Status = Status.Active,URL = "/admin/nhanvien_calamviec/index",IconCss = ""  },
                     new FUNCTION() {Id = "OVERTIME", Name = "Overtime",ParentId = "NHANSU",SortOrder = 4,Status = Status.Active,URL = "/admin/dangkyot/index",IconCss = ""  },
                     new FUNCTION() {Id = "REGIS_TIMEKEEPING", Name = "Register Timekeeping",ParentId = "NHANSU",SortOrder = 5,Status = Status.Active,URL = "/admin/chamcongdacbiet/index",IconCss = ""  },
                     new FUNCTION() {Id = "ADJ_TIMEKEEPING", Name = "Timekeeping Adjustments",ParentId = "NHANSU",SortOrder = 6,Status = Status.Active,URL = "/admin/dcchamcong/index",IconCss = ""  },
-                    new FUNCTION() {Id = "ATTENDANCE_RECORD", Name = "Monthly Attendance",ParentId = "NHANSU",SortOrder = 7,Status = Status.Active,URL = "/admin/bangcong/index",IconCss = ""  },
+                    new FUNCTION() {Id = "ATTENDANCE_RECORD", Name = "Timesheet",ParentId = "NHANSU",SortOrder = 7,Status = Status.Active,URL = "/admin/bangcong/index",IconCss = ""  },
 
                     new FUNCTION() {Id = "GA",Name = "GA",ParentId = null,SortOrder = 3,Status = Status.Active,URL = "",IconCss = ""  },
                     new FUNCTION() {Id = "COST",Name = "Cost",ParentId = "GA",SortOrder = 1,Status = Status.Active,URL = "/admin/cost/index",IconCss = "la la-money"  },
@@ -542,6 +542,30 @@ namespace HRMNS.Data.EF
                         Id="CD_WHC",
                         MaTruSo = "WHC",
                         TenCaLamViec = "Ca đêm/ 야간"
+                    },
+                     new DM_CA_LVIEC()
+                    {
+                        Id="CD_CN",
+                        MaTruSo = "WHC",
+                        TenCaLamViec = "Cdem-ConNho"
+                    },
+                     new DM_CA_LVIEC()
+                    {
+                        Id="CN_CN",
+                        MaTruSo = "WHC",
+                        TenCaLamViec = "Cngay-ConNho"
+                    },
+                     new DM_CA_LVIEC()
+                    {
+                        Id="TS",
+                        MaTruSo = "WHC",
+                        TenCaLamViec = "ThaiSan"
+                    },
+                     new DM_CA_LVIEC()
+                    {
+                        Id="VP_CN",
+                        MaTruSo = "WHC",
+                        TenCaLamViec = "VP-ConNho"
                     }
                 });
             }

@@ -1667,6 +1667,10 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
+                    b.Property<string>("CaLV_DB")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<string>("Danhmuc_CaLviec")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
@@ -1751,60 +1755,6 @@ namespace HRMNS.Data.EF.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("PERMISSION");
-                });
-
-            modelBuilder.Entity("HRMNS.Data.Entities.SETTING_TIME_CA_LVIEC", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("CaLamViec")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("DateCreated")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("DateModified")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("NgayBatDau")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("NgayBatDauDangKy")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("NgayKetThuc")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("NgayKetThucDangKy")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("UserCreated")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("UserModified")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CaLamViec");
-
-                    b.ToTable("SETTING_TIME_CA_LVIEC");
                 });
 
             modelBuilder.Entity("HRMNS.Data.Entities.SETTING_TIME_DIMUON_VESOM", b =>
@@ -2227,13 +2177,6 @@ namespace HRMNS.Data.EF.Migrations
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("HRMNS.Data.Entities.SETTING_TIME_CA_LVIEC", b =>
-                {
-                    b.HasOne("HRMNS.Data.Entities.DM_CA_LVIEC", "DM_CA_LVIEC")
-                        .WithMany("SETTING_TIME_CA_LVIEC")
-                        .HasForeignKey("CaLamViec");
                 });
 
             modelBuilder.Entity("HRMNS.Data.Entities.SETTING_TIME_DIMUON_VESOM", b =>

@@ -16,12 +16,14 @@ namespace HRMNS.Application.Interfaces
 
         List<ChamCongLogViewModel> Search(string result,string dept,string timeFrom,string timeTo);
 
-        ResultDB ImportExcel(string filePath, string param);
+        ResultDB ImportExcel(string filePath, DataTable employees);
 
         string GetMaxDate();
 
         ResultDB InsertLogData(DataTable data);
 
         void Save();
+
+        void SetDepartment(string dept);
     }
 }

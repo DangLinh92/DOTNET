@@ -1,4 +1,5 @@
-﻿using HRMNS.Utilities.Dtos;
+﻿using HRMNS.Data.EF.Extensions;
+using HRMNS.Utilities.Dtos;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -19,9 +20,18 @@ namespace HRMNS.Data.EF
         public ResultDB GetChamCongLogData(string fromTime, string toTime)
         {
             Dictionary<string, string> dic = new Dictionary<string, string>();
-            dic.Add("A_BEGIN_TIME", fromTime);
-            dic.Add("A_END_TIME", toTime);
+            dic.Add("A_BEGIN_TIME", fromTime.NullString());
+            dic.Add("A_END_TIME", toTime.NullString());
            return ExecProceduce("PKG_BUSINESS.GET_LOG_DATA_HRMS", dic, "", null);
+        }
+
+        public ResultDB GetChamCongAbsenceLogData(string fromTime, string toTime,string dept)
+        {
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic.Add("A_BEGIN_TIME", fromTime.NullString());
+            dic.Add("A_END_TIME", toTime.NullString());
+            dic.Add("A_DEPT", dept.NullString());
+            return ExecProceduce("PKG_BUSINESS.GET_LOG_DATA_ABSENCE_HRMS", dic, "", null);
         }
 
         public ResultDB GetDeparment()
@@ -32,9 +42,14 @@ namespace HRMNS.Data.EF
         public ResultDB ShowChamCongLogInDay(string userId,string time)
         {
             Dictionary<string, string> dic = new Dictionary<string, string>();
-            dic.Add("A_USER_ID", userId);
-            dic.Add("A_TIME", time);
+            dic.Add("A_USER_ID", userId.NullString());
+            dic.Add("A_TIME", time.NullString());
             return ExecProceduce("PKG_BUSINESS.GET_LOG_IN_DAY", dic, "", null);
+        }
+
+        public ResultDB GetAllNVInfo()
+        {
+            return ExecProceduce("[PKG_BUSINESS.GET_EMP_ALL_INFO]", new Dictionary<string, string>(), "", null);
         }
 
         public ResultDB ExecProceduce(string ProcName, Dictionary<string, string> Dictionary, string tableParam, DataTable table)

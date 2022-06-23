@@ -21,6 +21,7 @@ namespace HRMNS.Application.Interfaces
         void Delete(int id);
 
         List<NhanVien_CalamViecViewModel> GetAll();
+        List<NhanVien_CalamViecViewModel> GetAllWithoutStatus();
 
         List<NhanVien_CalamViecViewModel> GetAll(string keyword, params Expression<Func<NHANVIEN_CALAMVIEC, object>>[] includeProperties);
 
@@ -35,6 +36,10 @@ namespace HRMNS.Application.Interfaces
         void Approve(string dept, string status,bool isApprove);
         void ApproveSingle(int Id, bool isApprove);
 
-        NhanVien_CalamViecViewModel CheckExist(int id, string maNV, string dmCa, string From, string End);
+        void UpdateRange(List<NhanVien_CalamViecViewModel> OTVms);
+
+        NhanVien_CalamViecViewModel CheckExist(int id, string maNV, string From, string End);
+
+        NhanVien_CalamViecViewModel FindCaLamViecByDay(string maNV,string time);
     }
 }

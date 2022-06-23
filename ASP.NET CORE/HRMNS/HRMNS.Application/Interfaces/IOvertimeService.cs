@@ -14,8 +14,6 @@ namespace HRMNS.Application.Interfaces
 
         void Update(DangKyOTNhanVienViewModel nhanVienLVVm);
 
-        void UpdateSingle(DangKyOTNhanVienViewModel nhanVienLVVm);
-
         void Delete(int id);
 
         List<DangKyOTNhanVienViewModel> GetAll(string keyword, params Expression<Func<DANGKY_OT_NHANVIEN, object>>[] includeProperties);
@@ -28,8 +26,6 @@ namespace HRMNS.Application.Interfaces
 
         void Save();
 
-        void Approve(string dept, string status, string role, bool isApprove);
-        void ApproveSingle(int Id, string role, bool isApprove);
         void UpdateRange(List<DangKyOTNhanVienViewModel> OTVms);
 
         DangKyOTNhanVienViewModel CheckExist(int id, string maNV, string date);

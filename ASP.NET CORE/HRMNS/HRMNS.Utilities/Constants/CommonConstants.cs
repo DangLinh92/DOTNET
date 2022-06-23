@@ -73,5 +73,8 @@ namespace HRMNS.Utilities.Constants
         public const string SUPPORT_DEPT = "SP";
         public const string IN = "IN";
         public const string OUT = "OUT";
+
+        public const string VP = "VP";
+        public const string SX = "SX";
     }
 }

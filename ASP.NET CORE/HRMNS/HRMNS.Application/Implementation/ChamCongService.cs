@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using HRMNS.Application.Interfaces;
 using HRMNS.Application.ViewModels.Time_Attendance;
 using HRMNS.Data.EF;
@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,6 +26,7 @@ namespace HRMNS.Application.Implementation
         private IRespository<HR_NHANVIEN, string> _nhanvienRepository;
         private IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private string Department { get; set; }
 
         public ChamCongService(IRespository<CHAM_CONG_LOG, long> chamCongLogRepository, IRespository<HR_NHANVIEN, string> nhanvienRepository, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
@@ -46,7 +48,7 @@ namespace HRMNS.Application.Implementation
             return _mapper.Map<List<ChamCongLogViewModel>>(lst);
         }
 
-        public ResultDB ImportExcel(string filePath, string param)
+        public ResultDB ImportExcel(string filePath, DataTable employees)
         {
             ResultDB resultDB = new ResultDB();
             try
@@ -54,8 +56,6 @@ namespace HRMNS.Application.Implementation
                 using (var packet = new ExcelPackage(new System.IO.FileInfo(filePath)))
                 {
                     ExcelWorksheet worksheet = packet.Workbook.Worksheets[1];
-                    List<CHAM_CONG_LOG> lstChamCongLog = new List<CHAM_CONG_LOG>();
-                    CHAM_CONG_LOG log;
 
                     DataTable table = new DataTable();
                     table.Columns.Add("Date_Check");
@@ -75,41 +75,55 @@ namespace HRMNS.Application.Implementation
                     table.Columns.Add("WorkTime");
 
                     DataRow row = null;
+                    string dept = "";
+                    string firstTime = "";
+                    string lastTime = "";
+                    string userId = "";
                     for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
                     {
                         row = table.NewRow();
-                        log = new CHAM_CONG_LOG();
-                        log.ID_NV = worksheet.Cells[i, 2].Text.NullString();
 
-                        if (string.IsNullOrEmpty(log.ID_NV))
+                        firstTime = worksheet.Cells[i, 4].Text.NullString();
+                        lastTime = worksheet.Cells[i, 5].Text.NullString();
+                        userId = worksheet.Cells[i, 2].Text.NullString();
+
+                        if (userId.ToUpper().StartsWith("H"))
+                        {
+                            userId = userId.ToUpper().Replace("H", "");
+                        }
+
+                        if (string.IsNullOrEmpty(userId)
+                            || string.IsNullOrEmpty(worksheet.Cells[i, 1].Text.NullString())
+                            || string.IsNullOrEmpty(firstTime)
+                            || string.IsNullOrEmpty(lastTime))
                         {
                             continue;
                         }
 
-                        HR_NHANVIEN nv = _nhanvienRepository.FindAll(x => x.Id.Contains(log.ID_NV)).ToList().FirstOrDefault();
+                        TimeSpan fdateTime = TimeSpan.Parse(firstTime);
+                        TimeSpan ldateTime = TimeSpan.Parse(lastTime);
+                        DateTime dateCheck = DateTime.Parse(worksheet.Cells[i, 1].Text.NullString());
 
-                        log.Department = nv?.MaBoPhan;
-                        log.Ngay_ChamCong = worksheet.Cells[i, 1].Text.NullString();
-                        log.Ten_NV = worksheet.Cells[i, 3].Text.NullString();
-                        log.FirstIn_Time = worksheet.Cells[i, 7].Text.NullString();
-                        log.Last_Out_Time = worksheet.Cells[i, 8].Text.NullString();
-                        log.FirstIn = worksheet.Cells[i, 10].Text.NullString();
-                        log.LastOut = worksheet.Cells[i, 11].Text.NullString();
-                        log.UserCreated = GetUserId();
-                        log.UserModified = GetUserId();
-                        lstChamCongLog.Add(log);
+                        foreach (DataRow em in employees.Rows)
+                        {
+                            if (worksheet.Cells[i, 2].Text.NullString().Contains(em["sUserID"].NullString()))
+                            {
+                                dept = em["sDepartment"].NullString();
+                                break;
+                            }
+                        }
 
-                        row["Date_Check"] = log.Ngay_ChamCong;
-                        row["userId"] = log.ID_NV;
-                        row["userName"] = log.Ten_NV;
-                        row["Department"] = (nv?.MaBoPhan) ?? worksheet.Cells[i, 4].Text.NullString().Remove(0, 6).Split('/')[0].NullString();
+                        row["Date_Check"] = dateCheck.ToString("yyyy-MM-dd");
+                        row["userId"] = userId;
+                        row["userName"] = worksheet.Cells[i, 3].Text.NullString();
+                        row["Department"] = dept;
                         row["Shift_"] = "";
                         row["Daily_Schedule"] = "";
-                        row["First_In_Time"] = log.FirstIn_Time;
-                        row["Last_Out_Time"] = log.Last_Out_Time;
+                        row["First_In_Time"] = fdateTime.ToString(@"hh\:mm\:ss");
+                        row["Last_Out_Time"] = ldateTime.ToString(@"hh\:mm\:ss");
                         row["Result"] = "";
-                        row["First_In"] = log.FirstIn;
-                        row["Last_Out"] = log.LastOut;
+                        row["First_In"] = "IN";
+                        row["Last_Out"] = "OUT";
                         row["HanhChinh"] = "";
                         row["TangCa"] = "";
                         row["BreakTime"] = "";
@@ -117,7 +131,10 @@ namespace HRMNS.Application.Implementation
                         table.Rows.Add(row);
                     }
 
-                    resultDB = _chamCongLogRepository.ExecProceduce("PKG_BUSINESS.PUT_EVENT_LOG", new Dictionary<string, string>(), "A_DATA", table);
+                    Dictionary<string, string> param = new Dictionary<string, string>();
+                    param.Add("A_USER_HANDLE", "Y");
+                    param.Add("A_USER_UPDATE", GetUserId());
+                    resultDB = _chamCongLogRepository.ExecProceduce("PKG_BUSINESS.PUT_EVENT_LOG", param, "A_DATA", table);
                 }
                 return resultDB;
             }
@@ -141,7 +158,10 @@ namespace HRMNS.Application.Implementation
 
         public ResultDB InsertLogData(DataTable data)
         {
-            return _chamCongLogRepository.ExecProceduce("PKG_BUSINESS.PUT_EVENT_LOG", new Dictionary<string, string>(), "A_DATA", data);
+            Dictionary<string, string> param = new Dictionary<string, string>();
+            param.Add("A_USER_HANDLE", "N");
+            param.Add("A_USER_UPDATE", "sys");
+            return _chamCongLogRepository.ExecProceduce("PKG_BUSINESS.PUT_EVENT_LOG", param, "A_DATA", data);
         }
 
         public List<ChamCongLogViewModel> Search(string result, string dept, string timeFrom, string timeTo)
@@ -179,7 +199,20 @@ namespace HRMNS.Application.Implementation
             {
                 if (!string.IsNullOrEmpty(timeFrom) && !string.IsNullOrEmpty(timeTo))
                 {
-                    var lst = _chamCongLogRepository.FindAll(x => x.Department.Contains(dept) && string.Compare(x.Ngay_ChamCong, timeFrom) >= 0 && string.Compare(x.Ngay_ChamCong, timeTo) <= 0).OrderByDescending(x => x.Ngay_ChamCong);
+                    var lst = _chamCongLogRepository.FindAll(x => x.Department.Contains(dept) && string.Compare(x.Ngay_ChamCong, timeFrom) >= 0 && string.Compare(x.Ngay_ChamCong, timeTo) <= 0).OrderByDescending(x => x.Ngay_ChamCong).ToList();
+
+                    var lstNV = _nhanvienRepository.FindAll(x => x.MaBoPhan == Department);
+                    if (lstNV.Count() > 0)
+                    {
+                        foreach (var item in lstNV)
+                        {
+                            if (!lst.Any(x => item.Id.Contains(x.ID_NV)))
+                            {
+                                lst.AddRange(_chamCongLogRepository.FindAll(x => item.Id.Contains(x.ID_NV) && string.Compare(x.Ngay_ChamCong, timeFrom) >= 0 && string.Compare(x.Ngay_ChamCong, timeTo) <= 0).OrderByDescending(x => x.Ngay_ChamCong));
+                            }
+                        }
+                    }
+
                     var vm = _mapper.Map<List<ChamCongLogViewModel>>(lst);
 
                     if (!string.IsNullOrEmpty(result))
@@ -191,7 +224,22 @@ namespace HRMNS.Application.Implementation
                 }
                 else if (string.IsNullOrEmpty(timeFrom) && string.IsNullOrEmpty(timeTo))
                 {
-                    var vm = GetAll("").FindAll(x => x.Department.Contains(dept));
+                    var lst = GetAll("");
+                    var vm = lst.FindAll(x => x.Department.Contains(dept));
+
+                    var lstNV = _nhanvienRepository.FindAll(x => x.MaBoPhan == Department);
+                    if (lstNV.Count() > 0)
+                    {
+                        foreach (var item in lstNV)
+                        {
+                            if (!vm.Any(x => item.Id.Contains(x.ID_NV)))
+                            {
+                                vm.AddRange(lst.FindAll(x => item.Id.Contains(x.ID_NV)));
+                            }
+                        }
+                    }
+
+
                     if (!string.IsNullOrEmpty(result))
                     {
                         vm = vm.Where(x => x.Result.Contains(result)).ToList();
@@ -207,7 +255,7 @@ namespace HRMNS.Application.Implementation
         {
             var entity = _chamCongLogRepository.FindAll(x => x.ID_NV == model.ID_NV && x.Ngay_ChamCong == model.Ngay_ChamCong).FirstOrDefault();
 
-            if(entity != null)
+            if (entity != null)
             {
                 entity.FirstIn_Time = model.FirstIn_Time;
                 entity.Last_Out_Time = model.Last_Out_Time;
@@ -218,6 +266,11 @@ namespace HRMNS.Application.Implementation
                 _chamCongLogRepository.Update(entity);
             }
             return model;
+        }
+
+        public void SetDepartment(string dept)
+        {
+            Department = dept;
         }
     }
 }

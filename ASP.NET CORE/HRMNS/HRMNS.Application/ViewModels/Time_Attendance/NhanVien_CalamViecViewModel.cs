@@ -42,6 +42,12 @@ namespace HRMNS.Application.ViewModels.Time_Attendance
         [StringLength(50)]
         public string UserModified { get; set; }
 
+        [StringLength(50)]
+        public string CaLV_DB
+        {
+            get; set;
+        }
+
         [ForeignKey("Danhmuc_CaLviec")]
         public DMCalamviecViewModel DM_CA_LVIEC { get; set; }
 
