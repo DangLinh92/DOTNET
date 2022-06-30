@@ -72,30 +72,43 @@ namespace HRMS.Areas.Admin.Controllers
                 }
                 else
                 {
-                    if (UserRole == CommonConstants.roleApprove3 || UserRole == CommonConstants.AppRole.AdminRole) // HR
-                    {
-                        data.Approve = CommonConstants.Approved;
-                        data.ApproveLV2 = CommonConstants.Approved;
-                        data.ApproveLV3 = CommonConstants.Approved;
-                    }
-                    else if (UserRole == CommonConstants.roleApprove1) // group leader
-                    {
-                        data.Approve = CommonConstants.Approved;
-                        data.ApproveLV2 = CommonConstants.Request;
-                        data.ApproveLV3 = CommonConstants.Request;
-                    }
-                    else if (UserRole == CommonConstants.roleApprove2) // korea 
-                    {
-                        data.Approve = CommonConstants.Approved;
-                        data.ApproveLV2 = CommonConstants.Approved;
-                        data.ApproveLV3 = CommonConstants.Request;
-                    }
-                    else // assys leader
-                    {
-                        data.Approve = CommonConstants.Request;
-                        data.ApproveLV2 = CommonConstants.Request;
-                        data.ApproveLV3 = CommonConstants.Request;
-                    }
+                    //if (UserRole == CommonConstants.roleApprove3 || UserRole == CommonConstants.AppRole.AdminRole) // HR
+                    //{
+                    //    data.Approve = CommonConstants.Approved;
+                    //    data.ApproveLV2 = CommonConstants.Approved;
+                    //    data.ApproveLV3 = CommonConstants.Approved;
+                    //}
+                    //else if (UserRole == CommonConstants.roleApprove1) // group leader
+                    //{
+                    //    data.Approve = CommonConstants.Approved;
+                    //    data.ApproveLV2 = CommonConstants.Request;
+                    //    data.ApproveLV3 = CommonConstants.Request;
+                    //}
+                    //else if (UserRole == CommonConstants.roleApprove2) // korea 
+                    //{
+                    //    data.Approve = CommonConstants.Approved;
+                    //    data.ApproveLV2 = CommonConstants.Approved;
+                    //    data.ApproveLV3 = CommonConstants.Request;
+                    //}
+                    //else // assys leader
+                    //{
+                    //    if(data.MaChamCong_ChiTiet == 5) // cham OT bo xung
+                    //    {
+                    //        data.Approve = CommonConstants.Approved;
+                    //        data.ApproveLV2 = CommonConstants.Approved;
+                    //        data.ApproveLV3 = CommonConstants.Approved;
+                    //    }
+                    //    else
+                    //    {
+                    //        data.Approve = CommonConstants.Request;
+                    //        data.ApproveLV2 = CommonConstants.Request;
+                    //        data.ApproveLV3 = CommonConstants.Request;
+                    //    }
+                    //}
+
+                    data.Approve = CommonConstants.Approved;
+                    data.ApproveLV2 = CommonConstants.Approved;
+                    data.ApproveLV3 = CommonConstants.Approved;
 
                     _chamCongDacBietService.Add(data);
                 }

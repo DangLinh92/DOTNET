@@ -28,10 +28,10 @@ namespace HRMNS.Data.Entities
         }
 
         public HR_NHANVIEN
-            (string id,string tenNV, string maChucDanh, string maBoPhan, string gioiTinh, string ngaySinh, string noiSinh, string tinhTrangHonNhan, string danToc, string tonGiao, string diaChiThuongTru,
+            (string id, string tenNV, string maChucDanh, string maBoPhan, string gioiTinh, string ngaySinh, string noiSinh, string tinhTrangHonNhan, string danToc, string tonGiao, string diaChiThuongTru,
             string soDienThoai, string soDienThoaiNguoiThan, string quanHeNguoiThan, string cMTND, string ngayCapCMTND, string noiCapCMTND, string soTaiKhoanNH,
             string tenNganHang, string truongDaoTao, string ngayVao, string nguyenQuan, string dChiHienTai, string kyLuatLD, string maBHXH, string maSoThue, int soNguoiGiamTru,
-            string email, string note, string ngayNghiViec, string status, string image, string isDelete,int? maBoPhanChiTiet)
+            string email, string note, string ngayNghiViec, string status, string image, string isDelete, int? maBoPhanChiTiet)
         {
             Id = id;
             TenNV = tenNV;
@@ -155,7 +155,7 @@ namespace HRMNS.Data.Entities
         public string Note { get; set; }
 
         [StringLength(50)]
-        public string NgayNghiViec { get; set; }
+        public string NgayNghiViec { get; set; } = "";
 
         [StringLength(50)]
         public string Status { get; set; }
@@ -177,6 +177,12 @@ namespace HRMNS.Data.Entities
 
         [StringLength(10)]
         public string IsDelete { get; set; }
+
+        [StringLength(50)]
+        public string ChucVu2 { get; set; } // OP, STAFF, STAFF PM
+
+        [StringLength(100)]
+        public string TrucTiepSX { get; set; }
 
         [ForeignKey("MaBoPhan")]
         public virtual BOPHAN BOPHAN { get; set; }

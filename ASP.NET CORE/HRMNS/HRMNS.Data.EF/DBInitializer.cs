@@ -760,8 +760,13 @@ namespace HRMNS.Data.EF
 
                     new KY_HIEU_CHAM_CONG()
                     {
-                        Id = "EL/LC",
-                        GiaiThich = "Early Leave or Late Come/ Đi muộn/ về sớm",
+                        Id = "EL",
+                        GiaiThich = "Early Leave/về sớm",
+                    },
+                    new KY_HIEU_CHAM_CONG()
+                    {
+                        Id = "LC",
+                        GiaiThich = "Late Come/ Đi muộn",
                     },
                     new KY_HIEU_CHAM_CONG()
                     {
@@ -793,6 +798,11 @@ namespace HRMNS.Data.EF
                     {
                         Id = "KDA_OT_05",
                         GiaiThich = "Chấm không đi ăn trong giờ OT",
+                    },
+                     new KY_HIEU_CHAM_CONG()
+                    {
+                        Id = "DSBM_OT_150",
+                        GiaiThich = "Chấm đi sớm bật máy",
                     },
                 });
             }
@@ -1131,19 +1141,15 @@ namespace HRMNS.Data.EF
                 _context.DM_DANGKY_CHAMCONG.AddRange(new List<DM_DANGKY_CHAMCONG>() {
                     new DM_DANGKY_CHAMCONG()
                     {
-                        TieuDe = "Đăng ký vắng mặt"
+                        TieuDe = "Đăng ký vắng mặt" // id = 1
                     },
                     new DM_DANGKY_CHAMCONG()
                     {
-                        TieuDe = "Đăng ký đi muộn/về sớm"
+                        TieuDe = "Chấm công làm việc" // id = 4
                     },
                     new DM_DANGKY_CHAMCONG()
                     {
-                        TieuDe = "Chấm không đi ăn trong giờ OT"
-                    },
-                    new DM_DANGKY_CHAMCONG()
-                    {
-                        TieuDe = "Chấm công làm việc"
+                        TieuDe = "Bổ xung thêm giờ OT" // id = 5
                     }
                 });
             }
@@ -1303,9 +1309,15 @@ namespace HRMNS.Data.EF
                     },
                     new DANGKY_CHAMCONG_CHITIET()
                     {
-                       TenChiTiet = "Early Leave or Late Come",
-                       PhanLoaiDM = 2,
-                       KyHieuChamCong = "EL/LC"
+                       TenChiTiet = "Early Leave",
+                       PhanLoaiDM = 6,
+                       KyHieuChamCong = "EL"
+                    },
+                    new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Late Come",
+                       PhanLoaiDM = 6,
+                       KyHieuChamCong = "LC"
                     },
                     new DANGKY_CHAMCONG_CHITIET()
                     {
@@ -1401,6 +1413,12 @@ namespace HRMNS.Data.EF
                        TenChiTiet = "Làm ca đêm ngày kỷ niệm trước lễ chính thức",
                        PhanLoaiDM = 4,
                        KyHieuChamCong = "BM"
+                    },
+                    new DANGKY_CHAMCONG_CHITIET()
+                    {
+                       TenChiTiet = "Chấm công đi sớm bật máy",
+                       PhanLoaiDM = 5,
+                       KyHieuChamCong = "DSBM_OT_150"
                     },
                 });
             }

@@ -6,15 +6,49 @@
 
     function registerEvents() {
         $('#btnExportData').on('click', function () {
-
+            hrms.run_waitMe($('#bangCongDataTable'));
             $.ajax({
                 type: "POST",
                 url: "/Admin/BangCong/OutPutExcel",
                 success: function (response) {
                     window.location.href = response;
+                    hrms.hide_waitMe($('#bangCongDataTable'));
                 },
                 error: function (status) {
                     hrms.notify(status.responseText, 'error', 'alert', function () { });
+                    hrms.hide_waitMe($('#bangCongDataTable'));
+                }
+            });
+        });
+
+        $('#btnExportData2').on('click', function () {
+
+            let _time = $('#searchToTime').val();
+            let _dept = $('#cboDepartment').val();
+
+            if (!_time || !_dept) {
+                hrms.notify('Nhập tháng và bộ phận!', 'error', 'alert', function () { });
+                return;
+            }
+            hrms.run_waitMe($('#bangCongDataTable'));
+
+            $.ajax({
+                type: "POST",
+                url: "/Admin/BangCong/TongHopNhanSuDaily",
+                data:
+                {
+                    time: _time,
+                    dept: _dept
+                },
+                success: function (response)
+                {
+                    window.location.href = response;
+                    hrms.hide_waitMe($('#bangCongDataTable'));
+                },
+                error: function (status)
+                {
+                    hrms.notify(status.responseText, 'error', 'alert', function () { });
+                    hrms.hide_waitMe($('#bangCongDataTable'));
                 }
             });
         });

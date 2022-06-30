@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using OfficeOpenXml;
 using OfficeOpenXml.Table;
 using System;
@@ -45,10 +46,10 @@ namespace HRMS.Areas.Admin.Controllers
 
         public IActionResult Index()
         {
-            ResultDB result = _memoryCache.GetOrCreate(CacheKeys.BoPhanInBiosStar.ToString(), entry =>
+            _memoryCache.GetOrCreate(CacheKeys.BoPhanInBiosStar.ToString(), entry =>
             {
                 entry.SlidingExpiration = TimeSpan.FromHours(1);
-                return _bioStarDB.GetDeparment();
+                return _bioStarDB.GetDeparment().ReturnDataSet.Tables[0];
             });
             return View(new List<ChamCongLogViewModel>());
         }
@@ -75,7 +76,7 @@ namespace HRMS.Areas.Admin.Controllers
             string fromTime = DateTime.Parse(maxDate).AddDays(-40).ToString("yyyy-MM-dd");
             string toTime = DateTime.Now.AddDays(1).ToString("yyyy-MM-dd");
             ResultDB result = _bioStarDB.GetChamCongLogData(fromTime, toTime);
-            _logger.LogInformation("GetChamCongLog: "+result.ReturnString);
+            _logger.LogInformation("GetChamCongLog: " + result.ReturnString);
             if (result.ReturnInt == 0)
             {
                 ResultDB result1 = _chamCongService.InsertLogData(result.ReturnDataSet.Tables[0]);
@@ -103,12 +104,74 @@ namespace HRMS.Areas.Admin.Controllers
         /// <param name="dept"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult GetChamCongAbsenceLog(string fromTime,string toTime,string dept)
+        public IActionResult GetChamCongAbsenceLog(string fromTime, string toTime, string dept)
         {
-            ResultDB result = _bioStarDB.GetChamCongAbsenceLogData(fromTime, toTime,dept);
+            ResultDB result = _bioStarDB.GetChamCongAbsenceLogData(fromTime, toTime, dept);
             _logger.LogInformation("GetChamCongAbsenceLog: " + result.ReturnString);
             if (result.ReturnInt == 0)
             {
+                var lstNv = _nhanVienService.GetAll().Where(x => x.Status != Status.InActive.ToString());
+
+                List<ChamCongLogViewModel> lstLog = new List<ChamCongLogViewModel>();
+                ChamCongLogViewModel model;
+                foreach (DataRow row in result.ReturnDataSet.Tables[0].Rows)
+                {
+                    model = new ChamCongLogViewModel()
+                    {
+                        ID_NV = row["userId"].NullString(),
+                        Ngay_ChamCong = row["Date_Check"].NullString(),
+                        FirstIn_Time = row["First_In_Time"].NullString(),
+                        Last_Out_Time = row["Last_Out_Time"].NullString(),
+                        FirstIn = row["First_In"].NullString(),
+                        LastOut = row["Last_Out"].NullString(),
+                        Ten_NV = row["userName"].NullString()
+                    };
+                    lstLog.Add(model);
+                }
+
+                foreach (var item in lstLog.ToList())
+                {
+                    if (!lstNv.Any(x => x.Id.Contains(item.ID_NV)))
+                    {
+                        lstLog.Remove(item);
+                    }
+                }
+
+                var newlst = UpdateShifts(lstLog);
+                List<ChamCongSimpleModel> lstResult = new List<ChamCongSimpleModel>();
+                ChamCongSimpleModel simpleModel;
+                foreach (var item in newlst)
+                {
+                    simpleModel = new ChamCongSimpleModel()
+                    {
+                        ID_NV = item.ID_NV,
+                        Ten_NV = item.Ten_NV,
+                        CaLamViec = item.Shift,
+                        FirstIn_Time = item.FirstIn_Time,
+                        Last_Out_Time = item.Last_Out_Time,
+                        Ngay_ChamCong = item.Ngay_ChamCong,
+                    };
+
+                    if (item.FirstIn == "" && item.LastOut == "")
+                    {
+                        simpleModel.Status = "Không chấm công";
+                    }
+                    else if (item.FirstIn == "" && item.LastOut != "")
+                    {
+                        simpleModel.Status = "Không chấm đến";
+                    }
+                    else if (item.FirstIn != "" && item.LastOut == "")
+                    {
+                        simpleModel.Status = "Không chấm về";
+                    }
+                    lstResult.Add(simpleModel);
+                }
+
+                foreach (var item in lstResult)
+                {
+                    item.BoPhan = lstNv.FirstOrDefault(x => x.Id.Contains(item.ID_NV))?.MaBoPhan;
+                }
+
                 string sWebRootFolder = _hostingEnvironment.WebRootPath;
                 string directory = Path.Combine(sWebRootFolder, "export-files");
                 if (!Directory.Exists(directory))
@@ -128,7 +191,7 @@ namespace HRMS.Areas.Admin.Controllers
                 {
                     // add a new worksheet to the empty workbook
                     ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Data-LoiChamCong");
-                    worksheet.Cells["A1"].LoadFromDataTable(result.ReturnDataSet.Tables[0], true, TableStyles.Light11);
+                    worksheet.Cells["A1"].LoadFromCollection(lstResult.OrderBy(x=>x.Ngay_ChamCong), true, TableStyles.Light11);
                     worksheet.Cells.AutoFitColumns();
                     package.Save(); //Save the workbook.
                 }
@@ -144,24 +207,15 @@ namespace HRMS.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetDepartment()
         {
-            ResultDB result = _memoryCache.GetOrCreate(CacheKeys.BoPhanInBiosStar.ToString(), entry =>
+            DataTable data = _memoryCache.GetOrCreate(CacheKeys.BoPhanInBiosStar.ToString(), entry =>
             {
                 entry.SlidingExpiration = TimeSpan.FromHours(1);
-                return _bioStarDB.GetDeparment();
+                return _bioStarDB.GetDeparment().ReturnDataSet.Tables[0];
             });
-            _logger.LogInformation("GetDepartment: " + result.ReturnString);
-            if (result.ReturnInt == 0)
+
+            _logger.LogInformation("GetDepartment: " + data.Rows.Count);
+            if (data.Rows.Count > 0)
             {
-                DataTable data = result.ReturnDataSet.Tables[0];
-                if (data.Rows.Count == 0)
-                {
-                    ResultDB result1 = _bioStarDB.GetDeparment();
-                    _logger.LogInformation("GetDepartment: " + result1.ReturnString);
-                    if (result1.ReturnInt == 0)
-                    {
-                        data = result1.ReturnDataSet.Tables[0];
-                    }
-                }
                 string depts = DataTableToJson.DataTableToJSONWithJSONNet(data);
                 return new OkObjectResult(depts);
             }

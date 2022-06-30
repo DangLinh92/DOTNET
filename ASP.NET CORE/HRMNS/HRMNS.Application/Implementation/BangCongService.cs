@@ -16,6 +16,8 @@ using System.Data;
 using HRMNS.Data.EF.Extensions;
 using HRMNS.Utilities.Constants;
 using System.Globalization;
+using HRMNS.Application.ViewModels.HR;
+using HRMNS.Data.Enums;
 
 namespace HRMNS.Application.Implementation
 {
@@ -28,6 +30,9 @@ namespace HRMNS.Application.Implementation
         private IRespository<NGAY_DAC_BIET, string> _ngaydacbietRespository;
         private IRespository<NGAY_NGHI_BU_LE_NAM, int> _ngaynghibuRespository;
         private IRespository<HR_HOPDONG, int> _hopDongResponsitory;
+        private IRespository<HR_NHANVIEN, string> _nhanvienResponsitory;
+        private IRespository<DANGKY_CHAMCONG_DACBIET, int> _chamCongDBResponsitory;
+        private IRespository<NHANVIEN_CALAMVIEC, int> _nhanvienCLviecResponsitory;
 
         private EFUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -38,6 +43,9 @@ namespace HRMNS.Application.Implementation
             IRespository<CHAM_CONG_LOG, long> chamCongRespository,
             IRespository<HR_HOPDONG, int> hopDongResponsitory,
             IRespository<CA_LVIEC, int> calaviecRespository,
+            IRespository<HR_NHANVIEN, string> nhanvienResponsitory,
+            IRespository<DANGKY_CHAMCONG_DACBIET, int> chamCongDBResponsitory,
+            IRespository<NHANVIEN_CALAMVIEC, int> nhanvienCLviecResponsitory,
             IUnitOfWork unitOfWork, IMapper mapper,
             IHttpContextAccessor httpContextAccessor)
         {
@@ -48,9 +56,12 @@ namespace HRMNS.Application.Implementation
             _ngaynghibuRespository = ngaynghibuRespository;
             _hopDongResponsitory = hopDongResponsitory;
             _calaviecRespository = calaviecRespository;
+            _chamCongDBResponsitory = chamCongDBResponsitory;
+            _nhanvienCLviecResponsitory = nhanvienCLviecResponsitory;
             _unitOfWork = (EFUnitOfWork)unitOfWork;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
+            _nhanvienResponsitory = nhanvienResponsitory;
         }
 
         public void Dispose()
@@ -173,7 +184,9 @@ namespace HRMNS.Application.Implementation
                                     NgayBatDau = row["NgayBatDau"].NullString(),
                                     NgayKetThuc = row["NgayKetThuc"].NullString(),
                                     KyHieuChamCong = row["KyHieuChamCong"].NullString(),
-                                    DateModified = row["DateModified"].NullString()
+                                    DateModified = row["DateModified"].NullString(),
+                                    PhanLoaiDM = row["PhanLoaiDM"].NullString(),
+                                    HeSo = double.Parse(row["Heso"].IfNullIsZero())
                                 });
                             }
                         }
@@ -248,6 +261,7 @@ namespace HRMNS.Application.Implementation
                     CHAM_CONG_LOG _chamCongLog;
                     bool isRegistedOT;
                     string kyhieuChamCongDB;
+                    List<ChamCongDB> lstOTDB = new List<ChamCongDB>(); // danh sach bổ xung giờ OT như chấm bật máy
 
                     // thoi gian bat dau , ket thuc ngay thuong ca ngay.
                     string beginTimeCaNgay = _calaviecRespository.FindSingle(x => x.Danhmuc_CaLviec == "CN_WHC" && x.DM_NgayLViec == "NT" && x.HeSo_OT == 100).Time_BatDau;
@@ -293,7 +307,8 @@ namespace HRMNS.Application.Implementation
 
                             isRegistedOT = item.lstDangKyOT.Any(x => x.NgayOT == dateCheck);
 
-                            kyhieuChamCongDB = item.lstChamCongDB.OrderByDescending(x => x.DateModified).FirstOrDefault(x => string.Compare(dateCheck, x.NgayBatDau) >= 0 && string.Compare(dateCheck, x.NgayKetThuc) <= 0)?.KyHieuChamCong;
+                            kyhieuChamCongDB = item.lstChamCongDB.OrderByDescending(x => x.DateModified).FirstOrDefault(x => string.Compare(dateCheck, x.NgayBatDau) >= 0 && string.Compare(dateCheck, x.NgayKetThuc) <= 0 && x.PhanLoaiDM != CommonConstants.DM_OT && x.PhanLoaiDM != CommonConstants.DM_ELLC)?.KyHieuChamCong;
+                            lstOTDB = item.lstChamCongDB.Where(x => string.Compare(dateCheck, x.NgayBatDau) >= 0 && string.Compare(dateCheck, x.NgayKetThuc) <= 0 && x.PhanLoaiDM == CommonConstants.DM_OT).ToList();
 
                             if (hopDong_NV != null)
                             {
@@ -389,6 +404,8 @@ namespace HRMNS.Application.Implementation
                                                                 Registered = isRegistedOT
                                                             });
                                                         }
+
+
                                                     }
 
                                                     item.WorkingStatuses.Add(new WorkingStatus()
@@ -545,6 +562,29 @@ namespace HRMNS.Application.Implementation
                                                         DayCheck = dateCheck,
                                                         Value = kyhieuChamCongDB.NullString() == "" ? "PD" : kyhieuChamCongDB.NullString() // PD: Probation Day shift/Thử việc ca ngày
                                                     });
+                                                }
+
+                                                // Cham them OT
+                                                if (lstOTDB.Count > 0)
+                                                {
+                                                    foreach (var dB in lstOTDB)
+                                                    {
+                                                        if (dB.KyHieuChamCong == CommonConstants.OT_BAT_MAY)
+                                                        {
+                                                            if (DateTime.ParseExact(_chamCongLog.FirstIn_Time.NullString(), "HH:mm:ss", CultureInfo.InvariantCulture) < DateTime.ParseExact("08:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
+                                                            {
+                                                                var dbOT = (DateTime.ParseExact("08:00:00", "HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(_chamCongLog.FirstIn_Time.NullString(), "HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+
+                                                                item.OvertimeValues.Add(new OvertimeValue()
+                                                                {
+                                                                    DayCheckOT = dateCheck,
+                                                                    DMOvertime = dB.HeSo.NullString(),
+                                                                    ValueOT = dbOT,
+                                                                    Registered = true
+                                                                });
+                                                            }
+                                                        }
+                                                    }
                                                 }
 
                                                 // Di muon ve som
@@ -724,6 +764,29 @@ namespace HRMNS.Application.Implementation
                                                         DayCheck = dateCheck,
                                                         Value = kyhieuChamCongDB.NullString() == "" ? "PH" : kyhieuChamCongDB.NullString() // PH: làm ca đêm trước ngày lễ( thử việc)
                                                     });
+                                                }
+
+                                                // Cham them OT
+                                                if (lstOTDB.Count > 0)
+                                                {
+                                                    foreach (var dB in lstOTDB)
+                                                    {
+                                                        if (dB.KyHieuChamCong == CommonConstants.OT_BAT_MAY)
+                                                        {
+                                                            if (DateTime.ParseExact(_chamCongLog.FirstIn_Time.NullString(), "HH:mm:ss", CultureInfo.InvariantCulture) < DateTime.ParseExact("20:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
+                                                            {
+                                                                var dbOT = (DateTime.ParseExact("20:00:00", "HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(_chamCongLog.FirstIn_Time.NullString(), "HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+
+                                                                item.OvertimeValues.Add(new OvertimeValue()
+                                                                {
+                                                                    DayCheckOT = dateCheck,
+                                                                    DMOvertime = dB.HeSo.NullString(),
+                                                                    ValueOT = dbOT,
+                                                                    Registered = true
+                                                                });
+                                                            }
+                                                        }
+                                                    }
                                                 }
 
                                                 // Di muon ve som
@@ -1015,6 +1078,29 @@ namespace HRMNS.Application.Implementation
                                                     });
                                                 }
 
+                                                // thêm OT đi sớm bật máy
+                                                if (lstOTDB.Count > 0)
+                                                {
+                                                    foreach (var dB in lstOTDB)
+                                                    {
+                                                        if (dB.KyHieuChamCong == CommonConstants.OT_BAT_MAY)
+                                                        {
+                                                            if (DateTime.ParseExact(_chamCongLog.FirstIn_Time.NullString(), "HH:mm:ss", CultureInfo.InvariantCulture) < DateTime.ParseExact("08:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
+                                                            {
+                                                                var dbOT = (DateTime.ParseExact("08:00:00", "HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(_chamCongLog.FirstIn_Time.NullString(), "HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+
+                                                                item.OvertimeValues.Add(new OvertimeValue()
+                                                                {
+                                                                    DayCheckOT = dateCheck,
+                                                                    DMOvertime = dB.HeSo.NullString(),
+                                                                    ValueOT = dbOT,
+                                                                    Registered = true
+                                                                });
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
                                                 // Di muon ve som
                                                 double ELLC = 0;
                                                 if (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.ParseExact("08:05:00", "HH:mm:ss", CultureInfo.InvariantCulture))
@@ -1187,6 +1273,30 @@ namespace HRMNS.Application.Implementation
                                                     });
                                                 }
 
+                                                // thêm OT đi sớm bật máy
+                                                if (lstOTDB.Count > 0)
+                                                {
+                                                    foreach (var dB in lstOTDB)
+                                                    {
+                                                        if (dB.KyHieuChamCong == CommonConstants.OT_BAT_MAY)
+                                                        {
+                                                            if (DateTime.ParseExact(_chamCongLog.FirstIn_Time.NullString(), "HH:mm:ss", CultureInfo.InvariantCulture) < DateTime.ParseExact("20:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
+                                                            {
+                                                                var dbOT = (DateTime.ParseExact("20:00:00", "HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(_chamCongLog.FirstIn_Time.NullString(), "HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+
+                                                                item.OvertimeValues.Add(new OvertimeValue()
+                                                                {
+                                                                    DayCheckOT = dateCheck,
+                                                                    DMOvertime = dB.HeSo.NullString(),
+                                                                    ValueOT = dbOT,
+                                                                    Registered = true
+                                                                });
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+
                                                 // Di muon ve som
                                                 double ELLC = 0;
                                                 if (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.ParseExact("20:05:00", "HH:mm:ss", CultureInfo.InvariantCulture))
@@ -1291,7 +1401,7 @@ namespace HRMNS.Application.Implementation
                 {
                     if (!item.WorkingStatuses.Any(x => x.DayCheck == dayOfM))
                     {
-                        kyHchamcong = item.lstChamCongDB.FirstOrDefault(x => string.Compare(dayOfM, x.NgayBatDau) >= 0 && string.Compare(dayOfM, x.NgayKetThuc) <= 0)?.KyHieuChamCong;
+                        kyHchamcong = item.lstChamCongDB.FirstOrDefault(x => string.Compare(dayOfM, x.NgayBatDau) >= 0 && string.Compare(dayOfM, x.NgayKetThuc) <= 0 && x.PhanLoaiDM != CommonConstants.DM_OT && x.PhanLoaiDM != CommonConstants.DM_ELLC)?.KyHieuChamCong;
                         item.WorkingStatuses.Add(new WorkingStatus()
                         {
                             DayCheck = dayOfM,
@@ -2146,6 +2256,356 @@ namespace HRMNS.Application.Implementation
             }
 
             return 0;// ngay thuong
+        }
+
+        /// <summary>
+        /// Tông hợp nhân sự đi làm, nghỉ phép theo tháng, bộ phận.
+        /// </summary>
+        /// <param name="time"></param>
+        /// <param name="dept"></param>
+        /// <returns></returns>
+        public List<TongHopNhanSuDailyViewModel> TongHopNhanSuReport(string time, string dept)
+        {
+            string newTime = time + "-01";
+            int dayInMonth = DateTime.DaysInMonth(DateTime.Parse(newTime).Year, DateTime.Parse(newTime).Month);
+            string _time = time;
+            List<TongHopNhanSuDailyViewModel> dailyViewModels = new List<TongHopNhanSuDailyViewModel>();
+
+            for (int i = 1; i <= dayInMonth; i++)
+            {
+                _time = time;
+
+                if (i <= 9)
+                {
+                    _time += "-0" + i;
+                }
+                else
+                {
+                    _time += "-" + i;
+                }
+
+                if (DateTime.Parse(_time).DayOfWeek == DayOfWeek.Sunday || DateTime.Parse(_time).CompareTo(DateTime.Now) > 0)
+                {
+                    continue;
+                }
+
+                var lstNV = _nhanvienResponsitory.FindAll(x => x.MaBoPhan == dept && (x.Status == Status.Active.NullString() || string.Compare(x.NgayNghiViec, _time) > 0));
+                var lstGr = lstNV.GroupBy(x => x.MaBoPhan).Select(gr => new { BoPhan = gr.Key, Count = gr.Count() });
+
+                TongHopNhanSuDailyViewModel model;
+                foreach (var item in lstGr)
+                {
+                    model = new TongHopNhanSuDailyViewModel()
+                    {
+                        BoPhan = item.BoPhan,
+                        TongNV = item.Count,
+                        NgayBaoCao = _time
+                    };
+                    dailyViewModels.Add(model);
+                }
+            }
+
+            CaLamViecSL caLamViec;
+            double al = 0;
+            double ul = 0;
+            double nl = 0;
+            double l70 = 0;
+            double sl = 0;
+            double ct = 0;
+            double hl = 0;
+            double t = 0;
+            double nh = 0;
+            double el = 0;
+            double lc = 0;
+            string note = "";
+
+            foreach (var item in dailyViewModels) // duyet tung ngay với bo phan
+            {
+                note = "";
+                item.NghiTS = _chamCongDBResponsitory.FindAll(
+                    x => (x.HR_NHANVIEN.Status == Status.Active.NullString() || string.Compare(x.HR_NHANVIEN.NgayNghiViec, item.NgayBaoCao) >= 0) &&
+                    x.HR_NHANVIEN.MaBoPhan == item.BoPhan &&
+                    x.DANGKY_CHAMCONG_CHITIET.KyHieuChamCong == "IL" &&
+                    string.Compare(item.NgayBaoCao, x.NgayBatDau) >= 0 &&
+                    string.Compare(item.NgayBaoCao, x.NgayKetThuc) <= 0,
+                    x => x.DANGKY_CHAMCONG_CHITIET, y => y.HR_NHANVIEN).
+                    Select(x => x.MaNV).Distinct().Count();
+
+                var lstnv = _nhanvienCLviecResponsitory.FindAll(
+                    x => x.HR_NHANVIEN.MaBoPhan == item.BoPhan &&
+                     (x.HR_NHANVIEN.Status == Status.Active.NullString() || string.Compare(x.HR_NHANVIEN.NgayNghiViec, item.NgayBaoCao) >= 0) &&
+                     string.Compare(item.NgayBaoCao, x.BatDau_TheoCa) >= 0 &&
+                     string.Compare(item.NgayBaoCao, x.KetThuc_TheoCa) <= 0,
+                     x => x.HR_NHANVIEN).ToList();
+
+                var nvGr = lstnv.GroupBy(x => x.Danhmuc_CaLviec).Select(gr => gr);
+
+                foreach (var gr in nvGr)
+                {
+                    if (item.CaLamViec_Value.Any(x => x.CalamViec == gr.Key))
+                    {
+                        caLamViec = item.CaLamViec_Value.FirstOrDefault(x => x.CalamViec == gr.Key);
+                    }
+                    else
+                    {
+                        caLamViec = new CaLamViecSL()
+                        {
+                            CalamViec = gr.Key
+                        };
+                    }
+
+                    TrucTiepGianTiepSL tgianTiep = new TrucTiepGianTiepSL();
+
+                    foreach (var sub in gr)// duyet qua so nguoi là OP, STAFF, STAFF PM
+                    {
+                        note = "";
+
+                        al = _chamCongDBResponsitory.FindAll(
+                                x => x.HR_NHANVIEN.Id == sub.MaNV &&
+                                x.DANGKY_CHAMCONG_CHITIET.KyHieuChamCong == "AL" &&
+                                string.Compare(item.NgayBaoCao, x.NgayBatDau) >= 0 &&
+                                string.Compare(item.NgayBaoCao, x.NgayKetThuc) <= 0,
+                                x => x.DANGKY_CHAMCONG_CHITIET, y => y.HR_NHANVIEN).
+                                Select(x => x.MaNV).Distinct().Count();
+
+                        note += _chamCongDBResponsitory.FindAll(
+                                x => x.HR_NHANVIEN.Id == sub.MaNV &&
+                                x.DANGKY_CHAMCONG_CHITIET.KyHieuChamCong == "AL" &&
+                                string.Compare(item.NgayBaoCao, x.NgayBatDau) >= 0 &&
+                                string.Compare(item.NgayBaoCao, x.NgayKetThuc) <= 0,
+                                x => x.DANGKY_CHAMCONG_CHITIET, y => y.HR_NHANVIEN).FirstOrDefault()?.NoiDung + "\n";
+
+                        ul = _chamCongDBResponsitory.FindAll(
+                                x => x.HR_NHANVIEN.Id == sub.MaNV &&
+                                x.DANGKY_CHAMCONG_CHITIET.KyHieuChamCong == "UL" &&
+                                string.Compare(item.NgayBaoCao, x.NgayBatDau) >= 0 &&
+                                string.Compare(item.NgayBaoCao, x.NgayKetThuc) <= 0,
+                                x => x.DANGKY_CHAMCONG_CHITIET, y => y.HR_NHANVIEN).
+                                Select(x => x.MaNV).Distinct().Count();
+
+                        note += _chamCongDBResponsitory.FindAll(
+                                x => x.HR_NHANVIEN.Id == sub.MaNV &&
+                                x.DANGKY_CHAMCONG_CHITIET.KyHieuChamCong == "UL" &&
+                                string.Compare(item.NgayBaoCao, x.NgayBatDau) >= 0 &&
+                                string.Compare(item.NgayBaoCao, x.NgayKetThuc) <= 0,
+                                x => x.DANGKY_CHAMCONG_CHITIET, y => y.HR_NHANVIEN).FirstOrDefault()?.NoiDung + "\n";
+
+                        nl = _chamCongDBResponsitory.FindAll(
+                                x => x.HR_NHANVIEN.Id == sub.MaNV &&
+                                x.DANGKY_CHAMCONG_CHITIET.KyHieuChamCong == "NL" &&
+                                string.Compare(item.NgayBaoCao, x.NgayBatDau) >= 0 &&
+                                string.Compare(item.NgayBaoCao, x.NgayKetThuc) <= 0,
+                                x => x.DANGKY_CHAMCONG_CHITIET, y => y.HR_NHANVIEN).
+                                Select(x => x.MaNV).Distinct().Count();
+
+                        note += _chamCongDBResponsitory.FindAll(
+                                x => x.HR_NHANVIEN.Id == sub.MaNV &&
+                                x.DANGKY_CHAMCONG_CHITIET.KyHieuChamCong == "NL" &&
+                                string.Compare(item.NgayBaoCao, x.NgayBatDau) >= 0 &&
+                                string.Compare(item.NgayBaoCao, x.NgayKetThuc) <= 0,
+                                x => x.DANGKY_CHAMCONG_CHITIET, y => y.HR_NHANVIEN).FirstOrDefault()?.NoiDung + "\n";
+
+                        l70 = _chamCongDBResponsitory.FindAll(
+                                x => x.HR_NHANVIEN.Id == sub.MaNV &&
+                                x.DANGKY_CHAMCONG_CHITIET.KyHieuChamCong == "L70" &&
+                                string.Compare(item.NgayBaoCao, x.NgayBatDau) >= 0 &&
+                                string.Compare(item.NgayBaoCao, x.NgayKetThuc) <= 0,
+                                x => x.DANGKY_CHAMCONG_CHITIET, y => y.HR_NHANVIEN).
+                                Select(x => x.MaNV).Distinct().Count();
+
+                        note += _chamCongDBResponsitory.FindAll(
+                                x => x.HR_NHANVIEN.Id == sub.MaNV &&
+                                x.DANGKY_CHAMCONG_CHITIET.KyHieuChamCong == "L70" &&
+                                string.Compare(item.NgayBaoCao, x.NgayBatDau) >= 0 &&
+                                string.Compare(item.NgayBaoCao, x.NgayKetThuc) <= 0,
+                                x => x.DANGKY_CHAMCONG_CHITIET, y => y.HR_NHANVIEN).FirstOrDefault()?.NoiDung + "\n";
+
+                        sl = _chamCongDBResponsitory.FindAll(
+                               x => x.HR_NHANVIEN.Id == sub.MaNV &&
+                               x.DANGKY_CHAMCONG_CHITIET.KyHieuChamCong == "SL" &&
+                               string.Compare(item.NgayBaoCao, x.NgayBatDau) >= 0 &&
+                               string.Compare(item.NgayBaoCao, x.NgayKetThuc) <= 0,
+                               x => x.DANGKY_CHAMCONG_CHITIET, y => y.HR_NHANVIEN).
+                               Select(x => x.MaNV).Distinct().Count();
+
+                        note += _chamCongDBResponsitory.FindAll(
+                               x => x.HR_NHANVIEN.Id == sub.MaNV &&
+                               x.DANGKY_CHAMCONG_CHITIET.KyHieuChamCong == "SL" &&
+                               string.Compare(item.NgayBaoCao, x.NgayBatDau) >= 0 &&
+                               string.Compare(item.NgayBaoCao, x.NgayKetThuc) <= 0,
+                               x => x.DANGKY_CHAMCONG_CHITIET, y => y.HR_NHANVIEN).FirstOrDefault()?.NoiDung + "\n";
+
+                        ct = _chamCongDBResponsitory.FindAll(
+                               x => x.HR_NHANVIEN.Id == sub.MaNV &&
+                               x.DANGKY_CHAMCONG_CHITIET.KyHieuChamCong == "CT" &&
+                               string.Compare(item.NgayBaoCao, x.NgayBatDau) >= 0 &&
+                               string.Compare(item.NgayBaoCao, x.NgayKetThuc) <= 0,
+                               x => x.DANGKY_CHAMCONG_CHITIET, y => y.HR_NHANVIEN).
+                               Select(x => x.MaNV).Distinct().Count();
+
+                        note += _chamCongDBResponsitory.FindAll(
+                               x => x.HR_NHANVIEN.Id == sub.MaNV &&
+                               x.DANGKY_CHAMCONG_CHITIET.KyHieuChamCong == "CT" &&
+                               string.Compare(item.NgayBaoCao, x.NgayBatDau) >= 0 &&
+                               string.Compare(item.NgayBaoCao, x.NgayKetThuc) <= 0,
+                               x => x.DANGKY_CHAMCONG_CHITIET, y => y.HR_NHANVIEN).FirstOrDefault()?.NoiDung + "\n";
+
+                        hl = _chamCongDBResponsitory.FindAll(
+                                x => x.HR_NHANVIEN.Id == sub.MaNV &&
+                                x.DANGKY_CHAMCONG_CHITIET.KyHieuChamCong == "HL" &&
+                                string.Compare(item.NgayBaoCao, x.NgayBatDau) >= 0 &&
+                                string.Compare(item.NgayBaoCao, x.NgayKetThuc) <= 0,
+                                x => x.DANGKY_CHAMCONG_CHITIET, y => y.HR_NHANVIEN).
+                                Select(x => x.MaNV).Distinct().Count();
+
+                        note += _chamCongDBResponsitory.FindAll(
+                                x => x.HR_NHANVIEN.Id == sub.MaNV &&
+                                x.DANGKY_CHAMCONG_CHITIET.KyHieuChamCong == "HL" &&
+                                string.Compare(item.NgayBaoCao, x.NgayBatDau) >= 0 &&
+                                string.Compare(item.NgayBaoCao, x.NgayKetThuc) <= 0,
+                                x => x.DANGKY_CHAMCONG_CHITIET, y => y.HR_NHANVIEN).FirstOrDefault()?.NoiDung + "\n";
+
+                        nh = _chamCongDBResponsitory.FindAll(
+                                x => x.HR_NHANVIEN.Id == sub.MaNV &&
+                                x.DANGKY_CHAMCONG_CHITIET.KyHieuChamCong == "NH" &&
+                                string.Compare(item.NgayBaoCao, x.NgayBatDau) >= 0 &&
+                                string.Compare(item.NgayBaoCao, x.NgayKetThuc) <= 0,
+                                x => x.DANGKY_CHAMCONG_CHITIET, y => y.HR_NHANVIEN).
+                                Select(x => x.MaNV).Distinct().Count();
+
+                        note += _chamCongDBResponsitory.FindAll(
+                                x => x.HR_NHANVIEN.Id == sub.MaNV &&
+                                x.DANGKY_CHAMCONG_CHITIET.KyHieuChamCong == "NH" &&
+                                string.Compare(item.NgayBaoCao, x.NgayBatDau) >= 0 &&
+                                string.Compare(item.NgayBaoCao, x.NgayKetThuc) <= 0,
+                                x => x.DANGKY_CHAMCONG_CHITIET, y => y.HR_NHANVIEN).FirstOrDefault()?.NoiDung + "\n";
+
+                        el = _chamCongDBResponsitory.FindAll(
+                               x => x.HR_NHANVIEN.Id == sub.MaNV &&
+                               x.DANGKY_CHAMCONG_CHITIET.KyHieuChamCong == "EL" &&
+                               string.Compare(item.NgayBaoCao, x.NgayBatDau) >= 0 &&
+                               string.Compare(item.NgayBaoCao, x.NgayKetThuc) <= 0,
+                               x => x.DANGKY_CHAMCONG_CHITIET, y => y.HR_NHANVIEN).
+                               Select(x => x.MaNV).Distinct().Count();
+
+                        note += _chamCongDBResponsitory.FindAll(
+                               x => x.HR_NHANVIEN.Id == sub.MaNV &&
+                               x.DANGKY_CHAMCONG_CHITIET.KyHieuChamCong == "EL" &&
+                               string.Compare(item.NgayBaoCao, x.NgayBatDau) >= 0 &&
+                               string.Compare(item.NgayBaoCao, x.NgayKetThuc) <= 0,
+                               x => x.DANGKY_CHAMCONG_CHITIET, y => y.HR_NHANVIEN).FirstOrDefault()?.NoiDung + "\n";
+
+                        lc = _chamCongDBResponsitory.FindAll(
+                              x => x.HR_NHANVIEN.Id == sub.MaNV &&
+                              x.DANGKY_CHAMCONG_CHITIET.KyHieuChamCong == "LC" &&
+                              string.Compare(item.NgayBaoCao, x.NgayBatDau) >= 0 &&
+                              string.Compare(item.NgayBaoCao, x.NgayKetThuc) <= 0,
+                              x => x.DANGKY_CHAMCONG_CHITIET, y => y.HR_NHANVIEN).
+                              Select(x => x.MaNV).Distinct().Count();
+
+                        note += _chamCongDBResponsitory.FindAll(
+                               x => x.HR_NHANVIEN.Id == sub.MaNV &&
+                               x.DANGKY_CHAMCONG_CHITIET.KyHieuChamCong == "LC" &&
+                               string.Compare(item.NgayBaoCao, x.NgayBatDau) >= 0 &&
+                               string.Compare(item.NgayBaoCao, x.NgayKetThuc) <= 0,
+                               x => x.DANGKY_CHAMCONG_CHITIET, y => y.HR_NHANVIEN).FirstOrDefault()?.NoiDung + "\n";
+
+                        t = _nhanvienResponsitory.FindAll(x => x.Id == sub.MaNV && x.NgayNghiViec == item.NgayBaoCao).Count();
+
+                        if (t > 0)
+                        {
+                            note += _nhanvienResponsitory.FindById(sub.MaNV).TenNV + " nghỉ việc.";
+                        }
+
+                        if (caLamViec.ThongTins.Any(x => x.TrucTiepGianTiep == sub.HR_NHANVIEN.TrucTiepSX && x.ChucVu == sub.HR_NHANVIEN.ChucVu2))
+                        {
+                            tgianTiep = caLamViec.ThongTins.FirstOrDefault(x => x.TrucTiepGianTiep == sub.HR_NHANVIEN.TrucTiepSX && x.ChucVu == sub.HR_NHANVIEN.ChucVu2);
+                            tgianTiep.TongSoNguoi += 1;
+                            tgianTiep.NghiPhep += al;
+                            tgianTiep.NghiKhongLuong += ul;
+                            tgianTiep.NghiKhongThongBao += nl;
+                            tgianTiep.NghiHuongLuong70 += l70;
+                            tgianTiep.NghiDacBiet += sl;
+                            tgianTiep.DiCongTac += ct;
+                            tgianTiep.NghiOm += hl;
+                            tgianTiep.NghiViec += t;
+                            tgianTiep.NghiLe += nh;
+                            tgianTiep.DiMuon += lc;
+                            tgianTiep.VeSom += el;
+
+                            if (note.NullString() != "")
+                            {
+                                tgianTiep.Note += "\n" + note.Trim();
+                            }
+                        }
+                        else
+                        {
+                            tgianTiep = new TrucTiepGianTiepSL();
+                            tgianTiep.TrucTiepGianTiep = sub.HR_NHANVIEN.TrucTiepSX;
+                            tgianTiep.ChucVu = sub.HR_NHANVIEN.ChucVu2;
+                            tgianTiep.TongSoNguoi = 1;
+                            tgianTiep.NghiPhep = al;
+                            tgianTiep.NghiKhongLuong = ul;
+                            tgianTiep.NghiKhongThongBao = nl;
+                            tgianTiep.NghiHuongLuong70 = l70;
+                            tgianTiep.NghiDacBiet = sl;
+                            tgianTiep.DiCongTac = ct;
+                            tgianTiep.NghiOm = hl;
+                            tgianTiep.NghiViec = t;
+                            tgianTiep.NghiLe = nh;
+                            tgianTiep.DiMuon = lc;
+                            tgianTiep.VeSom = el;
+
+                            if (note.NullString() != "")
+                            {
+                                tgianTiep.Note += "\n" + note.Trim();
+                            }
+
+                            if (caLamViec.CalamViec == "CN_WHC")
+                            {
+                                if (sub.HR_NHANVIEN.TrucTiepSX == "TrucTiepSX" && sub.HR_NHANVIEN.ChucVu2 == "OP")
+                                {
+                                    tgianTiep.order = 0;
+                                }
+                                else
+                                if (sub.HR_NHANVIEN.TrucTiepSX == "TrucTiepSX" && sub.HR_NHANVIEN.ChucVu2 == "STAFF")
+                                {
+                                    tgianTiep.order = 1;
+                                }
+                                else
+                                if (sub.HR_NHANVIEN.TrucTiepSX == "GianTiepSX" && sub.HR_NHANVIEN.ChucVu2 == "STAFF PM")
+                                {
+                                    tgianTiep.order = 2;
+                                }
+                            }
+                            else
+                            if (caLamViec.CalamViec == "CD_WHC")
+                            {
+                                if (sub.HR_NHANVIEN.TrucTiepSX == "TrucTiepSX" && sub.HR_NHANVIEN.ChucVu2 == "OP")
+                                {
+                                    tgianTiep.order = 3;
+                                }
+
+                                if (sub.HR_NHANVIEN.TrucTiepSX == "TrucTiepSX" && sub.HR_NHANVIEN.ChucVu2 == "STAFF")
+                                {
+                                    tgianTiep.order = 4;
+                                }
+                            }
+
+                            caLamViec.ThongTins.Add(tgianTiep);
+
+                            caLamViec.ThongTins.Sort((x, y) => x.order - y.order);
+                        }
+                    }
+
+                    if (!item.CaLamViec_Value.Any(x => x.CalamViec == gr.Key))
+                    {
+                        item.CaLamViec_Value.Add(caLamViec);
+                    }
+                }
+            }
+
+            return dailyViewModels;
         }
     }
 }

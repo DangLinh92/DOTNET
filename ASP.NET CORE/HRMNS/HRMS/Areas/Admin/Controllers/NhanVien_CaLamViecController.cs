@@ -163,7 +163,7 @@ namespace HRMS.Areas.Admin.Controllers
                     }
                     else
                     {
-                        calamviec.Approved = CommonConstants.No_Approved;
+                        calamviec.Approved = CommonConstants.Approved;// CommonConstants.No_Approved;
                         _nvienCalamviecService.Add(calamviec);
                         _nvienCalamviecService.Save();
                     }

@@ -7,6 +7,29 @@ using System.Text;
 
 namespace HRMNS.Application.ViewModels.Time_Attendance
 {
+    public class ChamCongSimpleModel
+    {
+        [StringLength(50)]
+        public string Ngay_ChamCong { get; set; }
+
+        [StringLength(50)]
+        public string ID_NV { get; set; }
+
+        [StringLength(96)]
+        public string Ten_NV { get; set; }
+
+        [StringLength(50)]
+        public string FirstIn_Time { get; set; }
+
+        [StringLength(50)]
+        public string Last_Out_Time { get; set; }
+
+        public string BoPhan { get; set; }
+
+        public string CaLamViec { get; set; }
+
+        public string Status { get; set; }
+    }
     public class ChamCongLogViewModel
     {
         public long Id { get; set; }

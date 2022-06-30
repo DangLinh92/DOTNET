@@ -7,11 +7,13 @@ using HRMNS.Data.Entities;
 using HRMNS.Data.Enums;
 using HRMNS.Data.IRepositories;
 using HRMNS.Utilities.Constants;
+using HRMNS.Utilities.Dtos;
 using HRMS.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Http;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -151,6 +153,49 @@ namespace HRMNS.Application.Implementation
                 {
                     ImportDetailInfo(packet);
                 }
+                else if (param == CommonConstants.IMPORT_CHUCVU2_EMP)
+                {
+                    ImportChucVu2Info(packet);
+                }
+            }
+        }
+
+        private void ImportChucVu2Info(ExcelPackage packet)
+        {
+            ResultDB resultDB = new ResultDB();
+            try
+            {
+                DataTable table = new DataTable();
+                table.Columns.Add("MaNV");
+                table.Columns.Add("TenNV");
+                table.Columns.Add("ChucVu2");
+                table.Columns.Add("TrucTiepSX");
+                DataRow row = null;
+
+                ExcelWorksheet worksheet = packet.Workbook.Worksheets[1];
+                for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
+                {
+                    row = table.NewRow();
+
+                    if (string.IsNullOrEmpty(worksheet.Cells[i, 1].Text.NullString().ToUpper()))
+                    {
+                        continue;
+                    }
+
+                    row["MaNV"] = worksheet.Cells[i, 1].Text.NullString().ToUpper();
+                    row["TenNV"] = worksheet.Cells[i, 2].Text.NullString();
+                    row["ChucVu2"] = worksheet.Cells[i, 3].Text.NullString();
+                    row["TrucTiepSX"] = worksheet.Cells[i, 4].Text.NullString();
+
+                    table.Rows.Add(row);
+                }
+
+                resultDB = _nhanvienRepository.ExecProceduce("PKG_BUSINESS.PUT_NHANVIEN_CHUCVU2", new Dictionary<string, string>(), "A_DATA", table);
+            }
+            catch (Exception ex)
+            {
+                resultDB.ReturnInt = -1;
+                resultDB.ReturnString = ex.Message;
             }
         }
 
@@ -453,7 +498,7 @@ namespace HRMNS.Application.Implementation
 
         private int? GetBoPhanChiTiet(string tenbp)
         {
-           return _bophanDetailRepository.FindAll(x => x.TenBoPhanChiTiet == tenbp).FirstOrDefault().Id;
+            return _bophanDetailRepository.FindAll(x => x.TenBoPhanChiTiet == tenbp).FirstOrDefault().Id;
         }
     }
 }

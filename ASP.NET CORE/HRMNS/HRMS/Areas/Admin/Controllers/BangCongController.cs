@@ -1,6 +1,8 @@
 ﻿using HRMNS.Application.Interfaces;
+using HRMNS.Application.ViewModels.HR;
 using HRMNS.Application.ViewModels.System;
 using HRMNS.Application.ViewModels.Time_Attendance;
+using HRMNS.Data.EF.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -52,6 +54,246 @@ namespace HRMS.Areas.Admin.Controllers
             _memoryCache.Remove("ChamCongData");
             _memoryCache.Set("ChamCongData", ChamCongData);
             return PartialView("_gridBangCongPartialView", lst);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult TongHopNhanSuDaily(string time, string dept)
+        {
+            var data = _bangCongService.TongHopNhanSuReport(time, dept).OrderBy(x => x.NgayBaoCao).ToList();
+            if (data.Count == 0)
+            {
+                return new BadRequestObjectResult("Not found data!");
+            }
+
+            string sWebRootFolder = _hostingEnvironment.WebRootPath;
+            string directory = Path.Combine(sWebRootFolder, "export-files");
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
+            string sFileName = $"Tonghopnhansu_" + dept + $"_{DateTime.Now:yyyyMMddhhmmss}.xlsx";
+            string fileUrl = $"{Request.Scheme}://{Request.Host}/export-files/{sFileName}";
+            FileInfo file = new FileInfo(Path.Combine(directory, sFileName));
+            FileInfo fileSrc = new FileInfo(Path.Combine(Path.Combine(sWebRootFolder, "templates"), "TongHopNhanSuTemplate.xlsx"));
+            if (file.Exists)
+            {
+                file.Delete();
+            }
+
+            if (fileSrc.Exists)
+            {
+                fileSrc.CopyTo(file.FullName, true);
+            }
+
+            using (ExcelPackage package = new ExcelPackage(file))
+            {
+                // add a new worksheet to the empty workbook
+                ExcelWorksheet worksheet = package.Workbook.Worksheets[1];
+
+                int beginIndex = 5;
+                string cellfrom = "";
+                string cellTo = "";
+                string colName = "";
+                string newColName = "";
+
+                for (int i = 0; i < data.Count; i++)
+                {
+                    worksheet.Cells["A" + beginIndex].Value = dept;
+                    worksheet.Cells["B" + beginIndex].Value = data[i].TongNV;
+                    worksheet.Cells["C" + beginIndex].Value = data[i].NghiTS;
+                    worksheet.Cells["E" + beginIndex].Value = data[i].NgayBaoCao;
+
+                    foreach (var calv in data[i].CaLamViec_Value)
+                    {
+                        if (calv.CalamViec == "CN_WHC")
+                        {
+                            foreach (var tt in calv.ThongTins)
+                            {
+                                if (tt.TrucTiepGianTiep == "TrucTiepSX" && tt.ChucVu == "OP")
+                                {
+                                    for (int k = 0; k < 16; k++)
+                                    {
+                                        colName = GetExcelColumnName(k + 9);
+
+                                        if (colName == "J" || colName == "W" || colName == "U")
+                                        {
+                                            continue;
+                                        }
+
+                                        // fill working status
+                                        newColName = colName + (beginIndex + 0);
+                                        UpdateDataNsu(colName, newColName, tt, ref worksheet);
+                                    }
+                                }
+                                else
+                                 if (tt.TrucTiepGianTiep == "TrucTiepSX" && tt.ChucVu == "STAFF")
+                                {
+                                    for (int k = 0; k < 16; k++)
+                                    {
+                                        colName = GetExcelColumnName(k + 9);
+
+                                        if (colName == "J" || colName == "W" || colName == "U")
+                                        {
+                                            continue;
+                                        }
+
+                                        // fill working status
+                                        newColName = colName + (beginIndex + 1);
+                                        UpdateDataNsu(colName, newColName, tt, ref worksheet);
+                                    }
+                                }
+                                else
+                                if (tt.TrucTiepGianTiep == "GianTiepSX" && tt.ChucVu == "STAFF PM")
+                                {
+                                    for (int k = 0; k < 16; k++)
+                                    {
+                                        colName = GetExcelColumnName(k + 9);
+
+                                        if (colName == "J" || colName == "W" || colName == "U")
+                                        {
+                                            continue;
+                                        }
+
+                                        // fill working status
+                                        newColName = colName + (beginIndex + 2);
+                                        UpdateDataNsu(colName, newColName, tt, ref worksheet);
+                                    }
+                                }
+                            }
+                        }
+                        else if (calv.CalamViec == "CD_WHC")
+                        {
+                            foreach (var tt in calv.ThongTins)
+                            {
+                                if (tt.TrucTiepGianTiep == "TrucTiepSX" && tt.ChucVu == "OP")
+                                {
+                                    for (int k = 0; k < 16; k++)
+                                    {
+                                        colName = GetExcelColumnName(k + 9);
+
+                                        if (colName == "J" || colName == "W" || colName == "U")
+                                        {
+                                            continue;
+                                        }
+
+                                        // fill working status
+                                        newColName = colName + (beginIndex + 3);
+                                        UpdateDataNsu(colName, newColName, tt, ref worksheet);
+                                    }
+                                }
+                                else
+                                if (tt.TrucTiepGianTiep == "TrucTiepSX" && tt.ChucVu == "STAFF")
+                                {
+                                    for (int k = 0; k < 16; k++)
+                                    {
+                                        colName = GetExcelColumnName(k + 9);
+
+                                        if (colName == "J" || colName == "W" || colName == "U")
+                                        {
+                                            continue;
+                                        }
+
+                                        // fill working status
+                                        newColName = colName + (beginIndex + 4);
+                                        UpdateDataNsu(colName, newColName, tt, ref worksheet);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (i < data.Count - 2)
+                    {
+                        // copy range cell
+                        cellfrom = "A" + (beginIndex + 5) + ":X" + (beginIndex + 9);
+                        cellTo = "A" + (beginIndex + 10) + ":X" + (beginIndex + 14);
+                        worksheet.Cells[cellfrom].Copy(worksheet.Cells[cellTo]);
+                    }
+
+                    beginIndex += 5;
+                    if (data.Count == 1)
+                    {
+                        worksheet.DeleteRow(10, 5);
+                    }
+                }
+
+                package.Save(); //Save the workbook.
+            }
+
+            return new OkObjectResult(fileUrl);
+        }
+
+        private void UpdateDataNsu(string colName, string newColName, TrucTiepGianTiepSL tt, ref ExcelWorksheet worksheet)
+        {
+            if (colName == "I" && tt.TongSoNguoi > 0)
+            {
+                worksheet.Cells[newColName].Value = tt.TongSoNguoi;
+            }
+            else
+            if (colName == "K" && tt.DiMuon > 0)
+            {
+                worksheet.Cells[newColName].Value = tt.DiMuon;
+            }
+            else
+            if (colName == "L" && tt.VeSom > 0)
+            {
+                worksheet.Cells[newColName].Value = tt.VeSom;
+            }
+            else
+            if (colName == "M" && tt.NghiPhep > 0)
+            {
+                worksheet.Cells[newColName].Value = tt.NghiPhep;
+            }
+            else
+            if (colName == "N" && tt.NghiKhongLuong > 0)
+            {
+                worksheet.Cells[newColName].Value = tt.NghiKhongLuong;
+            }
+            else
+             if (colName == "O" && tt.NghiKhongThongBao > 0)
+            {
+                worksheet.Cells[newColName].Value = tt.NghiKhongThongBao;
+            }
+            else
+            if (colName == "P" && tt.NghiHuongLuong70 > 0)
+            {
+                worksheet.Cells[newColName].Value = tt.NghiHuongLuong70;
+            }
+            else
+            if (colName == "Q" && tt.NghiDacBiet > 0)
+            {
+                worksheet.Cells[newColName].Value = tt.NghiDacBiet;
+            }
+            else
+             if (colName == "R" && tt.DiCongTac > 0)
+            {
+                worksheet.Cells[newColName].Value = tt.DiCongTac;
+            }
+            else
+             if (colName == "S" && tt.NghiOm > 0)
+            {
+                worksheet.Cells[newColName].Value = tt.NghiOm;
+            }
+            else
+              if (colName == "T" && tt.NghiViec > 0)
+            {
+                worksheet.Cells[newColName].Value = tt.NghiViec;
+            }
+            else
+            if (colName == "V" && tt.NghiLe > 0)
+            {
+                worksheet.Cells[newColName].Value = tt.NghiLe;
+            }
+            else
+            if (colName == "X")
+            {
+                worksheet.Cells[newColName].Value = tt.Note.NullString();
+            }
         }
 
         /// <summary>

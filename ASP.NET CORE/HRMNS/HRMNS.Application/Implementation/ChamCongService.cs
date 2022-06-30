@@ -272,5 +272,11 @@ namespace HRMNS.Application.Implementation
         {
             Department = dept;
         }
+
+        public List<ChamCongLogViewModel> GetByTime(string fromTime, string toTime)
+        {
+            var lst = _chamCongLogRepository.FindAll(x => string.Compare(x.Ngay_ChamCong, fromTime) >= 0 && string.Compare(x.Ngay_ChamCong, toTime) <= 0).OrderByDescending(x => x.Ngay_ChamCong);
+            return _mapper.Map<List<ChamCongLogViewModel>>(lst);
+        }
     }
 }

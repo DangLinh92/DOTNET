@@ -11,6 +11,7 @@ namespace HRMNS.Application.Interfaces
     public interface IChamCongService: IDisposable
     {
         List<ChamCongLogViewModel> GetAll(string keyword);
+        List<ChamCongLogViewModel> GetByTime(string fromTime,string toTime);
 
         ChamCongLogViewModel Update(ChamCongLogViewModel model);
 

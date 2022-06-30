@@ -62,6 +62,8 @@ namespace HRMNS.Application.ViewModels.System
         public string NgayKetThuc { get; set; }
         public string KyHieuChamCong { get; set; }
 
+        public string PhanLoaiDM { get; set; }
+        public double HeSo { get; set; }
         public string DateModified { get; set; }
     }
 

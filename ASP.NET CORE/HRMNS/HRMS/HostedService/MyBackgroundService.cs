@@ -36,7 +36,7 @@ namespace HRMS.HostedService
             {
                 using (var scope = Services.CreateScope())
                 {
-                    if (DateTime.Now.ToString("HH:mm:ss").CompareTo("00:10:00") <= 0 && executionCount == 0)
+                    if (DateTime.Now.ToString("HH:mm:ss").CompareTo("23:00:00") <= 0 && executionCount == 0)
                     {
                         _logger.LogInformation("DoWork: active " + DateTime.Now.ToString("HH:mm:ss"));
 
@@ -49,9 +49,10 @@ namespace HRMS.HostedService
                         executionCount++;
                     }
 
-                    if (DateTime.Now.ToString("HH:mm:ss").CompareTo("00:10:00") > 0 && executionCount > 0)
+                    if (DateTime.Now.ToString("HH:mm:ss").CompareTo("23:00:00") > 0 && executionCount > 0)
                     {
                         executionCount = 0;
+                        _logger.LogInformation("DoWork: reset count = 0 " + DateTime.Now.ToString("HH:mm:ss"));
                     }
 
                     await Task.Delay(new TimeSpan(0, 0, 1));

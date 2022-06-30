@@ -17,14 +17,16 @@ namespace HRMNS.Application.Implementation
     public class HmrsBackgroundService : BaseService, IBackgroundService
     {
         private IRespository<NHANVIEN_CALAMVIEC, int> _nhanvienClviecRepository;
+        private IRespository<HR_NHANVIEN, string> _nhanvienRepository;
         private IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private ILogger _logger;
-       
 
-        public HmrsBackgroundService(IRespository<NHANVIEN_CALAMVIEC, int> respository, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+
+        public HmrsBackgroundService(IRespository<NHANVIEN_CALAMVIEC, int> respository, IRespository<HR_NHANVIEN, string> nhanvienRepository, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _nhanvienClviecRepository = respository;
+            _nhanvienRepository = nhanvienRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
@@ -54,7 +56,7 @@ namespace HRMNS.Application.Implementation
                         _logger.LogInformation("f:SettingTimeCaLviec: update status = inactive of nhan vien ca lam viec success");
                     }
                     else if (string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), item.KetThuc_TheoCa) <= 0
-                        && string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), item.BatDau_TheoCa) >= 0 
+                        && string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), item.BatDau_TheoCa) >= 0
                         && item.Status != Status.Active.ToString())
                     {
                         item.Status = Status.Active.ToString();
@@ -63,9 +65,29 @@ namespace HRMNS.Application.Implementation
                     }
                 }
 
+                // update nghi viec nhan vien
+                var lstNv = _nhanvienRepository.FindAll();
+
+                foreach (var item in lstNv)
+                {
+                    if (!string.IsNullOrEmpty(item.NgayNghiViec))
+                    {
+                        if (string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), item.NgayNghiViec) >= 0)
+                        {
+                            item.Status = Status.InActive.ToString();
+                            _nhanvienRepository.Update(item);
+                        }
+                    }
+                }
+
                 _unitOfWork.Commit();
 
                 foreach (var item in nvClviec)
+                {
+                    ((Data.EF.EFUnitOfWork)_unitOfWork).DBContext().Entry(item).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
+                }
+
+                foreach (var item in lstNv)
                 {
                     ((Data.EF.EFUnitOfWork)_unitOfWork).DBContext().Entry(item).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
                 }

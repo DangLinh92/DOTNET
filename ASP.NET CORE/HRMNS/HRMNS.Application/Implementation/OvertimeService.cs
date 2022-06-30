@@ -113,9 +113,9 @@ namespace HRMNS.Application.Implementation
                         row["MaNV"] = worksheet.Cells[i, 1].Text.NullString().ToUpper();
                         row["NgayOT"] = worksheet.Cells[i, 3].Text.NullString();
                         row["DM_NgayLViec"] = UpdateDMNgayLviec(worksheet.Cells[i, 3].Text.NullString());
-                        row["Approve"] = CommonConstants.Request;
-                        row["ApproveLV2"] = CommonConstants.Request;
-                        row["ApproveLV3"] = CommonConstants.Request;
+                        row["Approve"] = CommonConstants.Approved;
+                        row["ApproveLV2"] = CommonConstants.Approved;
+                        row["ApproveLV3"] = CommonConstants.Approved;
                         table.Rows.Add(row);
                     }
 

@@ -211,6 +211,12 @@
         $('#import_employee').modal('show');
     });
 
+    $('#btn-importChucVu2').on('click', function () { // import basic info for employee
+        $("#fileInputExcel").val(null);
+        $('#hd-ImportType').val('chucvu2_emp');
+        $('#import_employee').modal('show');
+    });
+
     $('#btnCloseImportExcel').on('click', function () {
         var fileUpload = $("#fileInputExcel").get(0);
         var files = fileUpload.files;

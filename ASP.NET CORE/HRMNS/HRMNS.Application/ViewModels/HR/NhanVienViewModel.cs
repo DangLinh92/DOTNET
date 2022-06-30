@@ -70,6 +70,10 @@ namespace HRMNS.Application.ViewModels.HR
 
         public string Status { get; set; }
 
+        public string ChucVu2 { get; set; } // OP, STAFF, STAFF PM
+
+        public string TrucTiepSX { get; set; }
+
         private string _image;
         public string Image
         {

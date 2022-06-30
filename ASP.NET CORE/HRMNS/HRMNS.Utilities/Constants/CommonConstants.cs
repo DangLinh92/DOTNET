@@ -38,6 +38,7 @@ namespace HRMNS.Utilities.Constants
 
         public const string IMPORT_BASIC_EMP = "basic_emp";
         public const string IMPORT_DETAIL_EMP = "detail_emp";
+        public const string IMPORT_CHUCVU2_EMP = "chucvu2_emp";
 
         // Hop Dong
         public const string HD_THUVIEC_EM = "TV85";
@@ -76,5 +77,9 @@ namespace HRMNS.Utilities.Constants
 
         public const string VP = "VP";
         public const string SX = "SX";
+
+        public const string DM_OT = "5";
+        public const string DM_ELLC = "6";
+        public const string OT_BAT_MAY = "DSBM_OT_150";
     }
 }

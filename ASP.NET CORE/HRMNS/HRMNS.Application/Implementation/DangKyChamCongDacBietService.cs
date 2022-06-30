@@ -3,6 +3,7 @@ using HRMNS.Application.Interfaces;
 using HRMNS.Application.ViewModels.Time_Attendance;
 using HRMNS.Data.EF.Extensions;
 using HRMNS.Data.Entities;
+using HRMNS.Data.Enums;
 using HRMNS.Utilities.Constants;
 using HRMNS.Utilities.Dtos;
 using HRMS.Infrastructure.Interfaces;
@@ -21,28 +22,65 @@ namespace HRMNS.Application.Implementation
     {
         private IRespository<DANGKY_CHAMCONG_DACBIET, int> _chamCongDbRepository;
         private IRespository<DANGKY_CHAMCONG_CHITIET, int> _chamCongChiTietRepository;
+        private IRespository<HR_NHANVIEN, string> _nhanVienRespository;
+
         private IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public DangKyChamCongDacBietService(IRespository<DANGKY_CHAMCONG_DACBIET, int> chamCongDbRepository, IRespository<DANGKY_CHAMCONG_CHITIET, int> respository, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public DangKyChamCongDacBietService(IRespository<DANGKY_CHAMCONG_DACBIET, int> chamCongDbRepository, IRespository<HR_NHANVIEN, string> nhanVienRespository, IRespository<DANGKY_CHAMCONG_CHITIET, int> respository, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _chamCongDbRepository = chamCongDbRepository;
+            _nhanVienRespository = nhanVienRespository;
             _chamCongChiTietRepository = respository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
         }
 
+        private void UpdateNghiViecNV(DangKyChamCongDacBietViewModel chamCongVm)
+        {
+           var chitiet = _chamCongChiTietRepository.FindAll(x => x.Id == chamCongVm.MaChamCong_ChiTiet).FirstOrDefault();
+            if(chitiet != null && chitiet.KyHieuChamCong == "T") // nghi viec
+            {
+               var nv = _nhanVienRespository.FindById(chamCongVm.MaNV);
+                if(nv != null)
+                {
+                    nv.NgayNghiViec = chamCongVm.NgayBatDau;
+
+                    if(string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), chamCongVm.NgayBatDau) >= 0)
+                    {
+                        nv.Status = Status.InActive.ToString();
+                    }
+
+                    _nhanVienRespository.Update(nv);
+                }
+            }
+        }
+
         public DangKyChamCongDacBietViewModel Add(DangKyChamCongDacBietViewModel chamCongVm)
         {
+            UpdateNghiViecNV(chamCongVm);
+
             chamCongVm.UserCreated = GetUserId();
             var entity = _mapper.Map<DANGKY_CHAMCONG_DACBIET>(chamCongVm);
             _chamCongDbRepository.Add(entity);
+
             return chamCongVm;
         }
 
         public void Delete(int id)
         {
+            var entity = _chamCongDbRepository.FindById(id, x => x.DANGKY_CHAMCONG_CHITIET);
+            if (entity.DANGKY_CHAMCONG_CHITIET.KyHieuChamCong == "T") // nghi viec
+            {
+                var nv = _nhanVienRespository.FindById(entity.MaNV);
+                if (nv != null)
+                {
+                    nv.NgayNghiViec = "";
+                    nv.Status = Status.Active.ToString();
+                    _nhanVienRespository.Update(nv);
+                }
+            }
             _chamCongDbRepository.Remove(id);
         }
 
@@ -73,6 +111,7 @@ namespace HRMNS.Application.Implementation
 
         public void Update(DangKyChamCongDacBietViewModel chamCongVm)
         {
+            UpdateNghiViecNV(chamCongVm);
             chamCongVm.UserModified = GetUserId();
             var entity = _mapper.Map<DANGKY_CHAMCONG_DACBIET>(chamCongVm);
             _chamCongDbRepository.Update(entity);
@@ -160,16 +199,20 @@ namespace HRMNS.Application.Implementation
                         row["Approve"] = CommonConstants.Request;
                         row["ApproveLV2"] = CommonConstants.Request;
 
-                        if (role == CommonConstants.AppRole.AdminRole || role == CommonConstants.roleApprove3)
-                        {
-                            row["Approve"] = CommonConstants.Approved;
-                            row["ApproveLV2"] = CommonConstants.Approved;
-                            row["ApproveLV3"] = CommonConstants.Approved;
-                        }
-                        else
-                        {
-                            row["ApproveLV3"] = CommonConstants.Request;
-                        }
+                        //if (role == CommonConstants.AppRole.AdminRole || role == CommonConstants.roleApprove3)
+                        //{
+                        //    row["Approve"] = CommonConstants.Approved;
+                        //    row["ApproveLV2"] = CommonConstants.Approved;
+                        //    row["ApproveLV3"] = CommonConstants.Approved;
+                        //}
+                        //else
+                        //{
+                        //    row["ApproveLV3"] = CommonConstants.Request;
+                        //}
+
+                        row["Approve"] = CommonConstants.Approved;
+                        row["ApproveLV2"] = CommonConstants.Approved;
+                        row["ApproveLV3"] = CommonConstants.Approved;
 
                         table.Rows.Add(row);
                     }
