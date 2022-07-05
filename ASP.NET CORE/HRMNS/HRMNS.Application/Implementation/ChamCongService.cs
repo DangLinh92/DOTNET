@@ -206,9 +206,9 @@ namespace HRMNS.Application.Implementation
                     {
                         foreach (var item in lstNV)
                         {
-                            if (!lst.Any(x => item.Id.Contains(x.ID_NV)))
+                            if (!lst.Any(x => item.Id.ToUpper() == "H" + x.ID_NV))
                             {
-                                lst.AddRange(_chamCongLogRepository.FindAll(x => item.Id.Contains(x.ID_NV) && string.Compare(x.Ngay_ChamCong, timeFrom) >= 0 && string.Compare(x.Ngay_ChamCong, timeTo) <= 0).OrderByDescending(x => x.Ngay_ChamCong));
+                                lst.AddRange(_chamCongLogRepository.FindAll(x => item.Id.ToUpper() == "H" + x.ID_NV && string.Compare(x.Ngay_ChamCong, timeFrom) >= 0 && string.Compare(x.Ngay_ChamCong, timeTo) <= 0).OrderByDescending(x => x.Ngay_ChamCong));
                             }
                         }
                     }
@@ -232,9 +232,9 @@ namespace HRMNS.Application.Implementation
                     {
                         foreach (var item in lstNV)
                         {
-                            if (!vm.Any(x => item.Id.Contains(x.ID_NV)))
+                            if (!vm.Any(x => item.Id.ToUpper() == "H" + x.ID_NV))
                             {
-                                vm.AddRange(lst.FindAll(x => item.Id.Contains(x.ID_NV)));
+                                vm.AddRange(lst.FindAll(x => item.Id.ToUpper() == "H" + x.ID_NV));
                             }
                         }
                     }

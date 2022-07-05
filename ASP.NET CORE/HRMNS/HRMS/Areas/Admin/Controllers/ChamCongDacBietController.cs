@@ -6,6 +6,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using HRMNS.Application.Interfaces;
 using HRMNS.Application.ViewModels.Time_Attendance;
+using HRMNS.Data.EF.Extensions;
 using HRMNS.Utilities.Common;
 using HRMNS.Utilities.Constants;
 using HRMNS.Utilities.Dtos;
@@ -19,12 +20,14 @@ namespace HRMS.Areas.Admin.Controllers
     {
         private IDangKyChamCongDacBietService _chamCongDacBietService;
         private IDangKyChamCongChiTietService _chamCongChiTietService;
+        private INhanVienService _nhanvienService;
         private readonly IWebHostEnvironment _hostingEnvironment;
 
-        public ChamCongDacBietController(IDangKyChamCongDacBietService chamCongService, IDangKyChamCongChiTietService chamCongChiTietService, IWebHostEnvironment hostingEnvironment)
+        public ChamCongDacBietController(IDangKyChamCongDacBietService chamCongService, IDangKyChamCongChiTietService chamCongChiTietService, INhanVienService nhanvienService, IWebHostEnvironment hostingEnvironment)
         {
             _chamCongDacBietService = chamCongService;
             _chamCongChiTietService = chamCongChiTietService;
+            _nhanvienService = nhanvienService;
             _hostingEnvironment = hostingEnvironment;
         }
 
@@ -58,6 +61,11 @@ namespace HRMS.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult RegisterChamCongDB(DangKyChamCongDacBietViewModel data, [FromQuery] string action)
         {
+            if(data != null && string.IsNullOrEmpty(data.NoiDung.NullString()))
+            {
+                data.NoiDung = _nhanvienService.GetById(data.MaNV.NullString())?.TenNV + " " + _chamCongChiTietService.GetById((int)data.MaChamCong_ChiTiet).TenChiTiet + "\n";
+            }
+
             if (action == "Add")
             {
                 var itemCheck = _chamCongDacBietService.GetSingle(x => x.MaNV == data.MaNV && x.NgayBatDau == data.NgayBatDau && x.NgayKetThuc == data.NgayKetThuc);

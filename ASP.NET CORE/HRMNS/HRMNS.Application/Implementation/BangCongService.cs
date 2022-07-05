@@ -320,7 +320,7 @@ namespace HRMNS.Application.Implementation
                                     if (_caLamViec != null)
                                     {
                                         // get data cham cong log 
-                                        _chamCongLog = _chamCongRespository.FindAll(x => dateCheck == x.Ngay_ChamCong && item.MaNV.ToUpper().Contains(x.ID_NV.ToUpper())).OrderByDescending(x => x.DateModified).FirstOrDefault();
+                                        _chamCongLog = _chamCongRespository.FindAll(x => dateCheck == x.Ngay_ChamCong && item.MaNV.ToUpper() == "H" + x.ID_NV.ToUpper()).OrderByDescending(x => x.DateModified).FirstOrDefault();
 
                                         if (_chamCongLog == null) break;
 
@@ -633,8 +633,8 @@ namespace HRMNS.Application.Implementation
 
                                                 if (ELLC < 0 || !string.IsNullOrEmpty(kyhieuChamCongDB.NullString()))
                                                 {
-                                                    ELLC = 0;
-                                                }
+                                                    ELLC = ALLC_Cal(firstTime, lastTime, kyhieuChamCongDB.NullString());
+                                                };
 
                                                 item.EL_LC_Statuses.Add(new EL_LC_Status()
                                                 {
@@ -813,7 +813,10 @@ namespace HRMNS.Application.Implementation
                                                 }
 
 
-                                                if (ELLC < 0 || !string.IsNullOrEmpty(kyhieuChamCongDB.NullString())) ELLC = 0;
+                                                if (ELLC < 0 || !string.IsNullOrEmpty(kyhieuChamCongDB.NullString()))
+                                                {
+                                                    ELLC = ALLC_Cal(firstTime, lastTime, kyhieuChamCongDB.NullString());
+                                                };
 
                                                 item.EL_LC_Statuses.Add(new EL_LC_Status()
                                                 {
@@ -859,7 +862,7 @@ namespace HRMNS.Application.Implementation
                                     if (_caLamViec != null)
                                     {
                                         // get data cham cong log 
-                                        _chamCongLog = _chamCongRespository.FindAll(x => dateCheck == x.Ngay_ChamCong && item.MaNV.ToUpper().Contains(x.ID_NV.ToUpper())).FirstOrDefault();
+                                        _chamCongLog = _chamCongRespository.FindAll(x => dateCheck == x.Ngay_ChamCong && item.MaNV.ToUpper() == "H" + x.ID_NV.ToUpper()).FirstOrDefault();
 
                                         if (_chamCongLog == null) break;
 
@@ -1143,7 +1146,10 @@ namespace HRMNS.Application.Implementation
                                                     }
                                                 }
 
-                                                if (ELLC < 0 || !string.IsNullOrEmpty(kyhieuChamCongDB.NullString())) ELLC = 0;
+                                                if (ELLC < 0 || !string.IsNullOrEmpty(kyhieuChamCongDB.NullString()))
+                                                {
+                                                    ELLC = ALLC_Cal(firstTime, lastTime, kyhieuChamCongDB.NullString());
+                                                };
 
                                                 item.EL_LC_Statuses.Add(new EL_LC_Status()
                                                 {
@@ -1319,7 +1325,10 @@ namespace HRMNS.Application.Implementation
                                                     }
                                                 }
 
-                                                if (ELLC < 0) ELLC = 0;
+                                                if (ELLC < 0 || !string.IsNullOrEmpty(kyhieuChamCongDB.NullString()))
+                                                {
+                                                    ELLC = ALLC_Cal(firstTime, lastTime, kyhieuChamCongDB.NullString());
+                                                };
 
                                                 item.EL_LC_Statuses.Add(new EL_LC_Status()
                                                 {
@@ -1425,6 +1434,45 @@ namespace HRMNS.Application.Implementation
             }
 
             return lstResult;
+        }
+
+        /// <summary>
+        /// Làm nửa ngày nếu về sơm thì k dc tính đủ công.
+        /// </summary>
+        /// <param name="firstTime"></param>
+        /// <param name="lastTime"></param>
+        /// <param name="kytuchamcong"></param>
+        /// <returns></returns>
+        private double ALLC_Cal(string firstTime, string lastTime, string kytuchamcong)
+        {
+            List<string> ktu = new List<string>()
+            {
+                "P/DS","P/NS","PH/F","PH/L","AL/DS","AL/NS","UL/DS","UL/NS","AL/BF","AL/BL","UL/BF","UL/BL"
+            };
+            double rs = 0;
+
+            if (ktu.Contains(kytuchamcong))
+            {
+                if (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) <= DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture))
+                {
+                    rs = (DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+                }
+                else
+                {
+                    rs = 24 + (DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+                }
+            }
+
+            if (rs > 0 && rs < 4)
+            {
+                rs = 4 - rs;
+            }
+            else
+            {
+                rs = 0;
+            }
+
+            return rs;
         }
 
         private List<OvertimeValue> GetOvertimeInNight(string firstTime, string lastTime, string dateCheck, string ngayLviec, bool isRegistedOT)

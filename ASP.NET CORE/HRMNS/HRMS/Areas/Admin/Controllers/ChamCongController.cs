@@ -49,7 +49,12 @@ namespace HRMS.Areas.Admin.Controllers
             _memoryCache.GetOrCreate(CacheKeys.BoPhanInBiosStar.ToString(), entry =>
             {
                 entry.SlidingExpiration = TimeSpan.FromHours(1);
-                return _bioStarDB.GetDeparment().ReturnDataSet.Tables[0];
+                DataTableCollection datas = _bioStarDB.GetDeparment().ReturnDataSet.Tables;
+                if(datas.Count > 0)
+                {
+                    return datas[0];
+                }
+                return new DataTable();
             });
             return View(new List<ChamCongLogViewModel>());
         }
@@ -110,7 +115,7 @@ namespace HRMS.Areas.Admin.Controllers
             _logger.LogInformation("GetChamCongAbsenceLog: " + result.ReturnString);
             if (result.ReturnInt == 0)
             {
-                var lstNv = _nhanVienService.GetAll().Where(x => x.Status != Status.InActive.ToString());
+                var lstNv = _nhanVienService.GetAll().Where(x => x.Status != Status.InActive.ToString() || fromTime.NullString().CompareTo(x.NgayNghiViec) <= 0);
 
                 List<ChamCongLogViewModel> lstLog = new List<ChamCongLogViewModel>();
                 ChamCongLogViewModel model;
@@ -191,7 +196,7 @@ namespace HRMS.Areas.Admin.Controllers
                 {
                     // add a new worksheet to the empty workbook
                     ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Data-LoiChamCong");
-                    worksheet.Cells["A1"].LoadFromCollection(lstResult.OrderBy(x=>x.Ngay_ChamCong), true, TableStyles.Light11);
+                    worksheet.Cells["A1"].LoadFromCollection(lstResult.OrderBy(x => x.Ngay_ChamCong), true, TableStyles.Light11);
                     worksheet.Cells.AutoFitColumns();
                     package.Save(); //Save the workbook.
                 }
@@ -250,7 +255,7 @@ namespace HRMS.Areas.Admin.Controllers
 
             if (!string.IsNullOrEmpty(Department) && Department != CommonConstants.SUPPORT_DEPT)
             {
-                var lstNv = _nhanVienService.GetAll().Where(x => x.MaBoPhan == Department && x.Status != Status.InActive.ToString());
+                var lstNv = _nhanVienService.GetAll().Where(x => x.MaBoPhan == Department && (x.Status != Status.InActive.ToString() || fromTime.NullString().CompareTo(x.NgayNghiViec) <= 0));
 
                 foreach (var item in lst.ToList())
                 {
@@ -262,7 +267,7 @@ namespace HRMS.Areas.Admin.Controllers
             }
             else
             {
-                var lstNv = _nhanVienService.GetAll().Where(x => x.Status != Status.InActive.ToString());
+                var lstNv = _nhanVienService.GetAll().Where(x => x.Status != Status.InActive.ToString() || fromTime.NullString().CompareTo(x.NgayNghiViec) <= 0);
 
                 foreach (var item in lst.ToList())
                 {

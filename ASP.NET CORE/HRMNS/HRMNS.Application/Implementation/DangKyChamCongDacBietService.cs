@@ -195,7 +195,16 @@ namespace HRMNS.Application.Implementation
                         row["MaChamCong_ChiTiet"] = _chamCongChiTietRepository.FindSingle(x => x.KyHieuChamCong == kytuChamCong).Id;
                         row["NgayBatDau"] = worksheet.Cells[i, 4].Text.NullString();
                         row["NgayKetThuc"] = worksheet.Cells[i, 5].Text.NullString();
-                        row["NoiDung"] = worksheet.Cells[i, 6].Text.NullString();
+
+                        if(worksheet.Cells[i, 6].Text.NullString() != "")
+                        {
+                            row["NoiDung"] = worksheet.Cells[i, 6].Text.NullString();
+                        }
+                        else
+                        {
+                            row["NoiDung"] = worksheet.Cells[i, 2].Text.NullString() + " " + worksheet.Cells[i, 3].Text.NullString();
+                        }
+                        
                         row["Approve"] = CommonConstants.Request;
                         row["ApproveLV2"] = CommonConstants.Request;
 
