@@ -15,7 +15,7 @@ namespace HRMNS.Data.Entities
         {
 
         }
-        public DANGKY_OT_NHANVIEN(string ngayOT,string maNV,string ngayLviec,string approve,string approveLV2,string approveLV3)
+        public DANGKY_OT_NHANVIEN(string ngayOT,string maNV,string ngayLviec,string approve,string approveLV2,string approveLV3,string heSoOT,double sogioOT,string noiDung)
         {
             NgayOT = ngayOT;
             MaNV = maNV;
@@ -23,6 +23,9 @@ namespace HRMNS.Data.Entities
             Approve = approve;
             ApproveLV2 = approveLV2;
             ApproveLV3 = approveLV3;
+            HeSoOT = heSoOT;
+            SoGioOT = sogioOT;
+            NoiDung = noiDung;
         }
 
         [StringLength(50)]
@@ -33,6 +36,14 @@ namespace HRMNS.Data.Entities
 
         [StringLength(50)]
         public string DM_NgayLViec { get; set; }
+
+        public double SoGioOT { get; set; }
+
+        [StringLength(50)]
+        public string HeSoOT { get; set; }
+
+        [StringLength(250)]
+        public string NoiDung { get; set; }
 
         [StringLength(50)]
         public string Approve { get; set; }

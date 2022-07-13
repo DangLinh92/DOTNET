@@ -69,7 +69,7 @@ namespace HRMS.Areas.Admin.Controllers
         public IActionResult Index()
         {
             ViewBag.BoPhans = _boPhanService.GetAll(null);
-            List<NhanVienViewModel> nhanviens = _nhanvienService.GetAll();
+            List<NhanVienViewModel> nhanviens = _nhanvienService.GetAll(x=>x.HR_HOPDONG);
             var section = _boPhanDetailService.GetAll(null);
             foreach (var item in nhanviens)
             {
@@ -92,7 +92,7 @@ namespace HRMS.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult OnGetPartialData()
         {
-            List<NhanVienViewModel> nhanviens = _nhanvienService.GetAll();
+            List<NhanVienViewModel> nhanviens = _nhanvienService.GetAll(x => x.HR_HOPDONG);
             var section = _boPhanDetailService.GetAll(null);
             foreach (var item in nhanviens)
             {

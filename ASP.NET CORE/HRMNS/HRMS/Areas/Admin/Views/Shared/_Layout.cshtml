@@ -52,6 +52,13 @@
     <!-- Main CSS -->
     <link rel="stylesheet" href="~/css/style.css">
 
+    <!-- su dung cho spreadsheet devexpress -->
+    <script src="~/js/jquery-3.6.0.min.js"></script>
+    <script src="~/node_modules/devextreme/dist/js/dx.all.js"></script>
+    <link href="~/node_modules/devextreme/dist/css/dx.light.css" rel="stylesheet" />
+    <script src="~/node_modules/devexpress-aspnetcore-spreadsheet/dist/dx-aspnetcore-spreadsheet.js"></script>
+    <link href="~/node_modules/devexpress-aspnetcore-spreadsheet/dist/dx-aspnetcore-spreadsheet.css" rel="stylesheet" />
+
     @RenderSection("Styles", required: false)
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -129,7 +136,7 @@
     </div>
     <!-- /Main Wrapper -->
     <!-- jQuery -->
-    <script src="~/js/jquery-3.6.0.min.js"></script>
+    @*<script src="~/js/jquery-3.6.0.min.js"></script>*@
 
     <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
     <script src="~/lib/jquery-validation/dist/additional-methods.js"></script>

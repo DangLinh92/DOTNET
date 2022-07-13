@@ -30,6 +30,7 @@
                 hrms.notify('Nhập tháng và bộ phận!', 'error', 'alert', function () { });
                 return;
             }
+
             hrms.run_waitMe($('#bangCongDataTable'));
 
             $.ajax({
@@ -40,13 +41,11 @@
                     time: _time,
                     dept: _dept
                 },
-                success: function (response)
-                {
-                    window.location.href = response;
+                success: function (response) {
                     hrms.hide_waitMe($('#bangCongDataTable'));
+                    window.open("/Admin/Spreadsheet/Export?fileName=" + response, '_blank');
                 },
-                error: function (status)
-                {
+                error: function (status) {
                     hrms.notify(status.responseText, 'error', 'alert', function () { });
                     hrms.hide_waitMe($('#bangCongDataTable'));
                 }
@@ -67,11 +66,9 @@
                     var render = "<option value='" + deparment + "'>" + deparment + "</option >";
                     $('#cboDepartment').html(render);
                 }
-                else
-                {
+                else {
                     var render = "<option value=''>--All--</option>";
-                    $.each(response, function (i, item)
-                    {
+                    $.each(response, function (i, item) {
                         render += "<option value='" + item.Id + "'>" + item.TenBoPhan + "</option >"
                     });
                     $('#cboDepartment').html(render);

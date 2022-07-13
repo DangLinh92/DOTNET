@@ -60,9 +60,9 @@ namespace HRMNS.Application.Implementation
             _nhanvienRepository.Remove(id);
         }
 
-        public List<NhanVienViewModel> GetAll()
+        public List<NhanVienViewModel> GetAll(params Expression<Func<HR_NHANVIEN, object>>[] includeProperties)
         {
-            var er = _nhanvienRepository.FindAll(x => x.IsDelete != CommonConstants.IsDelete).OrderByDescending(o => o.DateModified).ToList();
+            var er = _nhanvienRepository.FindAll(x => x.IsDelete != CommonConstants.IsDelete, includeProperties).OrderByDescending(o => o.DateModified).ToList();
             return (List<NhanVienViewModel>)_mapper.Map(er, typeof(List<HR_NHANVIEN>), typeof(List<NhanVienViewModel>));
             //return _mapper.ProjectTo<NhanVienViewModel>(null).ToList();
         }

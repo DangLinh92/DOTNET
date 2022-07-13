@@ -51,6 +51,7 @@ namespace HRMNS.Application.AutoMapper
             CreateMap<KY_HIEU_CHAM_CONG, KyHieuChamCongViewModel>();
             CreateMap<APP_ROLE, RoleViewModel>();
             CreateMap<PERMISSION, PermisstionViewModel>();
+            CreateMap<HR_THAISAN_CONNHO, NhanVienThaiSanViewModel>();
 
         }
     }

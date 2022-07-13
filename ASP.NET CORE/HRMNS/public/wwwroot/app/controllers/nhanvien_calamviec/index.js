@@ -225,7 +225,15 @@
                     if (response) {
                         $('#_txtId').val(that);
                         $('#_txtMaNV').val(response.MaNV);
-                        $('#_txtDmCaLviec').val(response.Danhmuc_CaLviec);
+
+                        if (response.CaLV_DB) {
+                            $('#_txtDmCaLviec').val(response.CaLV_DB);
+                        }
+                        else
+                        {
+                            $('#_txtDmCaLviec').val(response.Danhmuc_CaLviec);
+                        }
+
                         $('#_txtFrom').val(response.BatDau_TheoCa);
                         $('#_txtTo').val(response.KetThuc_TheoCa);
                         $('#_txtDmCaLviec').trigger('change');
@@ -624,7 +632,7 @@
                     return '<input type="checkbox" name="id[]" value="' + $('<div/>').text(data).html() + '">';
                 }
             }],
-            "order": [9, 'asc']
+            "order": [10, 'asc']
         });
         $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
         $('select[name="nvCalamviecDataTable_length"]').removeClass('form-control-sm');

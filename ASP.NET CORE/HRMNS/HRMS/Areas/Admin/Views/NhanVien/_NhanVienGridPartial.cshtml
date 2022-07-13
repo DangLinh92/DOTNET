@@ -2,13 +2,13 @@
 <table class="table table-striped custom-table datatable" id="nhanVienDataTable">
     <thead>
         <tr>
-            <th>Name</th>
-            <th>Employee ID</th>
-            <th>Team Position</th>
-            <th>Department</th>
-            <th>Email</th>
-            <th>Mobile</th>
-            <th class="text-nowrap">Starting Working</th>
+            <th>Tên NV</th>
+            <th>Mã NV</th>
+            <th>Vị trí</th>
+            <th>Bộ Phận</th>
+            <th>Ngày Hết Hạn HD</th>
+            <th>SDT</th>
+            <th class="text-nowrap">Ngày Vào</th>
             <th class="text-nowrap">Status</th>
             <th class="text-right no-sort">Action</th>
         </tr>
@@ -26,7 +26,7 @@
                 <td>@nv.Id</td>
                 <td>@nv.MaChucDanh</td>
                 <td>@nv.MaBoPhan</td>
-                <td>@nv.Email</td>
+                <td>@nv.HR_HOPDONG.OrderByDescending(x=>x.NgayHetHieuLuc).FirstOrDefault()?.NgayHetHieuLuc</td>
                 <td>@nv.SoDienThoai</td>
                 <td>@nv.NgayVao</td>
                 <td>

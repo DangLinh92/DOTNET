@@ -153,6 +153,7 @@ namespace HRMNS.Application.Implementation
                             if (calv == "CD_WHC" || calv == "CN_WHC")
                             {
                                 row["Danhmuc_CaLviec"] = calv;
+                                row["CaLV_DB"] = "";
                             }
                             else if (calv == "CD_CN") // ca dem con nho
                             {

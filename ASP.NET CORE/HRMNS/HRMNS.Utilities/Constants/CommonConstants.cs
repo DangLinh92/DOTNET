@@ -81,5 +81,6 @@ namespace HRMNS.Utilities.Constants
         public const string DM_OT = "5";
         public const string DM_ELLC = "6";
         public const string OT_BAT_MAY = "DSBM_OT_150";
+        public static string[] arrNghiPhep = { "AL", "UL", "NL", "L70", "SL", "CT" , "HL" , "NH" , "EL" , "LC" ,"T"};
     }
 }

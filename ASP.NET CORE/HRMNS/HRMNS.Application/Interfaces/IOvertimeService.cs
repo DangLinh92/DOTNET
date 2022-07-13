@@ -28,6 +28,6 @@ namespace HRMNS.Application.Interfaces
 
         void UpdateRange(List<DangKyOTNhanVienViewModel> OTVms);
 
-        DangKyOTNhanVienViewModel CheckExist(int id, string maNV, string date);
+        DangKyOTNhanVienViewModel CheckExist(int id, string maNV, string date,string hso);
     }
 }

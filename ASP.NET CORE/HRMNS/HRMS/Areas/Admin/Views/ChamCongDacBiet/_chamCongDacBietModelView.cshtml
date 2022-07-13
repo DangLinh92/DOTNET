@@ -14,7 +14,7 @@
                     <div class="form-group">
                         <input type="hidden" id="_txtId" />
                         <label for="_txtMaNV">Mã Nhân Viên<span class="text-danger">*</span></label>
-                        <select id="_txtMaNV" class="form-control nested" name="MaNV" required>
+                        <select multiple id="_txtMaNV" class="form-control nested" name="MaNV" required>
                             <option value="">Choose...</option>
                             <optgroup label="Group1">
                                 <option selected="selected">orange</option>
@@ -32,6 +32,7 @@
                                 <option>orange</option>
                             </optgroup>
                         </select>
+                        <input id="chkall" type="checkbox"> Select All
                     </div>
 
                     <div class="form-group">

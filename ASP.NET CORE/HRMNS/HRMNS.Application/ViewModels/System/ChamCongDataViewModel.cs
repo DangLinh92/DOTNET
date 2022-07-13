@@ -119,7 +119,7 @@ namespace HRMNS.Application.ViewModels.System
 
     public class OvertimeValue
     {
-        public string DMOvertime { get; set; }
+        public string DMOvertime { get; set; } // he so OT
         public string DayCheckOT { get; set; }
 
         private double _value = 0;

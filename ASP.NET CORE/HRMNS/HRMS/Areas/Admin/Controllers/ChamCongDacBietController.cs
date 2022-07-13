@@ -59,81 +59,87 @@ namespace HRMS.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult RegisterChamCongDB(DangKyChamCongDacBietViewModel data, [FromQuery] string action)
+        public IActionResult RegisterChamCongDB(List<DangKyChamCongDacBietViewModel> arrManv, [FromQuery] string action)
         {
-            if(data != null && string.IsNullOrEmpty(data.NoiDung.NullString()))
+            foreach (var data in arrManv.Where(x=>x.MaNV != null || x.MaNV != "").ToList())
             {
-                data.NoiDung = _nhanvienService.GetById(data.MaNV.NullString())?.TenNV + " " + _chamCongChiTietService.GetById((int)data.MaChamCong_ChiTiet).TenChiTiet + "\n";
-            }
-
-            if (action == "Add")
-            {
-                var itemCheck = _chamCongDacBietService.GetSingle(x => x.MaNV == data.MaNV && x.NgayBatDau == data.NgayBatDau && x.NgayKetThuc == data.NgayKetThuc);
-
-                if (itemCheck != null)
+                if (data != null && string.IsNullOrEmpty(data.NoiDung.NullString()))
                 {
-                    itemCheck.MaChamCong_ChiTiet = data.MaChamCong_ChiTiet;
-                    itemCheck.NgayBatDau = data.NgayBatDau;
-                    itemCheck.NgayKetThuc = data.NgayKetThuc;
-                    itemCheck.NoiDung = data.NoiDung;
-                    _chamCongDacBietService.Update(itemCheck);
+                    var chamCongct = _chamCongChiTietService.GetById((int)data.MaChamCong_ChiTiet);
+                    if (chamCongct != null && CommonConstants.arrNghiPhep.Contains(chamCongct.KyHieuChamCong))
+                    {
+                        data.NoiDung = _nhanvienService.GetById(data.MaNV.NullString())?.TenNV + " " + chamCongct.TenChiTiet + "\n";
+                    }
+                }
+
+                if (action == "Add")
+                {
+                    var itemCheck = _chamCongDacBietService.GetSingle(x => x.MaNV == data.MaNV && x.NgayBatDau == data.NgayBatDau && x.NgayKetThuc == data.NgayKetThuc);
+
+                    if (itemCheck != null)
+                    {
+                        itemCheck.MaChamCong_ChiTiet = data.MaChamCong_ChiTiet;
+                        itemCheck.NgayBatDau = data.NgayBatDau;
+                        itemCheck.NgayKetThuc = data.NgayKetThuc;
+                        itemCheck.NoiDung = data.NoiDung;
+                        _chamCongDacBietService.Update(itemCheck);
+                    }
+                    else
+                    {
+                        //if (UserRole == CommonConstants.roleApprove3 || UserRole == CommonConstants.AppRole.AdminRole) // HR
+                        //{
+                        //    data.Approve = CommonConstants.Approved;
+                        //    data.ApproveLV2 = CommonConstants.Approved;
+                        //    data.ApproveLV3 = CommonConstants.Approved;
+                        //}
+                        //else if (UserRole == CommonConstants.roleApprove1) // group leader
+                        //{
+                        //    data.Approve = CommonConstants.Approved;
+                        //    data.ApproveLV2 = CommonConstants.Request;
+                        //    data.ApproveLV3 = CommonConstants.Request;
+                        //}
+                        //else if (UserRole == CommonConstants.roleApprove2) // korea 
+                        //{
+                        //    data.Approve = CommonConstants.Approved;
+                        //    data.ApproveLV2 = CommonConstants.Approved;
+                        //    data.ApproveLV3 = CommonConstants.Request;
+                        //}
+                        //else // assys leader
+                        //{
+                        //    if(data.MaChamCong_ChiTiet == 5) // cham OT bo xung
+                        //    {
+                        //        data.Approve = CommonConstants.Approved;
+                        //        data.ApproveLV2 = CommonConstants.Approved;
+                        //        data.ApproveLV3 = CommonConstants.Approved;
+                        //    }
+                        //    else
+                        //    {
+                        //        data.Approve = CommonConstants.Request;
+                        //        data.ApproveLV2 = CommonConstants.Request;
+                        //        data.ApproveLV3 = CommonConstants.Request;
+                        //    }
+                        //}
+
+                        data.Approve = CommonConstants.Approved;
+                        data.ApproveLV2 = CommonConstants.Approved;
+                        data.ApproveLV3 = CommonConstants.Approved;
+
+                        _chamCongDacBietService.Add(data);
+                    }
                 }
                 else
                 {
-                    //if (UserRole == CommonConstants.roleApprove3 || UserRole == CommonConstants.AppRole.AdminRole) // HR
-                    //{
-                    //    data.Approve = CommonConstants.Approved;
-                    //    data.ApproveLV2 = CommonConstants.Approved;
-                    //    data.ApproveLV3 = CommonConstants.Approved;
-                    //}
-                    //else if (UserRole == CommonConstants.roleApprove1) // group leader
-                    //{
-                    //    data.Approve = CommonConstants.Approved;
-                    //    data.ApproveLV2 = CommonConstants.Request;
-                    //    data.ApproveLV3 = CommonConstants.Request;
-                    //}
-                    //else if (UserRole == CommonConstants.roleApprove2) // korea 
-                    //{
-                    //    data.Approve = CommonConstants.Approved;
-                    //    data.ApproveLV2 = CommonConstants.Approved;
-                    //    data.ApproveLV3 = CommonConstants.Request;
-                    //}
-                    //else // assys leader
-                    //{
-                    //    if(data.MaChamCong_ChiTiet == 5) // cham OT bo xung
-                    //    {
-                    //        data.Approve = CommonConstants.Approved;
-                    //        data.ApproveLV2 = CommonConstants.Approved;
-                    //        data.ApproveLV3 = CommonConstants.Approved;
-                    //    }
-                    //    else
-                    //    {
-                    //        data.Approve = CommonConstants.Request;
-                    //        data.ApproveLV2 = CommonConstants.Request;
-                    //        data.ApproveLV3 = CommonConstants.Request;
-                    //    }
-                    //}
+                    DangKyChamCongDacBietViewModel chamcongVm = _chamCongDacBietService.GetById(data.Id);
+                    chamcongVm.MaChamCong_ChiTiet = data.MaChamCong_ChiTiet;
+                    chamcongVm.NgayBatDau = data.NgayBatDau;
+                    chamcongVm.NgayKetThuc = data.NgayKetThuc;
+                    chamcongVm.NoiDung = data.NoiDung;
 
-                    data.Approve = CommonConstants.Approved;
-                    data.ApproveLV2 = CommonConstants.Approved;
-                    data.ApproveLV3 = CommonConstants.Approved;
-
-                    _chamCongDacBietService.Add(data);
+                    _chamCongDacBietService.Update(chamcongVm);
                 }
             }
-            else
-            {
-                DangKyChamCongDacBietViewModel chamcongVm = _chamCongDacBietService.GetById(data.Id);
-                chamcongVm.MaChamCong_ChiTiet = data.MaChamCong_ChiTiet;
-                chamcongVm.NgayBatDau = data.NgayBatDau;
-                chamcongVm.NgayKetThuc = data.NgayKetThuc;
-                chamcongVm.NoiDung = data.NoiDung;
-
-                _chamCongDacBietService.Update(chamcongVm);
-            }
-
             _chamCongDacBietService.Save();
-            return new OkObjectResult(data);
+            return new OkObjectResult(arrManv);
         }
 
         /// <summary>

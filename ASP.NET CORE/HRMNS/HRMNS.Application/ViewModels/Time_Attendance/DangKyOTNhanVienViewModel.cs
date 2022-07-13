@@ -20,6 +20,14 @@ namespace HRMNS.Application.ViewModels.Time_Attendance
         [StringLength(50)]
         public string DM_NgayLViec { get; set; }
 
+        public double SoGioOT { get; set; }
+
+        [StringLength(50)]
+        public string HeSoOT { get; set; }
+
+        [StringLength(250)]
+        public string NoiDung { get; set; }
+
         [StringLength(50)]
         public string Approve { get; set; }
 

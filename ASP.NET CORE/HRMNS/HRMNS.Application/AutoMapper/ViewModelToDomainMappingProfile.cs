@@ -42,7 +42,7 @@ namespace HRMNS.Application.AutoMapper
            .ConstructUsing(c => new NHANVIEN_CALAMVIEC(c.MaNV, c.Danhmuc_CaLviec, c.BatDau_TheoCa, c.KetThuc_TheoCa, c.Approved, c.CaLV_DB));
 
             CreateMap<DangKyOTNhanVienViewModel, DANGKY_OT_NHANVIEN>()
-            .ConstructUsing(c => new DANGKY_OT_NHANVIEN(c.NgayOT, c.MaNV, c.DM_NgayLViec, c.Approve, c.ApproveLV2, c.ApproveLV3));
+            .ConstructUsing(c => new DANGKY_OT_NHANVIEN(c.NgayOT, c.MaNV, c.DM_NgayLViec, c.Approve, c.ApproveLV2, c.ApproveLV3,c.HeSoOT,c.SoGioOT,c.NoiDung));
 
             CreateMap<NgayLeNamViewModel, NGAY_LE_NAM>()
             .ConstructUsing(c => new NGAY_LE_NAM(c.Id, c.TenNgayLe, c.KyHieuChamCong, c.IslastHoliday));
@@ -70,6 +70,9 @@ namespace HRMNS.Application.AutoMapper
 
             CreateMap<PermisstionViewModel, PERMISSION>()
          .ConstructUsing(c => new PERMISSION(c.Id, c.RoleId, c.FunctionId, c.CanCreate, c.CanRead, c.CanUpdate, c.CanDelete, c.ApproveL1, c.ApproveL2, c.ApproveL3));
+
+            CreateMap<NhanVienThaiSanViewModel, HR_THAISAN_CONNHO>()
+            .ConstructUsing(c => new HR_THAISAN_CONNHO(c.Id, c.MaNV, c.CheDoThaiSan, c.FromDate, c.ToDate));
         }
     }
 }

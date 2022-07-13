@@ -33,6 +33,8 @@ namespace HRMNS.Application.Implementation
         private IRespository<HR_NHANVIEN, string> _nhanvienResponsitory;
         private IRespository<DANGKY_CHAMCONG_DACBIET, int> _chamCongDBResponsitory;
         private IRespository<NHANVIEN_CALAMVIEC, int> _nhanvienCLviecResponsitory;
+        private IRespository<HR_THAISAN_CONNHO, int> _thaisanResponsitory;
+        private IRespository<DANGKY_OT_NHANVIEN, int> _overtimeResponsitory;
 
         private EFUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -46,6 +48,8 @@ namespace HRMNS.Application.Implementation
             IRespository<HR_NHANVIEN, string> nhanvienResponsitory,
             IRespository<DANGKY_CHAMCONG_DACBIET, int> chamCongDBResponsitory,
             IRespository<NHANVIEN_CALAMVIEC, int> nhanvienCLviecResponsitory,
+            IRespository<HR_THAISAN_CONNHO, int> thaisanResponsitory,
+            IRespository<DANGKY_OT_NHANVIEN, int> overtimeResponsitory,
             IUnitOfWork unitOfWork, IMapper mapper,
             IHttpContextAccessor httpContextAccessor)
         {
@@ -58,15 +62,31 @@ namespace HRMNS.Application.Implementation
             _calaviecRespository = calaviecRespository;
             _chamCongDBResponsitory = chamCongDBResponsitory;
             _nhanvienCLviecResponsitory = nhanvienCLviecResponsitory;
+            _overtimeResponsitory = overtimeResponsitory;
             _unitOfWork = (EFUnitOfWork)unitOfWork;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
             _nhanvienResponsitory = nhanvienResponsitory;
+            _thaisanResponsitory = thaisanResponsitory;
         }
 
         public void Dispose()
         {
             GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// ThaiSan : thai sản
+        /// MangBau: Mang bầu
+        /// ConNho1H: con nhỏ về sớm 1h
+        /// ConNho : con nhỏ về đúng giờ
+        /// </summary>
+        /// <param name="maChedo"></param>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        private bool CheckCheDoThaiSan(string maChedo, string date)
+        {
+            return _thaisanResponsitory.FindAll(x => x.CheDoThaiSan == maChedo && date.CompareTo(x.FromDate) >= 0 && date.CompareTo(x.ToDate) <= 0).FirstOrDefault() != null;
         }
 
         public List<ChamCongDataViewModel> GetDataReport(string time, string dept)
@@ -262,6 +282,7 @@ namespace HRMNS.Application.Implementation
                     bool isRegistedOT;
                     string kyhieuChamCongDB;
                     List<ChamCongDB> lstOTDB = new List<ChamCongDB>(); // danh sach bổ xung giờ OT như chấm bật máy
+                    bool isSetMaxOT = false;
 
                     // thoi gian bat dau , ket thuc ngay thuong ca ngay.
                     string beginTimeCaNgay = _calaviecRespository.FindSingle(x => x.Danhmuc_CaLviec == "CN_WHC" && x.DM_NgayLViec == "NT" && x.HeSo_OT == 100).Time_BatDau;
@@ -308,6 +329,12 @@ namespace HRMNS.Application.Implementation
                             isRegistedOT = item.lstDangKyOT.Any(x => x.NgayOT == dateCheck);
 
                             kyhieuChamCongDB = item.lstChamCongDB.OrderByDescending(x => x.DateModified).FirstOrDefault(x => string.Compare(dateCheck, x.NgayBatDau) >= 0 && string.Compare(dateCheck, x.NgayKetThuc) <= 0 && x.PhanLoaiDM != CommonConstants.DM_OT && x.PhanLoaiDM != CommonConstants.DM_ELLC)?.KyHieuChamCong;
+
+                            if (CheckCheDoThaiSan("ThaiSan", dateCheck))
+                            {
+                                kyhieuChamCongDB = "IL";
+                            }
+
                             lstOTDB = item.lstChamCongDB.Where(x => string.Compare(dateCheck, x.NgayBatDau) >= 0 && string.Compare(dateCheck, x.NgayKetThuc) <= 0 && x.PhanLoaiDM == CommonConstants.DM_OT).ToList();
 
                             if (hopDong_NV != null)
@@ -358,6 +385,8 @@ namespace HRMNS.Application.Implementation
 
                                                 if (CheckNgayDB(dateCheck) == 0) // ngay thuong
                                                 {
+                                                    isSetMaxOT = true;
+
                                                     string newBeginOT = "17:45:00";
                                                     if (item.BoPhan != CommonConstants.SUPPORT_DEPT)
                                                     {
@@ -365,8 +394,9 @@ namespace HRMNS.Application.Implementation
                                                     }
 
                                                     // Ca ngay con nhỏ, văn phòng con nhỏ thì dc về sớm 1h
-                                                    if (_caLamViec.CaLV_DB == "CN_CN" || _caLamViec.CaLV_DB == "VP_CN")
+                                                    if (CheckCheDoThaiSan("ConNho1H", dateCheck))
                                                     {
+                                                        isSetMaxOT = false;
                                                         newBeginOT = "16:00:00";
                                                     }
 
@@ -374,10 +404,12 @@ namespace HRMNS.Application.Implementation
                                                     {
                                                         newBeginOT = "13:15:00";
 
-                                                        if (_caLamViec.CaLV_DB == "CN_CN" || _caLamViec.CaLV_DB == "VP_CN")
+                                                        if (CheckCheDoThaiSan("ConNho1H", dateCheck))
                                                         {
                                                             newBeginOT = "13:00:00";
                                                         }
+
+                                                        isSetMaxOT = false;
                                                     }
 
                                                     if (string.Compare(lastTime, newBeginOT) > 0)
@@ -396,6 +428,12 @@ namespace HRMNS.Application.Implementation
 
                                                         if (timeOT > 0)
                                                         {
+                                                            // thơi gian OT max ngay thuong
+                                                            if (timeOT > 2.5 && isSetMaxOT)
+                                                            {
+                                                                timeOT = 2.5;
+                                                            }
+
                                                             item.OvertimeValues.Add(new OvertimeValue()
                                                             {
                                                                 DayCheckOT = dateCheck,
@@ -404,8 +442,6 @@ namespace HRMNS.Application.Implementation
                                                                 Registered = isRegistedOT
                                                             });
                                                         }
-
-
                                                     }
 
                                                     item.WorkingStatuses.Add(new WorkingStatus()
@@ -511,7 +547,7 @@ namespace HRMNS.Application.Implementation
                                                     string newBeginOT = "17:45:00";
 
                                                     // Ca ngay con nhỏ, văn phòng con nhỏ thì dc về sớm 1h
-                                                    if (_caLamViec.CaLV_DB == "CN_CN" || _caLamViec.CaLV_DB == "VP_CN")
+                                                    if (CheckCheDoThaiSan("ConNho1H", dateCheck))
                                                     {
                                                         newBeginOT = "16:00:00";
                                                     }
@@ -520,7 +556,7 @@ namespace HRMNS.Application.Implementation
                                                     {
                                                         newBeginOT = "13:15:00";
 
-                                                        if (_caLamViec.CaLV_DB == "CN_CN" || _caLamViec.CaLV_DB == "VP_CN")
+                                                        if (CheckCheDoThaiSan("ConNho1H", dateCheck))
                                                         {
                                                             newBeginOT = "13:00:00";
                                                         }
@@ -533,7 +569,7 @@ namespace HRMNS.Application.Implementation
                                                             newBeginOT = "17:30:00";
 
                                                             // Ca ngay con nhỏ, văn phòng con nhỏ thì dc về sớm 1h
-                                                            if (_caLamViec.CaLV_DB == "CN_CN" || _caLamViec.CaLV_DB == "VP_CN")
+                                                            if (CheckCheDoThaiSan("ConNho1H", dateCheck))
                                                             {
                                                                 newBeginOT = "16:00:00";
                                                             }
@@ -575,6 +611,11 @@ namespace HRMNS.Application.Implementation
                                                             {
                                                                 var dbOT = (DateTime.ParseExact("08:00:00", "HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(_chamCongLog.FirstIn_Time.NullString(), "HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
 
+                                                                if (dbOT > 2) // tối đa OT 2h bật máy.
+                                                                {
+                                                                    dbOT = 2;
+                                                                }
+
                                                                 item.OvertimeValues.Add(new OvertimeValue()
                                                                 {
                                                                     DayCheckOT = dateCheck,
@@ -596,7 +637,7 @@ namespace HRMNS.Application.Implementation
 
                                                 if (item.BoPhan == CommonConstants.SUPPORT_DEPT && DateTime.Parse(dateCheck).DayOfWeek == DayOfWeek.Saturday)
                                                 {
-                                                    if (_caLamViec.CaLV_DB == "CN_CN" || _caLamViec.CaLV_DB == "VP_CN") // co con nho ve som 1h
+                                                    if (CheckCheDoThaiSan("ConNho1H", dateCheck)) // co con nho ve som 1h
                                                     {
                                                         if (DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture) < DateTime.ParseExact("12:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
                                                         {
@@ -615,7 +656,7 @@ namespace HRMNS.Application.Implementation
                                                 else
                                                 {
 
-                                                    if (_caLamViec.CaLV_DB == "CN_CN" || _caLamViec.CaLV_DB == "VP_CN")
+                                                    if (CheckCheDoThaiSan("ConNho1H", dateCheck))
                                                     {
                                                         if (DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture) < DateTime.ParseExact("16:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
                                                         {
@@ -671,7 +712,7 @@ namespace HRMNS.Application.Implementation
                                                     string newBeginOT = "05:30:00";
 
                                                     // Ca dem con nhỏ, văn phòng con nhỏ thì dc về sớm 1h
-                                                    if (_caLamViec.CaLV_DB == "CD_CN" || _caLamViec.CaLV_DB == "VP_CN")
+                                                    if (CheckCheDoThaiSan("ConNho1H", dateCheck))
                                                     {
                                                         newBeginOT = "04:30:00";
                                                     }
@@ -708,7 +749,7 @@ namespace HRMNS.Application.Implementation
                                                             {
                                                                 DayCheckOT = dateCheck,
                                                                 DMOvertime = hsOT2, // 150 % :6h -> 8H
-                                                                ValueOT = timeOT - 0.5, // tru di 0.5h cua 5-6h
+                                                                ValueOT = timeOT - 0.5 > 2 ? 2 : timeOT - 0.5, // tru di 0.5h cua 5-6h
                                                                 Registered = isRegistedOT
                                                             });
                                                         }
@@ -797,7 +838,7 @@ namespace HRMNS.Application.Implementation
                                                 }
 
                                                 // Ca dem con nhỏ, văn phòng con nhỏ thì dc về sớm 1h
-                                                if (_caLamViec.CaLV_DB == "CD_CN" || _caLamViec.CaLV_DB == "VP_CN")
+                                                if (CheckCheDoThaiSan("ConNho1H", dateCheck))
                                                 {
                                                     if (DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture) < DateTime.ParseExact("04:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
                                                     {
@@ -899,15 +940,18 @@ namespace HRMNS.Application.Implementation
 
                                                 if (CheckNgayDB(dateCheck) == 0) // ngay thuong
                                                 {
+                                                    isSetMaxOT = true;
                                                     string newBeginOT = "17:45:00";
                                                     if (item.BoPhan == CommonConstants.SUPPORT_DEPT && DateTime.Parse(dateCheck).DayOfWeek == DayOfWeek.Saturday)
                                                     {
                                                         newBeginOT = "13:15:00";
 
-                                                        if (_caLamViec.CaLV_DB == "CN_CN" || _caLamViec.CaLV_DB == "VP_CN")
+                                                        if (CheckCheDoThaiSan("ConNho1H", dateCheck))
                                                         {
                                                             newBeginOT = "13:00:00";
                                                         }
+
+                                                        isSetMaxOT = false;
                                                     }
                                                     else
                                                     {
@@ -917,9 +961,10 @@ namespace HRMNS.Application.Implementation
                                                         }
 
                                                         // Ca ngay con nhỏ, văn phòng con nhỏ thì dc về sớm 1h
-                                                        if (_caLamViec.CaLV_DB == "CN_CN" || _caLamViec.CaLV_DB == "VP_CN")
+                                                        if (CheckCheDoThaiSan("ConNho1H", dateCheck))
                                                         {
                                                             newBeginOT = "16:00:00";
+                                                            isSetMaxOT = false;
                                                         }
                                                     }
 
@@ -938,6 +983,11 @@ namespace HRMNS.Application.Implementation
 
                                                         if (timeOT > 0)
                                                         {
+                                                            if (timeOT > 2.5 && isSetMaxOT)
+                                                            {
+                                                                timeOT = 2.5;
+                                                            }
+
                                                             item.OvertimeValues.Add(new OvertimeValue()
                                                             {
                                                                 DayCheckOT = dateCheck,
@@ -1113,7 +1163,7 @@ namespace HRMNS.Application.Implementation
 
                                                 if (item.BoPhan == CommonConstants.SUPPORT_DEPT && DateTime.Parse(dateCheck).DayOfWeek == DayOfWeek.Saturday)
                                                 {
-                                                    if (_caLamViec.CaLV_DB == "CN_CN" || _caLamViec.CaLV_DB == "VP_CN")
+                                                    if (CheckCheDoThaiSan("ConNho1H", dateCheck))
                                                     {
                                                         if (DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture) < DateTime.ParseExact("12:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
                                                         {
@@ -1130,7 +1180,7 @@ namespace HRMNS.Application.Implementation
                                                 }
                                                 else
                                                 {
-                                                    if (_caLamViec.CaLV_DB == "CN_CN" || _caLamViec.CaLV_DB == "VP_CN")
+                                                    if (CheckCheDoThaiSan("ConNho1H", dateCheck))
                                                     {
                                                         if (DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture) < DateTime.ParseExact("16:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
                                                         {
@@ -1175,7 +1225,7 @@ namespace HRMNS.Application.Implementation
                                                 if (CheckNgayDB(dateCheck) == 0) // ngay thuong
                                                 {
                                                     string newBeginOT = "05:30:00";
-                                                    if (_caLamViec.CaLV_DB == "CD_CN" || _caLamViec.CaLV_DB == "VP_CN")
+                                                    if (CheckCheDoThaiSan("ConNho1H", dateCheck))
                                                     {
                                                         newBeginOT = "04:30:00";
                                                     }
@@ -1221,7 +1271,7 @@ namespace HRMNS.Application.Implementation
                                                             {
                                                                 DayCheckOT = dateCheck,
                                                                 DMOvertime = hsOT2, // 150 % :6h -> 8H
-                                                                ValueOT = timeOT - 0.5, // tru di 0.5h cua 5-6h
+                                                                ValueOT = timeOT - 0.5 > 2 ? 2 : timeOT - 0.5, // tru di 0.5h cua 5-6h
                                                                 Registered = isRegistedOT
                                                             });
                                                         }
@@ -1310,7 +1360,7 @@ namespace HRMNS.Application.Implementation
                                                     ELLC += (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact("20:05:00", "HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
                                                 }
 
-                                                if (_caLamViec.CaLV_DB == "CD_CN" || _caLamViec.CaLV_DB == "VP_CN")
+                                                if (CheckCheDoThaiSan("ConNho1H", dateCheck))
                                                 {
                                                     if (DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture) < DateTime.ParseExact("04:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
                                                     {
@@ -1423,6 +1473,69 @@ namespace HRMNS.Application.Implementation
                             Value_EL = 0
                         });
                     }
+                }
+            }
+
+            // Group OT
+            List<OvertimeValue> overtimes = new List<OvertimeValue>();
+            OvertimeValue oval;
+            foreach (var item in lstResult)
+            {
+                overtimes = new List<OvertimeValue>();
+
+                if (item.OvertimeValues.Count > 0)
+                {
+                    foreach (var ot in item.OvertimeValues)
+                    {
+                        if (overtimes.Any(x => x.DMOvertime == ot.DMOvertime && x.DayCheckOT == ot.DayCheckOT))
+                        {
+                            oval = overtimes.Find(x => x.DMOvertime == ot.DMOvertime && x.DayCheckOT == ot.DayCheckOT);
+                            oval.ValueOT += ot.ValueOT;
+                        }
+                        else
+                        {
+                            // add them gio OT dac biet neu co
+                            var regisOTs = _overtimeResponsitory.FindAll(x => x.MaNV == item.MaNV && x.NgayOT == ot.DayCheckOT && x.HeSoOT == ot.DMOvertime).ToList();
+                            if (regisOTs.Count > 0)
+                            {
+                                foreach (var ad in regisOTs)
+                                {
+                                    ot.ValueOT += ad.SoGioOT;
+                                }
+                            }
+                            overtimes.Add(ot);
+                        }
+                    }
+                }
+                else
+                {
+                    var regisOTs = _overtimeResponsitory.FindAll(x => x.MaNV == item.MaNV && beginMonth.CompareTo(x.NgayOT) <= 0 && endMonth.CompareTo(x.NgayOT) >= 0).ToList();
+                    if (regisOTs.Count > 0)
+                    {
+                        foreach (var ad in regisOTs)
+                        {
+                            if (overtimes.Any(x => x.DMOvertime == ad.HeSoOT && x.DayCheckOT == ad.NgayOT))
+                            {
+                                oval = overtimes.Find(x => x.DMOvertime == ad.HeSoOT && x.DayCheckOT == ad.NgayOT);
+                                oval.ValueOT += ad.SoGioOT;
+                            }
+                            else
+                            {
+                                overtimes.Add(new OvertimeValue()
+                                {
+                                    DayCheckOT = ad.NgayOT,
+                                    DMOvertime = ad.HeSoOT,
+                                    ValueOT = ad.SoGioOT,
+                                    Registered = true
+                                });
+                            }
+                        }
+                    }
+                }
+
+                if (overtimes.Count > 0)
+                {
+                    item.OvertimeValues = overtimes;
                 }
             }
 

@@ -17,7 +17,7 @@ namespace HRMNS.Application.Interfaces
 
         void Delete(string id);
 
-        List<NhanVienViewModel> GetAll();
+        List<NhanVienViewModel> GetAll(params Expression<Func<HR_NHANVIEN, object>>[] includeProperties);
 
         List<NhanVienViewModel> GetAll(string keyword);
 

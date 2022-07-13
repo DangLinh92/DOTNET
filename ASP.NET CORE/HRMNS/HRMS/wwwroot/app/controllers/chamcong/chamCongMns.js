@@ -145,6 +145,7 @@
             $('#lblBeginTime').text(_inTime);
             $('#lblEndTime').text(_ouTime);
             $('#lblTitle').text($(this).data('name'));
+            $('#lblTitleId').text('('+_userId+')');
 
             $.ajax({
                 url: '/Admin/ChamCong/GetLogByUserId',

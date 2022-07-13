@@ -58,8 +58,6 @@ namespace HRMS
 
             services.AddIdentity<APP_USER, APP_ROLE>().AddEntityFrameworkStores<AppDBContext>().AddDefaultTokenProviders();
 
-
-
             // Configure Identity
             services.Configure<IdentityOptions>(options =>
             {
@@ -121,6 +119,7 @@ namespace HRMS
             services.AddTransient<IDangKyChamCongChiTietService, DangKyChamCongChiTietService>();
             services.AddTransient<IDangKyChamCongDacBietService, DangKyChamCongDacBietService>();
             services.AddTransient<IBangCongService, BangCongService>();
+            services.AddTransient<INhanVienThaiSanService, NhanVienThaiSanService>();
 
             services.AddTransient<IDM_DCChamCongService, DM_DCChamCongService>();
             services.AddTransient<IDCChamCongService, DCChamCongService>();
@@ -132,6 +131,9 @@ namespace HRMS
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();// not change format json
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             });
+            //services.AddMvc().AddRazorPagesOptions(o => {
+            //    o.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute());
+            //});
 
             services.Configure<FormOptions>(x =>
             {
@@ -144,6 +146,7 @@ namespace HRMS
 
             services.AddRazorPages().AddSessionStateTempDataProvider();
             services.AddControllersWithViews().AddSessionStateTempDataProvider();
+            services.AddDistributedMemoryCache();
             services.AddSession();
             services.AddMinResponse();
 
@@ -180,6 +183,11 @@ namespace HRMS
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            //app.UseStaticFiles(new StaticFileOptions
+            //{
+            //    FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "node_modules")),
+            //    RequestPath = "/node_modules"
+            //});
             app.UseMinResponse();
             app.UseRouting();
 

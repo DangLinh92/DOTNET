@@ -33,18 +33,26 @@
                 data: {
                     Id: that
                 },
-                success: function (overtime) {
-                    if (overtime) {
+                success: function (overtime)
+                {
+                    if (overtime)
+                    {
                         $('#_txtMaNV').val(overtime.MaNV);
                         $('#_txtMaNV').trigger('change');
                         $('#_txtOvertime').val(overtime.NgayOT);
                         $('#_txtId').val(that);
+                        $('#_txtSoGioOT').val(overtime.SoGioOT);
+                        $('#_txtHeSoOT').val(overtime.HeSoOT);
+                        $('#_txtHeSoOT').trigger('change');
+                        $('#_txtContent').val(overtime.NoiDung);
                     }
-                    else {
+                    else
+                    {
                         hrms.notify('error: Not found overtime!', 'error', 'alert', function () { });
                     }
                 },
-                error: function (status) {
+                error: function (status)
+                {
                     hrms.notify('error: ' + status.responseText, 'error', 'alert', function () { });
                 }
             });
@@ -60,6 +68,8 @@
             $('#_txtMaNV').val('');
             $('#_txtOvertime').val('');
             $('#_txtMaNV').trigger('change');
+            $('#_txtSoGioOT').val(0);
+            $('#_txtContent').val('');
         }
 
         // Init data nhan vien
@@ -119,15 +129,22 @@
                 var ngayOT = $('#_txtOvertime').val();
                 var action = $('#hd_overtime').val();
                 var code = $('#_txtId').val();
+                var timeOT = $('#_txtSoGioOT').val();
+                var hesoOT = $('#_txtHeSoOT').val();
+                var content = $('#_txtContent').val();
 
                 $.ajax({
                     url: '/Admin/DangKyOT/RegisterOvertime?action=' + action,
                     type: 'POST',
                     dataType: 'json',
-                    data: {
+                    data:
+                    {
                         Id: code,
                         MaNV: maNv,
-                        NgayOT: ngayOT
+                        NgayOT: ngayOT,
+                        SoGioOT: timeOT,
+                        HeSoOT: hesoOT,
+                        NoiDung: content
                     },
                     success: function (response) {
 

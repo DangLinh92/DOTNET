@@ -222,10 +222,11 @@ namespace HRMS.Areas.Admin.Controllers
                     }
                 }
 
-                package.Save(); //Save the workbook.
+                package.Save(); // Save the workbook.
             }
 
-            return new OkObjectResult(fileUrl);
+            //return RedirectToAction("Export", "Spreadsheet", new { area = "Admin", DocumentPath = sFileName });
+            return new OkObjectResult(sFileName);
         }
 
         private void UpdateDataNsu(string colName, string newColName, TrucTiepGianTiepSL tt, ref ExcelWorksheet worksheet)

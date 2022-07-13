@@ -4,14 +4,16 @@ using HRMNS.Data.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HRMNS.Data.EF.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    partial class AppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20220711030522_addThaisantable")]
+    partial class addThaisantable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -545,10 +547,6 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
-                    b.Property<string>("HeSoOT")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
                     b.Property<string>("MaNV")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
@@ -556,13 +554,6 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("NgayOT")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
-
-                    b.Property<string>("NoiDung")
-                        .HasColumnType("nvarchar(250)")
-                        .HasMaxLength(250);
-
-                    b.Property<double>("SoGioOT")
-                        .HasColumnType("float");
 
                     b.Property<string>("UserCreated")
                         .HasColumnType("nvarchar(50)")

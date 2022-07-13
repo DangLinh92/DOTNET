@@ -17,6 +17,7 @@
 
             $('#hd_chamCongDB').val('Add');
             $('#_txtMaNV').attr('disabled', false);
+            $('#chkall').attr('disabled', false);
             $('#addEditChamCongDacBietModel').modal('show');
         });
 
@@ -60,6 +61,7 @@
 
             $('#hd_chamCongDB').val('Edit');
             $('#_txtMaNV').attr('disabled', true);
+            $('#chkall').attr('disabled', true);
             $('#addEditChamCongDacBietModel').modal('show');
         });
 
@@ -77,17 +79,29 @@
                 var action = $('#hd_chamCongDB').val();
                 var id = $('#_txtId').val();
 
+                let arrManv = [];
+                $.each(maNv, function (index, value) {
+                    if (value) {
+                        let nv = {
+                            MaNV: value,
+                            MaChamCong_ChiTiet: dmChamCong,
+                            NgayBatDau: fromTime,
+                            NgayKetThuc: toTime,
+                            NoiDung: content,
+                            Id: id
+                        };
+
+                        arrManv.push(nv);
+                    }
+                    return arrManv;
+                });
+
                 $.ajax({
                     url: '/Admin/ChamCongDacBiet/RegisterChamCongDB?action=' + action,
                     type: 'POST',
                     dataType: 'json',
                     data: {
-                        MaNV: maNv,
-                        MaChamCong_ChiTiet: dmChamCong,
-                        NgayBatDau: fromTime,
-                        NgayKetThuc: toTime,
-                        NoiDung: content,
-                        Id: id
+                        arrManv: arrManv
                     },
                     success: function (response) {
 
@@ -543,4 +557,5 @@
         InitDataTable();
         hrms.hide_waitMe($('#chamCongDacBietDataTable'));
     }
+
 }

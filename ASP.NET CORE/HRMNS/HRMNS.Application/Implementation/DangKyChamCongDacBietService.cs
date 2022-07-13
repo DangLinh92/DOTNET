@@ -126,7 +126,7 @@ namespace HRMNS.Application.Implementation
                     return GetAll(includeProperties);
                 }
 
-                return _mapper.Map<List<DangKyChamCongDacBietViewModel>>(_chamCongDbRepository.FindAll(x => x.DateCreated.CompareTo(fromDate) >= 0 && x.DateCreated.CompareTo(toDate) <= 0, includeProperties).OrderByDescending(x => x.DateModified));
+                return _mapper.Map<List<DangKyChamCongDacBietViewModel>>(_chamCongDbRepository.FindAll(x => x.NgayBatDau.CompareTo(fromDate) >= 0 && x.NgayKetThuc.CompareTo(toDate) <= 0, includeProperties).OrderByDescending(x => x.DateModified));
             }
             else
             {
@@ -135,7 +135,7 @@ namespace HRMNS.Application.Implementation
                     return _mapper.Map<List<DangKyChamCongDacBietViewModel>>(_chamCongDbRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept, includeProperties).OrderByDescending(x => x.DateModified));
                 }
 
-                return _mapper.Map<List<DangKyChamCongDacBietViewModel>>(_chamCongDbRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && x.DateCreated.CompareTo(fromDate) >= 0 && x.DateCreated.CompareTo(toDate) <= 0, includeProperties).OrderByDescending(x => x.DateCreated));
+                return _mapper.Map<List<DangKyChamCongDacBietViewModel>>(_chamCongDbRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && x.NgayBatDau.CompareTo(fromDate) >= 0 && x.NgayKetThuc.CompareTo(toDate) <= 0, includeProperties).OrderByDescending(x => x.DateCreated));
             }
         }
 
@@ -202,7 +202,10 @@ namespace HRMNS.Application.Implementation
                         }
                         else
                         {
-                            row["NoiDung"] = worksheet.Cells[i, 2].Text.NullString() + " " + worksheet.Cells[i, 3].Text.NullString();
+                            if (CommonConstants.arrNghiPhep.Contains(kytuChamCong))
+                            {
+                                row["NoiDung"] = worksheet.Cells[i, 2].Text.NullString() + " " + worksheet.Cells[i, 3].Text.NullString();
+                            }
                         }
                         
                         row["Approve"] = CommonConstants.Request;

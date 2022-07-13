@@ -129,7 +129,7 @@
     <div class="page-header">
         <div class="row align-items-center">
             <div class="col">
-                <h3 class="page-title">Overtime-Đăng ký OT</h3>
+                <h3 class="page-title">Bổ xung thêm giờ OT</h3>
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/admin/home/index">Home</a></li>
                     <li class="breadcrumb-item active">Overtime</li>
@@ -157,14 +157,17 @@
         <div class="row filter-row">
 
             @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
-                 !(User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "GrLeader" ||
-                 User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "KRManager" ||
-                 User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" ||
-                 User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin"))
+                !(User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "GrLeader" ||
+                User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "KRManager" ||
+                User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" ||
+                User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin"))
             {
                 <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12"></div>
             }
-
+            else
+            {
+                <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12"></div>
+            }
             <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
                 <div class="form-group form-focus select-focus">
                     <select class="select floating" id="cboDepartment" name="department">
@@ -207,17 +210,17 @@
                 <button href="#" class="btn btn-success btn-block" id="btnSearch" type="submit"> Search </button>
             </div>
 
-            @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
-                 (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "GrLeader" ||
-                 User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "KRManager" ||
-                 User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" ||
-                 User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin"))
-            {
-                <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-                    <a href="#" style="min-width: 120px;" class="btn btn-primary" id="btnApprove" data-target="#approve_overtime">  Approve</a>
-                    <a href="#" class="btn btn-primary" id="btnUnApprove" data-target="#unapprove_overtime">UnApprove</a>
-                </div>
-            }
+            @*@if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+             (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "GrLeader" ||
+             User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "KRManager" ||
+             User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" ||
+             User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin"))
+        {
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <a href="#" style="min-width: 120px;" class="btn btn-primary" id="btnApprove" data-target="#approve_overtime">  Approve</a>
+                <a href="#" class="btn btn-primary" id="btnUnApprove" data-target="#unapprove_overtime">UnApprove</a>
+            </div>
+        }*@
         </div>
     </form>
 

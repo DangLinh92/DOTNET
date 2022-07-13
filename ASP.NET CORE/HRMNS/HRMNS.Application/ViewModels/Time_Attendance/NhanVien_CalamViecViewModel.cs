@@ -48,6 +48,8 @@ namespace HRMNS.Application.ViewModels.Time_Attendance
             get; set;
         }
 
+
+
         [ForeignKey("Danhmuc_CaLviec")]
         public DMCalamviecViewModel DM_CA_LVIEC { get; set; }
 

@@ -99,6 +99,9 @@ namespace HRMNS.Application.Implementation
                     table.Columns.Add("Approve");
                     table.Columns.Add("ApproveLV2");
                     table.Columns.Add("ApproveLV3");
+                    table.Columns.Add("HeSoOT");
+                    table.Columns.Add("NoiDung");
+                    table.Columns.Add("SoGioOT");
 
                     DataRow row = null;
                     for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
@@ -113,9 +116,15 @@ namespace HRMNS.Application.Implementation
                         row["MaNV"] = worksheet.Cells[i, 1].Text.NullString().ToUpper();
                         row["NgayOT"] = worksheet.Cells[i, 3].Text.NullString();
                         row["DM_NgayLViec"] = UpdateDMNgayLviec(worksheet.Cells[i, 3].Text.NullString());
+
                         row["Approve"] = CommonConstants.Approved;
                         row["ApproveLV2"] = CommonConstants.Approved;
                         row["ApproveLV3"] = CommonConstants.Approved;
+
+                        row["HeSoOT"] = worksheet.Cells[i, 4].Text.NullString();
+                        row["NoiDung"] = worksheet.Cells[i, 6].Text.NullString();
+                        row["SoGioOT"] = float.Parse(worksheet.Cells[i, 5].Text.NullString());
+
                         table.Rows.Add(row);
                     }
 
@@ -246,7 +255,7 @@ namespace HRMNS.Application.Implementation
             _overtimeRepository.Update(entity);
         }
 
-        public DangKyOTNhanVienViewModel CheckExist(int id, string maNV, string date)
+        public DangKyOTNhanVienViewModel CheckExist(int id, string maNV, string date,string hso)
         {
             if (id > 0)
             {
@@ -254,7 +263,7 @@ namespace HRMNS.Application.Implementation
             }
             else
             {
-                var obj = _overtimeRepository.FindSingle(x => x.MaNV == maNV && x.NgayOT == date);
+                var obj = _overtimeRepository.FindSingle(x => x.MaNV == maNV && x.NgayOT == date && x.HeSoOT == hso);
                 return _mapper.Map<DangKyOTNhanVienViewModel>(obj);
             }
         }

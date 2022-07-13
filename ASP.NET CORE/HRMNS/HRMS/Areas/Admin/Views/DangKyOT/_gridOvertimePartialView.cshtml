@@ -8,36 +8,42 @@
             <th>User Name</th>
             <th>Department</th>
             <th>Date Type</th>
-            @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
-             (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "GrLeader"))
-            {
-                <th class="text-nowrap" style="color:red">Leader Approve(lv1) </th>
-            }
-            else
-            {
-                <th class="text-nowrap">Leader Approve(lv1) </th>
-            }
 
-            @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
-        (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "KRManager"))
-            {
-                <th class="text-nowrap" style="color:red">KR Manager Approve(lv2)</th>
-            }
-            else
-            {
-                <th class="text-nowrap">KR Manager Approve(lv2)</th>
-            }
+            @*@if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+                     (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "GrLeader"))
+                    {
+                        <th class="text-nowrap" style="color:red">Leader Approve(lv1) </th>
+                    }
+                    else
+                    {
+                        <th class="text-nowrap">Leader Approve(lv1) </th>
+                    }
 
-            @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
-                          (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" ||
-                          User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin"))
-            {
-                <th class="text-nowrap" style="color:red">HR Approve(lv3)</th>
-            }
-            else
-            {
-                <th class="text-nowrap">HR Approve(lv3)</th>
-            }
+                    @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+                (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "KRManager"))
+                    {
+                        <th class="text-nowrap" style="color:red">KR Manager Approve(lv2)</th>
+                    }
+                    else
+                    {
+                        <th class="text-nowrap">KR Manager Approve(lv2)</th>
+                    }
+
+                    @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+                                  (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" ||
+                                  User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin"))
+                    {
+                        <th class="text-nowrap" style="color:red">HR Approve(lv3)</th>
+                    }
+                    else
+                    {
+                        <th class="text-nowrap">HR Approve(lv3)</th>
+                    }*@
+
+            <th>Hệ Số OT</th>
+            <th>Số giờ OT</th>
+            <th>Nội Dung</th>
+
             <th class="text-right no-sort">Action</th>
         </tr>
         <tr>
@@ -63,48 +69,52 @@
                 <td>@item.HR_NHANVIEN?.TenNV</td>
                 <td>@item.HR_NHANVIEN?.MaBoPhan</td>
                 <td>@item.DM_NGAY_LAMVIEC?.Ten_NgayLV</td>
-                <td>
-                    @if (item.Approve == CommonConstants.Approved)
-                    {
-                        <span class="badge bg-inverse-success">Yes</span>
-                    }
-                    else if (item.Approve == CommonConstants.No_Approved)
-                    {
-                        <span class="badge bg-inverse-danger">No</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-inverse-warning">Request</span>
-                    }
-                </td>
-                <td>
-                    @if (item.ApproveLV2 == CommonConstants.Approved)
-                    {
-                        <span class="badge bg-inverse-success">Yes</span>
-                    }
-                    else if (item.ApproveLV2 == CommonConstants.No_Approved)
-                    {
-                        <span class="badge bg-inverse-danger">No</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-inverse-warning">Request</span>
-                    }
-                </td>
-                <td>
-                    @if (item.ApproveLV3 == CommonConstants.Approved)
-                    {
-                        <span class="badge bg-inverse-success">Yes</span>
-                    }
-                    else if (item.ApproveLV3 == CommonConstants.No_Approved)
-                    {
-                        <span class="badge bg-inverse-danger">No</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-inverse-warning">Request</span>
-                    }
-                </td>
+                <td>@item.HeSoOT</td>
+                <td>@item.SoGioOT</td>
+                <td>@item.NoiDung</td>
+
+                @*<td>
+                        @if (item.Approve == CommonConstants.Approved)
+                        {
+                            <span class="badge bg-inverse-success">Yes</span>
+                        }
+                        else if (item.Approve == CommonConstants.No_Approved)
+                        {
+                            <span class="badge bg-inverse-danger">No</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-inverse-warning">Request</span>
+                        }
+                    </td>
+                    <td>
+                        @if (item.ApproveLV2 == CommonConstants.Approved)
+                        {
+                            <span class="badge bg-inverse-success">Yes</span>
+                        }
+                        else if (item.ApproveLV2 == CommonConstants.No_Approved)
+                        {
+                            <span class="badge bg-inverse-danger">No</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-inverse-warning">Request</span>
+                        }
+                    </td>
+                    <td>
+                        @if (item.ApproveLV3 == CommonConstants.Approved)
+                        {
+                            <span class="badge bg-inverse-success">Yes</span>
+                        }
+                        else if (item.ApproveLV3 == CommonConstants.No_Approved)
+                        {
+                            <span class="badge bg-inverse-danger">No</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-inverse-warning">Request</span>
+                        }
+                    </td>*@
 
                 <td class="text-right">
                     <div class="dropdown dropdown-action">
@@ -113,59 +123,59 @@
                             <a class="dropdown-item edit-nv-overtime" href="#" data-toggle="modal" data-target="#addEditOvertimeModel" data-id="@item.Id"><i class="fa fa-edit m-r-5"></i> Edit</a>
                             <a class="dropdown-item delete-nv-overtime" href="#" data-toggle="modal" data-target="#delete_overtime" data-id="@item.Id"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
 
-                            @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
-                      (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "GrLeader"))
-                            {
-                                if (item.Approve == CommonConstants.No_Approved)
-                                {
-                                    <a class="dropdown-item approve-nv-overtime" href="#" data-toggle="modal" data-target="#approve_overtime" data-id="@item.Id"><i class="fa fa-thumbs-up m-r-5"></i> Approve</a>
-                                }
-                                else if (item.Approve == CommonConstants.Approved)
-                                {
-                                    <a class="dropdown-item unapprove-nv-overtime" href="#" data-toggle="modal" data-target="#unapprove_overtime" data-id="@item.Id"><i class="fa fa-thumbs-down m-r-5"></i> UnApprove</a>
-                                }
-                                else
-                                {
-                                    <a class="dropdown-item approve-nv-overtime" href="#" data-toggle="modal" data-target="#approve_overtime" data-id="@item.Id"><i class="fa fa-thumbs-up m-r-5"></i> Approve</a>
-                                    <a class="dropdown-item unapprove-nv-overtime" href="#" data-toggle="modal" data-target="#unapprove_overtime" data-id="@item.Id"><i class="fa fa-thumbs-down m-r-5"></i> UnApprove</a>
-                                }
-                            }
-                            else
-                  if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
-                     (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "KRManager"))
-                            {
-                                if (item.ApproveLV2 == CommonConstants.No_Approved)
-                                {
-                                    <a class="dropdown-item approve-nv-overtime" href="#" data-toggle="modal" data-target="#approve_overtime" data-id="@item.Id"><i class="fa fa-thumbs-up m-r-5"></i> Approve</a>
-                                }
-                                else if (item.ApproveLV2 == CommonConstants.Approved)
-                                {
-                                    <a class="dropdown-item unapprove-nv-overtime" href="#" data-toggle="modal" data-target="#unapprove_overtime" data-id="@item.Id"><i class="fa fa-thumbs-down m-r-5"></i> UnApprove</a>
-                                }
-                                else
-                                {
-                                    <a class="dropdown-item approve-nv-overtime" href="#" data-toggle="modal" data-target="#approve_overtime" data-id="@item.Id"><i class="fa fa-thumbs-up m-r-5"></i> Approve</a>
-                                    <a class="dropdown-item unapprove-nv-overtime" href="#" data-toggle="modal" data-target="#unapprove_overtime" data-id="@item.Id"><i class="fa fa-thumbs-down m-r-5"></i> UnApprove</a>
-                                }
-                            }
-                            else if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
-                               (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" ||
-                               User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin"))
-                            {
-                                if (item.ApproveLV3 == CommonConstants.No_Approved)
-                                {
-                                    <a class="dropdown-item approve-nv-overtime" href="#" data-toggle="modal" data-target="#approve_overtime" data-id="@item.Id"><i class="fa fa-thumbs-up m-r-5"></i> Approve</a>
-                                }
-                                else if (item.ApproveLV3 == CommonConstants.Approved)
-                                {
-                                    <a class="dropdown-item unapprove-nv-overtime" href="#" data-toggle="modal" data-target="#unapprove_overtime" data-id="@item.Id"><i class="fa fa-thumbs-down m-r-5"></i> UnApprove</a>
-                                }
-                                else
-                                {
-                                    <a class="dropdown-item approve-nv-overtime" href="#" data-toggle="modal" data-target="#approve_overtime" data-id="@item.Id"><i class="fa fa-thumbs-up m-r-5"></i> Approve</a>
-                                    <a class="dropdown-item unapprove-nv-overtime" href="#" data-toggle="modal" data-target="#unapprove_overtime" data-id="@item.Id"><i class="fa fa-thumbs-down m-r-5"></i> UnApprove</a>
-                                }
-                            }
+                            @*@if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+                                    (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "GrLeader"))
+                                           {
+                                               if (item.Approve == CommonConstants.No_Approved)
+                                               {
+                                                   <a class="dropdown-item approve-nv-overtime" href="#" data-toggle="modal" data-target="#approve_overtime" data-id="@item.Id"><i class="fa fa-thumbs-up m-r-5"></i> Approve</a>
+                                               }
+                                               else if (item.Approve == CommonConstants.Approved)
+                                               {
+                                                   <a class="dropdown-item unapprove-nv-overtime" href="#" data-toggle="modal" data-target="#unapprove_overtime" data-id="@item.Id"><i class="fa fa-thumbs-down m-r-5"></i> UnApprove</a>
+                                               }
+                                               else
+                                               {
+                                                   <a class="dropdown-item approve-nv-overtime" href="#" data-toggle="modal" data-target="#approve_overtime" data-id="@item.Id"><i class="fa fa-thumbs-up m-r-5"></i> Approve</a>
+                                                   <a class="dropdown-item unapprove-nv-overtime" href="#" data-toggle="modal" data-target="#unapprove_overtime" data-id="@item.Id"><i class="fa fa-thumbs-down m-r-5"></i> UnApprove</a>
+                                               }
+                                           }
+                                           else
+                                if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+                                   (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "KRManager"))
+                                           {
+                                               if (item.ApproveLV2 == CommonConstants.No_Approved)
+                                               {
+                                                   <a class="dropdown-item approve-nv-overtime" href="#" data-toggle="modal" data-target="#approve_overtime" data-id="@item.Id"><i class="fa fa-thumbs-up m-r-5"></i> Approve</a>
+                                               }
+                                               else if (item.ApproveLV2 == CommonConstants.Approved)
+                                               {
+                                                   <a class="dropdown-item unapprove-nv-overtime" href="#" data-toggle="modal" data-target="#unapprove_overtime" data-id="@item.Id"><i class="fa fa-thumbs-down m-r-5"></i> UnApprove</a>
+                                               }
+                                               else
+                                               {
+                                                   <a class="dropdown-item approve-nv-overtime" href="#" data-toggle="modal" data-target="#approve_overtime" data-id="@item.Id"><i class="fa fa-thumbs-up m-r-5"></i> Approve</a>
+                                                   <a class="dropdown-item unapprove-nv-overtime" href="#" data-toggle="modal" data-target="#unapprove_overtime" data-id="@item.Id"><i class="fa fa-thumbs-down m-r-5"></i> UnApprove</a>
+                                               }
+                                           }
+                                           else if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+                                              (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" ||
+                                              User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin"))
+                                           {
+                                               if (item.ApproveLV3 == CommonConstants.No_Approved)
+                                               {
+                                                   <a class="dropdown-item approve-nv-overtime" href="#" data-toggle="modal" data-target="#approve_overtime" data-id="@item.Id"><i class="fa fa-thumbs-up m-r-5"></i> Approve</a>
+                                               }
+                                               else if (item.ApproveLV3 == CommonConstants.Approved)
+                                               {
+                                                   <a class="dropdown-item unapprove-nv-overtime" href="#" data-toggle="modal" data-target="#unapprove_overtime" data-id="@item.Id"><i class="fa fa-thumbs-down m-r-5"></i> UnApprove</a>
+                                               }
+                                               else
+                                               {
+                                                   <a class="dropdown-item approve-nv-overtime" href="#" data-toggle="modal" data-target="#approve_overtime" data-id="@item.Id"><i class="fa fa-thumbs-up m-r-5"></i> Approve</a>
+                                                   <a class="dropdown-item unapprove-nv-overtime" href="#" data-toggle="modal" data-target="#unapprove_overtime" data-id="@item.Id"><i class="fa fa-thumbs-down m-r-5"></i> UnApprove</a>
+                                               }
+                                           }*@
 
                         </div>
                     </div>

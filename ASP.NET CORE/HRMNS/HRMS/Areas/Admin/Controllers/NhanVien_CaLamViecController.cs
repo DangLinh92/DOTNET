@@ -16,6 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using HRMS.Extensions;
 
 namespace HRMS.Areas.Admin.Controllers
 {
@@ -42,6 +43,8 @@ namespace HRMS.Areas.Admin.Controllers
             {
                 nvCalamviecs = _nvienCalamviecService.GetAll("", x => x.HR_NHANVIEN, y => y.DM_CA_LVIEC).Where(x => x.Status != Status.InActive.ToString()).ToList(); ;
             }
+            var calviec = _nvienCalamviecService.GetDMCalamViec();
+            HttpContext.Session.Set("ssDMCaLviec", calviec);
             return View(nvCalamviecs);
         }
 
@@ -146,6 +149,10 @@ namespace HRMS.Areas.Admin.Controllers
                 {
                     calamviec.Danhmuc_CaLviec = "CN_WHC";
                     calamviec.CaLV_DB = "TS";
+                }
+                else
+                {
+                    calamviec.CaLV_DB = "";
                 }
 
                 if (action == "Add")

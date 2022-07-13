@@ -76,7 +76,7 @@ namespace HRMNS.Data.EF
                 resultDb.ReturnString = (string)V_RETURN.Value;
                 return resultDb;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 ResultDB result = new ResultDB();
                 result.ReturnInt = -1;

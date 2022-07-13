@@ -1,0 +1,116 @@
+﻿@model List<NhanVienThaiSanViewModel>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+@section Scripts
+{
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/app/controllers/thaisan/thaisanMns.js"></script>
+    <script>
+        var thaisanController = new thaisanController();
+        thaisanController.initialize();
+
+        onSuccess = thaisanController.doAftersearch;
+
+        $(document).ready(function () {
+            $('#thaisanDataTable').DataTable({
+                "order": [6, 'asc']
+            });
+            $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search.');
+            $('select[name="thaisanDataTable_length"]').removeClass('form-control-sm');
+
+            $(".nested").select2({
+                tags: true
+            });
+        });
+    </script>
+}
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Thai Sản Con Nhỏ</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/Admin/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Maternity</li>
+                </ul>
+            </div>
+            <div class="col-auto float-right ml-auto">
+                <a href="#" id="btnCreate" class="btn add-btn" data-toggle="modal" data-target="#add_thaisan"><i class="fa fa-plus"></i> Add</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Filter -->
+    <form id="frmSearch" method="post" data-ajax="true" data-ajax-url="/Admin/NhanVienThaiSan/Search" data-ajax-update="#gridThaisanIndex" data-ajax-mode='replace' data-ajax-success="onSuccess">
+        <div class="row filter-row">
+
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12"></div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12"></div>
+
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus select-focus">
+                    <input id="txtMaNV" name="maNV" class="form-control floating" type="text" />
+                    <label class="focus-label">User Id</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus">
+                    <div class="cal-icon">
+                        <input id="txtTimeFrom" name="fromTime" class="form-control floating datetimepicker" type="text">
+                    </div>
+                    <label class="focus-label">From</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus">
+                    <div class="cal-icon">
+                        <input id="txtTimeTo" name="toTime" class="form-control floating datetimepicker" type="text">
+                    </div>
+                    <label class="focus-label">To</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <button id="btnSearch" type="submit" class="btn btn-success btn-block"> Search </button>
+            </div>
+        </div>
+    </form>
+    <!-- /Search Filter -->
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive" id="gridThaisanIndex">
+                @await Html.PartialAsync("_gridThaiSanPartialView", Model)
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal custom-modal fade" id="delete_nhanVien_ts" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header">
+                    <input type="hidden" id="hdId_delete" />
+                    <h3>Delete</h3>
+                    <p>Are you sure want to delete?</p>
+                </div>
+                <div class="modal-btn delete-action">
+                    <div class="row">
+                        <div class="col-6">
+                            <a href="javascript:void(0);" class="btn btn-primary continue-btn" id="btn-delete_nv_ts">Delete</a>
+                        </div>
+                        <div class="col-6">
+                            <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- import excel model -->
+<partial name="_thaisanModelPartialView" />
+

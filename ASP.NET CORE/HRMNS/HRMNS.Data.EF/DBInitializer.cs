@@ -116,6 +116,7 @@ namespace HRMNS.Data.EF
                     new FUNCTION() {Id = "REGIS_TIMEKEEPING", Name = "Register Timekeeping",ParentId = "NHANSU",SortOrder = 5,Status = Status.Active,URL = "/admin/chamcongdacbiet/index",IconCss = ""  },
                     new FUNCTION() {Id = "ADJ_TIMEKEEPING", Name = "Timekeeping Adjustments",ParentId = "NHANSU",SortOrder = 6,Status = Status.Active,URL = "/admin/dcchamcong/index",IconCss = ""  },
                     new FUNCTION() {Id = "ATTENDANCE_RECORD", Name = "Timesheet",ParentId = "NHANSU",SortOrder = 7,Status = Status.Active,URL = "/admin/bangcong/index",IconCss = ""  },
+                    new FUNCTION() {Id = "THAISAN", Name = "Thai San",ParentId = "NHANSU",SortOrder = 8,Status = Status.Active,URL = "/admin/NhanVienThaiSan/index",IconCss = ""  },
 
                     new FUNCTION() {Id = "GA",Name = "GA",ParentId = null,SortOrder = 3,Status = Status.Active,URL = "",IconCss = ""  },
                     new FUNCTION() {Id = "COST",Name = "Cost",ParentId = "GA",SortOrder = 1,Status = Status.Active,URL = "/admin/cost/index",IconCss = "la la-money"  },
