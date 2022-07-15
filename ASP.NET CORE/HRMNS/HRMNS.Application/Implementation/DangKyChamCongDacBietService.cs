@@ -39,15 +39,15 @@ namespace HRMNS.Application.Implementation
 
         private void UpdateNghiViecNV(DangKyChamCongDacBietViewModel chamCongVm)
         {
-           var chitiet = _chamCongChiTietRepository.FindAll(x => x.Id == chamCongVm.MaChamCong_ChiTiet).FirstOrDefault();
-            if(chitiet != null && chitiet.KyHieuChamCong == "T") // nghi viec
+            var chitiet = _chamCongChiTietRepository.FindAll(x => x.Id == chamCongVm.MaChamCong_ChiTiet).FirstOrDefault();
+            if (chitiet != null && chitiet.KyHieuChamCong == "T") // nghi viec
             {
-               var nv = _nhanVienRespository.FindById(chamCongVm.MaNV);
-                if(nv != null)
+                var nv = _nhanVienRespository.FindById(chamCongVm.MaNV);
+                if (nv != null)
                 {
                     nv.NgayNghiViec = chamCongVm.NgayBatDau;
 
-                    if(string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), chamCongVm.NgayBatDau) >= 0)
+                    if (string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), chamCongVm.NgayBatDau) >= 0)
                     {
                         nv.Status = Status.InActive.ToString();
                     }
@@ -196,7 +196,7 @@ namespace HRMNS.Application.Implementation
                         row["NgayBatDau"] = worksheet.Cells[i, 4].Text.NullString();
                         row["NgayKetThuc"] = worksheet.Cells[i, 5].Text.NullString();
 
-                        if(worksheet.Cells[i, 6].Text.NullString() != "")
+                        if (worksheet.Cells[i, 6].Text.NullString() != "")
                         {
                             row["NoiDung"] = worksheet.Cells[i, 6].Text.NullString();
                         }
@@ -207,9 +207,9 @@ namespace HRMNS.Application.Implementation
                                 row["NoiDung"] = worksheet.Cells[i, 2].Text.NullString() + " " + worksheet.Cells[i, 3].Text.NullString();
                             }
                         }
-                        
-                        row["Approve"] = CommonConstants.Request;
-                        row["ApproveLV2"] = CommonConstants.Request;
+
+                        //row["Approve"] = CommonConstants.Request;
+                        //row["ApproveLV2"] = CommonConstants.Request;
 
                         //if (role == CommonConstants.AppRole.AdminRole || role == CommonConstants.roleApprove3)
                         //{
@@ -224,7 +224,11 @@ namespace HRMNS.Application.Implementation
 
                         row["Approve"] = CommonConstants.Approved;
                         row["ApproveLV2"] = CommonConstants.Approved;
-                        row["ApproveLV3"] = CommonConstants.Approved;
+                        row["ApproveLV3"] = CommonConstants.Request;
+                        if (role == CommonConstants.AppRole.AdminRole || role == CommonConstants.roleApprove3)
+                        {
+                            row["ApproveLV3"] = CommonConstants.Approved;
+                        }
 
                         table.Rows.Add(row);
                     }

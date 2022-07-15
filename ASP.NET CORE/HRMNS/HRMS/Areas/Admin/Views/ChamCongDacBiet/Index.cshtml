@@ -33,7 +33,7 @@
                 select: true,
                 "searching": true,
                 initComplete: function () {
-                    this.api().columns([1, 2, 3, 4, 5, 6, 8, 9, 10]).every(function () {
+                    this.api().columns([1, 2, 3, 4, 5, 6, 8, 9]).every(function () {
                         var column = this;
                         var select = $('<select><option value="">All</option></select>')
                             .appendTo($(column.header()))
@@ -69,10 +69,10 @@
                         return '<input type="checkbox" name="id[]" value="' + $('<div/>').text(data).html() + '">';
                     }
                 }],
-                "order": [[10, 'asc']]
+                "order": [[8, 'asc']]
             });
             table.columns.adjust().draw();
-            table.order([11, 'asc']).draw();
+            table.order([9, 'asc']).draw();
 
             $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
             $('select[name="chamCongDacBietDataTable_length"]').removeClass('form-control-sm');

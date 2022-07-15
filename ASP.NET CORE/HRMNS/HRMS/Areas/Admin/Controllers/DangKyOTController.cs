@@ -38,30 +38,23 @@ namespace HRMS.Areas.Admin.Controllers
         {
             List<DangKyOTNhanVienViewModel> lst = _overtimeService.GetAll("", x => x.HR_NHANVIEN, y => y.DM_NGAY_LAMVIEC).OrderByDescending(x => x.NgayOT).ToList();
 
-            #region xoa di
-            //if (UserRole == CommonConstants.AssLeader_Role)
-            //{
-            //    lst = lst.Where(x => x.HR_NHANVIEN.MaBoPhan == Department && x.ApproveLV3 != CommonConstants.Approved).ToList();
-            //}
-            //else if (UserRole == CommonConstants.roleApprove1) // leader 
-            //{
-            //    lst = lst.
-            //        Where(x => x.HR_NHANVIEN.MaBoPhan == Department && (x.Approve == CommonConstants.Request || x.ApproveLV2 == CommonConstants.Request || x.ApproveLV3 != CommonConstants.Approved)).OrderByDescending(x => x.DateModified).ToList();
-            //}
-            //else if (UserRole == CommonConstants.roleApprove2) // korea manager
-            //{
-            //    lst = lst.
-            //        Where(x => x.HR_NHANVIEN.MaBoPhan == Department && x.Approve == CommonConstants.Approved && x.ApproveLV3 != CommonConstants.Approved).OrderByDescending(x => x.DateModified).ToList();
-            //}
-            //else if (UserRole == CommonConstants.roleApprove3 || UserRole == CommonConstants.AppRole.AdminRole) // hr approve
-            //{
-            //    lst = lst.Where(x => x.ApproveLV2 == CommonConstants.Approved && x.ApproveLV3 == CommonConstants.Request).OrderByDescending(x => x.DateModified).ToList();
-            //}
-            #endregion
-
-            if (Department != CommonConstants.SUPPORT_DEPT && Department != "")
+            if (UserRole == CommonConstants.AssLeader_Role)
             {
-                lst = lst.Where(x => x.HR_NHANVIEN.MaBoPhan == Department).OrderByDescending(x=>x.NgayOT).ToList();
+                lst = lst.Where(x => x.HR_NHANVIEN.MaBoPhan == Department && x.ApproveLV3 != CommonConstants.Approved).ToList();
+            }
+            else if (UserRole == CommonConstants.roleApprove1) // leader 
+            {
+                lst = lst.
+                    Where(x => x.HR_NHANVIEN.MaBoPhan == Department && (x.Approve == CommonConstants.Request || x.ApproveLV2 == CommonConstants.Request || x.ApproveLV3 != CommonConstants.Approved)).OrderByDescending(x => x.DateModified).ToList();
+            }
+            else if (UserRole == CommonConstants.roleApprove2) // korea manager
+            {
+                lst = lst.
+                    Where(x => x.HR_NHANVIEN.MaBoPhan == Department && x.Approve == CommonConstants.Approved && x.ApproveLV3 != CommonConstants.Approved).OrderByDescending(x => x.DateModified).ToList();
+            }
+            else if (UserRole == CommonConstants.roleApprove3 || UserRole == CommonConstants.AppRole.AdminRole) // hr approve
+            {
+                lst = lst.Where(x => x.ApproveLV2 == CommonConstants.Approved && x.ApproveLV3 == CommonConstants.Request).OrderByDescending(x => x.DateModified).ToList();
             }
 
             return View(lst);
@@ -79,13 +72,22 @@ namespace HRMS.Areas.Admin.Controllers
             {
                 if (action == "Add")
                 {
-                    DangKyOTNhanVienViewModel itemCheck = _overtimeService.CheckExist(0, overtime.MaNV, overtime.NgayOT,overtime.HeSoOT);
+                    DangKyOTNhanVienViewModel itemCheck = _overtimeService.CheckExist(0, overtime.MaNV, overtime.NgayOT, overtime.HeSoOT);
                     if (itemCheck != null)
                     {
                         itemCheck.NgayOT = overtime.NgayOT;
                         itemCheck.SoGioOT = overtime.SoGioOT;
                         itemCheck.HeSoOT = overtime.HeSoOT;
                         itemCheck.NoiDung = overtime.NoiDung;
+
+                        itemCheck.Approve = CommonConstants.Approved;
+                        itemCheck.ApproveLV2 = CommonConstants.Approved;
+                        itemCheck.ApproveLV3 = CommonConstants.Request;
+                        if (UserRole == CommonConstants.roleApprove3 || UserRole == CommonConstants.AppRole.AdminRole)
+                        {
+                            itemCheck.ApproveLV3 = CommonConstants.Approved;
+                        }
+
                         UpdateDMNgayLviec(itemCheck);
                         _overtimeService.Update(itemCheck);
                     }
@@ -120,7 +122,11 @@ namespace HRMS.Areas.Admin.Controllers
 
                         overtime.Approve = CommonConstants.Approved;
                         overtime.ApproveLV2 = CommonConstants.Approved;
-                        overtime.ApproveLV3 = CommonConstants.Approved;
+                        overtime.ApproveLV3 = CommonConstants.Request;
+                        if (UserRole == CommonConstants.roleApprove3 || UserRole == CommonConstants.AppRole.AdminRole)
+                        {
+                            overtime.ApproveLV3 = CommonConstants.Approved;
+                        }
 
                         UpdateDMNgayLviec(overtime);
                         _overtimeService.Add(overtime);
@@ -137,6 +143,15 @@ namespace HRMS.Areas.Admin.Controllers
                         itemCheck.SoGioOT = overtime.SoGioOT;
                         itemCheck.HeSoOT = overtime.HeSoOT;
                         itemCheck.NoiDung = overtime.NoiDung;
+
+                        itemCheck.Approve = CommonConstants.Approved;
+                        itemCheck.ApproveLV2 = CommonConstants.Approved;
+                        itemCheck.ApproveLV3 = CommonConstants.Request;
+                        if (UserRole == CommonConstants.roleApprove3 || UserRole == CommonConstants.AppRole.AdminRole)
+                        {
+                            itemCheck.ApproveLV3 = CommonConstants.Approved;
+                        }
+
                         UpdateDMNgayLviec(itemCheck);
                     }
                     else
@@ -174,7 +189,11 @@ namespace HRMS.Areas.Admin.Controllers
 
                             overtime.Approve = CommonConstants.Approved;
                             overtime.ApproveLV2 = CommonConstants.Approved;
-                            overtime.ApproveLV3 = CommonConstants.Approved;
+                            overtime.ApproveLV3 = CommonConstants.Request;
+                            if (UserRole == CommonConstants.roleApprove3 || UserRole == CommonConstants.AppRole.AdminRole)
+                            {
+                                overtime.ApproveLV3 = CommonConstants.Approved;
+                            }
 
                             UpdateDMNgayLviec(overtime);
                             _overtimeService.Add(overtime);
@@ -187,6 +206,14 @@ namespace HRMS.Areas.Admin.Controllers
                             itemCheck.SoGioOT = overtime.SoGioOT;
                             itemCheck.HeSoOT = overtime.HeSoOT;
                             itemCheck.NoiDung = overtime.NoiDung;
+
+                            itemCheck.Approve = CommonConstants.Approved;
+                            itemCheck.ApproveLV2 = CommonConstants.Approved;
+                            itemCheck.ApproveLV3 = CommonConstants.Request;
+                            if (UserRole == CommonConstants.roleApprove3 || UserRole == CommonConstants.AppRole.AdminRole)
+                            {
+                                itemCheck.ApproveLV3 = CommonConstants.Approved;
+                            }
                         }
                     }
 
@@ -321,7 +348,7 @@ namespace HRMS.Areas.Admin.Controllers
                     file.CopyTo(fs);
                     fs.Flush();
                 }
-                ResultDB result = _overtimeService.ImportExcel(filePath, param);
+                ResultDB result = _overtimeService.ImportExcel(filePath, UserRole);
 
                 if (System.IO.File.Exists(filePath))
                 {

@@ -1495,7 +1495,7 @@ namespace HRMNS.Application.Implementation
                         else
                         {
                             // add them gio OT dac biet neu co
-                            var regisOTs = _overtimeResponsitory.FindAll(x => x.MaNV == item.MaNV && x.NgayOT == ot.DayCheckOT && x.HeSoOT == ot.DMOvertime).ToList();
+                            var regisOTs = _overtimeResponsitory.FindAll(x => x.MaNV == item.MaNV && x.NgayOT == ot.DayCheckOT && x.HeSoOT == ot.DMOvertime && x.ApproveLV3 == CommonConstants.Approved).ToList();
                             if (regisOTs.Count > 0)
                             {
                                 foreach (var ad in regisOTs)
@@ -1509,7 +1509,7 @@ namespace HRMNS.Application.Implementation
                 }
                 else
                 {
-                    var regisOTs = _overtimeResponsitory.FindAll(x => x.MaNV == item.MaNV && beginMonth.CompareTo(x.NgayOT) <= 0 && endMonth.CompareTo(x.NgayOT) >= 0).ToList();
+                    var regisOTs = _overtimeResponsitory.FindAll(x => x.MaNV == item.MaNV && x.ApproveLV3 == CommonConstants.Approved && beginMonth.CompareTo(x.NgayOT) <= 0 && endMonth.CompareTo(x.NgayOT) >= 0).ToList();
                     if (regisOTs.Count > 0)
                     {
                         foreach (var ad in regisOTs)
@@ -1536,6 +1536,10 @@ namespace HRMNS.Application.Implementation
                 if (overtimes.Count > 0)
                 {
                     item.OvertimeValues = overtimes;
+                }
+                else
+                {
+                    item.OvertimeValues = new List<OvertimeValue>();
                 }
             }
 

@@ -10,7 +10,7 @@
             <th>Begin Time</th>
             <th>End Time</th>
             <th class="text-nowrap">Content</th>
-            @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+            @*@if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
            (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "GrLeader"))
             {
                 <th class="text-nowrap" style="color:red">Leader Approve(lv1) </th>
@@ -28,7 +28,7 @@
             else
             {
                 <th class="text-nowrap">KR Manager Approve(lv2)</th>
-            }
+            }*@
 
             @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
                         (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" ||
@@ -52,8 +52,6 @@
             <th></th>
             <th class="text-nowrap"></th>
             <th class="text-nowrap"></th>
-            <th class="text-nowrap"></th>
-            <th class="text-nowrap"></th>
             <th class="text-right no-sort"></th>
         </tr>
     </thead>
@@ -69,7 +67,7 @@
                 <td>@item.NgayBatDau</td>
                 <td>@item.NgayKetThuc</td>
                 <td>@item.NoiDung</td>
-                <td>
+                @*<td>
                     @if (item.Approve == CommonConstants.Approved)
                     {
                         <span class="badge bg-inverse-success">Yes</span>
@@ -96,7 +94,7 @@
                     {
                         <span class="badge bg-inverse-warning">Request</span>
                     }
-                </td>
+                </td>*@
                 <td>
                     @if (item.ApproveLV3 == CommonConstants.Approved)
                     {

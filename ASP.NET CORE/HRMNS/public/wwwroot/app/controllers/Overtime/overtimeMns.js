@@ -441,7 +441,7 @@
             select: true,
             "searching": true,
             initComplete: function () {
-                this.api().columns([1, 2, 3, 4, 5, 6, 7, 8]).every(function () {
+                this.api().columns([1, 2, 3, 4, 5, 6, 7, 8,9]).every(function () {
                     var column = this;
                     var select = $('<select><option value="">All</option></select>')
                         .appendTo($(column.header()))
@@ -477,13 +477,13 @@
                     return '<input type="checkbox" name="id[]" value="' + $('<div/>').text(data).html() + '">';
                 }
             }],
-            "order": [8, 'asc']
+            "order": [9, 'asc']
         });
         $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
         $('select[name="overtimeDataTable_length"]').removeClass('form-control-sm');
 
         table.columns.adjust().draw();
-        table.order([9, 'asc']).draw();
+        table.order([10, 'asc']).draw();
 
         // Handle click on "Select all" control
         $('#overtimeDataTable-select-all').on('click', function () {

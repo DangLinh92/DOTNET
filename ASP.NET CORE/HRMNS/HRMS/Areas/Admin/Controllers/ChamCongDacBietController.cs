@@ -61,7 +61,7 @@ namespace HRMS.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult RegisterChamCongDB(List<DangKyChamCongDacBietViewModel> arrManv, [FromQuery] string action)
         {
-            foreach (var data in arrManv.Where(x=>x.MaNV != null || x.MaNV != "").ToList())
+            foreach (var data in arrManv.Where(x => x.MaNV != null || x.MaNV != "").ToList())
             {
                 if (data != null && string.IsNullOrEmpty(data.NoiDung.NullString()))
                 {
@@ -82,10 +82,20 @@ namespace HRMS.Areas.Admin.Controllers
                         itemCheck.NgayBatDau = data.NgayBatDau;
                         itemCheck.NgayKetThuc = data.NgayKetThuc;
                         itemCheck.NoiDung = data.NoiDung;
+
+                        itemCheck.Approve = CommonConstants.Approved;
+                        itemCheck.ApproveLV2 = CommonConstants.Approved;
+                        itemCheck.ApproveLV3 = CommonConstants.Request;
+                        if (UserRole == CommonConstants.roleApprove3 || UserRole == CommonConstants.AppRole.AdminRole)
+                        {
+                            itemCheck.ApproveLV3 = CommonConstants.Approved;
+                        }
+
                         _chamCongDacBietService.Update(itemCheck);
                     }
                     else
                     {
+                        #region
                         //if (UserRole == CommonConstants.roleApprove3 || UserRole == CommonConstants.AppRole.AdminRole) // HR
                         //{
                         //    data.Approve = CommonConstants.Approved;
@@ -119,10 +129,15 @@ namespace HRMS.Areas.Admin.Controllers
                         //        data.ApproveLV3 = CommonConstants.Request;
                         //    }
                         //}
+                        #endregion
 
                         data.Approve = CommonConstants.Approved;
                         data.ApproveLV2 = CommonConstants.Approved;
-                        data.ApproveLV3 = CommonConstants.Approved;
+                        data.ApproveLV3 = CommonConstants.Request;
+                        if (UserRole == CommonConstants.roleApprove3 || UserRole == CommonConstants.AppRole.AdminRole)
+                        {
+                            data.ApproveLV3 = CommonConstants.Approved;
+                        }
 
                         _chamCongDacBietService.Add(data);
                     }
@@ -134,6 +149,14 @@ namespace HRMS.Areas.Admin.Controllers
                     chamcongVm.NgayBatDau = data.NgayBatDau;
                     chamcongVm.NgayKetThuc = data.NgayKetThuc;
                     chamcongVm.NoiDung = data.NoiDung;
+
+                    chamcongVm.Approve = CommonConstants.Approved;
+                    chamcongVm.ApproveLV2 = CommonConstants.Approved;
+                    chamcongVm.ApproveLV3 = CommonConstants.Request;
+                    if (UserRole == CommonConstants.roleApprove3 || UserRole == CommonConstants.AppRole.AdminRole)
+                    {
+                        chamcongVm.ApproveLV3 = CommonConstants.Approved;
+                    }
 
                     _chamCongDacBietService.Update(chamcongVm);
                 }

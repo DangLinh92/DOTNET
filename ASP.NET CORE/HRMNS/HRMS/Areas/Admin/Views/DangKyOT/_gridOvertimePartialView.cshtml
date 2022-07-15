@@ -8,42 +8,39 @@
             <th>User Name</th>
             <th>Department</th>
             <th>Date Type</th>
-
-            @*@if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
-                     (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "GrLeader"))
-                    {
-                        <th class="text-nowrap" style="color:red">Leader Approve(lv1) </th>
-                    }
-                    else
-                    {
-                        <th class="text-nowrap">Leader Approve(lv1) </th>
-                    }
-
-                    @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
-                (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "KRManager"))
-                    {
-                        <th class="text-nowrap" style="color:red">KR Manager Approve(lv2)</th>
-                    }
-                    else
-                    {
-                        <th class="text-nowrap">KR Manager Approve(lv2)</th>
-                    }
-
-                    @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
-                                  (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" ||
-                                  User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin"))
-                    {
-                        <th class="text-nowrap" style="color:red">HR Approve(lv3)</th>
-                    }
-                    else
-                    {
-                        <th class="text-nowrap">HR Approve(lv3)</th>
-                    }*@
-
             <th>Hệ Số OT</th>
             <th>Số giờ OT</th>
             <th>Nội Dung</th>
+            @*@if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+             (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "GrLeader"))
+            {
+                <th class="text-nowrap" style="color:red">Leader Approve(lv1) </th>
+            }
+            else
+            {
+                <th class="text-nowrap">Leader Approve(lv1) </th>
+            }
 
+            @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+        (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "KRManager"))
+            {
+                <th class="text-nowrap" style="color:red">KR Manager Approve(lv2)</th>
+            }
+            else
+            {
+                <th class="text-nowrap">KR Manager Approve(lv2)</th>
+            }*@
+
+            @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+                          (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" ||
+                          User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin"))
+            {
+                <th class="text-nowrap" style="color:red">HR Approve(lv3)</th>
+            }
+            else
+            {
+                <th class="text-nowrap">HR Approve(lv3)</th>
+            }
             <th class="text-right no-sort">Action</th>
         </tr>
         <tr>
@@ -53,6 +50,7 @@
             <th></th>
             <th></th>
             <th></th>
+            <th class="text-nowrap"></th>
             <th class="text-nowrap"></th>
             <th class="text-nowrap"></th>
             <th class="text-nowrap"></th>
@@ -100,7 +98,7 @@
                         {
                             <span class="badge bg-inverse-warning">Request</span>
                         }
-                    </td>
+                    </td>*@
                     <td>
                         @if (item.ApproveLV3 == CommonConstants.Approved)
                         {
@@ -114,7 +112,7 @@
                         {
                             <span class="badge bg-inverse-warning">Request</span>
                         }
-                    </td>*@
+                    </td>
 
                 <td class="text-right">
                     <div class="dropdown dropdown-action">
