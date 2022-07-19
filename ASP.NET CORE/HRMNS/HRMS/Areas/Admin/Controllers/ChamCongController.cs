@@ -50,7 +50,7 @@ namespace HRMS.Areas.Admin.Controllers
             {
                 entry.SlidingExpiration = TimeSpan.FromHours(1);
                 DataTableCollection datas = _bioStarDB.GetDeparment().ReturnDataSet.Tables;
-                if(datas.Count > 0)
+                if (datas.Count > 0)
                 {
                     return datas[0];
                 }
@@ -226,7 +226,8 @@ namespace HRMS.Areas.Admin.Controllers
             }
             else
             {
-                return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
+                string jsonDept = "[{\"sName\":\"Support\"},{\"sName\":\"QualityControl\"},{\"sName\":\"SMT\"},{\"sName\":\"LFEM\"},{\"sName\":\"BoardofDirector\"},{\"sName\":\"Cleaner\"},{\"sName\":\"Security\"},{\"sName\":\"Driver\"},{\"sName\":\"Bep\"},{\"sName\":\"Utility\"},{\"sName\":\"Warehouse\"},{\"sName\":\"WLP2\"},{\"sName\":\"KoreanVN\"},{\"sName\":\"WLP1\"},{\"sName\":\"CSP\"},{\"sName\":\"Baove&Vesin\"}]";
+                return new OkObjectResult(jsonDept);
             }
         }
 

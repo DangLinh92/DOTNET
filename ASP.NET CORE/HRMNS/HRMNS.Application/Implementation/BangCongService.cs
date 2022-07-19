@@ -428,6 +428,11 @@ namespace HRMNS.Application.Implementation
 
                                                         if (timeOT > 0)
                                                         {
+                                                            if (timeOT < 0.5)
+                                                            {
+                                                                timeOT = 0;
+                                                            }
+
                                                             // thơi gian OT max ngay thuong
                                                             if (timeOT > 2.5 && isSetMaxOT)
                                                             {
@@ -460,7 +465,7 @@ namespace HRMNS.Application.Implementation
                                                     double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + firstTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
                                                     timeOT = timeOT <= 8 ? timeOT - 0.5 : timeOT - 1.5; // 1h nghi trua + 0.5h di an
 
-                                                    if (timeOT < 0)
+                                                    if (timeOT < 0.5)
                                                     {
                                                         timeOT = 0;
                                                     }
@@ -488,7 +493,7 @@ namespace HRMNS.Application.Implementation
 
                                                     double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + firstTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
                                                     timeOT = timeOT <= 8 ? timeOT - 0.5 : timeOT - 1.5;
-                                                    if (timeOT < 0)
+                                                    if (timeOT < 0.5)
                                                     {
                                                         timeOT = 0;
                                                     }
@@ -517,7 +522,7 @@ namespace HRMNS.Application.Implementation
 
                                                     double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + firstTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
                                                     timeOT = timeOT <= 8 ? timeOT - 0.5 : timeOT - 1.5;
-                                                    if (timeOT < 0)
+                                                    if (timeOT < 0.5)
                                                     {
                                                         timeOT = 0;
                                                     }
@@ -576,7 +581,7 @@ namespace HRMNS.Application.Implementation
                                                         }
 
                                                         double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + newBeginOT, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
-                                                        if (timeOT < 0.1)
+                                                        if (timeOT < 0.5)
                                                         {
                                                             timeOT = 0;
                                                         }
@@ -614,6 +619,11 @@ namespace HRMNS.Application.Implementation
                                                                 if (dbOT > 2) // tối đa OT 2h bật máy.
                                                                 {
                                                                     dbOT = 2;
+                                                                }
+
+                                                                if(dbOT < 0.5)
+                                                                {
+                                                                    dbOT = 0;
                                                                 }
 
                                                                 item.OvertimeValues.Add(new OvertimeValue()
@@ -720,7 +730,7 @@ namespace HRMNS.Application.Implementation
                                                     if (string.Compare(lastTime, newBeginOT) > 0)
                                                     {
                                                         double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + newBeginOT, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
-                                                        if (timeOT < 0.1)
+                                                        if (timeOT < 0.5)
                                                         {
                                                             timeOT = 0;
                                                         }
@@ -988,6 +998,11 @@ namespace HRMNS.Application.Implementation
                                                                 timeOT = 2.5;
                                                             }
 
+                                                            if(timeOT < 0.5)
+                                                            {
+                                                                timeOT = 0;
+                                                            }
+
                                                             item.OvertimeValues.Add(new OvertimeValue()
                                                             {
                                                                 DayCheckOT = dateCheck,
@@ -1008,7 +1023,7 @@ namespace HRMNS.Application.Implementation
                                                 {
                                                     double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + firstTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
                                                     timeOT = timeOT <= 8 ? timeOT - 0.5 : timeOT - 1.5;
-                                                    if (timeOT < 0)
+                                                    if (timeOT < 0.5)
                                                     {
                                                         timeOT = 0;
                                                     }
@@ -1036,7 +1051,7 @@ namespace HRMNS.Application.Implementation
                                                 {
                                                     double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + firstTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
                                                     timeOT = timeOT <= 8 ? timeOT - 0.5 : timeOT - 1.5;
-                                                    if (timeOT < 0)
+                                                    if (timeOT < 0.5)
                                                     {
                                                         timeOT = 0;
                                                     }
@@ -1064,7 +1079,7 @@ namespace HRMNS.Application.Implementation
                                                 {
                                                     double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + firstTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
                                                     timeOT = timeOT <= 8 ? timeOT - 0.5 : timeOT - 1.5;
-                                                    if (timeOT < 0)
+                                                    if (timeOT < 0.5)
                                                     {
                                                         timeOT = 0;
                                                     }
@@ -1100,7 +1115,7 @@ namespace HRMNS.Application.Implementation
                                                         }
 
                                                         double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + newBeginOT, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
-                                                        if (timeOT < 0.1)
+                                                        if (timeOT < 0.5)
                                                         {
                                                             timeOT = 0;
                                                         }
@@ -1141,6 +1156,11 @@ namespace HRMNS.Application.Implementation
                                                             if (DateTime.ParseExact(_chamCongLog.FirstIn_Time.NullString(), "HH:mm:ss", CultureInfo.InvariantCulture) < DateTime.ParseExact("08:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
                                                             {
                                                                 var dbOT = (DateTime.ParseExact("08:00:00", "HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(_chamCongLog.FirstIn_Time.NullString(), "HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+
+                                                                if (dbOT < 0.5)
+                                                                {
+                                                                    dbOT = 0;
+                                                                }
 
                                                                 item.OvertimeValues.Add(new OvertimeValue()
                                                                 {
@@ -1339,6 +1359,7 @@ namespace HRMNS.Application.Implementation
                                                             if (DateTime.ParseExact(_chamCongLog.FirstIn_Time.NullString(), "HH:mm:ss", CultureInfo.InvariantCulture) < DateTime.ParseExact("20:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
                                                             {
                                                                 var dbOT = (DateTime.ParseExact("20:00:00", "HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(_chamCongLog.FirstIn_Time.NullString(), "HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+                                                                if (dbOT < 0.5) dbOT = 0;
 
                                                                 item.OvertimeValues.Add(new OvertimeValue()
                                                                 {
@@ -1610,7 +1631,7 @@ namespace HRMNS.Application.Implementation
                 string hsOT = clviecs.FirstOrDefault(x => x.Time_KetThuc == "22:00:00").HeSo_OT.NullString();
 
                 double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + firstTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
-                if (timeOT < 0)
+                if (timeOT < 0.5)
                 {
                     timeOT = 0;
                 }
@@ -1650,7 +1671,7 @@ namespace HRMNS.Application.Implementation
                 string hsOT = clviecs.FirstOrDefault(x => x.Time_BatDau == "22:00:00").HeSo_OT.NullString();
 
                 double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + firstTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
-                if (timeOT < 0)
+                if (timeOT < 0.5)
                 {
                     timeOT = 0;
                 }
@@ -1687,7 +1708,7 @@ namespace HRMNS.Application.Implementation
                 string hsOT = clviecs.FirstOrDefault(x => x.Time_KetThuc.CompareTo("06:00:00") <= 0).HeSo_OT.NullString();
 
                 double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + firstTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
-                if (timeOT < 0)
+                if (timeOT < 0.5)
                 {
                     timeOT = 0;
                 }
@@ -1734,7 +1755,7 @@ namespace HRMNS.Application.Implementation
                 double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + firstTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
                 string hsOT = clviecs.FirstOrDefault(x => x.Time_KetThuc == "08:00:00").HeSo_OT.NullString();
 
-                if (timeOT < 0)
+                if (timeOT < 0.5)
                 {
                     timeOT = 0;
                 }
@@ -1784,11 +1805,11 @@ namespace HRMNS.Application.Implementation
                 string hsOT1 = clviecs.FirstOrDefault(x => x.Time_KetThuc == "22:00:00").HeSo_OT.NullString();
                 string hsOT2 = clviecs.FirstOrDefault(x => x.Time_BatDau == "22:00:00").HeSo_OT.NullString();
 
-                if (timeOT1 < 0)
+                if (timeOT1 < 0.5)
                 {
                     timeOT1 = 0;
                 }
-                if (timeOT2 < 0)
+                if (timeOT2 < 0.5)
                 {
                     timeOT2 = 0;
                 }
@@ -1848,11 +1869,11 @@ namespace HRMNS.Application.Implementation
                 string hsOT2 = clviecs.FirstOrDefault(x => x.Time_BatDau == "22:00:00").HeSo_OT.NullString(); // 22->00
                 string hsOT3 = clviecs.FirstOrDefault(x => x.Time_KetThuc.CompareTo("06:00:00") <= 0).HeSo_OT.NullString(); // 00 -> 6
 
-                if (timeOT1 < 0)
+                if (timeOT1 < 0.5)
                 {
                     timeOT1 = 0;
                 }
-                if (timeOT3 < 0)
+                if (timeOT3 < 0.5)
                 {
                     timeOT3 = 0;
                 }
@@ -1945,11 +1966,11 @@ namespace HRMNS.Application.Implementation
                 string hsOT3 = clviecs.FirstOrDefault(x => x.Time_KetThuc.CompareTo("06:00:00") <= 0).HeSo_OT.NullString(); // 00 -> 6
                 string hsOT4 = clviecs.FirstOrDefault(x => x.Time_KetThuc == "08:00:00").HeSo_OT.NullString(); // 6->8
 
-                if (timeOT1 < 0)
+                if (timeOT1 < 0.5)
                 {
                     timeOT1 = 0;
                 }
-                if (timeOT4 < 0)
+                if (timeOT4 < 0.5)
                 {
                     timeOT4 = 0;
                 }
@@ -2073,11 +2094,11 @@ namespace HRMNS.Application.Implementation
                 string hsOT1 = clviecs.FirstOrDefault(x => x.Time_BatDau == "22:00:00").HeSo_OT.NullString(); // 22->00
                 string hsOT2 = clviecs.FirstOrDefault(x => x.Time_KetThuc.CompareTo("06:00:00") <= 0).HeSo_OT.NullString(); // 00 -> 6
 
-                if (timeOT1 < 0)
+                if (timeOT1 < 0.5)
                 {
                     timeOT1 = 0;
                 }
-                if (timeOT2 < 0)
+                if (timeOT2 < 0.5)
                 {
                     timeOT2 = 0;
                 }
@@ -2149,12 +2170,12 @@ namespace HRMNS.Application.Implementation
                 string hsOT3 = clviecs.FirstOrDefault(x => x.Time_KetThuc.CompareTo("06:00:00") <= 0).HeSo_OT.NullString(); // 00 > 6
                 string hsOT4 = clviecs.FirstOrDefault(x => x.Time_KetThuc == "08:00:00").HeSo_OT.NullString(); // 6->8
 
-                if (timeOT4 < 0)
+                if (timeOT4 < 0.5)
                 {
                     timeOT4 = 0;
                 }
 
-                if (timeOT2 < 0)
+                if (timeOT2 < 0.5)
                 {
                     timeOT2 = 0;
                 }
@@ -2255,11 +2276,11 @@ namespace HRMNS.Application.Implementation
                 string hsOT2 = clviecs.FirstOrDefault(x => x.Time_KetThuc.CompareTo("06:00:00") <= 0).HeSo_OT.NullString(); // 00 -> 6
                 string hsOT4 = clviecs.FirstOrDefault(x => x.Time_KetThuc == "08:00:00").HeSo_OT.NullString(); //6->8
 
-                if (timeOT4 < 0)
+                if (timeOT4 < 0.5)
                 {
                     timeOT4 = 0;
                 }
-                if (timeOT2 < 0)
+                if (timeOT2 < 0.5)
                 {
                     timeOT2 = 0;
                 }

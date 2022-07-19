@@ -193,7 +193,7 @@ namespace HRMS
 
             app.UseAuthentication();
             app.UseAuthorization();
-
+            
             app.UseEndpoints(routes =>
             {
                 routes.MapControllerRoute(
@@ -202,7 +202,7 @@ namespace HRMS
 
                 //routes.MapControllerRoute(
                 //    "Deptdefault",
-                //    "{controller=Account}/{action=Login}/{id?}");
+                //      "{area:exists}/{controller=Login}/{action=Index}/{id?}");
 
             });
         }
