@@ -134,7 +134,7 @@ namespace HRMNS.Application.Implementation
                     Dictionary<string, string> param = new Dictionary<string, string>();
                     param.Add("A_USER_HANDLE", "Y");
                     param.Add("A_USER_UPDATE", GetUserId());
-                    resultDB = _chamCongLogRepository.ExecProceduce("PKG_BUSINESS.PUT_EVENT_LOG", param, "A_DATA", table);
+                    resultDB = _chamCongLogRepository.ExecProceduce("PKG_BUSINESS.PUT_EVENT_LOG_BY_EXCEL", param, "A_DATA", table);
                 }
                 return resultDB;
             }

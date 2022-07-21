@@ -73,12 +73,12 @@ namespace HRMS.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetChamCongLog()
         {
-            string maxDate = _chamCongService.GetMaxDate();
-            if (string.IsNullOrEmpty(maxDate))
-            {
-                maxDate = DateTime.Now.ToString("yyyy-MM") + "-01";
-            }
-            string fromTime = DateTime.Parse(maxDate).AddDays(-40).ToString("yyyy-MM-dd");
+            string maxDate = DateTime.Now.ToString("yyyy-MM-dd"); // _chamCongService.GetMaxDate();
+            //if (string.IsNullOrEmpty(maxDate))
+            //{
+            //    maxDate = DateTime.Now.ToString("yyyy-MM") + "-01";
+            //}
+            string fromTime = DateTime.Parse(maxDate).AddDays(-60).ToString("yyyy-MM-dd");
             string toTime = DateTime.Now.AddDays(1).ToString("yyyy-MM-dd");
             ResultDB result = _bioStarDB.GetChamCongLogData(fromTime, toTime);
             _logger.LogInformation("GetChamCongLog: " + result.ReturnString);

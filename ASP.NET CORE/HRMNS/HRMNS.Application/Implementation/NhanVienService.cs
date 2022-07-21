@@ -149,7 +149,7 @@ namespace HRMNS.Application.Implementation
                 {
                     ImportBasicInfo(packet);
                 }
-                else if (param == CommonConstants.IMPORT_DETAIL_EMP)
+                else if (param == CommonConstants.IMPORT_DETAIL_EMP) // IMPORT CONTRACT
                 {
                     ImportDetailInfo(packet);
                 }
@@ -207,19 +207,19 @@ namespace HRMNS.Application.Implementation
             for (int i = worksheet.Dimension.Start.Row + 2; i <= worksheet.Dimension.End.Row; i++)
             {
                 nhanvien = new HR_NHANVIEN();
-                nhanvien.Id = worksheet.Cells[i, 2].Value.NullString().ToUpper();
+                nhanvien.Id = worksheet.Cells[i, 2].Text.NullString().ToUpper();
 
                 if (string.IsNullOrEmpty(nhanvien.Id))
                 {
                     continue;
                 }
 
-                nhanvien.MaChucDanh = worksheet.Cells[i, 3].Value.NullString();
-                nhanvien.MaBoPhan = worksheet.Cells[i, 4].Value.NullString();
-                nhanvien.TenNV = worksheet.Cells[i, 5].Value.NullString();
-                nhanvien.GioiTinh = worksheet.Cells[i, 6].Value.NullString();
+                nhanvien.MaChucDanh = worksheet.Cells[i, 3].Text.NullString();
+                nhanvien.MaBoPhan = worksheet.Cells[i, 4].Text.NullString();
+                nhanvien.TenNV = worksheet.Cells[i, 5].Text.NullString();
+                nhanvien.GioiTinh = worksheet.Cells[i, 6].Text.NullString();
 
-                if (DateTime.TryParse(worksheet.Cells[i, 7].Value.NullString(), out var ngaysinh))
+                if (DateTime.TryParse(worksheet.Cells[i, 7].Text.NullString(), out var ngaysinh))
                 {
                     nhanvien.NgaySinh = ngaysinh.ToString("yyyy-MM-dd");
                 }
@@ -228,17 +228,17 @@ namespace HRMNS.Application.Implementation
                     nhanvien.NgaySinh = "";
                 }
 
-                nhanvien.NoiSinh = worksheet.Cells[i, 8].Value.NullString();
-                nhanvien.TinhTrangHonNhan = worksheet.Cells[i, 9].Value.NullString();
-                nhanvien.DanToc = worksheet.Cells[i, 10].Value.NullString();
-                nhanvien.DiaChiThuongTru = worksheet.Cells[i, 11].Value.NullString();
-                nhanvien.Email = worksheet.Cells[i, 12].Value.NullString();
-                nhanvien.SoDienThoai = worksheet.Cells[i, 13].Value.NullString();
-                nhanvien.SoDienThoaiNguoiThan = worksheet.Cells[i, 14].Value.NullString();
-                nhanvien.QuanHeNguoiThan = worksheet.Cells[i, 15].Value.NullString();
-                nhanvien.CMTND = worksheet.Cells[i, 16].Value.NullString();
+                nhanvien.NoiSinh = worksheet.Cells[i, 8].Text.NullString();
+                nhanvien.TinhTrangHonNhan = worksheet.Cells[i, 9].Text.NullString();
+                nhanvien.DanToc = worksheet.Cells[i, 10].Text.NullString();
+                nhanvien.DiaChiThuongTru = worksheet.Cells[i, 11].Text.NullString();
+                nhanvien.Email = worksheet.Cells[i, 12].Text.NullString();
+                nhanvien.SoDienThoai = worksheet.Cells[i, 13].Text.NullString();
+                nhanvien.SoDienThoaiNguoiThan = worksheet.Cells[i, 14].Text.NullString();
+                nhanvien.QuanHeNguoiThan = worksheet.Cells[i, 15].Text.NullString();
+                nhanvien.CMTND = worksheet.Cells[i, 16].Text.NullString();
 
-                if (DateTime.TryParse(worksheet.Cells[i, 17].Value.NullString(), out var ngayCapCMTND))
+                if (DateTime.TryParse(worksheet.Cells[i, 17].Text.NullString(), out var ngayCapCMTND))
                 {
                     nhanvien.NgayCapCMTND = ngayCapCMTND.ToString("yyyy-MM-dd");
                 }
@@ -247,12 +247,12 @@ namespace HRMNS.Application.Implementation
                     nhanvien.NgayCapCMTND = "";
                 }
 
-                nhanvien.NoiCapCMTND = worksheet.Cells[i, 18].Value.NullString();
-                nhanvien.TenNganHang = worksheet.Cells[i, 19].Value.NullString();
-                nhanvien.SoTaiKhoanNH = worksheet.Cells[i, 20].Value.NullString();
-                nhanvien.TruongDaoTao = worksheet.Cells[i, 21].Value.NullString();
+                nhanvien.NoiCapCMTND = worksheet.Cells[i, 18].Text.NullString();
+                nhanvien.TenNganHang = worksheet.Cells[i, 19].Text.NullString();
+                nhanvien.SoTaiKhoanNH = worksheet.Cells[i, 20].Text.NullString();
+                nhanvien.TruongDaoTao = worksheet.Cells[i, 21].Text.NullString();
 
-                if (DateTime.TryParse(worksheet.Cells[i, 22].Value.NullString(), out var ngayVao))
+                if (DateTime.TryParse(worksheet.Cells[i, 22].Text.NullString(), out var ngayVao))
                 {
                     nhanvien.NgayVao = ngayVao.ToString("yyyy-MM-dd");
                 }
@@ -261,14 +261,14 @@ namespace HRMNS.Application.Implementation
                     nhanvien.NgayVao = "";
                 }
 
-                nhanvien.NguyenQuan = worksheet.Cells[i, 23].Value.NullString();
-                nhanvien.DChiHienTai = worksheet.Cells[i, 24].Value.NullString();
-                nhanvien.KyLuatLD = worksheet.Cells[i, 25].Value.NullString();
-                nhanvien.Note = worksheet.Cells[i, 26].Value.NullString();
-                nhanvien.MaBHXH = worksheet.Cells[i, 27].Value.NullString();
+                nhanvien.NguyenQuan = worksheet.Cells[i, 23].Text.NullString();
+                nhanvien.DChiHienTai = worksheet.Cells[i, 24].Text.NullString();
+                nhanvien.KyLuatLD = worksheet.Cells[i, 25].Text.NullString();
+                nhanvien.Note = worksheet.Cells[i, 26].Text.NullString();
+                nhanvien.MaBHXH = worksheet.Cells[i, 27].Text.NullString();
 
-                DateTime.TryParse(worksheet.Cells[i, 28].Value.NullString(), out var ngayThamGiaBH);
-                DateTime.TryParse(worksheet.Cells[i, 29].Value.NullString(), out var ngayKetThucBH);
+                DateTime.TryParse(worksheet.Cells[i, 28].Text.NullString(), out var ngayThamGiaBH);
+                DateTime.TryParse(worksheet.Cells[i, 29].Text.NullString(), out var ngayKetThucBH);
 
                 if (ngayThamGiaBH == null)
                 {
@@ -293,15 +293,15 @@ namespace HRMNS.Application.Implementation
                     });
                 }
 
-                nhanvien.MaSoThue = worksheet.Cells[i, 30].Value.NullString();
-                int.TryParse(worksheet.Cells[i, 31].Value.NullString(), out var songuoigiamtru);
+                nhanvien.MaSoThue = worksheet.Cells[i, 30].Text.NullString();
+                int.TryParse(worksheet.Cells[i, 31].Text.NullString(), out var songuoigiamtru);
                 nhanvien.SoNguoiGiamTru = songuoigiamtru;
-                nhanvien.TonGiao = worksheet.Cells[i, 32].Value.NullString();
+                nhanvien.TonGiao = worksheet.Cells[i, 32].Text.NullString();
 
                 float totalPhepNam = 12;
                 float remainPhepNam = 0;
-                float.TryParse(worksheet.Cells[i, 33].Value.NullString(), out totalPhepNam);
-                float.TryParse(worksheet.Cells[i, 34].Value.NullString(), out remainPhepNam);
+                float.TryParse(worksheet.Cells[i, 33].Text.NullString(), out totalPhepNam);
+                float.TryParse(worksheet.Cells[i, 34].Text.NullString(), out remainPhepNam);
 
                 nhanvien.HR_PHEP_NAM.Add(new HR_PHEP_NAM()
                 {
@@ -313,7 +313,7 @@ namespace HRMNS.Application.Implementation
                     UserCreated = GetUserId()
                 });
 
-                nhanvien.MaBoPhanChiTiet = GetBoPhanChiTiet(worksheet.Cells[i, 35].Value.NullString());
+                nhanvien.MaBoPhanChiTiet = GetBoPhanChiTiet(worksheet.Cells[i, 35].Text.NullString());
 
                 nhanvien.Status = Status.Active.NullString();
                 nhanvien.IsDelete = "N";
@@ -335,7 +335,7 @@ namespace HRMNS.Application.Implementation
             string maNV = "";
             for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
             {
-                maNV = worksheet.Cells[i, 1].Value.NullString().ToUpper();
+                maNV = worksheet.Cells[i, 1].Text.NullString().ToUpper();
                 nhanvien = lstNhanVien.FirstOrDefault(x => x.Id == maNV);
 
                 if (nhanvien == null)
@@ -349,7 +349,7 @@ namespace HRMNS.Application.Implementation
                 }
 
                 int? loaiHd = 0;
-                string strLoaiHD = worksheet.Cells[i, 4].Value.NullString();
+                string strLoaiHD = worksheet.Cells[i, 4].Text.NullString();
                 loaiHd = _loaiHDRepository.FindAll(x => x.TenLoaiHD == strLoaiHD).FirstOrDefault().Id;
 
                 //switch (strLoaiHD)
@@ -371,16 +371,23 @@ namespace HRMNS.Application.Implementation
                 //        break;
                 //}
 
+                string ngayKetThuc = worksheet.Cells[i, 7].Text.NullString().ToYYYYMMDD();
+                if (loaiHd == 5 || strLoaiHD == "Hợp Đồng Không Thời Hạn")
+                {
+                    ngayKetThuc = DateTime.Parse(ngayKetThuc).AddYears(30).ToString("yyyy-MM-dd");
+                }
+
+                Random rd = new Random();
                 HR_HOPDONG hopdong = new HR_HOPDONG()
                 {
                     MaNV = maNV,
-                    MaHD = worksheet.Cells[i, 2].Value.NullString(),
-                    TenHD = worksheet.Cells[i, 3].Value.NullString(),
+                    MaHD = maNV + "/" + DateTime.Now.Year + "/" + loaiHd + "_" + rd.Next(1000), //worksheet.Cells[i, 2].Value.NullString(),
+                    TenHD = worksheet.Cells[i, 3].Text.NullString(),
                     LoaiHD = loaiHd,
-                    NgayKy = worksheet.Cells[i, 5].Value.NullString().ToYYYYMMDD(),
-                    NgayHieuLuc = worksheet.Cells[i, 6].Value.NullString().ToYYYYMMDD(),
-                    NgayHetHieuLuc = worksheet.Cells[i, 7].Value.NullString().ToYYYYMMDD(),
-                    NgayTao = worksheet.Cells[i, 5].Value.NullString().ToYYYYMMDD(),
+                    NgayKy = worksheet.Cells[i, 5].Text.NullString().ToYYYYMMDD(),
+                    NgayHieuLuc = worksheet.Cells[i, 6].Text.NullString().ToYYYYMMDD(),
+                    NgayHetHieuLuc = ngayKetThuc,
+                    NgayTao = worksheet.Cells[i, 5].Text.NullString().ToYYYYMMDD(),
                     DateCreated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                     UserCreated = GetUserId()
                 };
@@ -399,7 +406,7 @@ namespace HRMNS.Application.Implementation
             ExcelWorksheet worksheet2 = packet.Workbook.Worksheets[2];
             for (int i = worksheet2.Dimension.Start.Row + 1; i <= worksheet2.Dimension.End.Row; i++)
             {
-                maNV = worksheet2.Cells[i, 1].Value.NullString();
+                maNV = worksheet2.Cells[i, 1].Text.NullString();
                 nhanvien = lstNhanVien.FirstOrDefault(x => x.Id == maNV);
 
                 if (nhanvien == null)
@@ -415,10 +422,10 @@ namespace HRMNS.Application.Implementation
                 HR_QUATRINHLAMVIEC quatrinhCtac = new HR_QUATRINHLAMVIEC()
                 {
                     MaNV = maNV,
-                    TieuDe = worksheet2.Cells[i, 2].Value.NullString(),
-                    ThơiGianBatDau = worksheet2.Cells[i, 3].Value.NullString().ToYYYYMMDD(),
-                    ThoiGianKetThuc = worksheet2.Cells[i, 4].Value.NullString().ToYYYYMMDD(),
-                    Note = worksheet2.Cells[i, 5].Value.NullString(),
+                    TieuDe = worksheet2.Cells[i, 2].Text.NullString(),
+                    ThơiGianBatDau = worksheet2.Cells[i, 3].Text.NullString().ToYYYYMMDD(),
+                    ThoiGianKetThuc = worksheet2.Cells[i, 4].Text.NullString().ToYYYYMMDD(),
+                    Note = worksheet2.Cells[i, 5].Text.NullString(),
                     DateCreated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                     UserCreated = GetUserId()
                 };
@@ -437,7 +444,7 @@ namespace HRMNS.Application.Implementation
             ExcelWorksheet worksheet3 = packet.Workbook.Worksheets[3];
             for (int i = worksheet3.Dimension.Start.Row + 1; i <= worksheet3.Dimension.End.Row; i++)
             {
-                maNV = worksheet3.Cells[i, 1].Value.NullString();
+                maNV = worksheet3.Cells[i, 1].Text.NullString();
                 nhanvien = lstNhanVien.FirstOrDefault(x => x.Id == maNV);
 
                 if (nhanvien == null)
@@ -453,13 +460,13 @@ namespace HRMNS.Application.Implementation
                 HR_TINHTRANGHOSO tinhtranghs = new HR_TINHTRANGHOSO()
                 {
                     MaNV = maNV,
-                    SoYeuLyLich = worksheet3.Cells[i, 2].Value.NullString().Contains("X"),
-                    CMTND = worksheet3.Cells[i, 3].Value.NullString().Contains("X"),
-                    SoHoKhau = worksheet3.Cells[i, 4].Value.NullString().Contains("X"),
-                    GiayKhaiSinh = worksheet3.Cells[i, 5].Value.NullString().Contains("X"),
-                    BangTotNghiep = worksheet3.Cells[i, 6].Value.NullString().Contains("X"),
-                    XacNhanDanSu = worksheet3.Cells[i, 7].Value.NullString().Contains("X"),
-                    AnhThe = worksheet3.Cells[i, 8].Value.NullString().Contains("X"),
+                    SoYeuLyLich = worksheet3.Cells[i, 2].Text.NullString().Contains("X"),
+                    CMTND = worksheet3.Cells[i, 3].Text.NullString().Contains("X"),
+                    SoHoKhau = worksheet3.Cells[i, 4].Text.NullString().Contains("X"),
+                    GiayKhaiSinh = worksheet3.Cells[i, 5].Text.NullString().Contains("X"),
+                    BangTotNghiep = worksheet3.Cells[i, 6].Text.NullString().Contains("X"),
+                    XacNhanDanSu = worksheet3.Cells[i, 7].Text.NullString().Contains("X"),
+                    AnhThe = worksheet3.Cells[i, 8].Text.NullString().Contains("X"),
                     DateCreated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                     UserCreated = GetUserId()
                 };
@@ -498,7 +505,7 @@ namespace HRMNS.Application.Implementation
 
         private int? GetBoPhanChiTiet(string tenbp)
         {
-            return _bophanDetailRepository.FindAll(x => x.TenBoPhanChiTiet == tenbp).FirstOrDefault().Id;
+            return _bophanDetailRepository.FindAll(x => x.TenBoPhanChiTiet == tenbp).FirstOrDefault()?.Id;
         }
     }
 }

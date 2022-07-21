@@ -38,6 +38,12 @@ namespace HRMNS.Data.EF.Extensions
             }
             else
             {
+                string date1 = obj.Replace("/", "-");
+                if (DateTime.TryParse(date1, out var date2))
+                {
+                    return date2.ToString("yyyy-MM-dd");
+                }
+
                 return "";
             }
         }
