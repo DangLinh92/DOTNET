@@ -45,7 +45,8 @@ namespace HRMS.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Search(string department, string timeTo)
         {
-            var lst = _bangCongService.GetDataReport(timeTo, department);
+            List<DeNghiLamThemGioModel> lstLamthemgio = new List<DeNghiLamThemGioModel>();
+            var lst = _bangCongService.GetDataReport(timeTo, department, ref lstLamthemgio);
             string time = timeTo + "-01";
             ViewBag.DayOfMonths = DateTime.DaysInMonth(DateTime.Parse(time).Year, DateTime.Parse(time).Month);
 
@@ -53,6 +54,7 @@ namespace HRMS.Areas.Admin.Controllers
 
             _memoryCache.Remove("ChamCongData");
             _memoryCache.Set("ChamCongData", ChamCongData);
+
             return PartialView("_gridBangCongPartialView", lst);
         }
 
@@ -550,6 +552,126 @@ namespace HRMS.Areas.Admin.Controllers
             }
 
             return result;
+        }
+
+        [HttpPost]
+        public IActionResult ExportDenghiOT(string bophan, string fromTime, string endTime)
+        {
+            List<DeNghiLamThemGioModel> lstlamthem = new List<DeNghiLamThemGioModel>();
+            string timeTo = fromTime.Substring(0, 7);
+            var lst = _bangCongService.GetDataReport(timeTo, bophan, ref lstlamthem);
+
+            List<DeNghiLamThemGioModel> data = new List<DeNghiLamThemGioModel>();
+            if (bophan != "")
+            {
+                data = lstlamthem.Where(x => x.BoPhan == bophan && x.NgayDangKy.CompareTo(fromTime) >= 0 && x.NgayDangKy.CompareTo(endTime) <= 0).OrderBy(x => x.MaNV).ToList();
+            }
+            else
+            {
+                data = lstlamthem.OrderBy(x => x.MaNV).ToList();
+            }
+
+            string sWebRootFolder = _hostingEnvironment.WebRootPath;
+            string directory = Path.Combine(sWebRootFolder, "export-files");
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
+            string sFileName = $"DeNghiLamThemGio_{DateTime.Now:yyyyMMddhhmmss}.xlsx";
+            string fileUrl = $"{Request.Scheme}://{Request.Host}/export-files/{sFileName}";
+            FileInfo file = new FileInfo(Path.Combine(directory, sFileName));
+            FileInfo fileSrc = new FileInfo(Path.Combine(Path.Combine(sWebRootFolder, "templates"), "DeNghiLamThemGioTemp.xlsx"));
+            if (file.Exists)
+            {
+                file.Delete();
+            }
+
+            if (fileSrc.Exists)
+            {
+                fileSrc.CopyTo(file.FullName, true);
+            }
+
+            using (ExcelPackage package = new ExcelPackage(file))
+            {
+                DateTime from = DateTime.Parse(fromTime);
+                DateTime to = DateTime.Parse(endTime);
+                for (int i = from.Day; i <= to.Day; i++)
+                {
+                    if (i < 10)
+                    {
+                        package.Workbook.Worksheets.Copy("Data", "0" + i);
+                    }
+                    else
+                    {
+                        package.Workbook.Worksheets.Copy("Data", i.NullString());
+                    }
+                }
+
+                package.Workbook.Worksheets.Delete(package.Workbook.Worksheets["Data"]);
+
+                ExcelWorksheet worksheet;
+                string month = from.ToString("yyyy-MM");
+                string dayCheck = "";
+                for (int i = from.Day; i <= to.Day; i++)
+                {
+                    if (i < 10)
+                    {
+                        worksheet = package.Workbook.Worksheets["0" + i];
+                    }
+                    else
+                    {
+                        worksheet = package.Workbook.Worksheets[i.NullString()];
+                    }
+
+                    worksheet.Cells["A5"].Value = "Tên bộ phận/ Section: " + bophan + "_Ca  A +B";
+
+                    if (i < 10)
+                    {
+                        dayCheck = month + "-0" + i;
+                        worksheet.Cells["F5"].Value = month + "-0" + i;
+                    }
+                    else
+                    {
+                        dayCheck = month + "-" + i;
+                        worksheet.Cells["F5"].Value = month + "-" + i;
+                    }
+
+                    var lstOfDay = data.Where(x => x.NgayDangKy == dayCheck).OrderBy(x=>x.From).ToList();
+
+                    if (lstOfDay.Count() == 0)
+                    {
+                        package.Workbook.Worksheets.Delete(worksheet);
+                    }
+                    else
+                    {
+                        if (lstOfDay.Count > 50)
+                        {
+                            worksheet.InsertRow(11, lstOfDay.Count - 50);
+
+                            for (int c = 11; c < 11+ lstOfDay.Count - 50; c++)
+                            {
+                                worksheet.Cells["A10:I10"].Copy(worksheet.Cells["A"+c+":I"+c]);
+                            }
+                        }
+
+                        for (int k = 9; k < lstOfDay.Count + 9; k++)
+                        {
+                            worksheet.Cells["A" + k].Value = (k - 8);
+                            worksheet.Cells["B" + k].Value = lstOfDay[k - 9].MaNV;
+                            worksheet.Cells["C" + k].Value = lstOfDay[k - 9].TenNV;
+                            worksheet.Cells["D" + k].Value = lstOfDay[k - 9].From;
+                            worksheet.Cells["E" + k].Value = lstOfDay[k - 9].To;
+                            worksheet.Cells["F" + k].Value = double.Parse(lstOfDay[k - 9].Duration);
+                            worksheet.Cells["I" + k].Value = lstOfDay[k - 9].Note;
+                        }
+                    }
+                }
+
+                package.Save();
+            }
+
+            return new OkObjectResult(fileUrl);
         }
     }
 

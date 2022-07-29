@@ -5,6 +5,47 @@
     }
 
     function registerEvents() {
+
+        $('#btn-denghilamthemgio').on('click', function () {
+            $('#_txtBeginTimeOT').val('');
+            $('#_txtEndTimeOT').val('');
+            $('#denghilamthemgioModel').modal('show');
+        });
+
+        $('#btnExportDenghiLamThemGio').on('click', function (e) {
+            if ($('#frmDenghilamthemgio').valid()) {
+                e.preventDefault();
+
+                let department = $('#cboDepartmentDenghi').val();
+                let fromTime = $('#_txtBeginTimeOT').val();
+                let endTime = $('#_txtEndTimeOT').val();
+
+                hrms.run_waitMe($('#frmDenghilamthemgio'));
+
+                $.ajax({
+                    url: '/Admin/BangCong/ExportDenghiOT',
+                    type: 'POST',
+                    data:
+                    {
+                        bophan: department,
+                        fromTime: fromTime,
+                        endTime: endTime
+                    },
+                    success: function (response) {
+                        window.location.href = response;
+                        $('#denghilamthemgioModel').modal('hide');
+                        hrms.hide_waitMe($('#frmDenghilamthemgio'));
+                    },
+                    error: function (status) {
+                        console.log(status.responseText);
+                        hrms.notify('error:' + status.responseText, 'error', 'alert', function () {
+                            hrms.hide_waitMe($('#frmDenghilamthemgio'));
+                        });
+                    }
+                })
+            }
+        });
+
         $('#btnExportData').on('click', function () {
             hrms.run_waitMe($('#bangCongDataTable'));
             $.ajax({
@@ -65,6 +106,7 @@
                 if (deparment != '' && deparment != 'SP') {
                     var render = "<option value='" + deparment + "'>" + deparment + "</option >";
                     $('#cboDepartment').html(render);
+                    $('#cboDepartmentDenghi').html(render);
                 }
                 else {
                     var render = "<option value=''>--All--</option>";
@@ -72,6 +114,7 @@
                         render += "<option value='" + item.Id + "'>" + item.TenBoPhan + "</option >"
                     });
                     $('#cboDepartment').html(render);
+                    $('#cboDepartmentDenghi').html(render);
                 }
             },
             error: function (status) {

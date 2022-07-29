@@ -1,0 +1,39 @@
+﻿<!-- Add Nhan Vien Ca Lam Viec Modal -->
+<div id="denghilamthemgioModel" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Đề nghị làm thêm giờ</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="frmDenghilamthemgio">
+                    <div class="form-group form-focus select-focus">
+                        <select class="select floating" id="cboDepartmentDenghi" name="Department">
+                            <option value=""> -- Select -- </option>
+                            <option value="New">New</option>
+                            <option value="Active">Active</option>
+                            <option value="InActive">InActive</option>
+                        </select>
+                        <label class="focus-label">Deparment</label>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="_txtBeginTimeOT">Ngày Bắt Đầu<span class="text-danger">*</span></label>
+                        <div class="cal-icon"><input id="_txtBeginTimeOT" class="form-control datetimepicker" name="NgayBatDau" type="text" required></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="_txtEndTimeOT">Ngày Kết Thúc<span class="text-danger">*</span></label>
+                        <div class="cal-icon"><input id="_txtEndTimeOT" class="form-control datetimepicker" name="NgayKetThuc" type="text" required></div>
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn" id="btnExportDenghiLamThemGio">Export File</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Add Expense Modal -->

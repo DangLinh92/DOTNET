@@ -133,5 +133,10 @@ namespace HRMNS.Application.ViewModels.System
             }
         }
         public bool Registered { get; set; }
+
+        public string fromTime { get; set; }
+        public string toTime { get; set; }
+
+        public int orderTime { get; set; }
     }
 }

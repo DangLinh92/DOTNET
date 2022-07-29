@@ -44,7 +44,7 @@
             $('select[name="bangCongDataTable_length"]').removeClass('form-control-sm');
         });
 
-        $('.datetimepicker').datetimepicker({
+        $('#searchToTime').datetimepicker({
             format: 'YYYY-MM',
             icons: {
                 up: "fa fa-angle-up",
@@ -89,6 +89,7 @@
                     <button type="button" class="btn btn-info dropdown-toggle" id="btnmanagement" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Management</button>
                     <div class="dropdown-menu" style="">
                         <a class="dropdown-item" href="#" id="btnExportData2">Tổng hợp tình hình nhân sự</a>
+                        <a class="dropdown-item" href="#" id="btn-denghilamthemgio">Đề nghị làm thêm giờ</a>
                     </div>
                 </div>
             </div>
@@ -170,3 +171,4 @@
     </div>
 </div>
 <!-- Delete Expense Modal -->
+<partial name="_denghilamthemgioModel" />
