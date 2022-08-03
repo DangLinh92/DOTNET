@@ -153,7 +153,7 @@ namespace HRMNS.Application.Implementation
                 {
                     ImportDetailInfo(packet);
                 }
-                else if (param == CommonConstants.IMPORT_CHUCVU2_EMP)
+                else if (param == CommonConstants.IMPORT_CHUCVU2_EMP) // import chuc vu : gian tiep sx, truc tiep sx
                 {
                     ImportChucVu2Info(packet);
                 }
@@ -177,7 +177,7 @@ namespace HRMNS.Application.Implementation
                 {
                     row = table.NewRow();
 
-                    if (string.IsNullOrEmpty(worksheet.Cells[i, 1].Text.NullString().ToUpper()))
+                    if (string.IsNullOrEmpty(worksheet.Cells[i, 1].Text.NullString().ToUpper()) || _nhanvienRepository.FindById(worksheet.Cells[i, 1].Text.NullString().ToUpper()) == null)
                     {
                         continue;
                     }
@@ -209,7 +209,7 @@ namespace HRMNS.Application.Implementation
                 nhanvien = new HR_NHANVIEN();
                 nhanvien.Id = worksheet.Cells[i, 2].Text.NullString().ToUpper();
 
-                if (string.IsNullOrEmpty(nhanvien.Id))
+                if (string.IsNullOrEmpty(nhanvien.Id) || _nhanvienRepository.FindById(nhanvien.Id) != null)
                 {
                     continue;
                 }

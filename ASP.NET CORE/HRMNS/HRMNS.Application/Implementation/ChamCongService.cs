@@ -259,10 +259,18 @@ namespace HRMNS.Application.Implementation
 
             if (entity != null)
             {
-                entity.FirstIn_Time = model.FirstIn_Time;
-                entity.Last_Out_Time = model.Last_Out_Time;
-                entity.FirstIn = "IN";
-                entity.LastOut = "OUT";
+                if(entity.FirstIn_Time != model.FirstIn_Time)
+                {
+                    entity.FirstIn_Time = model.FirstIn_Time;
+                    entity.FirstIn = "IN";
+                }
+                
+                if(entity.Last_Out_Time != model.Last_Out_Time)
+                {
+                    entity.Last_Out_Time = model.Last_Out_Time;
+                    entity.LastOut = "OUT";
+                }
+                
                 entity.UserHandle = "Y";
                 entity.UserModified = model.UserModified;
                 _chamCongLogRepository.Update(entity);

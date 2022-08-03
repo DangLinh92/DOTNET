@@ -27,14 +27,33 @@
 
             var table = $('#chamCongLogDataTable').DataTable({
                 select: true,
+                initComplete: function () {
+                    this.api().columns([1, 2, 3, 4, 7, 8, 9]).every(function () {
+                        var column = this;
+                        var select = $('<select><option value="">All</option></select>')
+                            .appendTo($(column.header()))
+                            .on('change', function () {
+                                var val = $.fn.dataTable.util.escapeRegex(
+                                    $(this).val()
+                                );
+                                column
+                                    .search(val ? '^' + val + '$' : '', true, false)
+                                    .draw();
+                            });
+
+                        column.data().unique().sort().each(function (d, j) {
+                            select.append('<option value="' + d + '">' + d + '</option>');
+                        });
+                    });
+                },
                 columnDefs: [{
-                targets: 0,
-                className: 'dt-body-center',
-                render: function (data, type, full, meta) {
-                    return '<input type="checkbox" name="id[]" value="' + $('<div/>').text(data).html() + '">';
-                }
-            }],
-              "order": [13, 'asc']
+                    targets: 0,
+                    className: 'dt-body-center',
+                    render: function (data, type, full, meta) {
+                        return '<input type="checkbox" name="id[]" value="' + $('<div/>').text(data).html() + '">';
+                    }
+                }],
+                "order": [13, 'asc']
             });
 
             $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
@@ -96,7 +115,7 @@
             <div class="col-auto float-right ml-auto">
                 <a href="#" id="btnGetLog" class="btn add-btn"><i class="fa fa-arrow-circle-down"></i>Update Log Time</a>
                 @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
-                  (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin" || User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" || User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "AssLeader"))
+               (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin" || User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" || User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "AssLeader"))
                 {
                     <div class="btn-group" style="margin-right:5px">
                         <button type="button" class="btn btn-info dropdown-toggle" id="btnManagement" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Management</button>
@@ -166,30 +185,29 @@
         </div>
     </form>
     <!-- /Search Filter -->
-
     @*<div class="row" style="margin-bottom:10px">
-        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-        </div>
-        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-        </div>
-        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-        </div>
-        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-        </div>
-        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-        </div>
-        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-            @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
-  (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "GrLeader" ||
-  User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "KRManager" ||
-  User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" ||
-  User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin"))
-            {
-                <a href="#" style="min-width: 120px" class="btn btn-info" id="btnApprove" data-target="#approve_overtime">  Approve</a>
-                <a href="#" class="btn btn-info" id="btnUnApprove" data-target="#unapprove_overtime">UnApprove</a>
-            }
-        </div>
-    </div>*@
+              <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+              </div>
+              <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+              </div>
+              <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+              </div>
+              <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+              </div>
+              <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+              </div>
+              <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                  @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+        (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "GrLeader" ||
+        User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "KRManager" ||
+        User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" ||
+        User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin"))
+                  {
+                      <a href="#" style="min-width: 120px" class="btn btn-info" id="btnApprove" data-target="#approve_overtime">  Approve</a>
+                      <a href="#" class="btn btn-info" id="btnUnApprove" data-target="#unapprove_overtime">UnApprove</a>
+                  }
+              </div>
+          </div>*@
 
     <div class="row">
         <div class="col-md-12">

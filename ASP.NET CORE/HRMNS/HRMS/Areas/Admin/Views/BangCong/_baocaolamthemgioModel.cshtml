@@ -1,17 +1,17 @@
 ﻿<!-- Add Nhan Vien Ca Lam Viec Modal -->
-<div id="denghilamthemgioModel" class="modal custom-modal fade" role="dialog">
+<div id="baocaolamthemgioModel" class="modal custom-modal fade" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Đề nghị làm thêm giờ</h5>
+                <h5 class="modal-title">Báo cáo làm thêm giờ</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="frmDenghilamthemgio">
+                <form id="frmBaocaolamthemgio">
                     <div class="form-group form-focus select-focus">
-                        <select class="select floating" id="cboDepartmentDenghi" name="Department">
+                        <select class="select floating" id="cboDepartmentBaoCao" name="Department">
                             <option value=""> -- Select -- </option>
                             <option value="New">New</option>
                             <option value="Active">Active</option>
@@ -21,16 +21,16 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="_txtBeginTimeOT">Ngày Bắt Đầu<span class="text-danger">*</span></label>
-                        <div class="cal-icon"><input id="_txtBeginTimeOT" class="form-control datetimepicker" name="NgayBatDau" type="text" required></div>
+                        <label for="_txtBeginTimeBC">Ngày Bắt Đầu<span class="text-danger">*</span></label>
+                        <div class="cal-icon"><input id="_txtBeginTimeBC" class="form-control datetimepicker" name="NgayBatDau" type="text" required></div>
                     </div>
                     <div class="form-group">
-                        <label for="_txtEndTimeOT">Ngày Kết Thúc<span class="text-danger">*</span></label>
-                        <div class="cal-icon"><input id="_txtEndTimeOT" class="form-control datetimepicker" name="NgayKetThuc" type="text" required></div>
+                        <label for="_txtEndTimeBC">Ngày Kết Thúc<span class="text-danger">*</span></label>
+                        <div class="cal-icon"><input id="_txtEndTimeBC" class="form-control datetimepicker" name="NgayKetThuc" type="text" required></div>
                         <span><i>* Ngày bắt đầu và ngày kết thúc cùng thuộc 1 tháng</i></span>
                     </div>
                     <div class="submit-section">
-                        <button class="btn btn-primary submit-btn" id="btnExportDenghiLamThemGio">Export File</button>
+                        <button class="btn btn-primary submit-btn" id="btnExportBaocaoLamThemGio">Export File</button>
                     </div>
                 </form>
             </div>

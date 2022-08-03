@@ -6,6 +6,46 @@
 
     function registerEvents() {
 
+        $('#btn-baocaolamthemgio').on('click', function () {
+            $('#_txtBeginTimeBC').val('');
+            $('#_txtEndTimeBC').val('');
+            $('#baocaolamthemgioModel').modal('show');
+        });
+
+        $('#btnExportBaocaoLamThemGio').on('click', function (e) {
+            if ($('#frmBaocaolamthemgio').valid()) {
+                e.preventDefault();
+
+                let department = $('#cboDepartmentBaoCao').val();
+                let fromTime = $('#_txtBeginTimeBC').val();
+                let endTime = $('#_txtEndTimeBC').val();
+
+                hrms.run_waitMe($('#frmBaocaolamthemgio'));
+
+                $.ajax({
+                    url: '/Admin/BangCong/ExportBaoCaoOT',
+                    type: 'POST',
+                    data:
+                    {
+                        bophan: department,
+                        fromTime: fromTime,
+                        endTime: endTime
+                    },
+                    success: function (response) {
+                        window.location.href = response;
+                        $('#baocaolamthemgioModel').modal('hide');
+                        hrms.hide_waitMe($('#frmBaocaolamthemgio'));
+                    },
+                    error: function (status) {
+                        console.log(status.responseText);
+                        hrms.notify('error:' + status.responseText, 'error', 'alert', function () {
+                            hrms.hide_waitMe($('#frmBaocaolamthemgio'));
+                        });
+                    }
+                })
+            }
+        });
+
         $('#btn-denghilamthemgio').on('click', function () {
             $('#_txtBeginTimeOT').val('');
             $('#_txtEndTimeOT').val('');
@@ -67,8 +107,8 @@
             let _time = $('#searchToTime').val();
             let _dept = $('#cboDepartment').val();
 
-            if (!_time || !_dept) {
-                hrms.notify('Nhập tháng và bộ phận!', 'error', 'alert', function () { });
+            if (!_time) {
+                hrms.notify('Hãy nhập tháng!', 'error', 'alert', function () { });
                 return;
             }
 
@@ -115,6 +155,7 @@
                     });
                     $('#cboDepartment').html(render);
                     $('#cboDepartmentDenghi').html(render);
+                    $('#cboDepartmentBaoCao').html(render);
                 }
             },
             error: function (status) {

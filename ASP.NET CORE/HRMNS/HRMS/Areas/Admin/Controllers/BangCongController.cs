@@ -21,14 +21,16 @@ namespace HRMS.Areas.Admin.Controllers
     public class BangCongController : AdminBaseController
     {
         private IBangCongService _bangCongService;
+        private IBoPhanService _boPhanService;
         private readonly IWebHostEnvironment _hostingEnvironment;
         private ChamCongDataModel ChamCongData;
         private readonly IMemoryCache _memoryCache;
 
-        public BangCongController(IBangCongService bangCongService, IWebHostEnvironment hostEnvironment, ILogger<NhanVien_CaLamViecController> logger, IMemoryCache memoryCache)
+        public BangCongController(IBangCongService bangCongService, IBoPhanService boPhanService, IWebHostEnvironment hostEnvironment, ILogger<NhanVien_CaLamViecController> logger, IMemoryCache memoryCache)
         {
             _bangCongService = bangCongService;
             _hostingEnvironment = hostEnvironment;
+            _boPhanService = boPhanService;
             _logger = logger;
             _memoryCache = memoryCache;
         }
@@ -65,10 +67,35 @@ namespace HRMS.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult TongHopNhanSuDaily(string time, string dept)
         {
-            var data = _bangCongService.TongHopNhanSuReport(time, dept).OrderBy(x => x.NgayBaoCao).ToList();
-            if (data.Count == 0)
+            List<string> bophans = new List<string>();
+            List<List<TongHopNhanSuDailyViewModel>> lstNhansutonghop = new List<List<TongHopNhanSuDailyViewModel>>();
+
+            if (dept.NullString() == "")
             {
-                return new BadRequestObjectResult("Not found data!");
+                var lstbp = _boPhanService.GetAll("");
+                foreach (var item in lstbp)
+                {
+                    bophans.Add(item.TenBoPhan);
+                }
+
+                foreach (var item in bophans)
+                {
+                    var data = _bangCongService.TongHopNhanSuReport(time, item).OrderBy(x => x.NgayBaoCao).ToList();
+                    if (data.Count > 0)
+                    {
+                        lstNhansutonghop.Add(data);
+                    }
+                }
+            }
+            else
+            {
+                var data = _bangCongService.TongHopNhanSuReport(time, dept).OrderBy(x => x.NgayBaoCao).ToList();
+                if (data.Count == 0)
+                {
+                    return new BadRequestObjectResult("Not found data!");
+                }
+
+                lstNhansutonghop.Add(data);
             }
 
             string sWebRootFolder = _hostingEnvironment.WebRootPath;
@@ -94,133 +121,164 @@ namespace HRMS.Areas.Admin.Controllers
 
             using (ExcelPackage package = new ExcelPackage(file))
             {
-                // add a new worksheet to the empty workbook
-                ExcelWorksheet worksheet = package.Workbook.Worksheets[1];
-
-                int beginIndex = 5;
-                string cellfrom = "";
-                string cellTo = "";
-                string colName = "";
-                string newColName = "";
-
-                for (int i = 0; i < data.Count; i++)
+                foreach (var item in bophans)
                 {
-                    worksheet.Cells["A" + beginIndex].Value = dept;
-                    worksheet.Cells["B" + beginIndex].Value = data[i].TongNV;
-                    worksheet.Cells["C" + beginIndex].Value = data[i].NghiTS;
-                    worksheet.Cells["E" + beginIndex].Value = data[i].NgayBaoCao;
+                    package.Workbook.Worksheets.Copy("Data", item);
+                }
 
-                    foreach (var calv in data[i].CaLamViec_Value)
+                package.Workbook.Worksheets.Delete(package.Workbook.Worksheets["Data"]);
+
+                string sheetName = "";
+                foreach (var data in lstNhansutonghop)
+                {
+                    sheetName = data.FirstOrDefault().BoPhan;
+
+                    if (sheetName.NullString() == "") continue;
+
+                    // add a new worksheet to the empty workbook
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[sheetName];
+
+                    int beginIndex = 5;
+                    string cellfrom = "";
+                    string cellTo = "";
+                    string colName = "";
+                    string newColName = "";
+
+                    for (int i = 0; i < data.Count; i++)
                     {
-                        if (calv.CalamViec == "CN_WHC")
+                        worksheet.Cells["A" + beginIndex].Value = dept;
+                        worksheet.Cells["B" + beginIndex].Value = data[i].TongNV;
+                        worksheet.Cells["C" + beginIndex].Value = data[i].NghiTS;
+                        worksheet.Cells["E" + beginIndex].Value = data[i].NgayBaoCao;
+
+                        foreach (var calv in data[i].CaLamViec_Value)
                         {
-                            foreach (var tt in calv.ThongTins)
+                            if (calv.CalamViec == "CN_WHC")
                             {
-                                if (tt.TrucTiepGianTiep == "TrucTiepSX" && tt.ChucVu == "OP")
+                                foreach (var tt in calv.ThongTins)
                                 {
-                                    for (int k = 0; k < 16; k++)
+                                    if (tt.TrucTiepGianTiep == "TrucTiepSX" && tt.ChucVu == "OP")
                                     {
-                                        colName = GetExcelColumnName(k + 9);
-
-                                        if (colName == "J" || colName == "W" || colName == "U")
+                                        for (int k = 0; k < 16; k++)
                                         {
-                                            continue;
-                                        }
+                                            colName = GetExcelColumnName(k + 9);
 
-                                        // fill working status
-                                        newColName = colName + (beginIndex + 0);
-                                        UpdateDataNsu(colName, newColName, tt, ref worksheet);
+                                            if (colName == "J" || colName == "W" || colName == "U")
+                                            {
+                                                continue;
+                                            }
+
+                                            // fill working status
+                                            newColName = colName + (beginIndex + 0);
+                                            UpdateDataNsu(colName, newColName, tt, ref worksheet);
+                                        }
+                                    }
+                                    else
+                                     if (tt.TrucTiepGianTiep == "TrucTiepSX" && tt.ChucVu == "STAFF")
+                                    {
+                                        for (int k = 0; k < 16; k++)
+                                        {
+                                            colName = GetExcelColumnName(k + 9);
+
+                                            if (colName == "J" || colName == "W" || colName == "U")
+                                            {
+                                                continue;
+                                            }
+
+                                            // fill working status
+                                            newColName = colName + (beginIndex + 1);
+                                            UpdateDataNsu(colName, newColName, tt, ref worksheet);
+                                        }
+                                    }
+                                    else
+                                    if (tt.TrucTiepGianTiep == "GianTiepSX" && tt.ChucVu == "STAFF PM")
+                                    {
+                                        for (int k = 0; k < 16; k++)
+                                        {
+                                            colName = GetExcelColumnName(k + 9);
+
+                                            if (colName == "J" || colName == "W" || colName == "U")
+                                            {
+                                                continue;
+                                            }
+
+                                            // fill working status
+                                            newColName = colName + (beginIndex + 2);
+                                            UpdateDataNsu(colName, newColName, tt, ref worksheet);
+                                        }
                                     }
                                 }
-                                else
-                                 if (tt.TrucTiepGianTiep == "TrucTiepSX" && tt.ChucVu == "STAFF")
+                            }
+                            else if (calv.CalamViec == "CD_WHC")
+                            {
+                                foreach (var tt in calv.ThongTins)
                                 {
-                                    for (int k = 0; k < 16; k++)
+                                    if (tt.TrucTiepGianTiep == "TrucTiepSX" && tt.ChucVu == "OP")
                                     {
-                                        colName = GetExcelColumnName(k + 9);
-
-                                        if (colName == "J" || colName == "W" || colName == "U")
+                                        for (int k = 0; k < 16; k++)
                                         {
-                                            continue;
-                                        }
+                                            colName = GetExcelColumnName(k + 9);
 
-                                        // fill working status
-                                        newColName = colName + (beginIndex + 1);
-                                        UpdateDataNsu(colName, newColName, tt, ref worksheet);
+                                            if (colName == "J" || colName == "W" || colName == "U")
+                                            {
+                                                continue;
+                                            }
+
+                                            // fill working status
+                                            newColName = colName + (beginIndex + 3);
+                                            UpdateDataNsu(colName, newColName, tt, ref worksheet);
+                                        }
                                     }
-                                }
-                                else
-                                if (tt.TrucTiepGianTiep == "GianTiepSX" && tt.ChucVu == "STAFF PM")
-                                {
-                                    for (int k = 0; k < 16; k++)
+                                    else
+                                    if (tt.TrucTiepGianTiep == "TrucTiepSX" && tt.ChucVu == "STAFF")
                                     {
-                                        colName = GetExcelColumnName(k + 9);
-
-                                        if (colName == "J" || colName == "W" || colName == "U")
+                                        for (int k = 0; k < 16; k++)
                                         {
-                                            continue;
-                                        }
+                                            colName = GetExcelColumnName(k + 9);
 
-                                        // fill working status
-                                        newColName = colName + (beginIndex + 2);
-                                        UpdateDataNsu(colName, newColName, tt, ref worksheet);
+                                            if (colName == "J" || colName == "W" || colName == "U")
+                                            {
+                                                continue;
+                                            }
+
+                                            // fill working status
+                                            newColName = colName + (beginIndex + 4);
+                                            UpdateDataNsu(colName, newColName, tt, ref worksheet);
+                                        }
+                                    }
+                                    else if (tt.TrucTiepGianTiep == "GianTiepSX" && tt.ChucVu == "STAFF PM")
+                                    {
+                                        for (int k = 0; k < 16; k++)
+                                        {
+                                            colName = GetExcelColumnName(k + 9);
+
+                                            if (colName == "J" || colName == "W" || colName == "U")
+                                            {
+                                                continue;
+                                            }
+
+                                            // fill working status
+                                            newColName = colName + (beginIndex + 5);
+                                            UpdateDataNsu(colName, newColName, tt, ref worksheet);
+                                        }
                                     }
                                 }
                             }
                         }
-                        else if (calv.CalamViec == "CD_WHC")
+
+                        if (i < data.Count - 2)
                         {
-                            foreach (var tt in calv.ThongTins)
-                            {
-                                if (tt.TrucTiepGianTiep == "TrucTiepSX" && tt.ChucVu == "OP")
-                                {
-                                    for (int k = 0; k < 16; k++)
-                                    {
-                                        colName = GetExcelColumnName(k + 9);
-
-                                        if (colName == "J" || colName == "W" || colName == "U")
-                                        {
-                                            continue;
-                                        }
-
-                                        // fill working status
-                                        newColName = colName + (beginIndex + 3);
-                                        UpdateDataNsu(colName, newColName, tt, ref worksheet);
-                                    }
-                                }
-                                else
-                                if (tt.TrucTiepGianTiep == "TrucTiepSX" && tt.ChucVu == "STAFF")
-                                {
-                                    for (int k = 0; k < 16; k++)
-                                    {
-                                        colName = GetExcelColumnName(k + 9);
-
-                                        if (colName == "J" || colName == "W" || colName == "U")
-                                        {
-                                            continue;
-                                        }
-
-                                        // fill working status
-                                        newColName = colName + (beginIndex + 4);
-                                        UpdateDataNsu(colName, newColName, tt, ref worksheet);
-                                    }
-                                }
-                            }
+                            // copy range cell
+                            cellfrom = "A" + (beginIndex + 6) + ":X" + (beginIndex + 11);
+                            cellTo = "A" + (beginIndex + 12) + ":X" + (beginIndex + 17);
+                            worksheet.Cells[cellfrom].Copy(worksheet.Cells[cellTo]);
                         }
-                    }
 
-                    if (i < data.Count - 2)
-                    {
-                        // copy range cell
-                        cellfrom = "A" + (beginIndex + 5) + ":X" + (beginIndex + 9);
-                        cellTo = "A" + (beginIndex + 10) + ":X" + (beginIndex + 14);
-                        worksheet.Cells[cellfrom].Copy(worksheet.Cells[cellTo]);
-                    }
-
-                    beginIndex += 5;
-                    if (data.Count == 1)
-                    {
-                        worksheet.DeleteRow(10, 5);
+                        beginIndex += 6;
+                        if (data.Count == 1)
+                        {
+                            worksheet.DeleteRow(11, 6);
+                        }
                     }
                 }
 
@@ -559,16 +617,16 @@ namespace HRMS.Areas.Admin.Controllers
         {
             List<DeNghiLamThemGioModel> lstlamthem = new List<DeNghiLamThemGioModel>();
             string timeTo = fromTime.Substring(0, 7);
-            var lst = _bangCongService.GetDataReport(timeTo, bophan, ref lstlamthem);
+            var lst = _bangCongService.GetDataReport(timeTo, bophan.NullString(), ref lstlamthem);
 
             List<DeNghiLamThemGioModel> data = new List<DeNghiLamThemGioModel>();
-            if (bophan != "")
+            if (bophan.NullString() != "")
             {
                 data = lstlamthem.Where(x => x.BoPhan == bophan && x.NgayDangKy.CompareTo(fromTime) >= 0 && x.NgayDangKy.CompareTo(endTime) <= 0).OrderBy(x => x.MaNV).ToList();
             }
             else
             {
-                data = lstlamthem.OrderBy(x => x.MaNV).ToList();
+                data = lstlamthem.Where(x => x.NgayDangKy.CompareTo(fromTime) >= 0 && x.NgayDangKy.CompareTo(endTime) <= 0).OrderBy(x => x.MaNV).ToList();
             }
 
             string sWebRootFolder = _hostingEnvironment.WebRootPath;
@@ -637,7 +695,7 @@ namespace HRMS.Areas.Admin.Controllers
                         worksheet.Cells["F5"].Value = month + "-" + i;
                     }
 
-                    var lstOfDay = data.Where(x => x.NgayDangKy == dayCheck).OrderBy(x=>x.From).ToList();
+                    var lstOfDay = data.Where(x => x.NgayDangKy == dayCheck).OrderBy(x => x.From).ToList();
 
                     if (lstOfDay.Count() == 0)
                     {
@@ -649,9 +707,9 @@ namespace HRMS.Areas.Admin.Controllers
                         {
                             worksheet.InsertRow(11, lstOfDay.Count - 50);
 
-                            for (int c = 11; c < 11+ lstOfDay.Count - 50; c++)
+                            for (int c = 11; c < 11 + lstOfDay.Count - 50; c++)
                             {
-                                worksheet.Cells["A10:I10"].Copy(worksheet.Cells["A"+c+":I"+c]);
+                                worksheet.Cells["A10:I10"].Copy(worksheet.Cells["A" + c + ":I" + c]);
                             }
                         }
 
@@ -666,6 +724,122 @@ namespace HRMS.Areas.Admin.Controllers
                             worksheet.Cells["I" + k].Value = lstOfDay[k - 9].Note;
                         }
                     }
+                }
+
+                package.Save();
+            }
+
+            return new OkObjectResult(fileUrl);
+        }
+
+        [HttpPost]
+        public IActionResult ExportBaoCaoOT(string bophan, string fromTime, string endTime)
+        {
+            List<DeNghiLamThemGioModel> lstlamthem = new List<DeNghiLamThemGioModel>();
+            string timeTo = fromTime.Substring(0, 7);
+            var lst = _bangCongService.GetDataReport(timeTo, bophan.NullString(), ref lstlamthem);
+
+            List<DeNghiLamThemGioModel> data = new List<DeNghiLamThemGioModel>();
+            if (bophan.NullString() != "")
+            {
+                data = lstlamthem.Where(x => x.BoPhan == bophan && x.NgayDangKy.CompareTo(fromTime) >= 0 && x.NgayDangKy.CompareTo(endTime) <= 0).OrderBy(x => x.MaNV).ToList();
+            }
+            else
+            {
+                data = lstlamthem.Where(x => x.NgayDangKy.CompareTo(fromTime) >= 0 && x.NgayDangKy.CompareTo(endTime) <= 0).OrderBy(x => x.MaNV).ToList();
+            }
+
+            List<DeNghiLamThemGioModel> data2 = new List<DeNghiLamThemGioModel>();
+            DeNghiLamThemGioModel model;
+            double duration = 0;
+            foreach (var item in data.ToList().GroupBy(x => new { x.MaNV, x.NgayDangKy }).Select(y => y))
+            {
+                model = new DeNghiLamThemGioModel()
+                {
+                    MaNV = item.Key.MaNV,
+                    NgayDangKy = item.Key.NgayDangKy
+                };
+                duration = 0;
+                foreach (var sub in item)
+                {
+                    model.TenNV = sub.TenNV;
+                    model.BoPhan = sub.BoPhan;
+
+                    if (!string.IsNullOrEmpty(sub.Duration.NullString()) && double.TryParse(sub.Duration, out _))
+                    {
+                        duration += double.Parse(sub.Duration);
+                    }
+                }
+                model.Duration = duration.IfNullIsZero();
+                data2.Add(model);
+            };
+
+            string sWebRootFolder = _hostingEnvironment.WebRootPath;
+            string directory = Path.Combine(sWebRootFolder, "export-files");
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
+            string sFileName = $"BaoCaoLamThemGio_{DateTime.Now:yyyyMMddhhmmss}.xlsx";
+            string fileUrl = $"{Request.Scheme}://{Request.Host}/export-files/{sFileName}";
+            FileInfo file = new FileInfo(Path.Combine(directory, sFileName));
+            FileInfo fileSrc = new FileInfo(Path.Combine(Path.Combine(sWebRootFolder, "templates"), "BaoCaoLamThemGio.xlsx"));
+            if (file.Exists)
+            {
+                file.Delete();
+            }
+
+            if (fileSrc.Exists)
+            {
+                fileSrc.CopyTo(file.FullName, true);
+            }
+
+            using (ExcelPackage package = new ExcelPackage(file))
+            {
+                DateTime from = DateTime.Parse(fromTime);
+                DateTime to = DateTime.Parse(endTime);
+
+                ExcelWorksheet worksheet = package.Workbook.Worksheets[1];
+
+                string month = from.ToString("yyyy-MM");
+
+                worksheet.Cells["L1"].Value = "DỮ LIỆU OT THÁNG " + month + "_" + bophan;
+
+                int no = 0;
+                string colName = "";
+                var lstData = data2.GroupBy(x => new { x.MaNV, x.BoPhan, x.TenNV }).Select(y => y).OrderBy(x => x.Key.BoPhan).ThenBy(x => x.Key.MaNV);
+
+                if (lstData.Count() > 10)
+                {
+                    worksheet.InsertRow(11, lstData.Count());
+
+                    for (int c = 11; c < 11 + lstData.Count(); c++)
+                    {
+                        worksheet.Cells["A10:AI10"].Copy(worksheet.Cells["A" + c + ":AI" + c]);
+                    }
+                }
+
+                foreach (var item in lstData)
+                {
+                    worksheet.Cells["A" + (no + 5)].Value = no + 1;
+                    worksheet.Cells["B" + (no + 5)].Value = item.Key.BoPhan;
+                    worksheet.Cells["C" + (no + 5)].Value = item.Key.MaNV;
+                    worksheet.Cells["D" + (no + 5)].Value = item.Key.TenNV;
+
+                    foreach (var sub in item)
+                    {
+                        for (int i = 0; i < 31; i++)
+                        {
+                            if (int.Parse(sub.NgayDangKy.Substring(8, 2)) == i + 1)
+                            {
+                                colName = GetExcelColumnName(i + 5);
+                                worksheet.Cells[colName + (no + 5)].Value = double.Parse(sub.Duration.IfNullIsZero());
+                            } //yyyy-MM-dd
+                        }
+                    }
+
+                    no += 1;
                 }
 
                 package.Save();

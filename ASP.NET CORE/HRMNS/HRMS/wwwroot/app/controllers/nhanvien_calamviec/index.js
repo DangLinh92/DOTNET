@@ -7,6 +7,37 @@
 
     function registerEvents() {
 
+        $('#btn-exportShift').on('click', function () {
+
+            let department = $('#cboDepartment').val();
+            let status = $('#searchStatus').val();
+            let timeFrom = $('#searchFromTime').val();
+            let timeTo = $('#searchToTime').val();
+
+            $.ajax({
+                type: "POST",
+                data:
+                {
+                    department: department,
+                    status: status,
+                    timeFrom: timeFrom,
+                    timeTo: timeTo
+                },
+                url: "/Admin/NhanVien_CaLamViec/ExportExcel",
+                beforeSend: function () {
+                    hrms.run_waitMe($('#gridNvienCalamviecIndex'));
+                },
+                success: function (response) {
+                    window.location.href = response;
+                    hrms.hide_waitMe($('#gridNvienCalamviecIndex'));
+                },
+                error: function () {
+                    hrms.notify('Has an error in progress!', 'error', 'alert', function () { });
+                    hrms.hide_waitMe($('#gridNvienCalamviecIndex'));
+                }
+            });
+        });
+
         // Import excel
         // 1. import shift
         $('#btn-importShift').on('click', function () {
@@ -229,8 +260,7 @@
                         if (response.CaLV_DB) {
                             $('#_txtDmCaLviec').val(response.CaLV_DB);
                         }
-                        else
-                        {
+                        else {
                             $('#_txtDmCaLviec').val(response.Danhmuc_CaLviec);
                         }
 
@@ -580,8 +610,7 @@
                     }
                 });
             }
-            else
-            {
+            else {
                 ids.push(code);
             }
 
@@ -622,7 +651,7 @@
             table1.DataTable().destroy();
         }
 
-        var table =  $('#nvCalamviecDataTable').DataTable({
+        var table = $('#nvCalamviecDataTable').DataTable({
             select: true,
             "searching": true,
             columnDefs: [{

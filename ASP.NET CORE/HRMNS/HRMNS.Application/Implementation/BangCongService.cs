@@ -360,7 +360,8 @@ namespace HRMNS.Application.Implementation
                                         // get data cham cong log 
                                         _chamCongLog = _chamCongRespository.FindAll(x => dateCheck == x.Ngay_ChamCong && item.MaNV.ToUpper() == "H" + x.ID_NV.ToUpper()).OrderByDescending(x => x.DateModified).FirstOrDefault();
 
-                                        if (_chamCongLog == null) break;
+                                        if (_chamCongLog == null) 
+                                            continue;
 
                                         item.VP_SX = _chamCongLog.Department.Contains("Support") && !_chamCongLog.Department.Contains("Utility") ? CommonConstants.VP : CommonConstants.SX;
 
@@ -375,7 +376,7 @@ namespace HRMNS.Application.Implementation
                                                 lastTime = _chamCongLog.Last_Out_Time_Update.NullString();
                                             }
 
-                                            if (firstTime != "00:00:00" && lastTime != "00:00:00")
+                                            if (firstTime != "00:00:00" && lastTime != "00:00:00" && firstTime != lastTime)
                                             {
                                                 _chamCongLog.FirstIn = CommonConstants.IN;
                                                 _chamCongLog.LastOut = CommonConstants.OUT;
@@ -383,7 +384,7 @@ namespace HRMNS.Application.Implementation
                                         }
 
                                         // Co du lieu cham cong
-                                        if (_chamCongLog.FirstIn.NullString() == CommonConstants.IN && _chamCongLog.LastOut.NullString() == CommonConstants.OUT)
+                                        if (_chamCongLog.FirstIn.NullString() == CommonConstants.IN && _chamCongLog.LastOut.NullString() == CommonConstants.OUT && Math.Abs(TimeSpan.Parse(lastTime).Subtract(TimeSpan.Parse(firstTime)).TotalHours) >= 1)
                                         {
                                             #region THU VIEC + CA NGAY
                                             if (_caLamViec.MaCaLaviec == CommonConstants.CA_NGAY)
@@ -985,7 +986,8 @@ namespace HRMNS.Application.Implementation
                                         // get data cham cong log 
                                         _chamCongLog = _chamCongRespository.FindAll(x => dateCheck == x.Ngay_ChamCong && item.MaNV.ToUpper() == "H" + x.ID_NV.ToUpper()).FirstOrDefault();
 
-                                        if (_chamCongLog == null) break;
+                                        if (_chamCongLog == null) 
+                                            continue;
 
                                         item.VP_SX = _chamCongLog.Department.Contains("Support") && !_chamCongLog.Department.Contains("Utility") ? CommonConstants.VP : CommonConstants.SX;
 
@@ -1000,7 +1002,7 @@ namespace HRMNS.Application.Implementation
                                                 lastTime = _chamCongLog.Last_Out_Time_Update.NullString();
                                             }
 
-                                            if (firstTime != "00:00:00" && lastTime != "00:00:00")
+                                            if (firstTime != "00:00:00" && lastTime != "00:00:00" && firstTime != lastTime)
                                             {
                                                 _chamCongLog.FirstIn = CommonConstants.IN;
                                                 _chamCongLog.LastOut = CommonConstants.OUT;
@@ -1008,7 +1010,7 @@ namespace HRMNS.Application.Implementation
                                         }
 
                                         // Co du lieu cham cong
-                                        if (_chamCongLog.FirstIn.NullString() == CommonConstants.IN && _chamCongLog.LastOut.NullString() == CommonConstants.OUT)
+                                        if (_chamCongLog.FirstIn.NullString() == CommonConstants.IN && _chamCongLog.LastOut.NullString() == CommonConstants.OUT &&  Math.Abs(TimeSpan.Parse(lastTime).Subtract(TimeSpan.Parse(firstTime)).TotalHours) >= 1) 
                                         {
                                             #region CHINH THUC + CA NGAY
                                             if (_caLamViec.MaCaLaviec == CommonConstants.CA_NGAY)

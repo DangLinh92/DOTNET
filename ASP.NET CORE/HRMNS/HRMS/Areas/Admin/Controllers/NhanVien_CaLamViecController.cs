@@ -17,6 +17,8 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using HRMS.Extensions;
+using OfficeOpenXml;
+using OfficeOpenXml.Table;
 
 namespace HRMS.Areas.Admin.Controllers
 {
@@ -308,5 +310,64 @@ namespace HRMS.Areas.Admin.Controllers
             _nvienCalamviecService.Save();
             return new OkObjectResult(lstID);
         }
+
+        [HttpPost]
+        public IActionResult ExportExcel(string department, string status, string timeFrom, string timeTo)
+        {
+            string sWebRootFolder = _hostingEnvironment.WebRootPath;
+            string directory = Path.Combine(sWebRootFolder, "export-files");
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+            string sFileName = $"Nhanvien_calamviec_{DateTime.Now:yyyyMMddhhmmss}.xlsx";
+            string fileUrl = $"{Request.Scheme}://{Request.Host}/export-files/{sFileName}";
+            FileInfo file = new FileInfo(Path.Combine(directory, sFileName));
+            if (file.Exists)
+            {
+                file.Delete();
+                file = new FileInfo(Path.Combine(sWebRootFolder, sFileName));
+            }
+
+            var data = _nvienCalamviecService.Search(department, status, timeFrom, timeTo, x => x.HR_NHANVIEN, y => y.DM_CA_LVIEC);
+            List<NhanVienCaLamViecView> lstData = new List<NhanVienCaLamViecView>();
+            NhanVienCaLamViecView clv;
+            foreach (var item in data)
+            {
+                clv = new NhanVienCaLamViecView()
+                {
+                    MaNV = item.MaNV,
+                    TenNV = item.HR_NHANVIEN.TenNV,
+                    BoPhan = item.HR_NHANVIEN.MaBoPhan,
+                    CaLamViec = item.DM_CA_LVIEC.TenCaLamViec,
+                    FromTime = item.BatDau_TheoCa,
+                    ToTime = item.KetThuc_TheoCa,
+                    Approve = item.Approved
+                };
+
+                lstData.Add(clv);
+            }
+
+            using (ExcelPackage package = new ExcelPackage(file))
+            {
+                // add a new worksheet to the empty workbook
+                ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Calamviec");
+                worksheet.Cells["A1"].LoadFromCollection(lstData, true, TableStyles.Light11);
+                worksheet.Cells.AutoFitColumns();
+                package.Save(); //Save the workbook.
+            }
+            return new OkObjectResult(fileUrl);
+        }
+    }
+
+    public class NhanVienCaLamViecView
+    {
+        public string MaNV { get; set; }
+        public string TenNV { get; set; }
+        public string BoPhan { get; set; }
+        public string CaLamViec { get; set; }
+        public string FromTime { get; set; }
+        public string ToTime { get; set; }
+        public string Approve { get; set; }
     }
 }
