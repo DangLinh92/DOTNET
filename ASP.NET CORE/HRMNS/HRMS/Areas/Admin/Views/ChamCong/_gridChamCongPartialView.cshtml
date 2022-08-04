@@ -105,7 +105,7 @@
                         <a class="dropdown-item attendance-info" href="#" data-toggle="modal" data-target="#attendance_info" data-id="@item.ID_NV" data-date="@item.Ngay_ChamCong" data-name="@item.Ten_NV" data-timeIn="@item.FirstIn_Time" data-timeOut="@item.Last_Out_Time">
                             <i class="fa fa-expand m-r-5"></i>Detail
                         </a>
-                        @if (item.FirstIn_Time == "00:00:00" || item.Last_Out_Time == "00:00:00" || item.UserHandle == "Y")
+                        @if (item.FirstIn_Time == "00:00:00" || item.Last_Out_Time == "00:00:00" || item.UserHandle == "Y" || item.Status == "Absence")
                         {
                             <a class="dropdown-item edit-chamcong" href="#" data-toggle="modal" data-target="#addEditChamCongModel" data-id="@item.ID_NV" data-date="@item.Ngay_ChamCong" data-name="@item.Ten_NV" data-timeIn="@item.FirstIn_Time" data-timeOut="@item.Last_Out_Time"><i class="fa fa-edit m-r-5"></i> Edit</a>
                         }

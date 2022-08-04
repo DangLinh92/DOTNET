@@ -80,7 +80,7 @@ namespace HRMNS.Application.ViewModels.Time_Attendance
         {
             get
             {
-                if (!string.IsNullOrEmpty(FirstIn.NullString()) && !string.IsNullOrEmpty(LastOut.NullString()))
+                if (!string.IsNullOrEmpty(FirstIn.NullString()) && !string.IsNullOrEmpty(LastOut.NullString()) && Math.Abs(TimeSpan.Parse(Last_Out_Time).Subtract(TimeSpan.Parse(FirstIn_Time)).TotalHours) > 1)
                 {
                     return ChamCongStatus.Normal.ToString();
                 }

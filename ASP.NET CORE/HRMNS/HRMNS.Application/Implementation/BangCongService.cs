@@ -1360,7 +1360,7 @@ namespace HRMNS.Application.Implementation
                                                     if (string.Compare(lastTime, newBeginOT) > 0)
                                                     {
                                                         double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + newBeginOT, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
-                                                        if (timeOT < 0.3)
+                                                        if (timeOT < 0.5)
                                                         {
                                                             timeOT = 0;
                                                         }
@@ -1723,7 +1723,7 @@ namespace HRMNS.Application.Implementation
                 item.EL_LC_Statuses.Sort((x, y) => x.DayCheck_EL.CompareTo(y.DayCheck_EL));
             }
 
-            return lstResult;
+            return lstResult.OrderBy(x=>x.BoPhan).ToList();
         }
 
         /// <summary>

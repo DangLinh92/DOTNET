@@ -257,23 +257,48 @@ namespace HRMNS.Application.Implementation
         {
             var entity = _chamCongLogRepository.FindAll(x => x.ID_NV == model.ID_NV && x.Ngay_ChamCong == model.Ngay_ChamCong).FirstOrDefault();
 
+            DateTime ngayCham = DateTime.Parse(model.Ngay_ChamCong);
+            string preday = ngayCham.AddDays(-1).ToString("yyyy-MM-dd");
+            var entityPreday = _chamCongLogRepository.FindAll(x => x.ID_NV == model.ID_NV && x.Ngay_ChamCong == preday).FirstOrDefault();
+
             if (entity != null)
             {
-                if(entity.FirstIn_Time != model.FirstIn_Time)
+                if (entity.FirstIn_Time != model.FirstIn_Time)
                 {
                     entity.FirstIn_Time = model.FirstIn_Time;
                     entity.FirstIn = "IN";
                 }
-                
-                if(entity.Last_Out_Time != model.Last_Out_Time)
+
+                if (entity.Last_Out_Time != model.Last_Out_Time)
                 {
                     entity.Last_Out_Time = model.Last_Out_Time;
                     entity.LastOut = "OUT";
                 }
-                
-                entity.UserHandle = "Y";
+
+                if (model.FirstIn_Time == "00:00:00")
+                {
+                    entity.FirstIn = "";
+                }
+
+                if (model.Last_Out_Time == "00:00:00")
+                {
+                    entity.LastOut = "";
+                }
+
+                if (entity.FirstIn_Time == "00:00:00" && entity.Last_Out_Time == "00:00:00")
+                {
+                    entity.UserHandle = "N";
+                }
+                else
+                {
+                    entity.UserHandle = "Y";
+                }
+
+                entityPreday.Last_Out_Time_Update = entity.Last_Out_Time;
+
                 entity.UserModified = model.UserModified;
                 _chamCongLogRepository.Update(entity);
+                _chamCongLogRepository.Update(entityPreday);
             }
             return model;
         }

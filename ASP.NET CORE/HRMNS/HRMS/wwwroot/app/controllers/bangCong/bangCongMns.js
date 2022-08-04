@@ -147,6 +147,7 @@
                     var render = "<option value='" + deparment + "'>" + deparment + "</option >";
                     $('#cboDepartment').html(render);
                     $('#cboDepartmentDenghi').html(render);
+                    $('#cboDepartmentBaoCao').html(render);
                 }
                 else {
                     var render = "<option value=''>--All--</option>";
