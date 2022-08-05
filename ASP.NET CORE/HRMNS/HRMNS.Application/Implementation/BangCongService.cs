@@ -282,7 +282,7 @@ namespace HRMNS.Application.Implementation
                     bool isRegistedOT;
                     string kyhieuChamCongDB;
                     List<ChamCongDB> lstOTDB = new List<ChamCongDB>(); // danh sach bổ xung giờ OT như chấm bật máy
-                    bool isSetMaxOT = false;
+                    // bool isSetMaxOT = false;
                     deNghiLamThemGios.Clear();
                     DeNghiLamThemGioModel denghiOTModel;
 
@@ -397,7 +397,7 @@ namespace HRMNS.Application.Implementation
 
                                                 if (CheckNgayDB(dateCheck) == 0) // ngay thuong
                                                 {
-                                                    isSetMaxOT = true;
+                                                   // isSetMaxOT = true;
 
                                                     string newBeginOT = "17:45:00";
                                                     if (item.BoPhan != CommonConstants.SUPPORT_DEPT)
@@ -408,7 +408,7 @@ namespace HRMNS.Application.Implementation
                                                     // Ca ngay con nhỏ, văn phòng con nhỏ thì dc về sớm 1h
                                                     if (CheckCheDoThaiSan("ConNho1H", dateCheck, item.MaNV))
                                                     {
-                                                        isSetMaxOT = false;
+                                                       // isSetMaxOT = false;
                                                         newBeginOT = "16:00:00";
                                                     }
 
@@ -421,7 +421,7 @@ namespace HRMNS.Application.Implementation
                                                             newBeginOT = "13:00:00";
                                                         }
 
-                                                        isSetMaxOT = false;
+                                                       // isSetMaxOT = false;
                                                     }
 
                                                     if (string.Compare(lastTime, newBeginOT) > 0)
@@ -446,10 +446,10 @@ namespace HRMNS.Application.Implementation
                                                             }
 
                                                             // thơi gian OT max ngay thuong
-                                                            if (timeOT > 2.5 && isSetMaxOT)
-                                                            {
-                                                                timeOT = 2.5;
-                                                            }
+                                                            //if (timeOT > 2.5 && isSetMaxOT)
+                                                            //{
+                                                            //    timeOT = 2.5;
+                                                            //}
 
                                                             item.OvertimeValues.Add(new OvertimeValue()
                                                             {
@@ -818,7 +818,7 @@ namespace HRMNS.Application.Implementation
                                                         // set time de nghi làm thêm giờ
                                                         denghiOTModel.From = newBeginOT;
                                                         denghiOTModel.To = lastTime;
-                                                        denghiOTModel.Duration = timeOT > 2.5 ? "2.5" : timeOT.IfNullIsZero();
+                                                        denghiOTModel.Duration = timeOT.IfNullIsZero(); //timeOT > 2.5 ? "2.5" : timeOT.IfNullIsZero();
                                                     }
 
                                                     item.WorkingStatuses.Add(new WorkingStatus()
@@ -1022,7 +1022,7 @@ namespace HRMNS.Application.Implementation
 
                                                 if (CheckNgayDB(dateCheck) == 0) // ngay thuong
                                                 {
-                                                    isSetMaxOT = true;
+                                                    //isSetMaxOT = true;
                                                     string newBeginOT = "17:45:00";
                                                     if (item.BoPhan == CommonConstants.SUPPORT_DEPT && DateTime.Parse(dateCheck).DayOfWeek == DayOfWeek.Saturday)
                                                     {
@@ -1033,7 +1033,7 @@ namespace HRMNS.Application.Implementation
                                                             newBeginOT = "13:00:00";
                                                         }
 
-                                                        isSetMaxOT = false;
+                                                        //isSetMaxOT = false;
                                                     }
                                                     else
                                                     {
@@ -1046,7 +1046,7 @@ namespace HRMNS.Application.Implementation
                                                         if (CheckCheDoThaiSan("ConNho1H", dateCheck, item.MaNV))
                                                         {
                                                             newBeginOT = "16:00:00";
-                                                            isSetMaxOT = false;
+                                                            //isSetMaxOT = false;
                                                         }
                                                     }
 
@@ -1065,10 +1065,10 @@ namespace HRMNS.Application.Implementation
 
                                                         if (timeOT > 0)
                                                         {
-                                                            if (timeOT > 2.5 && isSetMaxOT)
-                                                            {
-                                                                timeOT = 2.5;
-                                                            }
+                                                            //if (timeOT > 2.5 && isSetMaxOT)
+                                                            //{
+                                                            //    timeOT = 2.5;
+                                                            //}
 
                                                             if (timeOT < 0.5)
                                                             {
@@ -1406,7 +1406,7 @@ namespace HRMNS.Application.Implementation
                                                         // set time de nghi làm thêm giờ
                                                         denghiOTModel.From = newBeginOT;
                                                         denghiOTModel.To = lastTime;
-                                                        denghiOTModel.Duration = timeOT > 2.5 ? "2.5" : timeOT.IfNullIsZero();
+                                                        denghiOTModel.Duration = timeOT.IfNullIsZero(); //timeOT > 2.5 ? "2.5" : timeOT.IfNullIsZero();
                                                     }
 
                                                     item.WorkingStatuses.Add(new WorkingStatus()
