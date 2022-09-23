@@ -71,6 +71,13 @@ namespace HRMNS.Data.EF
                     NormalizedName = "KRManager",
                     Description = "Korea Manager"
                 });
+
+                await _roleManager.CreateAsync(new APP_ROLE()
+                {
+                    Name = "HR_View",
+                    NormalizedName = "HR_View",
+                    Description = "Human Resources Only View"
+                });
             }
 
             if (!_userManager.Users.Any())
@@ -103,20 +110,26 @@ namespace HRMNS.Data.EF
                 _context.Functions.AddRange(new List<FUNCTION>()
                 {
                     new FUNCTION() {Id = "EHS", Name = "EHS",ParentId = null,SortOrder = 1,Status = Status.Active,URL = "",IconCss = ""  },
-                    new FUNCTION() {Id = "SAFETY", Name = "Safety",ParentId = "EHS",SortOrder = 1,Status = Status.Active,URL = "/admin/safety/index",IconCss = "la la-share-alt"  },
-                    new FUNCTION() {Id = "ENVIRONMENT", Name = "Environment",ParentId = "EHS",SortOrder = 2,Status = Status.Active,URL = "/admin/inviroment/index",IconCss = "la la-puzzle-piece"  },
-                    new FUNCTION() {Id = "DOCUMENT", Name = "Document",ParentId = "EHS",SortOrder =3,Status = Status.Active,URL = "/admin/document/index",IconCss = "la la-file-text"  },
+                   new FUNCTION() {Id = "KEHOACH", Name = "Kế Hoạch",ParentId = "EHS",SortOrder = 1,Status = Status.Active,URL = "",IconCss = "la la-share-alt"  },
+                    new FUNCTION() {Id = "DMKEHOACH", Name = "Danh Mục Kế Hoạch",ParentId = "KEHOACH",SortOrder = 1,Status = Status.Active,URL = "/admin/ehsdanhmuckehoach/index",IconCss = ""  },
+                    new FUNCTION() {Id = "KEHOACHTHEONAM", Name = "Kế Hoạch Theo Năm",ParentId = "KEHOACH",SortOrder = 2,Status = Status.Active,URL = "/admin/kehoachtheonam/index",IconCss = ""  },
+                    new FUNCTION() {Id = "TONGHOPKEHOACH", Name = "Tổng hợp Kế Hoạch",ParentId = "KEHOACH",SortOrder = 3,Status = Status.Active,URL = "/admin/tonghopkehoach/index",IconCss = ""  },
+                    new FUNCTION() {Id = "DOCUMENT", Name = "Tài Liệu",ParentId = "EHS",SortOrder =2,Status = Status.Active,URL = "/admin/ehsdocument/index",IconCss = "la la-file-text"  },
 
                     new FUNCTION() {Id = "HR", Name = "HR",ParentId = null,SortOrder = 2,Status = Status.Active,URL = "",IconCss = ""  },
-                    new FUNCTION() {Id = "NHANSU", Name = "Personnel",ParentId = "HR",SortOrder = 1,Status = Status.Active,URL = "",IconCss = "la la-user"  },
-                    new FUNCTION() {Id = "NHANVIEN", Name = "Employees",ParentId = "NHANSU",SortOrder = 1,Status = Status.Active,URL = "/admin/nhanvien/index",IconCss = ""  },
-                    new FUNCTION() {Id = "TIMEKEEPING", Name = "Time Tracking",ParentId = "NHANSU",SortOrder = 2,Status = Status.Active,URL = "/admin/chamcong/index",IconCss = ""  },
-                    new FUNCTION() {Id = "SHIFT_SCHEDULE", Name = "Shifts & Schedule",ParentId = "NHANSU",SortOrder = 3,Status = Status.Active,URL = "/admin/nhanvien_calamviec/index",IconCss = ""  },
-                    new FUNCTION() {Id = "OVERTIME", Name = "Overtime",ParentId = "NHANSU",SortOrder = 4,Status = Status.Active,URL = "/admin/dangkyot/index",IconCss = ""  },
-                    new FUNCTION() {Id = "REGIS_TIMEKEEPING", Name = "Register Timekeeping",ParentId = "NHANSU",SortOrder = 5,Status = Status.Active,URL = "/admin/chamcongdacbiet/index",IconCss = ""  },
-                    new FUNCTION() {Id = "ADJ_TIMEKEEPING", Name = "Timekeeping Adjustments",ParentId = "NHANSU",SortOrder = 6,Status = Status.Active,URL = "/admin/dcchamcong/index",IconCss = ""  },
-                    new FUNCTION() {Id = "ATTENDANCE_RECORD", Name = "Timesheet",ParentId = "NHANSU",SortOrder = 7,Status = Status.Active,URL = "/admin/bangcong/index",IconCss = ""  },
-                    new FUNCTION() {Id = "THAISAN", Name = "Thai San",ParentId = "NHANSU",SortOrder = 8,Status = Status.Active,URL = "/admin/NhanVienThaiSan/index",IconCss = ""  },
+                    new FUNCTION() {Id = "NHANSU", Name = "Nhân Sự",ParentId = "HR",SortOrder = 1,Status = Status.Active,URL = "",IconCss = "la la-user"  },
+                    new FUNCTION() {Id = "NHANVIEN", Name = "Danh Sách Nhân Viên",ParentId = "NHANSU",SortOrder = 1,Status = Status.Active,URL = "/admin/nhanvien/index",IconCss = ""  },
+                    new FUNCTION() {Id = "NHANVIEN_NGHIVIEC", Name = "Danh Sách Nghỉ Việc",ParentId = "NHANSU",SortOrder = 2,Status = Status.Active,URL = "/admin/nhanvien/nhanviennghiviec",IconCss = ""  },
+
+                    new FUNCTION() {Id = "CHAMCONG", Name = "Chấm Công",ParentId = "HR",SortOrder = 2,Status = Status.Active,URL = "",IconCss = "la la-info"  },
+                    new FUNCTION() {Id = "SHIFT_SCHEDULE", Name = "Phân ca",ParentId = "CHAMCONG",SortOrder = 1,Status = Status.Active,URL = "/admin/nhanvien_calamviec/index",IconCss = ""  },
+                    new FUNCTION() {Id = "REGIS_TIMEKEEPING", Name = "Chấm công bổ sung",ParentId = "CHAMCONG",SortOrder = 2,Status = Status.Active,URL = "/admin/chamcongdacbiet/index",IconCss = ""  },
+                    new FUNCTION() {Id = "OVERTIME", Name = "Đăng ký tăng ca",ParentId = "CHAMCONG",SortOrder = 3,Status = Status.Active,URL = "/admin/dangkyot/index",IconCss = ""  },
+                    new FUNCTION() {Id = "THAISAN", Name = "Thai sản",ParentId = "CHAMCONG",SortOrder = 4,Status = Status.Active,URL = "/admin/NhanVienThaiSan/index",IconCss = ""  },
+                    new FUNCTION() {Id = "TIMEKEEPING", Name = "Dữ liệu vào/ra",ParentId = "CHAMCONG",SortOrder = 5,Status = Status.Active,URL = "/admin/chamcong/index",IconCss = ""  },
+                    new FUNCTION() {Id = "ATTENDANCE_RECORD", Name = "Bảng Công",ParentId = "CHAMCONG",SortOrder = 6,Status = Status.Active,URL = "/admin/bangcong/index",IconCss = ""  },
+                    
+                    //new FUNCTION() {Id = "ADJ_TIMEKEEPING", Name = "Ghi Chú Công",ParentId = "CHAMCONG",SortOrder = 6,Status = Status.Active,URL = "/admin/dcchamcong/index",IconCss = ""  },
 
                     new FUNCTION() {Id = "GA",Name = "GA",ParentId = null,SortOrder = 3,Status = Status.Active,URL = "",IconCss = ""  },
                     new FUNCTION() {Id = "COST",Name = "Cost",ParentId = "GA",SortOrder = 1,Status = Status.Active,URL = "/admin/cost/index",IconCss = "la la-money"  },
@@ -125,9 +138,10 @@ namespace HRMNS.Data.EF
                     new FUNCTION() {Id = "DOCUMENT_SUB",Name = "Documents",ParentId = "OTHER",SortOrder = 1,Status = Status.Active,URL = "/admin/documentall/index",IconCss = "la la-file-text"  },
                     new FUNCTION() {Id = "CALENDAR",Name = "Calendar",ParentId = "OTHER",SortOrder = 2,Status = Status.Active,URL = "/admin/calendar/index",IconCss = "la la-table"  },
                     new FUNCTION() {Id = "SETTINGS",Name = "Settings",ParentId = "OTHER",SortOrder = 3,Status = Status.Active,URL = "/admin/settings/index",IconCss = "la la-cog"  },
-                    new FUNCTION() {Id = "ROLE_PERMISSTION",Name = "Roles & Permissions",ParentId = "SETTINGS",SortOrder = 1,Status = Status.Active,URL = "/admin/roleandpermisstion/index",IconCss = "la la-key"  },
+                    new FUNCTION() {Id = "ROLE_PERMISSTION",Name = "Phân Quyền User",ParentId = "SETTINGS",SortOrder = 1,Status = Status.Active,URL = "/admin/roleandpermisstion/index",IconCss = "la la-key"  },
                 });
             }
+
 
             if (_context.BoPhans.Count() == 0)
             {

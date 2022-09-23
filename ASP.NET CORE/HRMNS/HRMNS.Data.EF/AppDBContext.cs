@@ -65,6 +65,13 @@ namespace HRMNS.Data.EF
         public virtual DbSet<DM_DIEUCHINH_CHAMCONG> DM_DIEUCHINH_CHAMCONG { get; set; }
         public virtual DbSet<HR_THAISAN_CONNHO> HR_THAISAN_CONNHO { get; set; }
 
+        public virtual DbSet<EHS_DM_KEHOACH> EHS_DM_KEHOACH { get; set; }
+        public virtual DbSet<EHS_DEMUC_KEHOACH> EHS_DEMUC_KEHOACH { get; set; }
+        public virtual DbSet<EHS_LUATDINH_DEMUC_KEHOACH> EHS_LUATDINH_DEMUC_KEHOACH { get; set; }
+        public virtual DbSet<EHS_LUATDINH_KEHOACH> EHS_LUATDINH_KEHOACH { get; set; }
+        public virtual DbSet<EHS_NOIDUNG_KEHOACH> EHS_NOIDUNG_KEHOACH { get; set; }
+        public virtual DbSet<EHS_NOIDUNG> EHS_NOIDUNG { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             #region
@@ -115,6 +122,14 @@ namespace HRMNS.Data.EF
             builder.AddConfiguration(new NgayDacBietConfiguration());
             builder.AddConfiguration(new DMDieuChinhChamCongConfiguration());
             builder.AddConfiguration(new NhanVienThaiSanConfiguration());
+
+            builder.AddConfiguration(new EhsDMKeHoachConfiguration());
+            // builder.AddConfiguration(new EhsDMKeHoachByYearConfiguration());
+            builder.AddConfiguration(new EhsDeMucKeHoachConfiguration());
+            builder.AddConfiguration(new EhsLuatDinhKeHoachConfiguration());
+            builder.AddConfiguration(new EhsLuatDinhDeMucKeHoachConfiguration());
+            builder.AddConfiguration(new EhsNoiDungKeHoachConfiguration());
+            builder.AddConfiguration(new EhsNoiDungConfiguration());
 
             //base.OnModelCreating(builder);
         }

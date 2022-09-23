@@ -75,7 +75,7 @@
         // Init data nhan vien
         function initSelectOptionNhanVien() {
             $.ajax({
-                url: '/Admin/NhanVien/GetAll',
+                url: '/Admin/NhanVien/GetAllActive',
                 type: 'GET',
                 dataType: 'json',
                 async: false,

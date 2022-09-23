@@ -21,6 +21,19 @@ namespace HRMNS.Data.EF.Extensions
                 return result.ToString().Trim() == "" ? "0" : result.ToString().Trim();
         }
 
+        public static string TimeHHMM(this string result)
+        {
+            TimeSpan time;
+            if (TimeSpan.TryParse(result, out time))
+            {
+                return time.ToString(@"hh\:mm");
+            }
+            else
+            {
+                return "0:00";
+            }
+        }
+
         // Dao nguoc chuoi
         public static string Reverse(this string result)
         {

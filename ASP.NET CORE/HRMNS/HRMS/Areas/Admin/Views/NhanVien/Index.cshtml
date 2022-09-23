@@ -1,6 +1,10 @@
 ﻿@model List<NhanVienViewModel>
 @{
-    ViewData["Title"] = "Employees";
+    if (ViewData["Title"] == null)
+    {
+        ViewData["Title"] = "Danh sách nhân viên";
+    }
+
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
@@ -41,7 +45,7 @@
     <div class="page-header">
         <div class="row align-items-center">
             <div class="col">
-                <h3 class="page-title">Employees</h3>
+                <h3 class="page-title">@ViewData["Title"]</h3>
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/Admin/Home/Index">Home</a></li>
                     <li class="breadcrumb-item active">Employees</li>

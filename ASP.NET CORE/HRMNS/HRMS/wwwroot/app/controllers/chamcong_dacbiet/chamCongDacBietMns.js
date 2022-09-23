@@ -108,7 +108,7 @@
                         $('#addEditChamCongDacBietModel').modal('hide');
 
                         hrms.notify("Update success!", 'Success', 'alert', function () {
-                            location.reload();
+                            $('#btnSearch').submit();
                         });
                     },
                     error: function (status) {
@@ -144,7 +144,7 @@
 
                     $('#delete_chamcongDB').modal('hide');
                     hrms.notify("Delete success!", 'Success', 'alert', function () {
-                        location.reload();
+                        $('#btnSearch').submit();
                     });
                 },
                 error: function (status) {
@@ -204,8 +204,7 @@
                     }
                 });
             }
-            else
-            {
+            else {
                 ids.push(code);
             }
 
@@ -255,8 +254,7 @@
                     }
                 });
             }
-            else
-            {
+            else {
                 ids.push(code);
             }
 
@@ -301,7 +299,7 @@
         // Init data nhan vien
         function initSelectOptionNhanVien() {
             $.ajax({
-                url: '/Admin/NhanVien/GetAll',
+                url: '/Admin/NhanVien/GetAllActive',
                 type: 'GET',
                 dataType: 'json',
                 async: false,
@@ -343,6 +341,7 @@
 
         // Init data cham cong chi tiet
         function initSelectOptionChamCongChiTiet() {
+            console.log(roleUsers);
             $.ajax({
                 url: '/Admin/ChamCongDacBiet/GetDmucChamCongChiTiet',
                 type: 'GET',
@@ -351,8 +350,18 @@
                 success: function (response) {
 
                     var groupEmp = response.reduce(function (result, current) {
-                        result[current.DM_DANGKY_CHAMCONG.TieuDe] = result[current.DM_DANGKY_CHAMCONG.TieuDe] || [];
-                        result[current.DM_DANGKY_CHAMCONG.TieuDe].push(current);
+
+                        if (roleUsers != 'Admin' && roleUsers != 'HR') {
+                            if (current.DM_DANGKY_CHAMCONG.Id != 7) {
+                                result[current.DM_DANGKY_CHAMCONG.TieuDe] = result[current.DM_DANGKY_CHAMCONG.TieuDe] || [];
+                                result[current.DM_DANGKY_CHAMCONG.TieuDe].push(current);
+                            }
+                        }
+                        else {
+                            result[current.DM_DANGKY_CHAMCONG.TieuDe] = result[current.DM_DANGKY_CHAMCONG.TieuDe] || [];
+                            result[current.DM_DANGKY_CHAMCONG.TieuDe].push(current);
+                        }
+
                         return result;
                     }, {})
 
@@ -360,7 +369,7 @@
                     $.each(groupEmp, function (gr, item) {
                         render += "<optgroup label='" + gr + "'>";
                         $.each(item, function (j, sub) {
-                            render += "<option value='" + sub.Id + "'>" + sub.TenChiTiet + '-' + sub.KyHieuChamCong + "</option>"
+                            render += "<option value='" + sub.Id + "'>" + sub.TenChiTiet + '-' + hrms.nullString(sub.KyHieuChamCong) + "</option>"
                         });
                         render += "</optgroup>"
                     });
@@ -433,10 +442,38 @@
                     });
                 },
                 error: function (status) {
-                    hrms.notify('error: Import error!', 'error', 'alert', function () { });
+                    hrms.notify(status.responseText, 'error', 'alert', function () { });
                 }
             });
             return false;
+        });
+
+        // Export excel start
+        $('#btn-exportChamCongDB').on('click', function () {
+
+            var fromTime = $('#searchFromTime').val();
+            var toTime = $('#searchToTime').val();
+            var dept = $('#cboDepartment').val();
+            $.ajax({
+                type: "POST",
+                url: "/Admin/ChamCongDacBiet/ExportExcel",
+                data: {
+                    department: dept,
+                    timeFrom: fromTime,
+                    timeTo: toTime
+                },
+                beforeSend: function () {
+                    hrms.run_waitMe($('#gridChamCongDBIndex'));
+                },
+                success: function (response) {
+                    window.location.href = response;
+                    hrms.hide_waitMe($('#gridChamCongDBIndex'));
+                },
+                error: function () {
+                    hrms.notify('Has an error in progress!', 'error', 'alert', function () { });
+                    hrms.hide_waitMe($('#gridChamCongDBIndex'));
+                }
+            });
         });
     }
 

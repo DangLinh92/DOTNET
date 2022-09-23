@@ -209,43 +209,9 @@ namespace HRMNS.Application.Implementation
                 lstOT = lstOT.Where(x => x.HR_NHANVIEN.MaBoPhan == dept).ToList();
             }
 
-            if (string.IsNullOrEmpty(status))
+            if (!string.IsNullOrEmpty(status))
             {
-                if (role == CommonConstants.AssLeader_Role)
-                {
-                    lstOT = lstOT.Where(x => x.ApproveLV3 != CommonConstants.Approved).ToList();
-                }
-                else if (role == CommonConstants.roleApprove1) // leader approve
-                {
-                    lstOT = lstOT.Where(x => x.ApproveLV3 != CommonConstants.Approved && (x.Approve == CommonConstants.Approved || x.Approve == CommonConstants.No_Approved || x.Approve == CommonConstants.Request)).ToList();
-                }
-                else if (role == CommonConstants.roleApprove2) // korea mnger
-                {
-                    lstOT = lstOT.Where(x => x.Approve == CommonConstants.Approved && x.ApproveLV3 != CommonConstants.Approved).ToList();
-                }
-                else if (role == CommonConstants.roleApprove3 || role == CommonConstants.AppRole.AdminRole)
-                {
-                    lstOT = lstOT.Where(x => x.ApproveLV2 == CommonConstants.Approved).ToList();
-                }
-            }
-            else
-            {
-                if (role == CommonConstants.AssLeader_Role)
-                {
-                    lstOT = lstOT.Where(x => x.Approve == status && x.ApproveLV3 != CommonConstants.Approved).ToList();
-                }
-                else if (role == CommonConstants.roleApprove1) // leader approve
-                {
-                    lstOT = lstOT.Where(x => x.Approve == status && x.ApproveLV3 != CommonConstants.Approved).ToList();
-                }
-                else if (role == CommonConstants.roleApprove2) // korea mnger
-                {
-                    lstOT = lstOT.Where(x => x.Approve == CommonConstants.Approved && x.ApproveLV2 == status && x.ApproveLV3 != CommonConstants.Approved).ToList();
-                }
-                else if (role == CommonConstants.roleApprove3 || role == CommonConstants.AppRole.AdminRole)
-                {
-                    lstOT = lstOT.Where(x => x.ApproveLV2 == CommonConstants.Approved && x.ApproveLV3 == status).ToList();
-                }
+                lstOT = lstOT.Where(x => x.ApproveLV3 == status).ToList();
             }
 
             return lstOT;

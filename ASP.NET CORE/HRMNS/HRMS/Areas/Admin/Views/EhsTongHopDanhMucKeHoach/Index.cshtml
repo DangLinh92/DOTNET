@@ -1,0 +1,163 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@using HRMS.Authorization
+@inject IAuthorizationService AuthorizationService
+@model List<TongHopKeHoachViewModel>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+@section Scripts
+{
+    <script src="https://cdn.datatables.net/fixedcolumns/4.0.2/js/dataTables.fixedColumns.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedheader/3.2.2/js/dataTables.fixedHeader.min.js"></script>
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+
+    <script>
+        var deparment = JSON.parse('@Html.Raw(JsonSerializer.Serialize(User.FindFirst(x=>x.Type == "Deparment").Value+""))');
+        var roleUsers = JSON.parse('@Html.Raw(JsonSerializer.Serialize(User.FindFirst(x => x.Type == "Roles").Value + ""))');
+    </script>
+
+    @*<script src="~/app/controllers/bangCong/bangCongMns.js"></script>
+
+    <script>
+        var controller = new bangCongController();
+        controller.initialize();
+
+        onSuccess = controller.doAftersearch;
+        onBeginAjax = controller.beginSearch;
+
+        $(document).ready(function () {
+            $('#bangCongDataTable').DataTable({
+                scrollY: 600,
+                scrollX: true,
+                scrollCollapse: true,
+                paging: false,
+                select: true,
+                "searching": true,
+                fixedColumns: {
+                    left: 5
+                },
+                fixedHeader: true
+            });
+
+            $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
+            $('select[name="bangCongDataTable_length"]').removeClass('form-control-sm');
+        });
+
+        $('#searchToTime').datetimepicker({
+            format: 'YYYY-MM',
+            icons: {
+                up: "fa fa-angle-up",
+                down: "fa fa-angle-down",
+                next: 'fa fa-angle-right',
+                previous: 'fa fa-angle-left'
+            }
+        });
+    </script>*@
+}
+@section Styles{
+    <style>
+
+        #btnCreate {
+            float: none;
+            margin-right: 10px;
+        }
+
+        #btnManagement {
+            min-width: 150px;
+            border-radius: 50px;
+        }
+    </style>
+}
+<!-- Page Content -->
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Tổng hợp kế hoạch EHS</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/admin/ehstonghopdanhmuckehoach/index">Home</a></li>
+                    <li class="breadcrumb-item active">Kế hoạch EHS</li>
+                </ul>
+            </div>
+
+            <div class="col-auto float-right ml-auto">
+                <a href="#" id="btnExportData" class="btn add-btn"><i class="fa fa-arrow-circle-down"></i>Xuất kế hoạch EHS</a>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+    <!-- Search Filter -->
+    <form id="frmSearch" method="post" data-ajax="true" data-ajax-url="/Admin/ehstonghopdanhmuckehoach/Search" data-ajax-update="#gridDCChamCongIndex" data-ajax-mode='replace' data-ajax-begin="onBeginAjax" data-ajax-success="onSuccess">
+        <div class="row filter-row">
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus select-focus">
+                    <select class="select floating" id="cboDepartment" name="department">
+                        <option value="">-- All --</option>
+                        <option value="CSP">CSP</option>
+                        <option value="KHO">KHO</option>
+                        <option value="KOREA">KOREA</option>
+                        <option value="LFEM">LFEM</option>
+                        <option value="QC">QC</option>
+                        <option value="KOREA">KOREA</option>
+                    </select>
+                    <label class="focus-label">Deparment</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus">
+                    <div class="cal-icon">
+                        <input class="form-control floating datetimepicker" type="text" id="searchToTime" name="timeTo" required>
+                    </div>
+                    <label class="focus-label">Month</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <button href="#" class="btn btn-success btn-block" id="btnSearch" type="submit"> Search </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- /Search Filter -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive dx-viewport" id="gridDCChamCongIndex">
+                @*@await Html.PartialAsync("_gridBangCongPartialView", Model)*@
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Page Content -->
+<!-- Delete overtime -->
+<div class="modal custom-modal fade" id="delete_DCChamCong" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header">
+                    <input type="hidden" id="txtHiddenId" />
+                    <h3>Delete</h3>
+                    <p>Are you sure want to delete?</p>
+                </div>
+                <div class="modal-btn delete-action">
+                    <div class="row">
+                        <div class="col-6">
+                            <a href="javascript:void(0);" id="btnDeleteDCChamCong" class="btn btn-primary continue-btn">Delete</a>
+                        </div>
+                        <div class="col-6">
+                            <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Delete Expense Modal -->
+<

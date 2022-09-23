@@ -121,6 +121,8 @@ namespace HRMS
             services.AddTransient<IBangCongService, BangCongService>();
             services.AddTransient<INhanVienThaiSanService, NhanVienThaiSanService>();
 
+            services.AddTransient<IDanhMucKeHoachService, DanhMucKeHoachService>();
+
             services.AddTransient<IDM_DCChamCongService, DM_DCChamCongService>();
             services.AddTransient<IDCChamCongService, DCChamCongService>();
             services.AddTransient<IRoleAndPermisstionService, RoleAndPermisstionService>();

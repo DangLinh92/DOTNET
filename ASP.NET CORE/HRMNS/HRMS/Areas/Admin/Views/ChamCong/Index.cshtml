@@ -114,14 +114,21 @@
             </div>
             <div class="col-auto float-right ml-auto">
                 <a href="#" id="btnGetLog" class="btn add-btn"><i class="fa fa-arrow-circle-down"></i>Update Log Time</a>
+
                 @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
-               (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin" || User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" || User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "AssLeader"))
+(User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin"))
+                {
+                    <a href="#" id="btnGetLogBiostar" class="btn add-btn"><i class="fa fa-arrow-circle-down"></i>Sync Biostar</a>
+                }
+
+                @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+         (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin" || User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" || User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "AssLeader"))
                 {
                     <div class="btn-group" style="margin-right:5px">
                         <button type="button" class="btn btn-info dropdown-toggle" id="btnManagement" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Management</button>
                         <div class="dropdown-menu" style="">
-                            <a class="dropdown-item" href="~/templates/LogTimeTemplate.xlsx">Get import Template</a>
-                            <a class="dropdown-item" href="#" id="btn-importAttendance">Import Log Time</a>
+                            @*<a class="dropdown-item" href="~/templates/LogTimeTemplate.xlsx">Get import Template</a>
+                    <a class="dropdown-item" href="#" id="btn-importAttendance">Import Log Time</a>*@
                             <a class="dropdown-item" href="#" id="btnExportData">Xuất data search</a>
                             <a class="dropdown-item" href="#" id="btnExportAbsenceData">DS Chấm Công Lỗi</a>
                         </div>

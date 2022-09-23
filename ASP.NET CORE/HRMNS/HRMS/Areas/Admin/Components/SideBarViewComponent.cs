@@ -32,7 +32,7 @@ namespace HRMS.Areas.Admin.Components
             List<FunctionViewModel> functions = _memoryCache.GetOrCreate(key, entry =>
             {
                 entry.SlidingExpiration = TimeSpan.FromHours(1);
-                return GetPermistionByRole().Functions;
+                return GetPermistionByRole().Functions.OrderBy(x=>x.SortOrder).ToList();
             });
             // var roles = ((ClaimsPrincipal)User).GetSpecificClaim("Roles");
             
@@ -61,6 +61,7 @@ namespace HRMS.Areas.Admin.Components
 
             var functions = _functionService.GetAll("").ToList();
             model.Functions = new List<FunctionViewModel>();
+
             foreach (var item in model.PermisstionForRoleModels)
             {
                 if (functions.Any(x => x.Id == item.FunctionId) && item.CanRead)
@@ -68,6 +69,12 @@ namespace HRMS.Areas.Admin.Components
                     model.Functions.Add(functions.First(x => x.Id == item.FunctionId));
                 }
             }
+
+            if(model.Functions.Count == 0 && roles[0].Name == "Admin")
+            {
+                model.Functions.AddRange(functions);
+            }
+
             return model;
         }
     }

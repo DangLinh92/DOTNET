@@ -20,6 +20,7 @@ namespace HRMS.Infrastructure.Interfaces
         IQueryable<T> FindAll(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includeProperties);
 
         void Add(T entity);
+        void AddRange(List<T> entities);
 
         void Update(T entity);
 
@@ -32,6 +33,7 @@ namespace HRMS.Infrastructure.Interfaces
         void UpdateRange(List<T> entities);
 
         ResultDB ExecProceduce(string ProcName, Dictionary<string, string> Dictionary, string tableParam, DataTable table);
+        ResultDB ExecProceduce2(string ProcName, Dictionary<string, string> Dictionary);
 
         string GetMaxDate(Expression<Func<T, string>> selector);
     }

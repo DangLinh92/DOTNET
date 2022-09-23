@@ -11,7 +11,7 @@ namespace HRMNS.Application.Interfaces
 {
     public interface IBangCongService : IDisposable
     {
-        List<ChamCongDataViewModel> GetDataReport(string time,string dept,ref List<DeNghiLamThemGioModel> deNghiLamThemGios);
+        List<ChamCongDataViewModel> GetDataReport(string timeEnd,string status,string time,string dept,ref List<DeNghiLamThemGioModel> deNghiLamThemGios);
         List<TongHopNhanSuDailyViewModel> TongHopNhanSuReport(string time, string dept);
     }
 }

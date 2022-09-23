@@ -18,6 +18,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using HRMNS.Utilities.Common;
 
 namespace HRMNS.Application.Implementation
 {
@@ -135,6 +136,7 @@ namespace HRMNS.Application.Implementation
                     DataRow row = null;
                     string dmCalviec = "";
                     string calv = "";
+                    string dateCheck = "";
                     for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
                     {
                         row = table.NewRow();
@@ -181,11 +183,30 @@ namespace HRMNS.Application.Implementation
                             throw new Exception("Not found danh muc ca lam viec");
                         }
 
+                        if (!ValidateCommon.DateTimeValid(worksheet.Cells[i, 4].Text.NullString()))
+                        {
+                            throw new Exception("Ngày phải có định dạng: yyyy-MM-dd");
+                        }
+
+                        if (!ValidateCommon.DateTimeValid(worksheet.Cells[i, 5].Text.NullString()))
+                        {
+                            throw new Exception("Ngày phải có định dạng: yyyy-MM-dd");
+                        }
+
                         DateTime dStart = DateTime.Parse(worksheet.Cells[i, 4].Text.NullString());
                         DateTime dEnd = DateTime.Parse(worksheet.Cells[i, 5].Text.NullString());
 
                         row["BatDau_TheoCa"] = dStart.ToString("yyyy-MM-dd");
                         row["KetThuc_TheoCa"] = dEnd.ToString("yyyy-MM-dd");
+
+                        foreach (DateTime day in EachDay.EachDays(dStart, dEnd))
+                        {
+                            dateCheck = day.ToString("yyyy-MM-dd");
+                            if(_nhanvienClviecRepository.FindAll(x => x.MaNV == row["MaNV"].NullString() && string.Compare(x.BatDau_TheoCa, dateCheck) <= 0 && string.Compare(x.KetThuc_TheoCa, dateCheck) >= 0).Count() > 0)
+                            {
+                                throw new Exception("Ca làm việc bị trùng ngày: "+ dateCheck + " Mã NV: "+ row["MaNV"].NullString());
+                            }
+                        }
 
                         if (string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), dStart.ToString("yyyy-MM-dd")) >= 0 && string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), dEnd.ToString("yyyy-MM-dd")) <= 0)
                         {
@@ -225,30 +246,32 @@ namespace HRMNS.Application.Implementation
         {
             if (!string.IsNullOrEmpty(timeFrom) && !string.IsNullOrEmpty(timeTo))
             {
+                List<NhanVien_CalamViecViewModel> lstResult = new List<NhanVien_CalamViecViewModel>();
+
                 if (string.IsNullOrEmpty(dept) && string.IsNullOrEmpty(status))
                 {
-                    var lst = _nhanvienClviecRepository.FindAll(x => string.Compare(x.BatDau_TheoCa, timeFrom) >= 0 && string.Compare(x.KetThuc_TheoCa, timeTo) <= 0, includeProperties).OrderByDescending(x => x.DateModified);
-                    return _mapper.Map<List<NhanVien_CalamViecViewModel>>(lst);
+                    var lst = _nhanvienClviecRepository.FindAll(includeProperties).OrderByDescending(x => x.DateModified);
+                    lstResult = _mapper.Map<List<NhanVien_CalamViecViewModel>>(lst);
                 }
 
                 if (!string.IsNullOrEmpty(dept) && string.IsNullOrEmpty(status))
                 {
-                    var lst = _nhanvienClviecRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && (string.Compare(x.BatDau_TheoCa, timeFrom) >= 0 && string.Compare(x.KetThuc_TheoCa, timeTo) <= 0), includeProperties).OrderByDescending(x => x.DateModified);
-                    return _mapper.Map<List<NhanVien_CalamViecViewModel>>(lst);
+                    var lst = _nhanvienClviecRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept, includeProperties).OrderByDescending(x => x.DateModified);
+                    lstResult = _mapper.Map<List<NhanVien_CalamViecViewModel>>(lst);
                 }
 
                 if (string.IsNullOrEmpty(dept) && !string.IsNullOrEmpty(status))
                 {
                     if (status != CommonConstants.No_Approved && status != CommonConstants.Approved)
                     {
-                        var lst = _nhanvienClviecRepository.FindAll(x => x.Status == status && (string.Compare(x.BatDau_TheoCa, timeFrom) >= 0 && string.Compare(x.KetThuc_TheoCa, timeTo) <= 0), includeProperties).OrderByDescending(x => x.DateModified);
-                        return _mapper.Map<List<NhanVien_CalamViecViewModel>>(lst);
+                        var lst = _nhanvienClviecRepository.FindAll(x => x.Status == status, includeProperties).OrderByDescending(x => x.DateModified);
+                        lstResult = _mapper.Map<List<NhanVien_CalamViecViewModel>>(lst);
                     }
                     else
                     {
                         string[] itemCheck = status == CommonConstants.No_Approved ? new string[] { "", null } : new string[] { status };
-                        var lst = _nhanvienClviecRepository.FindAll(x => (x.Approved == status || itemCheck.Contains(x.Approved)) && (string.Compare(x.BatDau_TheoCa, timeFrom) >= 0 && string.Compare(x.KetThuc_TheoCa, timeTo) <= 0), includeProperties).OrderByDescending(x => x.DateModified);
-                        return _mapper.Map<List<NhanVien_CalamViecViewModel>>(lst);
+                        var lst = _nhanvienClviecRepository.FindAll(x => (x.Approved == status || itemCheck.Contains(x.Approved)), includeProperties).OrderByDescending(x => x.DateModified);
+                        lstResult = _mapper.Map<List<NhanVien_CalamViecViewModel>>(lst);
                     }
                 }
 
@@ -256,16 +279,39 @@ namespace HRMNS.Application.Implementation
                 {
                     if (status != CommonConstants.No_Approved && status != CommonConstants.Approved)
                     {
-                        var lst = _nhanvienClviecRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && x.Status == status && (string.Compare(x.BatDau_TheoCa, timeFrom) >= 0 && string.Compare(x.KetThuc_TheoCa, timeTo) <= 0), includeProperties).OrderByDescending(x => x.DateModified);
-                        return _mapper.Map<List<NhanVien_CalamViecViewModel>>(lst);
+                        var lst = _nhanvienClviecRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && x.Status == status, includeProperties).OrderByDescending(x => x.DateModified);
+                        lstResult = _mapper.Map<List<NhanVien_CalamViecViewModel>>(lst);
                     }
                     else
                     {
                         string[] itemCheck = status == CommonConstants.No_Approved ? new string[] { "", null } : new string[] { status };
-                        var lst = _nhanvienClviecRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && (x.Approved == status || itemCheck.Contains(x.Approved)) && (string.Compare(x.BatDau_TheoCa, timeFrom) >= 0 && string.Compare(x.KetThuc_TheoCa, timeTo) <= 0), includeProperties).OrderByDescending(x => x.DateModified);
-                        return _mapper.Map<List<NhanVien_CalamViecViewModel>>(lst);
+                        var lst = _nhanvienClviecRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && (x.Approved == status || itemCheck.Contains(x.Approved)), includeProperties).OrderByDescending(x => x.DateModified);
+                        lstResult = _mapper.Map<List<NhanVien_CalamViecViewModel>>(lst);
                     }
                 }
+
+                DateTime dFrom = DateTime.Parse(timeFrom);
+                DateTime dTo = DateTime.Parse(timeTo);
+                string dateCheck = "";
+                List<NhanVien_CalamViecViewModel> nvclviec;
+                List<NhanVien_CalamViecViewModel> lstResult2 = new List<NhanVien_CalamViecViewModel>();
+                foreach (DateTime day in EachDay.EachDays(dFrom, dTo))
+                {
+                    dateCheck = day.ToString("yyyy-MM-dd");
+                    nvclviec = lstResult.FindAll(x => string.Compare(x.BatDau_TheoCa, dateCheck) <= 0 && string.Compare(x.KetThuc_TheoCa, dateCheck) >= 0);
+                    if (nvclviec != null && nvclviec.Count > 0)
+                    {
+                        foreach (var item in nvclviec)
+                        {
+                            if (!lstResult2.Contains(item))
+                            {
+                                lstResult2.Add(item);
+                            }
+                        }
+                    }
+                }
+                return lstResult2;
+
             }
             else
             {
@@ -385,7 +431,7 @@ namespace HRMNS.Application.Implementation
 
         public NhanVien_CalamViecViewModel FindCaLamViecByDay(string maNV, string time)
         {
-            var obj = _nhanvienClviecRepository.FindAll(x => x.MaNV.Contains(maNV) && x.BatDau_TheoCa.CompareTo(time) <= 0 && x.KetThuc_TheoCa.CompareTo(time) >= 0,x=>x.DM_CA_LVIEC).OrderByDescending(x=>x.BatDau_TheoCa).FirstOrDefault();
+            var obj = _nhanvienClviecRepository.FindAll(x => x.MaNV.Contains(maNV) && x.BatDau_TheoCa.CompareTo(time) <= 0 && x.KetThuc_TheoCa.CompareTo(time) >= 0, x => x.DM_CA_LVIEC).OrderByDescending(x => x.BatDau_TheoCa).FirstOrDefault();
 
             if (obj != null)
                 return _mapper.Map<NhanVien_CalamViecViewModel>(obj);

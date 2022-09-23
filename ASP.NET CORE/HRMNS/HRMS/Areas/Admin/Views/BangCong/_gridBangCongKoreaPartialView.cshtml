@@ -1,0 +1,128 @@
+﻿@model List<ChamCongDataViewModel>
+@{
+    int dayInMonths = ViewBag.DayOfMonths;
+}
+<table class="table table-bordered mb-0 custom-table datatable" id="bangCongDataTable">
+    <thead>
+        <tr style="background-color:#F6DDCC">
+            <th></th>
+            <th></th>
+            <th></th>
+            @{
+                @for (int i = 1; i <= dayInMonths; i++)
+                {
+                    if (DateTime.TryParse(Model.FirstOrDefault()?.month_Check, out DateTime _dateCheck))
+                    {
+                        var firstDayOfMonth = new DateTime(_dateCheck.Year, _dateCheck.Month, 1);
+                        var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+
+                        if (i <= lastDayOfMonth.Day)
+                        {
+                            var dayOfWeek = (new DateTime(_dateCheck.Year, _dateCheck.Month, i)).DayOfWeek.ToString().Substring(0, 3);
+
+                            if (dayOfWeek == "Sun")
+                            {
+                                <th class="text-danger" colspan="3">
+                                    @dayOfWeek
+                                </th>
+                            }
+                            else
+                            {
+                                <th colspan="3">
+                                    @dayOfWeek
+                                </th>
+                            }
+
+                        }
+                    }
+                    else
+                    {
+                        <th colspan="3">
+                        </th>
+                    }
+                }
+            }
+        </tr>
+        <tr style="background-color:#F6DDCC">
+            <th></th>
+            <th></th>
+            <th></th>
+            @{
+
+                @for (int i = 1; i <= dayInMonths; i++)
+                {
+
+                    if (DateTime.TryParse(Model.FirstOrDefault()?.month_Check, out DateTime _dateCheck))
+                    {
+                        var strMonth = (new DateTime(_dateCheck.Year, _dateCheck.Month, 1)).ToString("yyyy-MM");
+                        <th colspan="3">@(strMonth + "-"+ @i)</th>
+                    }
+                    else
+                    {
+                        <th colspan="3"></th>
+                    }
+                }
+            }
+        </tr>
+        <tr style="background-color: #FBEEE6">
+            <th>Code</th>
+            <th>Name</th>
+            <th>Section</th>
+            @{
+                @for (int i = 1; i <= dayInMonths; i++)
+                {
+                    <th>IN</th>
+                    <th>OUT</th>
+                    <th>HẠNG MỤC</th>
+                }
+            }
+        </tr>
+    </thead>
+    <tbody id="tbl-content">
+        @{
+            int k = 0;
+        }
+        @foreach (var item in Model)
+        {
+
+            string style1 = k++ % 2 == 0 ? "background-color: #F2F3F4" : "background-color: #F8F9F9";
+
+            <tr>
+                <td style="@style1">@item.MaNV</td>
+                <td style="@style1">@item.TenNV</td>
+                <td style="@style1">@item.BoPhanDetail</td>
+
+                @for (int i = 1; i <= dayInMonths; i++)
+                {
+                    <td>
+                        <table class="table table-bordered mb-0 custom-table">
+                            @if (DateTime.TryParse(Model.FirstOrDefault()?.month_Check, out DateTime _dateCheck))
+                            {
+                                var firstDayOfMonth = new DateTime(_dateCheck.Year, _dateCheck.Month, 1);
+                                var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+
+                                if (i <= lastDayOfMonth.Day)
+                                {
+                                    foreach (var inOut in item.TimeInOutModels)
+                                    {
+                                        @if (DateTime.TryParse(inOut.DayCheck, out DateTime dayCheck))
+                                        {
+                                            if (dayCheck.Day == i)
+                                            {
+                                                <tr>
+                                                    <td>@inOut.InTime</td>
+                                                    <td>@inOut.OutTime</td>
+                                                    <td>@inOut.HangMuc</td>
+                                                </tr>
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        </table>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>

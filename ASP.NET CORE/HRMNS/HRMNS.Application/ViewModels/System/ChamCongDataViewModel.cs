@@ -16,6 +16,7 @@ namespace HRMNS.Application.ViewModels.System
             lstNhanVienCaLamViec = new List<NhanVien_CaLamViec>();
             lstDangKyOT = new List<DangKyOT>();
             lstChamCongDB = new List<ChamCongDB>();
+            TimeInOutModels = new List<TimeInOutModel>();
         }
 
         public string MaNV { get; set; }
@@ -44,6 +45,17 @@ namespace HRMNS.Application.ViewModels.System
         public List<WorkingStatus> WorkingStatuses { get; set; }
         public List<EL_LC_Status> EL_LC_Statuses { get; set; }
         public List<OvertimeValue> OvertimeValues { get; set; }
+        public List<TimeInOutModel> TimeInOutModels { get; set; } // dung cho châm cong nguoi Han
+    }
+
+    public class TimeInOutModel
+    {
+        public string InTime { get; set; }
+        public string OutTime { get; set; }
+        public string DayCheck { get; set; }
+        public string MaNV { get; set; }
+        public string TenNV { get; set; }
+        public string HangMuc { get; set; }// cham cong db
     }
 
     public class DangKyOT

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HRMNS.Application.ViewModels.EHS;
 using HRMNS.Application.ViewModels.HR;
 using HRMNS.Application.ViewModels.System;
 using HRMNS.Application.ViewModels.Time_Attendance;
@@ -42,7 +43,7 @@ namespace HRMNS.Application.AutoMapper
            .ConstructUsing(c => new NHANVIEN_CALAMVIEC(c.MaNV, c.Danhmuc_CaLviec, c.BatDau_TheoCa, c.KetThuc_TheoCa, c.Approved, c.CaLV_DB));
 
             CreateMap<DangKyOTNhanVienViewModel, DANGKY_OT_NHANVIEN>()
-            .ConstructUsing(c => new DANGKY_OT_NHANVIEN(c.NgayOT, c.MaNV, c.DM_NgayLViec, c.Approve, c.ApproveLV2, c.ApproveLV3,c.HeSoOT,c.SoGioOT,c.NoiDung));
+            .ConstructUsing(c => new DANGKY_OT_NHANVIEN(c.NgayOT, c.MaNV, c.DM_NgayLViec, c.Approve, c.ApproveLV2, c.ApproveLV3, c.HeSoOT, c.SoGioOT, c.NoiDung));
 
             CreateMap<NgayLeNamViewModel, NGAY_LE_NAM>()
             .ConstructUsing(c => new NGAY_LE_NAM(c.Id, c.TenNgayLe, c.KyHieuChamCong, c.IslastHoliday));
@@ -73,6 +74,23 @@ namespace HRMNS.Application.AutoMapper
 
             CreateMap<NhanVienThaiSanViewModel, HR_THAISAN_CONNHO>()
             .ConstructUsing(c => new HR_THAISAN_CONNHO(c.Id, c.MaNV, c.CheDoThaiSan, c.FromDate, c.ToDate));
+
+            CreateMap<EhsDMKeHoachViewModel, EHS_DM_KEHOACH>()
+                .ConstructUsing(c => new EHS_DM_KEHOACH(c.Id, c.TenKeHoach_VN, c.TenKeHoach_KR));
+            CreateMap<EhsLuatDinhKeHoachViewModel, EHS_LUATDINH_KEHOACH>()
+                .ConstructUsing(c => new EHS_LUATDINH_KEHOACH(c.Id, c.NoiDungLuatDinh, c.MaKeHoach));
+
+            CreateMap<EhsDeMucKeHoachViewModel, EHS_DEMUC_KEHOACH>()
+                .ConstructUsing(c => new EHS_DEMUC_KEHOACH(c.Id, c.TenKeDeMuc_VN, c.TenKeDeMuc_KR));
+
+            CreateMap<EhsNoiDungViewModel, EHS_NOIDUNG>()
+                .ConstructUsing(c => new EHS_NOIDUNG(c.Id, c.NoiDung, c.MaKeHoach, c.MaDeMucKH));
+
+            CreateMap<EhsLuatDinhDeMucKeHoachViewModel, EHS_LUATDINH_DEMUC_KEHOACH>()
+                .ConstructUsing(c => new EHS_LUATDINH_DEMUC_KEHOACH(c.Id, c.LuatDinhLienQuan, c.MaDeMuc));
+
+            CreateMap<EhsNoiDungKeHoachViewModel, EHS_NOIDUNG_KEHOACH>()
+                .ConstructUsing(c => new EHS_NOIDUNG_KEHOACH(c.Id, c.Year, c.MaNoiDung, c.NhaThau, c.ChuKy, c.YeuCau, c.Note,c.NgayThucHien,c.ThoiGian_ThucHien,c.ViTri,c.SoLuong,c.NgayKhaiBaoThietBi,c.ThoiGianThongBao));
         }
     }
 }

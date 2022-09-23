@@ -159,7 +159,7 @@
     <div class="page-header">
         <div class="row align-items-center">
             <div class="col">
-                <h3 class="page-title">Đăng ký chấm công, bổ xung OT.</h3>
+                <h3 class="page-title">Đăng ký chấm công.</h3>
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/admin/home/index">Home</a></li>
                     <li class="breadcrumb-item active">Register Timekeeping</li>
@@ -177,6 +177,7 @@
                         <div class="dropdown-menu" style="">
                             <a class="dropdown-item" href="~/templates/RegisterTimeKeepingTemplate.xlsx">Lấy File mẫu đăng ký</a>
                             <a class="dropdown-item" href="#" id="btn-importChamCongDB">Đăng ký Chấm Công(Import)</a>
+                            <a class="dropdown-item" href="#" id="btn-exportChamCongDB">Xuất File Chấm Công</a>
                         </div>
                     </div>
                 </div>
@@ -239,7 +240,7 @@
    User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" ||
    User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin"))
             {
-                <a href="#" style="min-width: 120px" class="btn btn-info" id="btnApprove" data-target="#approve_overtime">  Approve</a>
+                <a href="#" style="min-width: 100px" class="btn btn-info" id="btnApprove" data-target="#approve_overtime">  Approve</a>
                 <a href="#" class="btn btn-info" id="btnUnApprove" data-target="#unapprove_overtime">UnApprove</a>
             }
         </div>

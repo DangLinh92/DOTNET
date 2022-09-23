@@ -98,7 +98,7 @@
                     });
                 },
                 error: function (status) {
-                    hrms.notify('error: Import error!', 'error', 'alert', function () { });
+                    hrms.notify(status.responseText, 'error', 'alert', function () { });
                 }
             });
             return false;
@@ -158,7 +158,7 @@
         // Init data nhan vien
         function initSelectOptionNhanVien() {
             $.ajax({
-                url: '/Admin/NhanVien/GetAll',
+                url: '/Admin/NhanVien/GetAllActive',
                 type: 'GET',
                 dataType: 'json',
                 async: false,
@@ -172,16 +172,34 @@
                         return result;
                     }, {})
 
-                    console.log(groupEmp);
-
                     var render = "<option value='' selected='selected'>Select option...</option>";
                     $.each(groupEmp, function (gr, item) {
-                        render += "<optgroup label='" + gr + "'>";
-                        $.each(item, function (j, sub) {
-                            render += "<option value='" + sub.Id + "'>" + sub.Id + "-" + sub.TenNV + "</option>"
-                        });
-                        render += "</optgroup>"
+                        if (deparment != '') {
+                            if (deparment == gr) {
+                                render += "<optgroup label='" + gr + "'>";
+                                $.each(item, function (j, sub) {
+                                    render += "<option value='" + sub.Id + "'>" + sub.Id + "-" + sub.TenNV + "</option>"
+                                });
+                                render += "</optgroup>"
+                            }
+                        }
+                        else {
+                            render += "<optgroup label='" + gr + "'>";
+                            $.each(item, function (j, sub) {
+                                render += "<option value='" + sub.Id + "'>" + sub.Id + "-" + sub.TenNV + "</option>"
+                            });
+                            render += "</optgroup>"
+                        }
                     });
+
+                    //var render = "<option value='' selected='selected'>Select option...</option>";
+                    //$.each(groupEmp, function (gr, item) {
+                    //    render += "<optgroup label='" + gr + "'>";
+                    //    $.each(item, function (j, sub) {
+                    //        render += "<option value='" + sub.Id + "'>" + sub.Id + "-" + sub.TenNV + "</option>"
+                    //    });
+                    //    render += "</optgroup>"
+                    //});
                     $('#_txtMaNV').html(render);
                 },
                 error: function (status) {

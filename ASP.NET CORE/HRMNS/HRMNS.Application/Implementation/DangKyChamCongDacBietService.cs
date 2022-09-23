@@ -4,6 +4,7 @@ using HRMNS.Application.ViewModels.Time_Attendance;
 using HRMNS.Data.EF.Extensions;
 using HRMNS.Data.Entities;
 using HRMNS.Data.Enums;
+using HRMNS.Utilities.Common;
 using HRMNS.Utilities.Constants;
 using HRMNS.Utilities.Dtos;
 using HRMS.Infrastructure.Interfaces;
@@ -132,7 +133,8 @@ namespace HRMNS.Application.Implementation
             {
                 if (string.IsNullOrEmpty(fromDate) && string.IsNullOrEmpty(toDate))
                 {
-                    return _mapper.Map<List<DangKyChamCongDacBietViewModel>>(_chamCongDbRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept, includeProperties).OrderByDescending(x => x.DateModified));
+                    fromDate = DateTime.Now.AddMonths(-1).ToString("yyyy-MM")+"-01";
+                    toDate = DateTime.Now.ToString("yyyy-MM-dd");
                 }
 
                 return _mapper.Map<List<DangKyChamCongDacBietViewModel>>(_chamCongDbRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && x.NgayBatDau.CompareTo(fromDate) >= 0 && x.NgayKetThuc.CompareTo(toDate) <= 0, includeProperties).OrderByDescending(x => x.DateCreated));
@@ -159,6 +161,7 @@ namespace HRMNS.Application.Implementation
             ResultDB resultDB = new ResultDB();
             try
             {
+                bool isSave = false;
                 using (var packet = new ExcelPackage(new System.IO.FileInfo(filePath)))
                 {
                     ExcelWorksheet worksheet = packet.Workbook.Worksheets[1];
@@ -193,12 +196,28 @@ namespace HRMNS.Application.Implementation
 
                         row["MaNV"] = worksheet.Cells[i, 1].Text.NullString().ToUpper();
                         row["MaChamCong_ChiTiet"] = _chamCongChiTietRepository.FindSingle(x => x.KyHieuChamCong == kytuChamCong).Id;
-                        row["NgayBatDau"] = worksheet.Cells[i, 4].Text.NullString();
-                        row["NgayKetThuc"] = worksheet.Cells[i, 5].Text.NullString();
+
+                        if (ValidateCommon.DateTimeValid(worksheet.Cells[i, 4].Text.NullString()))
+                        {
+                            row["NgayBatDau"] = worksheet.Cells[i, 4].Text.NullString();
+                        }
+                        else
+                        {
+                            throw new Exception("Định dạng ngày phải là : yyyy-MM-dd");
+                        }
+
+                        if (ValidateCommon.DateTimeValid(worksheet.Cells[i, 5].Text.NullString()))
+                        {
+                            row["NgayKetThuc"] = worksheet.Cells[i, 5].Text.NullString();
+                        }
+                        else
+                        {
+                            throw new Exception("Định dạng ngày phải là : yyyy-MM-dd");
+                        }
 
                         if (worksheet.Cells[i, 6].Text.NullString() != "")
                         {
-                            row["NoiDung"] = worksheet.Cells[i, 6].Text.NullString();
+                            row["NoiDung"] = worksheet.Cells[i, 2].Text.NullString() + " " + worksheet.Cells[i, 6].Text.NullString();
                         }
                         else
                         {
@@ -230,6 +249,23 @@ namespace HRMNS.Application.Implementation
                             row["ApproveLV3"] = CommonConstants.Approved;
                         }
 
+                        if (kytuChamCong == "T") // nghi viec
+                        {
+                            var nv = _nhanVienRespository.FindById(row["MaNV"].NullString());
+                            if (nv != null)
+                            {
+                                nv.NgayNghiViec = row["NgayBatDau"].NullString();
+
+                                if (string.Compare(DateTime.Now.ToString("yyyy-MM-dd"), nv.NgayNghiViec) >= 0)
+                                {
+                                    nv.Status = Status.InActive.ToString();
+                                }
+
+                                _nhanVienRespository.Update(nv);
+                                isSave = true;
+                            }
+                        }
+
                         table.Rows.Add(row);
                     }
 
@@ -237,6 +273,12 @@ namespace HRMNS.Application.Implementation
                     dic.Add("A_USER", GetUserId());
                     resultDB = _chamCongDbRepository.ExecProceduce("PKG_BUSINESS.PUT_CHAMCONG_DB", dic, "A_DATA", table);
                 }
+
+                if (resultDB.ReturnInt == 0 && isSave)
+                {
+                    Save();
+                }
+
                 return resultDB;
             }
             catch (Exception ex)

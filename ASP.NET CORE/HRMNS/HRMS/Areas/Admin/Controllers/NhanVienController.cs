@@ -68,8 +68,9 @@ namespace HRMS.Areas.Admin.Controllers
 
         public IActionResult Index()
         {
+            string status = Status.Active.ToString();
             ViewBag.BoPhans = _boPhanService.GetAll(null);
-            List<NhanVienViewModel> nhanviens = _nhanvienService.GetAll(x=>x.HR_HOPDONG);
+            List<NhanVienViewModel> nhanviens = _nhanvienService.GetAll(x=>x.HR_HOPDONG).Where(x => x.Status == status && x.MaBoPhan != "KOREA").ToList();
             var section = _boPhanDetailService.GetAll(null);
             foreach (var item in nhanviens)
             {
@@ -81,6 +82,51 @@ namespace HRMS.Areas.Admin.Controllers
 
             return View(nhanviens);
         }
+        /// <summary>
+        /// Danh sách nhan viên nghỉ việc
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult NhanVienNghiViec()
+        {
+            ViewData["Title"] = "Danh sách nhân viên nghỉ việc";
+            ViewBag.BoPhans = _boPhanService.GetAll(null);
+            string status = Status.InActive.ToString();
+            List<NhanVienViewModel> nhanviens = _nhanvienService.GetAll(x => x.HR_HOPDONG).Where(x=>x.Status == status).ToList();
+            var section = _boPhanDetailService.GetAll(null);
+            foreach (var item in nhanviens)
+            {
+                if (section.Any(x => x.Id == item.MaBoPhanChiTiet))
+                {
+                    item.HR_BO_PHAN_DETAIL = section.Find(x => x.Id == item.MaBoPhanChiTiet);
+                }
+            }
+
+            return View("Index",nhanviens);
+        }
+
+        /// <summary>
+        /// Danh sách nhan viên hàn quốc
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult NhanVienKorea()
+        {
+            string datetime = DateTime.Now.ToString("yyyy-MM");
+            datetime = datetime + "-01";
+            ViewData["Title"] = "Danh sách người Hàn";
+            ViewBag.BoPhans = _boPhanService.GetAll(null);
+            string status = Status.InActive.ToString();
+            List<NhanVienViewModel> nhanviens = _nhanvienService.GetAll(x => x.HR_HOPDONG).Where(x => x.MaBoPhan == "KOREA" && (x.Status != status || string.Compare(datetime, x.NgayNghiViec) <= 0)).ToList();
+            var section = _boPhanDetailService.GetAll(null);
+            foreach (var item in nhanviens)
+            {
+                if (section.Any(x => x.Id == item.MaBoPhanChiTiet))
+                {
+                    item.HR_BO_PHAN_DETAIL = section.Find(x => x.Id == item.MaBoPhanChiTiet);
+                }
+            }
+
+            return View("Index", nhanviens);
+        }
 
         [HttpGet]
         public IActionResult GetAll()
@@ -90,9 +136,19 @@ namespace HRMS.Areas.Admin.Controllers
         }
 
         [HttpGet]
+        public IActionResult GetAllActive()
+        {
+            string datetime = DateTime.Now.ToString("yyyy-MM");
+            datetime = datetime + "-01";
+            List<NhanVienViewModel> nhanviens = _nhanvienService.GetAll().Where(x=>x.Status != Status.InActive.NullString() || string.Compare(datetime,x.NgayNghiViec) <= 0).ToList();
+            return new OkObjectResult(nhanviens);
+        }
+
+        [HttpGet]
         public IActionResult OnGetPartialData()
         {
-            List<NhanVienViewModel> nhanviens = _nhanvienService.GetAll(x => x.HR_HOPDONG);
+            string status = Status.Active.ToString();
+            List<NhanVienViewModel> nhanviens = _nhanvienService.GetAll(x => x.HR_HOPDONG).Where(x => x.Status == status).ToList();
             var section = _boPhanDetailService.GetAll(null);
             foreach (var item in nhanviens)
             {

@@ -159,6 +159,18 @@ namespace HRMS.Areas.Admin.Controllers
 
                 if (action == "Add")
                 {
+                    DateTime dStart = DateTime.Parse(calamviec.BatDau_TheoCa);
+                    DateTime dEnd = DateTime.Parse(calamviec.KetThuc_TheoCa);
+                    string dateCheck;
+                    foreach (DateTime day in EachDay.EachDays(dStart, dEnd))
+                    {
+                        dateCheck = day.ToString("yyyy-MM-dd");
+                        if (_nvienCalamviecService.GetAll().FindAll(x => x.MaNV == calamviec.MaNV && string.Compare(x.BatDau_TheoCa, dateCheck) <= 0 && string.Compare(x.KetThuc_TheoCa, dateCheck) >= 0).Count() > 0)
+                        {
+                            return new NotFoundObjectResult("Ca làm việc bị trùng ngày: " + dateCheck + " Mã NV: " + calamviec.MaNV);
+                        }
+                    }
+
                     NhanVien_CalamViecViewModel itemCheck = _nvienCalamviecService.CheckExist(0, calamviec.MaNV, calamviec.BatDau_TheoCa, calamviec.KetThuc_TheoCa);
                     if (itemCheck != null)
                     {
@@ -181,6 +193,18 @@ namespace HRMS.Areas.Admin.Controllers
                 }
                 else
                 {
+                    DateTime dStart = DateTime.Parse(calamviec.BatDau_TheoCa);
+                    DateTime dEnd = DateTime.Parse(calamviec.KetThuc_TheoCa);
+                    string dateCheck;
+                    foreach (DateTime day in EachDay.EachDays(dStart, dEnd))
+                    {
+                        dateCheck = day.ToString("yyyy-MM-dd");
+                        if (_nvienCalamviecService.GetAll().FindAll(x => x.MaNV == calamviec.MaNV && string.Compare(x.BatDau_TheoCa, dateCheck) <= 0 && string.Compare(x.KetThuc_TheoCa, dateCheck) >= 0).Count() > 1)
+                        {
+                            return new NotFoundObjectResult("Ca làm việc bị trùng ngày: " + dateCheck + " Mã NV: " + calamviec.MaNV);
+                        }
+                    }
+
                     NhanVien_CalamViecViewModel itemCheck = _nvienCalamviecService.CheckExist(calamviec.Id, calamviec.MaNV, calamviec.BatDau_TheoCa, calamviec.KetThuc_TheoCa);
                     itemCheck.Danhmuc_CaLviec = calamviec.Danhmuc_CaLviec;
                     itemCheck.BatDau_TheoCa = calamviec.BatDau_TheoCa;

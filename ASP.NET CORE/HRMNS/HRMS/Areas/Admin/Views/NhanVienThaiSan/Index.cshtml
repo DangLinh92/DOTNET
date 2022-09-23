@@ -37,7 +37,10 @@
                 </ul>
             </div>
             <div class="col-auto float-right ml-auto">
-                <a href="#" id="btnCreate" class="btn add-btn" data-toggle="modal" data-target="#add_thaisan"><i class="fa fa-plus"></i> Add</a>
+                @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 && (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin" || User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR"))
+                {
+                    <a href="#" id="btnCreate" class="btn add-btn" data-toggle="modal" data-target="#add_thaisan"><i class="fa fa-plus"></i> Add</a>
+                }
             </div>
         </div>
     </div>

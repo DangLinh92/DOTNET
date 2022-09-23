@@ -63,6 +63,17 @@ namespace HRMS.Areas.Admin.Controllers
         {
             List<ChamCongLogViewModel> chamCongLog = _chamCongService.GetAll("");
 
+            string fromTime = DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd");
+            var lstNv = _nhanVienService.GetAll().Where(x => x.Status != Status.InActive.ToString() || fromTime.NullString().CompareTo(x.NgayNghiViec) <= 0);
+
+            foreach (var item in chamCongLog.ToList())
+            {
+                if (!lstNv.Any(x => x.Id.ToUpper() == "H"+item.ID_NV))
+                {
+                    chamCongLog.Remove(item);
+                }
+            }
+
             var lst = UpdateShifts(chamCongLog);
             _memoryCache.Remove("SearchData");
             _memoryCache.Set("SearchData", lst);
@@ -73,6 +84,22 @@ namespace HRMS.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetChamCongLog()
         {
+
+            ResultDB result = _chamCongService.GetLogDataCurrentDay();
+            _logger.LogInformation("GetChamCongLog: " + result.ReturnString);
+            if (result.ReturnInt == 0)
+            {
+                return new OkObjectResult(result.ReturnString);
+            }
+            else
+            {
+                return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetChamCongLogBiostar()
+        {
             string maxDate = DateTime.Now.ToString("yyyy-MM-dd"); // _chamCongService.GetMaxDate();
             //if (string.IsNullOrEmpty(maxDate))
             //{
@@ -81,7 +108,7 @@ namespace HRMS.Areas.Admin.Controllers
             string fromTime = DateTime.Parse(maxDate).AddDays(-60).ToString("yyyy-MM-dd");
             string toTime = DateTime.Now.AddDays(1).ToString("yyyy-MM-dd");
             ResultDB result = _bioStarDB.GetChamCongLogData(fromTime, toTime);
-            _logger.LogInformation("GetChamCongLog: " + result.ReturnString);
+            _logger.LogInformation("GetChamCongLogBiostar: " + result.ReturnString);
             if (result.ReturnInt == 0)
             {
                 ResultDB result1 = _chamCongService.InsertLogData(result.ReturnDataSet.Tables[0]);
@@ -243,7 +270,7 @@ namespace HRMS.Areas.Admin.Controllers
             }
 
             _chamCongService.SetDepartment(Department);
-            var lst = _chamCongService.Search(result, dept, fromTime, toTime);
+            var lst = _chamCongService.Search(result, dept,ref fromTime,ref toTime);
             if (!string.IsNullOrEmpty(maNV.NullString()) && lst.Any(x => maNV != null && maNV.Contains(x.ID_NV)))
             {
                 lst = lst.Where(x => maNV.Contains(x.ID_NV)).ToList();
@@ -260,7 +287,7 @@ namespace HRMS.Areas.Admin.Controllers
 
                 foreach (var item in lst.ToList())
                 {
-                    if (!lstNv.Any(x => x.Id.Contains(item.ID_NV)))
+                    if (!lstNv.Any(x => x.Id.ToUpper() == "H" + item.ID_NV))
                     {
                         lst.Remove(item);
                     }
@@ -272,7 +299,7 @@ namespace HRMS.Areas.Admin.Controllers
 
                 foreach (var item in lst.ToList())
                 {
-                    if (!lstNv.Any(x => x.Id.Contains(item.ID_NV)))
+                    if (!lstNv.Any(x => x.Id.ToUpper() == "H" + item.ID_NV))
                     {
                         lst.Remove(item);
                     }

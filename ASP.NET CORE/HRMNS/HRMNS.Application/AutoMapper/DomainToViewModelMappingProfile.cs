@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HRMNS.Application.ViewModels.EHS;
 using HRMNS.Application.ViewModels.HR;
 using HRMNS.Application.ViewModels.System;
 using HRMNS.Application.ViewModels.Time_Attendance;
@@ -53,6 +54,11 @@ namespace HRMNS.Application.AutoMapper
             CreateMap<PERMISSION, PermisstionViewModel>();
             CreateMap<HR_THAISAN_CONNHO, NhanVienThaiSanViewModel>();
 
+            CreateMap<EHS_DM_KEHOACH, EhsDMKeHoachViewModel>();
+            CreateMap<EHS_LUATDINH_KEHOACH, EhsLuatDinhKeHoachViewModel>();
+            CreateMap<EHS_DEMUC_KEHOACH, EhsDeMucKeHoachViewModel>();
+            CreateMap<EHS_NOIDUNG, EhsNoiDungViewModel>();
+            CreateMap<EHS_NOIDUNG_KEHOACH, EhsNoiDungKeHoachViewModel>();
         }
     }
 }

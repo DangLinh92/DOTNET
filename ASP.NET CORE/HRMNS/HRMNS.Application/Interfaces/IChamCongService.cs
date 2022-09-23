@@ -15,13 +15,15 @@ namespace HRMNS.Application.Interfaces
 
         ChamCongLogViewModel Update(ChamCongLogViewModel model);
 
-        List<ChamCongLogViewModel> Search(string result,string dept,string timeFrom,string timeTo);
+        List<ChamCongLogViewModel> Search(string result,string dept,ref string timeFrom,ref string timeTo);
 
         ResultDB ImportExcel(string filePath, DataTable employees);
 
         string GetMaxDate();
 
         ResultDB InsertLogData(DataTable data);
+
+        ResultDB GetLogDataCurrentDay();
 
         void Save();
 

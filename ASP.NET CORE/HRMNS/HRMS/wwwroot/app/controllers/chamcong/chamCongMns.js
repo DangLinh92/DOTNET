@@ -130,6 +130,29 @@
                 }
             });
         });
+
+        // đồng bộ với biostar, trước khi get cần lấy dữ liệu mới nhất.
+        $('#btnGetLogBiostar').on('click', function () {
+            $.ajax({
+                type: "GET",
+                url: "/Admin/ChamCong/GetChamCongLogBiostar",
+                beforeSend: function () {
+                    hrms.run_waitMe($('#chamCongLogDataTable'));
+                },
+                success: function (response) {
+                    hrms.hide_waitMe($('#chamCongLogDataTable'));
+                    hrms.notify("Get Log success!", 'Success', 'alert', function () {
+                        location.reload();
+                    });
+                },
+                error: function () {
+                    hrms.hide_waitMe($('#chamCongLogDataTable'));
+                    hrms.notify('Has an error in progress!', 'error', 'alert', function () {
+                    });
+                }
+            });
+        });
+
         // Get Log end
 
         // open form show info

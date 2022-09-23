@@ -88,9 +88,33 @@
 
         $('#btnExportData').on('click', function () {
             hrms.run_waitMe($('#bangCongDataTable'));
+
+            let _time = $('#searchToTime').val();
+            let _dept = $('#cboDepartment').val();
+            let _status = '';
+            if ($("#chStatus").is(":checked")) {
+                _status = 'InActive';
+            }
+            else {
+                _status = 'Active';
+            }
+            let _timeEndUser = $('#searchOutToTime').val();
+
+            if (!_time || !_timeEndUser) {
+                hrms.notify('Hãy nhập ngày tháng!', 'error', 'alert', function () { });
+                return;
+            }
+
             $.ajax({
                 type: "POST",
                 url: "/Admin/BangCong/OutPutExcel",
+                data:
+                {
+                    timeEndUser: _timeEndUser,
+                    status: _status,
+                    department: _dept,
+                    timeTo: _time
+                },
                 success: function (response) {
                     window.location.href = response;
                     hrms.hide_waitMe($('#bangCongDataTable'));

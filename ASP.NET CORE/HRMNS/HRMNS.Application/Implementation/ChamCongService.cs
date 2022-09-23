@@ -44,7 +44,7 @@ namespace HRMNS.Application.Implementation
         public List<ChamCongLogViewModel> GetAll(string keyword)
         {
             string lastMonth = DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd");
-            var lst = _chamCongLogRepository.FindAll(x => string.Compare(x.Ngay_ChamCong, lastMonth) > 0).OrderByDescending(x => x.Ngay_ChamCong);
+            var lst = _chamCongLogRepository.FindAll(x => string.Compare(x.Ngay_ChamCong, lastMonth) >= 0).OrderByDescending(x => x.Ngay_ChamCong);
             return _mapper.Map<List<ChamCongLogViewModel>>(lst);
         }
 
@@ -164,13 +164,18 @@ namespace HRMNS.Application.Implementation
             return _chamCongLogRepository.ExecProceduce("PKG_BUSINESS.PUT_EVENT_LOG", param, "A_DATA", data);
         }
 
-        public List<ChamCongLogViewModel> Search(string result, string dept, string timeFrom, string timeTo)
+        public List<ChamCongLogViewModel> Search(string result, string dept,ref string timeFrom1,ref string timeTo1)
         {
-            if (string.IsNullOrEmpty(timeFrom.NullString()) || string.IsNullOrEmpty(timeTo))
+            string timeFrom, timeTo;
+
+            if (string.IsNullOrEmpty(timeFrom1.NullString()) || string.IsNullOrEmpty(timeTo1))
             {
-                timeFrom = DateTime.Now.AddDays(-5).ToString("yyyy-MM-dd");
-                timeTo = DateTime.Now.ToString("yyyy-MM-dd");
+                timeFrom1 = DateTime.Now.AddDays(-5).ToString("yyyy-MM-dd");
+                timeTo1 = DateTime.Now.ToString("yyyy-MM-dd");
             }
+
+            timeFrom = timeFrom1;
+            timeTo = timeTo1;
 
             if (string.IsNullOrEmpty(dept))
             {
@@ -260,19 +265,21 @@ namespace HRMNS.Application.Implementation
             DateTime ngayCham = DateTime.Parse(model.Ngay_ChamCong);
             string preday = ngayCham.AddDays(-1).ToString("yyyy-MM-dd");
             var entityPreday = _chamCongLogRepository.FindAll(x => x.ID_NV == model.ID_NV && x.Ngay_ChamCong == preday).FirstOrDefault();
-
+            string ex = "";
             if (entity != null)
             {
                 if (entity.FirstIn_Time != model.FirstIn_Time)
                 {
                     entity.FirstIn_Time = model.FirstIn_Time;
                     entity.FirstIn = "IN";
+                    ex = "-IN";
                 }
 
                 if (entity.Last_Out_Time != model.Last_Out_Time)
                 {
                     entity.Last_Out_Time = model.Last_Out_Time;
                     entity.LastOut = "OUT";
+                    ex += "-OUT";
                 }
 
                 if (model.FirstIn_Time == "00:00:00")
@@ -294,11 +301,17 @@ namespace HRMNS.Application.Implementation
                     entity.UserHandle = "Y";
                 }
 
-                entityPreday.Last_Out_Time_Update = entity.Last_Out_Time;
+                if(entityPreday != null)
+                {
+                    entityPreday.Last_Out_Time_Update = entity.Last_Out_Time;
+                }
 
-                entity.UserModified = model.UserModified;
+                entity.UserModified = model.UserModified + ex;
+
                 _chamCongLogRepository.Update(entity);
-                _chamCongLogRepository.Update(entityPreday);
+
+                if (entityPreday != null)
+                    _chamCongLogRepository.Update(entityPreday);
             }
             return model;
         }
@@ -312,6 +325,12 @@ namespace HRMNS.Application.Implementation
         {
             var lst = _chamCongLogRepository.FindAll(x => string.Compare(x.Ngay_ChamCong, fromTime) >= 0 && string.Compare(x.Ngay_ChamCong, toTime) <= 0).OrderByDescending(x => x.Ngay_ChamCong);
             return _mapper.Map<List<ChamCongLogViewModel>>(lst);
+        }
+
+        public ResultDB GetLogDataCurrentDay()
+        {
+            Dictionary<string, string> param = new Dictionary<string, string>();
+            return _chamCongLogRepository.ExecProceduce2("PKG_BUSINESS.AUTO_PUT_EVENT_LOG_2", param);
         }
     }
 }

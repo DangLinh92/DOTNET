@@ -389,7 +389,8 @@
         // update grid data ,update datatable jquery
         hrms.run_waitMe($('#gridNhanVien'));
 
-        $('#btnSearch').submit();
+        // $('#btnSearch').submit();
+        window.location.reload();
         let myVar = setInterval(function () {
             var table = $('#nhanVienDataTable');
             if (table) {

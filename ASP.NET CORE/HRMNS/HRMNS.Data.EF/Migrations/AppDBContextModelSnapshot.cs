@@ -771,6 +771,265 @@ namespace HRMNS.Data.EF.Migrations
                     b.ToTable("DM_NGAY_LAMVIEC");
                 });
 
+            modelBuilder.Entity("HRMNS.Data.Entities.EHS_DEMUC_KEHOACH", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("TenKeDeMuc_KR")
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.Property<string>("TenKeDeMuc_VN")
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EHS_DEMUC_KEHOACH");
+                });
+
+            modelBuilder.Entity("HRMNS.Data.Entities.EHS_DM_KEHOACH", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("TenKeHoach_KR")
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.Property<string>("TenKeHoach_VN")
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EHS_DM_KEHOACH");
+                });
+
+            modelBuilder.Entity("HRMNS.Data.Entities.EHS_LUATDINH_DEMUC_KEHOACH", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("LuatDinhLienQuan")
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.Property<Guid>("MaDeMuc")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MaDeMuc");
+
+                    b.ToTable("EHS_LUATDINH_DEMUC_KEHOACH");
+                });
+
+            modelBuilder.Entity("HRMNS.Data.Entities.EHS_LUATDINH_KEHOACH", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<Guid>("MaKeHoach")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("NoiDungLuatDinh")
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MaKeHoach");
+
+                    b.ToTable("EHS_LUATDINH_KEHOACH");
+                });
+
+            modelBuilder.Entity("HRMNS.Data.Entities.EHS_NOIDUNG", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<Guid>("MaDeMucKH")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("MaKeHoach")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("NoiDung")
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MaDeMucKH");
+
+                    b.HasIndex("MaKeHoach");
+
+                    b.ToTable("EHS_NOIDUNG");
+                });
+
+            modelBuilder.Entity("HRMNS.Data.Entities.EHS_NOIDUNG_KEHOACH", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ChuKy")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<Guid>("MaNoiDung")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("NgayKhaiBaoThietBi")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("NgayThucHien")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("NhaThau")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(500)")
+                        .HasMaxLength(500);
+
+                    b.Property<double>("SoLuong")
+                        .HasColumnType("float");
+
+                    b.Property<string>("ThoiGianThongBao")
+                        .HasColumnType("nvarchar(10)")
+                        .HasMaxLength(10);
+
+                    b.Property<string>("ThoiGian_ThucHien")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("ViTri")
+                        .HasColumnType("nvarchar(500)")
+                        .HasMaxLength(500);
+
+                    b.Property<string>("Year")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("YeuCau")
+                        .HasColumnType("nvarchar(500)")
+                        .HasMaxLength(500);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MaNoiDung");
+
+                    b.ToTable("EHS_NOIDUNG_KEHOACH");
+                });
+
             modelBuilder.Entity("HRMNS.Data.Entities.FUNCTION", b =>
                 {
                     b.Property<string>("Id")
@@ -2101,6 +2360,48 @@ namespace HRMNS.Data.EF.Migrations
                         .WithMany("DM_CA_LVIEC")
                         .HasForeignKey("MaTruSo")
                         .OnDelete(DeleteBehavior.SetNull);
+                });
+
+            modelBuilder.Entity("HRMNS.Data.Entities.EHS_LUATDINH_DEMUC_KEHOACH", b =>
+                {
+                    b.HasOne("HRMNS.Data.Entities.EHS_DEMUC_KEHOACH", "EHS_DEMUC_KEHOACH")
+                        .WithMany("EHS_LUATDINH_DEMUC_KEHOACH")
+                        .HasForeignKey("MaDeMuc")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HRMNS.Data.Entities.EHS_LUATDINH_KEHOACH", b =>
+                {
+                    b.HasOne("HRMNS.Data.Entities.EHS_DM_KEHOACH", "EHS_DM_KEHOACH")
+                        .WithMany("EHS_LUATDINH_KEHOACH")
+                        .HasForeignKey("MaKeHoach")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HRMNS.Data.Entities.EHS_NOIDUNG", b =>
+                {
+                    b.HasOne("HRMNS.Data.Entities.EHS_DEMUC_KEHOACH", "EHS_DEMUC_KEHOACH")
+                        .WithMany("EHS_NOIDUNG")
+                        .HasForeignKey("MaDeMucKH")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HRMNS.Data.Entities.EHS_DM_KEHOACH", "EHS_DM_KEHOACH")
+                        .WithMany("EHS_NOIDUNG")
+                        .HasForeignKey("MaKeHoach")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HRMNS.Data.Entities.EHS_NOIDUNG_KEHOACH", b =>
+                {
+                    b.HasOne("HRMNS.Data.Entities.EHS_NOIDUNG", "EHS_NOIDUNG")
+                        .WithMany("EHS_NOIDUNG_KEHOACH")
+                        .HasForeignKey("MaNoiDung")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("HRMNS.Data.Entities.HR_BHXH", b =>

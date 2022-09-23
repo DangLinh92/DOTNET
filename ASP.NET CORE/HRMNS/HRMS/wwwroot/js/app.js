@@ -148,6 +148,15 @@ $(document).ready(function() {
 	
 	// Datatable
 
+	let resizeObserver = new ResizeObserver(() => {
+		$($.fn.dataTable.tables(true)).DataTable()
+			.columns.adjust();
+	});
+
+	if ($('.container-fluid')[0]) {
+		resizeObserver.observe($('.container-fluid')[0]);
+    }
+
 	//if($('.datatable').length > 0) {
 	//	$('.datatable').DataTable({
 	//		"bFilter": false,

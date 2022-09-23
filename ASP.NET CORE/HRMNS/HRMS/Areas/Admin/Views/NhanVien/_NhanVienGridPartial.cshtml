@@ -7,7 +7,15 @@
             <th>Vị trí</th>
             <th>Bộ Phận</th>
             <th>Ngày Hết Hạn HD</th>
-            <th>SDT</th>
+            @if (Model.FirstOrDefault()?.Status == "InActive")
+            {
+                <th>Ngày nghỉ việc</th>
+            }
+            else
+            {
+                <th>SDT</th>
+            }
+
             <th class="text-nowrap">Ngày Vào</th>
             <th class="text-nowrap">Status</th>
             <th class="text-right no-sort">Action</th>
@@ -26,9 +34,19 @@
                 <td>@nv.Id</td>
                 <td>@nv.MaChucDanh</td>
                 <td>@nv.MaBoPhan</td>
-                <td>@nv.HR_HOPDONG.OrderByDescending(x=>x.NgayHetHieuLuc).FirstOrDefault()?.NgayHetHieuLuc</td>
-                <td>@nv.SoDienThoai</td>
+                <td>@nv.HR_HOPDONG.OrderByDescending(x => x.NgayHetHieuLuc).FirstOrDefault()?.NgayHetHieuLuc</td>
+
+                @if (nv.Status == "InActive")
+                {
+                    <td>@nv.NgayNghiViec</td>
+                }
+                else
+                {
+                    <td>@nv.SoDienThoai</td>
+                }
+
                 <td>@nv.NgayVao</td>
+
                 <td>
                     @if (nv.Status == "Active")
                     {

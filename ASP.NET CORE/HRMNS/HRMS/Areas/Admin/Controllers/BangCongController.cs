@@ -3,6 +3,8 @@ using HRMNS.Application.ViewModels.HR;
 using HRMNS.Application.ViewModels.System;
 using HRMNS.Application.ViewModels.Time_Attendance;
 using HRMNS.Data.EF.Extensions;
+using HRMNS.Data.Enums;
+using HRMNS.Utilities.Common;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -25,12 +27,14 @@ namespace HRMS.Areas.Admin.Controllers
         private readonly IWebHostEnvironment _hostingEnvironment;
         private ChamCongDataModel ChamCongData;
         private readonly IMemoryCache _memoryCache;
+        private INhanVienService _nhanVienService;
 
-        public BangCongController(IBangCongService bangCongService, IBoPhanService boPhanService, IWebHostEnvironment hostEnvironment, ILogger<NhanVien_CaLamViecController> logger, IMemoryCache memoryCache)
+        public BangCongController(INhanVienService nhanVienService, IBangCongService bangCongService, IBoPhanService boPhanService, IWebHostEnvironment hostEnvironment, ILogger<NhanVien_CaLamViecController> logger, IMemoryCache memoryCache)
         {
             _bangCongService = bangCongService;
             _hostingEnvironment = hostEnvironment;
             _boPhanService = boPhanService;
+            _nhanVienService = nhanVienService;
             _logger = logger;
             _memoryCache = memoryCache;
         }
@@ -45,10 +49,25 @@ namespace HRMS.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Search(string department, string timeTo)
+        public IActionResult Search(string timeEndUser, string status,string department, string timeTo)
         {
+            if (status.NullString() == "")
+            {
+                status = Status.Active.ToString();
+            }
+            else
+            {
+                status = Status.InActive.ToString();
+            }
+
             List<DeNghiLamThemGioModel> lstLamthemgio = new List<DeNghiLamThemGioModel>();
-            var lst = _bangCongService.GetDataReport(timeTo, department, ref lstLamthemgio);
+            var lst = _bangCongService.GetDataReport(timeEndUser, status, timeTo, department, ref lstLamthemgio);
+
+            if (department.NullString() == "")
+            {
+                lst = lst.Where(x => x.BoPhan != "KOREA").ToList();
+            }
+
             string time = timeTo + "-01";
             ViewBag.DayOfMonths = DateTime.DaysInMonth(DateTime.Parse(time).Year, DateTime.Parse(time).Month);
 
@@ -72,7 +91,7 @@ namespace HRMS.Areas.Admin.Controllers
 
             if (dept.NullString() == "")
             {
-                var lstbp = _boPhanService.GetAll("");
+                var lstbp = _boPhanService.GetAll("").Where(x => x.Id != "KOREA");
                 foreach (var item in lstbp)
                 {
                     bophans.Add(item.TenBoPhan);
@@ -89,6 +108,7 @@ namespace HRMS.Areas.Admin.Controllers
             }
             else
             {
+                bophans.Add(dept);
                 var data = _bangCongService.TongHopNhanSuReport(time, dept).OrderBy(x => x.NgayBaoCao).ToList();
                 if (data.Count == 0)
                 {
@@ -207,6 +227,40 @@ namespace HRMS.Areas.Admin.Controllers
                                             UpdateDataNsu(colName, newColName, tt, ref worksheet);
                                         }
                                     }
+                                    else if (tt.TrucTiepGianTiep == "GianTiepSX" && tt.ChucVu == "STAFF")
+                                    {
+                                        worksheet.Cells["H" + (beginIndex + 2)].Value = "STAFF";
+                                        for (int k = 0; k < 16; k++)
+                                        {
+                                            colName = GetExcelColumnName(k + 9);
+
+                                            if (colName == "J" || colName == "W" || colName == "U")
+                                            {
+                                                continue;
+                                            }
+
+                                            // fill working status
+                                            newColName = colName + (beginIndex + 2);
+                                            UpdateDataNsu(colName, newColName, tt, ref worksheet);
+                                        }
+                                    }
+                                    else if (tt.TrucTiepGianTiep == "TrucTiepSX" && tt.ChucVu == "STAFF PM")
+                                    {
+                                        worksheet.Cells["H" + (beginIndex + 1)].Value = "STAFF PM";
+                                        for (int k = 0; k < 16; k++)
+                                        {
+                                            colName = GetExcelColumnName(k + 9);
+
+                                            if (colName == "J" || colName == "W" || colName == "U")
+                                            {
+                                                continue;
+                                            }
+
+                                            // fill working status
+                                            newColName = colName + (beginIndex + 1);
+                                            UpdateDataNsu(colName, newColName, tt, ref worksheet);
+                                        }
+                                    }
                                 }
                             }
                             else if (calv.CalamViec == "CD_WHC")
@@ -259,6 +313,41 @@ namespace HRMS.Areas.Admin.Controllers
 
                                             // fill working status
                                             newColName = colName + (beginIndex + 5);
+                                            UpdateDataNsu(colName, newColName, tt, ref worksheet);
+                                        }
+                                    }
+                                    else if (tt.TrucTiepGianTiep == "GianTiepSX" && tt.ChucVu == "STAFF")
+                                    {
+                                        worksheet.Cells["H" + (beginIndex + 5)].Value = "STAFF";
+                                        for (int k = 0; k < 16; k++)
+                                        {
+                                            colName = GetExcelColumnName(k + 9);
+
+                                            if (colName == "J" || colName == "W" || colName == "U")
+                                            {
+                                                continue;
+                                            }
+
+                                            // fill working status
+                                            newColName = colName + (beginIndex + 5);
+                                            UpdateDataNsu(colName, newColName, tt, ref worksheet);
+                                        }
+                                    }
+                                    else
+                                    if (tt.TrucTiepGianTiep == "TrucTiepSX" && tt.ChucVu == "STAFF PM")
+                                    {
+                                        worksheet.Cells["H" + (beginIndex + 4)].Value = "STAFF PM";
+                                        for (int k = 0; k < 16; k++)
+                                        {
+                                            colName = GetExcelColumnName(k + 9);
+
+                                            if (colName == "J" || colName == "W" || colName == "U")
+                                            {
+                                                continue;
+                                            }
+
+                                            // fill working status
+                                            newColName = colName + (beginIndex + 4);
                                             UpdateDataNsu(colName, newColName, tt, ref worksheet);
                                         }
                                     }
@@ -362,15 +451,34 @@ namespace HRMS.Areas.Admin.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult OutPutExcel()
+        public IActionResult OutPutExcel(string timeEndUser, string status,string department, string timeTo)
         {
             _memoryCache.TryGetValue("ChamCongData", out ChamCongData);
-            if (!_memoryCache.TryGetValue("ChamCongData", out ChamCongData) || ChamCongData?.ChamCongData?.Count == 0)
+            if (!_memoryCache.TryGetValue("ChamCongData", out ChamCongData) || ChamCongData?.ChamCongData?.Count == 0 || ChamCongData?.ChamCongData?.FirstOrDefault()?.BoPhan != department)
             {
-                return new BadRequestObjectResult("Not found data!");
+                List<DeNghiLamThemGioModel> lstLamthemgio = new List<DeNghiLamThemGioModel>();
+                var lst = _bangCongService.GetDataReport(timeEndUser, status, timeTo, department, ref lstLamthemgio);
+
+                
+                if (lst.Count == 0)
+                {
+                    return new BadRequestObjectResult("Not found data!");
+                }
+                else
+                {
+                    string time = timeTo + "-01";
+                    ChamCongData = new ChamCongDataModel(lst, time);
+                    _memoryCache.Remove("ChamCongData");
+                    _memoryCache.Set("ChamCongData", ChamCongData);
+                }
             }
 
             List<ChamCongDataViewModel> data = ChamCongData.ChamCongData;
+
+            if (department.NullString() == "")
+            {
+                data = data.Where(x => x.BoPhan != "KOREA").ToList();
+            }
 
             string sWebRootFolder = _hostingEnvironment.WebRootPath;
             string directory = Path.Combine(sWebRootFolder, "export-files");
@@ -379,10 +487,22 @@ namespace HRMS.Areas.Admin.Controllers
                 Directory.CreateDirectory(directory);
             }
 
-            string sFileName = $"chamCong_{DateTime.Now:yyyyMMddhhmmss}.xlsx";
+            string sFileName = "";
+            string fileTemp = "BangCongTmp.xlsx";
+            if (department.NullString() == "KOREA")
+            {
+                sFileName = $"chamCong_KOREA_{DateTime.Now:yyyyMMddhhmmss}.xlsx";
+                fileTemp = "BangCongKoreaTemplate.xlsx";
+            }
+            else
+            {
+                sFileName = $"chamCong_{DateTime.Now:yyyyMMddhhmmss}.xlsx";
+            }
+
             string fileUrl = $"{Request.Scheme}://{Request.Host}/export-files/{sFileName}";
             FileInfo file = new FileInfo(Path.Combine(directory, sFileName));
-            FileInfo fileSrc = new FileInfo(Path.Combine(Path.Combine(sWebRootFolder, "templates"), "BangCongTmp.xlsx"));
+            FileInfo fileSrc = new FileInfo(Path.Combine(Path.Combine(sWebRootFolder, "templates"), fileTemp));
+
             if (file.Exists)
             {
                 file.Delete();
@@ -393,154 +513,221 @@ namespace HRMS.Areas.Admin.Controllers
                 fileSrc.CopyTo(file.FullName, true);
             }
 
+
             using (ExcelPackage package = new ExcelPackage(file))
             {
-                // add a new worksheet to the empty workbook
-                ExcelWorksheet worksheet = package.Workbook.Worksheets[1];
-
-                // TIEU ĐỀ
-                worksheet.Cells["R1"].Value = "MONTHLY ATTENDANCE RECORD OF " + GetMonthYearEng(ChamCongData.TimeChamCong);
-                worksheet.Cells["R2"].Value = "BẢNG CHẤM CÔNG THÁNG " + ChamCongData.TimeChamCong.Split("-")[1] + " NĂM " + ChamCongData.TimeChamCong.Split("-")[0];
-
-                worksheet.Cells["A1"].Value = ChamCongData.TimeChamCong.Replace("-", "");
-
-                int beginIndex = 17;
-                string cellfrom = "";
-                string cellTo = "";
-                string colName = "";
-                string newColName = "";
-
-                for (int i = 0; i < data.Count; i++)
+                if (department.NullString() == "KOREA")
                 {
-                    worksheet.Cells["A" + beginIndex].Value = (i + 1);
-                    worksheet.Cells["B" + beginIndex].Value = data[i].MaNV;
-                    worksheet.Cells["C" + beginIndex].Value = data[i].TenNV;
-                    worksheet.Cells["D" + beginIndex].Value = data[i].NgayVao;
-                    worksheet.Cells["E" + beginIndex].Value = data[i].BoPhanDetail;
-                    worksheet.Cells["CN" + beginIndex].Value = data[i].VP_SX;
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets["BangCong"];
+                    worksheet.Name = timeTo;
+                    worksheet.Cells["A1"].Value = timeTo + "-01";
 
-                    for (int j = 1; j <= 31; j++)
+                    DateTime fromTime = DateTime.Parse(timeTo + "-01");
+                    DateTime endTime = fromTime.AddMonths(1).AddDays(-1);
+
+                    int beginColIndex = 3;
+                    string headerColName = "";
+                    foreach (var day in EachDay.EachDays(fromTime, endTime))
                     {
-                        colName = GetExcelColumnName(j + 7);
-                        // fill working status
-                        newColName = colName + beginIndex;
-                        foreach (var ws in data[i].WorkingStatuses)
-                        {
-                            if (int.Parse(ws.DayCheck.Substring(8, 2)) == j)  // 2022-12-03
-                            {
-                                if (ws.Value != "-")
-                                {
-                                    worksheet.Cells[newColName].Value = ws.Value;
-                                }
-
-                                if (ws.Value != "DS" && ws.Value != "NS" && ws.Value != "-")
-                                {
-                                    worksheet.Cells[newColName].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                                    worksheet.Cells[newColName].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(255, 204, 153));
-                                }
-                                break;
-                            }
-                        }
-
-                        // fill OT
-                        for (int k = 1; k <= 6; k++) // 150,200,210,270,300,390
-                        {
-                            newColName = colName + (beginIndex + k);
-
-                            foreach (var ot in data[i].OvertimeValues)
-                            {
-                                if (int.Parse(ot.DayCheckOT.Substring(8, 2)) == j)  // 2022-12-03
-                                {
-                                    if (k == 1 && ot.DMOvertime == "150") // 150
-                                    {
-                                        worksheet.Cells[newColName].Value = ot.ValueOT;
-                                    }
-                                    else
-                                    if (k == 2 && ot.DMOvertime == "200") // 150
-                                    {
-                                        worksheet.Cells[newColName].Value = ot.ValueOT;
-                                    }
-                                    else
-                                    if (k == 3 && ot.DMOvertime == "210") // 150
-                                    {
-                                        worksheet.Cells[newColName].Value = ot.ValueOT;
-                                    }
-                                    else
-                                    if (k == 4 && ot.DMOvertime == "270") // 150
-                                    {
-                                        worksheet.Cells[newColName].Value = ot.ValueOT;
-                                    }
-                                    else
-                                    if (k == 5 && ot.DMOvertime == "300") // 150
-                                    {
-                                        worksheet.Cells[newColName].Value = ot.ValueOT;
-                                    }
-                                    else
-                                    if (k == 6 && ot.DMOvertime == "390") // 150
-                                    {
-                                        worksheet.Cells[newColName].Value = ot.ValueOT;
-                                    }
-                                }
-                            }
-                        }
-
-                        // fill EL/LC
-                        newColName = colName + (beginIndex + 7);
-                        foreach (var st in data[i].EL_LC_Statuses)
-                        {
-                            if (int.Parse(st.DayCheck_EL.Substring(8, 2)) == j)  // 2022-12-03
-                            {
-                                if (st.Value_EL > 0)
-                                {
-                                    worksheet.Cells[newColName].Value = st.Value_EL;
-                                    worksheet.Cells[newColName].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                                    worksheet.Cells[newColName].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(255, 217, 179));
-                                }
-                            }
-                        }
+                        headerColName = GetExcelColumnName(beginColIndex);
+                        worksheet.Cells[headerColName + "2"].Value = day.ToString("yyyy-MM-dd");
+                        // worksheet.Cells[headerColName + "1"].Value = day.DayOfWeek.ToString();
+                        beginColIndex += 3;
                     }
 
-                    if (i < data.Count - 2)
+                    int beginRowIndex = 4;
+                    string colName = "";
+                    string colName1 = "";
+                    string colName2 = "";
+                    int k = 0;
+                    for (int i = 0; i < data.Count; i++)
                     {
-                        // copy range cell
-                        cellfrom = "A" + (beginIndex + 8) + ":CO" + (beginIndex + 16);
-                        cellTo = "A" + (beginIndex + 16) + ":CO" + (beginIndex + 24);
-                        worksheet.Cells[cellfrom].Copy(worksheet.Cells[cellTo]);
+                        worksheet.Cells["A" + beginRowIndex].Value = data[i].TenNV;
 
-                        // format sum total
-                        string hAM = "";
-                        for (int h = 39; h <= 91; h++) // AM ->
+                        k = 3;
+                        for (int j = 1; j <= 31; j++)
                         {
-                            hAM = GetExcelColumnName(h);
-                            worksheet.Cells[hAM + (beginIndex + 24)].Formula = "SUM(" + hAM + "17:" + hAM + (beginIndex + 16) + ")";
-                        }
-                    }
+                            colName = GetExcelColumnName(k);
+                            colName1 = GetExcelColumnName(k+1);
+                            colName2 = GetExcelColumnName(k+2);
 
-                    if (i < data.Count - 1)
-                    {
-                        // format ngay chu nhat mau xanh
-                        for (int d = 1; d <= 31; d++)
-                        {
-                            colName = GetExcelColumnName(d + 7);
-
-                            if (DateTime.DaysInMonth(DateTime.Parse(ChamCongData.TimeChamCong).Year, DateTime.Parse(ChamCongData.TimeChamCong).Month) >= d)
+                            foreach (var inout in data[i].TimeInOutModels.OrderBy(x => x.DayCheck))
                             {
-                                var ex = worksheet.Cells[colName + (beginIndex + 8) + ":" + colName + (beginIndex + 15)].ConditionalFormatting.AddExpression();
-                                ex.Formula = string.Format("IF(" + colName + "$16=\"{0}\",1,0)", "Sun");
-                                ex.Style.Fill.PatternType = ExcelFillStyle.Solid;
-                                ex.Style.Fill.BackgroundColor.Color = Color.FromArgb(155, 194, 230);
+                                if (int.Parse(inout.DayCheck.Substring(8, 2)) == j)
+                                {
+                                    worksheet.Cells[colName + beginRowIndex].Value = inout.InTime.TimeHHMM();
+                                    worksheet.Cells[colName1 + beginRowIndex].Value = inout.OutTime.TimeHHMM();
+                                    worksheet.Cells[colName2 + beginRowIndex].Value = inout.HangMuc.NullString();
+                                }
                             }
+
+                            k += 3;
                         }
+
+                        if (i < data.Count - 2)
+                        {
+                            worksheet.Cells["A" + (beginRowIndex + 1) + ":CW" + (beginRowIndex + 1)].Copy(worksheet.Cells["A" + (beginRowIndex + 2) + ":CW" + (beginRowIndex + 2)]);
+                        }
+
+                        beginRowIndex += 1;
                     }
 
-                    beginIndex += 8;
                     if (data.Count == 1)
                     {
-                        worksheet.DeleteRow(25, 8);
+                        worksheet.DeleteRow(5, 1);
                     }
-                }
 
-                package.Save(); //Save the workbook.
+                    package.Save(); //Save the workbook.
+                }
+                else
+                {
+                    // add a new worksheet to the empty workbook
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[1];
+
+                    // TIEU ĐỀ
+                    worksheet.Cells["R1"].Value = "MONTHLY ATTENDANCE RECORD OF " + GetMonthYearEng(ChamCongData.TimeChamCong);
+                    worksheet.Cells["R2"].Value = "BẢNG CHẤM CÔNG THÁNG " + ChamCongData.TimeChamCong.Split("-")[1] + " NĂM " + ChamCongData.TimeChamCong.Split("-")[0];
+
+                    worksheet.Cells["A1"].Value = ChamCongData.TimeChamCong.Replace("-", "");
+
+                    int beginIndex = 17;
+                    string cellfrom = "";
+                    string cellTo = "";
+                    string colName = "";
+                    string newColName = "";
+
+                    for (int i = 0; i < data.Count; i++)
+                    {
+                        worksheet.Cells["A" + beginIndex].Value = (i + 1);
+                        worksheet.Cells["B" + beginIndex].Value = data[i].MaNV;
+                        worksheet.Cells["C" + beginIndex].Value = data[i].TenNV;
+                        worksheet.Cells["D" + beginIndex].Value = data[i].NgayVao;
+                        worksheet.Cells["E" + beginIndex].Value = data[i].BoPhanDetail;
+                        worksheet.Cells["CN" + beginIndex].Value = data[i].VP_SX;
+
+                        for (int j = 1; j <= 31; j++)
+                        {
+                            colName = GetExcelColumnName(j + 7);
+                            // fill working status
+                            newColName = colName + beginIndex;
+                            foreach (var ws in data[i].WorkingStatuses)
+                            {
+                                if (int.Parse(ws.DayCheck.Substring(8, 2)) == j)  // 2022-12-03
+                                {
+                                    if (ws.Value != "-")
+                                    {
+                                        worksheet.Cells[newColName].Value = ws.Value;
+                                    }
+
+                                    if (ws.Value != "DS" && ws.Value != "NS" && ws.Value != "-")
+                                    {
+                                        worksheet.Cells[newColName].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                        worksheet.Cells[newColName].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(255, 204, 153));
+                                    }
+                                    break;
+                                }
+                            }
+
+                            // fill OT
+                            for (int k = 1; k <= 6; k++) // 150,200,210,270,300,390
+                            {
+                                newColName = colName + (beginIndex + k);
+
+                                foreach (var ot in data[i].OvertimeValues)
+                                {
+                                    if (int.Parse(ot.DayCheckOT.Substring(8, 2)) == j)  // 2022-12-03
+                                    {
+                                        if (k == 1 && ot.DMOvertime == "150") // 150
+                                        {
+                                            worksheet.Cells[newColName].Value = ot.ValueOT;
+                                        }
+                                        else
+                                        if (k == 2 && ot.DMOvertime == "200") // 150
+                                        {
+                                            worksheet.Cells[newColName].Value = ot.ValueOT;
+                                        }
+                                        else
+                                        if (k == 3 && ot.DMOvertime == "210") // 150
+                                        {
+                                            worksheet.Cells[newColName].Value = ot.ValueOT;
+                                        }
+                                        else
+                                        if (k == 4 && ot.DMOvertime == "270") // 150
+                                        {
+                                            worksheet.Cells[newColName].Value = ot.ValueOT;
+                                        }
+                                        else
+                                        if (k == 5 && ot.DMOvertime == "300") // 150
+                                        {
+                                            worksheet.Cells[newColName].Value = ot.ValueOT;
+                                        }
+                                        else
+                                        if (k == 6 && ot.DMOvertime == "390") // 150
+                                        {
+                                            worksheet.Cells[newColName].Value = ot.ValueOT;
+                                        }
+                                    }
+                                }
+                            }
+
+                            // fill EL/LC
+                            newColName = colName + (beginIndex + 7);
+                            foreach (var st in data[i].EL_LC_Statuses)
+                            {
+                                if (int.Parse(st.DayCheck_EL.Substring(8, 2)) == j)  // 2022-12-03
+                                {
+                                    if (st.Value_EL > 0)
+                                    {
+                                        worksheet.Cells[newColName].Value = st.Value_EL;
+                                        worksheet.Cells[newColName].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                        worksheet.Cells[newColName].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(255, 217, 179));
+                                    }
+                                }
+                            }
+                        }
+
+                        if (i < data.Count - 2)
+                        {
+                            // copy range cell
+                            cellfrom = "A" + (beginIndex + 8) + ":CO" + (beginIndex + 16);
+                            cellTo = "A" + (beginIndex + 16) + ":CO" + (beginIndex + 24);
+                            worksheet.Cells[cellfrom].Copy(worksheet.Cells[cellTo]);
+
+                            // format sum total
+                            string hAM = "";
+                            for (int h = 39; h <= 91; h++) // AM ->
+                            {
+                                hAM = GetExcelColumnName(h);
+                                worksheet.Cells[hAM + (beginIndex + 24)].Formula = "SUM(" + hAM + "17:" + hAM + (beginIndex + 16) + ")";
+                            }
+                        }
+
+                        if (i < data.Count - 1)
+                        {
+                            // format ngay chu nhat mau xanh
+                            for (int d = 1; d <= 31; d++)
+                            {
+                                colName = GetExcelColumnName(d + 7);
+
+                                if (DateTime.DaysInMonth(DateTime.Parse(ChamCongData.TimeChamCong).Year, DateTime.Parse(ChamCongData.TimeChamCong).Month) >= d)
+                                {
+                                    var ex = worksheet.Cells[colName + (beginIndex + 8) + ":" + colName + (beginIndex + 15)].ConditionalFormatting.AddExpression();
+                                    ex.Formula = string.Format("IF(" + colName + "$16=\"{0}\",1,0)", "Sun");
+                                    ex.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                    ex.Style.Fill.BackgroundColor.Color = Color.FromArgb(155, 194, 230);
+                                }
+                            }
+                        }
+
+                        beginIndex += 8;
+                        if (data.Count == 1)
+                        {
+                            worksheet.DeleteRow(25, 8);
+                        }
+                    }
+
+                    package.Save(); //Save the workbook.
+                }
             }
             return new OkObjectResult(fileUrl);
         }
@@ -613,11 +800,11 @@ namespace HRMS.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult ExportDenghiOT(string bophan, string fromTime, string endTime)
+        public IActionResult ExportDenghiOT(string timeEndUser, string bophan, string fromTime, string endTime)
         {
             List<DeNghiLamThemGioModel> lstlamthem = new List<DeNghiLamThemGioModel>();
             string timeTo = fromTime.Substring(0, 7);
-            var lst = _bangCongService.GetDataReport(timeTo, bophan.NullString(), ref lstlamthem);
+            var lst = _bangCongService.GetDataReport("", "", timeTo, bophan.NullString(), ref lstlamthem);
 
             List<DeNghiLamThemGioModel> data = new List<DeNghiLamThemGioModel>();
             if (bophan.NullString() != "")
@@ -733,11 +920,11 @@ namespace HRMS.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult ExportBaoCaoOT(string bophan, string fromTime, string endTime)
+        public IActionResult ExportBaoCaoOT(string timeEndUser, string bophan, string fromTime, string endTime)
         {
             List<DeNghiLamThemGioModel> lstlamthem = new List<DeNghiLamThemGioModel>();
             string timeTo = fromTime.Substring(0, 7);
-            var lst = _bangCongService.GetDataReport(timeTo, bophan.NullString(), ref lstlamthem);
+            var lst = _bangCongService.GetDataReport("", "", timeTo, bophan.NullString(), ref lstlamthem);
 
             List<DeNghiLamThemGioModel> data = new List<DeNghiLamThemGioModel>();
             if (bophan.NullString() != "")
@@ -747,6 +934,77 @@ namespace HRMS.Areas.Admin.Controllers
             else
             {
                 data = lstlamthem.Where(x => x.NgayDangKy.CompareTo(fromTime) >= 0 && x.NgayDangKy.CompareTo(endTime) <= 0).OrderBy(x => x.MaNV).ToList();
+            }
+
+            string status = Status.InActive.NullString();
+            int dayFrom = DateTime.Parse(fromTime).Day;
+            int dayTo = DateTime.Parse(endTime).Day;
+
+            if (bophan.NullString() != "")
+            {
+                var lstNvien = _nhanVienService.GetAll().Where(x => x.Status != status && x.MaBoPhan == bophan).ToList();
+                string daycheck = timeTo;
+                foreach (var item in lstNvien)
+                {
+                    for (int i = dayFrom; i <= dayTo; i++)
+                    {
+                        daycheck = timeTo;
+
+                        if (i < 10)
+                        {
+                            daycheck += "-0" + i;
+                        }
+                        else
+                        {
+                            daycheck += "-" + i;
+                        }
+
+                        if (!data.Any(x => x.MaNV == item.Id && x.NgayDangKy == daycheck))
+                        {
+                            data.Add(new DeNghiLamThemGioModel()
+                            {
+                                MaNV = item.Id,
+                                BoPhan = item.MaBoPhan,
+                                Duration = "0",
+                                NgayDangKy = daycheck,
+                                TenNV = item.TenNV
+                            });
+                        }
+                    }
+                }
+            }
+            else
+            {
+                var lstNvien = _nhanVienService.GetAll().Where(x => x.Status != status).ToList();
+                string daycheck = timeTo;
+                foreach (var item in lstNvien)
+                {
+                    for (int i = dayFrom; i <= dayTo; i++)
+                    {
+                        daycheck = timeTo;
+
+                        if (i < 10)
+                        {
+                            daycheck += "-0" + i;
+                        }
+                        else
+                        {
+                            daycheck += "-" + i;
+                        }
+
+                        if (!data.Any(x => x.MaNV == item.Id && x.NgayDangKy == daycheck))
+                        {
+                            data.Add(new DeNghiLamThemGioModel()
+                            {
+                                MaNV = item.Id,
+                                BoPhan = item.MaBoPhan,
+                                Duration = "0",
+                                NgayDangKy = daycheck,
+                                TenNV = item.TenNV
+                            });
+                        }
+                    }
+                }
             }
 
             List<DeNghiLamThemGioModel> data2 = new List<DeNghiLamThemGioModel>();

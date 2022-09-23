@@ -22,8 +22,16 @@ namespace HRMS.Areas.Admin.Controllers
 
         public IActionResult Index()
         {
-            var lst = _nhanVienThaiSanService.GetAll().OrderByDescending(x=>x.DateModified).ToList();
-            return View(lst);
+            if (string.IsNullOrEmpty(Department))
+            {
+                var lst = _nhanVienThaiSanService.GetAll().OrderByDescending(x => x.DateModified).ToList();
+                return View(lst);
+            }
+            else
+            {
+                var lst = _nhanVienThaiSanService.GetAll().FindAll(x=>x.HR_NHANVIEN.MaBoPhan == Department).OrderByDescending(x => x.DateModified).ToList();
+                return View(lst);
+            }
         }
 
         [HttpPost]
