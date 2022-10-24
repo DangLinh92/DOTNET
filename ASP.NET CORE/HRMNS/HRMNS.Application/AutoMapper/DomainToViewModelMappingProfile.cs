@@ -59,6 +59,13 @@ namespace HRMNS.Application.AutoMapper
             CreateMap<EHS_DEMUC_KEHOACH, EhsDeMucKeHoachViewModel>();
             CreateMap<EHS_NOIDUNG, EhsNoiDungViewModel>();
             CreateMap<EHS_NOIDUNG_KEHOACH, EhsNoiDungKeHoachViewModel>();
+
+            CreateMap<TRAINING_TYPE, TrainingTypeViewModel>();
+            CreateMap<HR_TRAINING, Hr_TrainingViewModel>();
+            CreateMap<TRAINING_NHANVIEN, Training_NhanVienViewModel>();
+            CreateMap<EVENT_SHEDULE_PARENT, EventScheduleParentViewModel>();
+            CreateMap<EVENT_SHEDULE, EventSheduleViewModel>();
+            CreateMap<HR_NHANVIEN_CHEDO_DB, NhanVienCheDoDBViewModel>();
         }
     }
 }

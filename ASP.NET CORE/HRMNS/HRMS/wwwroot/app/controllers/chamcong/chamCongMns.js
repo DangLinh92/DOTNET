@@ -34,10 +34,15 @@
                     toTime: toTime,
                     dept: dept
                 },
+                beforeSend: function () {
+                    hrms.run_waitMe($('#chamCongLogDataTable'));
+                },
                 success: function (response) {
+                    hrms.hide_waitMe($('#chamCongLogDataTable'));
                     window.location.href = response;
                 },
                 error: function (status) {
+                    hrms.hide_waitMe($('#chamCongLogDataTable'));
                     hrms.notify(status.responseText, 'error', 'alert', function () { });
                 }
             });

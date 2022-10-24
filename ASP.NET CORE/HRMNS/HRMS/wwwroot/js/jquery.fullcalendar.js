@@ -142,7 +142,7 @@
             {
                 title: 'Test Event 1',
                 start: today,
-                end: today,
+                end: new Date($.now() + 148000000),
                 className: 'bg-success'
             },
             {

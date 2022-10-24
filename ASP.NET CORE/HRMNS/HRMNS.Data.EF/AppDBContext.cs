@@ -72,6 +72,13 @@ namespace HRMNS.Data.EF
         public virtual DbSet<EHS_NOIDUNG_KEHOACH> EHS_NOIDUNG_KEHOACH { get; set; }
         public virtual DbSet<EHS_NOIDUNG> EHS_NOIDUNG { get; set; }
 
+        public virtual DbSet<EVENT_SHEDULE> EVENT_SHEDULE { get; set; }
+        public virtual DbSet<EVENT_SHEDULE_PARENT> EVENT_SHEDULE_PARENT { get; set; }
+        public virtual DbSet<HR_TRAINING> HR_TRAINING { get; set; }
+        public virtual DbSet<TRAINING_NHANVIEN> TRAINING_NHANVIEN { get; set; }
+        public virtual DbSet<TRAINING_TYPE> TRAINING_TYPE { get; set; }
+        public virtual DbSet<HR_NHANVIEN_CHEDO_DB> HR_NHANVIEN_CHEDO_DB { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             #region
@@ -130,6 +137,13 @@ namespace HRMNS.Data.EF
             builder.AddConfiguration(new EhsLuatDinhDeMucKeHoachConfiguration());
             builder.AddConfiguration(new EhsNoiDungKeHoachConfiguration());
             builder.AddConfiguration(new EhsNoiDungConfiguration());
+            builder.AddConfiguration(new EventParentConfiguration());
+            builder.AddConfiguration(new EventConfiguration());
+
+            builder.AddConfiguration(new TrainingConfigurationConfiguration());
+            builder.AddConfiguration(new TrainingNhanVienConfiguration());
+            builder.AddConfiguration(new TrainingTypeConfiguration());
+            builder.AddConfiguration(new NhanVienCheDoDBConfiguration());
 
             //base.OnModelCreating(builder);
         }

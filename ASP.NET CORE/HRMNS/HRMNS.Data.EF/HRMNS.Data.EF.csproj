@@ -7,6 +7,12 @@
   <ItemGroup>
     <Compile Remove="Migrations\20220812082010_addTableEHS.cs" />
     <Compile Remove="Migrations\20220812082010_addTableEHS.Designer.cs" />
+    <Compile Remove="Migrations\20221006062836_updateTrainingtype.cs" />
+    <Compile Remove="Migrations\20221006062836_updateTrainingtype.Designer.cs" />
+    <Compile Remove="Migrations\20221006063657_deleteTrainingtype.cs" />
+    <Compile Remove="Migrations\20221006063657_deleteTrainingtype.Designer.cs" />
+    <Compile Remove="Migrations\20221006064139_upTrainingtype.cs" />
+    <Compile Remove="Migrations\20221006064139_upTrainingtype.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

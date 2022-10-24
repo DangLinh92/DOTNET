@@ -29,7 +29,7 @@
                 select: true,
                 "searching": true,
                 initComplete: function () {
-                    this.api().columns([1, 2, 3, 4, 5, 6, 7, 8,9]).every(function () {
+                    this.api().columns([1, 2, 3, 4, 5, 6, 7, 8, 9]).every(function () {
                         var column = this;
                         var select = $('<select><option value="">All</option></select>')
                             .appendTo($(column.header()))
@@ -137,16 +137,16 @@
             </div>
             <div class="col-auto float-right ml-auto">
                 @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
-            (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin" || User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" || User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "AssLeader"))
+          (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin" || User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" || User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "AssLeader"))
                 {
-                <a href="#" id="btnCreate" class="btn add-btn" data-toggle="modal" data-target="#addEditOvertimeModel"><i class="fa fa-plus"></i> Đăng ký OT</a>
-                <div class="btn-group">
-                    <button type="button" class="btn btn-info dropdown-toggle" id="btnManagement" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Management</button>
-                    <div class="dropdown-menu" style="">
-                        <a class="dropdown-item" href="~/templates/OvertimeTemplate.xlsx">Lấy File mẫu đăng ký</a>
-                        <a class="dropdown-item" href="#" id="btn-importOvertime">Đăng ký OT(Import)</a>
+                    <a href="#" id="btnCreate" class="btn add-btn" data-toggle="modal" data-target="#addEditOvertimeModel"><i class="fa fa-plus"></i> Đăng ký OT</a>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-info dropdown-toggle" id="btnManagement" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Management</button>
+                        <div class="dropdown-menu" style="">
+                            <a class="dropdown-item" href="~/templates/OvertimeTemplate.xlsx">Lấy File mẫu đăng ký</a>
+                            <a class="dropdown-item" href="#" id="btn-importOvertime">Đăng ký OT(Import)</a>
+                        </div>
                     </div>
-                </div>
                 }
             </div>
         </div>
@@ -157,12 +157,12 @@
         <div class="row filter-row">
 
             @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
-                !(User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "GrLeader" ||
-                User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "KRManager" ||
-                User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" ||
-                User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin"))
+             !(User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "GrLeader" ||
+             User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "KRManager" ||
+             User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" ||
+             User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin"))
             {
-            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12"></div>
+                <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12"></div>
             }
 
             <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
@@ -207,18 +207,28 @@
                 <button href="#" class="btn btn-success btn-block" id="btnSearch" type="submit"> Search </button>
             </div>
 
-            @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
-             (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "GrLeader" ||
-             User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "KRManager" ||
-             User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" ||
-             User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin"))
-        {
-            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-                <a href="#" style="min-width: 120px;" class="btn btn-primary" id="btnApprove" data-target="#approve_overtime">  Approve</a>
-                <a href="#" class="btn btn-primary" id="btnUnApprove" data-target="#unapprove_overtime">UnApprove</a>
+
+        </div>
+
+        @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+(User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "GrLeader" ||
+User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "KRManager" ||
+User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" ||
+User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin"))
+        {<div class="row filter-row" style="margin-bottom: 10px">
+                <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12"></div>
+                <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12"></div>
+                <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12"></div>
+                <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12"></div>
+                <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                    <a href="#" class="btn btn-primary btn-block" id="btnApprove" data-target="#approve_overtime">  Approve</a>
+                </div>
+                <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                    <a href="#" class="btn btn-primary btn-block" id="btnUnApprove" data-target="#unapprove_overtime">UnApprove</a>
+                </div>
             </div>
         }
-        </div>
+
     </form>
 
     <div class="card-body" id="spinner1" style="text-align:center; display:none">

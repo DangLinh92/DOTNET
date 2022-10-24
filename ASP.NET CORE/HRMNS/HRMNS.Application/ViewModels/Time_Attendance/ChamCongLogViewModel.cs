@@ -124,5 +124,7 @@ namespace HRMNS.Application.ViewModels.Time_Attendance
         public string Shift { get; set; } // calamviec
 
         public string UserHandle { get; set; }
+
+        public int NumberUpdated { get; set; }
     }
 }

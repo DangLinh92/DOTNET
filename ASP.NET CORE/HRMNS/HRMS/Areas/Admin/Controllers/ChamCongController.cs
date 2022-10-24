@@ -68,7 +68,7 @@ namespace HRMS.Areas.Admin.Controllers
 
             foreach (var item in chamCongLog.ToList())
             {
-                if (!lstNv.Any(x => x.Id.ToUpper() == "H"+item.ID_NV))
+                if (!lstNv.Any(x => x.Id.ToUpper() == "H" + item.ID_NV))
                 {
                     chamCongLog.Remove(item);
                 }
@@ -138,28 +138,29 @@ namespace HRMS.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult GetChamCongAbsenceLog(string fromTime, string toTime, string dept)
         {
-            ResultDB result = _bioStarDB.GetChamCongAbsenceLogData(fromTime, toTime, dept);
-            _logger.LogInformation("GetChamCongAbsenceLog: " + result.ReturnString);
-            if (result.ReturnInt == 0)
+            List<ChamCongLogViewModel> lstLog = _chamCongService.GetByTime(fromTime, toTime).Where(x => x.FirstIn.NullString() == "" || x.LastOut.NullString() == "").ToList();
+            //ResultDB result = _bioStarDB.GetChamCongAbsenceLogData(fromTime, toTime, dept);
+            //_logger.LogInformation("GetChamCongAbsenceLog: " + result.ReturnString);
+            if (lstLog.Count > 0)
             {
                 var lstNv = _nhanVienService.GetAll().Where(x => x.Status != Status.InActive.ToString() || fromTime.NullString().CompareTo(x.NgayNghiViec) <= 0);
 
-                List<ChamCongLogViewModel> lstLog = new List<ChamCongLogViewModel>();
-                ChamCongLogViewModel model;
-                foreach (DataRow row in result.ReturnDataSet.Tables[0].Rows)
-                {
-                    model = new ChamCongLogViewModel()
-                    {
-                        ID_NV = row["userId"].NullString(),
-                        Ngay_ChamCong = row["Date_Check"].NullString(),
-                        FirstIn_Time = row["First_In_Time"].NullString(),
-                        Last_Out_Time = row["Last_Out_Time"].NullString(),
-                        FirstIn = row["First_In"].NullString(),
-                        LastOut = row["Last_Out"].NullString(),
-                        Ten_NV = row["userName"].NullString()
-                    };
-                    lstLog.Add(model);
-                }
+                //List<ChamCongLogViewModel> lstLog = new List<ChamCongLogViewModel>();
+                //ChamCongLogViewModel model;
+                //foreach (DataRow row in result.ReturnDataSet.Tables[0].Rows)
+                //{
+                //    model = new ChamCongLogViewModel()
+                //    {
+                //        ID_NV = row["userId"].NullString(),
+                //        Ngay_ChamCong = row["Date_Check"].NullString(),
+                //        FirstIn_Time = row["First_In_Time"].NullString(),
+                //        Last_Out_Time = row["Last_Out_Time"].NullString(),
+                //        FirstIn = row["First_In"].NullString(),
+                //        LastOut = row["Last_Out"].NullString(),
+                //        Ten_NV = row["userName"].NullString()
+                //    };
+                //    lstLog.Add(model);
+                //}
 
                 foreach (var item in lstLog.ToList())
                 {
@@ -184,18 +185,55 @@ namespace HRMS.Areas.Admin.Controllers
                         Ngay_ChamCong = item.Ngay_ChamCong,
                     };
 
-                    if (item.FirstIn == "" && item.LastOut == "")
+                    if (item.Shift.NullString().Contains("주간"))
                     {
-                        simpleModel.Status = "Không chấm công";
+                        if (item.FirstIn == "" && item.LastOut == "")
+                        {
+                            simpleModel.Status = "Không chấm công";
+                        }
+                        else if (item.FirstIn == "" && item.LastOut != "")
+                        {
+                            simpleModel.Status = "Không chấm đến";
+                        }
+                        else if (item.FirstIn != "" && item.LastOut == "" && DateTime.Now.ToString("yyyy-MM-dd") != item.Ngay_ChamCong)
+                        {
+                            simpleModel.Status = "Không chấm về";
+                        }
+                        else
+                        {
+                            continue;
+                        }
                     }
-                    else if (item.FirstIn == "" && item.LastOut != "")
+                    else
                     {
-                        simpleModel.Status = "Không chấm đến";
+                        simpleModel.Last_Out_Time = item.Last_Out_Time_Update;
+
+                        if (DateTime.Now.ToString("yyyy-MM-dd") == item.Ngay_ChamCong)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            if (item.FirstIn_Time == "00:00:00" && item.Last_Out_Time_Update == "00:00:00")
+                            {
+                                simpleModel.Status = "Không chấm công";
+                            }
+                            else
+                            if (item.FirstIn_Time == "00:00:00")
+                            {
+                                simpleModel.Status = "Không chấm đến";
+                            }
+                            else if (item.Last_Out_Time_Update == "00:00:00")
+                            {
+                                simpleModel.Status = "Không chấm về";
+                            }
+                            else
+                            {
+                                continue;
+                            }
+                        }
                     }
-                    else if (item.FirstIn != "" && item.LastOut == "")
-                    {
-                        simpleModel.Status = "Không chấm về";
-                    }
+
                     lstResult.Add(simpleModel);
                 }
 
@@ -261,6 +299,10 @@ namespace HRMS.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Search(string result, string dept, string fromTime, string toTime, string maNV)
         {
+            if(result.NullString() == "" && dept.NullString() == "" && fromTime.NullString()=="" && toTime.NullString() == "" && maNV.NullString() == "")
+            {
+                return PartialView("_gridChamCongPartialView", new List<ChamCongLogViewModel>());
+            }
             string status = "";
 
             if (result == "Normal" || result == "Absence")
@@ -270,7 +312,7 @@ namespace HRMS.Areas.Admin.Controllers
             }
 
             _chamCongService.SetDepartment(Department);
-            var lst = _chamCongService.Search(result, dept,ref fromTime,ref toTime);
+            var lst = _chamCongService.Search(result, dept, ref fromTime, ref toTime);
             if (!string.IsNullOrEmpty(maNV.NullString()) && lst.Any(x => maNV != null && maNV.Contains(x.ID_NV)))
             {
                 lst = lst.Where(x => maNV.Contains(x.ID_NV)).ToList();
@@ -302,6 +344,10 @@ namespace HRMS.Areas.Admin.Controllers
                     if (!lstNv.Any(x => x.Id.ToUpper() == "H" + item.ID_NV))
                     {
                         lst.Remove(item);
+                    }
+                    else
+                    {
+                        item.Department = lstNv.FirstOrDefault(x => x.Id.ToUpper() == "H" + item.ID_NV)?.MaBoPhan;
                     }
                 }
             }

@@ -1,0 +1,26 @@
+﻿@model List<Training_NhanVienViewModel>
+
+<h3 class="card-title">
+    Thông tin đào tạo
+</h3>
+<table class="table table-striped custom-table datatable" id="thongTinDaoTaoDataTable">
+    <thead>
+        <tr>
+            <th>Khóa Đào Tạo</th>
+            <th>Ngày Bắt Đầu</th>
+            <th>Ngày Kết Thúc</th>
+        </tr>
+    </thead>
+    <tbody id="tbl-content">
+        @foreach (var nv in Model)
+        {
+            <tr>
+                <td>@nv.HR_TRAINING?.TRAINING_TYPE?.TrainName</td>
+                <td>@nv.HR_TRAINING?.FromDate</td>
+                <td>@nv.HR_TRAINING?.ToDate</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+

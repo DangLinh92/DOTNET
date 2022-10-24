@@ -90,7 +90,25 @@ namespace HRMNS.Application.AutoMapper
                 .ConstructUsing(c => new EHS_LUATDINH_DEMUC_KEHOACH(c.Id, c.LuatDinhLienQuan, c.MaDeMuc));
 
             CreateMap<EhsNoiDungKeHoachViewModel, EHS_NOIDUNG_KEHOACH>()
-                .ConstructUsing(c => new EHS_NOIDUNG_KEHOACH(c.Id, c.Year, c.MaNoiDung, c.NhaThau, c.ChuKy, c.YeuCau, c.Note,c.NgayThucHien,c.ThoiGian_ThucHien,c.ViTri,c.SoLuong,c.NgayKhaiBaoThietBi,c.ThoiGianThongBao));
+                .ConstructUsing(c => new EHS_NOIDUNG_KEHOACH(c.Id, c.Year, c.MaNoiDung, c.NhaThau, c.ChuKy, c.YeuCau, c.Note, c.NgayThucHien, c.ThoiGian_ThucHien, c.ViTri, c.SoLuong, c.NgayKhaiBaoThietBi, c.ThoiGianThongBao));
+
+            CreateMap<TrainingTypeViewModel, TRAINING_TYPE>()
+              .ConstructUsing(c => new TRAINING_TYPE(c.TrainName, c.Description, c.Status));
+
+            CreateMap<Hr_TrainingViewModel, HR_TRAINING>()
+              .ConstructUsing(c => new HR_TRAINING(c.Id, c.TrainnigType, c.Trainer, c.FromDate, c.ToDate, c.Description, c.Cost));
+
+            CreateMap<Training_NhanVienViewModel, TRAINING_NHANVIEN>()
+             .ConstructUsing(c => new TRAINING_NHANVIEN(c.MaNV, c.TrainnigId));
+
+            CreateMap<EventSheduleViewModel, EVENT_SHEDULE>()
+             .ConstructUsing(c => new EVENT_SHEDULE(c.MaEventParent, c.EventDate));
+
+            CreateMap<EventScheduleParentViewModel, EVENT_SHEDULE_PARENT>()
+             .ConstructUsing(c => new EVENT_SHEDULE_PARENT(c.Id, c.Title, c.StartEvent, c.EndEvent, c.Repeat, c.Content, c.BoPhan, c.TimeAlert, c.MaNoiDungKH));
+
+            CreateMap<NhanVienCheDoDBViewModel, HR_NHANVIEN_CHEDO_DB>()
+           .ConstructUsing(c => new HR_NHANVIEN_CHEDO_DB(c.MaNhanVien, c.CheDoDB, c.Note));
         }
     }
 }

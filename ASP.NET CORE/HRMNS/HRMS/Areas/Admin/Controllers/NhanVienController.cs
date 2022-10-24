@@ -36,6 +36,8 @@ namespace HRMS.Areas.Admin.Controllers
         IPhepNamService _phepNamService;
         IKeKhaiBaoHiemService _keKhaiBHService;
         ICheDoBHService _cheDoBHService;
+        ITrainingListService _trainingListService;
+        ITrainingTypeService _trainingTypeService;
 
         private readonly IWebHostEnvironment _hostingEnvironment;
 
@@ -50,8 +52,12 @@ namespace HRMS.Areas.Admin.Controllers
             IPhepNamService phepNamService,
             IKeKhaiBaoHiemService keKhaiBaoHiemService,
             ICheDoBHService cheDoBHService,
-            IWebHostEnvironment hostingEnvironment)
+             ITrainingListService trainingListService,
+             ITrainingTypeService trainingTypeService,
+        IWebHostEnvironment hostingEnvironment)
         {
+            _trainingListService = trainingListService;
+            _trainingTypeService = trainingTypeService;
             _nhanvienService = nhanVienService;
             _boPhanService = boPhanService;
             _hostingEnvironment = hostingEnvironment;
@@ -329,7 +335,8 @@ namespace HRMS.Areas.Admin.Controllers
                                                                     p => p.HR_QUATRINHLAMVIEC,
                                                                     q => q.HR_PHEP_NAM,
                                                                     k => k.HR_HOPDONG,
-                                                                    l => l.HR_KEKHAIBAOHIEM);
+                                                                    l => l.HR_KEKHAIBAOHIEM,
+                                                                    h=>h.TRAINING_NHANVIEN);
             if (nhanVien != null)
             {
                 NhanVienProfileModel profileModel = new NhanVienProfileModel();
@@ -498,6 +505,24 @@ namespace HRMS.Areas.Admin.Controllers
                 {
                     item.HR_CHEDOBH = chedo.Find(x => x.Id == item.CheDoBH);
                 }
+
+                profileModel.training_NhanVienViewModels = nhanVien.TRAINING_NHANVIEN.ToList();
+
+                if (profileModel.training_NhanVienViewModels == null || profileModel.training_NhanVienViewModels.Count() == 0)
+                {
+                    profileModel.training_NhanVienViewModels = new List<Training_NhanVienViewModel>()
+                    {
+                        new Training_NhanVienViewModel(profileModel.MaNhanVien,Guid.NewGuid())
+                    };
+                }
+                else
+                {
+                    foreach (var nvTrain in profileModel.training_NhanVienViewModels)
+                    {
+                       nvTrain.HR_TRAINING = _trainingListService.GetById(nvTrain.TrainnigId);
+                    }
+                }
+
 
                 ViewBag.LoaiHD = _hrLoaiHDService.GetAll();
 
@@ -860,7 +885,8 @@ namespace HRMS.Areas.Admin.Controllers
                                                                    p => p.HR_QUATRINHLAMVIEC,
                                                                    q => q.HR_PHEP_NAM,
                                                                    k => k.HR_HOPDONG,
-                                                                   l => l.HR_KEKHAIBAOHIEM);
+                                                                   l => l.HR_KEKHAIBAOHIEM,
+                                                                   h =>h.TRAINING_NHANVIEN);
             if (nhanVien != null)
             {
                 NhanVienProfileModel profileModel = new NhanVienProfileModel();
@@ -1029,6 +1055,23 @@ namespace HRMS.Areas.Admin.Controllers
                 foreach (var item in profileModel.kekhaibaohiems)
                 {
                     item.HR_CHEDOBH = chedo.Find(x => x.Id == item.CheDoBH);
+                }
+
+                profileModel.training_NhanVienViewModels = nhanVien.TRAINING_NHANVIEN.ToList();
+
+                if (profileModel.training_NhanVienViewModels == null || profileModel.training_NhanVienViewModels.Count() == 0)
+                {
+                    profileModel.training_NhanVienViewModels = new List<Training_NhanVienViewModel>()
+                    {
+                        new Training_NhanVienViewModel(profileModel.MaNhanVien,Guid.NewGuid())
+                    };
+                }
+                else
+                {
+                    foreach (var nvTrain in profileModel.training_NhanVienViewModels)
+                    {
+                        nvTrain.HR_TRAINING = _trainingListService.GetById(nvTrain.TrainnigId);
+                    }
                 }
 
                 ViewBag.LoaiHD = _hrLoaiHDService.GetAll();

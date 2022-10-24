@@ -1,0 +1,146 @@
+﻿@model List<TrainingTypeViewModel>
+@{
+    ViewData["Title"] = "Training Type";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+@section Scripts
+{
+    <script src="https://cdn.datatables.net/select/1.3.4/js/dataTables.select.min.js"></script>
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/app/controllers/Training/TrainingTypeController.js"></script>
+    <script>
+        var trainingTypeController = new TrainingTypeController();
+        trainingTypeController.initialize();
+
+        $(document).ready(function () {
+            $('#trainingTypeDataTable').DataTable();
+            $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search.');
+            $('select[name="trainingTypeDataTable_length"]').removeClass('form-control-sm');
+        });
+    </script>
+}
+@section Styles{
+
+}
+
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Danh Mục Đào Tạo</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/admin/home/index">Home</a></li>
+                    <li class="breadcrumb-item active">Training Type</li>
+                </ul>
+            </div>
+
+            <div class="col-auto float-right ml-auto">
+                <a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_type" id="btnAddType"><i class="fa fa-plus"></i> Add Type</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-striped custom-table mb-0 datatable" id="trainingTypeDataTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 30px;">#</th>
+                            <th>Type </th>
+                            <th>Description </th>
+                            <th>Status </th>
+                            <th class="text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.Count; i++)
+                        {
+                            <tr>
+                                <td>@(i+1)</td>
+                                <td>@Model[i].TrainName</td>
+                                <td>@Model[i].Description</td>
+                                <td>
+                                    @Model[i].Status
+                                </td>
+                                <td class="text-right">
+                                    <div class="dropdown dropdown-action">
+                                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item m_Edit_trainingType" href="#" data-toggle="modal" data-id="@Model[i].Id"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                                            <a class="dropdown-item m_Delete_trainingType" href="#" data-toggle="modal" data-id="@Model[i].Id"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Training Type Modal -->
+<div id="add_type" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <input type="hidden" id="hd_addType" />
+                <h5 class="modal-title">Add New</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="frmTrainingType">
+                    <div class="form-group">
+                        <input type="hidden" id="txtIdTrainingType" name="Id" />
+                        <label>Type <span class="text-danger">*</span></label>
+                        <input class="form-control" type="text" name="TrainName" id="txtTrainName">
+                    </div>
+                    <div class="form-group">
+                        <label>Description <span class="text-danger">*</span></label>
+                        <textarea class="form-control" rows="4" name="Description" id="txtDescription"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">Status</label>
+                        <select class="select" name="Status" id="txtStatusType">
+                            <option>Active</option>
+                            <option>Inactive</option>
+                        </select>
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn" id="btnSaveTrainingType">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Add Training Type Modal -->
+<!-- Delete Training Type Modal -->
+<div class="modal custom-modal fade" id="delete_type" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header">
+                    <input type="hidden" id="txtIdTrainingTypeDelete" name="Id" />
+                    <h3>Delete Training Type</h3>
+                    <p>Are you sure want to delete?</p>
+                </div>
+                <div class="modal-btn delete-action">
+                    <div class="row">
+                        <div class="col-6">
+                            <a href="javascript:void(0);" class="btn btn-primary continue-btn" id="btnDeleteTrainingType">Delete</a>
+                        </div>
+                        <div class="col-6">
+                            <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Delete Training Type Modal -->

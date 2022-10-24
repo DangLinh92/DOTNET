@@ -1,0 +1,9 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using HRMS
+@using HRMS.Models
+@using HRMNS.Data.Entities
+@using HRMS.Models.AccountViewModels
+@using HRMS.Models.ManageViewModels
+@using HRMNS.Application.ViewModels.HR
+@using HRMNS.Application.ViewModels.System
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers

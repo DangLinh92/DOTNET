@@ -1,0 +1,220 @@
+﻿@model List<Hr_TrainingViewModel>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts
+{
+    <script src="https://cdn.datatables.net/select/1.3.4/js/dataTables.select.min.js"></script>
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/app/controllers/Training/TrainingController.js"></script>
+    <script>
+        var trainingController = new trainingController();
+        trainingController.initialize();
+
+        $(document).ready(function () {
+            $('#trainingDatatable').DataTable();
+            $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search.');
+            $('select[name="trainingDatatable_length"]').removeClass('form-control-sm');
+        });
+    </script>
+}
+
+@section Styles
+{
+
+}
+
+<!-- Page Content -->
+<div class="content container-fluid">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Danh Sách Đào Tạo</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/admin/home/index">Home</a></li>
+                    <li class="breadcrumb-item active">Training</li>
+                </ul>
+            </div>
+            <div class="col-auto float-right ml-auto">
+                <a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_training" id="btnShowAddNewTraining"><i class="fa fa-plus"></i> Add New </a>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info dropdown-toggle" id="btnImport" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Managerment</button>
+                    <div class="dropdown-menu" style="">
+                        <a class="dropdown-item" href="~/templates/NhanVienDaoTaoTemplate.xlsx">File mẫu thông tin nhân viên</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-striped custom-table mb-0 datatable" id="trainingDatatable">
+                    <thead>
+                        <tr>
+                            <th style="width: 30px;">#</th>
+                            <th>Training Type</th>
+                            <th>Trainer</th>
+                            <th>From Date</th>
+                            <th>To Date</th>
+                            <th>Description </th>
+                            <th class="text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @for (int i = 0; i < Model.Count; i++)
+                        {
+                        <tr>
+                            <td>@(i+1)</td>
+                            <td>@Model[i].TRAINING_TYPE.TrainName</td>
+                            <td>
+                                @Model[i].Trainer
+                            </td>
+                            <td>@Model[i].FromDate</td>
+                            <td>@Model[i].ToDate</td>
+                            <td>@Model[i].Description</td>
+                            <td class="text-right">
+                                <div class="dropdown dropdown-action">
+                                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item m_Edit_training" href="#" data-toggle="modal" data-id="@Model[i].Id"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                                        <a class="dropdown-item m_Delete_training" href="#" data-toggle="modal" data-id="@Model[i].Id"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                                        <a class="dropdown-item m_Import_training" href="#" data-toggle="modal" data-id="@Model[i].Id"><i class="fa fa-file-o m-r-5"></i> Import Nhân Viên</a>
+                                        <a class="dropdown-item m_View_training" href="#" data-toggle="modal" data-id="@Model[i].Id"><i class="fa fa-address-book m-r-5"></i> View DS Nhân Viên</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Page Content -->
+<!-- Add Training List Modal -->
+<div id="add_training" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Training</h5>
+                <input type="hidden" id="hd_training" />
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="frmTraining">
+                    <div class="row">
+                        <input type="hidden" id="txtIdTraining" name="Id" />
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Training Type<span class="text-danger">*</span></label>
+                                <select class="select" name="TrainnigType" id="txtTrainnigType" required>
+                                    <option>Node Training</option>
+                                    <option>Swift Training</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-form-label">Trainer</label>
+                                <input class="form-control" type="text" name="Trainer" id="txtTrainer">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Start Date <span class="text-danger">*</span></label>
+                                <div class="cal-icon"><input class="form-control datetimepicker" type="text" name="FromDate" id="txtFromDate"></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>End Date <span class="text-danger">*</span></label>
+                                <div class="cal-icon"><input class="form-control datetimepicker" type="text" name="ToDate" id="txtToDate"></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label>Description</label>
+                                <textarea class="form-control" rows="4" name="Description" id="txtDescription"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn" id="btnSaveTraining">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Add Training List Modal -->
+<!-- Delete Training List Modal -->
+<div class="modal custom-modal fade" id="delete_training" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header">
+                    <input id="hd_training_delete" type="hidden" />
+                    <h3>Delete Training List</h3>
+                    <p>Are you sure want to delete?</p>
+                </div>
+                <div class="modal-btn delete-action">
+                    <div class="row">
+                        <div class="col-6">
+                            <a href="javascript:void(0);" class="btn btn-primary continue-btn" id="btnDeleteTraining">Delete</a>
+                        </div>
+                        <div class="col-6">
+                            <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Delete Training List Modal -->
+
+
+<div id="view_nhanvien_training" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:900px; max-height:700px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Danh Sách Nhân Viên</h5>
+                <input type="hidden" id="hd_nv_training" />
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-striped custom-table mb-0 datatable" id="nhanvienTrainingDatatable" style="max-height:500px">
+                        <thead>
+                            <tr>
+                                <th style="width: 30px;">#</th>
+                                <th>Mã NV</th>
+                                <th>Tên NV</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bdyNhanVienTraining">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<partial name="_ImportExcelModel" />

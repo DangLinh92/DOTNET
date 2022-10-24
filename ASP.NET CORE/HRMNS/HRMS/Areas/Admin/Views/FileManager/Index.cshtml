@@ -1,0 +1,101 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+@section Styles{
+
+    <style>
+        #devextreme0 {
+            height: 800px !important;
+        }
+
+        .photo-popup-content {
+            text-align: center;
+        }
+
+            .photo-popup-content .photo-popup-image {
+                height: 100%;
+                max-width: 100%;
+            }
+    </style>
+}
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">EHS Document</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/admin/home/index">Home</a></li>
+                    <li class="breadcrumb-item active">Document</li>
+                </ul>
+            </div>
+
+            <div class="col-auto float-right ml-auto">
+            </div>
+        </div>
+    </div>
+
+    @(Html.DevExtreme().FileManager()
+    .CurrentPath("Widescreen")
+    .FileSystemProvider(provider => provider
+        .Remote()
+        .Url(Url.RouteUrl("FileManagementImagesApi")))
+     .ItemView(view => view.Mode(FileManagerItemViewMode.Thumbnails))
+    .CustomizeThumbnail(@<text>
+        function(fileManagerItem) {
+            if (fileManagerItem.isDirectory)
+                return '@Url.Content("~/img/thumbnails/folder-svgrepo-com.svg")';
+
+            var fileExtension = fileManagerItem.getFileExtension().toLowerCase();
+            if(fileExtension === ".docx" || fileExtension === ".doc")
+                return '@Url.Content("~/img/thumbnails/docx-file.svg")';
+            if(fileExtension === ".xlsx")
+                return '@Url.Content("~/img/thumbnails/file-excel.svg")';
+            if(fileExtension === ".pdf")
+                return '@Url.Content("~/img/thumbnails/pdf-svgrepo-com.svg")';
+            if(fileExtension === ".ppt" || fileExtension === ".pptx")
+                return '@Url.Content("~/img/thumbnails/ppt-svgrepo-com.svg")';
+            if(fileExtension === ".txt")
+                return '@Url.Content("~/img/thumbnails/file-txt.svg")';
+            if(fileExtension === ".mp4")
+                return '@Url.Content("~/img/thumbnails/mp4-svgrepo-com.svg")';
+            if(fileExtension === ".mp3")
+                return '@Url.Content("~/img/thumbnails/mp3-svgrepo-com.svg")';
+
+            if(fileExtension === ".jpg" ||fileExtension === ".jpeg" || fileExtension === ".png" )
+                return '@Url.Content("~/img/thumbnails/image-file.svg")';
+
+            return '@Url.Content("~/img/thumbnails/file-other.svg")';
+        }
+    </text>)
+    .Permissions(permissions => permissions
+        .Create(true)
+        .Copy(true)
+        .Move(true)
+        .Delete(true)
+        .Rename(true)
+        .Upload(true)
+        .Download(true))
+    .OnSelectedFileOpened(@<text>
+
+      function(e) {
+            var popup = $("#photo-popup").dxPopup("instance");
+            popup.option({
+                "title": e.file.name,
+                "contentTemplate": "<img src=\"" + e.file.dataItem.url + "\" class=\"photo-popup-image\" />" @*"<embed src=\"" + e.file.dataItem.url + "\" type=\"application/pdf\" width=\"100%\" height=\"500px\"></embed>"*@
+            });
+            popup.show();
+        }
+    </text>)
+    .Height(450))
+    @(Html.DevExtreme().Popup()
+    .ID("photo-popup")
+    .MaxHeight(600)
+    .OnContentReady(@<text>
+        function(e) {
+            var $contentElement = e.component.content();
+            $contentElement.addClass("photo-popup-content");
+        }
+    </text>)
+    .CloseOnOutsideClick(true))
+</div>

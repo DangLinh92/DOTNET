@@ -22,4 +22,21 @@ namespace HRMNS.Data.EF.Configurations
             entity.HasKey(x => x.Id);
         }
     }
+
+    public class EventParentConfiguration : DbEntityConfiguration<EVENT_SHEDULE_PARENT>
+    {
+        public override void Configure(EntityTypeBuilder<EVENT_SHEDULE_PARENT> entity)
+        {
+            entity.HasKey(x => x.Id);
+        }
+    }
+
+    public class EventConfiguration : DbEntityConfiguration<EVENT_SHEDULE>
+    {
+        public override void Configure(EntityTypeBuilder<EVENT_SHEDULE> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
 }

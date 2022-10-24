@@ -45,7 +45,9 @@ namespace HRMNS.Application.Implementation
         {
             string lastMonth = DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd");
             var lst = _chamCongLogRepository.FindAll(x => string.Compare(x.Ngay_ChamCong, lastMonth) >= 0).OrderByDescending(x => x.Ngay_ChamCong);
-            return _mapper.Map<List<ChamCongLogViewModel>>(lst);
+            var results = _mapper.Map<List<ChamCongLogViewModel>>(lst);
+
+            return results;
         }
 
         public ResultDB ImportExcel(string filePath, DataTable employees)
@@ -164,7 +166,7 @@ namespace HRMNS.Application.Implementation
             return _chamCongLogRepository.ExecProceduce("PKG_BUSINESS.PUT_EVENT_LOG", param, "A_DATA", data);
         }
 
-        public List<ChamCongLogViewModel> Search(string result, string dept,ref string timeFrom1,ref string timeTo1)
+        public List<ChamCongLogViewModel> Search(string result, string dept, ref string timeFrom1, ref string timeTo1)
         {
             string timeFrom, timeTo;
 
@@ -197,6 +199,7 @@ namespace HRMNS.Application.Implementation
                     {
                         vm = vm.Where(x => x.Result.Contains(result)).ToList();
                     }
+
                     return vm;
                 }
             }
@@ -261,6 +264,7 @@ namespace HRMNS.Application.Implementation
         public ChamCongLogViewModel Update(ChamCongLogViewModel model)
         {
             var entity = _chamCongLogRepository.FindAll(x => x.ID_NV == model.ID_NV && x.Ngay_ChamCong == model.Ngay_ChamCong).FirstOrDefault();
+            var isUserHandle = entity.UserHandle == "Y";
 
             DateTime ngayCham = DateTime.Parse(model.Ngay_ChamCong);
             string preday = ngayCham.AddDays(-1).ToString("yyyy-MM-dd");
@@ -301,14 +305,38 @@ namespace HRMNS.Application.Implementation
                     entity.UserHandle = "Y";
                 }
 
-                if(entityPreday != null)
+                if (entityPreday != null)
                 {
                     entityPreday.Last_Out_Time_Update = entity.Last_Out_Time;
                 }
 
                 entity.UserModified = model.UserModified + ex;
 
-                _chamCongLogRepository.Update(entity);
+                if (entity.UserHandle == "Y" && !isUserHandle)
+                {
+                    var lst = _chamCongLogRepository.FindAll(x => x.ID_NV == model.ID_NV && x.Ngay_ChamCong.Substring(0, 7) == model.Ngay_ChamCong.Substring(0, 7));
+                    int count = lst.Where(x=>x.UserHandle == "Y").Count();
+                    foreach (var item in lst)
+                    {
+                        if(item.Ngay_ChamCong != entity.Ngay_ChamCong && item.Ngay_ChamCong != entityPreday?.Ngay_ChamCong)
+                        {
+                            item.NumberUpdated = count + 1;
+                            _chamCongLogRepository.Update(item);
+                        }
+                    }
+                }
+
+                if (entity.UserHandle == "Y" && !isUserHandle)
+                {
+                    entity.NumberUpdated += 1;
+
+                    if(entity.Ngay_ChamCong.Substring(0,7) == entityPreday.Ngay_ChamCong.Substring(0, 7))
+                    {
+                        entityPreday.NumberUpdated = entity.NumberUpdated;
+                    }
+                }
+
+                 _chamCongLogRepository.Update(entity);
 
                 if (entityPreday != null)
                     _chamCongLogRepository.Update(entityPreday);
@@ -324,7 +352,9 @@ namespace HRMNS.Application.Implementation
         public List<ChamCongLogViewModel> GetByTime(string fromTime, string toTime)
         {
             var lst = _chamCongLogRepository.FindAll(x => string.Compare(x.Ngay_ChamCong, fromTime) >= 0 && string.Compare(x.Ngay_ChamCong, toTime) <= 0).OrderByDescending(x => x.Ngay_ChamCong);
-            return _mapper.Map<List<ChamCongLogViewModel>>(lst);
+            var results = _mapper.Map<List<ChamCongLogViewModel>>(lst);
+
+            return results;
         }
 
         public ResultDB GetLogDataCurrentDay()

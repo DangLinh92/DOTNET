@@ -152,6 +152,11 @@ namespace HRMS.Areas.Admin.Controllers
                     calamviec.Danhmuc_CaLviec = "CN_WHC";
                     calamviec.CaLV_DB = "TS";
                 }
+                else if(calamviec.Danhmuc_CaLviec == "HC")
+                {
+                    calamviec.Danhmuc_CaLviec = "CN_WHC";
+                    calamviec.CaLV_DB = "HC";
+                }
                 else
                 {
                     calamviec.CaLV_DB = "";
@@ -363,7 +368,7 @@ namespace HRMS.Areas.Admin.Controllers
                     MaNV = item.MaNV,
                     TenNV = item.HR_NHANVIEN.TenNV,
                     BoPhan = item.HR_NHANVIEN.MaBoPhan,
-                    CaLamViec = item.DM_CA_LVIEC.TenCaLamViec,
+                    CaLamViec = item.CaLV_DB == "HC" ? "Hành Chính" : item.DM_CA_LVIEC.TenCaLamViec,
                     FromTime = item.BatDau_TheoCa,
                     ToTime = item.KetThuc_TheoCa,
                     Approve = item.Approved

@@ -177,6 +177,11 @@ namespace HRMNS.Application.Implementation
                                 row["Danhmuc_CaLviec"] = "CN_WHC";
                                 row["CaLV_DB"] = "TS";
                             }
+                            else if(calv == "HC") // HANH CHÍNH
+                            {
+                                row["Danhmuc_CaLviec"] = "CN_WHC";
+                                row["CaLV_DB"] = "HC";
+                            }
                         }
                         else
                         {
@@ -199,12 +204,15 @@ namespace HRMNS.Application.Implementation
                         row["BatDau_TheoCa"] = dStart.ToString("yyyy-MM-dd");
                         row["KetThuc_TheoCa"] = dEnd.ToString("yyyy-MM-dd");
 
-                        foreach (DateTime day in EachDay.EachDays(dStart, dEnd))
+                        if(_nhanvienClviecRepository.FindAll(x => x.MaNV == row["MaNV"].NullString() && x.BatDau_TheoCa == dStart.ToString("yyyy-MM-dd") && x.KetThuc_TheoCa == dEnd.ToString("yyyy-MM-dd")).Count() == 0)
                         {
-                            dateCheck = day.ToString("yyyy-MM-dd");
-                            if(_nhanvienClviecRepository.FindAll(x => x.MaNV == row["MaNV"].NullString() && string.Compare(x.BatDau_TheoCa, dateCheck) <= 0 && string.Compare(x.KetThuc_TheoCa, dateCheck) >= 0).Count() > 0)
+                            foreach (DateTime day in EachDay.EachDays(dStart, dEnd))
                             {
-                                throw new Exception("Ca làm việc bị trùng ngày: "+ dateCheck + " Mã NV: "+ row["MaNV"].NullString());
+                                dateCheck = day.ToString("yyyy-MM-dd");
+                                if (_nhanvienClviecRepository.FindAll(x => x.MaNV == row["MaNV"].NullString() && string.Compare(x.BatDau_TheoCa, dateCheck) <= 0 && string.Compare(x.KetThuc_TheoCa, dateCheck) >= 0).Count() > 0)
+                                {
+                                    throw new Exception("Ca làm việc bị trùng ngày: " + dateCheck + " Mã NV: " + row["MaNV"].NullString());
+                                }
                             }
                         }
 

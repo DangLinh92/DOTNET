@@ -134,14 +134,18 @@ namespace HRMNS.Data.EF
                     new FUNCTION() {Id = "GA",Name = "GA",ParentId = null,SortOrder = 3,Status = Status.Active,URL = "",IconCss = ""  },
                     new FUNCTION() {Id = "COST",Name = "Cost",ParentId = "GA",SortOrder = 1,Status = Status.Active,URL = "/admin/cost/index",IconCss = "la la-money"  },
 
-                    new FUNCTION() {Id = "OTHER",Name = "Others",ParentId = null,SortOrder = 4,Status = Status.Active,URL = "",IconCss = ""  },
+                    new FUNCTION() {Id = "OTHER",Name = "Others",ParentId = null,SortOrder = 5,Status = Status.Active,URL = "",IconCss = ""  },
                     new FUNCTION() {Id = "DOCUMENT_SUB",Name = "Documents",ParentId = "OTHER",SortOrder = 1,Status = Status.Active,URL = "/admin/documentall/index",IconCss = "la la-file-text"  },
                     new FUNCTION() {Id = "CALENDAR",Name = "Calendar",ParentId = "OTHER",SortOrder = 2,Status = Status.Active,URL = "/admin/calendar/index",IconCss = "la la-table"  },
                     new FUNCTION() {Id = "SETTINGS",Name = "Settings",ParentId = "OTHER",SortOrder = 3,Status = Status.Active,URL = "/admin/settings/index",IconCss = "la la-cog"  },
                     new FUNCTION() {Id = "ROLE_PERMISSTION",Name = "Phân Quyền User",ParentId = "SETTINGS",SortOrder = 1,Status = Status.Active,URL = "/admin/roleandpermisstion/index",IconCss = "la la-key"  },
+
+                     new FUNCTION() {Id = "DAO_TAO_EVENT", Name = "Performance",ParentId = null,SortOrder = 4,Status = Status.Active,URL = "",IconCss = ""  },
+                new FUNCTION() {Id = "TRAINING",Name = "Đào Tạo",ParentId = "DAO_TAO_EVENT",SortOrder = 1,Status = Status.Active,URL = "",IconCss = "la la-edit"  },
+                new FUNCTION() {Id = "TRAINING_LIST",Name = "Kế Hoạch Đào Tạo",ParentId = "TRAINING",SortOrder = 1,Status = Status.Active,URL = "/admin/traininglist/index",IconCss = ""  },
+                new FUNCTION() {Id = "TRAINING_TYPE",Name = "Danh Mục Đào Tạo",ParentId = "TRAINING",SortOrder = 2,Status = Status.Active,URL = "/admin/trainingtype/index",IconCss = ""  },
                 });
             }
-
 
             if (_context.BoPhans.Count() == 0)
             {

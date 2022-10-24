@@ -122,13 +122,15 @@ namespace HRMS
             services.AddTransient<INhanVienThaiSanService, NhanVienThaiSanService>();
 
             services.AddTransient<IDanhMucKeHoachService, DanhMucKeHoachService>();
+            services.AddTransient<ITrainingTypeService, TrainningTypeService>();
+            services.AddTransient<ITrainingListService, TrainningListService>();
 
             services.AddTransient<IDM_DCChamCongService, DM_DCChamCongService>();
             services.AddTransient<IDCChamCongService, DCChamCongService>();
             services.AddTransient<IRoleAndPermisstionService, RoleAndPermisstionService>();
             services.AddTransient<IAuthorizationHandler, BaseResourceAuthorizationHandler>();
             services.AddTransient<IBackgroundService, HmrsBackgroundService>();
-            services.AddMvc().AddNewtonsoftJson(options =>
+            services.AddMvc().AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null).AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();// not change format json
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;

@@ -49,15 +49,19 @@
     <!-- Loading indicator -->
     <link href="~/plugins/waitMe/waitMe.min.css" rel="stylesheet" />
 
+    <link href="~/css/fullcalendar.min.css" rel="stylesheet" />
+
     <!-- Main CSS -->
     <link rel="stylesheet" href="~/css/style.css">
 
     <!-- su dung cho spreadsheet devexpress -->
     <script src="~/js/jquery-3.6.0.min.js"></script>
-    <script src="~/node_modules/devextreme/dist/js/dx.all.js"></script>
-    <link href="~/node_modules/devextreme/dist/css/dx.light.css" rel="stylesheet" />
+    <script src="~/js/devextreme/dx.all.js"></script>
+    <link href="~/css/devextreme/dx.light.css" rel="stylesheet" />
     <script src="~/node_modules/devexpress-aspnetcore-spreadsheet/dist/dx-aspnetcore-spreadsheet.js"></script>
     <link href="~/node_modules/devexpress-aspnetcore-spreadsheet/dist/dx-aspnetcore-spreadsheet.css" rel="stylesheet" />
+    <script src="~/js/devextreme/aspnet/dx.aspnet.data.js"></script>
+    <script src="~/js/devextreme/aspnet/dx.aspnet.mvc.js"></script>
 
     @RenderSection("Styles", required: false)
 
@@ -180,6 +184,9 @@
 
     <!-- File upload -->
     <script src="~/plugins/fileupload/fileupload.min.js"></script>
+
+    <script src="~/js/fullcalendar.min.js"></script>
+    <script src="~/js/jquery.fullcalendar.js"></script>
 
     <!-- Custom JS -->
     <script src="~/js/app.js"></script>

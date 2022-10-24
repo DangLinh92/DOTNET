@@ -1,4 +1,5 @@
 ﻿using HRMNS.Application.ViewModels.HR;
+using HRMNS.Application.ViewModels.System;
 using HRMNS.Utilities.Constants;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ namespace HRMS.Areas.Admin.Models
             quaTrinhLamViecs = new List<QuaTrinhLamViecViewModel>();
             phepNams = new List<PhepNamViewModel>();
             hopDongs = new List<HopDongViewModel>();
+            training_NhanVienViewModels = new List<Training_NhanVienViewModel>();
         }
 
         // profile common
@@ -106,5 +108,7 @@ namespace HRMS.Areas.Admin.Models
         public List<HopDongViewModel> hopDongs { get; set; }
 
         public List<KeKhaiBaoHiemViewModel> kekhaibaohiems { get; set; }
+
+        public List<Training_NhanVienViewModel> training_NhanVienViewModels { get; set; }
     }
 }
