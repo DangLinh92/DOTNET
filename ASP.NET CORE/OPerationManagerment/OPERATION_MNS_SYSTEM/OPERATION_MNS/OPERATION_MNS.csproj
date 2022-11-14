@@ -1,0 +1,83 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>aspnet-HRMS-85F8A819-C15C-42D3-9BD1-89F864067BCC</UserSecretsId>
+    <AssemblyName>OPERATION_MNS</AssemblyName>
+    <RootNamespace>OPERATION_MNS</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="wwwroot\node_modules\devextreme\**" />
+    <Content Remove="wwwroot\node_modules\devextreme\**" />
+    <EmbeddedResource Remove="wwwroot\node_modules\devextreme\**" />
+    <None Remove="wwwroot\node_modules\devextreme\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="wwwroot\node_modules\devexpress-aspnetcore-spreadsheet\dist\dx-aspnetcore-spreadsheet.css" />
+    <Content Include="wwwroot\node_modules\devexpress-aspnetcore-spreadsheet\dist\icons\dxss-icons.ttf" />
+    <Content Include="wwwroot\node_modules\devexpress-aspnetcore-spreadsheet\dist\icons\dxss-icons.woff" />
+    <Content Include="wwwroot\node_modules\devexpress-aspnetcore-spreadsheet\package.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="Bower" Version="1.3.11" />
+    <PackageReference Include="DevExpress.AspNetCore.Spreadsheet" Version="21.2.7" />
+    <PackageReference Include="EPPlus.Core" Version="1.5.4" />
+    <PackageReference Include="GroupDocs.Viewer" Version="22.9.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.16" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.16" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.16" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.16" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.16" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.16" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />
+    <PackageReference Include="Serilog.Extensions.Logging.File" Version="2.0.0" />
+    <PackageReference Include="Syncfusion.EJ2.AspNet.Core" Version="20.3.0.50" />
+    <PackageReference Include="WebMarkupMin.AspNetCore2" Version="2.10.0" />
+    <PackageReference Include="WebMarkupMin.NUglify" Version="2.11.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OPERATION_MNS.Application\OPERATION_MNS.Application.csproj" />
+    <ProjectReference Include="..\OPERATION_MNS.Data.EF\OPERATION_MNS.Data.EF.csproj" />
+    <ProjectReference Include="..\OPERATION_MNS.Data\OPERATION_MNS.Data.csproj" />
+    <ProjectReference Include="..\OPERATION_MNS.Infrastructure\OPERATION_MNS.Infrastructure.csproj" />
+    <ProjectReference Include="..\OPERATION_MNS.Utilities\OPERATION_MNS.Utilities.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Areas\OpeationMns\Controllers\" />
+    <Folder Include="Areas\OpeationMns\Data\" />
+    <Folder Include="Areas\OpeationMns\Models\" />
+    <Folder Include="Areas\OpeationMns\Views\" />
+    <Folder Include="Models\Base\" />
+    <Folder Include="wwwroot\export-files\" />
+    <Folder Include="wwwroot\FileData\" />
+    <Folder Include="wwwroot\img\thumbnails\" />
+    <Folder Include="wwwroot\lib\mustache\test\spec\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="wwwroot\lib\mustache\.github\workflows\usage.yml" />
+    <None Include="wwwroot\lib\mustache\.github\workflows\verify.yml" />
+    <None Include="wwwroot\node_modules\devexpress-aspnetcore-spreadsheet\bin\localization-builder.js" />
+    <None Include="wwwroot\node_modules\devexpress-aspnetcore-spreadsheet\dist\dx-aspnetcore-spreadsheet.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\node_modules\devexpress-aspnetcore-spreadsheet\dist\icons\dxss-icons.woff2" />
+    <None Include="wwwroot\node_modules\devexpress-aspnetcore-spreadsheet\README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="wwwroot\**" CopyToPublishDirectory="Always" />
+    <Content Update="wwwroot\node_modules\devexpress-aspnetcore-spreadsheet\dist\dx-aspnetcore-spreadsheet.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\templates\BangCongTmp.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\templates\EmployeeTemplate.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <PackageReference Include="DevExtreme.AspNet.Core" Version="21.2.8" />
+    <PackageReference Include="DevExtreme.AspNet.Data" Version="2.8.6" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,352 @@
+﻿@model RoleAndPermisstionViewModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts
+{
+    <script>
+        var permisstionLst = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.PermisstionForRoleModels))');
+        var roleLst = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.RoleModels))');
+        var roleName = '@Html.Raw(JsonEncodedText.Encode(Model.RoleActive))';
+        var roleId = '';
+        for (let role of roleLst) {
+            if (role.Name == roleName) {
+                roleId = role.Id.toString();
+                break;
+            }
+        }
+
+        PermisstionChangeEvt = function (permisstion, functionId, value) {
+
+            if (!permisstionLst.find(e => e.FunctionId == functionId)) {
+                let newObj = {
+                    Id : null,
+                    RoleId: roleId,
+                    FunctionId: functionId,
+                    CanCreate: false,
+                    CanRead: false,
+                    CanUpdate: false,
+                    CanDelete: false,
+                    ApproveL1: false,
+                    ApproveL2: false,
+                    ApproveL3: false
+                };
+
+                permisstionLst.push(newObj);
+            }
+
+            for (let per of permisstionLst) {
+                if (functionId == per.FunctionId) {
+                    switch (permisstion) {
+                        case 'Read':
+                            per.CanRead = value;
+                            break;
+                        case 'Update':
+                            per.CanUpdate = value;
+                            per.CanCreate = value;
+                            break;
+                        case 'Delete':
+                            per.CanDelete = value;
+                            break;
+                        case 'ApproveL1':
+                            per.ApproveL1 = value;
+                            break;
+                        case 'ApproveL2':
+                            per.ApproveL2 = value;
+                            break;
+                        case 'ApproveL3':
+                            per.ApproveL3 = value;
+                            break;
+                        default:
+                    }
+                }
+            }
+
+            console.log(permisstionLst);
+        }
+
+        $(document).ready(function () {
+            RoleItemClick = function (elm) {
+                $('.roles-menu>ul li').removeClass('active');
+                $(elm).addClass('active');
+
+                var roleId = $(elm).data('val');
+                $('#hdRole').val(roleId);
+
+                $('#frmRoleChange').submit();
+            };
+
+            ulClick = function (roleName, roleId, e)
+            {
+                e.stopImmediatePropagation();
+                e.stopPropagation();
+                $('#txtRoleId').val(roleId);
+                $('#txtRoleName-Edit').val(roleName);
+                $('#edit_role').modal('show');
+            }
+
+            ulDeleteClick = function (roleName, roleId, e) {
+                e.stopImmediatePropagation();
+                e.stopPropagation();
+                $('#txtRoleId-delete').val(roleId);
+                $('#txtRoleName-Delete').val(roleName);
+                $('#delete_role').modal('show');
+            }
+
+            $('#tblModulePermisstion').DataTable({
+                scrollY: 600,
+                paging: false,
+                searching: false
+            });
+
+            $('#btnSave').on('click', function (e) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Admin/RoleAndPermisstion/SavePermission",
+                    data:
+                    {
+                        model: permisstionLst
+                    },
+                    success: function (response) {
+                        OPERATION_MNS.notify("Update date success!", 'Success', 'alert', function () { });
+                    },
+                    error: function (status) {
+                        OPERATION_MNS.notify(status.responseText, 'error', 'alert', function () { });
+                    }
+                });
+            });
+        });
+
+    </script>
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="page-title">Roles & Permissions</h3>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+
+    <div class="row">
+        <div class="col-sm-4 col-md-4 col-lg-4 col-xl-3">
+            <a href="#" class="btn btn-primary btn-block" data-toggle="modal" data-target="#add_role"><i class="fa fa-plus"></i> Add Roles</a>
+            <div class="roles-menu">
+                <ul>
+                    @foreach (RoleViewModel role in Model.RoleModels)
+                    {
+                        <li onclick="RoleItemClick(this)" data-val="@role.Id" class="@(role.Name == Model.RoleActive ? "active":"")">
+                            <a href="javascript:void(0);">
+                                @role.Description
+                                <span class="role-action">
+                                    <span class="action-circle large editRoleClick" data-toggle="modal" onclick="ulClick('@role.Name', '@role.Id', event)" data-target="#edit_role">
+                                        <i class="material-icons">edit</i>
+                                    </span>
+                                    <span class="action-circle large delete-btn" data-toggle="modal" onclick="ulDeleteClick('@role.Name', '@role.Id', event)" data-target="#delete_role">
+                                        <i class="material-icons">delete</i>
+                                    </span>
+                                </span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+                <form id="frmRoleChange" action="/Admin/RoleAndPermisstion/GetPermisstionByRole" method="post">
+                    <input type="hidden" id="hdRole" name="roleId" />
+                </form>
+            </div>
+        </div>
+        <div class="col-sm-8 col-md-8 col-lg-8 col-xl-9">
+            <a href="#" class="btn btn-info" id="btnSave"><i class="fa fa-save"></i> Save</a>
+            <div class="table-responsive">
+                <table id="tblModulePermisstion" class="table table-striped custom-table datatable">
+                    <thead>
+                        <tr>
+                            <th>Module Permission</th>
+                            <th class="text-center">Read</th>
+                            <th class="text-center">Write</th>
+                            <th class="text-center">Delete</th>
+                            <th class="text-center">Partleader Approve</th>
+                            <th class="text-center">Korea Approve</th>
+                            <th class="text-center">HR Approve</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Functions)
+                        {
+                            <tr>
+                                <td>@item.Name</td>
+                                @if (Model.PermisstionForRoleModels.Count > 0)
+                                {
+                                    bool exist = false;
+                                    @foreach (var permisstion in Model.PermisstionForRoleModels)
+                                    {
+                                        @if (item.Id == permisstion.FunctionId)
+                                        {
+                                            exist = true;
+                                            <td class="text-center">
+                                                <input type="checkbox" onchange="PermisstionChangeEvt('Read','@item.Id', this.checked)" name="CanRead" @(permisstion.CanRead ? "checked" : "")>
+                                            </td>
+                                            <td class="text-center">
+                                                <input type="checkbox" onchange="PermisstionChangeEvt('Update','@item.Id', this.checked)" name="CanUpdate" @(permisstion.CanUpdate ? "checked" : "")>
+                                            </td>
+                                            <td class="text-center">
+                                                <input type="checkbox" onchange="PermisstionChangeEvt('Delete','@item.Id', this.checked)" name="CanDelete" @(permisstion.CanDelete ? "checked" : "")>
+                                            </td>
+                                            <td class="text-center">
+                                                <input type="checkbox" onchange="PermisstionChangeEvt('ApproveL1','@item.Id', this.checked)" name="ApproveL1" @(permisstion.ApproveL1 ? "checked" : "")>
+                                            </td>
+                                            <td class="text-center">
+                                                <input type="checkbox" onchange="PermisstionChangeEvt('ApproveL2','@item.Id', this.checked)" name="ApproveL2" @(permisstion.ApproveL2 ? "checked" : "")>
+                                            </td>
+                                            <td class="text-center">
+                                                <input type="checkbox" onchange="PermisstionChangeEvt('ApproveL3','@item.Id', this.checked)" name="ApproveL3" @(permisstion.ApproveL3 ? "checked" : "")>
+                                            </td>
+                                        }
+                                    }
+
+                                    if (!exist)
+                                    {
+                                        <td class="text-center">
+                                            <input type="checkbox" onchange="PermisstionChangeEvt('Read','@item.Id', this.checked)" name="CanRead">
+                                        </td>
+
+                                        <td class="text-center">
+                                            <input type="checkbox" onchange="PermisstionChangeEvt('Update','@item.Id', this.checked)" name="CanUpdate">
+                                        </td>
+
+                                        <td class="text-center">
+                                            <input type="checkbox" onchange="PermisstionChangeEvt('Delete','@item.Id', this.checked)" name="CanDelete">
+                                        </td>
+
+                                        <td class="text-center">
+                                            <input type="checkbox" onchange="PermisstionChangeEvt('ApproveL1','@item.Id', this.checked)" name="ApproveL1">
+                                        </td>
+
+                                        <td class="text-center">
+                                            <input type="checkbox" onchange="PermisstionChangeEvt('ApproveL2','@item.Id', this.checked)" name="ApproveL2">
+                                        </td>
+
+                                        <td class="text-center">
+                                            <input type="checkbox" onchange="PermisstionChangeEvt('ApproveL3','@item.Id', this.checked)" name="ApproveL3">
+                                        </td>
+                                    }
+                                }
+                                else
+                                {
+                                    <td class="text-center">
+                                        <input type="checkbox" onchange="PermisstionChangeEvt('Read','@item.Id', this.checked)" name="CanRead">
+                                    </td>
+
+                                    <td class="text-center">
+                                        <input type="checkbox" onchange="PermisstionChangeEvt('Update','@item.Id', this.checked)" name="CanUpdate">
+                                    </td>
+
+                                    <td class="text-center">
+                                        <input type="checkbox" onchange="PermisstionChangeEvt('Delete','@item.Id', this.checked)" name="CanDelete">
+                                    </td>
+
+                                    <td class="text-center">
+                                        <input type="checkbox" onchange="PermisstionChangeEvt('ApproveL1','@item.Id', this.checked)" name="ApproveL1">
+                                    </td>
+
+                                    <td class="text-center">
+                                        <input type="checkbox" onchange="PermisstionChangeEvt('ApproveL2','@item.Id', this.checked)" name="ApproveL2">
+                                    </td>
+
+                                    <td class="text-center">
+                                        <input type="checkbox" onchange="PermisstionChangeEvt('ApproveL3','@item.Id', this.checked)" name="ApproveL3">
+                                    </td>
+                                }
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Add Role Modal -->
+<div id="add_role" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Role</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="/Admin/RoleAndPermisstion/SaveRole" method="post">
+                    <div class="form-group">
+                        <label>Role Name <span class="text-danger">*</span></label>
+                        <input class="form-control" type="text" id="txtRoleName" name="Name">
+                    </div>
+                    <div class="submit-section">
+                        <button type="submit" class="btn btn-primary submit-btn">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Add Role Modal -->
+<!-- Edit Role Modal -->
+<div id="edit_role" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content modal-md">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Role</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="/Admin/RoleAndPermisstion/SaveRole" method="post">
+                    <div class="form-group">
+                        <label>Role Name <span class="text-danger">*</span></label>
+                        <input class="form-control" type="text" name="Name" id="txtRoleName-Edit">
+                        <input type="hidden" id="txtRoleId" name="Id" />
+                    </div>
+                    <div class="submit-section">
+                        <button type="submit" class="btn btn-primary submit-btn">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Edit Role Modal -->
+<!-- Delete Role Modal -->
+<div class="modal custom-modal fade" id="delete_role" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <form action="/Admin/RoleAndPermisstion/DeleteRole" method="post">
+                    <div class="form-group">
+                        <h3>Delete Role</h3>
+                        <p>Are you sure want to delete?</p>
+                        <input class="form-control" type="text" name="Name" id="txtRoleName-Delete" readonly>
+                        <input type="hidden" id="txtRoleId-delete" name="roleId" />
+                    </div>
+                    <div class="modal-btn delete-action">
+                        <div class="row">
+                            <div class="col-6">
+                                <button type="submit" class="btn btn-primary submit-btn">Delete</button>
+                            </div>
+                            <div class="col-6">
+                                <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Delete Role Modal -->
