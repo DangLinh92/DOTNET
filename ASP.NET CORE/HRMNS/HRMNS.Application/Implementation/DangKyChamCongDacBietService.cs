@@ -127,7 +127,7 @@ namespace HRMNS.Application.Implementation
                     return GetAll(includeProperties);
                 }
 
-                return _mapper.Map<List<DangKyChamCongDacBietViewModel>>(_chamCongDbRepository.FindAll(x => x.NgayBatDau.CompareTo(fromDate) >= 0 && x.NgayKetThuc.CompareTo(toDate) <= 0, includeProperties).OrderByDescending(x => x.DateModified));
+                return _mapper.Map<List<DangKyChamCongDacBietViewModel>>(_chamCongDbRepository.FindAll(x => (x.NgayKetThuc.CompareTo(fromDate) >= 0 && x.NgayBatDau.CompareTo(toDate) <= 0), includeProperties).OrderByDescending(x => x.DateModified));
             }
             else
             {
@@ -137,7 +137,7 @@ namespace HRMNS.Application.Implementation
                     toDate = DateTime.Now.ToString("yyyy-MM-dd");
                 }
 
-                return _mapper.Map<List<DangKyChamCongDacBietViewModel>>(_chamCongDbRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && x.NgayBatDau.CompareTo(fromDate) >= 0 && x.NgayKetThuc.CompareTo(toDate) <= 0, includeProperties).OrderByDescending(x => x.DateCreated));
+                return _mapper.Map<List<DangKyChamCongDacBietViewModel>>(_chamCongDbRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && (x.NgayKetThuc.CompareTo(fromDate) >= 0 && x.NgayBatDau.CompareTo(toDate) <= 0), includeProperties).OrderByDescending(x => x.DateCreated));
             }
         }
 

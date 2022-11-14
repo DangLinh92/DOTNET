@@ -330,7 +330,7 @@ namespace HRMNS.Application.Implementation
                 {
                     entity.NumberUpdated += 1;
 
-                    if(entity.Ngay_ChamCong.Substring(0,7) == entityPreday.Ngay_ChamCong.Substring(0, 7))
+                    if(entityPreday != null && entity.Ngay_ChamCong.Substring(0,7) == entityPreday?.Ngay_ChamCong.Substring(0, 7))
                     {
                         entityPreday.NumberUpdated = entity.NumberUpdated;
                     }

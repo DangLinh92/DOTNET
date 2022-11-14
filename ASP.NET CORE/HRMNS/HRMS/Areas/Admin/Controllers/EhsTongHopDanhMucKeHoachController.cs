@@ -39,7 +39,7 @@ namespace HRMS.Areas.Admin.Controllers
         {
             var tonghopKeHoachs = _danhMucKeHoachService.TongHopKeHoachByYear(year);
 
-            if (tonghopKeHoachs == null || tonghopKeHoachs.Count == 0)
+            if (tonghopKeHoachs == null || tonghopKeHoachs.TongHopKeHoachViewModels.Count == 0)
                 return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
 
             string sWebRootFolder = _hostingEnvironment.WebRootPath;

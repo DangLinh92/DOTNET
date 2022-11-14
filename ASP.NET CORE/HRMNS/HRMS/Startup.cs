@@ -29,6 +29,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
@@ -124,17 +125,27 @@ namespace HRMS
             services.AddTransient<IDanhMucKeHoachService, DanhMucKeHoachService>();
             services.AddTransient<ITrainingTypeService, TrainningTypeService>();
             services.AddTransient<ITrainingListService, TrainningListService>();
+            services.AddTransient<IEventScheduleParentService, EventScheduleParentService>();
 
             services.AddTransient<IDM_DCChamCongService, DM_DCChamCongService>();
             services.AddTransient<IDCChamCongService, DCChamCongService>();
             services.AddTransient<IRoleAndPermisstionService, RoleAndPermisstionService>();
             services.AddTransient<IAuthorizationHandler, BaseResourceAuthorizationHandler>();
             services.AddTransient<IBackgroundService, HmrsBackgroundService>();
-            services.AddMvc().AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null).AddNewtonsoftJson(options =>
+            services.AddMvc().AddJsonOptions(options => {
+                options.JsonSerializerOptions.PropertyNamingPolicy = null;
+                }).AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();// not change format json
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             });
+
+            // using for schedule syncfusion
+            services.AddMvc()
+                .AddNewtonsoftJson(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver())
+                .AddNewtonsoftJson(opt => opt.SerializerSettings.DateFormatHandling = DateFormatHandling.MicrosoftDateFormat)
+                .AddNewtonsoftJson(opt => opt.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Local);
+
             //services.AddMvc().AddRazorPagesOptions(o => {
             //    o.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute());
             //});
@@ -165,12 +176,25 @@ namespace HRMS
             {
                 options.AllowSynchronousIO = true;
             });
+
+            //string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+            //services.AddCors(options =>
+            //{
+            //    options.AddPolicy(MyAllowSpecificOrigins,
+            //                      policy =>
+            //                      {
+            //                          policy.WithOrigins(".")
+            //                                              .AllowAnyHeader()
+            //                                              .AllowAnyMethod();
+            //                      });
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddFile("Logs/hrms-{Date}.txt");
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Mgo+DSMBaFt/QHNqVVhkW1pFdEBBXHxAd1p/VWJYdVt5flBPcDwsT3RfQF9iSXxQdERgWntccXdRRA==;Mgo+DSMBPh8sVXJ0S0V+XE9AcVRDX3xKf0x/TGpQb19xflBPallYVBYiSV9jS3xSdkdgW35dc3BXR2VfUw==;ORg4AjUWIQA/Gnt2VVhjQlFaclhJXGFWfVJpTGpQdk5xdV9DaVZUTWY/P1ZhSXxRd0VhWn1fc3dRRGFaWUY=;NzQ2MjA0QDMyMzAyZTMzMmUzMEVXeUJ5MzVHOUNrRVZBK3lDUWtsV3VzVFQrTzg3eUh3VkcxeVRlZlA4M289;NzQ2MjA1QDMyMzAyZTMzMmUzMGZqcnVLY2dnRDFjY3JGcU54Q3lNbDNuenJ0NFQ0SE0wNnI0QU9qM01WRDg9;NRAiBiAaIQQuGjN/V0Z+X09EaFtFVmJLYVB3WmpQdldgdVRMZVVbQX9PIiBoS35RdERjW3xccXdWQmJeUkN0;NzQ2MjA3QDMyMzAyZTMzMmUzMGVUMHVkYUs0blBNME9lUEEwakVaaGlyeDNCVWV4RzhlcS8yZm9xMS9QaU09;NzQ2MjA4QDMyMzAyZTMzMmUzMEsrd3lNRGxlRUZ3TmZDNUI1dlBlK1FyWnhycFA2bFpuYkRzR3lkR1RFYkk9;Mgo+DSMBMAY9C3t2VVhjQlFaclhJXGFWfVJpTGpQdk5xdV9DaVZUTWY/P1ZhSXxRd0VhWn1fc3dRRGJVWUY=;NzQ2MjEwQDMyMzAyZTMzMmUzMGFWY0NaTlhGSUNuWGlFYUlteUsrd3F0SlJqSUV5Z2VQUUwwMWtJS3NNTmc9;NzQ2MjExQDMyMzAyZTMzMmUzMFUrMUhmZnJFRUdRbTgvQkdxMDhVTTdrZnFudzZhS0NWN083dGxYbm1UNDA9;NzQ2MjEyQDMyMzAyZTMzMmUzMGVUMHVkYUs0blBNME9lUEEwakVaaGlyeDNCVWV4RzhlcS8yZm9xMS9QaU09");
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -194,6 +218,8 @@ namespace HRMS
             //});
             app.UseMinResponse();
             app.UseRouting();
+
+            // app.UseCors();
 
             app.UseAuthentication();
             app.UseAuthorization();

@@ -164,5 +164,25 @@ namespace VOC.Application.ViewModels.VOC
         public string DateModified { get; set; }
         public string UserCreated { get; set; }
         public string UserModified { get; set; }
+
+        // Received date (YY-MM)
+        [StringLength(50)]
+        public string ReceivedDate_2 { get; set; }
+
+        // SPL 접수 일자 2
+        [StringLength(50)]
+        public string SPLReceivedDate_2 { get; set; }
+
+        // 고객사 구분
+        [StringLength(50)]
+        public string CustomerGroup { get; set; }
+
+        // 부품 생산일자
+        [StringLength(50)]
+        public string ProdutionDate { get; set; }
+
+        // 부품 생산일자 2
+        [StringLength(50)]
+        public string ProdutionDate_2 { get; set; }
     }
 }

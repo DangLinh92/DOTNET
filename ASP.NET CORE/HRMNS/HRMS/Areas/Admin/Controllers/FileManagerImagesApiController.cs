@@ -18,7 +18,7 @@ namespace HRMS.Areas.Admin.Controllers
             return View();
         }
 
-        static readonly string SampleImagesRelativePath = Path.Combine("FileData", "img");
+        static readonly string SampleImagesRelativePath = Path.Combine("FileData", "Ehs_Documents");
 
         public FileManagerImagesApiController(IWebHostEnvironment hostingEnvironment)
         {

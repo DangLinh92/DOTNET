@@ -70,6 +70,19 @@ namespace HRMNS.Application.ViewModels.EHS
         [StringLength(50)]
         public string UserModified { get; set; }
 
+        [StringLength(150)]
+        public string MaHieuMayKiemTra { get; set; }
+
+        public double SoTien { get; set; }
+
+        [StringLength(1000)]
+        public string KetQua { get; set; }
+
+        [StringLength(50)]
+        public string Status { get; set; } // Active/ Inactive / Wait
+
+        public double TienDoHoanThanh { get; set; } // 50%,100%
+
         public EhsNoiDungViewModel EHS_NOIDUNG { get; set; }
     }
 }

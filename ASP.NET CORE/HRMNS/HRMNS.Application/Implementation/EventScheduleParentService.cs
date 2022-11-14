@@ -4,6 +4,7 @@ using HRMNS.Application.ViewModels.System;
 using HRMNS.Data.EF.Extensions;
 using HRMNS.Data.Entities;
 using HRMS.Infrastructure.Interfaces;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,16 +15,17 @@ namespace HRMNS.Application.Implementation
     public class EventScheduleParentService : BaseService, IEventScheduleParentService
     {
         private IRespository<EVENT_SHEDULE_PARENT, Guid> _eventParentRepository;
-        private IRespository<EVENT_SHEDULE, Guid> _eventRepository;
+        private IRespository<EVENT_SHEDULE, int> _eventRepository;
         private IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public EventScheduleParentService(IRespository<EVENT_SHEDULE_PARENT, Guid> eventParentRepository, IRespository<EVENT_SHEDULE, Guid> eventRepository, IUnitOfWork unitOfWork, IMapper mapper)
+        public EventScheduleParentService(IRespository<EVENT_SHEDULE_PARENT, Guid> eventParentRepository, IRespository<EVENT_SHEDULE, int> eventRepository, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _eventParentRepository = eventParentRepository;
             _eventRepository = eventRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public EventScheduleParentViewModel AddEventParent(EventScheduleParentViewModel even)

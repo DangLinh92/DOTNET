@@ -139,7 +139,7 @@
     <form id="frmSearch" method="post" data-ajax="true" data-ajax-url="/Admin/NhanVien_CaLamViec/Search" data-ajax-loading="#spinner1" data-ajax-update="#gridNvienCalamviecIndex" data-ajax-mode='replace' data-ajax-success="onSuccess">
         <div class="row">
             <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-               
+
             </div>
             <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
                 <div class="form-group form-focus select-focus">
@@ -186,14 +186,14 @@
             </div>
 
             @*<div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-                @if (pApprove3.Succeeded)
-                {
-                    <div class="form-group form-focus">
-                        <a href="#" style="min-width: 120px; height: 100%" class="btn btn-primary" id="btnApprove" data-target="#approve_nhanVien_calviec">  Approve</a>
-                        <a href="#" style="height: 100%" class="btn btn-primary" id="btnUnApprove" data-target="#unapprove_nhanVien_calviec">UnApprove</a>
-                    </div>
-                }
-            </div>*@
+                    @if (pApprove3.Succeeded)
+                    {
+                        <div class="form-group form-focus">
+                            <a href="#" style="min-width: 120px; height: 100%" class="btn btn-primary" id="btnApprove" data-target="#approve_nhanVien_calviec">  Approve</a>
+                            <a href="#" style="height: 100%" class="btn btn-primary" id="btnUnApprove" data-target="#unapprove_nhanVien_calviec">UnApprove</a>
+                        </div>
+                    }
+                </div>*@
         </div>
     </form>
 
@@ -203,6 +203,29 @@
         </div>
     </div>
     <!-- /Search Filter -->
+
+    <div class="row" style="margin-bottom:10px">
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+  (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "GrLeader" ||
+  User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "KRManager" ||
+  User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" ||
+  User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin"))
+            {
+                <a href="#" class="btn btn-block btn-danger" id="btnDeleteAll">Delete</a>
+            }
+        </div>
+    </div>
 
     <div class="row">
         <div class="col-md-12">
@@ -281,6 +304,29 @@
                     <div class="row">
                         <div class="col-6">
                             <a href="javascript:void(0);" class="btn btn-primary continue-btn" id="btn-Unapprove_nv_calamviec">UnApprove</a>
+                        </div>
+                        <div class="col-6">
+                            <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal custom-modal fade" id="delete_all_nhanVien_calviec" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header">
+                    <h3>Delete selected item</h3>
+                    <p>Are you sure want to delete?</p>
+                </div>
+                <div class="modal-btn delete-action">
+                    <div class="row">
+                        <div class="col-6">
+                            <a href="javascript:void(0);" class="btn btn-primary continue-btn" id="btn-delete_all_nv_calamviec">Approve</a>
                         </div>
                         <div class="col-6">
                             <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>

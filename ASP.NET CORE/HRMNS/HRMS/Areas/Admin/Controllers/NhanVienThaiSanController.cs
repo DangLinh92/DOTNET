@@ -2,8 +2,11 @@
 using HRMNS.Application.ViewModels.HR;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using OfficeOpenXml;
+using OfficeOpenXml.Table;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -32,6 +35,51 @@ namespace HRMS.Areas.Admin.Controllers
                 var lst = _nhanVienThaiSanService.GetAll().FindAll(x=>x.HR_NHANVIEN.MaBoPhan == Department).OrderByDescending(x => x.DateModified).ToList();
                 return View(lst);
             }
+        }
+
+        [HttpPost]
+        public IActionResult ExportExcel(string maNV, string timeFrom, string timeTo)
+        {
+            string sWebRootFolder = _hostingEnvironment.WebRootPath;
+            string directory = Path.Combine(sWebRootFolder, "export-files");
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+            string sFileName = $"NhanVienThaiSan_{DateTime.Now:yyyyMMddhhmmss}.xlsx";
+            string fileUrl = $"{Request.Scheme}://{Request.Host}/export-files/{sFileName}";
+            FileInfo file = new FileInfo(Path.Combine(directory, sFileName));
+            if (file.Exists)
+            {
+                file.Delete();
+                file = new FileInfo(Path.Combine(sWebRootFolder, sFileName));
+            }
+            var data = _nhanVienThaiSanService.Search(maNV, timeFrom, timeTo);
+            List<NhanVienThaiSan_ExportViewModel> lstTSan = new List<NhanVienThaiSan_ExportViewModel>();
+            NhanVienThaiSan_ExportViewModel model;
+            foreach (var item in data)
+            {
+                model = new NhanVienThaiSan_ExportViewModel()
+                {
+                    MaNV = item.MaNV,
+                    NameNV = item.HR_NHANVIEN.TenNV,
+                    CheDoThaiSan = item.CheDoThaiSan == "ConNho1H" ? "Con nhỏ - Về sớm 1H(Không trừ về sớm,Tính OT)" : (item.CheDoThaiSan == "ConNho" ? "Con nhỏ - Về đúng giờ(Không tính OT)" : "Thai sản"),
+                    FromDate = item.FromDate,
+                    ToDate = item.ToDate
+                };
+
+                lstTSan.Add(model);
+            }
+
+            using (ExcelPackage package = new ExcelPackage(file))
+            {
+                // add a new worksheet to the empty workbook
+                ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("ChamCongDB");
+                worksheet.Cells["A1"].LoadFromCollection(lstTSan, true, TableStyles.Light11);
+                worksheet.Cells.AutoFitColumns();
+                package.Save(); //Save the workbook.
+            }
+            return new OkObjectResult(fileUrl);
         }
 
         [HttpPost]

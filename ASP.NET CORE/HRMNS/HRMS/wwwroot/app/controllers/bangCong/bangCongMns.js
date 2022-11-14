@@ -98,6 +98,11 @@
             else {
                 _status = 'Active';
             }
+
+            if ($("#chStatus_All").is(":checked")) {
+                _status = '';
+            }
+
             let _timeEndUser = $('#searchOutToTime').val();
 
             if (!_time || !_timeEndUser) {

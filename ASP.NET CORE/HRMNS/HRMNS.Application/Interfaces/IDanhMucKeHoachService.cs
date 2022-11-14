@@ -35,11 +35,12 @@ namespace HRMNS.Application.Interfaces
         List<EhsNoiDungKeHoachViewModel> GetNoiDungKeHoachByMaNoiDung(string maNoiDung);
         EhsNoiDungKeHoachViewModel GetNoiDungKeHoachById(string Id);
         EhsNoiDungKeHoachViewModel UpdateNoiDungKeHoach(EhsNoiDungKeHoachViewModel model);
+        EhsNoiDungKeHoachViewModel UpdateNoiDungKeHoachSingle(EhsNoiDungKeHoachViewModel model);
         string DeleteNoiDungKeHoach(string Id);
 
         ResultDB ImportExcel(string filePath,string maKH);
 
-        List<TongHopKeHoachViewModel> TongHopKeHoachByYear(string year);
+        TongHopKeHoachALL TongHopKeHoachByYear(string year);
 
         void Save();
     }

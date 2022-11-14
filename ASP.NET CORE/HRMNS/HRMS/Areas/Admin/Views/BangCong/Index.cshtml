@@ -60,6 +60,17 @@
                 previous: 'fa fa-angle-left'
             }
         });
+
+        $('#chStatus_All').change(function () {
+            if (this.checked) {
+                $('#chStatus').prop("checked", false);
+            }
+        });
+        $('#chStatus').change(function () {
+            if (this.checked) {
+                $('#chStatus_All').prop("checked", false);
+            }
+        });
     </script>
 }
 @section Styles{
@@ -108,6 +119,14 @@
     <form id="frmSearch" method="post" data-ajax="true" data-ajax-url="/Admin/bangcong/Search" data-ajax-update="#gridDCChamCongIndex" data-ajax-mode='replace' data-ajax-begin="onBeginAjax" data-ajax-success="onSuccess">
         <div class="row filter-row">
             <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label class="focus-label">
+                            <input type="checkbox" name="status_all" id="chStatus_All" />
+                            Tất cả nhân viên
+                        </label>
+                    </div>
+                </div>
             </div>
 
             <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">

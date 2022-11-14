@@ -25,6 +25,8 @@ namespace HRMNS.Application.Implementation
         private IRespository<EHS_NOIDUNG, Guid> _ehsNoiDungRespository;
         private IRespository<EHS_NOIDUNG_KEHOACH, Guid> _ehsNoiDungKeHoachRespository;
         private IRespository<EHS_LUATDINH_DEMUC_KEHOACH, int> _ehsLuatDinhDemucKHRespository;
+        private IRespository<EVENT_SHEDULE_PARENT, Guid> _eventScheduleParentRepository;
+
         private IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
@@ -35,6 +37,7 @@ namespace HRMNS.Application.Implementation
             IRespository<EHS_NOIDUNG, Guid> ehsNoiDungRespository,
             IRespository<EHS_LUATDINH_DEMUC_KEHOACH, int> ehsLuatDinhDemucKHRespository,
             IRespository<EHS_NOIDUNG_KEHOACH, Guid> ehsNoiDungKeHoachRespository,
+            IRespository<EVENT_SHEDULE_PARENT, Guid> eventScheduleParentRepository,
             IHttpContextAccessor httpContextAccessor,
             IUnitOfWork unitOfWork,
             IMapper mapper)
@@ -45,6 +48,7 @@ namespace HRMNS.Application.Implementation
             _ehsNoiDungRespository = ehsNoiDungRespository;
             _ehsLuatDinhDemucKHRespository = ehsLuatDinhDemucKHRespository;
             _ehsNoiDungKeHoachRespository = ehsNoiDungKeHoachRespository;
+            _eventScheduleParentRepository = eventScheduleParentRepository;
             _httpContextAccessor = httpContextAccessor;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -277,12 +281,13 @@ namespace HRMNS.Application.Implementation
                         return resultDB;
                     }
                 }
-                else
+                else // IMPORT_NOIDUNG_CHITIET
                 {
                     using (var packet = new ExcelPackage(new System.IO.FileInfo(filePath)))
                     {
                         ExcelWorksheet worksheet = packet.Workbook.Worksheets[1];
                         List<EHS_NOIDUNG_KEHOACH> lstNoiDungKH = new List<EHS_NOIDUNG_KEHOACH>();
+                        List<EVENT_SHEDULE_PARENT> lstEvent = new List<EVENT_SHEDULE_PARENT>();
 
                         for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
                         {
@@ -291,7 +296,7 @@ namespace HRMNS.Application.Implementation
                                 continue;
                             }
 
-                            foreach (var ngayKDinh in worksheet.Cells[i, 8].Text.NullString().Split(",")) // 2022-06-10,2022-09-10
+                            foreach (var ngayKDinh in worksheet.Cells[i, 9].Text.NullString().Split(",")) // 2022-06-10,2022-09-10
                             {
                                 if (ngayKDinh.NullString() == "")
                                 {
@@ -304,8 +309,9 @@ namespace HRMNS.Application.Implementation
 
                                 noiDungKH.ChuKy = double.Parse(worksheet.Cells[i, 4].Text.IfNullIsZero()) + "/" + worksheet.Cells[i, 5].Text.NullString();
 
-                                noiDungKH.SoLuong = double.Parse(worksheet.Cells[i, 6].Text.IfNullIsZero());
-                                noiDungKH.ViTri = worksheet.Cells[i, 7].Text.NullString();
+                                noiDungKH.MaHieuMayKiemTra = worksheet.Cells[i, 6].Text.NullString();
+                                noiDungKH.SoLuong = double.Parse(worksheet.Cells[i, 7].Text.IfNullIsZero());
+                                noiDungKH.ViTri = worksheet.Cells[i, 8].Text.NullString();
 
                                 if (ValidateCommon.DateTimeValid(ngayKDinh.NullString()))
                                 {
@@ -316,19 +322,38 @@ namespace HRMNS.Application.Implementation
                                     throw new Exception("Ngày kiểm định phải định dạng : yyyy-MM-dd");
                                 }
 
-                                noiDungKH.ThoiGian_ThucHien = worksheet.Cells[i, 9].Text.IfNullIsZero();
-                                noiDungKH.YeuCau = worksheet.Cells[i, 10].Text.NullString();
-                                noiDungKH.NgayKhaiBaoThietBi = worksheet.Cells[i, 11].Text.NullString();
-                                noiDungKH.ThoiGianThongBao = worksheet.Cells[i, 12].Text.IfNullIsZero() + "/" + worksheet.Cells[i, 13].Text.NullString();
+                                noiDungKH.ThoiGian_ThucHien = worksheet.Cells[i, 10].Text.IfNullIsZero();
+                                noiDungKH.YeuCau = worksheet.Cells[i, 11].Text.NullString();
+                                noiDungKH.NgayKhaiBaoThietBi = worksheet.Cells[i, 12].Text.NullString();
+                                noiDungKH.ThoiGianThongBao = worksheet.Cells[i, 13].Text.IfNullIsZero() + "/" + worksheet.Cells[i, 14].Text.NullString();
+
+                                noiDungKH.TienDoHoanThanh = double.Parse(worksheet.Cells[i, 15].Text.IfNullIsZero());
+                                noiDungKH.SoTien = double.Parse(worksheet.Cells[i, 16].Text.IfNullIsZero());
+                                noiDungKH.KetQua = worksheet.Cells[i, 17].Text.NullString();
+
                                 noiDungKH.Id = Guid.NewGuid();
                                 noiDungKH.Year = DateTime.Parse(ngayKDinh.NullString()).Year.NullString();
                                 noiDungKH.UserCreated = GetUserId();
                                 noiDungKH.UserModified = GetUserId();
                                 lstNoiDungKH.Add(noiDungKH);
+
+                                EVENT_SHEDULE_PARENT even = new EVENT_SHEDULE_PARENT();
+                                even.Subject = worksheet.Cells[i, 2].Text.NullString();
+                                even.MaNoiDungKH = noiDungKH.MaNoiDung;
+                                even.StartEvent = noiDungKH.NgayThucHien;
+                                even.EndEvent = noiDungKH.NgayThucHien;
+                                even.StartTime = DateTime.Parse(noiDungKH.NgayThucHien);
+                                even.EndTime = DateTime.Parse(noiDungKH.NgayThucHien);
+                                even.TimeAlert = noiDungKH.ThoiGianThongBao;
+                                even.Location = noiDungKH.ViTri;
+                                even.IsAllDay = true;
+                                even.Description = "Vendor: " + noiDungKH.NhaThau + "\n" + " || Date: " + noiDungKH.NgayThucHien + "\n" + " || Cost: " + noiDungKH.SoTien + "\n" + " || Result: " + noiDungKH.KetQua;
+                                lstEvent.Add(even);
                             }
                         }
 
                         _ehsNoiDungKeHoachRespository.AddRange(lstNoiDungKH);
+                        _eventScheduleParentRepository.AddRange(lstEvent);
                         Save();
 
                         resultDB.ReturnInt = 0;
@@ -388,6 +413,48 @@ namespace HRMNS.Application.Implementation
             model.UserModified = GetUserId();
             var en = _mapper.Map<EHS_NOIDUNG_KEHOACH>(model);
             _ehsNoiDungKeHoachRespository.Update(en);
+
+            var even = _eventScheduleParentRepository.FindSingle(x => x.MaNoiDungKH.Equals(model.Id));
+            string noidung = _ehsNoiDungRespository.FindById(model.MaNoiDung)?.NoiDung.NullString();
+            if (even != null)
+            {
+                even.Subject = noidung;
+                even.StartEvent = model.NgayThucHien;
+                even.EndEvent = model.NgayThucHien;
+                even.StartTime = DateTime.Parse(model.NgayThucHien);
+                even.EndTime = DateTime.Parse(model.NgayThucHien);
+                even.TimeAlert = model.ThoiGianThongBao;
+                even.Location = model.ViTri;
+                even.IsAllDay = true;
+                even.Description = "Vendor: " + model.NhaThau + "\n" + " || Date: " + model.NgayThucHien + "\n" + " || Cost: " + model.SoTien + "\n" + " || Result: " + model.KetQua;
+                even.UserModified = GetUserId();
+                _eventScheduleParentRepository.Update(even);
+            }
+            else
+            {
+                even = new EVENT_SHEDULE_PARENT();
+                even.Subject = noidung;
+                even.MaNoiDungKH = model.Id;
+                even.StartEvent = model.NgayThucHien;
+                even.EndEvent = model.NgayThucHien;
+                even.StartTime = DateTime.Parse(model.NgayThucHien);
+                even.EndTime = DateTime.Parse(model.NgayThucHien);
+                even.TimeAlert = model.ThoiGianThongBao;
+                even.Location = model.ViTri;
+                even.IsAllDay = true;
+                even.Description = "Vendor: " + model.NhaThau + "\n" + " || Date: " + model.NgayThucHien + "\n" + " || Cost: " + model.SoTien + "\n" + " || Result: " + model.KetQua;
+                even.UserCreated = GetUserId();
+                _eventScheduleParentRepository.Add(even);
+            }
+
+            return model;
+        }
+
+        public EhsNoiDungKeHoachViewModel UpdateNoiDungKeHoachSingle(EhsNoiDungKeHoachViewModel model)
+        {
+            model.UserModified = GetUserId();
+            var en = _mapper.Map<EHS_NOIDUNG_KEHOACH>(model);
+            _ehsNoiDungKeHoachRespository.Update(en);
             return model;
         }
 
@@ -398,8 +465,9 @@ namespace HRMNS.Application.Implementation
             return Id;
         }
 
-        public List<TongHopKeHoachViewModel> TongHopKeHoachByYear(string year)
+        public TongHopKeHoachALL TongHopKeHoachByYear(string year)
         {
+            TongHopKeHoachALL tongHopKeHoachALL = new TongHopKeHoachALL();
             List<TongHopKeHoachViewModel> result = new List<TongHopKeHoachViewModel>();
             var lstDMKehoach = GetDMKehoach();
             var lstEhsDemucKeHoach = _ehsDemucKHRespository.FindAll(x => x.EHS_NOIDUNG, y => y.EHS_LUATDINH_DEMUC_KEHOACH);
@@ -413,6 +481,7 @@ namespace HRMNS.Application.Implementation
                     MaKeHoach = kehoach.Id,
                     TenKeHoach = kehoach.TenKeHoach_VN + "\n" + kehoach.TenKeHoach_KR,
                     Year = year,
+                    OrderItem = kehoach.OrderDM,
                     LuatDinhKeHoach = kehoach.EHS_LUATDINH_KEHOACH.FirstOrDefault()?.NoiDungLuatDinh.NullString()
                 };
 
@@ -456,8 +525,119 @@ namespace HRMNS.Application.Implementation
                 if (kehoachTongHop.lstDeMucNoiDung.Count > 0)
                     result.Add(kehoachTongHop);
             }
+            tongHopKeHoachALL.TongHopKeHoachViewModels = result;
+            TotalByYear totalByYear = new TotalByYear()
+            {
+                Year = year
+            };
+            TotalAllItemByYear totalAllItem;
+            foreach (var item in result)
+            {
+                foreach (var demuc in item.lstDeMucNoiDung)
+                {
+                    foreach (var noidung in demuc.NoiDungs)
+                    {
+                        if (!totalByYear.ItemByYears.Any(x => x.MaKeHoach.Equals(demuc.MaKeHoach) && x.MaDeMuc.Equals(demuc.MaDeMucKH) && x.MaNoiDung.Equals(noidung.MaNoiDung)))
+                        {
+                            totalAllItem = new TotalAllItemByYear()
+                            {
+                                MaKeHoach = demuc.MaKeHoach,
+                                MaDeMuc = demuc.MaDeMucKH,
+                                TenDeMuc = demuc.TenDemuc,
+                                TenNoiDung = noidung.NoiDung,
+                                MaNoiDung = noidung.MaNoiDung,
+                                ChuKy = noidung.NoiDungChiTiets.FirstOrDefault().ChuKy,
+                                NhaThau = noidung.NoiDungChiTiets.FirstOrDefault().NhaThau,
+                                OrderItem = item.OrderItem
+                            };
+                        }
+                        else
+                        {
+                            totalAllItem = totalByYear.ItemByYears.FirstOrDefault(x => x.MaKeHoach.Equals(demuc.MaKeHoach) && x.MaDeMuc.Equals(demuc.MaDeMucKH) && x.MaNoiDung.Equals(noidung.MaNoiDung));
+                        }
 
-            return result;
+                        foreach (var ndChitiet in noidung.NoiDungChiTiets)
+                        {
+                            if (ndChitiet.NgayThucHien.NullString().Contains("-") && ndChitiet.NgayThucHien.Split("-")[1].NullString() == "01") // yyyy-MM-dd 
+                            {
+                                totalAllItem.Month_1 += ndChitiet.SoTien;
+                                totalByYear.TMonth_1 += ndChitiet.SoTien;
+                            }
+
+                            if (ndChitiet.NgayThucHien.NullString().Contains("-") && ndChitiet.NgayThucHien.Split("-")[1].NullString() == "02") // yyyy-MM-dd 
+                            {
+                                totalAllItem.Month_2 += ndChitiet.SoTien;
+                                totalByYear.TMonth_2 += ndChitiet.SoTien;
+                            }
+
+                            if (ndChitiet.NgayThucHien.NullString().Contains("-") && ndChitiet.NgayThucHien.Split("-")[1].NullString() == "03") // yyyy-MM-dd 
+                            {
+                                totalAllItem.Month_3 += ndChitiet.SoTien;
+                                totalByYear.TMonth_3 += ndChitiet.SoTien;
+                            }
+
+                            if (ndChitiet.NgayThucHien.NullString().Contains("-") && ndChitiet.NgayThucHien.Split("-")[1].NullString() == "04") // yyyy-MM-dd 
+                            {
+                                totalAllItem.Month_4 += ndChitiet.SoTien;
+                                totalByYear.TMonth_4 += ndChitiet.SoTien;
+                            }
+
+                            if (ndChitiet.NgayThucHien.NullString().Contains("-") && ndChitiet.NgayThucHien.Split("-")[1].NullString() == "05") // yyyy-MM-dd 
+                            {
+                                totalAllItem.Month_5 += ndChitiet.SoTien;
+                                totalByYear.TMonth_5 += ndChitiet.SoTien;
+                            }
+
+                            if (ndChitiet.NgayThucHien.NullString().Contains("-") && ndChitiet.NgayThucHien.Split("-")[1].NullString() == "06") // yyyy-MM-dd 
+                            {
+                                totalAllItem.Month_6 += ndChitiet.SoTien;
+                                totalByYear.TMonth_6 += ndChitiet.SoTien;
+                            }
+
+                            if (ndChitiet.NgayThucHien.NullString().Contains("-") && ndChitiet.NgayThucHien.Split("-")[1].NullString() == "07") // yyyy-MM-dd 
+                            {
+                                totalAllItem.Month_7 += ndChitiet.SoTien;
+                                totalByYear.TMonth_7 += ndChitiet.SoTien;
+                            }
+
+                            if (ndChitiet.NgayThucHien.NullString().Contains("-") && ndChitiet.NgayThucHien.Split("-")[1].NullString() == "08") // yyyy-MM-dd 
+                            {
+                                totalAllItem.Month_8 += ndChitiet.SoTien;
+                                totalByYear.TMonth_8 += ndChitiet.SoTien;
+                            }
+
+                            if (ndChitiet.NgayThucHien.NullString().Contains("-") && ndChitiet.NgayThucHien.Split("-")[1].NullString() == "09") // yyyy-MM-dd 
+                            {
+                                totalAllItem.Month_9 += ndChitiet.SoTien;
+                                totalByYear.TMonth_9 += ndChitiet.SoTien;
+                            }
+
+                            if (ndChitiet.NgayThucHien.NullString().Contains("-") && ndChitiet.NgayThucHien.Split("-")[1].NullString() == "10") // yyyy-MM-dd 
+                            {
+                                totalAllItem.Month_10 += ndChitiet.SoTien;
+                                totalByYear.TMonth_10 += ndChitiet.SoTien;
+                            }
+
+                            if (ndChitiet.NgayThucHien.NullString().Contains("-") && ndChitiet.NgayThucHien.Split("-")[1].NullString() == "11") // yyyy-MM-dd 
+                            {
+                                totalAllItem.Month_11 += ndChitiet.SoTien;
+                                totalByYear.TMonth_11 += ndChitiet.SoTien;
+                            }
+
+                            if (ndChitiet.NgayThucHien.NullString().Contains("-") && ndChitiet.NgayThucHien.Split("-")[1].NullString() == "12") // yyyy-MM-dd 
+                            {
+                                totalAllItem.Month_12 += ndChitiet.SoTien;
+                                totalByYear.TMonth_12 += ndChitiet.SoTien;
+                            }
+                        }
+
+                        totalByYear.ItemByYears.Add(totalAllItem);
+                    }
+                }
+            }
+            totalByYear.ItemByYears.Sort((a, b) => a.OrderItem.CompareTo(b.OrderItem));
+            tongHopKeHoachALL.TotalByYear = totalByYear;
+            return tongHopKeHoachALL;
         }
     }
 }

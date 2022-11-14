@@ -37,103 +37,103 @@
     <tbody id="tbl-content">
         @foreach (var item in Model)
         {
-        <tr>
-            <td>@item.Id</td>
-            <td>@item.Ngay_ChamCong</td>
-            <td>@item.ID_NV</td>
-            <td>@item.Ten_NV</td>
-            <td>@item.Department</td>
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.Ngay_ChamCong</td>
+                <td>@item.ID_NV</td>
+                <td>@item.Ten_NV</td>
+                <td>@item.Department</td>
 
-            @if (item.UserModified != "sys")
+                @if (item.UserModified != "sys")
                 {
-            @if (item.UserModified.Contains("IN"))
+                    @if (item.UserModified.Contains("IN"))
                     {
-            <td>
-                <span class="badge badge bg-inverse-danger">@item.FirstIn_Time</span>
-            </td>
+                        <td>
+                            <span class="badge badge bg-inverse-danger">@item.FirstIn_Time</span>
+                        </td>
                     }
                     else
                     {
-            <td>
-                <span class="badge badge bg-inverse-info">@item.FirstIn_Time</span>
-            </td>
+                        <td>
+                            <span class="badge badge bg-inverse-info">@item.FirstIn_Time</span>
+                        </td>
                     }
 
-            @if (item.UserModified.Contains("OUT"))
+                    @if (item.UserModified.Contains("OUT"))
                     {
-            <td><span class="badge badge bg-inverse-danger">@item.Last_Out_Time</span></td>
+                        <td><span class="badge badge bg-inverse-danger">@item.Last_Out_Time</span></td>
                     }
                     else
                     {
-            <td><span class="badge badge bg-inverse-info">@item.Last_Out_Time</span></td>
+                        <td><span class="badge badge bg-inverse-info">@item.Last_Out_Time</span></td>
                     }
                 }
                 else
                 {
-            <td>@item.FirstIn_Time</td>
-            <td>@item.Last_Out_Time</td>
+                    <td>@item.FirstIn_Time</td>
+                    <td>@item.Last_Out_Time</td>
                 }
-            <td>@item.FirstIn</td>
-            <td>@item.LastOut</td>
-            <td>@item.Shift</td>
-            <td>
-                @if (item.Result == "NonWorking")
+                <td>@item.FirstIn</td>
+                <td>@item.LastOut</td>
+                <td>@item.Shift</td>
+                <td>
+                    @if (item.Result == "NonWorking")
                     {
-                <span class="badge bg-inverse-dark">@item.Result</span>
+                        <span class="badge bg-inverse-dark">@item.Result</span>
                     }
                     else if (item.Result == "Miss_In")
                     {
-                <span class="badge bg-inverse-warning">@item.Result</span>
+                        <span class="badge bg-inverse-warning">@item.Result</span>
                     }
                     else if (item.Result == "Miss_Out")
                     {
-                <span class="badge badge bg-inverse-info">@item.Result</span>
+                        <span class="badge badge bg-inverse-info">@item.Result</span>
                     }
                     else
                     {
-                <span class="badge bg-inverse-success">@item.Result</span>
+                        <span class="badge bg-inverse-success">@item.Result</span>
                     }
-            </td>
-            <td>
-                @if (item.Status == "Normal")
+                </td>
+                <td>
+                    @if (item.Status == "Normal")
                     {
-                <span class="badge bg-inverse-success">@item.Status</span>
+                        <span class="badge bg-inverse-success">@item.Status</span>
                     }
                     else
                     {
-                <span class="badge bg-inverse-danger">@item.Status</span>
+                        <span class="badge bg-inverse-danger">@item.Status</span>
                     }
-            </td>
-            @if (item.UserModified != "sys")
+                </td>
+                @if (item.UserModified != "sys")
                 {
-            <td>
-                <span class="badge badge bg-inverse-warning">@item.UserModified + @("(" + item.NumberUpdated + ")")</span>
-            </td>
+                    <td>
+                        <span class="badge badge bg-inverse-warning">@item.UserModified + @("(" + item.NumberUpdated + ")")</span>
+                    </td>
                 }
                 else
                 {
-            <td>
-                <span class="badge badge bg-inverse-warning">@("+" + item.NumberUpdated)</span>
-            </td>
+                    <td>
+                        <span class="badge badge bg-inverse-warning">@("+" + item.NumberUpdated)</span>
+                    </td>
                 }
 
-            <td class="text-right">
-                <div class="dropdown dropdown-action">
-                    <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item attendance-info" href="#" data-toggle="modal" data-target="#attendance_info" data-id="@item.ID_NV" data-date="@item.Ngay_ChamCong" data-name="@item.Ten_NV" data-timeIn="@item.FirstIn_Time" data-timeOut="@item.Last_Out_Time">
-                            <i class="fa fa-expand m-r-5"></i>Detail
-                        </a>
-                        @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
-                        (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" ||
-                        User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin") || item.NumberUpdated < 5)
+                <td class="text-right">
+                    <div class="dropdown dropdown-action">
+                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item attendance-info" href="#" data-toggle="modal" data-target="#attendance_info" data-id="@item.ID_NV" data-date="@item.Ngay_ChamCong" data-name="@item.Ten_NV" data-timeIn="@item.FirstIn_Time" data-timeOut="@item.Last_Out_Time">
+                                <i class="fa fa-expand m-r-5"></i>Detail
+                            </a>
+                            @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+                           (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" ||
+                           User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin") || item.NumberUpdated < 5)
                             {
-                        <a class="dropdown-item edit-chamcong" href="#" data-toggle="modal" data-target="#addEditChamCongModel" data-id="@item.ID_NV" data-date="@item.Ngay_ChamCong" data-name="@item.Ten_NV" data-timeIn="@item.FirstIn_Time" data-timeOut="@item.Last_Out_Time"><i class="fa fa-edit m-r-5"></i> Edit</a>
+                                <a class="dropdown-item edit-chamcong" href="#" data-toggle="modal" data-target="#addEditChamCongModel" data-id="@item.ID_NV" data-date="@item.Ngay_ChamCong" data-name="@item.Ten_NV" data-timeIn="@item.FirstIn_Time" data-timeOut="@item.Last_Out_Time"><i class="fa fa-edit m-r-5"></i> Edit</a>
                             }
+                        </div>
                     </div>
-                </div>
-            </td>
-        </tr>
+                </td>
+            </tr>
         }
     </tbody>
 </table>

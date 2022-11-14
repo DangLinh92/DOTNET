@@ -46,6 +46,11 @@
             let ngayKhaiBaoTB = $('#_txtNgayKhaiBaoThietBi').val();
             let thongBaoTruoc = $('#_txtThoiGianThongBao').val() + '/' + $('#_txtDonViThoiGianThongBao').val();
 
+            let maHieuMayKiemTra = $('#_txtMaHieuMayKiemTra').val();
+            let tienDoHoanThanh =  $('#_txtTienDoHoanThanh').val();
+            let soTien = $('#_txtSoTien').val();
+            let ketQua = $('#_txtKetQua').val();
+
             $.ajax({
                 type: "POST",
                 url: "/Admin/EhsDanhMucKeHoach/UpdateNoiDungChiTiet",
@@ -60,7 +65,11 @@
                     ThoiGian_ThucHien: thoiGianHuanLuyen,
                     YeuCau: yeuCau,
                     NgayKhaiBaoThietBi: ngayKhaiBaoTB,
-                    ThoiGianThongBao: thongBaoTruoc
+                    ThoiGianThongBao: thongBaoTruoc,
+                    MaHieuMayKiemTra: maHieuMayKiemTra,
+                    TienDoHoanThanh: tienDoHoanThanh,
+                    SoTien: soTien,
+                    KetQua: ketQua
                 },
                 success: function (response) {
                     hrms.notify("Update success!", 'Success', 'alert', function () {
@@ -109,6 +118,11 @@
                         $('#_txtThoiGian_ThucHien').val(noidung.ThoiGian_ThucHien);
                         $('#_txtYeuCau').val(noidung.YeuCau);
                         $('#_txtNgayKhaiBaoThietBi').val(noidung.NgayKhaiBaoThietBi);
+
+                        $('#_txtMaHieuMayKiemTra').val(noidung.MaHieuMayKiemTra);
+                        $('#_txtTienDoHoanThanh').val(noidung.TienDoHoanThanh);
+                        $('#_txtSoTien').val(noidung.SoTien);
+                        $('#_txtKetQua').val(noidung.KetQua);
 
                         if (noidung.ThoiGianThongBao.split('/').length > 1) {
                             let tgthongBao = noidung.ThoiGianThongBao.split('/')[0];

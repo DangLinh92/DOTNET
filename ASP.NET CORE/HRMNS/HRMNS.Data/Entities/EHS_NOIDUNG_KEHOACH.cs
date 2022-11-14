@@ -15,8 +15,8 @@ namespace HRMNS.Data.Entities
         {
         }
 
-        public EHS_NOIDUNG_KEHOACH(Guid id,string year,Guid maNoiDung,string nhathau,string chuky,string yeucau,string note,
-            string ngaythuchien,string thoigianthuchien,string vitri,double soluong,string ngaykhaibaoTB,string thoigianthongbao)
+        public EHS_NOIDUNG_KEHOACH(Guid id, string year, Guid maNoiDung, string nhathau, string chuky, string yeucau, string note,
+            string ngaythuchien, string thoigianthuchien, string vitri, double soluong, string ngaykhaibaoTB, string thoigianthongbao, string mahieuKtra, double sotien, string ketqua, string status, double tiendo)
         {
             Id = id;
             Year = year;
@@ -31,9 +31,15 @@ namespace HRMNS.Data.Entities
             Note = note;
             NgayKhaiBaoThietBi = ngaykhaibaoTB;
             ThoiGianThongBao = thoigianthongbao;
+
+            MaHieuMayKiemTra = mahieuKtra;
+            SoTien = sotien;
+            KetQua = ketqua;
+            Status = status;
+            TienDoHoanThanh = tiendo;
         }
 
-        public string  Year { get; set; }
+        public string Year { get; set; }
 
         public Guid MaNoiDung { get; set; }
 
@@ -46,6 +52,7 @@ namespace HRMNS.Data.Entities
         [StringLength(50)]
         public string NgayThucHien { get; set; } // 2022-01-01
 
+        // Thoi gian huan luyen
         [StringLength(50)]
         public string ThoiGian_ThucHien { get; set; } // 8h
 
@@ -77,6 +84,19 @@ namespace HRMNS.Data.Entities
 
         [StringLength(50)]
         public string UserModified { get; set; }
+
+        [StringLength(150)]
+        public string MaHieuMayKiemTra { get; set; }
+
+        public double SoTien { get; set; }
+
+        [StringLength(1000)]
+        public string KetQua { get; set; }
+
+        [StringLength(50)]
+        public string Status { get; set; } // Active/ Inactive / Wait
+
+        public double TienDoHoanThanh { get; set; } // 50%,100%
 
         [ForeignKey("MaNoiDung")]
         public virtual EHS_NOIDUNG EHS_NOIDUNG { get; set; }

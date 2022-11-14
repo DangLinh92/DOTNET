@@ -823,6 +823,9 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
+                    b.Property<int>("OrderDM")
+                        .HasColumnType("int");
+
                     b.Property<string>("TenKeHoach_KR")
                         .HasColumnType("nvarchar(1000)")
                         .HasMaxLength(1000);
@@ -977,6 +980,14 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
+                    b.Property<string>("KetQua")
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.Property<string>("MaHieuMayKiemTra")
+                        .HasColumnType("nvarchar(150)")
+                        .HasMaxLength(150);
+
                     b.Property<Guid>("MaNoiDung")
                         .HasColumnType("uniqueidentifier");
 
@@ -999,6 +1010,13 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<double>("SoLuong")
                         .HasColumnType("float");
 
+                    b.Property<double>("SoTien")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<string>("ThoiGianThongBao")
                         .HasColumnType("nvarchar(10)")
                         .HasMaxLength(10);
@@ -1006,6 +1024,9 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("ThoiGian_ThucHien")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
+
+                    b.Property<double>("TienDoHoanThanh")
+                        .HasColumnType("float");
 
                     b.Property<string>("UserCreated")
                         .HasColumnType("nvarchar(50)")
@@ -1080,9 +1101,8 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
-                    b.Property<string>("Content")
-                        .HasColumnType("nvarchar(1000)")
-                        .HasMaxLength(1000);
+                    b.Property<int?>("ConferenceId")
+                        .HasColumnType("int");
 
                     b.Property<string>("DateCreated")
                         .HasColumnType("nvarchar(50)")
@@ -1092,12 +1112,40 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
                     b.Property<string>("EndEvent")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("EndTimezone")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<bool?>("IsAllDay")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
                     b.Property<Guid>("MaNoiDungKH")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("RecurrenceException")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("RecurrenceID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RecurrenceRule")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
 
                     b.Property<string>("Repeat")
                         .HasColumnType("nvarchar(50)")
@@ -1107,13 +1155,20 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
+                    b.Property<DateTime?>("StartTime")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("StartTimezone")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("Subject")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
                     b.Property<string>("TimeAlert")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
-
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(250)")
-                        .HasMaxLength(250);
 
                     b.Property<string>("UserCreated")
                         .HasColumnType("nvarchar(50)")
@@ -1126,6 +1181,76 @@ namespace HRMNS.Data.EF.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("EVENT_SHEDULE_PARENT");
+                });
+
+            modelBuilder.Entity("HRMNS.Data.Entities.FILE_MANAGER", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("ItemID")
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<byte[]>("Content")
+                        .HasColumnType("VARBINARY(MAX)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("DATETIME");
+
+                    b.Property<string>("DateEx")
+                        .HasColumnType("NVARCHAR(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime?>("DateModified")
+                        .HasColumnType("DATETIME");
+
+                    b.Property<string>("FilterPath")
+                        .HasColumnType("NVARCHAR(200)")
+                        .HasMaxLength(200);
+
+                    b.Property<bool?>("HasChild")
+                        .HasColumnType("BIT");
+
+                    b.Property<bool?>("IsFile")
+                        .HasColumnType("BIT");
+
+                    b.Property<bool?>("IsRoot")
+                        .HasColumnType("BIT");
+
+                    b.Property<string>("MimeType")
+                        .HasColumnType("NCHAR(200)")
+                        .HasMaxLength(200);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("NCHAR(40)")
+                        .HasMaxLength(40);
+
+                    b.Property<int?>("ParentID")
+                        .HasColumnType("int");
+
+                    b.Property<long?>("Size")
+                        .HasColumnType("BIGINT");
+
+                    b.Property<string>("StorageLocation")
+                        .HasColumnType("NVARCHAR(200)")
+                        .HasMaxLength(200);
+
+                    b.Property<string>("Type")
+                        .HasColumnType("VARCHAR(255)")
+                        .HasMaxLength(255);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FILE_MANAGER");
                 });
 
             modelBuilder.Entity("HRMNS.Data.Entities.FUNCTION", b =>

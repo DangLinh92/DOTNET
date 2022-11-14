@@ -594,6 +594,56 @@
             });
         });
 
+        // delete
+        $('#btnDeleteAll').on('click', function (e) {
+
+            e.preventDefault();
+            $('#delete_all_nhanVien_calviec').modal('show');
+        });
+
+        $('#btn-delete_all_nv_calamviec').on('click', function (e) {
+
+            e.preventDefault();
+
+            var ids = [];
+
+            // Iterate over all checkboxes in the table
+            let arrV = $($.fn.dataTable.tables(true)).DataTable().$('input[type="checkbox"]');
+            arrV.each(function () {
+                // If checkbox is checked
+                if (this.checked) {
+                    ids.push(this.value);
+                }
+            });
+
+            if (ids.length == 0) {
+                hrms.notify('error: Choose item for delete', 'error', 'alert', function () { });
+                return;
+            }
+            else {
+                $.ajax({
+                    url: '/Admin/NhanVien_CaLamViec/DeleteAll',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        lstID: ids,
+                        action: 'approve'
+                    },
+                    success: function (response) {
+                        $('#delete_all_nhanVien_calviec').modal('hide');
+                        hrms.notify("Delete success!", 'Success', 'alert', function () {
+                            location.reload();
+                        });
+                    },
+                    error: function (status) {
+                        console.log(status.responseText);
+                        hrms.notify('error:' + status.responseText, 'error', 'alert', function () { });
+                    }
+                });
+            }
+        });
+
+
         // Click approve nhan vien ca lam viec tren gridview
         $('body').on('click', '.approve-nv-calviec', function (e) {
             e.preventDefault();

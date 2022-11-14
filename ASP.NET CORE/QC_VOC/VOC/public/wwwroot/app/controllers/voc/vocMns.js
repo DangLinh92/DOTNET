@@ -26,13 +26,11 @@
                     nameEng: nameEng,
                     nameKr: nameKr
                 },
-                success: function (data)
-                {
+                success: function (data) {
                     $('#addDefectType').modal('hide');
-                    hrms.notify("Update date success!", 'Success', 'alert', function () {});
+                    hrms.notify("Update date success!", 'Success', 'alert', function () { });
                 },
-                error: function (status)
-                {
+                error: function (status) {
                     hrms.notify(status.responseText, 'error', 'alert', function () { });
                 }
             });
@@ -283,7 +281,13 @@
                         $('#txtReportSentDate').val(voc.Rport_sentDate);
                         $('#cboVocState').val(voc.VOCState);
                         $('#cboVocState').trigger('change');
+
                         $('#txtVocFinishDate').val(voc.VOCFinishingDate);
+                        $('#txtCustomerGroup').val(voc.CustomerGroup);
+                        $('#txtProdutionDate').val(voc.ProdutionDate);
+                        $('#txtProdutionDate2').val(voc.ProdutionDate_2);
+                        $('#txtReceivedDate2').val(voc.ReceivedDate_2);
+                        $('#txtSPLReceiveddate2').val(voc.SPLReceivedDate_2);
                     }
                     else {
                         hrms.notify('error: Not found voc!', 'error', 'alert', function () { });
@@ -328,6 +332,12 @@
                 var vocFinishDate = $('#txtVocFinishDate').val();
                 var code = $('#hdId').val();
 
+                var CustomerGroup = $('#txtCustomerGroup').val();
+                var ProdutionDate = $('#txtProdutionDate').val();
+                var ProdutionDate_2 = $('#txtProdutionDate2').val();
+                var ReceivedDate_2 = $('#txtReceivedDate2').val();
+                var SPLReceivedDate_2 = $('#txtSPLReceiveddate2').val();
+
                 if (!code) {
                     code = 0;
                 }
@@ -364,7 +374,12 @@
                         Report_Sender: reportSender,
                         Rport_sentDate: reportSentDate,
                         VOCState: vocState,
-                        VOCFinishingDate: vocFinishDate
+                        VOCFinishingDate: vocFinishDate,
+                        CustomerGroup: CustomerGroup,
+                        ProdutionDate: ProdutionDate,
+                        ProdutionDate_2: ProdutionDate_2,
+                        ReceivedDate_2: ReceivedDate_2,
+                        SPLReceivedDate_2: SPLReceivedDate_2
                     },
                     success: function (response) {
                         $('#addEdi_Voc').modal('hide');
@@ -432,6 +447,12 @@
             $('#txtVocFinishDate').val('');
             $('#txtDefectRate').val('');
             $('#txtReportSender').val('');
+
+            $('#txtCustomerGroup').val('');
+            $('#txtProdutionDate').val('');
+            $('#txtProdutionDate2').val('');
+            $('#txtReceivedDate2').val('');
+            $('#txtSPLReceiveddate2').val('');
         }
 
         function initSelectOptionDefectType() {

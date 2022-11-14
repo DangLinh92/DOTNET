@@ -40,6 +40,7 @@
                 @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 && (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin" || User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR"))
                 {
                     <a href="#" id="btnCreate" class="btn add-btn" data-toggle="modal" data-target="#add_thaisan"><i class="fa fa-plus"></i> Add</a>
+                    <a href="#" id="btnExport" class="btn add-btn"><i class="fa fa-file"></i> Export</a>
                 }
             </div>
         </div>

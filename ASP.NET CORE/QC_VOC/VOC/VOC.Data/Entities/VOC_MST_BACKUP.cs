@@ -71,8 +71,8 @@ namespace VOC.Data.Entities
 
         // PBA FAE 결과 
         // (해당사항 없으면 입력 X)
-        [StringLength(50)]
-        public string PBA_FAE_Result { get; set; }
+        //[StringLength(50)]
+        //public string PBA_FAE_Result { get; set; }
 
         // 부품 구분1 
         // (SAW, 모듈)
@@ -135,6 +135,26 @@ namespace VOC.Data.Entities
 
         [StringLength(1000)]
         public string LinkReport { get; set; }
+
+        // Received date (YY-MM)
+        [StringLength(50)]
+        public string ReceivedDate_2 { get; set; }
+
+        // SPL 접수 일자 2
+        [StringLength(50)]
+        public string SPLReceivedDate_2 { get; set; }
+
+        // 고객사 구분
+        [StringLength(50)]
+        public string CustomerGroup { get; set; }
+
+        // 부품 생산일자
+        [StringLength(50)]
+        public string ProdutionDate { get; set; }
+
+        // 부품 생산일자 2
+        [StringLength(50)]
+        public string ProdutionDate_2 { get; set; }
 
         [StringLength(50)]
         public string DateCreated { get; set; }

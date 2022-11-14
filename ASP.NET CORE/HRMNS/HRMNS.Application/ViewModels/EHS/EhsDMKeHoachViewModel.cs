@@ -21,6 +21,8 @@ namespace HRMNS.Application.ViewModels.EHS
         [StringLength(1000)]
         public string TenKeHoach_KR { get; set; }
 
+        public int OrderDM { get; set; }
+
         [StringLength(50)]
         public string DateCreated { get; set; }
 

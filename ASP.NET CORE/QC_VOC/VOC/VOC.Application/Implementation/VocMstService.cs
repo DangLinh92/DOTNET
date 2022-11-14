@@ -234,6 +234,12 @@ namespace VOC.Application.Implementation
                     table.Columns.Add("VOCFinishingDate");
                     table.Columns.Add("VOC_TAT");
 
+                    table.Columns.Add("CustomerGroup");
+                    table.Columns.Add("ProdutionDate");
+                    table.Columns.Add("ProdutionDate_2");
+                    table.Columns.Add("ReceivedDate_2");
+                    table.Columns.Add("SPLReceivedDate_2");
+
                     DataRow row = null;
                     for (int i = worksheet.Dimension.Start.Row + 3; i <= worksheet.Dimension.End.Row; i++) // Start.Row = 2
                     {
@@ -258,18 +264,20 @@ namespace VOC.Application.Implementation
                         DateTime.TryParse(worksheet.Cells[i, 6].Text.NullString(), out DateTime dt);
                         row["ReceivedDate"] = dt.ToString("yyyy-MM-dd");
 
-                        if (DateTime.TryParse(worksheet.Cells[i, 7].Text.NullString(), out DateTime splDt))
+                        row["ReceivedDate_2"] = worksheet.Cells[i, 7].Text.NullString();
+
+                        if (DateTime.TryParse(worksheet.Cells[i, 8].Text.NullString(), out DateTime splDt))
                         {
                             row["SPLReceivedDate"] = splDt.ToString("yyyy-MM-dd");
                         }
                         else
                         {
-                            row["SPLReceivedDate"] = worksheet.Cells[i, 7].Text.NullString();
+                            row["SPLReceivedDate"] = worksheet.Cells[i, 8].Text.NullString();
                         }
 
-                        if (!DateTime.TryParse(worksheet.Cells[i, 7].Text.NullString(), out _))
+                        if (!DateTime.TryParse(worksheet.Cells[i, 8].Text.NullString(), out _))
                         {
-                            row["SPLReceivedDateWeek"] = "W" + (DateTime.Parse(worksheet.Cells[i, 6].Text.NullString()).GetWeekOfYear() - 1);
+                            row["SPLReceivedDateWeek"] = "W" + (DateTime.Parse(worksheet.Cells[i, 8].Text.NullString()).GetWeekOfYear() - 1);
                         }
                         else
                         {
@@ -283,27 +291,36 @@ namespace VOC.Application.Implementation
                             row["SPLReceivedDateWeek"] = worksheet.Cells[i, 8].Text.NullString().ToUpper();
                         }
 
-                        row["Customer"] = worksheet.Cells[i, 9].Text.NullString();
-                        row["SETModelCustomer"] = worksheet.Cells[i, 10].Text.NullString();
-                        row["ProcessCustomer"] = worksheet.Cells[i, 11].Text.NullString();
-                        row["ModelFullname"] = worksheet.Cells[i, 12].Text.NullString();
-                        row["DefectNameCus"] = worksheet.Cells[i, 13].Text.NullString();
-                        row["DefectRate"] = worksheet.Cells[i, 14].Text.NullString();
-                        row["PBA_FAE_Result"] = worksheet.Cells[i, 15].Text.NullString();
-                        row["PartsClassification"] = worksheet.Cells[i, 16].Text.NullString();
-                        row["PartsClassification2"] = worksheet.Cells[i, 17].Text.NullString();
-                        row["ProdutionDateMarking"] = worksheet.Cells[i, 18].Text.NullString();
-                        row["AnalysisResult"] = worksheet.Cells[i, 19].Text.NullString();
-                        row["VOCCount"] = worksheet.Cells[i, 20].Text.NullString().ToUpper();
-                        row["DefectCause"] = worksheet.Cells[i, 21].Text.NullString();
-                        row["DefectClassification"] = worksheet.Cells[i, 22].Text.NullString();
-                        row["CustomerResponse"] = worksheet.Cells[i, 23].Text.NullString();
-                        row["Report_FinalApprover"] = worksheet.Cells[i, 24].Text.NullString();
-                        row["Report_Sender"] = worksheet.Cells[i, 25].Text.NullString();
-                        row["Rport_sentDate"] = worksheet.Cells[i, 26].Text.NullString();
-                        row["VOCState"] = worksheet.Cells[i, 27].Text.NullString();
-                        row["VOCFinishingDate"] = worksheet.Cells[i, 28].Text.NullString();
-                        row["VOC_TAT"] = worksheet.Cells[i, 29].Text.NullString();
+                        row["SPLReceivedDate_2"] = worksheet.Cells[i, 9].Text.NullString();
+
+                        row["CustomerGroup"] = worksheet.Cells[i, 11].Text.NullString();
+
+                        row["Customer"] = worksheet.Cells[i, 12].Text.NullString();
+                        row["SETModelCustomer"] = worksheet.Cells[i, 13].Text.NullString();
+                        row["ProcessCustomer"] = worksheet.Cells[i, 14].Text.NullString();
+                        row["ModelFullname"] = worksheet.Cells[i, 15].Text.NullString();
+                        row["DefectNameCus"] = worksheet.Cells[i, 16].Text.NullString();
+                        row["DefectRate"] = worksheet.Cells[i, 17].Text.NullString();
+                        row["PBA_FAE_Result"] = "";//worksheet.Cells[i, 15].Text.NullString();
+                        row["PartsClassification"] = worksheet.Cells[i, 18].Text.NullString();
+                        row["PartsClassification2"] = worksheet.Cells[i, 19].Text.NullString();
+                        row["ProdutionDateMarking"] = worksheet.Cells[i, 20].Text.NullString();
+
+                        row["ProdutionDate"] = worksheet.Cells[i, 21].Text.NullString();
+                        row["ProdutionDate_2"] = worksheet.Cells[i, 22].Text.NullString();
+
+                        row["AnalysisResult"] = worksheet.Cells[i, 23].Text.NullString();
+                        row["VOCCount"] = worksheet.Cells[i, 24].Text.NullString().ToUpper();
+                        row["DefectCause"] = worksheet.Cells[i, 25].Text.NullString();
+                        row["DefectClassification"] = worksheet.Cells[i, 26].Text.NullString();
+                        row["CustomerResponse"] = worksheet.Cells[i, 27].Text.NullString();
+                        row["Report_FinalApprover"] = worksheet.Cells[i, 28].Text.NullString();
+                        row["Report_Sender"] = worksheet.Cells[i, 29].Text.NullString();
+                        row["Rport_sentDate"] = worksheet.Cells[i, 30].Text.NullString();
+                        row["VOCState"] = worksheet.Cells[i, 31].Text.NullString();
+                        row["VOCFinishingDate"] = worksheet.Cells[i, 32].Text.NullString();
+                        row["VOC_TAT"] = worksheet.Cells[i, 33].Text.NullString();
+
                         table.Rows.Add(row);
                     }
 

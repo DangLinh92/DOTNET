@@ -56,10 +56,12 @@ namespace HRMNS.Application.Implementation
             _eventScheduleParentRepository.Add(new EVENT_SHEDULE_PARENT()
             {
                 Id = scheduleId,
-                Title = trainName,
+                Subject = trainName,
                 StartEvent = trainigModel.FromDate,
                 EndEvent = trainigModel.ToDate,
-                Content = trainigModel.Description,
+                StartTime = DateTime.Parse(trainigModel.FromDate),
+                EndTime = DateTime.Parse(trainigModel.ToDate),
+                Description = trainigModel.Description,
                 UserCreated = GetUserId()
             });
             EVENT_SHEDULE even = null;
@@ -87,10 +89,12 @@ namespace HRMNS.Application.Implementation
 
             var scheduleParent = _eventScheduleParentRepository.FindById(oldTraining.MaEventParent);
             string trainName = _trainingTypeRepository.FindById(trainigModel.TrainnigType).TrainName;
-            scheduleParent.Title = trainName;
+            scheduleParent.Subject = trainName;
             scheduleParent.StartEvent = trainigModel.FromDate;
             scheduleParent.EndEvent = trainigModel.ToDate;
-            scheduleParent.Content = trainigModel.Description;
+            scheduleParent.StartTime = DateTime.Parse(trainigModel.FromDate);
+            scheduleParent.EndTime = DateTime.Parse(trainigModel.ToDate);
+            scheduleParent.Description = trainigModel.Description;
             scheduleParent.UserModified = GetUserId();
             _eventScheduleParentRepository.Update(scheduleParent);
 

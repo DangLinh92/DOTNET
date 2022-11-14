@@ -76,7 +76,7 @@ namespace HRMNS.Application.AutoMapper
             .ConstructUsing(c => new HR_THAISAN_CONNHO(c.Id, c.MaNV, c.CheDoThaiSan, c.FromDate, c.ToDate));
 
             CreateMap<EhsDMKeHoachViewModel, EHS_DM_KEHOACH>()
-                .ConstructUsing(c => new EHS_DM_KEHOACH(c.Id, c.TenKeHoach_VN, c.TenKeHoach_KR));
+                .ConstructUsing(c => new EHS_DM_KEHOACH(c.Id, c.TenKeHoach_VN, c.TenKeHoach_KR,c.OrderDM));
             CreateMap<EhsLuatDinhKeHoachViewModel, EHS_LUATDINH_KEHOACH>()
                 .ConstructUsing(c => new EHS_LUATDINH_KEHOACH(c.Id, c.NoiDungLuatDinh, c.MaKeHoach));
 
@@ -90,7 +90,8 @@ namespace HRMNS.Application.AutoMapper
                 .ConstructUsing(c => new EHS_LUATDINH_DEMUC_KEHOACH(c.Id, c.LuatDinhLienQuan, c.MaDeMuc));
 
             CreateMap<EhsNoiDungKeHoachViewModel, EHS_NOIDUNG_KEHOACH>()
-                .ConstructUsing(c => new EHS_NOIDUNG_KEHOACH(c.Id, c.Year, c.MaNoiDung, c.NhaThau, c.ChuKy, c.YeuCau, c.Note, c.NgayThucHien, c.ThoiGian_ThucHien, c.ViTri, c.SoLuong, c.NgayKhaiBaoThietBi, c.ThoiGianThongBao));
+                .ConstructUsing(c => new EHS_NOIDUNG_KEHOACH(c.Id, c.Year, c.MaNoiDung, c.NhaThau, c.ChuKy, c.YeuCau, c.Note, c.NgayThucHien, c.ThoiGian_ThucHien, c.ViTri,
+                c.SoLuong, c.NgayKhaiBaoThietBi, c.ThoiGianThongBao,c.MaHieuMayKiemTra,c.SoTien,c.KetQua,c.Status,c.TienDoHoanThanh));
 
             CreateMap<TrainingTypeViewModel, TRAINING_TYPE>()
               .ConstructUsing(c => new TRAINING_TYPE(c.TrainName, c.Description, c.Status));
@@ -105,7 +106,9 @@ namespace HRMNS.Application.AutoMapper
              .ConstructUsing(c => new EVENT_SHEDULE(c.MaEventParent, c.EventDate));
 
             CreateMap<EventScheduleParentViewModel, EVENT_SHEDULE_PARENT>()
-             .ConstructUsing(c => new EVENT_SHEDULE_PARENT(c.Id, c.Title, c.StartEvent, c.EndEvent, c.Repeat, c.Content, c.BoPhan, c.TimeAlert, c.MaNoiDungKH));
+             .ConstructUsing(c => new EVENT_SHEDULE_PARENT(c.Id, c.Subject, c.StartEvent, c.EndEvent, c.Repeat, c.Description, c.BoPhan, c.TimeAlert,
+                                                           c.MaNoiDungKH,c.StartTime,c.EndTime,c.IsAllDay,c.RecurrenceRule,
+                                                           c.StartTimezone,c.EndTimezone,c.RecurrenceID,c.RecurrenceException,c.ConferenceId,c.Location));
 
             CreateMap<NhanVienCheDoDBViewModel, HR_NHANVIEN_CHEDO_DB>()
            .ConstructUsing(c => new HR_NHANVIEN_CHEDO_DB(c.MaNhanVien, c.CheDoDB, c.Note));

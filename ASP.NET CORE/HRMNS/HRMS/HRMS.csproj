@@ -32,6 +32,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />
     <PackageReference Include="Serilog.Extensions.Logging.File" Version="2.0.0" />
+    <PackageReference Include="Syncfusion.EJ2.AspNet.Core" Version="20.3.0.50" />
     <PackageReference Include="WebMarkupMin.AspNetCore2" Version="2.10.0" />
     <PackageReference Include="WebMarkupMin.NUglify" Version="2.11.0" />
   </ItemGroup>
@@ -44,8 +45,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\Admin\Data\" />
+    <Folder Include="App_Data\" />
+    <Folder Include="Models\Base\" />
     <Folder Include="wwwroot\export-files\" />
-    <Folder Include="wwwroot\FileData\img\" />
+    <Folder Include="wwwroot\FileData\Ehs_Documents\" />
     <Folder Include="wwwroot\img\thumbnails\" />
     <Folder Include="wwwroot\lib\mustache\test\spec\" />
   </ItemGroup>
@@ -72,5 +75,13 @@
     </Content>
     <PackageReference Include="DevExtreme.AspNet.Core" Version="21.2.8" />
     <PackageReference Include="DevExtreme.AspNet.Data" Version="2.8.6" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="App_Data\FileManager.mdf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Update="App_Data\FileManager_log.ldf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

@@ -53,6 +53,11 @@ namespace HRMS.Areas.Admin.Controllers
         public IActionResult AddKeHoach(string nameVN, string nameKR, string luatDinh)
         {
             Guid idKh = Guid.NewGuid();
+            int maxOrder = 0;
+            if (_danhMucKeHoachService.GetDataDanhMucKeHoachPage(null).EhsDMKeHoachViewModels.OrderByDescending(x => x.OrderDM).FirstOrDefault() != null)
+            {
+                maxOrder = _danhMucKeHoachService.GetDataDanhMucKeHoachPage(null).EhsDMKeHoachViewModels.OrderByDescending(x => x.OrderDM).FirstOrDefault().OrderDM + 1;
+            }
 
             EhsDMKeHoachViewModel ehsDM = new EhsDMKeHoachViewModel()
             {
@@ -60,7 +65,8 @@ namespace HRMS.Areas.Admin.Controllers
                 TenKeHoach_VN = nameVN,
                 TenKeHoach_KR = nameKR,
                 UserCreated = UserName,
-                UserModified = UserName
+                UserModified = UserName,
+                OrderDM = maxOrder
             };
             EhsLuatDinhKeHoachViewModel luatDinhKH = new EhsLuatDinhKeHoachViewModel()
             {
@@ -164,11 +170,18 @@ namespace HRMS.Areas.Admin.Controllers
                 newModel.NgayKhaiBaoThietBi = model.NgayKhaiBaoThietBi;
                 newModel.ThoiGianThongBao = model.ThoiGianThongBao;
                 newModel.Year = DateTime.Parse(model.NgayThucHien).Year.ToString();
+
+                newModel.MaHieuMayKiemTra = model.MaHieuMayKiemTra;
+                newModel.TienDoHoanThanh = model.TienDoHoanThanh;
+                newModel.SoTien = model.SoTien;
+                newModel.KetQua = model.KetQua;
+
                 newModel.EHS_NOIDUNG = null;
                 _danhMucKeHoachService.UpdateNoiDungKeHoach(newModel);
                 _danhMucKeHoachService.Save();
-                return new OkObjectResult(new  {
-                   MaNoiDung = maNoiDung
+                return new OkObjectResult(new
+                {
+                    MaNoiDung = maNoiDung
                 });
             }
             else

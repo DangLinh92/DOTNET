@@ -49,15 +49,22 @@ namespace HRMS.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Search(string timeEndUser, string status,string department, string timeTo)
+        public IActionResult Search(string timeEndUser, string status,string status_all, string department, string timeTo)
         {
-            if (status.NullString() == "")
+            if(status_all.NullString() == "")
             {
-                status = Status.Active.ToString();
+                if (status.NullString() == "")
+                {
+                    status = Status.Active.ToString();
+                }
+                else
+                {
+                    status = Status.InActive.ToString();
+                }
             }
             else
             {
-                status = Status.InActive.ToString();
+                status = "";
             }
 
             List<DeNghiLamThemGioModel> lstLamthemgio = new List<DeNghiLamThemGioModel>();

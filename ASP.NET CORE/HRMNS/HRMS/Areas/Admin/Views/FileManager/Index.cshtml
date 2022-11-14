@@ -1,9 +1,12 @@
-﻿@{
+﻿@using Syncfusion.EJ2
+@{
     ViewData["Title"] = "Index";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 @section Styles{
-
+    <!-- Syncfusion ASP.NET Core controls style -->
+    <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/20.3.47/material.css" />
+    <script src="https://cdn.syncfusion.com/ej2/20.3.47/dist/ej2.min.js"></script>
     <style>
         #devextreme0 {
             height: 800px !important;
@@ -17,8 +20,17 @@
                 height: 100%;
                 max-width: 100%;
             }
+
+        #filemanager {
+            height: 720px !important;
+        }
     </style>
 }
+
+@{
+    string[] files = new string[] { "Edit", "Open","Cut", "|", "Delete", "Download", "Rename", "|", "Details" };
+}
+
 <div class="content container-fluid">
     <div class="page-header">
         <div class="row align-items-center">
@@ -35,67 +47,171 @@
         </div>
     </div>
 
-    @(Html.DevExtreme().FileManager()
-    .CurrentPath("Widescreen")
-    .FileSystemProvider(provider => provider
-        .Remote()
-        .Url(Url.RouteUrl("FileManagementImagesApi")))
-     .ItemView(view => view.Mode(FileManagerItemViewMode.Thumbnails))
-    .CustomizeThumbnail(@<text>
-        function(fileManagerItem) {
-            if (fileManagerItem.isDirectory)
-                return '@Url.Content("~/img/thumbnails/folder-svgrepo-com.svg")';
-
-            var fileExtension = fileManagerItem.getFileExtension().toLowerCase();
-            if(fileExtension === ".docx" || fileExtension === ".doc")
-                return '@Url.Content("~/img/thumbnails/docx-file.svg")';
-            if(fileExtension === ".xlsx")
-                return '@Url.Content("~/img/thumbnails/file-excel.svg")';
-            if(fileExtension === ".pdf")
-                return '@Url.Content("~/img/thumbnails/pdf-svgrepo-com.svg")';
-            if(fileExtension === ".ppt" || fileExtension === ".pptx")
-                return '@Url.Content("~/img/thumbnails/ppt-svgrepo-com.svg")';
-            if(fileExtension === ".txt")
-                return '@Url.Content("~/img/thumbnails/file-txt.svg")';
-            if(fileExtension === ".mp4")
-                return '@Url.Content("~/img/thumbnails/mp4-svgrepo-com.svg")';
-            if(fileExtension === ".mp3")
-                return '@Url.Content("~/img/thumbnails/mp3-svgrepo-com.svg")';
-
-            if(fileExtension === ".jpg" ||fileExtension === ".jpeg" || fileExtension === ".png" )
-                return '@Url.Content("~/img/thumbnails/image-file.svg")';
-
-            return '@Url.Content("~/img/thumbnails/file-other.svg")';
-        }
-    </text>)
-    .Permissions(permissions => permissions
-        .Create(true)
-        .Copy(true)
-        .Move(true)
-        .Delete(true)
-        .Rename(true)
-        .Upload(true)
-        .Download(true))
-    .OnSelectedFileOpened(@<text>
-
-      function(e) {
-            var popup = $("#photo-popup").dxPopup("instance");
-            popup.option({
-                "title": e.file.name,
-                "contentTemplate": "<img src=\"" + e.file.dataItem.url + "\" class=\"photo-popup-image\" />" @*"<embed src=\"" + e.file.dataItem.url + "\" type=\"application/pdf\" width=\"100%\" height=\"500px\"></embed>"*@
-            });
-            popup.show();
-        }
-    </text>)
-    .Height(450))
-    @(Html.DevExtreme().Popup()
-    .ID("photo-popup")
-    .MaxHeight(600)
-    .OnContentReady(@<text>
-        function(e) {
-            var $contentElement = e.component.content();
-            $contentElement.addClass("photo-popup-content");
-        }
-    </text>)
-    .CloseOnOutsideClick(true))
+    <div class=" control-section">
+        <div class="file-container">
+            <!-- File Manager full functionalities sample -->
+            <ejs-filemanager id="filemanager" allowMultiSelection="true" allowDragAndDrop="true" view="@Syncfusion.EJ2.FileManager.ViewType.Details" menuOpen="menuOpen" menuClick="menuClick" uploadListCreate="uploadListCreate" beforeSend="beforeSend">
+                <e-filemanager-detailsviewsettings>
+                    <e-detailsviewsettings-columns>
+                        <e-detailsviewsettings-column Field="name" HeaderText="Name" template="${name}"></e-detailsviewsettings-column>
+                        <e-detailsviewsettings-column Field="dateModified" HeaderText="Date Modified" type="dateTime" format="MMMM dd, yyyy HH:mm"></e-detailsviewsettings-column>
+                        <e-detailsviewsettings-column Field="uSize" HeaderText="Size" template="${uSize}"></e-detailsviewsettings-column>
+                        <e-detailsviewsettings-column Field="dateEx" HeaderText="Expiration date"></e-detailsviewsettings-column>
+                        <e-detailsviewsettings-column Field="storageLocation" HeaderText="Storage Location"></e-detailsviewsettings-column>
+                    </e-detailsviewsettings-columns>
+                </e-filemanager-detailsviewsettings>
+                <e-filemanager-ajaxsettings url="http://10.70.10.97:8089/admin/FileManager/SQLFileOperations"
+                                            downloadUrl="http://10.70.10.97:8089/admin/FileManager/SQLDownload"
+                                            uploadUrl="http://10.70.10.97:8089/admin/FileManager/SQLUpload"
+                                            getImageUrl="http://10.70.10.97:8089/admin/FileManager/SQLGetImage">
+                </e-filemanager-ajaxsettings>
+                <e-filemanager-uploadsettings maxFileSize="209715200" minFileSize="200" autoUpload="false"></e-filemanager-uploadsettings>
+                <e-filemanager-contextmenusettings file="files"></e-filemanager-contextmenusettings>
+            </ejs-filemanager>
+        </div>
+    </div>
 </div>
+
+<div id="edit_LocationAndDate" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Location and expiration date</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <input type="hidden" name="ItemID" id="txtItemID" />
+                    <input type="hidden" name="Action" value="Edit" />
+                    <div class="form-group">
+                        <label>Location</label>
+                        <input class="form-control" type="text" name="StorageLocation" id="txtStorageLocation">
+                    </div>
+                    <div class="form-group">
+                        <label>Expiration date</label>
+                        <div class="cal-icon"><input class="form-control datetimepicker" type="text" name="DateEx" id="txtDateEx"></div>
+                    </div>
+                    <div class="submit-section">
+                        <button class="btn btn-primary submit-btn" id="btnUpdateLocationAndDate">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        $('#btnUpdateLocationAndDate').on('click', function (e) {
+  
+            var action = 'Edit';
+            var itemID = $('#txtItemID').val();
+            var storageLocation = $('#txtStorageLocation').val();
+            var dateEx = $('#txtDateEx').val();
+
+            $.ajax({
+                type: "POST",
+                url: '/admin/FileManager/SQLFileOperations_2',
+                data: {
+                    Action: action,
+                    Id: itemID,
+                    StorageLocation: storageLocation,
+                    DateEx: dateEx
+                },
+                success: function (response) {
+                    //alert('Update ok!');
+                    window.location.reload();
+                },
+                error: function (status) {
+                    alert('update err:' + status.responseText);
+                }
+            });
+        });
+    });
+
+    //function popupOpen(args) {
+    //    if (args.popupName == 'Upload') {
+    //        var input = document.createElement('button');
+    //        input.innerText = 'Click';
+    //        args.popupModule.dlgContainer
+    //            .querySelector('.e-dlg-content')
+    //            .append(input);
+    //    }
+    //}
+
+    // Icon added to custom menu item
+    function menuOpen(args) {
+        for (var i = 0; i < args.items.length; i++) {
+            if (args.items[i].id === this.element.id + '_cm_edit') {
+                args.items[i].iconCss = 'e-icons e-fe-tick';
+            }
+        }
+    }
+
+    // event for custom menu item
+    function menuClick(args) {
+        console.log(args);
+        if (args.item.text === 'Edit')
+        {
+            $('#txtItemID').val(args.fileDetails[0].id);
+            $('#txtStorageLocation').val(args.fileDetails[0].storageLocation);
+            $('#txtDateEx').val(args.fileDetails[0].dateEx);
+
+            $('#edit_LocationAndDate').modal('show');
+        }
+    }
+
+    function beforeSend(args) {
+        if (args.action == "Upload") {
+
+            var data = JSON.parse(args.ajaxSettings.data);
+
+            var storage = $('#txtViTri').val();
+            var dateEx = $('#txtExTime').val();
+            // Add custom parameter column
+            data.push({ storageLocation: storage });
+            data.push({ dateEx: dateEx });
+
+            // Add custom parameter in ajax settings
+            args.ajaxSettings.data = JSON.stringify(data);
+        }
+    }
+
+    function uploadListCreate(args) {
+
+        if ($('#txtViTri').length == 0) {
+            var ele = document.querySelector('.e-upload.e-control-wrapper');
+            var label = document.createElement('label');
+            label.textContent = 'Vị Trí Lưu Trữ:';
+            var input = document.createElement('input');
+            input.id = "txtViTri";
+            input.name = "StorageLocation";
+            input.setAttribute('type', 'text');
+            input.setAttribute('style', 'width: 70%;');
+            // You can update required controls here
+            ele.prepend(input);
+            ele.prepend(label);
+
+            var label1 = document.createElement('label');
+            label1.textContent = 'Ngày Hết Hạn:';
+            var input1 = document.createElement('input');
+            input1.id = "txtExTime";
+            input1.name = "DateEx";
+            input1.setAttribute('type', 'date');
+            input1.setAttribute('style', 'width: 69%;');
+            // You can update required controls here
+            ele.prepend(input1);
+            ele.prepend(label1);
+        }
+        else {
+            var input = document.getElementById('txtViTri');
+            input.value = "";
+
+            var input1 = document.getElementById('txtExTime');
+            input1.value = "";
+        }
+    }
+</script>

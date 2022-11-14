@@ -341,6 +341,19 @@ namespace HRMS.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        public IActionResult DeleteAll(List<int> lstID)
+        {
+            List<NhanVien_CalamViecViewModel> lstCalamviec = _nvienCalamviecService.GetAllWithoutStatus().Where(x => lstID.Contains(x.Id)).ToList();
+
+            foreach (var id in lstID)
+            {
+                _nvienCalamviecService.Delete(id);
+            }
+            _nvienCalamviecService.Save();
+            return new OkObjectResult(lstID);
+        }
+
+        [HttpPost]
         public IActionResult ExportExcel(string department, string status, string timeFrom, string timeTo)
         {
             string sWebRootFolder = _hostingEnvironment.WebRootPath;

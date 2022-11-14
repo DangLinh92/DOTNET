@@ -17,11 +17,12 @@ namespace HRMNS.Data.Entities
             EHS_NOIDUNG = new HashSet<EHS_NOIDUNG>();
         }
 
-        public EHS_DM_KEHOACH(Guid id,string tenKeHoachVn,string tenKeHoachKR)
+        public EHS_DM_KEHOACH(Guid id,string tenKeHoachVn,string tenKeHoachKR,int order)
         {
             Id = id;
             TenKeHoach_VN = tenKeHoachVn;
             TenKeHoach_KR = tenKeHoachKR;
+            OrderDM = order;
         }
 
         [StringLength(1000)]
@@ -41,6 +42,8 @@ namespace HRMNS.Data.Entities
 
         [StringLength(50)]
         public string UserModified { get; set; }
+
+        public int OrderDM { get; set; } 
 
         public virtual ICollection<EHS_LUATDINH_KEHOACH> EHS_LUATDINH_KEHOACH { get; set; }
         public virtual ICollection<EHS_NOIDUNG> EHS_NOIDUNG { get; set; }

@@ -78,6 +78,7 @@ namespace HRMNS.Data.EF
         public virtual DbSet<TRAINING_NHANVIEN> TRAINING_NHANVIEN { get; set; }
         public virtual DbSet<TRAINING_TYPE> TRAINING_TYPE { get; set; }
         public virtual DbSet<HR_NHANVIEN_CHEDO_DB> HR_NHANVIEN_CHEDO_DB { get; set; }
+        public virtual DbSet<FILE_MANAGER> FILE_MANAGER { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -144,6 +145,7 @@ namespace HRMNS.Data.EF
             builder.AddConfiguration(new TrainingNhanVienConfiguration());
             builder.AddConfiguration(new TrainingTypeConfiguration());
             builder.AddConfiguration(new NhanVienCheDoDBConfiguration());
+            builder.AddConfiguration(new FileManagementConfiguration());
 
             //base.OnModelCreating(builder);
         }

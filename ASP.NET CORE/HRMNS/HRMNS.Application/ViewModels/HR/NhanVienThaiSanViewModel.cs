@@ -35,4 +35,10 @@ namespace HRMNS.Application.ViewModels.HR
 
         public NhanVienViewModel HR_NHANVIEN { get; set; }
     }
+
+    public class NhanVienThaiSan_ExportViewModel : NhanVienThaiSanViewModel
+    {
+        [StringLength(50)]
+        public string NameNV { get; set; }
+    }
 }

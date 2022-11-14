@@ -5,6 +5,35 @@
 
     function registerEvents() {
 
+        // Export excel start
+        $('#btnExport').on('click', function () {
+
+            var maNV = $('#txtMaNV').val();
+            var fromTime = $('#txtTimeFrom').val();
+            var toTime = $('#txtTimeTo').val();
+
+            $.ajax({
+                type: "POST",
+                url: "/Admin/NhanVienThaiSan/ExportExcel",
+                data: {
+                    maNV: maNV,
+                    timeFrom: fromTime,
+                    timeTo: toTime
+                },
+                beforeSend: function () {
+                    hrms.run_waitMe($('#gridThaisanIndex'));
+                },
+                success: function (response) {
+                    window.location.href = response;
+                    hrms.hide_waitMe($('#gridThaisanIndex'));
+                },
+                error: function () {
+                    hrms.notify('Has an error in progress!', 'error', 'alert', function () { });
+                    hrms.hide_waitMe($('#gridThaisanIndex'));
+                }
+            });
+        });
+
         $('#btnCreate').on('click', function () {
             resetFormData();
             $('#hd_thaisan').val('Add');

@@ -391,6 +391,10 @@ namespace VOC.Data.EF.Migrations
                         .HasColumnType("nvarchar(150)")
                         .HasMaxLength(150);
 
+                    b.Property<string>("CustomerGroup")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<string>("CustomerResponse")
                         .HasColumnType("nvarchar(500)")
                         .HasMaxLength(500);
@@ -447,11 +451,23 @@ namespace VOC.Data.EF.Migrations
                         .HasColumnType("nvarchar(250)")
                         .HasMaxLength(250);
 
+                    b.Property<string>("ProdutionDate")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<string>("ProdutionDateMarking")
                         .HasColumnType("nvarchar(500)")
                         .HasMaxLength(500);
 
+                    b.Property<string>("ProdutionDate_2")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<string>("ReceivedDate")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("ReceivedDate_2")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
@@ -484,6 +500,10 @@ namespace VOC.Data.EF.Migrations
                         .HasMaxLength(50);
 
                     b.Property<string>("SPLReceivedDateWeek")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("SPLReceivedDate_2")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
@@ -534,6 +554,10 @@ namespace VOC.Data.EF.Migrations
                         .HasColumnType("nvarchar(150)")
                         .HasMaxLength(150);
 
+                    b.Property<string>("CustomerGroup")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<string>("CustomerResponse")
                         .HasColumnType("nvarchar(500)")
                         .HasMaxLength(500);
@@ -590,11 +614,23 @@ namespace VOC.Data.EF.Migrations
                         .HasColumnType("nvarchar(250)")
                         .HasMaxLength(250);
 
+                    b.Property<string>("ProdutionDate")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<string>("ProdutionDateMarking")
                         .HasColumnType("nvarchar(500)")
                         .HasMaxLength(500);
 
+                    b.Property<string>("ProdutionDate_2")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<string>("ReceivedDate")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("ReceivedDate_2")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
@@ -627,6 +663,10 @@ namespace VOC.Data.EF.Migrations
                         .HasMaxLength(50);
 
                     b.Property<string>("SPLReceivedDateWeek")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("SPLReceivedDate_2")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
