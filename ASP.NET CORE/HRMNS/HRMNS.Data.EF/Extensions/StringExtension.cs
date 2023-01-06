@@ -6,6 +6,14 @@ namespace HRMNS.Data.EF.Extensions
 {
     public static class StringExtension
     {
+        public static string AddString(this object result, string newStr)
+        {
+            if (result == null)
+                return string.Empty;
+            else
+                return result.ToString().Trim() == "" ? "" : newStr + ": " + result.ToString().Trim();
+        }
+
         public static string NullString(this object result)
         {
             if (result == null)
@@ -71,7 +79,7 @@ namespace HRMNS.Data.EF.Extensions
         /// 0 : date1 = date2
         /// 1 : date1 > date2
         /// </returns>
-        public static int CompareDateTime(this string date1,string date2)
+        public static int CompareDateTime(this string date1, string date2)
         {
             return date1.CompareTo(date2);
         }
@@ -83,9 +91,9 @@ namespace HRMNS.Data.EF.Extensions
         /// <param name="date2"></param>
         /// <param name="date3"></param>
         /// <returns></returns>
-        public static bool InRangeDateTime(this string date1,string date2,string date3)
+        public static bool InRangeDateTime(this string date1, string date2, string date3)
         {
-            if(date2.CompareTo(date1) <= 0 && date3.CompareTo(date1) >= 0)
+            if (date2.CompareTo(date1) <= 0 && date3.CompareTo(date1) >= 0)
             {
                 return true;
             }

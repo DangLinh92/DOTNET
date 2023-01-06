@@ -1,0 +1,121 @@
+﻿@model List<GocPlanViewModelEx>
+@{
+    ViewData["Title"] = "Actual & Prod. Plan";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts
+{
+    <script src="~/js/dataTables.fixedColumns.min.js"></script>
+    <script src="~/js/dataTables.fixedHeader.min.js"></script>
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+
+    <script src="~/app/controllers/GocPlan/GocPlanController.js"></script>
+    <script>
+        var controller = new GocPlanController();
+        controller.initialize();
+
+        onSuccess = controller.doAftersearch;
+        onBeginAjax = controller.beginSearch;
+
+        $(document).ready(function () {
+            var table = $('#gocPlanDataTable').DataTable({
+                scrollY: 530,
+                scrollX: true,
+                scrollCollapse: true,
+                paging: false,
+                select: true,
+                "searching": true,
+                fixedColumns: {
+                    left: 6
+                },
+                fixedHeader: true
+            });
+
+            $('#gocPlanDataTable tbody').on('click', 'tr', function () {
+                if ($(this).hasClass('selected')) {
+                    $(this).removeClass('selected');
+                } else {
+                    table.$('tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
+                }
+            });
+
+            $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
+            $('select[name="gocPlanDataTable_length"]').removeClass('form-control-sm');
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+            /*.selected {
+            background-color: #1a659e !important;
+        }*/
+    </style>
+
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">@ViewData["Title"]</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Actual & Prod. Plan</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+
+    <form id="frmSearch" method="post" data-ajax="true" data-ajax-url="/OpeationMns/GOCPlan/Search" data-ajax-update="#gridGocPlan" data-ajax-mode='replace' data-ajax-begin="onBeginAjax" data-ajax-success="onSuccess">
+        <div class="row filter-row">
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus select-focus">
+                    <select class="select floating" id="cboChipWafer" name="chipWafer">
+                        <option value="CHIP">CHIP</option>
+                        <option value="WAFER">WAFER</option>
+                    </select>
+                    <label class="focus-label">Chip/Wafer</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus">
+                    <div class="cal-icon">
+                        <input class="form-control floating datetimepicker" type="text" id="searchFromTime" name="fromTime">
+                    </div>
+                    <label class="focus-label">From</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus">
+                    <div class="cal-icon">
+                        <input class="form-control floating datetimepicker" type="text" id="searchToTime" name="toTime">
+                    </div>
+                    <label class="focus-label">To</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <button href="#" class="btn btn-success btn-block" id="btnSearch" type="submit"> Search </button>
+            </div>
+        </div>
+    </form>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive" id="gridGocPlan">
+                @await Html.PartialAsync("_GocPlanGridView", Model)
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

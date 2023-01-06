@@ -39,8 +39,8 @@
                             }
                             else
                             {
-                                <li>
-                                    <a href="@subItem.URL"><i class="@subItem.IconCss"></i> <span>@subItem.Name</span></a>
+                                <li id="@subItem.Id">
+                                    <a href="@subItem.URL" onclick="linkClick2('@subItem.Id')"><i class="@subItem.IconCss"></i> <span>@subItem.Name</span></a>
                                 </li>
                             }
                         }
@@ -55,7 +55,9 @@
     function linkClick(item) {
         sessionStorage.setItem('activeLink', item.id);
     }
-
+    function linkClick2(id) {
+        sessionStorage.setItem('activeLink', id);
+    }
     (function () {
         let id = sessionStorage.getItem("activeLink");
         let element = document.getElementById(id);

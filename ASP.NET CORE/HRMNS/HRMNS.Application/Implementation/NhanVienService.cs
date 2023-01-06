@@ -314,6 +314,7 @@ namespace HRMNS.Application.Implementation
                 });
 
                 nhanvien.MaBoPhanChiTiet = GetBoPhanChiTiet(worksheet.Cells[i, 35].Text.NullString());
+                nhanvien.NoiTuyenDung = worksheet.Cells[i, 37].Text.NullString();
 
                 if (worksheet.Cells[i, 36].Text.NullString() != "" && DateTime.TryParse(worksheet.Cells[i, 36].Text.NullString(), out DateTime ngaynghiviec))
                 {

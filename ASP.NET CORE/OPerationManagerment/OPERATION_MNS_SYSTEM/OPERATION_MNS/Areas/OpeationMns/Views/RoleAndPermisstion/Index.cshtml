@@ -1,7 +1,7 @@
 ﻿@model RoleAndPermisstionViewModel
 @{
-    ViewData["Title"] = "Index";
-    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Roles & Permissions";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
 }
 
 @section Scripts
@@ -104,16 +104,16 @@
             $('#btnSave').on('click', function (e) {
                 $.ajax({
                     type: "POST",
-                    url: "/Admin/RoleAndPermisstion/SavePermission",
+                    url: "/OpeationMns/RoleAndPermisstion/SavePermission",
                     data:
                     {
                         model: permisstionLst
                     },
                     success: function (response) {
-                        OPERATION_MNS.notify("Update date success!", 'Success', 'alert', function () { });
+                        hrms.notify("Update date success!", 'Success', 'alert', function () { });
                     },
                     error: function (status) {
-                        OPERATION_MNS.notify(status.responseText, 'error', 'alert', function () { });
+                        hrms.notify(status.responseText, 'error', 'alert', function () { });
                     }
                 });
             });
@@ -155,7 +155,7 @@
                         </li>
                     }
                 </ul>
-                <form id="frmRoleChange" action="/Admin/RoleAndPermisstion/GetPermisstionByRole" method="post">
+                <form id="frmRoleChange" action="/OpeationMns/RoleAndPermisstion/GetPermisstionByRole" method="post">
                     <input type="hidden" id="hdRole" name="roleId" />
                 </form>
             </div>
@@ -282,7 +282,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form action="/Admin/RoleAndPermisstion/SaveRole" method="post">
+                <form action="/OpeationMns/RoleAndPermisstion/SaveRole" method="post">
                     <div class="form-group">
                         <label>Role Name <span class="text-danger">*</span></label>
                         <input class="form-control" type="text" id="txtRoleName" name="Name">
@@ -307,7 +307,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form action="/Admin/RoleAndPermisstion/SaveRole" method="post">
+                <form action="/OpeationMns/RoleAndPermisstion/SaveRole" method="post">
                     <div class="form-group">
                         <label>Role Name <span class="text-danger">*</span></label>
                         <input class="form-control" type="text" name="Name" id="txtRoleName-Edit">
@@ -327,7 +327,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body">
-                <form action="/Admin/RoleAndPermisstion/DeleteRole" method="post">
+                <form action="/OpeationMns/RoleAndPermisstion/DeleteRole" method="post">
                     <div class="form-group">
                         <h3>Delete Role</h3>
                         <p>Are you sure want to delete?</p>

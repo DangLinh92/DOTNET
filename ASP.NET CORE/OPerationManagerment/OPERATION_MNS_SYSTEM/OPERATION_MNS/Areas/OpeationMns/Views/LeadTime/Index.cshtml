@@ -1,0 +1,404 @@
+﻿@using OPERATION_MNS.Data.EF.Extensions
+@model LeadTimeModel
+@{
+    ViewData["Title"] = "WLP Lead Time Trend";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+}
+
+@section Scripts
+{
+    <script>
+
+        var WLP1_LeadTimeByMonth = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.WLP1_LeadTimeByMonth))');
+        var WLP2_LeadTimeByMonth = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.WLP2_LeadTimeByMonth))');
+        var WLP_LeadTimeByYear = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.WLP_LeadTimeByYear))');
+        var WLP_LeadTimeByMonth = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.WLP_LeadTimeByMonth))');
+        var WLP_LeadTimeByWeek = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.WLP_LeadTimeByWeek))');
+        var WLP1_LeadTimeByWeek = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.WLP1_LeadTimeByWeek))');
+        var WLP2_LeadTimeByWeek = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.WLP2_LeadTimeByWeek))');
+        var WeeksLabel = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.Weeks_Lable))');
+        var weekSelected = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.Week))');
+
+        var WLP1_LeadTimeByDay = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.WLP1_LeadTimeByDay))');
+        var WLP2_LeadTimeByDay = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.WLP2_LeadTimeByDay))');
+
+        var Days1 = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.Days1))');
+        var Days2 = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.Days2))');
+
+        $('#txtYear').datetimepicker({
+            format: 'YYYY',
+            icons:
+            {
+                up: "fa fa-angle-up",
+                down: "fa fa-angle-down",
+                next: 'fa fa-angle-right',
+                previous: 'fa fa-angle-left'
+            }
+        });
+
+        $('#txtMonth').datetimepicker({
+            format: 'MM',
+            icons:
+            {
+                up: "fa fa-angle-up",
+                down: "fa fa-angle-down",
+                next: 'fa fa-angle-right',
+                previous: 'fa fa-angle-left'
+            }
+        });
+
+        $('#txtDay').datetimepicker({
+            format: 'DD',
+            icons:
+            {
+                up: "fa fa-angle-up",
+                down: "fa fa-angle-down",
+                next: 'fa fa-angle-right',
+                previous: 'fa fa-angle-left'
+            }
+        });
+    </script>
+    <script src="~/app/controllers/LeadTime/LeadTime_Chart.js"></script>
+    <script>
+        var _leadTimeChart = new LeadTimeChart();
+        _leadTimeChart.DrawChart();
+
+        $(function () {
+            $('#txtMonth').on('dp.change', function (e) {
+
+                $.ajax({
+                    url: '/OpeationMns/LeadTime/GetWeekByMonth',
+                    type: 'POST',
+                    data: {
+                        year: $('#txtYear').val(),
+                        month: $('#txtMonth').val(),
+                    },
+                    success: function (response) {
+                        var _selected_0 = weekSelected == "0" ? "selected" : "";
+                        var render = "<option value='0' " + _selected_0 + " >All</option>";
+                        $.each(response, function (i, item) {
+                            var _selected_1 = weekSelected == item ? "selected" : "";
+                            render += "<option value='" + item + " ' " + _selected_1 + ">" + item + "</option >";
+                        });
+                        $('#cboWeek').html(render);
+                    },
+                    error: function (status) {
+                        hrms.notify(status.responseText, 'error', 'alert', function () { });
+                    }
+                });
+            });
+
+            $('#show-hidden-grid-wlp').click(function () {
+                $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+                $('.hidden-grid-wlp').slideToggle("slow");
+
+            });
+
+            $('#show-hidden-grid-wlp-month').click(function () {
+                $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+                $('.hidden-grid-wlp-month').slideToggle("slow");
+
+            });
+
+            $('#show-hidden-grid-wlp-week').click(function () {
+                $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+                $('.hidden-grid-wlp-week').slideToggle("slow");
+
+            });
+
+            $('#show-hidden-grid-wlp1-week').click(function () {
+                $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+                $('.hidden-grid-wlp1-week').slideToggle("slow");
+
+            });
+
+            $('#show-hidden-grid-wlp2-week').click(function () {
+                $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+                $('.hidden-grid-wlp2-week').slideToggle("slow");
+
+            });
+
+            $('#show-hidden-grid-wlp1-day').click(function () {
+                $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+                $('.hidden-grid-wlp1-day').slideToggle("slow");
+
+            });
+            $('#show-hidden-grid-wlp2-day').click(function () {
+                $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+                $('.hidden-grid-wlp2-day').slideToggle("slow");
+
+            });
+        })
+
+
+    </script>
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">@ViewData["Title"]</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">WLP Lead Time Trend</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="myHeader">
+        <form  action="/OpeationMns/LeadTime/Search" method="post">
+            <div class="row filter-row">
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <div class="form-group form-focus select-focus">
+                        <div class="cal-icon"><input id="txtYear" name="year" value="@Model.Year" class="form-control datetimepicker" type="text" required></div>
+                        <label class="focus-label">Year</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <div class="form-group form-focus select-focus">
+                        <div class="cal-icon"><input id="txtMonth" name="month" value="@Model.Month" class="form-control datetimepicker" type="text"></div>
+                        <label class="focus-label">Month</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <div class="form-group form-focus select-focus">
+                        <select id="cboWeek" class="select floating" name="week">
+                            <!option value="0" @(Model.Week == 0 ? "selected" : "")>All</!option>
+                            @foreach (var w in Model.Weeks)
+                            {
+                                <!option value="@w" @(Model.Week + "" == w ? "selected" : "")>W @w</!option>
+                            }
+                        </select>
+                        <label class="focus-label">Week</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <div class="form-group form-focus select-focus">
+                        <div class="cal-icon"><input id="txtDay" name="day" value="@Model.Day" class="form-control datetimepicker" type="text"></div>
+                        <label class="focus-label">Day</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <div class="form-group form-focus select-focus">
+                        <select id="cboHodiday" class="select floating" name="holiday">
+                            <!option value="" @(Model.Ox == "ALL" ? "selected" : "")>All</!option>
+                            <!option value="X" @(Model.Ox == "X" ? "selected" : "")>O</!option>
+                        </select>
+                        <label class="focus-label">Excluding holidays</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <button id="btnSearch" type="submit" class="btn btn-success btn-block"> Search </button>
+                </div>
+            </div>
+        </form>
+    </div>
+   
+
+    <div class="row contentChart">
+        <div class="col-sm-12" id="show-hidden-grid-wlp">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item active" style="cursor: pointer;">
+                    <i class="fa fa-caret-right"></i> <strong>WLP Lead time by year,month</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row hidden-grid-wlp">
+        <div class="col-md-4 d-flex">
+            <div class="card flex-fill dash-statistics">
+                <div class="card-header">
+                    <h5 id="wlp_byYear" class="card-title mb-0">WLP_Lead time theo năm ( Đơn vị: ngày)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chartjs-wrapper-demo">
+                        <canvas id="chartstacked_wlp_byYear" style="height:250px"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8 d-flex">
+            <div class="card flex-fill dash-statistics">
+                <div class="card-header">
+                    <div id="WLP_LeadTimeByMonth" class="card-title mb-0">WLP_ Lead time tổng theo tháng (Đơn vị:  ngày)</div>
+                </div>
+                <div class="card-body">
+                    <div class="chartjs-wrapper-demo">
+                        <canvas id="chartstacked_WLP_LeadTimeByMonth" style="height:250px"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12" id="show-hidden-grid-wlp-month">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item active" style="cursor: pointer;">
+                    <i class="fa fa-caret-right"></i> <strong>WLP1, WLP2 Lead time by month</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row hidden-grid-wlp-month">
+        <div class="col-md-6 d-flex">
+            <div class="card flex-fill dash-statistics">
+                <div class="card-header">
+                    <h5 id="wlp1_leadtimebyMonth" class="card-title mb-0">WLP1_ Lead time theo tháng ( Đơn vị: ngày)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chartjs-wrapper-demo">
+                        <canvas id="chartstacked_wlp1_leadtimeby_Month" style="height:250px"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 d-flex">
+            <div class="card flex-fill dash-statistics">
+                <div class="card-header">
+                    <h5 id="wlp2_leadtimebyMonth" class="card-title mb-0">WLP2_ Lead time theo tháng (Đơn vị: ngày)</h5>
+                </div>
+                <div class="card-body">
+                    <div id="wlp2_leadtimeby_Month"></div>
+                    <div class="chartjs-wrapper-demo">
+                        <canvas id="chartstacked_wlp2_leadtimeby_Month" style="height:250px"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12" id="show-hidden-grid-wlp-week">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item active" style="cursor: pointer;">
+                    <i class="fa fa-caret-right"></i> <strong>WLP Lead time by week</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row hidden-grid-wlp-week">
+        <div class="col-md-12 d-flex">
+            <div class="card flex-fill dash-statistics">
+                <div class="card-header">
+                    <div id="vocByMonthTitle" class="card-title mb-0">WLP_ Lead time tổng theo tuần ( Đơn vị: ngày)</div>
+                </div>
+                <div class="card-body">
+                    <div class="chartjs-wrapper-demo">
+                        <canvas id="chartstacked_WLP_LeadTimeByWeek" style="height:250px"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12" id="show-hidden-grid-wlp1-week">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item active" style="cursor: pointer;">
+                    <i class="fa fa-caret-right"></i> <strong>WLP1 Lead time by week</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row hidden-grid-wlp1-week">
+        <div class="col-md-12 d-flex">
+            <div class="card flex-fill dash-statistics">
+                <div class="card-header">
+                    <div id="vocByMonthTitle" class="card-title mb-0">WLP1_ Lead time theo tuần (Đơn vị: ngày)</div>
+                </div>
+                <div class="card-body">
+                    <div class="chartjs-wrapper-demo">
+                        <canvas id="chartstacked_WLP1_LeadTimeByWeek" style="height:250px"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12" id="show-hidden-grid-wlp2-week">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item active" style="cursor: pointer;">
+                    <i class="fa fa-caret-right"></i> <strong>WLP2 Lead time by week</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row hidden-grid-wlp2-week">
+        <div class="col-md-12 d-flex">
+            <div class="card flex-fill dash-statistics">
+                <div class="card-header">
+                    <div id="vocByMonthTitle" class="card-title mb-0">WLP2_ Lead time theo tuần ( Đơn vị: ngày)</div>
+                </div>
+                <div class="card-body">
+                    <div class="chartjs-wrapper-demo">
+                        <canvas id="chartstacked_WLP2_LeadTimeByWeek" style="height:250px"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="row">
+        <div class="col-sm-12" id="show-hidden-grid-wlp1-day">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item active" style="cursor: pointer;">
+                    <i class="fa fa-caret-right"></i> <strong>WLP1 Lead time by day</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row hidden-grid-wlp1-day">
+        <div class="col-md-12 d-flex">
+            <div class="card flex-fill dash-statistics">
+                <div class="card-header">
+                    <div id="WLP1_LeadTimeByday" class="card-title mb-0">WLP1_ Lead time theo ngày ( Đơn vị: ngày)</div>
+                </div>
+                <div class="card-body">
+                    <div class="chartjs-wrapper-demo">
+                        <canvas id="chartstacked_WLP1_LeadTimeByday" style="height:250px"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12" id="show-hidden-grid-wlp2-day">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item active" style="cursor: pointer;">
+                    <i class="fa fa-caret-right"></i> <strong>WLP2 Lead time by day</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row hidden-grid-wlp2-day">
+        <div class="col-md-12 d-flex">
+            <div class="card flex-fill dash-statistics">
+                <div class="card-header">
+                    <div id="WLP2_LeadTimeByday" class="card-title mb-0">WLP2_ Lead time theo ngày ( Đơn vị: ngày)</div>
+                </div>
+                <div class="card-body">
+                    <div class="chartjs-wrapper-demo">
+                        <canvas id="chartstacked_WLP2_LeadTimeByday" style="height:250px"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

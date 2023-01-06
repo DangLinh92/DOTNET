@@ -140,10 +140,11 @@ namespace HRMNS.Data.EF
                     new FUNCTION() {Id = "SETTINGS",Name = "Settings",ParentId = "OTHER",SortOrder = 3,Status = Status.Active,URL = "/admin/settings/index",IconCss = "la la-cog"  },
                     new FUNCTION() {Id = "ROLE_PERMISSTION",Name = "Phân Quyền User",ParentId = "SETTINGS",SortOrder = 1,Status = Status.Active,URL = "/admin/roleandpermisstion/index",IconCss = "la la-key"  },
 
-                     new FUNCTION() {Id = "DAO_TAO_EVENT", Name = "Performance",ParentId = null,SortOrder = 4,Status = Status.Active,URL = "",IconCss = ""  },
-                new FUNCTION() {Id = "TRAINING",Name = "Đào Tạo",ParentId = "DAO_TAO_EVENT",SortOrder = 1,Status = Status.Active,URL = "",IconCss = "la la-edit"  },
-                new FUNCTION() {Id = "TRAINING_LIST",Name = "Kế Hoạch Đào Tạo",ParentId = "TRAINING",SortOrder = 1,Status = Status.Active,URL = "/admin/traininglist/index",IconCss = ""  },
-                new FUNCTION() {Id = "TRAINING_TYPE",Name = "Danh Mục Đào Tạo",ParentId = "TRAINING",SortOrder = 2,Status = Status.Active,URL = "/admin/trainingtype/index",IconCss = ""  },
+                    new FUNCTION() {Id = "DAO_TAO_EVENT", Name = "Performance",ParentId = null,SortOrder = 4,Status = Status.Active,URL = "",IconCss = ""  },
+                    new FUNCTION() {Id = "TRAINING",Name = "Đào Tạo",ParentId = "DAO_TAO_EVENT",SortOrder = 1,Status = Status.Active,URL = "",IconCss = "la la-edit"  },
+                    new FUNCTION() {Id = "TRAINING_LIST",Name = "Kế Hoạch Đào Tạo",ParentId = "TRAINING",SortOrder = 1,Status = Status.Active,URL = "/admin/traininglist/index",IconCss = ""  },
+                    new FUNCTION() {Id = "TRAINING_TYPE",Name = "Danh Mục Đào Tạo",ParentId = "TRAINING",SortOrder = 2,Status = Status.Active,URL = "/admin/trainingtype/index",IconCss = ""  },
+                    new FUNCTION() {Id = "SAMSUNG_TRAINING",Name = "Samsung traning",ParentId = "TRAINING",SortOrder = 3,Status = Status.Active,URL = "/admin/samsungtraining/index",IconCss = ""  },
                 });
             }
 

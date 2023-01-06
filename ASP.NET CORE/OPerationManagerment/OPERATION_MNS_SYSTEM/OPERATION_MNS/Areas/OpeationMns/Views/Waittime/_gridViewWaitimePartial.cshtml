@@ -1,0 +1,35 @@
+﻿@model OperationWaitimeSheet
+@(Html.DevExtreme().DataGrid<WaittimeViewModel>()
+.ID(@Model.GridName)
+    .DataSource(Model.lstWaittimeViewModel)
+    .Height(580)
+    .ShowBorders(true)
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnMinWidth(50)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .FilterRow(filterRow => filterRow
+        .Visible(true)
+        .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+    .Columns(columns =>
+    {
+        columns.Add().DataField("CassetteID").Width(110);
+        columns.Add().DataField("Material").Width(120);
+        columns.Add().DataField("OperationName").Width(150);
+        columns.Add().DataField("Status").Width(65);
+        columns.Add().DataField("StayDay").SortOrder(SortOrder.Desc).Width(80).CellTemplate(@<text>
+                <span class="<%- data.StayDay > 0.4 ? 'dec' : 'inc' %>">
+                    <span class="current-value" style="color:black"><%- text %></span>
+                    <span class="arrow"></span>
+                </span>
+            </text>);
+    })
+    )

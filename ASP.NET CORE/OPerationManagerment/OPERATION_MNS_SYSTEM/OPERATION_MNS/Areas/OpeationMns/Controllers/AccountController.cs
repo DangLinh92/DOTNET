@@ -41,7 +41,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            return Redirect("/Admin/Login");
+            return Redirect("/OpeationMns/Login");
         }
 
         [TempData]
@@ -450,7 +450,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
 
             if (model.Username != _httpContextAccessor.HttpContext.User.Identity.Name)
             {
-                return Redirect("/admin/Error/index?id=Can not reset other User");
+                return Redirect("/OpeationMns/Error/index?id=Can not reset other User");
             }
 
             var user = await _userManager.FindByNameAsync(model.Username);

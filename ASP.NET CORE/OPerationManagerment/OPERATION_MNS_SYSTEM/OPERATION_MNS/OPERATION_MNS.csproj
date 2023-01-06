@@ -6,9 +6,13 @@
     <RootNamespace>OPERATION_MNS</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="wwwroot\export-files\**" />
     <Compile Remove="wwwroot\node_modules\devextreme\**" />
+    <Content Remove="wwwroot\export-files\**" />
     <Content Remove="wwwroot\node_modules\devextreme\**" />
+    <EmbeddedResource Remove="wwwroot\export-files\**" />
     <EmbeddedResource Remove="wwwroot\node_modules\devextreme\**" />
+    <None Remove="wwwroot\export-files\**" />
     <None Remove="wwwroot\node_modules\devextreme\**" />
   </ItemGroup>
   <ItemGroup>
@@ -46,12 +50,9 @@
     <ProjectReference Include="..\OPERATION_MNS.Utilities\OPERATION_MNS.Utilities.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Areas\OpeationMns\Controllers\" />
     <Folder Include="Areas\OpeationMns\Data\" />
-    <Folder Include="Areas\OpeationMns\Models\" />
-    <Folder Include="Areas\OpeationMns\Views\" />
+    <Folder Include="Areas\OpeationMns\Hubs\" />
     <Folder Include="Models\Base\" />
-    <Folder Include="wwwroot\export-files\" />
     <Folder Include="wwwroot\FileData\" />
     <Folder Include="wwwroot\img\thumbnails\" />
     <Folder Include="wwwroot\lib\mustache\test\spec\" />

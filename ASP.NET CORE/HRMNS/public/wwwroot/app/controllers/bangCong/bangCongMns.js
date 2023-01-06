@@ -212,6 +212,7 @@
             paging: false,
             select: true,
             "searching": true,
+            "order": [3, 'asc'],
             fixedColumns: {
                 left: 5
             },

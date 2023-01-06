@@ -24,6 +24,8 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
+using OPERATION_MNS.Areas.OpeationMns.Models.SignalR;
+using OPERATION_MNS.Hubs;
 
 namespace OPERATION_MNS
 {
@@ -85,7 +87,18 @@ namespace OPERATION_MNS
 
             // Service
             services.AddTransient<IFunctionService, FunctionService>();
+            services.AddTransient<IGocPlanService, GocPlanService>();
+            services.AddTransient<IInventoryService, InventoryService>();
+            services.AddTransient<IInventoryTicker, InventoryTicker>(); 
+            services.AddTransient<IDateOffLineService, DateOffLineService>();
+            services.AddTransient<IYieldOfModelService, YieldOfModelService>();
+            services.AddTransient<IWaitimeService, WaitimeService>();
+            services.AddTransient<IStayLotListService, StayLotListService>();
+            services.AddTransient<IMaterialToSapCodeService, MaterialToSapCodeService>();
+            services.AddTransient<ILeadTimeService, LeadTimeService>();
+            services.AddTransient<IUserMailService, UserMailService>();
 
+            services.AddSignalR(cfg =>cfg.EnableDetailedErrors = true);
 
             services.AddTransient<IRoleAndPermisstionService, RoleAndPermisstionService>();
             services.AddTransient<IAuthorizationHandler, BaseResourceAuthorizationHandler>();
@@ -119,7 +132,11 @@ namespace OPERATION_MNS
             services.AddRazorPages().AddSessionStateTempDataProvider();
             services.AddControllersWithViews().AddSessionStateTempDataProvider();
             services.AddDistributedMemoryCache();
-            services.AddSession();
+            services.AddSession(cfg => {
+                cfg.Cookie.Name = "sDateOmns";
+                cfg.IdleTimeout = new TimeSpan(24, 0, 0);
+            });
+
             services.AddMinResponse();
 
             // If using Kestrel:
@@ -180,18 +197,19 @@ namespace OPERATION_MNS
 
             app.UseAuthentication();
             app.UseAuthorization();
-            
+
             app.UseEndpoints(routes =>
-            {
-                routes.MapControllerRoute(
-                    "default",
-                    "{area:exists}/{controller=Login}/{action=Index}/{id?}");
+              {
+                  routes.MapControllerRoute(
+                      "default",
+                      "{area:exists}/{controller=Login}/{action=Index}/{id?}");
 
-                //routes.MapControllerRoute(
-                //    "Deptdefault",
-                //      "{area:exists}/{controller=Login}/{action=Index}/{id?}");
+                  routes.MapHub<liveUpdateSignalRHub>("/liveUpdateSignalRHub");
+                  //routes.MapControllerRoute(
+                  //    "Deptdefault",
+                  //      "{area:exists}/{controller=Login}/{action=Index}/{id?}");
 
-            });
+              });
         }
     }
 }

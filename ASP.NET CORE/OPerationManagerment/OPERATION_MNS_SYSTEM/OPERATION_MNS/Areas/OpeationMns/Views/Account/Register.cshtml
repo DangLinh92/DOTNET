@@ -19,7 +19,7 @@
                     <h4 class="card-title mb-0">Đăng ký User</h4>
                 </div>
                 <div class="card-body">
-                    <form action="/admin/account/register" method="post">
+                    <form action="/OpeationMns/account/register" method="post">
                         @Html.AntiForgeryToken()
                         <div asp-validation-summary="All" class="text-danger"></div>
                         <div class="form-group">
@@ -177,19 +177,19 @@
                 var that = $('#txtId').val();
                 $.ajax({
                     type: "POST",
-                    url: "/Admin/Account/DeleteUser",
+                    url: "/OpeationMns/Account/DeleteUser",
                     dataType: "json",
                     data: {
                         userName: that
                     },
                     success: function (response) {
                         $('#delete_user').modal('hide');
-                        OPERATION_MNS.notify("Delete success!", 'Success', 'alert', function () {
+                        hrms.notify("Delete success!", 'Success', 'alert', function () {
                             window.location.reload();
                         });
                     },
                     error: function (status) {
-                        OPERATION_MNS.notify('error: ' + status.responseText, 'error', 'alert', function () { });
+                        hrms.notify('error: ' + status.responseText, 'error', 'alert', function () { });
                     }
                 });
             });

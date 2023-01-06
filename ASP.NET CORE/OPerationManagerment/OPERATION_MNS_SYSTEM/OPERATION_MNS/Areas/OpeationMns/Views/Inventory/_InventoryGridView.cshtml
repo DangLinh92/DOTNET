@@ -1,0 +1,175 @@
+﻿@model List<GocPlanViewModelEx>
+@{
+    List<string> daysSearch = ViewBag.daysSearch;
+}
+
+<table class="table table-bordered mb-0 custom-table datatable" id="gocPlanDataTable">
+    <thead>
+        <tr style="background-color: #FBEEE6">
+            <th></th>
+            <th></th>
+            <th>@Model.FirstOrDefault()?.Unit QTY</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            @{
+                @foreach (var item in daysSearch)
+                {
+                    if (DateTime.TryParse(item, out DateTime _dateCheck))
+                    {
+                        var dayOfWeek = _dateCheck.DayOfWeek.ToString().Substring(0, 3);
+
+                        if (dayOfWeek == "Sun")
+                        {
+                            <th class="text-danger">
+                                @dayOfWeek
+                            </th>
+                        }
+                        else
+                        {
+                            <th>
+                                @dayOfWeek
+                            </th>
+                        }
+                    }
+                    else
+                    {
+                        <th>
+                        </th>
+                    }
+                }
+            }
+            <th></th>
+        </tr>
+        <tr style="background-color:#F6DDCC">
+            <th>Module</th>
+            <th>Model</th>
+            <th>Material</th>
+            <th>구분</th>
+            <th>Standard Q.ty</th>
+            <th>Total</th>
+            @{
+                @foreach (var item in daysSearch)
+                {
+                    if (DateTime.TryParse(item, out DateTime _dateCheck))
+                    {
+                        <th>@_dateCheck.Day</th>
+                    }
+                    else
+                    {
+                        <th>@item</th>
+                    }
+                }
+            }
+            <th class="text-right no-sort">Action</th>
+        </tr>
+
+    </thead>
+    <tbody id="tbl-content">
+        @{
+            int k = 0;
+        }
+
+        @foreach (var item in Model)
+        {
+            string style1 = k++ % 2 == 0 ? "background-color: #F2F3F4" : "background-color: #F8F9F9";
+
+        <tr>
+            <td style="@style1">@item.Module</td>
+            <td style="@style1">@item.Model</td>
+            <td style="@style1">@item.Material</td>
+            <td style="@style1">@item.Division</td>
+            <td style="@style1">@item.StandardQtyForMonth</td>
+            <td style="@style1">
+                <table class="table table-bordered mb-0 custom-table">
+                    <tr>
+                        <td>@item.Total_Plan</td>
+                    </tr>
+                    <tr>
+                        <td>@item.Total_Actual</td>
+                    </tr>
+                    <tr>
+                        <td>@item.Total_Gap</td>
+                    </tr>
+                </table>
+            </td>
+
+            @foreach (var day in daysSearch)
+            {
+                if (item.QuantityByDays.Count > 0)
+                {
+                    foreach (var qty in item.QuantityByDays)
+                    {
+                        if (item.QuantityByDays.Any(x => x.DatePlan == day))
+                        {
+                            if (qty.DatePlan == day)
+                            {
+                                <td>
+                                    <table class="table mb-0 custom-table">
+                                        <tr>
+                                            <td style="color: blue">@qty.QuantityPlan</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="color: green">@qty.QuantityActual</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="color: red">@qty.QuantityGap</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            }
+                        }
+                        else
+                        {
+                            <td>
+                                <table class="table mb-0 custom-table">
+                                    <tr>
+                                        <td style="color: blue">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color: green">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color: red">-</td>
+                                    </tr>
+                                </table>
+                            </td>
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    <td>
+                        <table class="table mb-0 custom-table">
+                            <tr>
+                                <td>0</td>
+                            </tr>
+                            <tr>
+                                <td>0</td>
+                            </tr>
+                            <tr>
+                                <td>0</td>
+                            </tr>
+                        </table>
+                    </td>
+                }
+            }
+
+            <td class="text-right">
+
+                @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 && (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin"))
+                {
+                    <div class="dropdown dropdown-action">
+                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item edit-GocPlan" href="#" data-toggle="modal" data-id="@item.Id"><i class="fa fa-edit m-r-5"></i> Edit</a>
+                            <a class="dropdown-item delete-GocPlan" href="#" data-toggle="modal" data-id="@item.Id"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                        </div>
+                    </div>
+                }
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>

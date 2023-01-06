@@ -53,6 +53,9 @@ namespace VOC.Application.ViewModels.VOC
         [StringLength(50)]
         public string ProductionDate { get; set; }
 
+        [StringLength(150)]
+        public string CustomerDefectName { get; set; }
+
         [StringLength(50)]
         public string DateCreated { get; set; }
 

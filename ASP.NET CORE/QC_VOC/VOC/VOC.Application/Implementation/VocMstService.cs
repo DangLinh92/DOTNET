@@ -275,20 +275,13 @@ namespace VOC.Application.Implementation
                             row["SPLReceivedDate"] = worksheet.Cells[i, 8].Text.NullString();
                         }
 
-                        if (!DateTime.TryParse(worksheet.Cells[i, 8].Text.NullString(), out _))
+                        if (DateTime.TryParse(worksheet.Cells[i, 8].Text.NullString(), out _))
                         {
                             row["SPLReceivedDateWeek"] = "W" + (DateTime.Parse(worksheet.Cells[i, 8].Text.NullString()).GetWeekOfYear() - 1);
                         }
                         else
                         {
-                            if (!int.TryParse(worksheet.Cells[i, 8].Text.NullString().ToUpper().Substring(1), out _))
-                            {
-                                resultDB.ReturnInt = -1;
-                                resultDB.ReturnString = "SPL Received date (week) Invalid : " + worksheet.Cells[i, 8].Text.NullString().ToUpper();
-                                return resultDB;
-                            }
-
-                            row["SPLReceivedDateWeek"] = worksheet.Cells[i, 8].Text.NullString().ToUpper();
+                            row["SPLReceivedDateWeek"] = worksheet.Cells[i, 10].Text.NullString().ToUpper();
                         }
 
                         row["SPLReceivedDate_2"] = worksheet.Cells[i, 9].Text.NullString();

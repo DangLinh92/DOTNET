@@ -1,0 +1,312 @@
+﻿@using OPERATION_MNS.Areas.OpeationMns.Models.SignalR
+@{
+    ViewData["Title"] = "Current Inventory";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <style>
+        #gridContainer span.current-value {
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        #gridContainer span.diff {
+            width: 50px;
+            display: inline-block;
+        }
+    </style>
+
+}
+
+@section Scripts
+{
+    <script src="~/js/dataTables.fixedColumns.min.js"></script>
+    <script src="~/js/dataTables.fixedHeader.min.js"></script>
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+    <script>
+
+     var connection = new signalR.HubConnectionBuilder()
+            .withUrl("@Url.Content("~/liveUpdateSignalRHub")")
+            .configureLogging(signalR.LogLevel.Information)
+        .build();
+
+    $(function () {
+
+        connection.start()
+            .then(function () {
+
+                var store = new DevExpress.data.CustomStore({
+                    load: function () {
+                        return connection.invoke("getAllStocks");
+                    },
+                    key: "inventoryId"
+                });
+
+               $("#gridContainer").dxDataGrid({
+                   dataSource: store,
+                   reshapeOnPush: true
+               });
+
+                connection.on("updateInventory", function (dataObj) {
+
+                    store.push([{ type: "update", key: dataObj.inventoryId, data: dataObj }]);
+                });
+            });
+    });
+
+    function exporting(e) {
+        var workbook = new ExcelJS.Workbook();
+        var worksheet = workbook.addWorksheet('Current Inventory');
+
+        DevExpress.excelExporter.exportDataGrid({
+            component: e.component,
+            worksheet: worksheet,
+            autoFilterEnabled: true
+        }).then(function () {
+            workbook.xlsx.writeBuffer().then(function (buffer) {
+                saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'CurrentInventory.xlsx');
+            });
+        });
+        e.cancel = true;
+        }
+
+        function selectBox_valueChanged(data) {
+            let viewOption = data.value;
+            $.ajax({
+                url: '/OpeationMns/Inventory/SetViewOption',
+                type: 'POST',
+                data: {
+                    option: viewOption
+                },
+                success: function (response) {
+                    hrms.hide_waitMe($('#gridContainer'));
+                    console.log(response);
+                    location.reload();
+                },
+                error: function (status) {
+                    hrms.notify(status.responseText, 'error', 'alert', function () { });
+                    hrms.hide_waitMe($('#gridContainer'));
+                }
+            });
+        }
+    </script>
+
+}
+
+@{
+    string ViewOption_Actual = ViewBag.ViewOption_Actual;
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header" style="margin-bottom:-1rem">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">@ViewData["Title"]</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Current Inventory</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+    <!-- /Page Header -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form">
+                <div class="dx-fieldset">
+                    <div class="dx-field">
+                        <div>
+                            @(Html.DevExtreme().SelectBox()
+                                .ID("slChipWafer")
+                                .DataSource(new List<string>(){"CHIP","WAFER"})
+                                .Width(200)
+                                .Value(ViewOption_Actual)
+                                .OnValueChanged("selectBox_valueChanged")
+                             )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+
+
+            @(Html.DevExtreme().DataGrid<InventoryActualModel>()
+    .ID("gridContainer")
+    .DataSourceOptions(o => o.ReshapeOnPush(true))
+    .ShowBorders(true)
+    .RepaintChangesOnly(true)
+    .HighlightChanges(true)
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnMinWidth(100)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .FilterRow(filterRow => filterRow
+        .Visible(true)
+        .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .SearchPanel(searchPanel => searchPanel
+        .Visible(true)
+        .Width(240)
+        .Placeholder("Search...")
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+     .OnExporting("exporting")
+    .Height(700)
+    .ColumnFixing(x=>x.Enabled(true))
+    .Columns(columns => {
+        columns.AddFor(m => m.LastUpdate).DataField("lastUpdate").Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.InventoryId).DataField("inventoryId").Visible(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.Category).DataField("category").Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.Series).DataField("series").Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.Model).DataField("model").Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.Material).DataField("material").Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.Material_SAP_CODE).DataField("material_SAP_CODE").Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.Total).DataField("total").DataType(GridColumnDataType.Number).Format("#,##0");
+        columns.AddFor(m => m.CassetteInputStock_Pre).DataField("cassetteInputStock_Pre").Format("#,##0"); ;
+        columns.AddFor(m => m.PreOperationWaiting).DataField("preOperationWaiting").Format("#,##0"); ;
+        columns.AddFor(m => m.WaitMarkingIDCHK).DataField("waitMarkingIDCHK").Format("#,##0"); ;
+        columns.AddFor(m => m.Input_wafer_inspection).DataField("input_wafer_inspection").Format("#,##0"); ;
+        columns.AddFor(m => m.Wall_PR_Wafer_inspection).DataField("wall_PR_Wafer_inspection").Format("#,##0");
+        columns.AddFor(m => m.Wall_PR).DataField("wall_PR").Format("#,##0");
+        columns.AddFor(m => m.EBR).DataField("ebr").Format("#,##0");
+        columns.AddFor(m => m.Wall_Mask_Cleaning).DataField("wall_Mask_Cleaning").Format("#,##0");
+        columns.AddFor(m => m.Wall_Photo).DataField("wall_Photo").Format("#,##0");
+        columns.AddFor(m => m.Wall_Develop).DataField("wall_Develop").Format("#,##0");
+        columns.AddFor(m => m.Wall_Oven).DataField("wall_Oven").Format("#,##0");
+        columns.AddFor(m => m.Wall_PR_Measure).DataField("wall_PR_Measure").Format("#,##0");
+        columns.AddFor(m => m.Wall_Ashing_Waiting).DataField("wall_Ashing_Waiting").Format("#,##0");
+        columns.AddFor(m => m.Wall_Inspection).DataField("wall_Inspection").Format("#,##0");
+        columns.AddFor(m => m.Wall_Ashing).DataField("wall_Ashing").Format("#,##0");
+        columns.AddFor(m => m.Before_Roof_Lami_Wafer_Inspection).DataField("before_Roof_Lami_Wafer_Inspection").Format("#,##0");
+        columns.AddFor(m => m.Roof_Laminating).DataField("roof_Laminating").Format("#,##0");
+        columns.AddFor(m => m.After_Roof_Lami_Visual_Inspection).DataField("after_Roof_Lami_Visual_Inspection").Format("#,##0");
+        columns.AddFor(m => m.Roof_Hardening).DataField("roof_Hardening").Format("#,##0");
+        columns.AddFor(m => m.Roof_Mask_Cleaning).DataField("roof_Mask_Cleaning").Format("#,##0");
+        columns.AddFor(m => m.Roof_Photo).DataField("roof_Photo").Format("#,##0");
+        columns.AddFor(m => m.Roof_Remover).DataField("roof_Remover").Format("#,##0");
+        columns.AddFor(m => m.Roof_Oven_PEB).DataField("roof_Oven_PEB").Format("#,##0");
+        columns.AddFor(m => m.Roof_Develop).DataField("roof_Develop").Format("#,##0");
+        columns.AddFor(m => m.After_Roof_Develop_Visual_Inspection).DataField("after_Roof_Develop_Visual_Inspection").Format("#,##0");
+        columns.AddFor(m => m.Roof_QDR).DataField("roof_QDR").Format("#,##0");
+        columns.AddFor(m => m.Roof_Oven).DataField("roof_Oven").Format("#,##0");
+        columns.AddFor(m => m.Wafer_Sorting).DataField("wafer_Sorting").Format("#,##0");
+        columns.AddFor(m => m.Roof_Measure).DataField("roof_Measure").Format("#,##0");
+        columns.AddFor(m => m.Roof_BST).DataField("roof_BST").Format("#,##0");
+        columns.AddFor(m => m.Roof_Inspection).DataField("roof_Inspection").Format("#,##0");
+        columns.AddFor(m => m.Seed_Deposition).DataField("seed_Deposition").Format("#,##0");
+        columns.AddFor(m => m.Before_Plate_PR_Wafer_Inspection).DataField("before_Plate_PR_Wafer_Inspection").Format("#,##0");
+        columns.AddFor(m => m.Plate_Patterning_PR).DataField("plate_Patterning_PR").Format("#,##0");
+        columns.AddFor(m => m.Plate_Patterning_Mask_Cleaning).DataField("plate_Patterning_Mask_Cleaning").Format("#,##0");
+        columns.AddFor(m => m.Plate_Patterning_Photo).DataField("plate_Patterning_Photo").Format("#,##0");
+        columns.AddFor(m => m.Plate_Patterning_Develop).DataField("plate_Patterning_Develop").Format("#,##0");
+        columns.AddFor(m => m.After_Plate_Develop_Visual_Inspection).DataField("after_Plate_Develop_Visual_Inspection").Format("#,##0");
+        columns.AddFor(m => m.Plate_Patterning_Measure).DataField("plate_Patterning_Measure").Format("#,##0");
+        columns.AddFor(m => m.Plate_Patterning_PR_Ashing).DataField("plate_Patterning_PR_Ashing").Format("#,##0");
+        columns.AddFor(m => m.Plate_Patterning_Inspection).DataField("plate_Patterning_Inspection").Format("#,##0");
+        columns.AddFor(m => m.Plating_Input_Waiting).DataField("plating_Input_Waiting").Format("#,##0");
+        columns.AddFor(m => m.Cu_Sn_Plating).DataField("cu_Sn_Plating").Format("#,##0");
+        columns.AddFor(m => m.St_Plate_Visual_Inspection).DataField("st_Plate_Visual_Inspection").Format("#,##0");
+        columns.AddFor(m => m.SN_Plate_Measure).DataField("sN_Plate_Measure").Format("#,##0");
+        columns.AddFor(m => m.PR_Strip_Cu_Etching).DataField("pR_Strip_Cu_Etching").Format("#,##0");
+        columns.AddFor(m => m.Nd_Plate_Visual_Inspection).DataField("nd_Plate_Visual_Inspection").Format("#,##0");
+        columns.AddFor(m => m.Ti_ething).DataField("ti_ething").Format("#,##0");
+        columns.AddFor(m => m.Plate_Measure).DataField("plate_Measure").Format("#,##0");
+        columns.AddFor(m => m.Plate_BST).DataField("plate_BST").Format("#,##0");
+        columns.AddFor(m => m.Plate_Inspection_Wait).DataField("plate_Inspection_Wait").Format("#,##0");
+        columns.AddFor(m => m.Plate_Inspection).DataField("plate_Inspection").Format("#,##0");
+        columns.AddFor(m => m.Probe_Waite).DataField("probe_Waite").Format("#,##0");
+        columns.AddFor(m => m.Wafer_Probe_RF).DataField("wafer_Probe_RF").Format("#,##0");
+        columns.AddFor(m => m.Wafer_Probe_IR).DataField("wafer_Probe_IR").Format("#,##0");
+        columns.AddFor(m => m.Shipping_Wait).DataField("shipping_Wait").Format("#,##0");
+        columns.AddFor(m => m.Post_Operation_Shipping).DataField("post_Operation_Shipping").Format("#,##0");
+    })
+    .Summary(s => s.TotalItems(items =>
+    {
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("total");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("cassetteInputStock_Pre");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("preOperationWaiting");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("waitMarkingIDCHK");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("input_wafer_inspection");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("wall_PR_Wafer_inspection");
+
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("wall_PR");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("ebr");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("wall_Mask_Cleaning");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("wall_Photo");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("wall_Develop");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("wall_Oven");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("wall_PR_Measure");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("wall_Ashing_Waiting");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("wall_Inspection");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("wall_Ashing");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("before_Roof_Lami_Wafer_Inspection");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("roof_Laminating");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("after_Roof_Lami_Visual_Inspection");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("roof_Hardening");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("roof_Mask_Cleaning");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("roof_Photo");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("roof_Remover");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("roof_Oven_PEB");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("roof_Develop");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("after_Roof_Develop_Visual_Inspection");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("roof_QDR");
+
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("roof_Oven");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("wafer_Sorting");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("roof_Measure");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("roof_BST");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("roof_Inspection");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("seed_Deposition");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("before_Plate_PR_Wafer_Inspection");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("plate_Patterning_PR");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("plate_Patterning_Mask_Cleaning");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("plate_Patterning_Photo");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("plate_Patterning_Develop");
+
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("after_Plate_Develop_Visual_Inspection");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("plate_Patterning_PR_Ashing");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("plate_Patterning_Inspection");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("plating_Input_Waiting");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("cu_Sn_Plating");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("st_Plate_Visual_Inspection");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("sN_Plate_Measure");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("pR_Strip_Cu_Etching");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("nd_Plate_Visual_Inspection");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("ti_ething");
+
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("plate_Measure");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("plate_BST");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("plate_Inspection_Wait");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("plate_Inspection");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("probe_Waite");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("wafer_Probe_RF");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("wafer_Probe_IR");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("shipping_Wait");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("post_Operation_Shipping");
+
+    })
+    ))
+        </div>
+    </div>
+</div>
+

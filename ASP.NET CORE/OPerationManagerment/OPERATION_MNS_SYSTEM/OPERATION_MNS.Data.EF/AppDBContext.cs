@@ -27,6 +27,20 @@ namespace OPERATION_MNS.Data.EF
         public virtual DbSet<FUNCTION> Functions { get; set; }
         public virtual DbSet<PERMISSION> Permissions { get; set; }
         public virtual DbSet<LANGUAGE> Languages { get; set; }
+        public virtual DbSet<ACTUAL_DAILY_VIEW> ACTUAL_DAILY_VIEW { get; set; }
+        public virtual DbSet<GOC_PLAN> GOC_PLAN { get; set; }
+        public virtual DbSet<INVENTORY_ACTUAL> INVENTORY_ACTUAL { get; set; }
+        public virtual DbSet<GOC_STANDAR_QTY> GOC_STANDAR_QTY { get; set; }
+        public virtual DbSet<MATERIAL_TO_SAP> MATERIAL_TO_SAP { get; set; }
+        public virtual DbSet<SETTING_ITEMS> SETTING_ITEMS { get; set; }
+        public virtual DbSet<DATE_OFF_LINE> DATE_OFF_LINE { get; set; }
+        public virtual DbSet<STAY_LOT_LIST> STAY_LOT_LIST { get; set; }
+        public virtual DbSet<LEAD_TIME_WLP> LEAD_TIME_WLP { get; set; }
+        public virtual DbSet<STAY_LOT_LIST_HISTORY> STAY_LOT_LIST_HISTORY { get; set; }
+        public virtual DbSet<FAB_PLAN> FAB_PLAN { get; set; }
+        public virtual DbSet<VIEW_CONTROL_CHART_MODEL> VIEW_CONTROL_CHART_MODEL { get; set; }
+        public virtual DbSet<CTQ_SETTING> CTQ_SETTING { get; set; }
+        public virtual DbSet<CTQ_EMAIL_RECEIV> CTQ_EMAIL_RECEIV { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -40,6 +54,21 @@ namespace OPERATION_MNS.Data.EF
 
             builder.AddConfiguration(new FunctionConfiguration());
             builder.AddConfiguration(new PermissionConfiguration());
+            builder.AddConfiguration(new ActualDailyViewConfiguration());
+            builder.AddConfiguration(new GocPlanConfiguration());
+            builder.AddConfiguration(new InventoryActualConfiguration());
+            builder.AddConfiguration(new GocStandarQtyConfiguration());
+            builder.AddConfiguration(new MaterialToSapConfiguration());
+            builder.AddConfiguration(new SettingItemsConfiguration());
+            builder.AddConfiguration(new DateOffLineConfiguration());
+            builder.AddConfiguration(new YieldOfModelConfiguration());
+            builder.AddConfiguration(new StayLotListConfiguration());
+            builder.AddConfiguration(new LeadTimeConfiguration());
+            builder.AddConfiguration(new StayLotListHistoryConfiguration());
+            builder.AddConfiguration(new FABPLANConfiguration());
+            builder.AddConfiguration(new CTQConfiguration());
+            builder.AddConfiguration(new CTQSettingConfiguration());
+            builder.AddConfiguration(new CtqEmailConfiguration());
         }
 
         public override int SaveChanges()

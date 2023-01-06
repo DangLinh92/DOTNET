@@ -1,0 +1,607 @@
+﻿@using Microsoft.AspNetCore.Http
+@using OPERATION_MNS.Application.ViewModels
+@{
+    ViewData["Title"] = "Daily Plan";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <style>
+        #gridContainer span.current-value {
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        #gridContainer span.diff {
+            width: 50px;
+            display: inline-block;
+        }
+
+        #gridContainer .inc {
+            color: #2ab71b;
+        }
+
+        #gridContainer .dec {
+            color: #f00;
+        }
+
+            #gridContainer .inc .arrow,
+            #gridContainer .dec .arrow {
+                display: inline-block;
+                height: 10px;
+                width: 10px;
+                background-repeat: no-repeat;
+                background-size: 10px 10px;
+            }
+
+        #gridContainer .inc .arrow {
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAADKSURBVHjaYtTaLs1ABEiG0nPRJa56PEHhsxBhmCUQT4OyrwHxcXyKmQgYJgHE64CYDYrXQcXIMhCbAcgWkGzgNKh38QUB0QamIUUErkhKI9ZAGyCeTERkTYaqxWsgKA2txhdG6GGsvUNGGpeBRMUiGhCFGsqGzUBQQJsxkA5AemaiG5hDIBIIgQSgK0FmMDACs549kN5FZLjhA7+A2A2U9YSAOBeLAk4gnoBDczoOcSFGPIUDPxB/wCHHiKtwYGKgMhg1cBAaCBBgAJTUIL3ToPZfAAAAAElFTkSuQmCC');
+        }
+
+        #gridContainer .dec .arrow {
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAADJSURBVHjaYvzPgBfgkhYA4o8QFahKmBioDEYNHIQGsgBxIBCLkqgvAYi/g1mMjMjir0EJzR6If/6HpChKMMgMe3DKBeIcKhiY8x/MYoDj+RQYNgdkGLqBbEB8kgzDToL1YjEQhKWB+BUJhj0H64Eahs1AELYhMpJ+gtUiGYbLQBBOI8LANLBaIg1kAAc0vkiAqSPBQFAkHcNi2DGoHMkGgrAENOCRI0ECRQ2JBoKwJTQCfkLZDPgMZPxPXN5NhtJzMSsJVBMAAgwAyWSY2svfmrwAAAAASUVORK5CYII=');
+        }
+
+        #Yield_Id {
+            margin-top: 15px;
+        }
+
+        #begindate-date {
+            float: left;
+            margin-right: 10px;
+        }
+
+        #slChipWafer {
+            float: left;
+            margin-right: 10px;
+            margin-top: 6px;
+        }
+
+        .dx-cell-focus-disabled[role="gridcell"] {
+            background-color: #004e89 !important;
+            color: #ffff !important;
+        }
+    </style>
+
+}
+
+@section Scripts
+{
+    @*<script src="https://cdn.datatables.net/fixedcolumns/4.0.2/js/dataTables.fixedColumns.min.js"></script>*@
+    @*<script src="https://cdn.datatables.net/fixedheader/3.2.2/js/dataTables.fixedHeader.min.js"></script>*@
+
+    <script src="~/js/dataTables.fixedColumns.min.js"></script>
+    <script src="~/js/dataTables.fixedHeader.min.js"></script>
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+    <script>
+
+     var connection = new signalR.HubConnectionBuilder()
+            .withUrl("@Url.Content("~/liveUpdateSignalRHub")")
+            .configureLogging(signalR.LogLevel.Information)
+        .build();
+
+    $(function () {
+
+        connection.start()
+            .then(function () {
+
+                var store = new DevExpress.data.CustomStore({
+                    load: function () {
+                        return connection.invoke("GetDailyPlan");
+                    },
+                    key: "model"
+                });
+
+               $("#gridContainer").dxDataGrid({
+                   dataSource: store,
+                   reshapeOnPush: true
+               });
+
+                connection.on("UpdateDaiLyPlan", function (dataObj) {
+
+                    store.push([{ type: "update", key: dataObj.model, data: dataObj }]);
+                });
+            });
+    });
+
+    function exporting(e) {
+        var workbook = new ExcelJS.Workbook();
+        var worksheet = workbook.addWorksheet('Daily Plan');
+
+        DevExpress.excelExporter.exportDataGrid({
+            component: e.component,
+            worksheet: worksheet,
+            autoFilterEnabled: true
+        }).then(function () {
+            workbook.xlsx.writeBuffer().then(function (buffer) {
+                saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'DailyPlan.xlsx');
+            });
+        });
+        e.cancel = true;
+        };
+
+    var arrOperationData = ["wall_PR", "wall_Ashing", "roof_Laminating",
+                            "roof_Photo", "roof_Measure", "roof_Inspection",
+                            "seed_Deposition", "plate_Patterning_PR", "plate_Patterning_Inspection",
+                            "cu_Sn_Plating", "plate_BST", "plate_Inspection", "shipping_Wait"];
+
+    var arrOpearationName = ["Wall PR", "Wall Ashing", "Roof Laminating",
+                             "Roof Photo", "Roof Measure", "Roof Inspection",
+                             "Seed Deposition", "Plate Patterning PR", "Plate Patterning Inspection",
+            "Cu/Sn Plating", "Plate BST", "Plate Inspection", "Shipping Wait"];
+
+
+        var arrOperation_ID = ["OP31000", "OP38000", "OP40000",
+            "OP43000", "OP49000", "OP51000",
+            "OP52000", "OP53000", "OP59000",
+            "OP60000", "OP69000", "OP70000", "OP72500"];
+
+    function checkBox_Yield_valueChanged(data) {
+
+        $("#gridContainer").dxDataGrid("columnOption", "yieldPlan", "visible", data.value);
+        $("#gridContainer").dxDataGrid("columnOption", "yieldActual", "visible", data.value);
+        $("#gridContainer").dxDataGrid("columnOption", "yieldGap", "visible", data.value);
+        };
+
+    function checkBox_All_valueChanged(data) {
+        // $("#disabled").dxCheckBox("instance").option("value", data.value);
+
+        var arr = data.value;
+        for (col of arr) {
+             let item = arrOperationData[arrOpearationName.indexOf(col)];
+             $("#gridContainer").dxDataGrid("columnOption", item, "visible", true);
+        }
+
+        if (arr.length > 0) {
+
+            // ẩn cột k chọn
+            var arrDiff = getDifference(arrOpearationName, arr);
+            for (col of arrDiff) {
+                let item = arrOperationData[arrOpearationName.indexOf(col)];
+                $("#gridContainer").dxDataGrid("columnOption", item, "visible", false);
+            }
+
+            if (arr.length == arrOpearationName.length) {
+                $("#gridContainer").dxDataGrid("columnOption","gapActualPlan_SH", "visible", true);
+                $("#gridContainer").dxDataGrid("columnOption","gapActualPlan_EA", "visible", true);
+            }
+            else
+            {
+                $("#gridContainer").dxDataGrid("columnOption","gapActualPlan_SH", "visible", false);
+                $("#gridContainer").dxDataGrid("columnOption","gapActualPlan_EA", "visible", false);
+            }
+        }
+        else {
+            for (col of arrOperationData) {
+                $("#gridContainer").dxDataGrid("columnOption", col, "visible", true);
+            }
+
+            $("#gridContainer").dxDataGrid("columnOption","gapActualPlan_SH", "visible", true);
+            $("#gridContainer").dxDataGrid("columnOption","gapActualPlan_EA", "visible", true);
+        }
+        };
+
+    function getDifference(array1, array2) {
+        return array1.filter(object1 => {
+            return !array2.some(object2 => {
+                return object1 === object2;
+            });
+        });
+        };
+
+    function selectedDate_changed(data) {
+
+        let _beginDate = formatDate(data.value);
+
+        $.ajax({
+            url: '/OpeationMns/DailyPlan/SetBeginDate',
+            type: 'POST',
+            data: {
+                beginDate: _beginDate
+            },
+            success: function (response) {
+                hrms.hide_waitMe($('#gridContainer'));
+                console.log(response);
+                /*$("#gridContainer").dxDataGrid("getDataSource").reload();*/
+                location.reload();
+            },
+            error: function (status) {
+                hrms.notify(status.responseText, 'error', 'alert', function () { });
+                hrms.hide_waitMe($('#gridContainer'));
+            }
+        });
+        };
+
+    function formatDate(sDate) {
+
+        if (sDate == '') {
+            var date = new Date();
+        }
+        else
+        {
+            var date = new Date(sDate);
+        }
+
+        // Get year, month, and day part from the date
+        var year = date.toLocaleString("default", { year: "numeric" });
+        var month = date.toLocaleString("default", { month: "2-digit" });
+        var day = date.toLocaleString("default", { day: "2-digit" });
+
+        // Generate yyyy-mm-dd date string
+        var formattedDate = year + '-' + month + '-' + day;
+        return formattedDate;
+        }
+
+    function selectBox_valueChanged(data)
+    {
+        let viewOption = data.value;
+        $.ajax({
+            url: '/OpeationMns/DailyPlan/SetViewOption',
+            type: 'POST',
+            data: {
+                option: viewOption
+            },
+            success: function (response) {
+                hrms.hide_waitMe($('#gridContainer'));
+                console.log(response);
+                location.reload();
+            },
+            error: function (status) {
+                hrms.notify(status.responseText, 'error', 'alert', function () { });
+                hrms.hide_waitMe($('#gridContainer'));
+            }
+        });
+    }
+
+        function OnCellClick(e)
+        {
+            //e.cellElement.style.backgroundColor = "lightgreen";
+            // e.cellElement.css("background-color", "red")
+
+            let operationNameIndex = arrOperationData.indexOf(e.column.dataField);
+
+            if (operationNameIndex < 0) {
+                return;
+            }
+
+            let operationID = arrOperation_ID[operationNameIndex];
+
+            $.ajax({
+                url: '/OpeationMns/DailyPlan/GetstayLotInfo',
+                type: 'POST',
+                data: {
+                    model: e.key,
+                    operation: operationID
+                },
+                beforeSend: function () {
+                    hrms.run_waitMe($('#grid-container-detail'));
+                },
+                success: function (response) {
+                    hrms.hide_waitMe($('#grid-container-detail'));
+                    console.log(response);
+
+                    $("#grid-container-detail").dxDataGrid({
+                        dataSource: response
+                    });
+                },
+                error: function (status) {
+                    hrms.notify(status.responseText, 'error', 'alert', function () { });
+                    hrms.hide_waitMe($('#grid-container-detail'));
+                    $("#grid-container-detail").dxDataGrid({
+                        dataSource: []
+                    });
+                }
+            });
+        }
+
+        $('#show-hidden-grid-wlp').click(function () {
+            $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+            $('.hidden-grid-wlp').slideToggle("slow");
+
+        });
+    </script>
+
+}
+
+@{
+    List<string> daysPlan = ViewBag.DayPlan;
+
+    string today = DateTime.Parse(daysPlan[0]).ToString("dd-MM");
+    string today1 = DateTime.Parse(daysPlan[1]).ToString("dd-MM");
+    string today2 = DateTime.Parse(daysPlan[2]).ToString("dd-MM");
+    string today3 = DateTime.Parse(daysPlan[3]).ToString("dd-MM");
+    string today4 = DateTime.Parse(daysPlan[4]).ToString("dd-MM");
+    string today5 = DateTime.Parse(daysPlan[5]).ToString("dd-MM");
+
+    string ViewOption = ViewBag.ViewOption;
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header" style="margin-bottom:-1rem">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">@ViewData["Title"]</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Daily Plan</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form">
+                <div class="dx-fieldset">
+                    <div class="dx-field">
+                        <div>
+                            @(Html.DevExtreme().SelectBox()
+                                .ID("slChipWafer")
+                                .DataSource(new List<string>(){"WAFER","CHIP"})
+                                .Value(ViewOption)
+                                .OnValueChanged("selectBox_valueChanged")
+                             )
+                            @(Html.DevExtreme().DateBox()
+                                  .ID("begindate-date")
+                                  .Value(DateTime.Parse(daysPlan[0]))
+                                  .DisplayFormat("yyyy-MM-dd")
+                                  .Width(200)
+                                  .Placeholder("Select...")
+                                  .Label("Begin Date")
+                                  .OnValueChanged("selectedDate_changed")
+                            )
+                            @(Html.DevExtreme().CheckBox()
+                                    .ID("Yield_Id")
+                                    .Value(false).Text("View Yield (%)")
+                                    .OnValueChanged("checkBox_Yield_valueChanged")
+                            )
+                        </div>
+                    </div>
+                    <div class="dx-field">
+                        <div>
+                            @(Html.DevExtreme().TagBox()
+                                .Items(new List<string>()
+                                { "Shipping Wait", "Plate Inspection", "Plate BST", "Cu/Sn Plating",
+                                                        "Plate Patterning Inspection", "Plate Patterning PR", "Seed Deposition", "Roof Inspection",
+                                                        "Roof Measure", "Roof Photo", "Roof Laminating", "Wall Ashing", "Wall PR"
+                                })
+                                .ShowSelectionControls(true)
+                                .ApplyValueMode(EditorApplyValueMode.UseButtons)
+                                .Placeholder("Select Operation")
+                                .OnValueChanged("checkBox_All_valueChanged")
+                             )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            @(Html.DevExtreme().DataGrid<DailyPlanViewModel>()
+    .ID("gridContainer")
+    .DataSourceOptions(o => o.ReshapeOnPush(true))
+    .ShowBorders(true)
+    .RepaintChangesOnly(true)
+    .HighlightChanges(true)
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnMinWidth(20)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .FilterRow(filterRow => filterRow
+        .Visible(true)
+        .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .SearchPanel(searchPanel => searchPanel
+        .Visible(true)
+        .Width(240)
+        .Placeholder("Search...")
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+     .OnExporting("exporting")
+    .Height(650)
+    .ColumnFixing(x=>x.Enabled(true))
+    .Columns(columns => {
+        columns.Add().Caption("Kế Hoạch Sản Xuất "+today).Columns(c => {
+            c.AddFor(m => m.STT).DataField("stt").Width(30).Fixed(true).FixedPosition(HorizontalEdge.Left);
+            c.AddFor(m => m.LastUpdate).DataField("lastUpdate").Fixed(true).FixedPosition(HorizontalEdge.Left);
+            c.AddFor(m => m.Module).DataField("module").Visible(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+            c.AddFor(m => m.Model).DataField("model").Visible(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+            c.AddFor(m => m.Model_Short).DataField("model_Short").Fixed(true).FixedPosition(HorizontalEdge.Left);
+            c.AddFor(m => m.StandardQty).DataField("standardQty").DataType(GridColumnDataType.Number).Format("#,##0").Fixed(true).FixedPosition(HorizontalEdge.Left);
+            c.AddFor(m => m.YieldPlan).DataField("yieldPlan").DataType(GridColumnDataType.Number).Fixed(true).FixedPosition(HorizontalEdge.Left).Visible(false);
+            c.AddFor(m => m.YieldActual).DataField("yieldActual").DataType(GridColumnDataType.Number).Fixed(true).FixedPosition(HorizontalEdge.Left).Visible(false);
+            c.AddFor(m => m.YieldGap).DataField("yieldGap").DataType(GridColumnDataType.Number).Fixed(true).FixedPosition(HorizontalEdge.Left).CellTemplate(@<text>
+                <span class="<%- data.yieldGap >= 0 ? 'inc' : 'dec' %>">
+                    <span class="current-value"><%- text %>%</span>
+                    <span class="arrow"></span>
+                </span>
+            </text>).Visible(false);
+        }).Fixed(true).FixedPosition(HorizontalEdge.Left);
+
+        columns.Add().Caption("Day " + today5).Columns(c => {
+            c.AddFor(m => m.Wall_PR).DataField("wall_PR").Format("#,##0").CellTemplate(@<text>
+                <span class="<%- data.wall_PR >= 0 ? 'inc' : 'dec' %>">
+                  <%- text %>
+                </span>
+            </text>);
+        });
+
+        columns.Add().Caption("Day "+today4).Columns(c => {
+                    c.AddFor(m => m.Wall_Ashing).DataField("wall_Ashing").Format("#,##0").CellTemplate(@<text>
+                                    <span class="<%- data.wall_Ashing >= 0 ? 'inc' : 'dec' %>">
+                                        <%- text %>
+                                    </span>
+                                </text>);
+                    c.AddFor(m => m.Roof_Laminating).DataField("roof_Laminating").Format("#,##0").CellTemplate(@<text>
+                                    <span class="<%- data.roof_Laminating >= 0 ? 'inc' : 'dec' %>">
+                                        <%- text %>
+                                    </span>
+                                </text>);
+                                    c.AddFor(m => m.Roof_Photo).DataField("roof_Photo").Format("#,##0").CellTemplate(@<text>
+                                        <span class="<%- data.roof_Photo >= 0 ? 'inc' : 'dec' %>">
+                                            <%- text %>
+                                        </span>
+                                    </text>);
+                            });
+
+                        columns.Add().Caption("Day " + today3).Columns(c => {
+
+                    c.AddFor(m => m.Roof_Measure).DataField("roof_Measure").Format("#,##0").CellTemplate(@<text>
+                                        <span class="<%- data.roof_Measure >= 0 ? 'inc' : 'dec' %>">
+                                            <%- text %>
+                                        </span>
+                                    </text>);
+        });
+
+    columns.Add().Caption("Day " + today2).Columns(c =>
+    {
+    c.AddFor(m => m.Roof_Inspection).DataField("roof_Inspection").Format("#,##0").CellTemplate(@<text>
+                <span class="<%- data.roof_Inspection >= 0 ? 'inc' : 'dec' %>">
+                    <%- text %>
+                </span>
+            </text>);
+c.AddFor(m => m.Seed_Deposition).DataField("seed_Deposition").Format("#,##0").CellTemplate(@<text>
+                <span class="<%- data.seed_Deposition >= 0 ? 'inc' : 'dec' %>">
+                    <%- text %>
+                </span>
+            </text>);
+c.AddFor(m => m.Plate_Patterning_PR).DataField("plate_Patterning_PR").Format("#,##0").CellTemplate(@<text>
+                <span class="<%- data.plate_Patterning_PR >= 0 ? 'inc' : 'dec' %>">
+                    <%- text %>
+                </span>
+            </text>);
+c.AddFor(m => m.Plate_Patterning_Inspection).DataField("plate_Patterning_Inspection").Format("#,##0").CellTemplate(@<text>
+                <span class="<%- data.plate_Patterning_Inspection >= 0 ? 'inc' : 'dec' %>">
+                    <%- text %>
+                </span>
+            </text>);
+    });
+
+    columns.Add().Caption("Day " + today1).Columns(c => {
+    c.AddFor(m => m.Cu_Sn_Plating).DataField("cu_Sn_Plating").Format("#,##0").CellTemplate(@<text>
+                <span class="<%- data.cu_Sn_Plating >= 0 ? 'inc' : 'dec' %>">
+                    <%- text %>
+                </span>
+            </text>);
+        c.AddFor(m => m.Plate_BST).DataField("plate_BST").Format("#,##0").CellTemplate(@<text>
+                <span class="<%- data.plate_BST >= 0 ? 'inc' : 'dec' %>">
+                    <%- text %>
+                </span>
+            </text>);
+    });
+    columns.Add().Caption("Day " + today).Columns(c => {
+    c.AddFor(m => m.Plate_Inspection).DataField("plate_Inspection").Format("#,##0").CellTemplate(@<text>
+                <span class="<%- data.plate_Inspection >= 0 ? 'inc' : 'dec' %>">
+                    <%- text %>
+                </span>
+            </text>);
+        c.AddFor(m => m.Shipping_Wait).DataField("shipping_Wait").Format("#,##0").CellTemplate(@<text>
+                <span class="<%- data.shipping_Wait >= 0 ? 'inc' : 'dec' %>">
+                     <span class="current-value"><%- text %></span>
+                    <span class="arrow"></span>
+                </span>
+            </text>);
+     c.AddFor(m => m.GapActualPlan_SH).DataField("gapActualPlan_SH").Format("#,##0").CellTemplate(@<text>
+                <span class="<%- data.gapActualPlan_SH >= 0 ? 'inc' : 'dec' %>">
+                    <%- text %>
+                </span>
+            </text>);
+        c.AddFor(m => m.GapActualPlan_EA).DataField("gapActualPlan_EA").Format("#,##0").CellTemplate(@<text>
+                <span class="<%- data.gapActualPlan_EA >= 0 ? 'inc' : 'dec' %>">
+                    <%- text %>
+                </span>
+            </text>);
+    });
+    })
+    .Summary(s=>s.TotalItems(totalItems => {
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("wall_PR").Name("Sum_wall_PR").CssClass("Sum_wall_PR").DisplayFormat("Total: {0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("wall_Ashing").Name("Sum_wall_Ashing").CssClass("Sum_wall_Ashing").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("roof_Laminating").Name("Sum_roof_Laminating").CssClass("Sum_roof_Laminating").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("roof_Photo").Name("Sum_roof_Photo").CssClass("Sum_roof_Photo").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("roof_Measure").Name("roof_Measure").CssClass("roof_Measure").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("roof_Inspection").Name("roof_Inspection").CssClass("roof_Inspection").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("seed_Deposition").Name("seed_Deposition").CssClass("seed_Deposition").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("plate_Patterning_PR").Name("plate_Patterning_PR").CssClass("plate_Patterning_PR").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("plate_Patterning_Inspection").Name("plate_Patterning_Inspection").CssClass("plate_Patterning_Inspection").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("cu_Sn_Plating").Name("cu_Sn_Plating").CssClass("cu_Sn_Plating").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("plate_BST").Name("plate_BST").CssClass("plate_BST").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("plate_Inspection").Name("plate_Inspection").CssClass("plate_Inspection").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("shipping_Wait").Name("shipping_Wait").CssClass("shipping_Wait").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("gapActualPlan_SH").Name("gapActualPlan_SH").CssClass("gapActualPlan_SH").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("gapActualPlan_EA").Name("gapActualPlan_EA").CssClass("gapActualPlan_EA").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+    })
+    ).OnCellClick("OnCellClick")
+    )
+            <div id="holdLotInfo" style="margin-top:20px">
+                <div class="col-sm-12" id="show-hidden-grid-wlp">
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item active" style="cursor: pointer;">
+                            <i class="fa fa-caret-right"></i> <strong>View Stay Lot List</strong>
+                        </li>
+                    </ul>
+                </div>
+                <div class="row hidden-grid-wlp">
+                    @(Html.DevExtreme().DataGrid<StayLotList_Ex_ViewModel>()
+.ID("grid-container-detail")
+.Height(280)
+.ShowBorders(true)
+.Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+.Paging(paging => paging.Enabled(false))
+.AllowColumnResizing(true)
+.ColumnMinWidth(50)
+.ColumnAutoWidth(true)
+.ShowColumnLines(true)
+.ShowRowLines(true)
+.RowAlternationEnabled(true)
+.FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+)
+.HeaderFilter(headerFilter => headerFilter.Visible(true))
+.HoverStateEnabled(true)
+.Selection(s => s.Mode(SelectionMode.Single))
+.Columns(columns =>
+{
+    columns.AddFor(m => m.STT).Width(80);
+    columns.AddFor(m => m.CassetteId);
+    columns.AddFor(m => m.Material);
+    columns.AddFor(m => m.OperationName);
+    columns.AddFor(m => m.LotStatus);
+    columns.AddFor(m => m.ChipQty).Format(Format.FixedPoint);
+    columns.AddFor(m => m.WaferQty).Format(Format.FixedPoint);
+    columns.AddFor(m => m.StayDay);
+    columns.AddFor(m => m.Priority);
+
+}).Summary(s => s.TotalItems(items =>
+{
+    items.AddFor(m => m.ChipQty).SummaryType(SummaryType.Sum).DisplayFormat("Sum: {0}").ValueFormat(Format.FixedPoint);
+    items.AddFor(m => m.WaferQty).SummaryType(SummaryType.Sum).DisplayFormat("Sum: {0}").ValueFormat(Format.FixedPoint);
+    items.AddFor(m => m.StayDay).SummaryType(SummaryType.Avg).DisplayFormat("Average: {0}").ValueFormat(Format.FixedPoint);
+})))
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

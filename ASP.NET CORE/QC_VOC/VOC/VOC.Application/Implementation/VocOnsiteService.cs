@@ -245,6 +245,7 @@ namespace VOC.Application.Implementation
                     table.Columns.Add("OK");
                     table.Columns.Add("NG");
                     table.Columns.Add("Not_Measure");
+                    table.Columns.Add("CustomerDefectName");
 
                     DataRow row = null;
                     for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++) // Start.Row = 1
@@ -290,17 +291,19 @@ namespace VOC.Application.Implementation
                         row["Customer_Code"] = worksheet.Cells[i, 8].Text.NullString();
                         row["Marking"] = worksheet.Cells[i, 9].Text.NullString();
                         row["ProductionDate"] = worksheet.Cells[i, 10].Text.NullString();
-                        row["SetModel"] = worksheet.Cells[i, 11].Text.NullString();
-                        row["Result"] = worksheet.Cells[i, 12].Text.NullString();
-                        row["Note"] = worksheet.Cells[i, 13].Text.NullString();
 
-                        if (worksheet.Cells[i, 12].Text.NullString() == "OK")
+                        row["CustomerDefectName"] = worksheet.Cells[i, 11].Text.NullString();
+                        row["SetModel"] = worksheet.Cells[i, 12].Text.NullString();
+                        row["Result"] = worksheet.Cells[i, 13].Text.NullString();
+                        row["Note"] = worksheet.Cells[i, 14].Text.NullString();
+
+                        if (worksheet.Cells[i, 13].Text.NullString() == "OK")
                         {
                             row["OK"] = "OK";
                             row["NG"] = "";
                             row["Not_Measure"] = "";
                         }
-                        else if (worksheet.Cells[i, 12].Text.NullString() == "NG")
+                        else if (worksheet.Cells[i, 13].Text.NullString() == "NG")
                         {
                             row["NG"] = "NG";
                             row["OK"] = "";

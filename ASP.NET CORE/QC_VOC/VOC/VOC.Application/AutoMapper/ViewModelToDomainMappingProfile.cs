@@ -54,7 +54,7 @@ namespace VOC.Application.AutoMapper
               .ConstructUsing(c => new VOC_PPM(c.Id, c.Module, c.Customer, c.Type, c.Year, c.Month, c.Value, c.TargetValue));
 
             CreateMap<VocOnsiteViewModel, VOC_ONSITE>()
-             .ConstructUsing(c => new VOC_ONSITE(c.Id, c.Month, c.Week,c.Date, c.Part, c.Customer_Code, c.Wisol_Model, c.Customer, c.Qty, c.Marking, c.SetModel, c.OK, c.NG, c.Not_Measure, c.Result, c.ProductionDate, c.Note));
+             .ConstructUsing(c => new VOC_ONSITE(c.Id, c.Month, c.Week,c.Date, c.Part, c.Customer_Code, c.Wisol_Model, c.Customer, c.Qty, c.Marking, c.SetModel, c.OK, c.NG, c.Not_Measure, c.Result, c.ProductionDate, c.Note,c.CustomerDefectName));
         }
     }
 }

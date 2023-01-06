@@ -140,4 +140,116 @@ namespace HRMNS.Data.Entities
 
         public virtual ICollection<HR_TRAINING> HR_TRAINING { get; set; }
     }
+
+    [Table("SAMSUNG_TRAINING")]
+    public class SAMSUNG_TRAINING : DomainEntity<int>, IDateTracking
+    {
+        public SAMSUNG_TRAINING()
+        {
+        }
+
+        public SAMSUNG_TRAINING(string _SubNo, string _CoursesName,string _Level, string _Program, string _Category,
+                                string _Class, string _Type, string _Year, string _Month, string _Week, string _Date,
+                                string _TrainingPlace, string _TrainingRoom, string _GEN, string _Name,
+                                string _Company, string _Part, string _Title, string _Score, string _Result, string _Remarks)
+        {
+            SubNo = _SubNo;
+            CoursesName = _CoursesName;
+            Program = _Program;
+            Level = _Level;
+            Category = _Category;
+            Class = _Class;
+            Type = _Type;
+            Year = _Year;
+            Month = _Month;
+            Week = _Week;
+            Date = _Date;
+            TrainingPlace = _TrainingPlace;
+            TrainingRoom = _TrainingRoom;
+            GEN = _GEN;
+            Name = _Name;
+            Company = _Company;
+            Part = _Part;
+            Title = _Title;
+            Score = _Score;
+            Result = _Result;
+            Remarks = _Remarks;
+        }
+
+        [StringLength(10)]
+        public string SubNo { get; set; }
+
+        [StringLength(150)]
+        public string CoursesName { get; set; }
+
+        [StringLength(50)]
+        public string Level { get; set; }
+
+        [StringLength(50)]
+        public string Program { get; set; }
+
+        [StringLength(50)]
+        public string Category { get; set; }
+
+        [StringLength(50)]
+        public string Class { get; set; }
+
+        [StringLength(50)]
+        public string Type { get; set; }
+
+        [StringLength(50)]
+        public string Year { get; set; }
+
+        [StringLength(50)]
+        public string Month { get; set; }
+
+        [StringLength(50)]
+        public string Week { get; set; }
+
+        [StringLength(50)]
+        public string Date { get; set; }
+
+        [StringLength(50)]
+        public string TrainingPlace { get; set; }
+
+        [StringLength(50)]
+        public string TrainingRoom { get; set; }
+
+        [StringLength(50)]
+        public string GEN { get; set; }
+
+        [StringLength(50)]
+        public string Name { get; set; }
+
+        [StringLength(50)]
+        public string Company { get; set; }
+
+        [StringLength(50)]
+        public string Part { get; set; }
+
+        [StringLength(50)]
+        public string Title { get; set; }
+
+        [StringLength(50)]
+        public string Score { get; set; }
+
+        [StringLength(50)]
+        public string Result { get; set; }
+
+        [StringLength(250)]
+        public string Remarks { get; set; }
+
+        [StringLength(50)]
+        public string DateCreated { get; set; }
+
+        [StringLength(50)]
+        public string DateModified { get; set; }
+
+        [StringLength(50)]
+        public string UserCreated { get; set; }
+
+        [StringLength(50)]
+        public string UserModified { get; set; }
+
+    }
 }

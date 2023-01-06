@@ -1,0 +1,374 @@
+﻿@using OPERATION_MNS.Data.EF.Extensions
+@model ViewControlChartDataModel
+@{
+    ViewData["Title"] = "View control chart";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+@section Styles {
+    <style>
+        #tbl-content tr td {
+            background-color: #F2F3F4;
+        }
+
+        .sorting, .sorting_asc, .sorting_desc {
+            background: none;
+        }
+
+        a:hover {
+            background-color: #ddd;
+            color: black!important;
+        }
+
+        .previous {
+            background-color: #f1f1f1;
+            color: black;
+            float: right;
+            width: 101px;
+            text-decoration: none;
+            display: inline-block;
+            padding: 8px 16px;
+            cursor:pointer;
+        }
+
+        .next {
+            background-color: #004e89;
+            color: white !important;
+            float: right;
+            width: 101px;
+            text-decoration: none;
+            display: inline-block;
+            padding: 8px 16px;
+            cursor: pointer;
+        }
+
+        .round {
+            border-radius: 50%;
+        }
+    </style>
+}
+
+@section Scripts
+{
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+
+    <script>
+        var chartData = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.lstData))');
+        const tempData = chartData;
+
+        //$('#txtYear').datetimepicker({
+        //    format: 'YYYY',
+        //    icons:
+        //    {
+        //        up: "fa fa-angle-up",
+        //        down: "fa fa-angle-down",
+        //        next: 'fa fa-angle-right',
+        //        previous: 'fa fa-angle-left'
+        //    }
+        //});
+
+        //$('#txtMonth').datetimepicker({
+        //    format: 'MM',
+        //    icons:
+        //    {
+        //        up: "fa fa-angle-up",
+        //        down: "fa fa-angle-down",
+        //        next: 'fa fa-angle-right',
+        //        previous: 'fa fa-angle-left'
+        //    }
+        //});
+
+        //$('#txtDay').datetimepicker({
+        //    format: 'DD',
+        //    icons:
+        //    {
+        //        up: "fa fa-angle-up",
+        //        down: "fa fa-angle-down",
+        //        next: 'fa fa-angle-right',
+        //        previous: 'fa fa-angle-left'
+        //    }
+        //});
+    </script>
+    <script src="~/app/controllers/GocPlan/WLP1_ChartControl.js"></script>
+    <script>
+        var _WLP1_ChartControl = new WLP1_ChartControl();
+        _WLP1_ChartControl.DrawChart();
+
+        function RowClickDataEvt(selectedItems) {
+            var data = selectedItems.selectedRowsData;
+
+            if (data.length > 0) {
+
+                let arrFilter = [];
+                console.log(data);
+                for (let value of data) {
+                    arrFilter.push(tempData.find((item) => item.LOT_ID == value.LOT_ID && item.DATE == value.DATE && item.MAIN_OPERATION == value.MAIN_OPERATION));
+                }
+
+                chartData = arrFilter;
+                _WLP1_ChartControl.DrawChart();
+            }
+        }
+
+        function onRowDbl(e) {
+            let dataGrid = $("#grid-container_loi").dxDataGrid("instance");
+            dataGrid.deselectAll();
+            dataGrid.clearSelection();
+
+            chartData = tempData;
+            _WLP1_ChartControl.DrawChart();
+        }
+
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('CTQ Lots List');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'CTQ_Lots_List.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        function exporting_err(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('CTQ Lots List Error');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'CTQ_Lots_List_Error.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+    </script>
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">@ViewData["Title"]</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">WLP1 View control chart</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="myHeader">
+        <form action="/OpeationMns/GOCPlan/GetDataControlChart" method="post">
+            <div class="row filter-row">
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    @*<div class="form-group form-focus select-focus">
+                            <div class="cal-icon"><input id="txtYear" name="year" value="@Model.Year" class="form-control datetimepicker" type="text" required></div>
+                            <label class="focus-label">Year</label>
+                        </div>*@
+                </div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <div class="form-group form-focus select-focus">
+                        <div class="cal-icon"><input id="txtFrom" name="fromDay" value="@Model.FromDay" class="form-control datetimepicker" type="text" required></div>
+                        <label class="focus-label">From</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <div class="form-group form-focus select-focus">
+                        <div class="cal-icon"><input id="txtTo" name="toDay" value="@Model.ToDay" class="form-control datetimepicker" type="text" required></div>
+                        <label class="focus-label">To</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <div class="form-group form-focus select-focus">
+                        <select id="cboOperation" class="select floating" name="operation" required>
+                            <!option value="OP64000" @(Model.Operation == "OP64000" ? "selected" : "")>Plate Measure</!option>
+                            <!option value="OP37000" @(Model.Operation == "OP37000" ? "selected" : "")>Wall PR Measure</!option>
+                            <!option value="OP49000" @(Model.Operation == "OP49000" ? "selected" : "")>Roof Measure</!option>
+                            <!option value="OP50000" @(Model.Operation == "OP50000" ? "selected" : "")>Roof BST</!option>
+                            <!option value="OP57000" @(Model.Operation == "OP57000" ? "selected" : "")>Plate Patterning Measure</!option>
+                            <!option value="OP65000" @(Model.Operation == "OP65000" ? "selected" : "")>SN Plate Measure</!option>
+                            <!option value="OP69000" @(Model.Operation == "OP69000" ? "selected" : "")>Plate BST</!option>
+                        </select>
+                        <label class="focus-label">Operation</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <div class="form-group form-focus select-focus">
+                        <select id="cboMatertial" class="select floating" name="matertial">
+                            <!option value="" @(Model.MatertialID == "" ? "selected" : "")>ALL</!option>
+                            @foreach (var item in Model.lstData.Select(x => x.MATERIAL_ID).Distinct())
+                            {
+                                <!option value="@item" @(Model.MatertialID == item ? "selected" : "")>@item</!option>
+                            }
+                        </select>
+                        <label class="focus-label">Material</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <button id="btnSearch" type="submit" class="btn btn-success btn-block"> Search </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="row contentChart">
+        <div class="col-sm-12" id="show-hidden-grid-wlp">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item active" style="cursor: pointer;">
+                    <i class="fa fa-caret-right"></i> <strong>WLP1 View Control Chart</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row hidden-grid-wlp">
+        <div class="col-md-12 d-flex">
+            <div class="card flex-fill dash-statistics">
+                <div class="card-header">
+                    <h5 id="wlp_byYear" class="card-title mb-0">
+                        WLP1 View Control Chart
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="chartjs-wrapper-demo">
+                        <div class="containerChart">
+                            <div class="container-body-Chart">
+                                <canvas id="chartsLine_control" class="h-300" style="height:275px"></canvas>
+
+                            </div>
+                            <a class="next" id="btnNext">Next &raquo;</a>
+                            <a class="previous" id="btnPre">&laquo; Previous</a>
+                            <span id="txtItems" style="float: right; margin-top: 10px; margin-right: 10px ">Items: </span>
+                        </div>
+                    </div>
+                    <div class="table-responsive" style="margin-top:10px">
+                        @(Html.DevExtreme().DataGrid<ViewControlChartModel>()
+.ID("grid-container_loi")
+.DataSource(Model.lstData)
+.Height(400)
+.ShowBorders(true)
+.Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+.Paging(paging => paging.Enabled(false))
+.AllowColumnResizing(true)
+.ColumnMinWidth(50)
+.ColumnAutoWidth(true)
+.ShowColumnLines(true)
+.ShowRowLines(true)
+.RowAlternationEnabled(true)
+.FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+)
+.HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .HoverStateEnabled(true)
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+     .OnExporting("exporting")
+.Columns(columns =>
+{
+    columns.AddFor(m => m.DATE).Caption("Date");
+    columns.AddFor(m => m.MATERIAL_ID).Caption("Material");
+    columns.AddFor(m => m.LOT_ID).Caption("LotID");
+    columns.AddFor(m => m.CASSETTE_ID).Caption("CassetteID");
+    columns.AddFor(m => m.MAIN_OPERATION).Caption("Operation");
+    columns.AddFor(m => m.MAIN_EQUIPMENT_NAME).Caption("Equipment");
+    columns.AddFor(m => m.MAIN_TARGET_USL).Caption("USL");
+    columns.AddFor(m => m.MAIN_TARGET_UCL).Caption("UCL");
+    columns.AddFor(m => m.MAIN_TARGET_LSL).Caption("LSL");
+    columns.AddFor(m => m.MAIN_TARGET_LCL).Caption("LCL");
+    columns.AddFor(m => m.MAIN_VALUE_COUNT).Caption("Point");
+    columns.AddFor(m => m.MAIN_VALUE1).Caption("Value 1");
+    columns.AddFor(m => m.MAIN_VALUE2).Caption("Value 2");
+    columns.AddFor(m => m.MAIN_VALUE3).Caption("Value 3");
+    columns.AddFor(m => m.MAIN_MAX_VALUE).Caption("Max Value");
+    columns.AddFor(m => m.MAIN_MIN_VALUE).Caption("Min Value");
+    columns.AddFor(m => m.MAIN_AVG_VALUE).Caption("Avg Value");
+    columns.AddFor(m => m.MAIN_RANGE).Caption("Range");
+}).Summary(s => s.TotalItems(items =>
+{
+    items.AddFor(m => m.LOT_ID)
+    .SummaryType(SummaryType.Count);
+})
+)
+.OnSelectionChanged("RowClickDataEvt").OnRowDblClick("onRowDbl"))
+                    </div>
+                    <div class="col-sm-12" style="margin-top:10px">
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item active">
+                                <i class="fa fa-caret-right"></i> <strong>Danh sách Lot lỗi</strong>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="table-responsive" style="margin-top:10px">
+                        @(Html.DevExtreme().DataGrid<ViewControlChartModel>
+    ()
+    .ID("grid-container_loi_2")
+    .DataSource(Model.lstDataErr)
+    .Height(400)
+    .ShowBorders(true)
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnMinWidth(50)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+     .SearchPanel(searchPanel => searchPanel
+        .Visible(true)
+        .Width(240)
+        .Placeholder("Search...")
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .HoverStateEnabled(true)
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+     .OnExporting("exporting_err")
+    .Columns(columns =>
+    {
+    columns.AddFor(m => m.DATE).Caption("Date");
+    columns.AddFor(m => m.MATERIAL_ID).Caption("Material");
+    columns.AddFor(m => m.LOT_ID).Caption("LotID");
+    columns.AddFor(m => m.CASSETTE_ID).Caption("CassetteID");
+    columns.AddFor(m => m.MAIN_OPERATION).Caption("Operation");
+    columns.AddFor(m => m.MAIN_EQUIPMENT_NAME).Caption("Equipment");
+    columns.AddFor(m => m.MAIN_TARGET_LSL).Caption("LSL");
+    columns.AddFor(m => m.LWL).Caption("LWL");
+    columns.AddFor(m => m.MAIN_TARGET).Caption("MAIN_TARGET").Caption("Target");
+    columns.AddFor(m => m.UWL).Caption("UWL");
+    columns.AddFor(m => m.MAIN_TARGET_USL).Caption("USL");
+    columns.AddFor(m => m.MAIN_VALUE_COUNT).Caption("Point");
+    columns.AddFor(m => m.MAIN_VALUE1).Caption("Value 1");
+    columns.AddFor(m => m.MAIN_VALUE2).Caption("Value 2");
+    columns.AddFor(m => m.MAIN_VALUE3).Caption("Value 3");
+    columns.AddFor(m => m.MAIN_MAX_VALUE).Caption("Max Value");
+    columns.AddFor(m => m.MAIN_MIN_VALUE).Caption("Min Value");
+    columns.AddFor(m => m.MAIN_AVG_VALUE).Caption("Avg Value");
+    columns.AddFor(m => m.MAIN_RANGE).Caption("Range");
+    }).Summary(s => s.TotalItems(items => {
+    items.AddFor(m => m.LOT_ID)
+    .SummaryType(SummaryType.Count);})
+    )
+    )
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+

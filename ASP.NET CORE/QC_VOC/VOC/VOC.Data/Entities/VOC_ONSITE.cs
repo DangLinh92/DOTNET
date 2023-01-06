@@ -17,7 +17,7 @@ namespace VOC.Data.Entities
         }
 
         public VOC_ONSITE(int id,int month,string week,string date,string part,string customer_code, string wisol_model, string customer,int qty, 
-            string marking, string setModel, string ok,string ng,string not_measure, string result,string productiondate,string note)
+            string marking, string setModel, string ok,string ng,string not_measure, string result,string productiondate,string note,string customerDefectName)
         {
             Id = id;
             Month = month;
@@ -36,6 +36,7 @@ namespace VOC.Data.Entities
             Result = result;
             ProductionDate = productiondate;
             Note = note;
+            CustomerDefectName = customerDefectName;
         }
 
         public int Month { get; set; }
@@ -82,6 +83,9 @@ namespace VOC.Data.Entities
 
         [StringLength(500)]
         public string Note { get; set; }
+
+        [StringLength(150)]
+        public string CustomerDefectName { get; set; }
 
         [StringLength(50)]
         public string DateCreated { get; set; }

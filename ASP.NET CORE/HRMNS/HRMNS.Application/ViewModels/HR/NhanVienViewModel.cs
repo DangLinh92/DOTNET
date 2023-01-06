@@ -71,6 +71,8 @@ namespace HRMNS.Application.ViewModels.HR
 
         public string Status { get; set; }
 
+        public string NoiTuyenDung { get; set; }
+
         public string ChucVu2 { get; set; } // OP, STAFF, STAFF PM
 
         public string TrucTiepSX { get; set; }
@@ -117,5 +119,6 @@ namespace HRMNS.Application.ViewModels.HR
         public BoPhanDetailViewModel HR_BO_PHAN_DETAIL { get; set; }
         public ICollection<PhepNamViewModel> HR_PHEP_NAM { get; set; }
         public ICollection<Training_NhanVienViewModel> TRAINING_NHANVIEN { get; set; }
+        public ICollection<NhanVienThaiSanViewModel> HR_THAISAN_CONNHO { get; set; }
     }
 }

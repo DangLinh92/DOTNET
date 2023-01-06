@@ -74,8 +74,16 @@ namespace HRMNS.Application.Implementation
 
             if (!string.IsNullOrEmpty(maNV))
             {
-               var lst = _thaisanRepository.FindAll(x => x.MaNV == maNV && ((begin.CompareTo(x.FromDate) <= 0 && end.CompareTo(x.FromDate) >= 0) || (begin.CompareTo(x.ToDate) <= 0 && end.CompareTo(x.ToDate) >= 0)),x=>x.HR_NHANVIEN).OrderByDescending(x => x.DateModified);
-               return _mapper.Map<List<NhanVienThaiSanViewModel>>(lst);
+                if(!string.IsNullOrEmpty(begin) && !string.IsNullOrEmpty(end))
+                {
+                    var lst = _thaisanRepository.FindAll(x => x.MaNV == maNV && ((begin.CompareTo(x.FromDate) <= 0 && end.CompareTo(x.FromDate) >= 0) || (begin.CompareTo(x.ToDate) <= 0 && end.CompareTo(x.ToDate) >= 0)), x => x.HR_NHANVIEN).OrderByDescending(x => x.DateModified);
+                    return _mapper.Map<List<NhanVienThaiSanViewModel>>(lst);
+                }
+                else
+                {
+                    var lst = _thaisanRepository.FindAll(x => x.MaNV == maNV, x => x.HR_NHANVIEN).OrderByDescending(x => x.DateModified);
+                    return _mapper.Map<List<NhanVienThaiSanViewModel>>(lst);
+                }
             }
             else
             {

@@ -1,0 +1,229 @@
+﻿@model List<OperationWaitimeSheet>
+@{
+    ViewData["Title"] = "Wait time";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+
+    <style>
+        .tables {
+            display: flex;
+        }
+
+        .column {
+            width: 33%;
+            padding-right: 5px;
+            text-align: center;
+        }
+
+            .column:last-child {
+                width: 33%;
+                padding-left: 5px;
+            }
+
+        span.current-value {
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        span.diff {
+            width: 50px;
+            display: inline-block;
+        }
+
+        .inc {
+            color: #f00;
+        }
+
+        .dec {
+            color: #2ab71b;
+            background-image: linear-gradient(to right, red, yellow);
+            font-weight:bold;
+            padding-left: 10px;
+        }
+
+            .inc .arrow,
+            .dec .arrow {
+                display: inline-block;
+                height: 10px;
+                width: 10px;
+                background-repeat: no-repeat;
+                background-size: 10px 10px;
+            }
+
+        .inc .arrow {
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAADKSURBVHjaYtTaLs1ABEiG0nPRJa56PEHhsxBhmCUQT4OyrwHxcXyKmQgYJgHE64CYDYrXQcXIMhCbAcgWkGzgNKh38QUB0QamIUUErkhKI9ZAGyCeTERkTYaqxWsgKA2txhdG6GGsvUNGGpeBRMUiGhCFGsqGzUBQQJsxkA5AemaiG5hDIBIIgQSgK0FmMDACs549kN5FZLjhA7+A2A2U9YSAOBeLAk4gnoBDczoOcSFGPIUDPxB/wCHHiKtwYGKgMhg1cBAaCBBgAJTUIL3ToPZfAAAAAElFTkSuQmCC');
+            transform: rotate(180deg);
+          
+        }
+
+        .dec .arrow {
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAADJSURBVHjaYvzPgBfgkhYA4o8QFahKmBioDEYNHIQGsgBxIBCLkqgvAYi/g1mMjMjir0EJzR6If/6HpChKMMgMe3DKBeIcKhiY8x/MYoDj+RQYNgdkGLqBbEB8kgzDToL1YjEQhKWB+BUJhj0H64Eahs1AELYhMpJ+gtUiGYbLQBBOI8LANLBaIg1kAAc0vkiAqSPBQFAkHcNi2DGoHMkGgrAENOCRI0ECRQ2JBoKwJTQCfkLZDPgMZPxPXN5NhtJzMSsJVBMAAgwAyWSY2svfmrwAAAAASUVORK5CYII=');
+            transform: rotate(180deg);
+          
+        }
+    </style>
+}
+@section Scripts
+{
+    <script>
+
+        $(document).ready(function () {
+
+            $('#show-hidden-grid-wlp11').click(function () {
+                $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+                $('.hidden-grid-wlp11').slideToggle("slow");
+
+            });
+
+            $('#show-hidden-grid-wlp12').click(function () {
+                $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+                $('.hidden-grid-wlp12').slideToggle("slow");
+            });
+
+            $('#show-hidden-grid-wlp2').click(function () {
+                $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+                $('.hidden-grid-wlp2').slideToggle("slow");
+            });
+
+        });
+
+        onChangeTab = function (tabIndex) {
+
+        };
+    </script>
+
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">재공 정체 LOT 조회 MONITORING SYSTEM (Wait time 0.4일)</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Wait time</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12" id="show-hidden-grid-wlp11">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item active" style="cursor: pointer;">
+                    <i class="fa fa-caret-right"></i> <strong>공정별 정체재공(노광/Lộ Quang)</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row hidden-grid-wlp11">
+        <div class="col-md-12">
+            <div class="tables">
+                <div class="column">
+                    <h5>WALL 공정 정체시간 조사</h5>
+                    @await Html.PartialAsync("_gridViewWaitimePartial", Model.FirstOrDefault(x => x.GridName == "grid_Wall"))
+                </div>
+                <div class="column">
+                    <h5>ROOF 공정 정체시간 조사</h5>
+                    @await Html.PartialAsync("_gridViewWaitimePartial", Model.FirstOrDefault(x => x.GridName == "grid_Roof"))
+                </div>
+                <div class="column">
+                    <h5>PLATE 공정 정체시간 조사</h5>
+                    @await Html.PartialAsync("_gridViewWaitimePartial", Model.FirstOrDefault(x => x.GridName == "grid_Plate"))
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top:20px">
+        <div class="col-sm-12" id="show-hidden-grid-wlp12">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item active" style="cursor: pointer;">
+                    <i class="fa fa-caret-right"></i> <strong>공정별 정체재공(도금,프로브/ Mạ, Probe)</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row hidden-grid-wlp12">
+        <div class="col-md-12">
+            <div class="tables">
+                <div class="column">
+                    <h5>SEED 공정 정체시간 조사</h5>
+                    @await Html.PartialAsync("_gridViewWaitimePartial", Model.FirstOrDefault(x => x.GridName == "grid_Seed"))
+                </div>
+                <div class="column">
+                    <h5>MẠ/ 도금 공정 정체시간 조사</h5>
+                    @await Html.PartialAsync("_gridViewWaitimePartial", Model.FirstOrDefault(x => x.GridName == "grid_Plateted"))
+                </div>
+                <div class="column">
+                    <h5>PROBE 공정 정체시간 조사</h5>
+                    @await Html.PartialAsync("_gridViewWaitimePartial", Model.FirstOrDefault(x => x.GridName == "grid_Probe"))
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top:20px">
+        <div class="col-sm-12" id="show-hidden-grid-wlp2">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item active" style="cursor: pointer;">
+                    <i class="fa fa-caret-right"></i> <strong>공정별 정체재공(후공정)</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row hidden-grid-wlp2">
+        <div class="col-md-12">
+            <div class="tables">
+                <div class="column">
+                    <h5>DICING, B/G 공정 정체시간 조사</h5>
+                    @await Html.PartialAsync("_gridViewWaitimePartial", Model.FirstOrDefault(x => x.GridName == "grid_Dicing"))
+                </div>
+                <div class="column">
+                    <h5>CHIP INSPECTION 정체시간 조사</h5>
+                    @await Html.PartialAsync("_gridViewWaitimePartial", Model.FirstOrDefault(x => x.GridName == "grid_Inspection"))
+                </div>
+                <div class="column">
+                    <h5>REEL PACKING 정체시간 조사</h5>
+                    @(Html.DevExtreme().DataGrid<WaittimeViewModel>()
+                        .ID("grid_ReelPacking")
+                        .DataSource(Model.FirstOrDefault(x => x.GridName == "grid_ReelPacking").lstWaittimeViewModel)
+                        .Height(580)
+                        .ShowBorders(true)
+                        .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                        .Paging(paging => paging.Enabled(false))
+                        .AllowColumnResizing(true)
+                        .ColumnMinWidth(50)
+                        .ColumnAutoWidth(true)
+                        .ShowColumnLines(true)
+                        .ShowRowLines(true)
+                        .RowAlternationEnabled(true)
+                        .FilterRow(filterRow => filterRow
+                            .Visible(true)
+                            .ApplyFilter(GridApplyFilterMode.Auto)
+                        )
+                        .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                        .Selection(s => s.Mode(SelectionMode.Single))
+                        .HoverStateEnabled(true)
+                        .Columns(columns =>
+                        {
+                            columns.Add().DataField("LotId").Width(110);
+                            columns.Add().DataField("Material").Width(120);
+                            columns.Add().DataField("OperationName").Width(150);
+                            columns.Add().DataField("Status").Width(65);
+                            columns.Add().DataField("StayDay").SortOrder(SortOrder.Desc).Width(80).CellTemplate(@<text>
+                                    <span class="<%- data.StayDay > 0.4 ? 'dec' : 'inc' %>">
+                                        <span class="current-value" style="color:black"><%- text %></span>
+                                        <span class="arrow"></span>
+                                    </span>
+                                </text>);
+                        })
+    )
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

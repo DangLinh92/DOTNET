@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
+using System.Threading;
 
 namespace OPERATION_MNS.Data.EF.Extensions
 {
@@ -91,6 +93,15 @@ namespace OPERATION_MNS.Data.EF.Extensions
             }
 
             return false;
+        }
+
+        public static int GetWeekOfYear(this DateTime date)
+        {
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+            var calendar = CultureInfo.CurrentCulture.Calendar;
+            var formatRules = CultureInfo.CurrentCulture.DateTimeFormat;
+            int week = calendar.GetWeekOfYear(date, formatRules.CalendarWeekRule, formatRules.FirstDayOfWeek) - 1;
+            return week;
         }
     }
 }

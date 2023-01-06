@@ -76,7 +76,7 @@ namespace HRMS.Areas.Admin.Controllers
         {
             string status = Status.Active.ToString();
             ViewBag.BoPhans = _boPhanService.GetAll(null);
-            List<NhanVienViewModel> nhanviens = _nhanvienService.GetAll(x=>x.HR_HOPDONG).Where(x => x.Status == status && x.MaBoPhan != "KOREA").ToList();
+            List<NhanVienViewModel> nhanviens = _nhanvienService.GetAll(x => x.HR_HOPDONG).Where(x => x.Status == status && x.MaBoPhan != "KOREA").ToList();
             var section = _boPhanDetailService.GetAll(null);
             foreach (var item in nhanviens)
             {
@@ -97,7 +97,7 @@ namespace HRMS.Areas.Admin.Controllers
             ViewData["Title"] = "Danh sách nhân viên nghỉ việc";
             ViewBag.BoPhans = _boPhanService.GetAll(null);
             string status = Status.InActive.ToString();
-            List<NhanVienViewModel> nhanviens = _nhanvienService.GetAll(x => x.HR_HOPDONG).Where(x=>x.Status == status).ToList();
+            List<NhanVienViewModel> nhanviens = _nhanvienService.GetAll(x => x.HR_HOPDONG).Where(x => x.Status == status).ToList();
             var section = _boPhanDetailService.GetAll(null);
             foreach (var item in nhanviens)
             {
@@ -107,7 +107,7 @@ namespace HRMS.Areas.Admin.Controllers
                 }
             }
 
-            return View("Index",nhanviens);
+            return View("Index", nhanviens);
         }
 
         /// <summary>
@@ -146,7 +146,7 @@ namespace HRMS.Areas.Admin.Controllers
         {
             string datetime = DateTime.Now.ToString("yyyy-MM");
             datetime = datetime + "-01";
-            List<NhanVienViewModel> nhanviens = _nhanvienService.GetAll().Where(x=>x.Status != Status.InActive.NullString() || string.Compare(datetime,x.NgayNghiViec) <= 0).ToList();
+            List<NhanVienViewModel> nhanviens = _nhanvienService.GetAll().Where(x => x.Status != Status.InActive.NullString() || string.Compare(datetime, x.NgayNghiViec) <= 0).ToList();
             return new OkObjectResult(nhanviens);
         }
 
@@ -250,7 +250,7 @@ namespace HRMS.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult ExportExcel()
+        public IActionResult ExportExcel([FromQuery] string chedo)
         {
             string sWebRootFolder = _hostingEnvironment.WebRootPath;
             string directory = Path.Combine(sWebRootFolder, "export-files");
@@ -266,38 +266,104 @@ namespace HRMS.Areas.Admin.Controllers
                 file.Delete();
                 file = new FileInfo(Path.Combine(sWebRootFolder, sFileName));
             }
-            var nhanviens = _nhanvienService.GetAll().Where(x => x.Status.NullString() != Status.InActive.ToString()).Select(x => new
+
+            IEnumerable<NhanVienViewModel> nhanviens;
+            if (chedo == "TS")
             {
-                x.Id,
-                x.TenNV,
-                x.MaBoPhan,
-                x.MaChucDanh,
-                x.GioiTinh,
-                x.NgaySinh,
-                x.NoiSinh,
-                x.TinhTrangHonNhan,
-                x.DanToc,
-                x.TonGiao,
-                x.DiaChiThuongTru,
-                x.SoDienThoai,
-                x.SoDienThoaiNguoiThan,
-                x.Email,
-                x.CMTND,
-                x.SoTaiKhoanNH,
-                x.TenNganHang,
-                x.TruongDaoTao,
-                x.NgayVao,
-                x.NguyenQuan,
-                x.DChiHienTai,
-                x.MaBHXH,
-                x.MaSoThue,
-                x.Status
-            });
+                nhanviens = _nhanvienService.GetAll(x => x.HR_THAISAN_CONNHO).Where(x => x.Status.NullString() != Status.InActive.ToString() && x.HR_THAISAN_CONNHO.Any(x => x.CheDoThaiSan == "ThaiSan" && x.FromDate.CompareTo(DateTime.Now.ToString("yyyy-MM-dd")) <= 0 && x.ToDate.CompareTo(DateTime.Now.ToString("yyyy-MM-dd")) >= 0)).Select(x => new NhanVienViewModel()
+                {
+                    Id = x.Id,
+                    TenNV = x.TenNV,
+                    MaBoPhan  = x.MaBoPhan,
+                    MaChucDanh = x.MaChucDanh,
+                    GioiTinh = x.GioiTinh,
+                    NgaySinh = x.NgaySinh,
+                    NoiSinh = x.NoiSinh,
+                    TinhTrangHonNhan = x.TinhTrangHonNhan,
+                    DanToc=  x.DanToc,
+                    TonGiao = x.TonGiao,
+                    DiaChiThuongTru = x.DiaChiThuongTru,
+                    SoDienThoai = x.SoDienThoai,
+                    SoDienThoaiNguoiThan = x.SoDienThoaiNguoiThan,
+                    Email = x.Email,
+                    CMTND = x.CMTND,
+                    SoTaiKhoanNH = x.SoTaiKhoanNH,
+                    TenNganHang = x.TenNganHang,
+                    TruongDaoTao = x.TruongDaoTao,
+                    NgayVao = x.NgayVao,
+                    NguyenQuan = x.NguyenQuan,
+                    DChiHienTai =x.DChiHienTai,
+                    MaBHXH = x.MaBHXH,
+                    MaSoThue = x.MaSoThue,
+                    Status = x.Status
+                });
+            }
+            else if (chedo == "KTS")
+            {
+                nhanviens = _nhanvienService.GetAll(x => x.HR_THAISAN_CONNHO).Where(x => x.Status.NullString() != Status.InActive.ToString() && !x.HR_THAISAN_CONNHO.Any(x => x.CheDoThaiSan == "ThaiSan" && x.FromDate.CompareTo(DateTime.Now.ToString("yyyy-MM-dd")) <= 0 && x.ToDate.CompareTo(DateTime.Now.ToString("yyyy-MM-dd")) >= 0)).Select(x => new NhanVienViewModel()
+                {
+                    Id = x.Id,
+                    TenNV = x.TenNV,
+                    MaBoPhan = x.MaBoPhan,
+                    MaChucDanh = x.MaChucDanh,
+                    GioiTinh = x.GioiTinh,
+                    NgaySinh = x.NgaySinh,
+                    NoiSinh = x.NoiSinh,
+                    TinhTrangHonNhan = x.TinhTrangHonNhan,
+                    DanToc = x.DanToc,
+                    TonGiao = x.TonGiao,
+                    DiaChiThuongTru = x.DiaChiThuongTru,
+                    SoDienThoai = x.SoDienThoai,
+                    SoDienThoaiNguoiThan = x.SoDienThoaiNguoiThan,
+                    Email = x.Email,
+                    CMTND = x.CMTND,
+                    SoTaiKhoanNH = x.SoTaiKhoanNH,
+                    TenNganHang = x.TenNganHang,
+                    TruongDaoTao = x.TruongDaoTao,
+                    NgayVao = x.NgayVao,
+                    NguyenQuan = x.NguyenQuan,
+                    DChiHienTai = x.DChiHienTai,
+                    MaBHXH = x.MaBHXH,
+                    MaSoThue = x.MaSoThue,
+                    Status = x.Status
+                });
+            }
+            else
+            {
+                nhanviens = _nhanvienService.GetAll(x => x.HR_THAISAN_CONNHO).Where(x => x.Status.NullString() != Status.InActive.ToString()).Select(x => new NhanVienViewModel()
+                {
+                    Id = x.Id,
+                    TenNV = x.TenNV,
+                    MaBoPhan = x.MaBoPhan,
+                    MaChucDanh = x.MaChucDanh,
+                    GioiTinh = x.GioiTinh,
+                    NgaySinh = x.NgaySinh,
+                    NoiSinh = x.NoiSinh,
+                    TinhTrangHonNhan = x.TinhTrangHonNhan,
+                    DanToc = x.DanToc,
+                    TonGiao = x.TonGiao,
+                    DiaChiThuongTru = x.DiaChiThuongTru,
+                    SoDienThoai = x.SoDienThoai,
+                    SoDienThoaiNguoiThan = x.SoDienThoaiNguoiThan,
+                    Email = x.Email,
+                    CMTND = x.CMTND,
+                    SoTaiKhoanNH = x.SoTaiKhoanNH,
+                    TenNganHang = x.TenNganHang,
+                    TruongDaoTao = x.TruongDaoTao,
+                    NgayVao = x.NgayVao,
+                    NguyenQuan = x.NguyenQuan,
+                    DChiHienTai = x.DChiHienTai,
+                    MaBHXH = x.MaBHXH,
+                    MaSoThue = x.MaSoThue,
+                    Status = x.Status
+                });
+            }
+
             using (ExcelPackage package = new ExcelPackage(file))
             {
                 // add a new worksheet to the empty workbook
                 ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Employee");
-                worksheet.Cells["A1"].LoadFromCollection(nhanviens, true, TableStyles.Light11);
+                worksheet.Cells["A1"].LoadFromCollection(nhanviens.ToList(), true, TableStyles.Light11);
                 worksheet.Cells.AutoFitColumns();
                 package.Save(); //Save the workbook.
             }
@@ -336,7 +402,7 @@ namespace HRMS.Areas.Admin.Controllers
                                                                     q => q.HR_PHEP_NAM,
                                                                     k => k.HR_HOPDONG,
                                                                     l => l.HR_KEKHAIBAOHIEM,
-                                                                    h=>h.TRAINING_NHANVIEN);
+                                                                    h => h.TRAINING_NHANVIEN);
             if (nhanVien != null)
             {
                 NhanVienProfileModel profileModel = new NhanVienProfileModel();
@@ -519,7 +585,7 @@ namespace HRMS.Areas.Admin.Controllers
                 {
                     foreach (var nvTrain in profileModel.training_NhanVienViewModels)
                     {
-                       nvTrain.HR_TRAINING = _trainingListService.GetById(nvTrain.TrainnigId);
+                        nvTrain.HR_TRAINING = _trainingListService.GetById(nvTrain.TrainnigId);
                     }
                 }
 
@@ -886,7 +952,7 @@ namespace HRMS.Areas.Admin.Controllers
                                                                    q => q.HR_PHEP_NAM,
                                                                    k => k.HR_HOPDONG,
                                                                    l => l.HR_KEKHAIBAOHIEM,
-                                                                   h =>h.TRAINING_NHANVIEN);
+                                                                   h => h.TRAINING_NHANVIEN);
             if (nhanVien != null)
             {
                 NhanVienProfileModel profileModel = new NhanVienProfileModel();
@@ -1219,6 +1285,38 @@ namespace HRMS.Areas.Admin.Controllers
             _keKhaiBHService.Delete(Id);
             _keKhaiBHService.Save();
             return new OkObjectResult(Id);
+        }
+
+        [HttpPost]
+        public IActionResult Search(string searchSelect)
+        {
+            string status = Status.Active.ToString();
+
+            ViewBag.BoPhans = _boPhanService.GetAll(null);
+            List<NhanVienViewModel> nhanviens = new List<NhanVienViewModel>();
+            if (searchSelect == "TS")
+            {
+                nhanviens = _nhanvienService.GetAll(x => x.HR_HOPDONG, x => x.HR_THAISAN_CONNHO).Where(x => x.Status == status && x.MaBoPhan != "KOREA" && x.HR_THAISAN_CONNHO.Any(x => x.CheDoThaiSan == "ThaiSan" && x.FromDate.CompareTo(DateTime.Now.ToString("yyyy-MM-dd")) <= 0 && x.ToDate.CompareTo(DateTime.Now.ToString("yyyy-MM-dd")) >= 0)).ToList();
+            }
+            else if (searchSelect == "KTS")
+            {
+                nhanviens = _nhanvienService.GetAll(x => x.HR_HOPDONG, x => x.HR_THAISAN_CONNHO).Where(x => x.Status == status && x.MaBoPhan != "KOREA" && !x.HR_THAISAN_CONNHO.Any(x => x.CheDoThaiSan == "ThaiSan" && x.FromDate.CompareTo(DateTime.Now.ToString("yyyy-MM-dd")) <= 0 && x.ToDate.CompareTo(DateTime.Now.ToString("yyyy-MM-dd")) >= 0)).ToList();
+            }
+            else
+            {
+                nhanviens = _nhanvienService.GetAll(x => x.HR_HOPDONG, x => x.HR_THAISAN_CONNHO).Where(x => x.Status == status && x.MaBoPhan != "KOREA").ToList();
+            }
+
+            var section = _boPhanDetailService.GetAll(null);
+            foreach (var item in nhanviens)
+            {
+                if (section.Any(x => x.Id == item.MaBoPhanChiTiet))
+                {
+                    item.HR_BO_PHAN_DETAIL = section.Find(x => x.Id == item.MaBoPhanChiTiet);
+                }
+            }
+
+            return PartialView("_NhanVienGridPartial", nhanviens);
         }
     }
 }

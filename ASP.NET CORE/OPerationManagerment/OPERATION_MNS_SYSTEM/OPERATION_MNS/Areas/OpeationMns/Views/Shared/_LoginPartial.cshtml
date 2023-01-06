@@ -14,10 +14,10 @@
 <div class="dropdown-menu">
     @if (!User.IsInRole("Staff") && !User.IsInRole("GrLeader") && !User.IsInRole("AssLeader") && !User.IsInRole("KRManager"))
     {
-        <a class="dropdown-item" href="/admin/account/register">Register</a>
+        <a class="dropdown-item" href="/OpeationMns/account/register">Register</a>
     }
-    <a class="dropdown-item" href="/admin/account/resetpassword?userName=@User.GetSpecificClaim("UserName")">Reset password</a>
-    <form action="/Admin/Account/Logout" method="post" id="logoutForm">
+    <a class="dropdown-item" href="/OpeationMns/account/resetpassword?userName=@User.GetSpecificClaim("UserName")">Reset password</a>
+    <form action="/OpeationMns/Account/Logout" method="post" id="logoutForm">
         <button id="btnLogout" type="submit" class="dropdown-item">Logout</button>
     </form>
 </div>

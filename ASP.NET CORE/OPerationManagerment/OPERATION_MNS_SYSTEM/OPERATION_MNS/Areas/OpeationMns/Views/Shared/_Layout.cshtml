@@ -8,7 +8,7 @@
     <meta name="keywords" content="admin, estimates, bootstrap, business, corporate, creative, management, minimal, modern, accounts, invoice, html5, responsive, CRM, Projects">
     <meta name="author" content="Dreamguys - Bootstrap Admin Template">
     <meta name="robots" content="noindex, nofollow">
-    <title>OPERATION_MNS</title>
+    <title>@ViewData["Title"]</title>
 
     <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="~/img/faviconWisol.png">
@@ -18,7 +18,8 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;0,900;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    @*<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;0,900;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">*@
+    <link href="~/css/fontGgapi.css" rel="stylesheet" />
 
     <!-- Fontawesome CSS -->
     <link rel="stylesheet" href="~/css/font-awesome.min.css">
@@ -58,8 +59,8 @@
     <script src="~/js/jquery-3.6.0.min.js"></script>
     <script src="~/js/devextreme/dx.all.js"></script>
     <link href="~/css/devextreme/dx.light.css" rel="stylesheet" />
-    <script src="~/node_modules/devexpress-aspnetcore-spreadsheet/dist/dx-aspnetcore-spreadsheet.js"></script>
-    <link href="~/node_modules/devexpress-aspnetcore-spreadsheet/dist/dx-aspnetcore-spreadsheet.css" rel="stylesheet" />
+    @*<script src="~/node_modules/devexpress-aspnetcore-spreadsheet/dist/dx-aspnetcore-spreadsheet.js"></script>
+        <link href="~/node_modules/devexpress-aspnetcore-spreadsheet/dist/dx-aspnetcore-spreadsheet.css" rel="stylesheet" />*@
     <script src="~/js/devextreme/aspnet/dx.aspnet.data.js"></script>
     <script src="~/js/devextreme/aspnet/dx.aspnet.mvc.js"></script>
 
@@ -114,9 +115,9 @@
             <div class="dropdown mobile-user-menu">
                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
                 <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item" href="/admin/profile/index">My Profile</a>
-                    <a class="dropdown-item" href="/admin/settings/index">Settings</a>
-                    <form action="/Admin/Account/Logout" method="post" id="logoutFormMobile">
+                    <a class="dropdown-item" href="/OpeationMns/profile/index">My Profile</a>
+                    <a class="dropdown-item" href="/OpeationMns/settings/index">Settings</a>
+                    <form action="/OpeationMns/Account/Logout" method="post" id="logoutFormMobile">
                         <button type="submit" class="dropdown-item">Logout</button>
                     </form>
                 </div>
@@ -175,12 +176,19 @@
     @*<script src="~/plugins/morris/morris.min.js"></script>
         <script src="~/plugins/raphael/raphael.min.js"></script>
         <script src="~/js/chart.js"></script>*@
+    <script src="~/plugins/chartjs/chart.min.js"></script>
+    @*<script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>*@
+    <script src="~/js/chart.min.js"></script>
+    @*<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>*@
+    <script src="~/js/chartjs-plugin-datalabels@2.0.0.js"></script>
+
+    <script src="~/plugins/apexchart/apexcharts.min.js"></script>
 
     <!-- Loading -->
     <script src="~/plugins/waitMe/waitMe.min.js"></script>
 
     <script src="~/plugins/alertify/alertify.min.js"></script>
-    <script src="~/app/shared/OPERATION_MNS.js"></script>
+    <script src="~/app/shared/hrms.js"></script>
 
     <!-- File upload -->
     <script src="~/plugins/fileupload/fileupload.min.js"></script>
@@ -192,11 +200,8 @@
     <script src="~/js/app.js"></script>
 
     <!-- set auto logout -->
-    <script src="~/app/shared/IdleTimeout.js"></script>
+    @*<script src="~/app/shared/IdleTimeout.js"></script>*@
 
     @RenderSection("Scripts", required: false)
-
-    <!-- Syncfusion ASP.NET Core Script Manager -->
-    <ejs-scripts></ejs-scripts>
 </body>
 </html>

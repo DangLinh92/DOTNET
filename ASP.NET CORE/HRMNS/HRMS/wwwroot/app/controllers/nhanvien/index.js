@@ -278,9 +278,12 @@
 
     // Export excel start
     $('#btn-export').on('click', function () {
+
+        let chedo = $('#cboChedo').val();
+
         $.ajax({
             type: "POST",
-            url: "/Admin/NhanVien/ExportExcel",
+            url: "/Admin/NhanVien/ExportExcel?chedo=" + chedo,
             beforeSend: function () {
                 hrms.run_waitMe($('#gridNhanVien'));
             },
@@ -404,5 +407,26 @@
                 hrms.hide_waitMe($('#gridNhanVien'));
             }
         }, 500);
+    }
+
+    this.doAftersearch = function () {
+        InitDataTable();
+    }
+
+    function InitDataTable() {
+        var table1 = $('#nhanVienDataTable');
+        if (table1) {
+            table1.DataTable().destroy();
+        }
+
+        var table = $('#nhanVienDataTable');
+        if (table) {
+            table.DataTable().destroy();
+            $('#nhanVienDataTable').DataTable({
+                "order": [8, 'asc']
+            });
+            $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
+            $('select[name="nhanVienDataTable_length"]').removeClass('form-control-sm');
+        }
     }
 }

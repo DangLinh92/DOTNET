@@ -594,10 +594,6 @@ namespace VOC.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
-                    b.Property<string>("PBA_FAE_Result")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
                     b.Property<string>("PartsClassification")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
@@ -708,6 +704,10 @@ namespace VOC.Data.EF.Migrations
                     b.Property<string>("Customer")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
+
+                    b.Property<string>("CustomerDefectName")
+                        .HasColumnType("nvarchar(150)")
+                        .HasMaxLength(150);
 
                     b.Property<string>("Customer_Code")
                         .HasColumnType("nvarchar(50)")

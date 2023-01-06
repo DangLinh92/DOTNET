@@ -11,7 +11,7 @@
                 </li>
                 @*<li class="submenu">*@
                 <li>
-                    <a href="/Admin/Home/Index" target="_self" onclick="linkClick(this)"><i class="la la-dashboard"></i> <span> Home</span></a>
+                    <a href="/OpeationMns/Home/Index" target="_self" onclick="linkClick(this)"><i class="la la-dashboard"></i> <span> Home</span></a>
                 </li>
 
 
@@ -39,8 +39,8 @@
                             }
                             else
                             {
-                                <li>
-                                    <a href="@subItem.URL"><i class="@subItem.IconCss"></i> <span>@subItem.Name</span></a>
+                                <li id="@subItem.Id">
+                                    <a href="@subItem.URL" onclick="linkClick2('@subItem.Id')"><i class="@subItem.IconCss"></i> <span>@subItem.Name</span></a>
                                 </li>
                             }
                         }
@@ -54,6 +54,10 @@
 <script>
     function linkClick(item) {
         sessionStorage.setItem('activeLink', item.id);
+    }
+
+    function linkClick2(id) {
+        sessionStorage.setItem('activeLink',id);
     }
 
     (function () {

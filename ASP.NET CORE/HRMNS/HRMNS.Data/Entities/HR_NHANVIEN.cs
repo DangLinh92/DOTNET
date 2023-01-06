@@ -26,13 +26,14 @@ namespace HRMNS.Data.Entities
             NHANVIEN_CALAMVIEC = new HashSet<NHANVIEN_CALAMVIEC>();
             ATTENDANCE_RECORD = new HashSet<ATTENDANCE_RECORD>();
             TRAINING_NHANVIEN = new HashSet<TRAINING_NHANVIEN>();
+            HR_THAISAN_CONNHO = new HashSet<HR_THAISAN_CONNHO>();
         }
 
         public HR_NHANVIEN
             (string id, string tenNV, string maChucDanh, string maBoPhan, string gioiTinh, string ngaySinh, string noiSinh, string tinhTrangHonNhan, string danToc, string tonGiao, string diaChiThuongTru,
             string soDienThoai, string soDienThoaiNguoiThan, string quanHeNguoiThan, string cMTND, string ngayCapCMTND, string noiCapCMTND, string soTaiKhoanNH,
             string tenNganHang, string truongDaoTao, string ngayVao, string nguyenQuan, string dChiHienTai, string kyLuatLD, string maBHXH, string maSoThue, int soNguoiGiamTru,
-            string email, string note, string ngayNghiViec, string status, string image, string isDelete, int? maBoPhanChiTiet)
+            string email, string note, string ngayNghiViec, string status, string image, string isDelete, int? maBoPhanChiTiet, string noiTuyenDung)
         {
             Id = id;
             TenNV = tenNV;
@@ -68,6 +69,7 @@ namespace HRMNS.Data.Entities
             Image = image;
             IsDelete = isDelete;
             MaBoPhanChiTiet = maBoPhanChiTiet;
+            NoiTuyenDung = noiTuyenDung;
         }
 
         [StringLength(250)]
@@ -161,6 +163,9 @@ namespace HRMNS.Data.Entities
         [StringLength(50)]
         public string Status { get; set; }
 
+        [StringLength(50)]
+        public string NoiTuyenDung { get; set; }
+
         [StringLength(500)]
         public string Image { get; set; }
 
@@ -197,6 +202,7 @@ namespace HRMNS.Data.Entities
         public virtual HR_CHUCDANH HR_CHUCDANH { get; set; }
         public virtual ICollection<HR_CHUNGCHI_NHANVIEN> HR_CHUNGCHI_NHANVIEN { get; set; }
         public virtual ICollection<HR_HOPDONG> HR_HOPDONG { get; set; }
+        public virtual ICollection<HR_THAISAN_CONNHO> HR_THAISAN_CONNHO { get; set; }
         public virtual ICollection<HR_KEKHAIBAOHIEM> HR_KEKHAIBAOHIEM { get; set; }
         public virtual ICollection<HR_QUATRINHLAMVIEC> HR_QUATRINHLAMVIEC { get; set; }
         public virtual ICollection<HR_TINHTRANGHOSO> HR_TINHTRANGHOSO { get; set; }
@@ -209,5 +215,6 @@ namespace HRMNS.Data.Entities
         public virtual ICollection<ATTENDANCE_RECORD> ATTENDANCE_RECORD { get; set; }
 
         public virtual ICollection<TRAINING_NHANVIEN> TRAINING_NHANVIEN { get; set; }
+        public virtual ICollection<DANGKY_DIMUON_VSOM_NHANVIEN> DANGKY_DIMUON_VSOM_NHANVIEN { get; set; }
     }
 }

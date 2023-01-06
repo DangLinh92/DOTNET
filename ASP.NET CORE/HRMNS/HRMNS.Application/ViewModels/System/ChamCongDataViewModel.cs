@@ -31,6 +31,8 @@ namespace HRMNS.Application.ViewModels.System
 
         public string VP_SX { get; set; }
 
+        public string OrderBy { get; set; }
+
         public List<HopDong_NV> lstHopDong { get; set; }
         public List<NhanVien_CaLamViec> lstNhanVienCaLamViec { get; set; }
 

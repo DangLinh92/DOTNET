@@ -49,9 +49,9 @@ namespace HRMS.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Search(string timeEndUser, string status,string status_all, string department, string timeTo)
+        public IActionResult Search(string timeEndUser, string status, string status_all, string department, string timeTo)
         {
-            if(status_all.NullString() == "")
+            if (status_all.NullString() == "")
             {
                 if (status.NullString() == "")
                 {
@@ -73,6 +73,11 @@ namespace HRMS.Areas.Admin.Controllers
             if (department.NullString() == "")
             {
                 lst = lst.Where(x => x.BoPhan != "KOREA").ToList();
+            }
+            else
+            if (department.NullString() == "KOREA")
+            {
+                lst = lst.OrderBy(x => x.OrderBy).ToList(); ;
             }
 
             string time = timeTo + "-01";
@@ -458,7 +463,7 @@ namespace HRMS.Areas.Admin.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult OutPutExcel(string timeEndUser, string status,string department, string timeTo)
+        public IActionResult OutPutExcel(string timeEndUser, string status, string department, string timeTo)
         {
             _memoryCache.TryGetValue("ChamCongData", out ChamCongData);
             if (!_memoryCache.TryGetValue("ChamCongData", out ChamCongData) || ChamCongData?.ChamCongData?.Count == 0 || ChamCongData?.ChamCongData?.FirstOrDefault()?.BoPhan != department)
@@ -466,7 +471,7 @@ namespace HRMS.Areas.Admin.Controllers
                 List<DeNghiLamThemGioModel> lstLamthemgio = new List<DeNghiLamThemGioModel>();
                 var lst = _bangCongService.GetDataReport(timeEndUser, status, timeTo, department, ref lstLamthemgio);
 
-                
+
                 if (lst.Count == 0)
                 {
                     return new BadRequestObjectResult("Not found data!");
@@ -485,6 +490,11 @@ namespace HRMS.Areas.Admin.Controllers
             if (department.NullString() == "")
             {
                 data = data.Where(x => x.BoPhan != "KOREA").ToList();
+            }
+            else
+            if (department.NullString() == "KOREA")
+            {
+                data = data.OrderBy(x => x.OrderBy).ToList(); ;
             }
 
             string sWebRootFolder = _hostingEnvironment.WebRootPath;
@@ -555,8 +565,8 @@ namespace HRMS.Areas.Admin.Controllers
                         for (int j = 1; j <= 31; j++)
                         {
                             colName = GetExcelColumnName(k);
-                            colName1 = GetExcelColumnName(k+1);
-                            colName2 = GetExcelColumnName(k+2);
+                            colName1 = GetExcelColumnName(k + 1);
+                            colName2 = GetExcelColumnName(k + 2);
 
                             foreach (var inout in data[i].TimeInOutModels.OrderBy(x => x.DayCheck))
                             {

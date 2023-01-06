@@ -1,0 +1,5 @@
+2022-12-13T08:31:04.2073968+07:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2022-12-13T08:31:04.2140485+07:00  [INF] Hosting environment: "Production" (c3307c92)
+2022-12-13T08:31:04.2142288+07:00  [INF] Content root path: "E:\WorkSpace\Source\NET CORE\ASP.NET CORE\OPerationManagerment\OPERATION_MNS_SYSTEM\public" (b5d60022)
+2022-12-13T08:31:04.2482194+07:00 80000072-0001-fe00-b63f-84710c7967bb [WRN] Failed to determine the https port for redirect. (ca76cc21)
+2022-12-13T08:52:00.7926088+07:00  [INF] Application is shutting down... (90f52c38)

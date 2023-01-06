@@ -496,7 +496,7 @@
 
 <div class="content container-fluid">
     <h1 class="display-4">Welcome HR system</h1>
-    @{ if ("H2103028,admin".Contains(User.Claims.First(x => x.Type == "UserName").Value))
+    @{ if ("admin".Contains(User.Claims.First(x => x.Type == "UserName").Value))
         {
             <canvas id="pinkboard"></canvas>
         }

@@ -15,6 +15,9 @@
     <script>
         var nhanvienJs = new nhanVienController();
         nhanvienJs.initialize();
+
+        onSuccess = nhanvienJs.doAftersearch;
+
         $(document).ready(function () {
             $('#nhanVienDataTable').DataTable({
                 "order": [8, 'asc']
@@ -79,6 +82,31 @@
         </div>
     </form>
     <!-- /Search Filter -->
+
+    <div id="myHeader">
+        <form method="post" data-ajax="true" data-ajax-url="/Admin/NhanVien/Search" data-ajax-update="#gridNhanVien" data-ajax-mode='replace' data-ajax-success="onSuccess">
+            <div class="row filter-row">
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2"></div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2"></div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2"></div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2"></div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <div class="form-group form-focus select-focus">
+                        <select class="select floating" name="searchSelect" id="cboChedo">
+                            <option value="">ALL</option>
+                            <option value="TS">Thai Sản</option>
+                            <option value="KTS">Khác</option>
+                        </select>
+                        <label class="focus-label">Chế Độ</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                        <button id="btnSearchEx" type="submit" class="btn btn-success btn-block"> Search </button>
+                    </div>
+                </div>
+        </form>
+    </div>
+
     <!-- /Search Filter -->
     <div class="row">
         <div class="col-md-12">
