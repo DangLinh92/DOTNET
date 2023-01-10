@@ -132,11 +132,19 @@ namespace HRMNS.Application.ViewModels.EHS
 
         }
 
+
+        public string KeyKH 
+        {
+            get => MaKeHoach.ToString() + "$" + MaDeMuc.ToString() +"$"+ MaNoiDung.ToString();
+        }
+
         public Guid MaKeHoach { get; set; }
         public Guid MaDeMuc { get; set; }
         public Guid MaNoiDung { get; set; }
 
         public int OrderItem { get; set; }
+
+        public int STT { get; set; }
 
         public string TenDeMuc { get; set; }
         public string TenNoiDung { get; set; }

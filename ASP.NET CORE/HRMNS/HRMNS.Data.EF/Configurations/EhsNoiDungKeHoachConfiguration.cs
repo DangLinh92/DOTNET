@@ -23,6 +23,15 @@ namespace HRMNS.Data.EF.Configurations
         }
     }
 
+    public class EhsChiPhiByMonthConfiguration : DbEntityConfiguration<EHS_CHIPHI_BY_MONTH>
+    {
+        public override void Configure(EntityTypeBuilder<EHS_CHIPHI_BY_MONTH> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
+
     public class EventParentConfiguration : DbEntityConfiguration<EVENT_SHEDULE_PARENT>
     {
         public override void Configure(EntityTypeBuilder<EVENT_SHEDULE_PARENT> entity)

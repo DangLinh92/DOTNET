@@ -53,6 +53,9 @@
     <Folder Include="wwwroot\lib\mustache\test\spec\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="wwwroot\js\exportFile_devextreme\exceljs.min.js" />
+    <None Include="wwwroot\js\exportFile_devextreme\FileSaver.min.js" />
+    <None Include="wwwroot\js\exportFile_devextreme\polyfill.min.js" />
     <None Include="wwwroot\lib\mustache\.github\workflows\usage.yml" />
     <None Include="wwwroot\lib\mustache\.github\workflows\verify.yml" />
     <None Include="wwwroot\node_modules\devexpress-aspnetcore-spreadsheet\bin\localization-builder.js" />

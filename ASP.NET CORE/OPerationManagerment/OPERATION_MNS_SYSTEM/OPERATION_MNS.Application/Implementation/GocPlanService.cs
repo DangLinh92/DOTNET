@@ -6,6 +6,7 @@ using OPERATION_MNS.Application.ViewModels;
 using OPERATION_MNS.Data.EF.Extensions;
 using OPERATION_MNS.Data.Entities;
 using OPERATION_MNS.Infrastructure.Interfaces;
+using OPERATION_MNS.Utilities.Common;
 using OPERATION_MNS.Utilities.Constants;
 using OPERATION_MNS.Utilities.Dtos;
 using System;
@@ -303,7 +304,9 @@ namespace OPERATION_MNS.Application.Implementation
 
                         // lưu ngày không kế hoạch 
                         DATE_OFF_LINE dateOff;
+                        DATE_OFF_LINE dateOff2;
                         List<DATE_OFF_LINE> lstDateOff = new List<DATE_OFF_LINE>();
+                        List<DATE_OFF_LINE> lstDateOffWlp2 = new List<DATE_OFF_LINE>();
                         List<string> dayOff = new List<string>();
                         foreach (KeyValuePair<string, string> item in DayNoPlan)
                         {
@@ -316,17 +319,28 @@ namespace OPERATION_MNS.Application.Implementation
                                     WLP = "WLP1",
                                     UserCreated = GetUserId()
                                 };
+
+                                dateOff2 = new DATE_OFF_LINE()
+                                {
+                                    ItemValue = item.Key,
+                                    ON_OFF = CommonConstants.OFF,
+                                    WLP = "WLP2",
+                                    UserCreated = GetUserId()
+                                };
+
                                 lstDateOff.Add(dateOff);
+                                lstDateOffWlp2.Add(dateOff2);
                             }
                         }
 
-                        var lstOff = _DateOffLineRepository.FindAll(x => x.ItemValue.CompareTo(beginDate) >= 0 && x.ItemValue.CompareTo(EndDate) <= 0 && x.WLP == "WLP1").ToList();
+                        var lstOff = _DateOffLineRepository.FindAll(x => x.ItemValue.CompareTo(beginDate) >= 0 && x.ItemValue.CompareTo(EndDate) <= 0 && x.WLP.Contains("WLP")).ToList();
                         _DateOffLineRepository.RemoveMultiple(lstOff);
                         _DateOffLineRepository.AddRange(lstDateOff);
+                        _DateOffLineRepository.AddRange(lstDateOffWlp2);
                         dayOff = lstDateOff.Select(x => x.ItemValue.Replace("-", "")).ToList();
 
                         //TODO: THÊM DK CHO wlp = WLP1,WLP2 nếu k cùng date off
-                        var leadTimes = _LeadTimeRepository.FindAll(x => x.WorkDate.CompareTo(beginDate.Replace("-", "")) >= 0 && x.WorkDate.CompareTo(EndDate.Replace("-", "")) <= 0);
+                        var leadTimes = _LeadTimeRepository.FindAll(x => x.WorkDate.CompareTo(beginDate.Replace("-", "")) >= 0 && x.WorkDate.CompareTo(EndDate.Replace("-", "")) <= 0 && x.WLP.Contains("WLP"));
 
                         foreach (var item in leadTimes)
                         {
@@ -595,7 +609,7 @@ namespace OPERATION_MNS.Application.Implementation
 
                 plan.Total_Plan = unit == CommonConstants.CHIP ? (float)Math.Round(totalPlan / 1000, 0) : (float)Math.Round(totalPlan, 0);
                 plan.Total_Actual = unit == CommonConstants.CHIP ? (float)Math.Round(totalActual / 1000, 0) : (float)Math.Round(totalActual, 0);
-                plan.Total_Gap = plan.Total_Plan - plan.Total_Actual;//unit == CommonConstants.CHIP ? (float)Math.Round(totalGap / 1000, 0) : (float)Math.Round(totalGap, 0);
+                plan.Total_Gap =  - plan.Total_Plan + plan.Total_Actual;//unit == CommonConstants.CHIP ? (float)Math.Round(totalGap / 1000, 0) : (float)Math.Round(totalGap, 0);
 
                 lstResult.Add(plan);
             }
@@ -836,6 +850,7 @@ namespace OPERATION_MNS.Application.Implementation
             return data.OrderBy(x => int.Parse(x.DatePlan)).ToList();
         }
 
+        [Obsolete]
         public ViewControlChartDataModel GetDataControlChart(string date, string toDate, string operation, string mattertial)
         {
             ViewControlChartDataModel result = new ViewControlChartDataModel();
@@ -846,12 +861,19 @@ namespace OPERATION_MNS.Application.Implementation
             dic.Add("A_FROM_DATE", date);
             dic.Add("A_TO_DATE", toDate);
             dic.Add("A_MATERTIAL", mattertial);
+            List<double> AvgItem = new List<double>();
+            List<double> UslItem = new List<double>();
+            List<double> LslItem = new List<double>();
 
             ResultDB rs = _GocPlanRepository.ExecProceduce2("PKG_BUSINESS@VIEW_CONTROL_CHART_DATA", dic);
             if (rs.ReturnInt == 0)
             {
                 DataTable tbl = rs.ReturnDataSet.Tables[0];
                 DataTable tbl_Err = rs.ReturnDataSet.Tables[1];
+                DataTable tbl_MatertialId = rs.ReturnDataSet.Tables[2];
+
+              
+
                 foreach (DataRow row in tbl.Rows)
                 {
                     ViewControlChartModel model = new ViewControlChartModel();
@@ -912,6 +934,10 @@ namespace OPERATION_MNS.Application.Implementation
                     model.MAIN_RANGE = double.Parse(row["MAIN_RANGE"].IfNullIsZero());
                     model.MAIN_JUDGE_FLAG = row["MAIN_JUDGE_FLAG"].NullString();
                     chartModels.Add(model);
+
+                    AvgItem.Add(model.MAIN_AVG_VALUE);
+                    UslItem.Add(model.MAIN_TARGET_USL);
+                    LslItem.Add(model.MAIN_TARGET_LSL);
                 }
 
                 foreach (DataRow row in tbl_Err.Rows)
@@ -977,11 +1003,31 @@ namespace OPERATION_MNS.Application.Implementation
                     model.UWL = double.Parse(row["UWL"].IfNullIsZero());
                     chartModelsErr.Add(model);
                 }
+
+                foreach (DataRow row in tbl_MatertialId.Rows)
+                {
+                    result.lstMaterialId.Add(row["MATERIAL_ID"].NullString());
+                }
             }
 
             result.lstData = chartModels;
             result.lstDataErr = chartModelsErr;
 
+            double stdev = AvgItem.Count > 0 ? AvgItem.StdDev(false) : 0;
+
+            result.STDEV = Math.Round(stdev, 1);
+
+            if((operation == "OP50000" || operation == "OP69000") && AvgItem.Count  > 0 && LslItem.Count > 0 && stdev != 0)
+            {
+                result.CPK_bst = Math.Round((AvgItem.Average() - LslItem.Average()) / (3 * stdev), 1);
+            }
+
+            if ((operation == "OP37000" || operation == "OP49000" || operation == "OP57000" || operation == "OP65000" || operation == "OP64000")
+                && UslItem.Count > 0 && AvgItem.Count > 0 && LslItem.Count > 0 && stdev != 0)
+            {
+                result.CPK_Thickness = Math.Round(Math.MinMagnitude((UslItem.Average() - AvgItem.Average()) / (3 * stdev), (AvgItem.Average() - LslItem.Average()) / (3 * stdev)), 1);
+            }
+          
             return result;
         }
 
@@ -1015,6 +1061,11 @@ namespace OPERATION_MNS.Application.Implementation
         public CTQSettingViewModel GetCTQ_Id(int Id)
         {
             return _mapper.Map<CTQSettingViewModel>(_CTQ_SettingRepository.FindById(Id));
+        }
+
+       public List<string> DateOffLine(string year)
+        {
+           return _DateOffLineRepository.FindAll(x => x.ON_OFF == "OFF" && x.WLP == "WLP1" && x.ItemValue.StartsWith(year)).Select(x => x.ItemValue).ToList();
         }
     }
 }

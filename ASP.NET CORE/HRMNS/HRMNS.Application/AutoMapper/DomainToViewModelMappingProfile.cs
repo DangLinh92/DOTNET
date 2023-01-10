@@ -66,6 +66,7 @@ namespace HRMNS.Application.AutoMapper
             CreateMap<EVENT_SHEDULE_PARENT, EventScheduleParentViewModel>();
             CreateMap<EVENT_SHEDULE, EventSheduleViewModel>();
             CreateMap<HR_NHANVIEN_CHEDO_DB, NhanVienCheDoDBViewModel>();
+            CreateMap<EHS_CHIPHI_BY_MONTH, EhsChiPhiByMonthViewModel>();
         }
     }
 }

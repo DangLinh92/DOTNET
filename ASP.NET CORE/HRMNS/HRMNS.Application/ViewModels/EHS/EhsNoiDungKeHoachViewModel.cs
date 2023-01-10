@@ -83,6 +83,9 @@ namespace HRMNS.Application.ViewModels.EHS
 
         public double TienDoHoanThanh { get; set; } // 50%,100%
 
+        [StringLength(150)]
+        public string NguoiPhucTrach { get; set; }
+
         public EhsNoiDungViewModel EHS_NOIDUNG { get; set; }
     }
 }

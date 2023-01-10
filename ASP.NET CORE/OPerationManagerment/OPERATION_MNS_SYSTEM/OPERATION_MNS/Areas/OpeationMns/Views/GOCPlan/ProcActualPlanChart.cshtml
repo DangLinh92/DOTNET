@@ -3,6 +3,8 @@
 @{
     ViewData["Title"] = "Production Report";
     Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+
+  List<string> dayOffLine = ViewBag.dayOffLine;
 }
 
 @section Styles {
@@ -184,13 +186,13 @@
                                     <td style="background-color: #004e89;"></td>
                                     @for (int i = 1; i <= Model.FirstOrDefault(x => x.CFAB == "CHIP").DayOfMonth; i++)
                                     {
-                                        @if (DateTime.Parse(Model.FirstOrDefault()?.Month + "-" + i).DayOfWeek == DayOfWeek.Sunday)
+                                       @if (DateTime.Parse(Model.FirstOrDefault()?.Month + "-" + i).DayOfWeek == DayOfWeek.Sunday ||  dayOffLine.Contains(DateTime.Parse(Model.FirstOrDefault()?.Month + "-" + i).ToString("yyyy-MM-dd")))
                                         {
-                                            <td style="background-color: #004e89;color:red">@(i+ "일")</td>
+                                    <td style="background-color: #004e89;color:red">@(i+ "일")</td>
                                         }
                                         else
                                         {
-                                            <td style="background-color: #004e89;">@(i+ "일")</td>
+                                    <td style="background-color: #004e89;">@(i+ "일")</td>
                                         }
                                     }
                                 </tr>
@@ -201,7 +203,7 @@
                                     <td>Day</td>
                                     @foreach (var item in Model.FirstOrDefault(x => x.CFAB == "CHIP").QuantityByDays)
                                     {
-                                        <td>@item.QuantityPlan.ViewChipWf("CHIP").ChipWFFormat("N0")</td>
+                                    <td>@item.QuantityPlan.ViewChipWf("CHIP").ChipWFFormat("N0")</td>
                                     }
                                 </tr>
                                 <tr>
@@ -209,7 +211,7 @@
                                     <td>YTD</td>
                                     @foreach (var item in Model.FirstOrDefault(x => x.CFAB == "CHIP").QuantityByDays)
                                     {
-                                        <td>@item.QtyPlan_Ytd.ViewChipWf("CHIP").ChipWFFormat("N0")</td>
+                                    <td>@item.QtyPlan_Ytd.ViewChipWf("CHIP").ChipWFFormat("N0")</td>
                                     }
                                 </tr>
 
@@ -218,7 +220,7 @@
                                     <td>Day</td>
                                     @foreach (var item in Model.FirstOrDefault(x => x.CFAB == "CHIP").QuantityByDays)
                                     {
-                                        <td>@item.QuantityActual.ViewChipWf("CHIP").ChipWFFormat("N0")</td>
+                                    <td>@item.QuantityActual.ViewChipWf("CHIP").ChipWFFormat("N0")</td>
                                     }
                                 </tr>
                                 <tr>
@@ -226,7 +228,7 @@
                                     <td>YTD</td>
                                     @foreach (var item in Model.FirstOrDefault(x => x.CFAB == "CHIP").QuantityByDays)
                                     {
-                                        <td>@item.QtyActual_Ytd.ViewChipWf("CHIP").ChipWFFormat("N0")</td>
+                                    <td>@item.QtyActual_Ytd.ViewChipWf("CHIP").ChipWFFormat("N0")</td>
                                     }
                                 </tr>
 
@@ -235,7 +237,7 @@
                                     <td>Day</td>
                                     @foreach (var item in Model.FirstOrDefault(x => x.CFAB == "CHIP").QuantityByDays)
                                     {
-                                        <td style="color:@item.QuantityGap.ChipWFFormatColor()">@item.QuantityGap.ViewChipWf("CHIP").ChipWFFormat("N0")</td>
+                                    <td style="color:@item.QuantityGap.ChipWFFormatColor()">@item.QuantityGap.ViewChipWf("CHIP").ChipWFFormat("N0")</td>
                                     }
                                 </tr>
                                 <tr>
@@ -243,7 +245,7 @@
                                     <td>YTD</td>
                                     @foreach (var item in Model.FirstOrDefault(x => x.CFAB == "CHIP").QuantityByDays)
                                     {
-                                        <td style="color:@item.QtyGap_Ytd.ChipWFFormatColor()">@item.QtyGap_Ytd.ViewChipWf("CHIP").ChipWFFormat("N0")</td>
+                                    <td style="color:@item.QtyGap_Ytd.ChipWFFormatColor()">@item.QtyGap_Ytd.ViewChipWf("CHIP").ChipWFFormat("N0")</td>
                                     }
                                 </tr>
                             </tbody>
@@ -284,13 +286,13 @@
                                     <td style="background-color: #004e89;"></td>
                                     @for (int i = 1; i <= Model.FirstOrDefault(x => x.CFAB == "WAFER").DayOfMonth; i++)
                                     {
-                                        @if (DateTime.Parse(Model.FirstOrDefault()?.Month + "-" + i).DayOfWeek == DayOfWeek.Sunday)
+                                    @if (DateTime.Parse(Model.FirstOrDefault()?.Month + "-" + i).DayOfWeek == DayOfWeek.Sunday || dayOffLine.Contains(DateTime.Parse(Model.FirstOrDefault()?.Month + "-" + i).ToString("yyyy-MM-dd")))
                                         {
-                                            <td style="background-color: #004e89;color:red">@(i+ "일")</td>
+                                    <td style="background-color: #004e89;color:red">@(i+ "일")</td>
                                         }
                                         else
                                         {
-                                            <td style="background-color: #004e89;">@(i+ "일")</td>
+                                    <td style="background-color: #004e89;">@(i+ "일")</td>
                                         }
                                     }
                                 </tr>
@@ -301,7 +303,7 @@
                                     <td>Day</td>
                                     @foreach (var item in Model.FirstOrDefault(x => x.CFAB == "WAFER").QuantityByDays)
                                     {
-                                        <td>@item.QuantityPlan.ViewChipWf("WAFER").ChipWFFormat("N0")</td>
+                                    <td>@item.QuantityPlan.ViewChipWf("WAFER").ChipWFFormat("N0")</td>
                                     }
                                 </tr>
                                 <tr>
@@ -309,7 +311,7 @@
                                     <td>YTD</td>
                                     @foreach (var item in Model.FirstOrDefault(x => x.CFAB == "WAFER").QuantityByDays)
                                     {
-                                        <td>@item.QtyPlan_Ytd.ViewChipWf("WAFER").ChipWFFormat("N0")</td>
+                                    <td>@item.QtyPlan_Ytd.ViewChipWf("WAFER").ChipWFFormat("N0")</td>
                                     }
                                 </tr>
 
@@ -318,7 +320,7 @@
                                     <td>Day</td>
                                     @foreach (var item in Model.FirstOrDefault(x => x.CFAB == "WAFER").QuantityByDays)
                                     {
-                                        <td>@item.QuantityActual.ViewChipWf("WAFER").ChipWFFormat("N0")</td>
+                                    <td>@item.QuantityActual.ViewChipWf("WAFER").ChipWFFormat("N0")</td>
                                     }
                                 </tr>
                                 <tr>
@@ -326,7 +328,7 @@
                                     <td>YTD</td>
                                     @foreach (var item in Model.FirstOrDefault(x => x.CFAB == "WAFER").QuantityByDays)
                                     {
-                                        <td>@item.QtyActual_Ytd.ViewChipWf("WAFER").ChipWFFormat("N0")</td>
+                                    <td>@item.QtyActual_Ytd.ViewChipWf("WAFER").ChipWFFormat("N0")</td>
                                     }
                                 </tr>
 
@@ -335,7 +337,7 @@
                                     <td>Day</td>
                                     @foreach (var item in Model.FirstOrDefault(x => x.CFAB == "WAFER").QuantityByDays)
                                     {
-                                        <td style="color:@item.QuantityGap.ChipWFFormatColor()">@item.QuantityGap.ViewChipWf("WAFER").ChipWFFormat("N0")</td>
+                                    <td style="color:@item.QuantityGap.ChipWFFormatColor()">@item.QuantityGap.ViewChipWf("WAFER").ChipWFFormat("N0")</td>
                                     }
                                 </tr>
                                 <tr>
@@ -343,7 +345,7 @@
                                     <td>YTD</td>
                                     @foreach (var item in Model.FirstOrDefault(x => x.CFAB == "WAFER").QuantityByDays)
                                     {
-                                        <td style="color:@item.QtyGap_Ytd.ChipWFFormatColor()">@item.QtyGap_Ytd.ViewChipWf("WAFER").ChipWFFormat("N0")</td>
+                                    <td style="color:@item.QtyGap_Ytd.ChipWFFormatColor()">@item.QtyGap_Ytd.ViewChipWf("WAFER").ChipWFFormat("N0")</td>
                                     }
                                 </tr>
                             </tbody>
@@ -384,13 +386,13 @@
                                     <td style="background-color: #004e89;"></td>
                                     @for (int i = 1; i <= Model.FirstOrDefault(x => x.CFAB == "FAB_WLP1").DayOfMonth; i++)
                                     {
-                                        @if (DateTime.Parse(Model.FirstOrDefault()?.Month + "-" + i).DayOfWeek == DayOfWeek.Sunday)
+                                    @if (DateTime.Parse(Model.FirstOrDefault()?.Month + "-" + i).DayOfWeek == DayOfWeek.Sunday || dayOffLine.Contains(DateTime.Parse(Model.FirstOrDefault()?.Month + "-" + i).ToString("yyyy-MM-dd")))
                                         {
-                                            <td style="background-color: #004e89;color:red">@(i+ "일")</td>
+                                    <td style="background-color: #004e89;color:red">@(i+ "일")</td>
                                         }
                                         else
                                         {
-                                            <td style="background-color: #004e89;">@(i+ "일")</td>
+                                    <td style="background-color: #004e89;">@(i+ "일")</td>
                                         }
                                     }
                                 </tr>
@@ -401,7 +403,7 @@
                                     <td>Day</td>
                                     @foreach (var item in Model.FirstOrDefault(x => x.CFAB == "FAB_WLP1").QuantityByDays)
                                     {
-                                        <td>@item.QuantityPlan.ViewChipWf("FAB_WLP1").ChipWFFormat("N0")</td>
+                                    <td>@item.QuantityPlan.ViewChipWf("FAB_WLP1").ChipWFFormat("N0")</td>
                                     }
                                 </tr>
                                 <tr>
@@ -409,7 +411,7 @@
                                     <td>YTD</td>
                                     @foreach (var item in Model.FirstOrDefault(x => x.CFAB == "FAB_WLP1").QuantityByDays)
                                     {
-                                        <td>@item.QtyPlan_Ytd.ViewChipWf("FAB_WLP1").ChipWFFormat("N0")</td>
+                                    <td>@item.QtyPlan_Ytd.ViewChipWf("FAB_WLP1").ChipWFFormat("N0")</td>
                                     }
                                 </tr>
 
@@ -418,7 +420,7 @@
                                     <td>Day</td>
                                     @foreach (var item in Model.FirstOrDefault(x => x.CFAB == "FAB_WLP1").QuantityByDays)
                                     {
-                                        <td>@item.QuantityActual.ViewChipWf("FAB_WLP1").ChipWFFormat("N0")</td>
+                                    <td>@item.QuantityActual.ViewChipWf("FAB_WLP1").ChipWFFormat("N0")</td>
                                     }
                                 </tr>
                                 <tr>
@@ -426,7 +428,7 @@
                                     <td>YTD</td>
                                     @foreach (var item in Model.FirstOrDefault(x => x.CFAB == "FAB_WLP1").QuantityByDays)
                                     {
-                                        <td>@item.QtyActual_Ytd.ViewChipWf("FAB_WLP1").ChipWFFormat("N0")</td>
+                                    <td>@item.QtyActual_Ytd.ViewChipWf("FAB_WLP1").ChipWFFormat("N0")</td>
                                     }
                                 </tr>
 
@@ -435,7 +437,7 @@
                                     <td>Day</td>
                                     @foreach (var item in Model.FirstOrDefault(x => x.CFAB == "FAB_WLP1").QuantityByDays)
                                     {
-                                        <td style="color:@item.QuantityGap.ChipWFFormatColor()">@item.QuantityGap.ViewChipWf("FAB_WLP1").ChipWFFormat("N0")</td>
+                                    <td style="color:@item.QuantityGap.ChipWFFormatColor()">@item.QuantityGap.ViewChipWf("FAB_WLP1").ChipWFFormat("N0")</td>
                                     }
                                 </tr>
                                 <tr>
@@ -443,7 +445,7 @@
                                     <td>YTD</td>
                                     @foreach (var item in Model.FirstOrDefault(x => x.CFAB == "FAB_WLP1").QuantityByDays)
                                     {
-                                        <td style="color:@item.QtyGap_Ytd.ChipWFFormatColor()">@item.QtyGap_Ytd.ViewChipWf("FAB_WLP1").ChipWFFormat("N0")</td>
+                                    <td style="color:@item.QtyGap_Ytd.ChipWFFormatColor()">@item.QtyGap_Ytd.ViewChipWf("FAB_WLP1").ChipWFFormat("N0")</td>
 
                                     }
                                 </tr>

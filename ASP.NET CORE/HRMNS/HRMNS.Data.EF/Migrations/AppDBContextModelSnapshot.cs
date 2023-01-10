@@ -831,6 +831,83 @@ namespace HRMNS.Data.EF.Migrations
                     b.ToTable("DM_NGAY_LAMVIEC");
                 });
 
+            modelBuilder.Entity("HRMNS.Data.Entities.EHS_CHIPHI_BY_MONTH", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<double>("ChiPhi1")
+                        .HasColumnType("float");
+
+                    b.Property<double>("ChiPhi10")
+                        .HasColumnType("float");
+
+                    b.Property<double>("ChiPhi11")
+                        .HasColumnType("float");
+
+                    b.Property<double>("ChiPhi12")
+                        .HasColumnType("float");
+
+                    b.Property<double>("ChiPhi2")
+                        .HasColumnType("float");
+
+                    b.Property<double>("ChiPhi3")
+                        .HasColumnType("float");
+
+                    b.Property<double>("ChiPhi4")
+                        .HasColumnType("float");
+
+                    b.Property<double>("ChiPhi5")
+                        .HasColumnType("float");
+
+                    b.Property<double>("ChiPhi6")
+                        .HasColumnType("float");
+
+                    b.Property<double>("ChiPhi7")
+                        .HasColumnType("float");
+
+                    b.Property<double>("ChiPhi8")
+                        .HasColumnType("float");
+
+                    b.Property<double>("ChiPhi9")
+                        .HasColumnType("float");
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<Guid>("MaNoiDungKeHoach")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Month")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Year")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MaNoiDungKeHoach");
+
+                    b.ToTable("EHS_CHIPHI_BY_MONTH");
+                });
+
             modelBuilder.Entity("HRMNS.Data.Entities.EHS_DEMUC_KEHOACH", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1055,6 +1132,10 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("NgayThucHien")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
+
+                    b.Property<string>("NguoiPhucTrach")
+                        .HasColumnType("nvarchar(150)")
+                        .HasMaxLength(150);
 
                     b.Property<string>("NhaThau")
                         .HasColumnType("nvarchar(250)")
@@ -2940,6 +3021,15 @@ namespace HRMNS.Data.EF.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
                 });
 
+            modelBuilder.Entity("HRMNS.Data.Entities.EHS_CHIPHI_BY_MONTH", b =>
+                {
+                    b.HasOne("HRMNS.Data.Entities.EHS_NOIDUNG_KEHOACH", "EHS_NOIDUNG_KEHOACH")
+                        .WithMany("EHS_CHIPHI_BY_MONTH")
+                        .HasForeignKey("MaNoiDungKeHoach")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("HRMNS.Data.Entities.EHS_LUATDINH_DEMUC_KEHOACH", b =>
                 {
                     b.HasOne("HRMNS.Data.Entities.EHS_DEMUC_KEHOACH", "EHS_DEMUC_KEHOACH")
@@ -3076,7 +3166,7 @@ namespace HRMNS.Data.EF.Migrations
             modelBuilder.Entity("HRMNS.Data.Entities.HR_THAISAN_CONNHO", b =>
                 {
                     b.HasOne("HRMNS.Data.Entities.HR_NHANVIEN", "HR_NHANVIEN")
-                        .WithMany()
+                        .WithMany("HR_THAISAN_CONNHO")
                         .HasForeignKey("MaNV");
                 });
 

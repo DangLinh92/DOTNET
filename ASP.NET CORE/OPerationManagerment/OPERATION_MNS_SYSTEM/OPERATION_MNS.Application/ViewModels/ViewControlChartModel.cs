@@ -71,6 +71,7 @@ namespace OPERATION_MNS.Application.ViewModels
         {
             lstData = new List<ViewControlChartModel>();
             lstDataErr = new List<ViewControlChartModel>();
+            lstMaterialId = new List<string>();
         }
 
         //public string Year { get; set; }
@@ -83,7 +84,12 @@ namespace OPERATION_MNS.Application.ViewModels
         public string Operation { get; set; }
         public string MatertialID { get; set; }
 
+        public double STDEV { get; set; }
+        public double CPK_Thickness { get; set; }
+        public double CPK_bst { get; set; }
+
         public List<ViewControlChartModel> lstData { get; set; }
         public List<ViewControlChartModel> lstDataErr { get; set; }
+        public List<string> lstMaterialId { get; set; }
     }
 }

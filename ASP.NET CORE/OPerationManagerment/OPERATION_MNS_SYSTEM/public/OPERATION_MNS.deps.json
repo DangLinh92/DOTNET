@@ -303,7 +303,7 @@
           "System.Web": "4.0.0.0",
           "System.Web.HttpUtility": "4.0.2.0",
           "System.Windows": "4.0.0.0",
-          "System.Windows.Extensions": "4.0.1.0",
+          "System.Windows.Extensions.Reference": "4.0.1.0",
           "System.Xml": "4.0.0.0",
           "System.Xml.Linq": "4.0.0.0",
           "System.Xml.ReaderWriter.Reference": "4.2.2.0",
@@ -456,7 +456,7 @@
         "dependencies": {
           "DevExpress.Data": "21.2.7",
           "NETStandard.Library": "2.0.3",
-          "System.CodeDom": "4.4.0"
+          "System.CodeDom": "4.7.0"
         },
         "runtime": {
           "lib/netstandard2.0/DevExpress.CodeParser.v21.2.dll": {
@@ -473,7 +473,7 @@
           "Microsoft.Win32.Registry": "4.7.0",
           "NETStandard.Library": "2.0.3",
           "System.ComponentModel.Annotations": "4.7.0",
-          "System.Configuration.ConfigurationManager": "4.5.0",
+          "System.Configuration.ConfigurationManager": "4.7.0",
           "System.Diagnostics.PerformanceCounter": "4.5.0",
           "System.Drawing.Common": "5.0.2",
           "System.Reflection.Emit": "4.7.0",
@@ -499,7 +499,7 @@
           "DevExpress.RichEdit.Core": "21.2.7",
           "DevExpress.Xpo": "21.2.7",
           "NETStandard.Library": "2.0.3",
-          "System.Configuration.ConfigurationManager": "4.5.0",
+          "System.Configuration.ConfigurationManager": "4.7.0",
           "System.Data.SqlClient": "4.8.3",
           "System.Drawing.Common": "5.0.2",
           "System.Reflection.Emit": "4.7.0"
@@ -752,6 +752,29 @@
           "lib/netstandard2.0/DevExtreme.AspNet.Data.dll": {}
         }
       },
+      "EntityFramework/6.4.4": {
+        "dependencies": {
+          "Microsoft.CSharp": "4.7.0",
+          "System.CodeDom": "4.7.0",
+          "System.ComponentModel.Annotations": "4.7.0",
+          "System.Configuration.ConfigurationManager": "4.7.0",
+          "System.Data.SqlClient": "4.8.3"
+        },
+        "runtime": {
+          "lib/netstandard2.1/EntityFramework.SqlServer.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.400.420.21404"
+          },
+          "lib/netstandard2.1/EntityFramework.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.400.420.21404"
+          }
+        },
+        "compile": {
+          "lib/netstandard2.1/EntityFramework.SqlServer.dll": {},
+          "lib/netstandard2.1/EntityFramework.dll": {}
+        }
+      },
       "EPPlus.Core/1.5.4": {
         "dependencies": {
           "System.Collections.NonGeneric": "4.3.0",
@@ -788,7 +811,7 @@
           "System.Reflection.Emit": "4.7.0",
           "System.Reflection.Emit.ILGeneration": "4.7.0",
           "System.Security.Cryptography.Pkcs": "6.0.1",
-          "System.Security.Permissions": "4.5.0",
+          "System.Security.Permissions": "4.7.0",
           "System.Text.Encoding.CodePages": "5.0.0"
         },
         "runtime": {
@@ -1494,7 +1517,7 @@
           "Microsoft.IdentityModel.JsonWebTokens": "5.5.0",
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "5.5.0",
           "Microsoft.Win32.Registry": "4.7.0",
-          "System.Configuration.ConfigurationManager": "4.5.0",
+          "System.Configuration.ConfigurationManager": "4.7.0",
           "System.Runtime.Caching": "4.5.0",
           "System.Security.Principal.Windows": "4.7.0",
           "System.Text.Encoding.CodePages": "5.0.0",
@@ -2523,11 +2546,11 @@
         }
       },
       "System.Buffers/4.5.1": {},
-      "System.CodeDom/4.4.0": {
+      "System.CodeDom/4.7.0": {
         "runtime": {
           "lib/netstandard2.0/System.CodeDom.dll": {
-            "assemblyVersion": "4.0.0.0",
-            "fileVersion": "4.6.25519.3"
+            "assemblyVersion": "4.0.3.0",
+            "fileVersion": "4.700.19.56404"
           }
         },
         "compile": {
@@ -2746,15 +2769,15 @@
           "lib/netstandard1.0/System.Composition.TypedParts.dll": {}
         }
       },
-      "System.Configuration.ConfigurationManager/4.5.0": {
+      "System.Configuration.ConfigurationManager/4.7.0": {
         "dependencies": {
-          "System.Security.Cryptography.ProtectedData": "4.5.0",
-          "System.Security.Permissions": "4.5.0"
+          "System.Security.Cryptography.ProtectedData": "4.7.0",
+          "System.Security.Permissions": "4.7.0"
         },
         "runtime": {
           "lib/netstandard2.0/System.Configuration.ConfigurationManager.dll": {
-            "assemblyVersion": "4.0.1.0",
-            "fileVersion": "4.6.26515.6"
+            "assemblyVersion": "4.0.3.0",
+            "fileVersion": "4.700.19.56404"
           }
         },
         "compile": {
@@ -2829,7 +2852,7 @@
         "dependencies": {
           "Microsoft.NETCore.Platforms": "5.0.0",
           "Microsoft.Win32.Registry": "4.7.0",
-          "System.Configuration.ConfigurationManager": "4.5.0",
+          "System.Configuration.ConfigurationManager": "4.7.0",
           "System.Security.Principal.Windows": "4.7.0"
         },
         "runtime": {
@@ -3169,7 +3192,7 @@
       "System.Runtime.Caching/4.5.0": {
         "dependencies": {
           "Microsoft.NETCore.Platforms": "5.0.0",
-          "System.Configuration.ConfigurationManager": "4.5.0"
+          "System.Configuration.ConfigurationManager": "4.7.0"
         },
         "runtime": {
           "lib/netstandard2.0/System.Runtime.Caching.dll": {
@@ -3409,19 +3432,19 @@
           "System.Threading.Tasks": "4.3.0"
         }
       },
-      "System.Security.Cryptography.ProtectedData/4.5.0": {
+      "System.Security.Cryptography.ProtectedData/4.7.0": {
         "runtime": {
           "lib/netstandard2.0/System.Security.Cryptography.ProtectedData.dll": {
-            "assemblyVersion": "4.0.3.0",
-            "fileVersion": "4.6.26515.6"
+            "assemblyVersion": "4.0.5.0",
+            "fileVersion": "4.700.19.56404"
           }
         },
         "runtimeTargets": {
           "runtimes/win/lib/netstandard2.0/System.Security.Cryptography.ProtectedData.dll": {
             "rid": "win",
             "assetType": "runtime",
-            "assemblyVersion": "4.0.3.0",
-            "fileVersion": "4.6.26515.6"
+            "assemblyVersion": "4.0.5.0",
+            "fileVersion": "4.700.19.56404"
           }
         }
       },
@@ -3457,12 +3480,13 @@
       "System.Security.Cryptography.Xml/4.5.0": {
         "dependencies": {
           "System.Security.Cryptography.Pkcs": "6.0.1",
-          "System.Security.Permissions": "4.5.0"
+          "System.Security.Permissions": "4.7.0"
         }
       },
-      "System.Security.Permissions/4.5.0": {
+      "System.Security.Permissions/4.7.0": {
         "dependencies": {
-          "System.Security.AccessControl": "4.7.0"
+          "System.Security.AccessControl": "4.7.0",
+          "System.Windows.Extensions": "4.7.0"
         }
       },
       "System.Security.Principal/4.3.0": {
@@ -3622,6 +3646,11 @@
           "Microsoft.NETCore.Platforms": "5.0.0",
           "Microsoft.NETCore.Targets": "1.1.0",
           "System.Runtime": "4.3.0"
+        }
+      },
+      "System.Windows.Extensions/4.7.0": {
+        "dependencies": {
+          "System.Drawing.Common": "5.0.2"
         }
       },
       "System.Xml.ReaderWriter/4.3.0": {
@@ -3799,6 +3828,7 @@
         "dependencies": {
           "AutoMapper": "9.0.0",
           "EPPlus.Core": "1.5.4",
+          "EntityFramework": "6.4.4",
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "OPERATION_MNS.Data": "1.0.0",
           "OPERATION_MNS.Data.EF": "1.0.0",
@@ -5345,7 +5375,7 @@
         },
         "compileOnly": true
       },
-      "System.Windows.Extensions/4.0.1.0": {
+      "System.Windows.Extensions.Reference/4.0.1.0": {
         "compile": {
           "System.Windows.Extensions.dll": {}
         },
@@ -5586,6 +5616,13 @@
       "sha512": "sha512-i1yihftbQALysX/Sh5rm4XFVRKPXKwHcmfH8esD0fTH+RTPGpMmIUoYOg2oAAOxqJsi/F5IQ8Gkp60lDzOigRA==",
       "path": "devextreme.aspnet.data/2.8.6",
       "hashPath": "devextreme.aspnet.data.2.8.6.nupkg.sha512"
+    },
+    "EntityFramework/6.4.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-yj1+/4tci7Panu3jKDHYizxwVm0Jvm7b7m057b5h4u8NUHGCR8WIWirBTw+8EptRffwftIWPBeIRGNKD1ewEMQ==",
+      "path": "entityframework/6.4.4",
+      "hashPath": "entityframework.6.4.4.nupkg.sha512"
     },
     "EPPlus.Core/1.5.4": {
       "type": "package",
@@ -6637,12 +6674,12 @@
       "path": "system.buffers/4.5.1",
       "hashPath": "system.buffers.4.5.1.nupkg.sha512"
     },
-    "System.CodeDom/4.4.0": {
+    "System.CodeDom/4.7.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-2sCCb7doXEwtYAbqzbF/8UAeDRMNmPaQbU2q50Psg1J9KzumyVVCgKQY8s53WIPTufNT0DpSe9QRvVjOzfDWBA==",
-      "path": "system.codedom/4.4.0",
-      "hashPath": "system.codedom.4.4.0.nupkg.sha512"
+      "sha512": "sha512-Hs9pw/kmvH3lXaZ1LFKj3pLQsiGfj2xo3sxSzwiLlRL6UcMZUTeCfoJ9Udalvn3yq5dLlPEZzYegrTQ1/LhPOQ==",
+      "path": "system.codedom/4.7.0",
+      "hashPath": "system.codedom.4.7.0.nupkg.sha512"
     },
     "System.Collections/4.3.0": {
       "type": "package",
@@ -6749,12 +6786,12 @@
       "path": "system.composition.typedparts/1.0.31",
       "hashPath": "system.composition.typedparts.1.0.31.nupkg.sha512"
     },
-    "System.Configuration.ConfigurationManager/4.5.0": {
+    "System.Configuration.ConfigurationManager/4.7.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-UIFvaFfuKhLr9u5tWMxmVoDPkFeD+Qv8gUuap4aZgVGYSYMdERck4OhLN/2gulAc0nYTEigWXSJNNWshrmxnng==",
-      "path": "system.configuration.configurationmanager/4.5.0",
-      "hashPath": "system.configuration.configurationmanager.4.5.0.nupkg.sha512"
+      "sha512": "sha512-/anOTeSZCNNI2zDilogWrZ8pNqCmYbzGNexUnNhjW8k0sHqEZ2nHJBp147jBV3hGYswu5lINpNg1vxR7bnqvVA==",
+      "path": "system.configuration.configurationmanager/4.7.0",
+      "hashPath": "system.configuration.configurationmanager.4.7.0.nupkg.sha512"
     },
     "System.Data.Common/4.3.0": {
       "type": "package",
@@ -7141,12 +7178,12 @@
       "path": "system.security.cryptography.primitives/4.3.0",
       "hashPath": "system.security.cryptography.primitives.4.3.0.nupkg.sha512"
     },
-    "System.Security.Cryptography.ProtectedData/4.5.0": {
+    "System.Security.Cryptography.ProtectedData/4.7.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-wLBKzFnDCxP12VL9ANydSYhk59fC4cvOr9ypYQLPnAj48NQIhqnjdD2yhP8yEKyBJEjERWS9DisKL7rX5eU25Q==",
-      "path": "system.security.cryptography.protecteddata/4.5.0",
-      "hashPath": "system.security.cryptography.protecteddata.4.5.0.nupkg.sha512"
+      "sha512": "sha512-ehYW0m9ptxpGWvE4zgqongBVWpSDU/JCFD4K7krxkQwSz/sFQjEXCUqpvencjy6DYDbn7Ig09R8GFffu8TtneQ==",
+      "path": "system.security.cryptography.protecteddata/4.7.0",
+      "hashPath": "system.security.cryptography.protecteddata.4.7.0.nupkg.sha512"
     },
     "System.Security.Cryptography.X509Certificates/4.3.0": {
       "type": "package",
@@ -7162,12 +7199,12 @@
       "path": "system.security.cryptography.xml/4.5.0",
       "hashPath": "system.security.cryptography.xml.4.5.0.nupkg.sha512"
     },
-    "System.Security.Permissions/4.5.0": {
+    "System.Security.Permissions/4.7.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-9gdyuARhUR7H+p5CjyUB/zPk7/Xut3wUSP8NJQB6iZr8L3XUXTMdoLeVAg9N4rqF8oIpE7MpdqHdDHQ7XgJe0g==",
-      "path": "system.security.permissions/4.5.0",
-      "hashPath": "system.security.permissions.4.5.0.nupkg.sha512"
+      "sha512": "sha512-dkOV6YYVBnYRa15/yv004eCGRBVADXw8qRbbNiCn/XpdJSUXkkUeIvdvFHkvnko4CdKMqG8yRHC4ox83LSlMsQ==",
+      "path": "system.security.permissions/4.7.0",
+      "hashPath": "system.security.permissions.4.7.0.nupkg.sha512"
     },
     "System.Security.Principal/4.3.0": {
       "type": "package",
@@ -7301,6 +7338,13 @@
       "sha512": "sha512-saGfUV8uqVW6LeURiqxcGhZ24PzuRNaUBtbhVeuUAvky1naH395A/1nY0P2bWvrw/BreRtIB/EzTDkGBpqCwEw==",
       "path": "system.threading.timer/4.0.1",
       "hashPath": "system.threading.timer.4.0.1.nupkg.sha512"
+    },
+    "System.Windows.Extensions/4.7.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-CeWTdRNfRaSh0pm2gDTJFwVaXfTq6Xwv/sA887iwPTneW7oMtMlpvDIO+U60+3GWTB7Aom6oQwv5VZVUhQRdPQ==",
+      "path": "system.windows.extensions/4.7.0",
+      "hashPath": "system.windows.extensions.4.7.0.nupkg.sha512"
     },
     "System.Xml.ReaderWriter/4.3.0": {
       "type": "package",
@@ -8627,7 +8671,7 @@
       "serviceable": false,
       "sha512": ""
     },
-    "System.Windows.Extensions/4.0.1.0": {
+    "System.Windows.Extensions.Reference/4.0.1.0": {
       "type": "referenceassembly",
       "serviceable": false,
       "sha512": ""

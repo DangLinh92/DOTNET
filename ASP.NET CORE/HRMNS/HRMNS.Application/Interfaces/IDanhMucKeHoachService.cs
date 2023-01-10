@@ -27,7 +27,7 @@ namespace HRMNS.Application.Interfaces
         Guid UpdateLuatDinhDeMucKeHoach(Guid maDemuc,string luatDinh);
         EhsLuatDinhDeMucKeHoachViewModel DeleteLuatDinhDemucKeHoach(int id);
 
-        List<EhsNoiDungViewModel> GetNoiDungByKeHoach(Guid maKeHoach);
+        List<EhsNoiDungViewModel> GetNoiDungByKeHoach(Guid maKeHoach,string year);
         Guid UpdateNoiDung(Guid maNoiDung,string noidung);
         Guid DeleteNoiDung(Guid maNoiDung);
         string GetNoiDungKeHoach(Guid maNoiDung);

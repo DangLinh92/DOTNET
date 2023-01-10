@@ -149,7 +149,7 @@
                                 scrollX: true,
                                 scrollCollapse: true,
                                 paging: false,
-                                "order": [5, 'desc']
+                                "order": [5, 'asc']
                             });
                             $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search.');
                             $('select[name="noiDungChiTietDataTable_length"]').removeClass('form-control-sm');
@@ -220,6 +220,17 @@
             //$('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search.');
             //$('select[name="noiDungChiTietDataTable_length"]').removeClass('form-control-sm');
         });
+
+        $('#_txtYear').datetimepicker({
+            format: 'YYYY',
+            icons:
+            {
+                up: "fa fa-angle-up",
+                down: "fa fa-angle-down",
+                next: 'fa fa-angle-right',
+                previous: 'fa fa-angle-left'
+            }
+        });
     </script>
 }
 
@@ -236,6 +247,7 @@
         tr.row_selected td {
             background-color: #ffebda !important;
         }
+
     </style>
 }
 
@@ -284,9 +296,13 @@
                 <button type="button" class="btn btn-primary dropdown-toggle" id="btnImport" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Đề Mục Kế Hoạch</button>
                 <div class="dropdown-menu" style="">
                     <a class="dropdown-item" href="~/templates/DeMucKH_NoiDungTemplate.xlsx">File mẫu import đề mục</a>
-                    <a class="dropdown-item" href="#" id="btn-importDemuc">Import đề mục kế hoạch</a>
                     <a class="dropdown-item" href="#" id="btn-getFileNoiDung">File mẫu import nội dung chi tiết</a>
+                    <a class="dropdown-item" href="#" id="btn-importDemuc">Import đề mục kế hoạch</a>
                     <a class="dropdown-item" href="#" id="btn-importNoiDung">Import nội dung chi tiết</a>
+                </div>
+                <div class="form-group form-focus select-focus" style="margin-left:10px">
+                    <div class="cal-icon"><input id="_txtYear" class="form-control datetimepicker" name="year" type="text"></div>
+                    <label for="_txtYear" class="focus-label">Year</label>
                 </div>
             </div>
             <div class="m-b-30 table-responsive" style="margin-top:20px;">

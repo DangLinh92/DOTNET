@@ -30,7 +30,7 @@ namespace HRMS.Areas.Admin.Controllers
 
         public IActionResult Index()
         {
-            var model = _danhMucKeHoachService.TongHopKeHoachByYear("2022");
+            var model = _danhMucKeHoachService.TongHopKeHoachByYear("2023");
             return View(model);
         }
 

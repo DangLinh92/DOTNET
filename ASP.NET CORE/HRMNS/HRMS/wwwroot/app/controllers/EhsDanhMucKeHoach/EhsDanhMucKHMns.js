@@ -398,12 +398,13 @@
 
             e.preventDefault();
             var maKH = $('.roles-menu>ul li.active').data('val');
-
+            let _year = $('#_txtYear').val();
             $.ajax({
                 url: '/admin/EhsDanhMucKeHoach/GetFileNoiDungChiTiet',
                 type: 'POST',
                 data: {
-                    maKeHoach: maKH
+                    maKeHoach: maKH,
+                    year: _year
                 },
                 success: function (url) {
                     window.location.href = url;

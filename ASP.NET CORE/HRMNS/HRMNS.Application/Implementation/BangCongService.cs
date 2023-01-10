@@ -355,8 +355,6 @@ namespace HRMNS.Application.Implementation
 
                     deNghiLamThemGios.Clear();
 
-
-
                     // thoi gian bat dau , ket thuc ngay thuong ca ngay.
                     string beginTimeCaNgay = _calaviecRespository.FindSingle(x => x.Danhmuc_CaLviec == "CN_WHC" && x.DM_NgayLViec == "NT" && x.HeSo_OT == 100).Time_BatDau;
                     string endTimeCaNgay = _calaviecRespository.FindSingle(x => x.Danhmuc_CaLviec == "CN_WHC" && x.DM_NgayLViec == "NT" && x.HeSo_OT == 100).Time_KetThuc;
@@ -1269,12 +1267,13 @@ namespace HRMNS.Application.Implementation
                                                 else if (_chamCongLog.FirstIn.NullString() == "" && _chamCongLog.LastOut.NullString() == "")
                                                 {
                                                     int checkDate = CheckNgayDB(dateCheck, _caLamViec.MaCaLaviec);
-                                                    if (checkDate == 1 || checkDate == 4 || checkDate == 5) // ngay le, nghi bu,ngay db
+
+                                                    if (checkDate == 1)
                                                     {
                                                         item.WorkingStatuses.Add(new WorkingStatus()
                                                         {
                                                             DayCheck = dateCheck,
-                                                            Value = kyhieuChamCongDB.NullString() == "" ? "PD" : kyhieuChamCongDB.NullString()
+                                                            Value = kyhieuChamCongDB.NullString() == "" ? "NH" : kyhieuChamCongDB.NullString() // NH: NationALHoliday/ Nghỉ lễ
                                                         });
                                                     }
                                                     else
@@ -1285,6 +1284,7 @@ namespace HRMNS.Application.Implementation
                                                             Value = kyhieuChamCongDB.NullString() == "" ? "-" : kyhieuChamCongDB.NullString()
                                                         });
                                                     }
+
                                                     double ELLC = 0;
                                                     var dmvs = DANGKY_DIMUON_VSOM_NHANVIENs.FirstOrDefault(x => x.MaNV == item.MaNV && x.NgayDangKy == dateCheck);
                                                     if (dmvs != null)
@@ -1301,12 +1301,13 @@ namespace HRMNS.Application.Implementation
                                                 else if (_chamCongLog.FirstIn.NullString() == "" && _chamCongLog.LastOut.NullString() != "")
                                                 {
                                                     int checkDate = CheckNgayDB(dateCheck, _caLamViec.MaCaLaviec);
-                                                    if (checkDate == 1 || checkDate == 4 || checkDate == 5) // ngay le, nghi bu,ngay db
+
+                                                    if (checkDate == 1)
                                                     {
                                                         item.WorkingStatuses.Add(new WorkingStatus()
                                                         {
                                                             DayCheck = dateCheck,
-                                                            Value = kyhieuChamCongDB.NullString() == "" ? "PD" : kyhieuChamCongDB.NullString()
+                                                            Value = kyhieuChamCongDB.NullString() == "" ? "NH" : kyhieuChamCongDB.NullString() // NH: NationALHoliday/ Nghỉ lễ
                                                         });
                                                     }
                                                     else
@@ -2117,7 +2118,7 @@ namespace HRMNS.Application.Implementation
                                                             item.WorkingStatuses.Add(new WorkingStatus()
                                                             {
                                                                 DayCheck = dateCheck,
-                                                                Value = kyhieuChamCongDB.NullString() == "" ? "DS" : kyhieuChamCongDB.NullString()
+                                                                Value = kyhieuChamCongDB.NullString() == "" ? "-" : kyhieuChamCongDB.NullString()
                                                             });
                                                         }
                                                     }
@@ -2173,7 +2174,7 @@ namespace HRMNS.Application.Implementation
                                                             item.WorkingStatuses.Add(new WorkingStatus()
                                                             {
                                                                 DayCheck = dateCheck,
-                                                                Value = kyhieuChamCongDB.NullString() == "" ? "DS" : kyhieuChamCongDB.NullString()
+                                                                Value = kyhieuChamCongDB.NullString() == "" ? "-" : kyhieuChamCongDB.NullString()
                                                             });
                                                         }
                                                     }

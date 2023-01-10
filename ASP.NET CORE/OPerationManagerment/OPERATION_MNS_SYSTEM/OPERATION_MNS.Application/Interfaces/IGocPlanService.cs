@@ -11,6 +11,8 @@ namespace OPERATION_MNS.Application.Interfaces
         void Add(GocPlanViewModel model);
 
         List<GocPlanViewModel> GetAll();
+        List<string> DateOffLine(string year);
+
         List<GocPlanViewModelEx> GetByTime(string unit,string fromDate,string toDate);
         List<GocPlanViewModelEx> GetByTime_fab(string unit,string fromDate,string toDate);
 

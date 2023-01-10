@@ -2,6 +2,7 @@
 @model List<GocPlanViewModelEx>
 @{
     List<string> daysSearch = ViewBag.daysSearch;
+    List<string> daysOff = ViewBag.dayOff;
 }
 
 <table class="table table-bordered mb-0 custom-table datatable" id="gocPlanDataTable">
@@ -15,7 +16,7 @@
                     {
                         var dayOfWeek = _dateCheck.DayOfWeek.ToString().Substring(0, 3);
 
-                        if (dayOfWeek == "Sun")
+                        if (dayOfWeek == "Sun" || daysOff.Contains(item))
                         {
                             <th class="text-danger">
                                 @dayOfWeek
@@ -83,7 +84,14 @@
                             <td>@item.Total_Actual.ToString("N0")</td>
                         </tr>
                         <tr>
-                            <td>@item.Total_Gap.ToString("N0")</td>
+                            @if (item.Total_Gap < 0)
+                            {
+                                <td style="color:red">@item.Total_Gap.ToString("N0")</td>
+                            }
+                            else
+                            {
+                                <td style="color: blue">@item.Total_Gap.ToString("N0")</td>
+                            }
                         </tr>
                     </table>
                 </td>

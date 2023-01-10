@@ -7,6 +7,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using HRMNS.Application.Interfaces;
 using HRMNS.Application.ViewModels.EHS;
+using HRMNS.Data.EF.Extensions;
 using HRMNS.Utilities.Common;
 using HRMNS.Utilities.Constants;
 using HRMNS.Utilities.Dtos;
@@ -141,7 +142,7 @@ namespace HRMS.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult GetNoiDungChiTiet(string maNoiDung)
         {
-            var lstNoiDung = _danhMucKeHoachService.GetNoiDungKeHoachByMaNoiDung(maNoiDung);
+            var lstNoiDung = _danhMucKeHoachService.GetNoiDungKeHoachByMaNoiDung(maNoiDung).OrderBy(x=>x.NgayThucHien).ToList();
             return new OkObjectResult(lstNoiDung);
         }
 
@@ -249,9 +250,9 @@ namespace HRMS.Areas.Admin.Controllers
 
 
         [HttpPost]
-        public IActionResult GetFileNoiDungChiTiet(string maKeHoach)
+        public IActionResult GetFileNoiDungChiTiet(string maKeHoach, string year)
         {
-            var lstND = _danhMucKeHoachService.GetNoiDungByKeHoach(Guid.Parse(maKeHoach));
+            var lstND = _danhMucKeHoachService.GetNoiDungByKeHoach(Guid.Parse(maKeHoach), year).OrderBy(x => x.MaDeMucKH).ToList();
 
             if (lstND == null || lstND.Count == 0)
                 return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
@@ -282,17 +283,53 @@ namespace HRMS.Areas.Admin.Controllers
                 // add a new worksheet to the empty workbook
                 ExcelWorksheet worksheet = package.Workbook.Worksheets["NoiDungChiTiet"];
 
+                int start = 0;
+                List<EhsNoiDungKeHoachViewModel> lstKeHoach = new List<EhsNoiDungKeHoachViewModel>();
                 for (int i = 0; i < lstND.Count; i++)
                 {
-                    if (i < lstND.Count - 1)
+                    if (lstND[i].EHS_NOIDUNG_KEHOACH.Count > 0)
                     {
-                        worksheet.Cells["A2:M2"].Copy(worksheet.Cells["A" + (i + 3) + ":M" + (i + 3)]);
+                        for (int j = 0; j < lstND[i].EHS_NOIDUNG_KEHOACH.Count; j++)
+                        {
+                            lstKeHoach = lstND[i].EHS_NOIDUNG_KEHOACH.ToList();
+                            start += 1;
+
+                            worksheet.Cells["A2:S2"].Copy(worksheet.Cells["A" + (start + 2) + ":S" + (start + 2)]);
+
+                            worksheet.Cells["A" + (start + 2)].Value = lstKeHoach[j].Id.NullString();
+                            worksheet.Cells["B" + (start + 2)].Value = lstND[i].Id.NullString();
+                            worksheet.Cells["C" + (start + 2)].Value = lstND[i].NoiDung.NullString();
+
+                            worksheet.Cells["D" + (start + 2)].Value = lstKeHoach[j].NhaThau.NullString();
+                            worksheet.Cells["E" + (start + 2)].Value = lstKeHoach[j].ChuKy.NullString().Contains("_") ? lstKeHoach[j].ChuKy.ToString().Split("_")[0] : "";
+                            worksheet.Cells["F" + (start + 2)].Value = lstKeHoach[j].ChuKy.NullString().Contains("_") ? lstKeHoach[j].ChuKy.ToString().Split("_")[1] : "";
+                            worksheet.Cells["G" + (start + 2)].Value = lstKeHoach[j].MaHieuMayKiemTra.NullString();
+                            worksheet.Cells["H" + (start + 2)].Value = lstKeHoach[j].SoLuong;
+                            worksheet.Cells["I" + (start + 2)].Value = lstKeHoach[j].ViTri.NullString();
+                            worksheet.Cells["J" + (start + 2)].Value = lstKeHoach[j].NgayThucHien.NullString();
+                            worksheet.Cells["K" + (start + 2)].Value = lstKeHoach[j].ThoiGian_ThucHien.NullString();
+                            worksheet.Cells["L" + (start + 2)].Value = lstKeHoach[j].YeuCau.NullString();
+                            worksheet.Cells["M" + (start + 2)].Value = lstKeHoach[j].NgayKhaiBaoThietBi.NullString();
+                            worksheet.Cells["N" + (start + 2)].Value = lstKeHoach[j].ThoiGianThongBao.NullString().Contains("_") ? lstKeHoach[j].ThoiGianThongBao.NullString().Split("_")[0] : "" ;
+                            worksheet.Cells["O" + (start + 2)].Value = lstKeHoach[j].ThoiGianThongBao.NullString().Contains("_") ? lstKeHoach[j].ThoiGianThongBao.NullString().Split("_")[1] : "";
+                            worksheet.Cells["P" + (start + 2)].Value = lstKeHoach[j].TienDoHoanThanh.NullString();
+                            worksheet.Cells["Q" + (start + 2)].Value = lstKeHoach[j].SoTien;
+                            worksheet.Cells["R" + (start + 2)].Value = lstKeHoach[j].KetQua.NullString();
+                            worksheet.Cells["S" + (start + 2)].Value = lstKeHoach[j].NguoiPhucTrach.NullString();
+                        }
                     }
+                    else
+                    {
+                        start += 1;
 
-                    worksheet.Cells["A" + (i + 2)].Value = lstND[i].Id.ToString();
-                    worksheet.Cells["B" + (i + 2)].Value = lstND[i].NoiDung.ToString();
+                        worksheet.Cells["A2:S2"].Copy(worksheet.Cells["A" + (start + 2) + ":S" + (start + 2)]);
+
+                        worksheet.Cells["A" + (start + 2)].Value = "";
+                        worksheet.Cells["B" + (start + 2)].Value = lstND[i].Id.NullString();
+                        worksheet.Cells["C" + (start + 2)].Value = lstND[i].NoiDung.NullString();
+                    }
                 }
-
+                worksheet.DeleteRow(2); // xoa row 2
                 package.Save(); //Save the workbook.
             }
             return new OkObjectResult(fileUrl);

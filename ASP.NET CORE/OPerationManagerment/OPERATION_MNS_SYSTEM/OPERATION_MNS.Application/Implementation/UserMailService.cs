@@ -36,15 +36,7 @@ namespace OPERATION_MNS.Application.Implementation
 
         public List<CTQEmailReceivViewModel> GetListMail()
         {
-            string dept = GetDepartment();
-            if(dept == "")
-            {
-                return _mapper.Map<List<CTQEmailReceivViewModel>>(_UserMailRepository.FindAll());
-            }
-            else
-            {
-                return _mapper.Map<List<CTQEmailReceivViewModel>>(_UserMailRepository.FindAll(x => x.Department == dept));
-            }
+            return _mapper.Map<List<CTQEmailReceivViewModel>>(_UserMailRepository.FindAll());
         }
 
         // update

@@ -1,7 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Authorization
 @using HRMS.Authorization
 @inject IAuthorizationService AuthorizationService
-@model List<TongHopKeHoachViewModel>
+@model TongHopKeHoachALL
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
@@ -11,61 +11,153 @@
     <script src="https://cdn.datatables.net/fixedcolumns/4.0.2/js/dataTables.fixedColumns.min.js"></script>
     <script src="https://cdn.datatables.net/fixedheader/3.2.2/js/dataTables.fixedHeader.min.js"></script>
     <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
-
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
     <script>
         var deparment = JSON.parse('@Html.Raw(JsonSerializer.Serialize(User.FindFirst(x=>x.Type == "Deparment").Value+""))');
         var roleUsers = JSON.parse('@Html.Raw(JsonSerializer.Serialize(User.FindFirst(x => x.Type == "Roles").Value + ""))');
+
+        function RowClickDataEvt(selectedItems) {
+            var data = selectedItems.selectedRowsData;
+
+            if (data.length > 0) {
+
+                let arrFilter = [];
+                console.log(data);
+                for (let value of data) {
+                    arrFilter.push(tempData.find((item) => item.LOT_ID == value.LOT_ID && item.DATE == value.DATE && item.MAIN_OPERATION == value.MAIN_OPERATION));
+                }
+
+                chartData = arrFilter;
+                _WLP1_ChartControl.DrawChart();
+            }
+        }
+
+        function onRowDbl(e) {
+            let dataGrid = $("#grid-container_loi").dxDataGrid("instance");
+            dataGrid.deselectAll();
+            dataGrid.clearSelection();
+
+            chartData = tempData;
+            _WLP1_ChartControl.DrawChart();
+        }
+
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('Ke Hoach Thuc Hien');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'KeHoachThucHien.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        var mergelements = {};
+        function OnCellPrepared(cellInfo)
+            {
+                if (cellInfo.rowType == "data") {
+                    cellInfo.cellElement.addClass("mergecells");
+                    //color cell on selection
+                    cellInfo.cellElement.click(function () {
+                        $(".mergecellselected").removeClass("mergecellselected")
+                        $(this).addClass("mergecellselected");
+                    });
+                    if (cellInfo.rowIndex > 0 && cellInfo.column.command != "edit") {
+                        if (cellInfo.component.cellValue(cellInfo.rowIndex - 1, cellInfo.column.dataField) == cellInfo.value) {
+                            if (cellInfo.component.cellValue(cellInfo.rowIndex - 1, cellInfo.column.dataField)) {
+                                var prev = mergelements[cellInfo.rowIndex - 1][cellInfo.column.dataField]
+                                if (!mergelements[cellInfo.rowIndex]) mergelements[cellInfo.rowIndex] = {};
+                                mergelements[cellInfo.rowIndex][cellInfo.column.dataField] = prev;
+                                if (prev) {
+                                    cellInfo.cellElement.css("display", "none");
+                                    var span = prev.attr('rowspan');
+                                    if (span)
+                                        prev.attr('rowspan', Number(span) + 1);
+                                    else
+                                        prev.attr('rowspan', 2);
+                                }
+                            }
+                            else {
+                                if (!mergelements[cellInfo.rowIndex]) mergelements[cellInfo.rowIndex] = {};
+                                mergelements[cellInfo.rowIndex][cellInfo.column.dataField] = cellInfo.cellElement;
+                            }
+
+                        }
+                        else {
+                            if (!mergelements[cellInfo.rowIndex]) mergelements[cellInfo.rowIndex] = {};
+                            mergelements[cellInfo.rowIndex][cellInfo.column.dataField] = cellInfo.cellElement;
+
+                        }
+                    }
+                    else {
+                        if (!mergelements[cellInfo.rowIndex]) mergelements[cellInfo.rowIndex] = {};
+                        mergelements[cellInfo.rowIndex][cellInfo.column.dataField] = cellInfo.cellElement;
+                    }
+                }
+
+            }
+
     </script>
 
     @*<script src="~/app/controllers/bangCong/bangCongMns.js"></script>
 
-    <script>
-        var controller = new bangCongController();
-        controller.initialize();
+        <script>
+            var controller = new bangCongController();
+            controller.initialize();
 
-        onSuccess = controller.doAftersearch;
-        onBeginAjax = controller.beginSearch;
+            onSuccess = controller.doAftersearch;
+            onBeginAjax = controller.beginSearch;
 
-        $(document).ready(function () {
-            $('#bangCongDataTable').DataTable({
-                scrollY: 600,
-                scrollX: true,
-                scrollCollapse: true,
-                paging: false,
-                select: true,
-                "searching": true,
-                fixedColumns: {
-                    left: 5
-                },
-                fixedHeader: true
+            $(document).ready(function () {
+                $('#bangCongDataTable').DataTable({
+                    scrollY: 600,
+                    scrollX: true,
+                    scrollCollapse: true,
+                    paging: false,
+                    select: true,
+                    "searching": true,
+                    fixedColumns: {
+                        left: 5
+                    },
+                    fixedHeader: true
+                });
+
+                $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
+                $('select[name="bangCongDataTable_length"]').removeClass('form-control-sm');
             });
 
-            $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
-            $('select[name="bangCongDataTable_length"]').removeClass('form-control-sm');
-        });
-
-        $('#searchToTime').datetimepicker({
-            format: 'YYYY-MM',
-            icons: {
-                up: "fa fa-angle-up",
-                down: "fa fa-angle-down",
-                next: 'fa fa-angle-right',
-                previous: 'fa fa-angle-left'
-            }
-        });
-    </script>*@
+            $('#searchToTime').datetimepicker({
+                format: 'YYYY-MM',
+                icons: {
+                    up: "fa fa-angle-up",
+                    down: "fa fa-angle-down",
+                    next: 'fa fa-angle-right',
+                    previous: 'fa fa-angle-left'
+                }
+            });
+        </script>*@
 }
 @section Styles{
     <style>
-
-        #btnCreate {
-            float: none;
-            margin-right: 10px;
+        .mergecells {
+            display: table-cell;
+            vertical-align: middle !important;
+            /*border-color: rgba(61, 70, 109, 0.5) !important;*/
+/*            border-style: solid !important;
+            border-width: 0.1px 0.1px 0.1px 0.1px !important;*/
+            background: white !important;
+            color: black !important;
         }
 
-        #btnManagement {
-            min-width: 150px;
-            border-radius: 50px;
+        .mergecellselected {
+            background: #ffebda !important;
         }
     </style>
 }
@@ -81,55 +173,75 @@
                     <li class="breadcrumb-item active">Kế hoạch EHS</li>
                 </ul>
             </div>
-
-            <div class="col-auto float-right ml-auto">
-                <a href="#" id="btnExportData" class="btn add-btn"><i class="fa fa-arrow-circle-down"></i>Xuất kế hoạch EHS</a>
-            </div>
         </div>
     </div>
     <!-- /Page Header -->
-    <!-- Search Filter -->
-    <form id="frmSearch" method="post" data-ajax="true" data-ajax-url="/Admin/ehstonghopdanhmuckehoach/Search" data-ajax-update="#gridDCChamCongIndex" data-ajax-mode='replace' data-ajax-begin="onBeginAjax" data-ajax-success="onSuccess">
-        <div class="row filter-row">
-            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-            </div>
-            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-            </div>
-            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-            </div>
-            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-                <div class="form-group form-focus select-focus">
-                    <select class="select floating" id="cboDepartment" name="department">
-                        <option value="">-- All --</option>
-                        <option value="CSP">CSP</option>
-                        <option value="KHO">KHO</option>
-                        <option value="KOREA">KOREA</option>
-                        <option value="LFEM">LFEM</option>
-                        <option value="QC">QC</option>
-                        <option value="KOREA">KOREA</option>
-                    </select>
-                    <label class="focus-label">Deparment</label>
-                </div>
-            </div>
-            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-                <div class="form-group form-focus">
-                    <div class="cal-icon">
-                        <input class="form-control floating datetimepicker" type="text" id="searchToTime" name="timeTo" required>
-                    </div>
-                    <label class="focus-label">Month</label>
-                </div>
-            </div>
-            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-                <button href="#" class="btn btn-success btn-block" id="btnSearch" type="submit"> Search </button>
-            </div>
-        </div>
-    </form>
 
-    <!-- /Search Filter -->
     <div class="row">
         <div class="col-md-12">
             <div class="table-responsive dx-viewport" id="gridDCChamCongIndex">
-                @*@await Html.PartialAsync("_gridBangCongPartialView", Model)*@
+                @(Html.DevExtreme().DataGrid<TotalAllItemByYear>
+    ()
+    .ID("grid-container_loi")
+    .DataSource(Model.TotalByYear.ItemByYears)
+    .Height(750)
+    .ShowBorders(true)
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnMinWidth(50)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .HoverStateEnabled(true)
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+    .OnExporting("exporting")
+    .Columns(columns =>
+    {
+        columns.AddFor(m => m.KeyKH).Visible(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.STT).Caption("STT").Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.TenDeMuc).Caption("Đề mục\n항목").Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.TenNoiDung).Caption("Nội dung\n내용").Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.NhaThau).Caption("Nhà thầu").Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.ChuKy).Caption("Chu kỳ/lần").Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.Month_1).Format("#,##0").Caption("1월");
+        columns.AddFor(m => m.Month_2).Format("#,##0").Caption("2월");
+        columns.AddFor(m => m.Month_3).Format("#,##0").Caption("3월");
+        columns.AddFor(m => m.Month_4).Format("#,##0").Caption("4월");
+        columns.AddFor(m => m.Month_5).Format("#,##0").Caption("5월");
+        columns.AddFor(m => m.Month_6).Format("#,##0").Caption("6월");
+        columns.AddFor(m => m.Month_7).Format("#,##0").Caption("7월");
+        columns.AddFor(m => m.Month_8).Format("#,##0").Caption("8월");
+        columns.AddFor(m => m.Month_9).Format("#,##0").Caption("9월");
+        columns.AddFor(m => m.Month_10).Format("#,##0").Caption("10월");
+        columns.AddFor(m => m.Month_11).Format("#,##0").Caption("11월");
+        columns.AddFor(m => m.Month_12).Format("#,##0").Caption("12월");
+        columns.AddFor(m => m.ToTal).Format("#,##0").Caption("Total");
+
+    }).OnCellPrepared("OnCellPrepared").Summary(s => s.TotalItems(items =>
+    {
+        items.AddFor(m => m.Month_1).SummaryType(SummaryType.Sum).DisplayFormat("Total {0}").ValueFormat(Format.FixedPoint);
+        items.AddFor(m => m.Month_2).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        items.AddFor(m => m.Month_3).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        items.AddFor(m => m.Month_4).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        items.AddFor(m => m.Month_5).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        items.AddFor(m => m.Month_6).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        items.AddFor(m => m.Month_7).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        items.AddFor(m => m.Month_8).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        items.AddFor(m => m.Month_9).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        items.AddFor(m => m.Month_10).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        items.AddFor(m => m.Month_11).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        items.AddFor(m => m.Month_12).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        items.AddFor(m => m.ToTal).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+    })
+    ))
             </div>
         </div>
     </div>
@@ -160,4 +272,3 @@
     </div>
 </div>
 <!-- Delete Expense Modal -->
-<

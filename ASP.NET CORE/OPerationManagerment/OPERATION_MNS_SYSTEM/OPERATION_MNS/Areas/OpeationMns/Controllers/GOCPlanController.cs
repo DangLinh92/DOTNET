@@ -25,7 +25,6 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
     {
         IGocPlanService _GocPlanService;
         private readonly IWebHostEnvironment _hostingEnvironment;
-        private readonly ILogger _logger;
 
         public GOCPlanController(IGocPlanService GocPlanService, IWebHostEnvironment hostingEnvironment, ILogger<GOCPlanController> logger)
         {
@@ -46,6 +45,8 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
             }
 
             ViewBag.daysSearch = lstDate;
+            ViewBag.dayOff = _GocPlanService.DateOffLine(DateTime.Now.ToString("yyyy")) ;
+            ViewBag.ViewType = "";
             var lst = _GocPlanService.GetByTime(CommonConstants.CHIP, fromDate, toDate);
             return View(lst);
         }
@@ -62,6 +63,8 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
             }
 
             ViewBag.daysSearch = lstDate;
+            ViewBag.dayOff = _GocPlanService.DateOffLine(DateTime.Now.ToString("yyyy"));
+            ViewBag.ViewType = "";
             var lst = _GocPlanService.GetByTime(CommonConstants.CHIP, fromDate, toDate);
             return View(lst);
         }
@@ -74,7 +77,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
         }
 
         [HttpPost]
-        public IActionResult Search(string chipWafer, string fromTime, string toTime)
+        public IActionResult Search(string chipWafer, string fromTime, string toTime,string actualPlanGap)
         {
             if (string.IsNullOrEmpty(chipWafer) || string.IsNullOrEmpty(fromTime) || string.IsNullOrEmpty(toTime))
             {
@@ -90,12 +93,16 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
                     }
 
                     ViewBag.daysSearch = lstDate1;
+                    ViewBag.dayOff = _GocPlanService.DateOffLine(DateTime.Now.ToString("yyyy"));
+                    ViewBag.ViewType = actualPlanGap.NullString();
                     var lst1 = _GocPlanService.GetByTime(chipWafer, fromDate, toDate);
                     return PartialView("_GocPlanGridView", lst1);
                 }
                 else
                 {
                     ViewBag.daysSearch = new List<string>();
+                    ViewBag.dayOff = _GocPlanService.DateOffLine(DateTime.Now.ToString("yyyy"));
+                    ViewBag.ViewType = actualPlanGap.NullString();
                     return PartialView("_GocPlanGridView", new List<GocPlanViewModelEx>());
                 }
             }
@@ -108,6 +115,8 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
             }
 
             ViewBag.daysSearch = lstDate;
+            ViewBag.dayOff = _GocPlanService.DateOffLine(DateTime.Parse(fromTime).ToString("yyyy"));
+            ViewBag.ViewType = actualPlanGap.NullString();
             var lst = _GocPlanService.GetByTime(chipWafer, fromTime, toTime);
             return PartialView("_GocPlanGridView", lst);
         }
@@ -166,6 +175,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
 
         public IActionResult ProcActualPlanChart()
         {
+            ViewBag.dayOffLine = _GocPlanService.DateOffLine(DateTime.Now.ToString("yyyy"));
             var data = _GocPlanService.GetProcActualPlanModel(DateTime.Now.ToString("yyyy-MM"));
             return View(data);
         }
@@ -174,6 +184,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
         public IActionResult GetDataChart(string year, string month)
         {
             string m = year + "-" + month;
+            ViewBag.dayOffLine = _GocPlanService.DateOffLine(year);
             var data = _GocPlanService.GetProcActualPlanModel(m);
             return View("ProcActualPlanChart", data);
         }

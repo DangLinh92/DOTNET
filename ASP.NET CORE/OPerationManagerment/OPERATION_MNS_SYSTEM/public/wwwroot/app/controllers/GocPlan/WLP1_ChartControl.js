@@ -174,6 +174,109 @@
 
         arrLeadTimeChart.push(ControlChart);
 
+        // barchart
+        let dataLabel_2 = [];
+        let dataSetChar = [];
+
+        function AvggroupBy(array, f) {
+            var groups = {};
+            array.forEach(function (o) {
+                var group = JSON.stringify(f(o));
+                groups[group] = groups[group] || [];
+                groups[group].push(o);
+            });
+            return Object.keys(groups).map(function (group) {
+                return groups[group];
+            })
+        };
+
+        var resultData = AvggroupBy(chartData, function (item) {
+            return [item.MAIN_AVG_VALUE];
+        });
+      
+        resultData.sort((x, y) => { return x[0].MAIN_AVG_VALUE - y[0].MAIN_AVG_VALUE });
+        console.log(resultData);
+
+        for (arr of resultData) {
+
+            dataLabel_2.push(arr[0].MAIN_AVG_VALUE);
+            dataSetChar.push(arr.length);
+        }
+
+        console.log(dataLabel_2);
+        console.log(dataSetChar);
+
+        var ctx1 = document.getElementById('chartsColumn_control').getContext('2d');
+        var ControlColumnChart = new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: dataLabel_2,
+                datasets: [{
+                    label: '측정값 산포',
+                    data: dataSetChar,
+                    backgroundColor: '#44c4fa'
+                }]
+            },
+            plugins: [ChartDataLabels, legenMargin],
+            options: {
+                plugins: {
+                    datalabels: {
+                        formatter: function (value, context) {
+                            return value.toLocaleString("en-US");
+                        },
+                        anchor: 'end',
+                        align: 'end',
+                        display: 'true',
+                        color: '#205295',
+                        offset: 4,
+                        font: {
+                            weight: 'bold'
+                        }
+                    }
+                },
+                maintainAspectRatio: false,
+                responsive: true,
+                legend: {
+                    display: false,
+                    labels: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        barPercentage: 0.6,
+                        ticks: {
+                            beginAtZero: true,
+                            fontSize: 11
+                        },
+                        grid: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'MATERIAL_ID 개'
+                        },
+                    },
+                    x: {
+                        barPercentage: 0.6,
+                        ticks: {
+                            beginAtZero: true,
+                            fontSize: 11
+                        },
+                        grid: {
+                            display: false
+                        },
+                        title: {
+                            display: false,
+                            text: '측정값 산포'
+                        },
+                    }
+                }
+            }
+        });
+
+        arrLeadTimeChart.push(ControlColumnChart);
+
         function scroller(scroll,chart) {
             console.log(scroll);
 
