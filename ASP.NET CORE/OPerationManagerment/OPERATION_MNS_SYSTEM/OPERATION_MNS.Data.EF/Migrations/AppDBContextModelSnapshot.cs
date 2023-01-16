@@ -1079,6 +1079,10 @@ namespace OPERATION_MNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
+                    b.Property<string>("PhanLoaiLoi")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
                     b.Property<string>("PhuongAnXuLy")
                         .HasColumnType("nvarchar(1000)")
                         .HasMaxLength(1000);
@@ -1167,6 +1171,10 @@ namespace OPERATION_MNS.Data.EF.Migrations
                     b.Property<string>("OperationName")
                         .HasColumnType("nvarchar(100)")
                         .HasMaxLength(100);
+
+                    b.Property<string>("PhanLoaiLoi")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
 
                     b.Property<string>("PhuongAnXuLy")
                         .HasColumnType("nvarchar(1000)")

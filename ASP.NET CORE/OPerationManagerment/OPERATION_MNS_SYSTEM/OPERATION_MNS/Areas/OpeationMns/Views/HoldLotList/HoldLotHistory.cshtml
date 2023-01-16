@@ -135,16 +135,17 @@
     columns.AddFor(m => m.HoldUserName).AllowEditing(false);
     columns.AddFor(m => m.HoldComment).AllowEditing(false);
 
-    columns.AddFor(m => m.ReleaseTime).AllowEditing(false);;
-    columns.AddFor(m => m.ReleaseCode).AllowEditing(false);;
-    columns.AddFor(m => m.ReleaseFlag).AllowEditing(false);;
-    columns.AddFor(m => m.ReleaseUser).AllowEditing(false);;
-    columns.AddFor(m => m.ReleaseName).AllowEditing(false);;
+    columns.AddFor(m => m.ReleaseTime).AllowEditing(false);
+    columns.AddFor(m => m.ReleaseCode).AllowEditing(false);
+    columns.AddFor(m => m.ReleaseFlag).AllowEditing(false);
+    columns.AddFor(m => m.ReleaseUser).AllowEditing(false);
+    columns.AddFor(m => m.ReleaseName).AllowEditing(false);
     columns.AddFor(m => m.ReleaseComment).AllowEditing(false);
 
     columns.AddFor(m => m.TenLoi).Caption("Tên Lỗi").AllowEditing(false);
     columns.AddFor(m => m.NguoiXuLy).Caption("Người Xử Lý").AllowEditing(false);
     columns.AddFor(m => m.PhuongAnXuLy).Caption("Phương Án Xử Lý").AllowEditing(false);
+    columns.AddFor(m => m.PhanLoaiLoi).Caption("Phân Loại Lỗi").AllowEditing(false);
 }).
 Summary(s => s.TotalItems(items =>
 {

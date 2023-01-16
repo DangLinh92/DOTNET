@@ -241,6 +241,7 @@
 .Selection(s => s.Mode(SelectionMode.Single))
 .Columns(columns =>
 {
+    columns.AddFor(m => m.PhanLoaiLoi).Caption("Phân Loại Lỗi");
     columns.AddFor(m => m.TenLoi).Caption("Tên Lỗi");
     columns.AddFor(m => m.QtyWF).Format(Format.FixedPoint);
     columns.AddFor(m => m.QtyChip).Format(Format.FixedPoint);
@@ -319,6 +320,7 @@
     columns.AddFor(m => m.HoldComment).AllowEditing(false);
     columns.AddFor(m => m.PhuongAnXuLy).Caption("Phương án xử lý");
     columns.AddFor(m => m.TenLoi).Caption("Tên Lỗi");
+    columns.AddFor(m => m.PhanLoaiLoi).Caption("Phân Loại Lỗi");
     columns.AddFor(m => m.NguoiXuLy).Caption("Người xử lý");
     columns.AddFor(m => m.UpdateByCassetteId).Caption("Update theo Cassette ID");
 }).OnSaving("onSaving").

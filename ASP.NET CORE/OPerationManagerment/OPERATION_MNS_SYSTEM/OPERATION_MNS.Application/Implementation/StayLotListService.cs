@@ -61,7 +61,8 @@ namespace OPERATION_MNS.Application.Implementation
                         Index = ++i,
                         TenLoi = row["TenLoi"].NullString(),
                         QtyChip = decimal.Parse(row["CHIP_QTY"].IfNullIsZero()),
-                        QtyWF = decimal.Parse(row["WF_QTY"].IfNullIsZero())
+                        QtyWF = decimal.Parse(row["WF_QTY"].IfNullIsZero()),
+                        PhanLoaiLoi = row["PhanLoaiLoi"].NullString()
                     });
                 }
 
@@ -86,7 +87,8 @@ namespace OPERATION_MNS.Application.Implementation
                         PhuongAnXuLy = row["PhuongAnXuLy"].NullString(),
                         NguoiXuLy = row["NguoiXuLy"].NullString(),
                         UpdateByCassetteId = false,
-                        history_seq = double.Parse(row["HISTORY_SEQ"].IfNullIsZero())
+                        history_seq = double.Parse(row["HISTORY_SEQ"].IfNullIsZero()),
+                        PhanLoaiLoi = row["PhanLoaiLoi"].NullString()
                     });
                 }
             }
@@ -105,11 +107,12 @@ namespace OPERATION_MNS.Application.Implementation
                     lot.PhuongAnXuLy = model.PhuongAnXuLy.NullString();
                     lot.NguoiXuLy = model.NguoiXuLy.NullString();
                     lot.UserModified = GetUserId();
+                    lot.PhanLoaiLoi = model.PhanLoaiLoi.NullString();
                     _StayLotListRepository.Update(lot);
                 }
                 else
                 {
-                    STAY_LOT_LIST en = new STAY_LOT_LIST(model.LotId.NullString(), model.PhuongAnXuLy.NullString(), model.TenLoi.NullString(), model.NguoiXuLy.NullString(), model.CassetteId.NullString(), model.history_seq);
+                    STAY_LOT_LIST en = new STAY_LOT_LIST(model.LotId.NullString(), model.PhuongAnXuLy.NullString(), model.TenLoi.NullString(), model.NguoiXuLy.NullString(), model.CassetteId.NullString(), model.history_seq,model.PhanLoaiLoi);
                     en.UserModified = GetUserId();
                     en.UserCreated = GetUserId();
                     _StayLotListRepository.Add(en);
@@ -129,11 +132,12 @@ namespace OPERATION_MNS.Application.Implementation
                         lot.PhuongAnXuLy = model.PhuongAnXuLy.NullString();
                         lot.NguoiXuLy = model.NguoiXuLy.NullString();
                         lot.UserModified = GetUserId();
+                        lot.PhanLoaiLoi = model.PhanLoaiLoi.NullString();
                         _StayLotListRepository.Update(lot);
                     }
                     else
                     {
-                        lot = new STAY_LOT_LIST(item.LotId.NullString(), model.PhuongAnXuLy.NullString(), model.TenLoi.NullString(), model.NguoiXuLy.NullString(), item.CassetteId.NullString(), item.history_seq);
+                        lot = new STAY_LOT_LIST(item.LotId.NullString(), model.PhuongAnXuLy.NullString(), model.TenLoi.NullString(), model.NguoiXuLy.NullString(), item.CassetteId.NullString(), item.history_seq,item.PhanLoaiLoi);
                         lot.UserModified = GetUserId();
                         lot.UserCreated = GetUserId();
                         _StayLotListRepository.Add(lot);

@@ -17,7 +17,7 @@ namespace OPERATION_MNS.Data.Entities
 
         }
 
-        public STAY_LOT_LIST(string lotId, string phuongAnXuLy,string tenLoi,string nguoixuly,string cassettleId,double seq)
+        public STAY_LOT_LIST(string lotId, string phuongAnXuLy,string tenLoi,string nguoixuly,string cassettleId,double seq,string phanloaiLoi)
         {
             LotId = lotId;
             PhuongAnXuLy = phuongAnXuLy;
@@ -25,6 +25,7 @@ namespace OPERATION_MNS.Data.Entities
             NguoiXuLy = nguoixuly;
             CassetteId = cassettleId;
             History_seq = seq;
+            PhanLoaiLoi = phanloaiLoi;
         }
 
         [StringLength(50)]
@@ -46,6 +47,9 @@ namespace OPERATION_MNS.Data.Entities
 
         [StringLength(1)]
         public string ReleaseFlag { get; set; }
+
+        [StringLength(250)]
+        public string PhanLoaiLoi { get; set; }
 
         [StringLength(50)]
         public string DateCreated { get; set; }

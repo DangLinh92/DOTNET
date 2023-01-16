@@ -27,6 +27,7 @@ namespace OPERATION_MNS.Application.ViewModels
         public decimal QtyWF { get; set; }
         public decimal QtyChip { get; set; }
         public string TenLoi { get; set; }
+        public string PhanLoaiLoi { get; set; }
     }
 
     public class StayLotListViewModel
@@ -121,6 +122,8 @@ namespace OPERATION_MNS.Application.ViewModels
 
         public int STT { get; set; }
         public string LotStatus { get; set; }
+
+        public string PhanLoaiLoi { get; set; }
     }
 
     public class ViewHistoryHoldLotModel {

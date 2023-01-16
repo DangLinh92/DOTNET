@@ -84,6 +84,9 @@ namespace OPERATION_MNS.Data.Entities
         [StringLength(2000)]
         public string ReleaseComment { get; set; }
 
+        [StringLength(250)]
+        public string PhanLoaiLoi { get; set; }
+
         [StringLength(50)]
         public string DateCreated { get; set; }
 
