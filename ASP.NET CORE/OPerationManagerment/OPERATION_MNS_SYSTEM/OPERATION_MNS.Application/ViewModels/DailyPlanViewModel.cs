@@ -24,7 +24,7 @@ namespace OPERATION_MNS.Application.ViewModels
         public decimal Wall_PR { get; set; }
 
         public decimal Wall_Oven { get; set; }
-        public decimal Wall_Ashing { get; set; }
+        public decimal Wall_Inspection { get; set; } //Wall_Ashing
 
         public decimal Roof_Laminating { get; set; }
 

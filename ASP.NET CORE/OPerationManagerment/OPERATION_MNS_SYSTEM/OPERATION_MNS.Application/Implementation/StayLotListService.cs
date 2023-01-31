@@ -188,9 +188,8 @@ namespace OPERATION_MNS.Application.Implementation
                     rs = rs.Where(x => x.HoldTime.CompareTo(timeTo) <= 0).ToList();
                 else
                 {
-                    rs = ((EFUnitOfWork)_unitOfWork).DBContext().STAY_LOT_LIST_HISTORY.Where(x => x.HoldTime.CompareTo(timeTo) <= 0).ToList();
+                    rs = ((EFUnitOfWork)_unitOfWork).DBContext().STAY_LOT_LIST_HISTORY.Where(x => x.HoldTime.CompareTo(timeFrom) >= 0 && x.HoldTime.CompareTo(timeTo) <= 0).ToList();
                 }
-
             }
 
             return rs;

@@ -72,11 +72,11 @@ namespace OPERATION_MNS.Application.ViewModels
             string beginYear = Year + "-01-01";
             string endYear = DateTime.Parse(beginYear).AddYears(1).AddDays(-1).ToString("yyyy-MM-dd");
 
-            int weekOfYear = DateTime.Parse(endYear).GetWeekOfYear();
+            int weekOfYear = DateTime.Parse(endYear).GetWeekOfYear() + 1;
 
             if (Year == DateTime.Now.Year.ToString())
             {
-                weekOfYear = DateTime.Now.GetWeekOfYear();
+                weekOfYear = DateTime.Now.GetWeekOfYear() + 1;
             }
 
             for (int i = 1; i <= weekOfYear; i++)
@@ -86,7 +86,7 @@ namespace OPERATION_MNS.Application.ViewModels
             return result;
         }
 
-        public List<string> GetWeeksByMonth(string year,string month)
+        public List<string> GetWeeksByMonth(string year, string month)
         {
             if (string.IsNullOrEmpty(month))
                 return GetWeeks();
@@ -96,9 +96,9 @@ namespace OPERATION_MNS.Application.ViewModels
             string endMonth = DateTime.Parse(beginMonth).AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd");
 
             int weekOfYear;
-            foreach (var day in EachDay.EachDays(DateTime.Parse(beginMonth),DateTime.Parse(endMonth)))
+            foreach (var day in EachDay.EachDays(DateTime.Parse(beginMonth), DateTime.Parse(endMonth)))
             {
-                weekOfYear = day.GetWeekOfYear();
+                weekOfYear = day.GetWeekOfYear() + 1;
                 if (!result.Contains(weekOfYear + "") && weekOfYear > 0)
                 {
                     result.Add(weekOfYear + "");
@@ -111,7 +111,7 @@ namespace OPERATION_MNS.Application.ViewModels
 
     public class ChartDataItem
     {
-        public string Label_x {get; set; }
+        public string Label_x { get; set; }
         public double Value_runtime { get; set; }
         public double Value_waittime { get; set; }
         public double Value_target { get; set; }

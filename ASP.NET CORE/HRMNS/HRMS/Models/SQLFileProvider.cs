@@ -475,7 +475,7 @@ namespace HRMS.Models
                                 {
                                     using (Stream file = File.OpenWrite(Path.Combine(Path.GetTempPath(), item.Name)))
                                     {
-                                        file.Write(((byte[])myReader["Content"]), 0, ((byte[])myReader["Content"]).Length);
+                                        file.Write(Decompress((byte[])myReader["Content"]), 0, Decompress((byte[])myReader["Content"]).Length);
                                         if (files.IndexOf(item.Name) == -1) files.Add(item.Name);
                                     }
                                 }
@@ -1009,7 +1009,7 @@ namespace HRMS.Models
             command.Parameters.Add(new SqlParameter("@Size", bytes.Length));
             command.Parameters.Add(new SqlParameter("@ParentId", parentId));
             command.Parameters.Add(new SqlParameter("@MimeType", contentType));
-            command.Parameters.Add("@Content", SqlDbType.VarBinary).Value = bytes;
+            command.Parameters.Add("@Content", SqlDbType.VarBinary).Value = Compress(bytes);
             command.Parameters.Add(new SqlParameter("@DateModified", DateTime.Now));
             command.Parameters.Add(new SqlParameter("@DateCreated", DateTime.Now));
             command.Parameters.Add(new SqlParameter("@HasChild", false));
@@ -1491,6 +1491,39 @@ namespace HRMS.Models
                 renameResponse.Error = error;
                 return renameResponse;
             }
+        }
+
+        private static byte[] Compress(byte[] data)
+        {
+            var output = new MemoryStream();
+            using (var gzip = new GZipStream(output, CompressionMode.Compress, true))
+            {
+                gzip.Write(data, 0, data.Length);
+                gzip.Close();
+            }
+            return output.ToArray();
+        }
+        private static byte[] Decompress(byte[] data)
+        {
+            var output = new MemoryStream();
+            var input = new MemoryStream();
+            input.Write(data, 0, data.Length);
+            input.Position = 0;
+
+            using (var gzip = new GZipStream(input, CompressionMode.Decompress, true))
+            {
+                var buff = new byte[64];
+                var read = gzip.Read(buff, 0, buff.Length);
+
+                while (read > 0)
+                {
+                    output.Write(buff, 0, read);
+                    read = gzip.Read(buff, 0, buff.Length);
+                }
+
+                gzip.Close();
+            }
+            return output.ToArray();
         }
     }
 }

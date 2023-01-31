@@ -17,7 +17,7 @@
         var deparment = JSON.parse('@Html.Raw(JsonSerializer.Serialize(User.FindFirst(x=>x.Type == "Deparment").Value+""))');
         var roleUsers = JSON.parse('@Html.Raw(JsonSerializer.Serialize(User.FindFirst(x => x.Type == "Roles").Value + ""))');
     </script>
-    <script src="~/app/controllers/nhanvien_calamviec/index.js"></script>
+    @*<script src="~/app/controllers/nhanvien_calamviec/index.js"></script>*@
     <script>
         var controller = new nhanvien_calamviecController();
         controller.initialize();

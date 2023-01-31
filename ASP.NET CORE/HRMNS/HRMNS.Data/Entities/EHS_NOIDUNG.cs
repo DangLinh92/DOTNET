@@ -14,6 +14,7 @@ namespace HRMNS.Data.Entities
         public EHS_NOIDUNG()
         {
             EHS_NOIDUNG_KEHOACH = new HashSet<EHS_NOIDUNG_KEHOACH>();
+            EHS_CHIPHI_BY_MONTH = new HashSet<EHS_CHIPHI_BY_MONTH>();
         }
 
         public EHS_NOIDUNG(Guid id,string noidung,Guid maKeHoach,Guid maDeMucKH)
@@ -51,5 +52,6 @@ namespace HRMNS.Data.Entities
         public virtual EHS_DEMUC_KEHOACH EHS_DEMUC_KEHOACH { get; set; }
 
         public virtual ICollection<EHS_NOIDUNG_KEHOACH> EHS_NOIDUNG_KEHOACH { get; set; }
+        public virtual ICollection<EHS_CHIPHI_BY_MONTH> EHS_CHIPHI_BY_MONTH { get; set; }
     }
 }

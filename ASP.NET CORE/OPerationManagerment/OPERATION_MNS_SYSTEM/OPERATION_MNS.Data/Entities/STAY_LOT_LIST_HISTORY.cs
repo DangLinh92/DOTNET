@@ -87,6 +87,9 @@ namespace OPERATION_MNS.Data.Entities
         [StringLength(250)]
         public string PhanLoaiLoi { get; set; }
 
+        [StringLength(1)]
+        public string History_delete_flag { get; set; }
+
         [StringLength(50)]
         public string DateCreated { get; set; }
 

@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using DevExtreme.AspNet.Data;
+using DevExtreme.AspNet.Mvc;
 using HRMNS.Application.Interfaces;
 using HRMNS.Application.ViewModels.EHS;
 using HRMNS.Data.EF.Extensions;
@@ -14,6 +16,7 @@ using HRMNS.Utilities.Dtos;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 
@@ -32,6 +35,7 @@ namespace HRMS.Areas.Admin.Controllers
         public IActionResult Index()
         {
             EhsDanhMucKeHoachPageViewModel model = _danhMucKeHoachService.GetDataDanhMucKeHoachPage(null);
+            model.Year = DateTime.Now.Year.ToString();
             return View(model);
         }
 
@@ -39,6 +43,7 @@ namespace HRMS.Areas.Admin.Controllers
         public IActionResult GetDeMucKH(string kehoachID)
         {
             EhsDanhMucKeHoachPageViewModel model = _danhMucKeHoachService.GetDataDanhMucKeHoachPage(Guid.Parse(kehoachID));
+            // model.Year = DateTime.Now.Year.ToString();
             return View("Index", model);
         }
 
@@ -140,10 +145,36 @@ namespace HRMS.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult GetNoiDungChiTiet(string maNoiDung)
+        public IActionResult GetNoiDungChiTiet(string maNoiDung, string year)
         {
-            var lstNoiDung = _danhMucKeHoachService.GetNoiDungKeHoachByMaNoiDung(maNoiDung).OrderBy(x=>x.NgayThucHien).ToList();
-            return new OkObjectResult(lstNoiDung);
+            ChiTietNoiDungChiPhiViewModel model = new ChiTietNoiDungChiPhiViewModel();
+            if (year.NullString() == "") year = DateTime.Now.Year.ToString();
+
+            var lstNoiDung = _danhMucKeHoachService.GetNoiDungKeHoachByMaNoiDung(maNoiDung, year).OrderBy(x => x.NgayThucHien).ToList();
+            var chiphi = _danhMucKeHoachService.GetChiPhiNoiDung(maNoiDung, year);
+            if(chiphi != null)
+            {
+                chiphi.TenNoiDung = lstNoiDung.FirstOrDefault()?.EHS_NOIDUNG.NoiDung;
+                model.ChiPhi.Add(chiphi);
+            }
+            else
+            {
+                EhsChiPhiByMonthViewModel cphi = new EhsChiPhiByMonthViewModel()
+                {
+                    MaNoiDung = Guid.Parse(maNoiDung),
+                    TenNoiDung = lstNoiDung.FirstOrDefault()?.EHS_NOIDUNG.NoiDung,
+                    Year = year
+                };
+
+                _danhMucKeHoachService.AddChiPhi(cphi);
+
+                var newChiphi = _danhMucKeHoachService.GetChiPhiNoiDung(maNoiDung, year);
+                newChiphi.TenNoiDung = lstNoiDung.FirstOrDefault()?.EHS_NOIDUNG.NoiDung;
+                model.ChiPhi.Add(newChiphi);
+            }
+          
+            model.NoiDungChiTiet = lstNoiDung;
+            return new OkObjectResult(model);
         }
 
         [HttpPost]
@@ -174,8 +205,8 @@ namespace HRMS.Areas.Admin.Controllers
 
                 newModel.MaHieuMayKiemTra = model.MaHieuMayKiemTra;
                 newModel.TienDoHoanThanh = model.TienDoHoanThanh;
-                newModel.SoTien = model.SoTien;
                 newModel.KetQua = model.KetQua;
+                newModel.NguoiPhucTrach = model.NguoiPhucTrach;
 
                 newModel.EHS_NOIDUNG = null;
                 _danhMucKeHoachService.UpdateNoiDungKeHoach(newModel);
@@ -310,12 +341,11 @@ namespace HRMS.Areas.Admin.Controllers
                             worksheet.Cells["K" + (start + 2)].Value = lstKeHoach[j].ThoiGian_ThucHien.NullString();
                             worksheet.Cells["L" + (start + 2)].Value = lstKeHoach[j].YeuCau.NullString();
                             worksheet.Cells["M" + (start + 2)].Value = lstKeHoach[j].NgayKhaiBaoThietBi.NullString();
-                            worksheet.Cells["N" + (start + 2)].Value = lstKeHoach[j].ThoiGianThongBao.NullString().Contains("_") ? lstKeHoach[j].ThoiGianThongBao.NullString().Split("_")[0] : "" ;
+                            worksheet.Cells["N" + (start + 2)].Value = lstKeHoach[j].ThoiGianThongBao.NullString().Contains("_") ? lstKeHoach[j].ThoiGianThongBao.NullString().Split("_")[0] : "";
                             worksheet.Cells["O" + (start + 2)].Value = lstKeHoach[j].ThoiGianThongBao.NullString().Contains("_") ? lstKeHoach[j].ThoiGianThongBao.NullString().Split("_")[1] : "";
                             worksheet.Cells["P" + (start + 2)].Value = lstKeHoach[j].TienDoHoanThanh.NullString();
-                            worksheet.Cells["Q" + (start + 2)].Value = lstKeHoach[j].SoTien;
-                            worksheet.Cells["R" + (start + 2)].Value = lstKeHoach[j].KetQua.NullString();
-                            worksheet.Cells["S" + (start + 2)].Value = lstKeHoach[j].NguoiPhucTrach.NullString();
+                            worksheet.Cells["Q" + (start + 2)].Value = lstKeHoach[j].KetQua.NullString();
+                            worksheet.Cells["R" + (start + 2)].Value = lstKeHoach[j].NguoiPhucTrach.NullString();
                         }
                     }
                     else
@@ -334,5 +364,39 @@ namespace HRMS.Areas.Admin.Controllers
             }
             return new OkObjectResult(fileUrl);
         }
+
+        [HttpPost]
+        public IActionResult GetChiPhiByNoiDung(string noidungId, string year)
+        {
+            var obj = _danhMucKeHoachService.GetChiPhiNoiDung(noidungId, year);
+            return new OkObjectResult(obj);
+        }
+
+        #region Add Update Chi Phi
+        [HttpPost]
+        public IActionResult Post(string values)
+        {
+            EhsChiPhiByMonthViewModel model = new EhsChiPhiByMonthViewModel();
+            JsonConvert.PopulateObject(values, model);
+
+            _danhMucKeHoachService.AddChiPhi(model);
+            return Ok();
+        }
+
+        [HttpPut]
+        public IActionResult Put(int key, string values)
+        {
+            var model = _danhMucKeHoachService.GetChiPhiById(key);
+            JsonConvert.PopulateObject(values, model);
+            _danhMucKeHoachService.UpdateChiPhi(model);
+            return Ok();
+        }
+
+        [HttpGet]
+        public object Get(DataSourceLoadOptions loadOptions)
+        {
+            return DataSourceLoader.Load(new List<EhsChiPhiByMonthViewModel>(), loadOptions);
+        }
+        #endregion
     }
 }

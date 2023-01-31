@@ -4,14 +4,16 @@ using HRMNS.Data.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HRMNS.Data.EF.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    partial class AppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230110065653_addTblChiPhi")]
+    partial class addTblChiPhi
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -882,8 +884,12 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
-                    b.Property<Guid>("MaNoiDung")
+                    b.Property<Guid>("MaNoiDungKeHoach")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Month")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("UserCreated")
                         .HasColumnType("nvarchar(50)")
@@ -899,7 +905,7 @@ namespace HRMNS.Data.EF.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MaNoiDung");
+                    b.HasIndex("MaNoiDungKeHoach");
 
                     b.ToTable("EHS_CHIPHI_BY_MONTH");
                 });
@@ -1142,6 +1148,9 @@ namespace HRMNS.Data.EF.Migrations
                         .HasMaxLength(500);
 
                     b.Property<double>("SoLuong")
+                        .HasColumnType("float");
+
+                    b.Property<double>("SoTien")
                         .HasColumnType("float");
 
                     b.Property<string>("Status")
@@ -3016,9 +3025,9 @@ namespace HRMNS.Data.EF.Migrations
 
             modelBuilder.Entity("HRMNS.Data.Entities.EHS_CHIPHI_BY_MONTH", b =>
                 {
-                    b.HasOne("HRMNS.Data.Entities.EHS_NOIDUNG", "EHS_NOIDUNG")
+                    b.HasOne("HRMNS.Data.Entities.EHS_NOIDUNG_KEHOACH", "EHS_NOIDUNG_KEHOACH")
                         .WithMany("EHS_CHIPHI_BY_MONTH")
-                        .HasForeignKey("MaNoiDung")
+                        .HasForeignKey("MaNoiDungKeHoach")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

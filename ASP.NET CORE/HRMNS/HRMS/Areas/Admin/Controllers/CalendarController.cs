@@ -112,9 +112,8 @@ namespace HRMS.Areas.Admin.Controllers
 
                             newModel.MaHieuMayKiemTra = newModel.MaHieuMayKiemTra;
                             newModel.TienDoHoanThanh = newModel.TienDoHoanThanh;
-                            newModel.SoTien = newModel.SoTien;
                             newModel.KetQua = newModel.KetQua;
-                            newModel.Note = "Vendor: " + newModel.NhaThau + "\n" + " || Date: " + newModel.NgayThucHien + "\n" + " || Cost: " + newModel.SoTien + "\n" + " || Result: " + newModel.KetQua;
+                            newModel.Note = "Vendor: " + newModel.NhaThau + "\n" + " || Date: " + newModel.NgayThucHien + "\n" + "\n" + " || Result: " + newModel.KetQua;
                             appointment.Description = newModel.Note;
                             newModel.EHS_NOIDUNG = null;
                             _danhMucKeHoachService.UpdateNoiDungKeHoachSingle(newModel);

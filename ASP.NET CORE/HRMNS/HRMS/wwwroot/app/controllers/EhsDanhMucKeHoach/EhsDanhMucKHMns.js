@@ -10,77 +10,84 @@
         $('#btnDelete_NoiDungChiTiet').on('click', function (e) {
             e.preventDefault();
 
-            let Id = $('#hd_IdNoiDungChiTiet').val();
-           
-            $.ajax({
-                type: "POST",
-                url: "/Admin/EhsDanhMucKeHoach/DeleteNoiDungChiTiet",
-                dataType: "json",
-                data: {
-                    Id: Id
-                },
-                success: function (response) {
-                    hrms.notify("Update success!", 'Success', 'alert', function () {
-                        $('#addEditNoiDungChiTietModel').modal('hide');
-                        ItemClickNoiDung(response.MaNoiDung);
-                    });
-                },
-                error: function (status) {
-                    hrms.notify('error: ' + status.responseText, 'error', 'alert', function () { });
-                }
-            });
+            let text = "Chắc chắn muốn xóa!\n Enter OK or Cancel.";
+            if (confirm(text) == true)
+            {
+                let Id = $('#hd_IdNoiDungChiTiet').val();
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Admin/EhsDanhMucKeHoach/DeleteNoiDungChiTiet",
+                    dataType: "json",
+                    data: {
+                        Id: Id
+                    },
+                    success: function (response) {
+                        hrms.notify("Update success!", 'Success', 'alert', function () {
+                            $('#addEditNoiDungChiTietModel').modal('hide');
+                            ItemClickNoiDung(response.MaNoiDung);
+                        });
+                    },
+                    error: function (status) {
+                        hrms.notify('error: ' + status.responseText, 'error', 'alert', function () { });
+                    }
+                });
+            } 
         });
 
         // edit chi tiet noi dung.
         $('#btnSave_NoiDungChiTiet').on('click', function (e) {
             e.preventDefault();
 
-            let Id = $('#hd_IdNoiDungChiTiet').val();
-            let nhaThau = $('#_txtNhaThau').val();
-            let chuky = $('#_txtChuKy').val() + '/' + $('#_txtDonViChuKy').val();
-            let vitri = $('#_txtViTri').val();
-            let soLuong = $('#_txtSoLuong').val();
-            let NgayKiemDinh = $('#_txtNgayThucHien').val();
-            let thoiGianHuanLuyen = $('#_txtThoiGian_ThucHien').val();
-            let yeuCau = $('#_txtYeuCau').val();
-            let ngayKhaiBaoTB = $('#_txtNgayKhaiBaoThietBi').val();
-            let thongBaoTruoc = $('#_txtThoiGianThongBao').val() + '/' + $('#_txtDonViThoiGianThongBao').val();
+            let text = "Chắc chắn muốn update!\n Enter OK or Cancel.";
+            if (confirm(text) == true) {
+                let Id = $('#hd_IdNoiDungChiTiet').val();
+                let nhaThau = $('#_txtNhaThau').val();
+                let chuky = $('#_txtChuKy').val() + '/' + $('#_txtDonViChuKy').val();
+                let vitri = $('#_txtViTri').val();
+                let soLuong = $('#_txtSoLuong').val();
+                let NgayKiemDinh = $('#_txtNgayThucHien').val();
+                let thoiGianHuanLuyen = $('#_txtThoiGian_ThucHien').val();
+                let yeuCau = $('#_txtYeuCau').val();
+                let ngayKhaiBaoTB = $('#_txtNgayKhaiBaoThietBi').val();
+                let thongBaoTruoc = $('#_txtThoiGianThongBao').val() + '/' + $('#_txtDonViThoiGianThongBao').val();
 
-            let maHieuMayKiemTra = $('#_txtMaHieuMayKiemTra').val();
-            let tienDoHoanThanh =  $('#_txtTienDoHoanThanh').val();
-            let soTien = $('#_txtSoTien').val();
-            let ketQua = $('#_txtKetQua').val();
+                let maHieuMayKiemTra = $('#_txtMaHieuMayKiemTra').val();
+                let tienDoHoanThanh = $('#_txtTienDoHoanThanh').val();
+                let ketQua = $('#_txtKetQua').val();
+                let nguoiphutrach = $('#_txtNguoiPhuTrach').val();
 
-            $.ajax({
-                type: "POST",
-                url: "/Admin/EhsDanhMucKeHoach/UpdateNoiDungChiTiet",
-                dataType: "json",
-                data: {
-                    Id: Id,
-                    NhaThau: nhaThau,
-                    ChuKy: chuky,
-                    ViTri: vitri,
-                    SoLuong: soLuong,
-                    NgayThucHien: NgayKiemDinh,
-                    ThoiGian_ThucHien: thoiGianHuanLuyen,
-                    YeuCau: yeuCau,
-                    NgayKhaiBaoThietBi: ngayKhaiBaoTB,
-                    ThoiGianThongBao: thongBaoTruoc,
-                    MaHieuMayKiemTra: maHieuMayKiemTra,
-                    TienDoHoanThanh: tienDoHoanThanh,
-                    SoTien: soTien,
-                    KetQua: ketQua
-                },
-                success: function (response) {
-                    hrms.notify("Update success!", 'Success', 'alert', function () {
-                        $('#addEditNoiDungChiTietModel').modal('hide');
-                        ItemClickNoiDung(response.MaNoiDung);
-                    });
-                },
-                error: function (status) {
-                    hrms.notify('error: ' + status.responseText, 'error', 'alert', function () { });
-                }
-            });
+                $.ajax({
+                    type: "POST",
+                    url: "/Admin/EhsDanhMucKeHoach/UpdateNoiDungChiTiet",
+                    dataType: "json",
+                    data: {
+                        Id: Id,
+                        NhaThau: nhaThau,
+                        ChuKy: chuky,
+                        ViTri: vitri,
+                        SoLuong: soLuong,
+                        NgayThucHien: NgayKiemDinh,
+                        ThoiGian_ThucHien: thoiGianHuanLuyen,
+                        YeuCau: yeuCau,
+                        NgayKhaiBaoThietBi: ngayKhaiBaoTB,
+                        ThoiGianThongBao: thongBaoTruoc,
+                        MaHieuMayKiemTra: maHieuMayKiemTra,
+                        TienDoHoanThanh: tienDoHoanThanh,
+                        KetQua: ketQua,
+                        NguoiPhucTrach: nguoiphutrach
+                    },
+                    success: function (response) {
+                        hrms.notify("Update success!", 'Success', 'alert', function () {
+                            $('#addEditNoiDungChiTietModel').modal('hide');
+                            ItemClickNoiDung(response.MaNoiDung);
+                        });
+                    },
+                    error: function (status) {
+                        hrms.notify('error: ' + status.responseText, 'error', 'alert', function () { });
+                    }
+                });
+            }
         });
 
         $('body').on('click', '.edit-noidungKH', function (e) {
@@ -104,9 +111,9 @@
                         $('#_txtNoiDung').val(noidung.EHS_NOIDUNG.NoiDung);
                         $('#_txtNhaThau').val(noidung.NhaThau);
 
-                        if (noidung.ChuKy.split('/').length > 1) {
-                            let chuKy = noidung.ChuKy.split('/')[0];
-                            let donvi = noidung.ChuKy.split('/')[1];
+                        if (noidung.ChuKy.split('_').length > 1) {
+                            let chuKy = noidung.ChuKy.split('_')[0];
+                            let donvi = noidung.ChuKy.split('_')[1];
                             $('#_txtChuKy').val(chuKy);
                             $('#_txtDonViChuKy').val(donvi);
                             $('#_txtDonViChuKy').trigger('change');
@@ -121,12 +128,12 @@
 
                         $('#_txtMaHieuMayKiemTra').val(noidung.MaHieuMayKiemTra);
                         $('#_txtTienDoHoanThanh').val(noidung.TienDoHoanThanh);
-                        $('#_txtSoTien').val(noidung.SoTien);
                         $('#_txtKetQua').val(noidung.KetQua);
+                        $('#_txtNguoiPhuTrach').val(noidung.NguoiPhucTrach);
 
-                        if (noidung.ThoiGianThongBao.split('/').length > 1) {
-                            let tgthongBao = noidung.ThoiGianThongBao.split('/')[0];
-                            let donviTB = noidung.ThoiGianThongBao.split('/')[1];
+                        if (noidung.ThoiGianThongBao.split('_').length > 1) {
+                            let tgthongBao = noidung.ThoiGianThongBao.split('_')[0];
+                            let donviTB = noidung.ThoiGianThongBao.split('_')[1];
 
                             $('#_txtThoiGianThongBao').val(tgthongBao);
                             $('#_txtDonViThoiGianThongBao').val(donviTB);

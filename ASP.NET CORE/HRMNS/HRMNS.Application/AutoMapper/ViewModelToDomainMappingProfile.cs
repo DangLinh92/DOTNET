@@ -91,7 +91,7 @@ namespace HRMNS.Application.AutoMapper
 
             CreateMap<EhsNoiDungKeHoachViewModel, EHS_NOIDUNG_KEHOACH>()
                 .ConstructUsing(c => new EHS_NOIDUNG_KEHOACH(c.Id, c.Year, c.MaNoiDung, c.NhaThau, c.ChuKy, c.YeuCau, c.Note, c.NgayThucHien, c.ThoiGian_ThucHien, c.ViTri,
-                c.SoLuong, c.NgayKhaiBaoThietBi, c.ThoiGianThongBao,c.MaHieuMayKiemTra,c.SoTien,c.KetQua,c.Status,c.TienDoHoanThanh,c.NguoiPhucTrach));
+                c.SoLuong, c.NgayKhaiBaoThietBi, c.ThoiGianThongBao,c.MaHieuMayKiemTra,c.KetQua,c.Status,c.TienDoHoanThanh,c.NguoiPhucTrach));
 
             CreateMap<TrainingTypeViewModel, TRAINING_TYPE>()
               .ConstructUsing(c => new TRAINING_TYPE(c.TrainName, c.Description, c.Status));
@@ -114,7 +114,7 @@ namespace HRMNS.Application.AutoMapper
            .ConstructUsing(c => new HR_NHANVIEN_CHEDO_DB(c.MaNhanVien, c.CheDoDB, c.Note));
 
             CreateMap<EhsChiPhiByMonthViewModel, EHS_CHIPHI_BY_MONTH>()
-        .ConstructUsing(c => new EHS_CHIPHI_BY_MONTH(c.Month,c.Year,c.MaNoiDungKeHoach,c.ChiPhi1,c.ChiPhi2, c.ChiPhi3, c.ChiPhi4, c.ChiPhi5, c.ChiPhi6, c.ChiPhi7, c.ChiPhi8, c.ChiPhi9, c.ChiPhi10, c.ChiPhi11, c.ChiPhi12));
+        .ConstructUsing(c => new EHS_CHIPHI_BY_MONTH(c.Year,c.MaNoiDung,c.ChiPhi1,c.ChiPhi2, c.ChiPhi3, c.ChiPhi4, c.ChiPhi5, c.ChiPhi6, c.ChiPhi7, c.ChiPhi8, c.ChiPhi9, c.ChiPhi10, c.ChiPhi11, c.ChiPhi12));
         }
     }
 }

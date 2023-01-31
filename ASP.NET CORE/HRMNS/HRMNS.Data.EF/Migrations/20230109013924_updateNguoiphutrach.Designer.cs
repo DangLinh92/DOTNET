@@ -4,14 +4,16 @@ using HRMNS.Data.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HRMNS.Data.EF.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    partial class AppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230109013924_updateNguoiphutrach")]
+    partial class updateNguoiphutrach
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -831,79 +833,6 @@ namespace HRMNS.Data.EF.Migrations
                     b.ToTable("DM_NGAY_LAMVIEC");
                 });
 
-            modelBuilder.Entity("HRMNS.Data.Entities.EHS_CHIPHI_BY_MONTH", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<double>("ChiPhi1")
-                        .HasColumnType("float");
-
-                    b.Property<double>("ChiPhi10")
-                        .HasColumnType("float");
-
-                    b.Property<double>("ChiPhi11")
-                        .HasColumnType("float");
-
-                    b.Property<double>("ChiPhi12")
-                        .HasColumnType("float");
-
-                    b.Property<double>("ChiPhi2")
-                        .HasColumnType("float");
-
-                    b.Property<double>("ChiPhi3")
-                        .HasColumnType("float");
-
-                    b.Property<double>("ChiPhi4")
-                        .HasColumnType("float");
-
-                    b.Property<double>("ChiPhi5")
-                        .HasColumnType("float");
-
-                    b.Property<double>("ChiPhi6")
-                        .HasColumnType("float");
-
-                    b.Property<double>("ChiPhi7")
-                        .HasColumnType("float");
-
-                    b.Property<double>("ChiPhi8")
-                        .HasColumnType("float");
-
-                    b.Property<double>("ChiPhi9")
-                        .HasColumnType("float");
-
-                    b.Property<string>("DateCreated")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("DateModified")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
-                    b.Property<Guid>("MaNoiDung")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("UserCreated")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("UserModified")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("Year")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MaNoiDung");
-
-                    b.ToTable("EHS_CHIPHI_BY_MONTH");
-                });
-
             modelBuilder.Entity("HRMNS.Data.Entities.EHS_DEMUC_KEHOACH", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1142,6 +1071,9 @@ namespace HRMNS.Data.EF.Migrations
                         .HasMaxLength(500);
 
                     b.Property<double>("SoLuong")
+                        .HasColumnType("float");
+
+                    b.Property<double>("SoTien")
                         .HasColumnType("float");
 
                     b.Property<string>("Status")
@@ -3012,15 +2944,6 @@ namespace HRMNS.Data.EF.Migrations
                         .WithMany("DM_CA_LVIEC")
                         .HasForeignKey("MaTruSo")
                         .OnDelete(DeleteBehavior.SetNull);
-                });
-
-            modelBuilder.Entity("HRMNS.Data.Entities.EHS_CHIPHI_BY_MONTH", b =>
-                {
-                    b.HasOne("HRMNS.Data.Entities.EHS_NOIDUNG", "EHS_NOIDUNG")
-                        .WithMany("EHS_CHIPHI_BY_MONTH")
-                        .HasForeignKey("MaNoiDung")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("HRMNS.Data.Entities.EHS_LUATDINH_DEMUC_KEHOACH", b =>

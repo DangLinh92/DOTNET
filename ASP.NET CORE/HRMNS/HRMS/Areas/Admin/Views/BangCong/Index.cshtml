@@ -17,7 +17,7 @@
         var roleUsers = JSON.parse('@Html.Raw(JsonSerializer.Serialize(User.FindFirst(x => x.Type == "Roles").Value + ""))');
     </script>
 
-    <script src="~/app/controllers/bangCong/bangCongMns.js"></script>
+    @*<script src="~/app/controllers/bangCong/bangCongMns.js"></script>*@
 
     <script>
         var controller = new bangCongController();

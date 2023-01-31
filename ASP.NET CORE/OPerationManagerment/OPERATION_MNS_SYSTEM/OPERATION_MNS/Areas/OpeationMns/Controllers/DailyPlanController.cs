@@ -65,32 +65,16 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
             int index = 1;
             while (Days.ToList().Count < leadTime - 1)
             {
-                if (!DateOffLineViewModels.Any(x => x.ItemValue == GetBeginDate().AddDays(index).ToString("yyyy-MM-dd")))
+                if (!DateOffLineViewModels.Any(x => x.ItemValue == InventoryTicker.GetBeginDate().AddDays(index).ToString("yyyy-MM-dd")))
                 {
-                    Days.Add(GetBeginDate().AddDays(index).ToString("yyyy-MM-dd"));
+                    Days.Add(InventoryTicker.GetBeginDate().AddDays(index).ToString("yyyy-MM-dd"));
                 }
                 index += 1;
             }
 
             Days.Sort();
-            Days.Insert(0, GetBeginDate().ToString("yyyy-MM-dd"));
+            Days.Insert(0, InventoryTicker.GetBeginDate().ToString("yyyy-MM-dd"));
             return Days;
-        }
-
-        private static DateTime GetBeginDate()
-        {
-            string dateResult = DateTime.Now.ToString("yyyy-MM-dd");
-            if (string.IsNullOrEmpty(InventoryTicker.BeginDate) || InventoryTicker.BeginDate == dateResult)
-            {
-                dateResult = "080000".CompareTo(DateTime.Now.ToString("HHmmss")) > 0 ? DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd") : DateTime.Now.ToString("yyyy-MM-dd");
-            }
-            else
-            {
-                dateResult = DateTime.Parse(InventoryTicker.BeginDate).ToString("yyyy-MM-dd");
-            }
-
-            return DateTime.Parse(dateResult);
-
         }
 
         [HttpPost]

@@ -73,8 +73,6 @@ namespace HRMNS.Application.ViewModels.EHS
         [StringLength(150)]
         public string MaHieuMayKiemTra { get; set; }
 
-        public double SoTien { get; set; }
-
         [StringLength(1000)]
         public string KetQua { get; set; }
 

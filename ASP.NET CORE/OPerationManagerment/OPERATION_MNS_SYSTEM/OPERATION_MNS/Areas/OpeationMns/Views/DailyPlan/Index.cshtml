@@ -125,12 +125,12 @@
         e.cancel = true;
         };
 
-    var arrOperationData = ["wall_PR", "wall_Ashing", "roof_Laminating",
+        var arrOperationData = ["wall_PR", "wall_Inspection", "roof_Laminating",
                             "roof_Photo", "roof_Measure", "roof_Inspection",
                             "seed_Deposition", "plate_Patterning_PR", "plate_Patterning_Inspection",
                             "cu_Sn_Plating", "plate_BST", "plate_Inspection", "shipping_Wait"];
 
-    var arrOpearationName = ["Wall PR", "Wall Ashing", "Roof Laminating",
+        var arrOpearationName = ["Wall PR", "Wall Inspection", "Roof Laminating",
                              "Roof Photo", "Roof Measure", "Roof Inspection",
                              "Seed Deposition", "Plate Patterning PR", "Plate Patterning Inspection",
             "Cu/Sn Plating", "Plate BST", "Plate Inspection", "Shipping Wait"];
@@ -369,7 +369,7 @@
                                 .Items(new List<string>()
                                 { "Shipping Wait", "Plate Inspection", "Plate BST", "Cu/Sn Plating",
                                                         "Plate Patterning Inspection", "Plate Patterning PR", "Seed Deposition", "Roof Inspection",
-                                                        "Roof Measure", "Roof Photo", "Roof Laminating", "Wall Ashing", "Wall PR"
+                                                        "Roof Measure", "Roof Photo", "Roof Laminating", "Wall Inspection", "Wall PR"
                                 })
                                 .ShowSelectionControls(true)
                                 .ApplyValueMode(EditorApplyValueMode.UseButtons)
@@ -442,8 +442,8 @@
         });
 
         columns.Add().Caption("Day "+today4).Columns(c => {
-                    c.AddFor(m => m.Wall_Ashing).DataField("wall_Ashing").Format("#,##0").CellTemplate(@<text>
-                                    <span class="<%- data.wall_Ashing >= 0 ? 'inc' : 'dec' %>">
+                    c.AddFor(m => m.Wall_Inspection).DataField("wall_Inspection").Format("#,##0").CellTemplate(@<text>
+                                    <span class="<%- data.wall_Inspection >= 0 ? 'inc' : 'dec' %>">
                                         <%- text %>
                                     </span>
                                 </text>);
@@ -530,7 +530,7 @@ c.AddFor(m => m.Plate_Patterning_Inspection).DataField("plate_Patterning_Inspect
     })
     .Summary(s=>s.TotalItems(totalItems => {
         totalItems.Add().SummaryType(SummaryType.Sum).Column("wall_PR").Name("Sum_wall_PR").CssClass("Sum_wall_PR").DisplayFormat("Total: {0}").ValueFormat(Format.FixedPoint);
-        totalItems.Add().SummaryType(SummaryType.Sum).Column("wall_Ashing").Name("Sum_wall_Ashing").CssClass("Sum_wall_Ashing").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("wall_Inspection").Name("Sum_wall_Inspection").CssClass("Sum_wall_Inspection").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
         totalItems.Add().SummaryType(SummaryType.Sum).Column("roof_Laminating").Name("Sum_roof_Laminating").CssClass("Sum_roof_Laminating").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
         totalItems.Add().SummaryType(SummaryType.Sum).Column("roof_Photo").Name("Sum_roof_Photo").CssClass("Sum_roof_Photo").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
 

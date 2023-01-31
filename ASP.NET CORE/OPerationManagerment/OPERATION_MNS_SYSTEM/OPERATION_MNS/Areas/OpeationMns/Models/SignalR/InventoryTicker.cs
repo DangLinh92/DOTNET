@@ -239,7 +239,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models.SignalR
                                                 iv.Plating_Input_Waiting + iv.Cu_Sn_Plating + iv.St_Plate_Visual_Inspection + iv.SN_Plate_Measure + iv.PR_Strip_Cu_Etching + iv.Nd_Plate_Visual_Inspection + iv.Ti_ething + iv.Plate_Measure + iv.Plate_BST +
                                                 iv.Plate_Inspection_Wait + iv.Plate_Inspection + iv.Probe_Waite + iv.Wafer_Probe_RF + iv.Wafer_Probe_IR + iv.Shipping_Wait;
 
-                            daily.Wall_Ashing = daily.Roof_Laminating + iv.Before_Roof_Lami_Wafer_Inspection + iv.Roof_Laminating;
+                            daily.Wall_Inspection = daily.Roof_Laminating + iv.Before_Roof_Lami_Wafer_Inspection + iv.Roof_Laminating;
                         }
 
                         // kế hoach ngày thứ 6,...
@@ -270,14 +270,11 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models.SignalR
             return SetYieldForModel(dailyPlanViewModels);
         }
 
-        private static DateTime GetBeginDate()
+        public static DateTime GetBeginDate()
         {
             string dateResult = DateTime.Now.ToString("yyyy-MM-dd");
-            if (string.IsNullOrEmpty(BeginDate) || dateResult == BeginDate)
-            {
-                dateResult = "080000".CompareTo(DateTime.Now.ToString("HHmmss")) > 0 ? DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd") : DateTime.Now.ToString("yyyy-MM-dd");
-            }
-            else
+
+            if (!string.IsNullOrEmpty(BeginDate))
             {
                 dateResult = DateTime.Parse(BeginDate).ToString("yyyy-MM-dd");
             }
@@ -325,6 +322,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models.SignalR
                 foreach (DataRow row in data.Rows)
                 {
                     item = DailyPlanViewModels.FirstOrDefault(x => x.Model == row["Model"].NullString());
+
                     if (item != null)
                     {
                         item.YieldPlan = decimal.Parse(row["YieldPlan"].NullString());
@@ -338,7 +336,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models.SignalR
                                 // chuyển đổi từ chip -> wafer :số tấm = số chip/ (hieu suat * chip co ban)
                                 item.Wall_PR = Math.Floor((100 * item.Wall_PR) / (item.YieldPlan * item.StandardQty));
                                 item.Wall_Oven = Math.Floor((100 * item.Wall_Oven) / (item.YieldPlan * item.StandardQty));
-                                item.Wall_Ashing = Math.Floor((100 * item.Wall_Ashing) / (item.YieldPlan * item.StandardQty));
+                                item.Wall_Inspection = Math.Floor((100 * item.Wall_Inspection) / (item.YieldPlan * item.StandardQty));
                                 item.Roof_Laminating = Math.Floor((100 * item.Roof_Laminating) / (item.YieldPlan * item.StandardQty));
                                 item.Roof_Ashing = Math.Floor((100 * item.Roof_Ashing) / (item.YieldPlan * item.StandardQty));
                                 item.Roof_Measure = Math.Floor((100 * item.Roof_Measure) / (item.YieldPlan * item.StandardQty));
@@ -357,7 +355,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models.SignalR
                             {
                                 item.Wall_PR = 0;
                                 item.Wall_Oven = 0;
-                                item.Wall_Ashing = 0;
+                                item.Wall_Inspection = 0;
                                 item.Roof_Laminating = 0;
                                 item.Roof_Ashing = 0;
                                 item.Roof_Measure = 0;

@@ -4,14 +4,16 @@ using HRMNS.Data.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HRMNS.Data.EF.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    partial class AppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230114042526_updateChiPhiByMonth")]
+    partial class updateChiPhiByMonth
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -885,6 +887,10 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<Guid>("MaNoiDung")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Month")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<string>("UserCreated")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
@@ -1142,6 +1148,9 @@ namespace HRMNS.Data.EF.Migrations
                         .HasMaxLength(500);
 
                     b.Property<double>("SoLuong")
+                        .HasColumnType("float");
+
+                    b.Property<double>("SoTien")
                         .HasColumnType("float");
 
                     b.Property<string>("Status")

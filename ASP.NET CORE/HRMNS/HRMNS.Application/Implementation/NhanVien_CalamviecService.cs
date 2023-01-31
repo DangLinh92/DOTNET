@@ -177,7 +177,7 @@ namespace HRMNS.Application.Implementation
                                 row["Danhmuc_CaLviec"] = "CN_WHC";
                                 row["CaLV_DB"] = "TS";
                             }
-                            else if(calv == "HC") // HANH CHÍNH
+                            else if (calv == "HC") // HANH CHÍNH
                             {
                                 row["Danhmuc_CaLviec"] = "CN_WHC";
                                 row["CaLV_DB"] = "HC";
@@ -201,18 +201,21 @@ namespace HRMNS.Application.Implementation
                         DateTime dStart = DateTime.Parse(worksheet.Cells[i, 4].Text.NullString());
                         DateTime dEnd = DateTime.Parse(worksheet.Cells[i, 5].Text.NullString());
 
+                        if (DateTime.Compare(dStart, dEnd) > 0)
+                        {
+                            throw new Exception("Ngày bắt đầu phải nhỏ hơn ngày kết thúc");
+                        }
+
                         row["BatDau_TheoCa"] = dStart.ToString("yyyy-MM-dd");
                         row["KetThuc_TheoCa"] = dEnd.ToString("yyyy-MM-dd");
 
-                        if(_nhanvienClviecRepository.FindAll(x => x.MaNV == row["MaNV"].NullString() && x.BatDau_TheoCa == dStart.ToString("yyyy-MM-dd") && x.KetThuc_TheoCa == dEnd.ToString("yyyy-MM-dd")).Count() == 0)
+                        // Không được đăng ký trùng 1 ngày có 2 ca
+                        foreach (DateTime day in EachDay.EachDays(dStart, dEnd))
                         {
-                            foreach (DateTime day in EachDay.EachDays(dStart, dEnd))
+                            dateCheck = day.ToString("yyyy-MM-dd");
+                            if (_nhanvienClviecRepository.FindAll(x => x.MaNV == row["MaNV"].NullString() && string.Compare(x.BatDau_TheoCa, dateCheck) <= 0 && string.Compare(x.KetThuc_TheoCa, dateCheck) >= 0).Count() > 0)
                             {
-                                dateCheck = day.ToString("yyyy-MM-dd");
-                                if (_nhanvienClviecRepository.FindAll(x => x.MaNV == row["MaNV"].NullString() && string.Compare(x.BatDau_TheoCa, dateCheck) <= 0 && string.Compare(x.KetThuc_TheoCa, dateCheck) >= 0).Count() > 0)
-                                {
-                                    throw new Exception("Ca làm việc bị trùng ngày: " + dateCheck + " Mã NV: " + row["MaNV"].NullString());
-                                }
+                                throw new Exception("Ca làm việc bị trùng ngày: " + dateCheck + " Mã NV: " + row["MaNV"].NullString());
                             }
                         }
 

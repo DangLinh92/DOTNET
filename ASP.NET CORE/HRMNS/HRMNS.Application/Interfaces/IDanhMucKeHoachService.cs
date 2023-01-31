@@ -32,7 +32,7 @@ namespace HRMNS.Application.Interfaces
         Guid DeleteNoiDung(Guid maNoiDung);
         string GetNoiDungKeHoach(Guid maNoiDung);
 
-        List<EhsNoiDungKeHoachViewModel> GetNoiDungKeHoachByMaNoiDung(string maNoiDung);
+        List<EhsNoiDungKeHoachViewModel> GetNoiDungKeHoachByMaNoiDung(string maNoiDung,string year);
         EhsNoiDungKeHoachViewModel GetNoiDungKeHoachById(string Id);
         EhsNoiDungKeHoachViewModel UpdateNoiDungKeHoach(EhsNoiDungKeHoachViewModel model);
         EhsNoiDungKeHoachViewModel UpdateNoiDungKeHoachSingle(EhsNoiDungKeHoachViewModel model);
@@ -41,6 +41,11 @@ namespace HRMNS.Application.Interfaces
         ResultDB ImportExcel(string filePath,string maKH);
 
         TongHopKeHoachALL TongHopKeHoachByYear(string year);
+
+        EhsChiPhiByMonthViewModel GetChiPhiNoiDung(string noidungId,string year);
+        EhsChiPhiByMonthViewModel GetChiPhiById(int Id);
+        EhsChiPhiByMonthViewModel AddChiPhi(EhsChiPhiByMonthViewModel model);
+        EhsChiPhiByMonthViewModel UpdateChiPhi(EhsChiPhiByMonthViewModel model);
 
         void Save();
     }

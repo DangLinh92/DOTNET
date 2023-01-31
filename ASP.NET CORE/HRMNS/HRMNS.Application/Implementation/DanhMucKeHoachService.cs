@@ -26,6 +26,7 @@ namespace HRMNS.Application.Implementation
         private IRespository<EHS_NOIDUNG_KEHOACH, Guid> _ehsNoiDungKeHoachRespository;
         private IRespository<EHS_LUATDINH_DEMUC_KEHOACH, int> _ehsLuatDinhDemucKHRespository;
         private IRespository<EVENT_SHEDULE_PARENT, Guid> _eventScheduleParentRepository;
+        private IRespository<EHS_CHIPHI_BY_MONTH, int> _chiPhiByMonthRepository;
 
         private IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -38,6 +39,7 @@ namespace HRMNS.Application.Implementation
             IRespository<EHS_LUATDINH_DEMUC_KEHOACH, int> ehsLuatDinhDemucKHRespository,
             IRespository<EHS_NOIDUNG_KEHOACH, Guid> ehsNoiDungKeHoachRespository,
             IRespository<EVENT_SHEDULE_PARENT, Guid> eventScheduleParentRepository,
+            IRespository<EHS_CHIPHI_BY_MONTH, int> chiPhiByMonthRepository,
             IHttpContextAccessor httpContextAccessor,
             IUnitOfWork unitOfWork,
             IMapper mapper)
@@ -49,6 +51,7 @@ namespace HRMNS.Application.Implementation
             _ehsLuatDinhDemucKHRespository = ehsLuatDinhDemucKHRespository;
             _ehsNoiDungKeHoachRespository = ehsNoiDungKeHoachRespository;
             _eventScheduleParentRepository = eventScheduleParentRepository;
+            _chiPhiByMonthRepository = chiPhiByMonthRepository;
             _httpContextAccessor = httpContextAccessor;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -130,7 +133,7 @@ namespace HRMNS.Application.Implementation
             foreach (var item in nds)
             {
                 item.EHS_NOIDUNG_KEHOACH = _mapper.Map<List<EhsNoiDungKeHoachViewModel>>(_ehsNoiDungKeHoachRespository.FindAll(x => x.MaNoiDung.Equals(item.Id) && x.Year == year));
-            }         
+            }
 
             return nds;
         }
@@ -341,9 +344,8 @@ namespace HRMNS.Application.Implementation
                                 noiDungKH.ThoiGianThongBao = worksheet.Cells[i, 14].Text.IfNullIsZero() + "_" + worksheet.Cells[i, 15].Text.NullString();
 
                                 noiDungKH.TienDoHoanThanh = double.Parse(worksheet.Cells[i, 16].Text.IfNullIsZero());
-                                noiDungKH.SoTien = double.Parse(worksheet.Cells[i, 17].Text.IfNullIsZero());
-                                noiDungKH.KetQua = worksheet.Cells[i, 18].Text.NullString();
-                                noiDungKH.NguoiPhucTrach = worksheet.Cells[i, 19].Text.NullString();
+                                noiDungKH.KetQua = worksheet.Cells[i, 17].Text.NullString();
+                                noiDungKH.NguoiPhucTrach = worksheet.Cells[i, 18].Text.NullString();
 
                                 noiDungKH.Year = DateTime.Parse(ngayKDinh.NullString()).Year.NullString();
                                 noiDungKH.UserCreated = GetUserId();
@@ -384,7 +386,7 @@ namespace HRMNS.Application.Implementation
                                 even.TimeAlert = noiDungKH.ThoiGianThongBao;
                                 even.Location = noiDungKH.ViTri;
                                 even.IsAllDay = true;
-                                even.Description = "Phụ Trách: " + noiDungKH.NguoiPhucTrach + " <\br> Vendor: " + noiDungKH.NhaThau + "<\br>" + " || Date: " + noiDungKH.NgayThucHien + "<\br>" + " || Cost: " + noiDungKH.SoTien + "<\br>" + " || Result: " + noiDungKH.KetQua;
+                                even.Description = "Phụ Trách: " + noiDungKH.NguoiPhucTrach + " || Vendor: " + noiDungKH.NhaThau + " || Result: " + noiDungKH.KetQua;
 
                                 if (eventParent == null)
                                 {
@@ -442,9 +444,9 @@ namespace HRMNS.Application.Implementation
             return "";
         }
 
-        public List<EhsNoiDungKeHoachViewModel> GetNoiDungKeHoachByMaNoiDung(string maNoiDung)
+        public List<EhsNoiDungKeHoachViewModel> GetNoiDungKeHoachByMaNoiDung(string maNoiDung, string year)
         {
-            return _mapper.Map<List<EhsNoiDungKeHoachViewModel>>(_ehsNoiDungKeHoachRespository.FindAll(x => Guid.Parse(maNoiDung).Equals(x.MaNoiDung), x => x.EHS_NOIDUNG));
+            return _mapper.Map<List<EhsNoiDungKeHoachViewModel>>(_ehsNoiDungKeHoachRespository.FindAll(x => Guid.Parse(maNoiDung).Equals(x.MaNoiDung) && x.Year == year, x => x.EHS_NOIDUNG));
         }
 
         public EhsNoiDungKeHoachViewModel GetNoiDungKeHoachById(string Id)
@@ -470,7 +472,7 @@ namespace HRMNS.Application.Implementation
                 even.TimeAlert = model.ThoiGianThongBao;
                 even.Location = model.ViTri;
                 even.IsAllDay = true;
-                even.Description = "Vendor: " + model.NhaThau + "\n" + " || Date: " + model.NgayThucHien + "\n" + " || Cost: " + model.SoTien + "\n" + " || Result: " + model.KetQua;
+                even.Description = "Phụ Trách: " + model.NguoiPhucTrach + " || Vendor: " + model.NhaThau + " || Result: " + model.KetQua;
                 even.UserModified = GetUserId();
                 _eventScheduleParentRepository.Update(even);
             }
@@ -486,7 +488,7 @@ namespace HRMNS.Application.Implementation
                 even.TimeAlert = model.ThoiGianThongBao;
                 even.Location = model.ViTri;
                 even.IsAllDay = true;
-                even.Description = "Vendor: " + model.NhaThau + "\n" + " || Date: " + model.NgayThucHien + "\n" + " || Cost: " + model.SoTien + "\n" + " || Result: " + model.KetQua;
+                even.Description = "Phụ Trách: " + model.NguoiPhucTrach + " || Vendor: " + model.NhaThau + " || Result: " + model.KetQua;
                 even.UserCreated = GetUserId();
                 _eventScheduleParentRepository.Add(even);
             }
@@ -604,79 +606,43 @@ namespace HRMNS.Application.Implementation
                             totalAllItem = totalByYear.ItemByYears.FirstOrDefault(x => x.MaKeHoach.Equals(demuc.MaKeHoach) && x.MaDeMuc.Equals(demuc.MaDeMucKH) && x.MaNoiDung.Equals(noidung.MaNoiDung));
                         }
 
-                        foreach (var ndChitiet in noidung.NoiDungChiTiets)
+                        foreach (var chiphi in _chiPhiByMonthRepository.FindAll(x => x.MaNoiDung.Equals(noidung.MaNoiDung)))
                         {
-                            if (ndChitiet.NgayThucHien.NullString().Contains("-") && ndChitiet.NgayThucHien.Split("-")[1].NullString() == "01") // yyyy-MM-dd 
-                            {
-                                totalAllItem.Month_1 += ndChitiet.SoTien;
-                                totalByYear.TMonth_1 += ndChitiet.SoTien;
-                            }
+                            totalAllItem.Month_1 = chiphi.ChiPhi1;
+                            totalByYear.TMonth_1 = chiphi.ChiPhi1;
 
-                            if (ndChitiet.NgayThucHien.NullString().Contains("-") && ndChitiet.NgayThucHien.Split("-")[1].NullString() == "02") // yyyy-MM-dd 
-                            {
-                                totalAllItem.Month_2 += ndChitiet.SoTien;
-                                totalByYear.TMonth_2 += ndChitiet.SoTien;
-                            }
+                            totalAllItem.Month_2 = chiphi.ChiPhi2;
+                            totalByYear.TMonth_2 = chiphi.ChiPhi2;
 
-                            if (ndChitiet.NgayThucHien.NullString().Contains("-") && ndChitiet.NgayThucHien.Split("-")[1].NullString() == "03") // yyyy-MM-dd 
-                            {
-                                totalAllItem.Month_3 += ndChitiet.SoTien;
-                                totalByYear.TMonth_3 += ndChitiet.SoTien;
-                            }
+                            totalAllItem.Month_3 = chiphi.ChiPhi3;
+                            totalByYear.TMonth_3 = chiphi.ChiPhi3;
 
-                            if (ndChitiet.NgayThucHien.NullString().Contains("-") && ndChitiet.NgayThucHien.Split("-")[1].NullString() == "04") // yyyy-MM-dd 
-                            {
-                                totalAllItem.Month_4 += ndChitiet.SoTien;
-                                totalByYear.TMonth_4 += ndChitiet.SoTien;
-                            }
+                            totalAllItem.Month_4 = chiphi.ChiPhi4;
+                            totalByYear.TMonth_4 = chiphi.ChiPhi4;
 
-                            if (ndChitiet.NgayThucHien.NullString().Contains("-") && ndChitiet.NgayThucHien.Split("-")[1].NullString() == "05") // yyyy-MM-dd 
-                            {
-                                totalAllItem.Month_5 += ndChitiet.SoTien;
-                                totalByYear.TMonth_5 += ndChitiet.SoTien;
-                            }
+                            totalAllItem.Month_5 = chiphi.ChiPhi5;
+                            totalByYear.TMonth_5 = chiphi.ChiPhi5;
 
-                            if (ndChitiet.NgayThucHien.NullString().Contains("-") && ndChitiet.NgayThucHien.Split("-")[1].NullString() == "06") // yyyy-MM-dd 
-                            {
-                                totalAllItem.Month_6 += ndChitiet.SoTien;
-                                totalByYear.TMonth_6 += ndChitiet.SoTien;
-                            }
+                            totalAllItem.Month_6 = chiphi.ChiPhi6;
+                            totalByYear.TMonth_6 = chiphi.ChiPhi6;
 
-                            if (ndChitiet.NgayThucHien.NullString().Contains("-") && ndChitiet.NgayThucHien.Split("-")[1].NullString() == "07") // yyyy-MM-dd 
-                            {
-                                totalAllItem.Month_7 += ndChitiet.SoTien;
-                                totalByYear.TMonth_7 += ndChitiet.SoTien;
-                            }
+                            totalAllItem.Month_7 = chiphi.ChiPhi7;
+                            totalByYear.TMonth_7 = chiphi.ChiPhi7;
 
-                            if (ndChitiet.NgayThucHien.NullString().Contains("-") && ndChitiet.NgayThucHien.Split("-")[1].NullString() == "08") // yyyy-MM-dd 
-                            {
-                                totalAllItem.Month_8 += ndChitiet.SoTien;
-                                totalByYear.TMonth_8 += ndChitiet.SoTien;
-                            }
+                            totalAllItem.Month_8 = chiphi.ChiPhi8;
+                            totalByYear.TMonth_8 = chiphi.ChiPhi8;
 
-                            if (ndChitiet.NgayThucHien.NullString().Contains("-") && ndChitiet.NgayThucHien.Split("-")[1].NullString() == "09") // yyyy-MM-dd 
-                            {
-                                totalAllItem.Month_9 += ndChitiet.SoTien;
-                                totalByYear.TMonth_9 += ndChitiet.SoTien;
-                            }
+                            totalAllItem.Month_9 = chiphi.ChiPhi9;
+                            totalByYear.TMonth_9 = chiphi.ChiPhi9;
 
-                            if (ndChitiet.NgayThucHien.NullString().Contains("-") && ndChitiet.NgayThucHien.Split("-")[1].NullString() == "10") // yyyy-MM-dd 
-                            {
-                                totalAllItem.Month_10 += ndChitiet.SoTien;
-                                totalByYear.TMonth_10 += ndChitiet.SoTien;
-                            }
+                            totalAllItem.Month_10 = chiphi.ChiPhi10;
+                            totalByYear.TMonth_10 = chiphi.ChiPhi10;
 
-                            if (ndChitiet.NgayThucHien.NullString().Contains("-") && ndChitiet.NgayThucHien.Split("-")[1].NullString() == "11") // yyyy-MM-dd 
-                            {
-                                totalAllItem.Month_11 += ndChitiet.SoTien;
-                                totalByYear.TMonth_11 += ndChitiet.SoTien;
-                            }
+                            totalAllItem.Month_11 = chiphi.ChiPhi11;
+                            totalByYear.TMonth_11 = chiphi.ChiPhi11;
 
-                            if (ndChitiet.NgayThucHien.NullString().Contains("-") && ndChitiet.NgayThucHien.Split("-")[1].NullString() == "12") // yyyy-MM-dd 
-                            {
-                                totalAllItem.Month_12 += ndChitiet.SoTien;
-                                totalByYear.TMonth_12 += ndChitiet.SoTien;
-                            }
+                            totalAllItem.Month_12 = chiphi.ChiPhi12;
+                            totalByYear.TMonth_12 = chiphi.ChiPhi12;
                         }
 
                         totalByYear.ItemByYears.Add(totalAllItem);
@@ -686,6 +652,31 @@ namespace HRMNS.Application.Implementation
             totalByYear.ItemByYears.Sort((a, b) => a.OrderItem.CompareTo(b.OrderItem));
             tongHopKeHoachALL.TotalByYear = totalByYear;
             return tongHopKeHoachALL;
+        }
+
+        public EhsChiPhiByMonthViewModel GetChiPhiNoiDung(string noidungId,string year)
+        {
+           var en = _chiPhiByMonthRepository.FindAll(x=>x.MaNoiDung.Equals(Guid.Parse(noidungId)) && x.Year == year).FirstOrDefault();
+           return _mapper.Map<EhsChiPhiByMonthViewModel>(en);
+        }
+
+        public EhsChiPhiByMonthViewModel AddChiPhi(EhsChiPhiByMonthViewModel model)
+        {
+            _chiPhiByMonthRepository.Add(_mapper.Map<EHS_CHIPHI_BY_MONTH>(model));
+            Save();
+            return model;
+        }
+
+        public EhsChiPhiByMonthViewModel UpdateChiPhi(EhsChiPhiByMonthViewModel model)
+        {
+            _chiPhiByMonthRepository.Update(_mapper.Map<EHS_CHIPHI_BY_MONTH>(model));
+            Save();
+            return model;
+        }
+
+        public EhsChiPhiByMonthViewModel GetChiPhiById(int Id)
+        {
+           return _mapper.Map<EhsChiPhiByMonthViewModel>(_chiPhiByMonthRepository.FindById(Id));
         }
     }
 }

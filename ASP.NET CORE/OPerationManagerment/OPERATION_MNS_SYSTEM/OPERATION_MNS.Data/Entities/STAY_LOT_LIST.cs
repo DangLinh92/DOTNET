@@ -48,6 +48,9 @@ namespace OPERATION_MNS.Data.Entities
         [StringLength(1)]
         public string ReleaseFlag { get; set; }
 
+        [StringLength(1)]
+        public string History_delete_flag { get; set; }
+
         [StringLength(250)]
         public string PhanLoaiLoi { get; set; }
 

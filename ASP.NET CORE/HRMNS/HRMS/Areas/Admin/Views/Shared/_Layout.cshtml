@@ -52,12 +52,15 @@
     <link href="~/css/fullcalendar.min.css" rel="stylesheet" />
 
     <!-- Main CSS -->
-    <link rel="stylesheet" href="~/css/style.css">
+    @*<link rel="stylesheet" href="~/css/style.css">*@
+    <link href="~/bundled/site-admin.min.css" rel="stylesheet" />
 
     <!-- su dung cho spreadsheet devexpress -->
     <script src="~/js/jquery-3.6.0.min.js"></script>
     <script src="~/js/devextreme/dx.all.js"></script>
-    <link href="~/css/devextreme/dx.light.css" rel="stylesheet" />
+        <link href="~/css/devextreme/dx.light.css" rel="stylesheet" />
+    @*<script src="~/bundled/site-Devextreme.min.js"></script>
+    <link href="~/bundled/site-Devextreme.min.css" rel="stylesheet" />*@
     <script src="~/node_modules/devexpress-aspnetcore-spreadsheet/dist/dx-aspnetcore-spreadsheet.js"></script>
     <link href="~/node_modules/devexpress-aspnetcore-spreadsheet/dist/dx-aspnetcore-spreadsheet.css" rel="stylesheet" />
     <script src="~/js/devextreme/aspnet/dx.aspnet.data.js"></script>
@@ -193,6 +196,9 @@
 
     <!-- set auto logout -->
     <script src="~/app/shared/IdleTimeout.js"></script>
+
+
+    <script src="~/bundled/site-admin.min.js"></script>
 
     @RenderSection("Scripts", required: false)
 

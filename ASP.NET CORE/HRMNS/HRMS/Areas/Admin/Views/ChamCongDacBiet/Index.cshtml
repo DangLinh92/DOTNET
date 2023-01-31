@@ -15,7 +15,7 @@
         var roleUsers = JSON.parse('@Html.Raw(JsonSerializer.Serialize(User.FindFirst(x => x.Type == "Roles").Value + ""))');
     </script>
     <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
-    <script src="~/app/controllers/chamcong_dacbiet/chamCongDacBietMns.js"></script>
+    @*<script src="~/app/controllers/chamcong_dacbiet/chamCongDacBietMns.js"></script>*@
     <script>
         var controller = new chamcongDacBietController();
         controller.initialize();

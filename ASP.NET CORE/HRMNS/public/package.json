@@ -3,7 +3,12 @@
   "name": "asp.net",
   "private": true,
   "devDependencies": {
+    "devexpress-aspnetcore-spreadsheet": "21.2.7",
     "devextreme": "21.2.8",
-    "devexpress-aspnetcore-spreadsheet": "21.2.7"
+    "gulp": "4.0.2",
+    "gulp-concat": "2.6.1",
+    "gulp-cssmin": "0.2.0",
+    "gulp-uglify": "3.0.2",
+    "rimraf": "3.0.0"
   }
 }

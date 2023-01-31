@@ -141,6 +141,7 @@
                     x: {
                         stacked: false,
                         ticks: {
+                            beginAtZero: true,
                             fontSize: 11
                         },
                         grid: {

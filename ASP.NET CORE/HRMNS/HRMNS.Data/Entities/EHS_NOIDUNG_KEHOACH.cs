@@ -13,11 +13,10 @@ namespace HRMNS.Data.Entities
     {
         public EHS_NOIDUNG_KEHOACH()
         {
-            EHS_CHIPHI_BY_MONTH = new HashSet<EHS_CHIPHI_BY_MONTH>();
         }
 
         public EHS_NOIDUNG_KEHOACH(Guid id, string year, Guid maNoiDung, string nhathau, string chuky, string yeucau, string note,
-            string ngaythuchien, string thoigianthuchien, string vitri, double soluong, string ngaykhaibaoTB, string thoigianthongbao, string mahieuKtra, double sotien, string ketqua, string status, double tiendo,string nguoiPhuTrach)
+            string ngaythuchien, string thoigianthuchien, string vitri, double soluong, string ngaykhaibaoTB, string thoigianthongbao, string mahieuKtra, string ketqua, string status, double tiendo,string nguoiPhuTrach)
         {
             Id = id;
             Year = year;
@@ -34,7 +33,6 @@ namespace HRMNS.Data.Entities
             ThoiGianThongBao = thoigianthongbao;
 
             MaHieuMayKiemTra = mahieuKtra;
-            SoTien = sotien;
             KetQua = ketqua;
             Status = status;
             TienDoHoanThanh = tiendo;
@@ -90,8 +88,6 @@ namespace HRMNS.Data.Entities
         [StringLength(150)]
         public string MaHieuMayKiemTra { get; set; }
 
-        public double SoTien { get; set; }
-
         [StringLength(1000)]
         public string KetQua { get; set; }
 
@@ -105,7 +101,5 @@ namespace HRMNS.Data.Entities
 
         [ForeignKey("MaNoiDung")]
         public virtual EHS_NOIDUNG EHS_NOIDUNG { get; set; }
-
-        public virtual ICollection<EHS_CHIPHI_BY_MONTH> EHS_CHIPHI_BY_MONTH { get; set; }
     }
 }
