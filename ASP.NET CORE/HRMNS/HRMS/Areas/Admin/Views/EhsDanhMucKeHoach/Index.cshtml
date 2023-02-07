@@ -15,8 +15,6 @@
 
         var keHoachIdInit = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.MaKeHoachActive+""))');
 
-        $('#hd-ImportType').val(keHoachIdInit);
-
         var controller = new EhsDMKeHoachController();
         controller.initialize();
 
@@ -27,11 +25,9 @@
                 $('.roles-menu>ul li').removeClass('active');
                 $(elm).addClass('active');
 
-                var khId = $(elm).data('val');
-                $('#hdKeHoachId').val(khId);
-                $('#hd-ImportType').val(khId);
-
-                $('#frmkhChange').submit();
+                //var khId = $(elm).data('val');
+                //$('#hdKeHoachId').val(khId);
+                //$('#frmkhChange').submit();
             };
 
             ulClick = function (kehoachId, kehoachVN, kehoachKR, noidung, e) {
@@ -69,222 +65,7 @@
                 $('#txtTenKeHoach_Delete').val(kehoachVN);
                 $('#delete_KeHoach').modal('show');
             }
-
-            dbClickDemuc = function (demucKeHoach, e) {
-
-                $.ajax({
-                    url: '/admin/EhsDanhMucKeHoach/GetTenDemucKeHoach',
-                    type: 'POST',
-                    data: {
-                        maDemuc: demucKeHoach,
-                    },
-                    success: function (res) {
-                        $('#txtDemucKeHoachId').val(demucKeHoach);
-                        $('#txtTenDemucKeHoach_VN').val(res.TenDemuc);
-                        $('#txtLuatDinhLquanDeMuc_Edit').val(res.LuatDinh);
-                         $('#update_Demuckehoach').modal('show');
-                    },
-                    error: function (status) {
-                        console.log(status.responseText);
-                        hrms.notify('error:' + status.responseText, 'error', 'alert', function () {
-                        });
-                    }
-                });
-            }
-
-            dbClickNoiDung = function (maNoiDung, e) {
-
-                $.ajax({
-                    url: '/admin/EhsDanhMucKeHoach/GetNoiDungKeHoach',
-                    type: 'POST',
-                    data: {
-                        maNoiDung: maNoiDung,
-                    },
-                    success: function (response) {
-                        $('#txtNoiDungKeHoachId').val(maNoiDung);
-                        $('#txtNoiDungKeHoach').val(response);
-                        $('#update_NoiDungkehoach').modal('show');
-                    },
-                    error: function (status) {
-                        console.log(status.responseText);
-                        hrms.notify('error:' + status.responseText, 'error', 'alert', function () {
-                        });
-                    }
-                });
-            }
-
-            ItemClickNoiDung = function (maNoiDung) {
-
-                let _year = $('#_txtYear').val();
-
-                $.ajax({
-                    url: '/admin/EhsDanhMucKeHoach/GetNoiDungChiTiet',
-                    type: 'POST',
-                    data: {
-                        maNoiDung: maNoiDung,
-                        year: _year
-                    },
-                    success: function (response) {
-                        var render = "";
-                        $.each(response.NoiDungChiTiet, function (i, item) {
-                            render += "<tr>";
-                            render += " <td class='text-wrap'>" + item.EHS_NOIDUNG.NoiDung + "</td> ";
-                            render += " <td>" + item.NhaThau + "</td> ";
-                            render += " <td>" + item.ChuKy + "</td> ";
-                            render += " <td>" + item.ViTri + "</td> ";
-                            render += " <td>" + item.SoLuong + "</td> ";
-                            render += " <td>" + item.NgayThucHien + "</td> ";
-                            render += " <td>" + item.ThoiGian_ThucHien + "</td> ";
-                            render += " <td>" + item.YeuCau + "</td> ";
-                            render += " <td>" + item.TienDoHoanThanh + "</td> ";
-                            render += " <td>" + item.ThoiGianConLai + "</td> ";
-                            render += " <td>" + item.NguoiPhucTrach + "</td> ";
-                            render += " <td>" + '<a class="dropdown-item edit-noidungKH" href="#" data-toggle="modal" data-target="#addEditNoiDungChiTietModel" data-id="'+ item.Id+'"><i class="fa fa-edit m-r-5"></i> Sửa Xóa</a>' + "</td> ";
-                            render += "</tr>";
-                        });
-
-                        var table = $('#noiDungChiTietDataTable');
-
-                        if (table) {
-                            table.DataTable().destroy();
-
-                            $('#noiDungChiTietDataTable').find('tbody').html(render);
-
-                            $('#noiDungChiTietDataTable').DataTable({
-                                scrollY: 300,
-                                scrollX: true,
-                                scrollCollapse: true,
-                                paging: false,
-                                "order": [5, 'asc']
-                            });
-
-                            $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search.');
-                            $('select[name="noiDungChiTietDataTable_length"]').removeClass('form-control-sm');
-
-                            $('#noiDungChiTietDataTable').DataTable().draw();
-                        }
-
-                        console.log(response.ChiPhi);
-                        var dataGrid = $('#gridContainer').dxDataGrid('instance');
-                        dataGrid.option("dataSource", response.ChiPhi);
-                    },
-                    error: function (status) {
-                        console.log(status.responseText);
-                        hrms.notify('error:' + status.responseText, 'error', 'alert', function () {
-                        });
-                    }
-                });
-            }
-
-
-            var collapsedGroups = {};
-
-            var oTable = $('#tblDemuc').DataTable({
-                scrollY: 480,
-                scrollX: true,
-                scrollCollapse: true,
-                paging: false,
-                order: [
-                    [0, 'asc']
-                ],
-                rowGroup: {
-                    // Uses the 'row group' plugin
-                    dataSrc: 0,
-                    startRender: function (rows, group) {
-                        var collapsed = !!collapsedGroups[group];
-
-                        rows.nodes().each(function (r) {
-                            r.style.display = 'none';
-                            if (collapsed) {
-                                r.style.display = '';
-                            }
-                        });
-
-                        // Add category name to the <tr>. NOTE: Hardcoded colspan
-                        return $('<tr/>')
-                            .append('<td colspan="8">' + group + ' (' + rows.count() + ')</td>')
-                            .attr('data-name', group)
-                            .toggleClass('collapsed', collapsed);
-                    }
-                }
-            });
-
-            $('#tblDemuc tbody').on('click', 'tr.dtrg-start', function () {
-                var name = $(this).data('name');
-                collapsedGroups[name] = !collapsedGroups[name];
-                oTable.draw(false);
-            });
-
-            $("#tblDemuc tbody tr").on('click', function (event) {
-                $("#tblDemuc tbody tr").removeClass('row_selected');
-                $(this).addClass('row_selected');
-            });
         });
-
-        $('#_txtYear').datetimepicker({
-            format: 'YYYY',
-            icons:
-            {
-                up: "fa fa-angle-up",
-                down: "fa fa-angle-down",
-                next: 'fa fa-angle-right',
-                previous: 'fa fa-angle-left'
-            }
-        });
-
-    function SaveChiPhi(e) {
-
-      var change = e.changes[0];
-      console.log(change);
-      if (change) {
-          e.cancel = true;
-          e.promise = saveChange(change)
-              .done((data) => {
-                  var chiphis = e.component.option("dataSource");
-
-                  if (change.type === "insert") {
-                      change.data = data;
-                  }
-
-                  chiphis = DevExpress.data.applyChanges(chiphis, [change], { keyExpr: "Id" });
-
-                  e.component.option({
-                      dataSource: chiphis,
-                      editing: {
-                          editRowKey: null,
-                          changes: []
-                      }
-                  });
-              });
-      }
-    };
-
-        function saveChange(change) {
-             switch (change.type) {
-                case "update":
-                     return sendRequest('@Url.RouteUrl(new { area= "admin", controller = "EhsDanhMucKeHoach", action = "Put" })', "PUT", { key: change.key, values: JSON.stringify(change.data) });
-                }
-            };
-
-            function sendRequest(url, method, data) {
-                var d = $.Deferred();
-
-                method = method || "GET";
-
-                $.ajax(url, {
-                    method: method,
-                    data: data,
-                    cache: false,
-                    xhrFields: { withCredentials: true }
-                }).done(function (result) {
-                    d.resolve(method === "GET" ? result.data : result);
-                }).fail(function (xhr) {
-                    d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
-                });
-
-                return d.promise();
-        };
-
     </script>
 }
 
@@ -315,8 +96,8 @@
     <!-- /Page Header -->
 
     <div class="row">
-        <div class="col-sm-5 col-md-5 col-lg-5 col-xl-4">
-            <a href="#" class="btn btn-primary btn-block" id="btnShowAddKH" data-toggle="modal" data-target="#add_kehoach"><i class="fa fa-plus"></i>Thêm Kế Hoạch</a>
+        <div class="col-md-12">
+            <a href="#" class="btn btn-primary btn-block" style="width:162px" id="btnShowAddKH" data-toggle="modal" data-target="#add_kehoach"><i class="fa fa-plus"></i>Thêm Kế Hoạch</a>
             <div class="roles-menu">
                 <ul>
                     @foreach (var item in Model.EhsDMKeHoachViewModels)
@@ -329,9 +110,9 @@
                                     <span class="action-circle large" data-toggle="modal" onclick="ulClick('@item.Id', '@item.TenKeHoach_VN','@item.TenKeHoach_KR','', event)" data-target="#edit_kehoach">
                                         <i class="material-icons">edit</i>
                                     </span>
-                                    <span class="action-circle large delete-btn" data-toggle="modal" onclick="uDeleteClick('@item.Id', '@item.TenKeHoach_VN', event)" data-target="#delete_kehoach">
+                                    @*<span class="action-circle large delete-btn" data-toggle="modal" onclick="uDeleteClick('@item.Id', '@item.TenKeHoach_VN', event)" data-target="#delete_kehoach">
                                         <i class="material-icons">delete</i>
-                                    </span>
+                                    </span>*@
                                 </span>
                             </a>
                             <hr style="width: 80%;text-align: center;margin: 0 auto;">
@@ -342,149 +123,6 @@
                     <input type="hidden" id="hdKeHoachId" name="kehoachID" />
                 </form>
             </div>
-        </div>
-
-        <div class="col-sm-7 col-md-7 col-lg-7 col-xl-8">
-            <div class="btn-group" style="height:40px">
-                <button type="button" class="btn btn-primary dropdown-toggle" id="btnImport" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Đề Mục Kế Hoạch</button>
-                <div class="dropdown-menu" style="">
-                    <a class="dropdown-item" href="~/templates/DeMucKH_NoiDungTemplate.xlsx">File mẫu import đề mục</a>
-                    <a class="dropdown-item" href="#" id="btn-getFileNoiDung">File mẫu import nội dung chi tiết</a>
-                    <a class="dropdown-item" href="#" id="btn-importDemuc">Import đề mục kế hoạch</a>
-                    <a class="dropdown-item" href="#" id="btn-importNoiDung">Import nội dung chi tiết</a>
-                </div>
-                <div class="form-group form-focus select-focus" style="margin-left:10px">
-                    <div class="cal-icon"><input id="_txtYear" class="form-control datetimepicker" name="year" value="@Model.Year" type="text" style="height:40px !important"></div>
-                    <label for="_txtYear" class="focus-label">Year</label>
-                </div>
-            </div>
-            <div class="m-b-30 table-responsive" style="margin-top:20px;">
-                <table id="tblDemuc" class="display" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th>Đề Mục</th>
-                            <th>Nội Dung</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.NoiDungKeHoachViewModels)
-                        {
-                            <tr>
-                                <td>
-                                    <a href="#" ondblclick="dbClickDemuc('@item.MaDeMucKH',event)" style="color: #92969b">@Html.Raw(@item.TenKeDeMuc_VN)</a>
-                                </td>
-                                <td>
-                                    <a href="#" onclick="ItemClickNoiDung('@item.MaNoiDung')" ondblclick="dbClickNoiDung('@item.MaNoiDung',event)" data-noidung="@item.MaNoiDung" style="color: #92969b">@Html.Raw(@item.NoiDung)</a>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            <div class="table-responsive" id="gridNoiDungChiTiet">
-                <table class="table table-bordered table-hover mb-0 table-striped custom-table datatable" id="noiDungChiTietDataTable" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th class="text-nowrap">
-                                Nội Dung
-                            </th>
-                            <th>
-                                Nhà Thầu
-                            </th>
-                            <th>
-                                Chu Kỳ
-                            </th>
-                            <th class="text-nowrap">
-                                Vị Trí
-                            </th>
-                            <th>
-                                Số Lượng
-                            </th>
-                            <th>
-                                Thời gian kiểm định
-                            </th>
-                            <th>
-                                Thời gian(huấn luyện)
-                            </th>
-                            <th class="text-nowrap">
-                                Yêu Cầu
-                            </th>
-                            <th>
-                                Tiến độ hoàn thành
-                            </th>
-                            <th>
-                                Ngày Còn Lại
-                            </th>
-                            <th>
-                                Người phụ trách
-                            </th>
-                            <th class="text-right no-sort">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbl-content">
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div style="margin: 10px 15px;font-weight:bold">Chi Phí Hạng Mục</div>
-        <div class="col-md-12">
-            @(Html.DevExtreme().DataGrid<EhsChiPhiByMonthViewModel>()
-        .ID("gridContainer")
-        .KeyExpr("Id")
-        .Height(200)
-        .ShowBorders(true)
-        .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
-        .Paging(paging => paging.Enabled(false))
-        .AllowColumnResizing(true)
-        .ColumnMinWidth(50)
-        .ColumnAutoWidth(true)
-        .ShowColumnLines(true)
-        .ShowRowLines(true)
-        .RowAlternationEnabled(true)
-        .FilterRow(filterRow => filterRow
-            .Visible(true)
-            .ApplyFilter(GridApplyFilterMode.Auto)
-        )
-        .HeaderFilter(headerFilter => headerFilter.Visible(true))
-        .Selection(s => s.Mode(SelectionMode.Single))
-        .HoverStateEnabled(true)
-            .Editing(editing =>
-            {
-                editing.Mode(GridEditMode.Row);
-                editing.AllowUpdating(true);
-            })
-            .Columns(columns =>
-            {
-                columns.AddFor(m => m.Id).Visible(false).AllowEditing(false);
-                columns.AddFor(m => m.MaNoiDung).Visible(false).AllowEditing(false);
-                columns.AddFor(m => m.Year).Caption("Năm").AllowEditing(false);
-                columns.AddFor(m => m.TenNoiDung).Caption("Nội Dung").Width(150).AllowEditing(false);
-                columns.AddFor(m => m.ChiPhi1).Caption("Chi Phí Tháng 1").AllowEditing(true).Format("#,##0");
-                columns.AddFor(m => m.ChiPhi2).Caption("Tháng 2").AllowEditing(true).Format("#,##0");
-                columns.AddFor(m => m.ChiPhi3).Caption("Tháng 3").AllowEditing(true).Format("#,##0");
-                columns.AddFor(m => m.ChiPhi4).Caption("Tháng 4").AllowEditing(true).Format("#,##0");
-                columns.AddFor(m => m.ChiPhi5).Caption("Tháng 5").AllowEditing(true).Format("#,##0");
-                columns.AddFor(m => m.ChiPhi6).Caption("Tháng 6").AllowEditing(true).Format("#,##0");
-                columns.AddFor(m => m.ChiPhi7).Caption("Tháng 7").AllowEditing(true).Format("#,##0");
-                columns.AddFor(m => m.ChiPhi8).Caption("Tháng 8").AllowEditing(true).Format("#,##0");
-                columns.AddFor(m => m.ChiPhi9).Caption("Tháng 9").AllowEditing(true).Format("#,##0");
-                columns.AddFor(m => m.ChiPhi10).Caption("Tháng 10").AllowEditing(true).Format("#,##0");
-                columns.AddFor(m => m.ChiPhi11).Caption("Tháng 11").AllowEditing(true).Format("#,##0");
-                columns.AddFor(m => m.ChiPhi12).Caption("Tháng 12").AllowEditing(true).Format("#,##0");
-            })
-            .DataSource(d => d.Mvc()
-                .Area("Admin")
-                .Controller("EhsDanhMucKeHoach")
-                .LoadAction("Get")
-                .UpdateAction("Put")
-                .Key("Id")
-            ).OnSaving("SaveChiPhi")
-    )
         </div>
     </div>
 </div>
@@ -583,62 +221,3 @@
     </div>
 </div>
 
-<div id="update_Demuckehoach" class="modal custom-modal fade" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Đề Mục Kế Hoạch</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="frmDemucKeHoach">
-                    <div class="form-group">
-                        <label>Tên đề mục kế hoạch<span class="text-danger">*</span></label>
-                        <input type="hidden" id="txtDemucKeHoachId" />
-                        <input class="form-control" type="text" id="txtTenDemucKeHoach_VN" name="TenKeDeMuc_VN" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Luật Định Liên Quan</label>
-                        <textarea rows="6" class="form-control" id="txtLuatDinhLquanDeMuc_Edit" maxlength="1000"></textarea>
-                    </div>
-                    <div class="submit-section">
-                        <button id="btnDeleteDemucKeHoach" class="btn btn-primary submit-btn">Delete</button>
-                        <button id="btnSaveDemucKeHoach" class="btn btn-info submit-btn">Save</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="update_NoiDungkehoach" class="modal custom-modal fade" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Nội Dung Kế Hoạch</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="frmNoiDungKeHoach">
-                    <div class="form-group">
-                        <label>Nội Dung Kế Hoạch<span class="text-danger">*</span></label>
-                        <input type="hidden" id="txtNoiDungKeHoachId" />
-                        <textarea rows="6" class="form-control" id="txtNoiDungKeHoach" name="NoiDung" maxlength="1000" required></textarea>
-                    </div>
-                    <div class="submit-section">
-                        <button class="btn btn-primary submit-btn" id="btnDelete_NoiDungKH">Delete</button>
-                        <button id="btnSaveNoiDungKeHoach" class="btn btn-info submit-btn">Save</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- /Delete Role Modal -->
-<partial name="_ImportExcelModel" />
-<partial name="_NoiDungChiTietModelView" />

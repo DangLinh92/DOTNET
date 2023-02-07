@@ -113,6 +113,12 @@
                                     changes: []
                                 }
                             });
+
+                            e.component.refresh(true).done(() => {
+                                if (change.data.UpdateByCassetteId == true)
+                                    location.reload();
+                            });
+
                         });
                 }
             };

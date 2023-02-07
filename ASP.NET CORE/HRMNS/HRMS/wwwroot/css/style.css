@@ -142,6 +142,28 @@ Version      : 3.6
     font-weight: 800;
     src: local('Circular Std Black Italic'), url('../fonts/CircularStd-BlackItalic.woff') format('woff');
 }
+
+
+/* select grid extreme */
+.dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused):not(.dx-row-removed) > td {
+    background-color: #f7c59f;
+    color: unset;
+}
+
+.dx-header-row {
+    background-color: #004e89;
+    color: #ffff;
+    text-align: center !important;
+}
+
+    .dx-header-row > td {
+        text-align: center !important;
+    }
+
+.dx-scrollable-scroll-content {
+    background-color: #004e89 !important;
+}
+
 /*-----------------
 	1. General
 -----------------------*/

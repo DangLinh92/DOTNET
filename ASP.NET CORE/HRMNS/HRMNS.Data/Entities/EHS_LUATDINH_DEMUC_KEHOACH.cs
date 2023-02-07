@@ -8,39 +8,39 @@ using System.Text;
 
 namespace HRMNS.Data.Entities
 {
-    [Table("EHS_LUATDINH_DEMUC_KEHOACH")]
-    public class EHS_LUATDINH_DEMUC_KEHOACH : DomainEntity<int>, IDateTracking
-    {
-        public EHS_LUATDINH_DEMUC_KEHOACH()
-        {
+    //[Table("EHS_LUATDINH_DEMUC_KEHOACH")]
+    //public class EHS_LUATDINH_DEMUC_KEHOACH : DomainEntity<int>, IDateTracking
+    //{
+    //    public EHS_LUATDINH_DEMUC_KEHOACH()
+    //    {
 
-        }
+    //    }
 
-        public EHS_LUATDINH_DEMUC_KEHOACH(int id,string luatDinh,Guid maDemuc)
-        {
-            Id = id;
-            LuatDinhLienQuan = luatDinh;
-            MaDeMuc = maDemuc;
-        }
+    //    public EHS_LUATDINH_DEMUC_KEHOACH(int id,string luatDinh,Guid maDemuc)
+    //    {
+    //        Id = id;
+    //        LuatDinhLienQuan = luatDinh;
+    //        MaDeMuc = maDemuc;
+    //    }
 
-        [StringLength(1000)]
-        public string LuatDinhLienQuan { get; set; }
+    //    [StringLength(1000)]
+    //    public string LuatDinhLienQuan { get; set; }
 
-        public Guid MaDeMuc { get; set; }
+    //    public Guid MaDeMuc { get; set; }
 
-        [StringLength(50)]
-        public string DateCreated { get; set; }
+    //    [StringLength(50)]
+    //    public string DateCreated { get; set; }
 
-        [StringLength(50)]
-        public string DateModified { get; set; }
+    //    [StringLength(50)]
+    //    public string DateModified { get; set; }
 
-        [StringLength(50)]
-        public string UserCreated { get; set; }
+    //    [StringLength(50)]
+    //    public string UserCreated { get; set; }
 
-        [StringLength(50)]
-        public string UserModified { get; set; }
+    //    [StringLength(50)]
+    //    public string UserModified { get; set; }
 
-        [ForeignKey("MaDeMuc")]
-        public virtual EHS_DEMUC_KEHOACH EHS_DEMUC_KEHOACH { get; set; }
-    }
+    //    [ForeignKey("MaDeMuc")]
+    //    public virtual EHS_DEMUC_KEHOACH EHS_DEMUC_KEHOACH { get; set; }
+    //}
 }

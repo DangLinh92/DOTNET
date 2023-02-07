@@ -1,0 +1,474 @@
+﻿
+@{
+    ViewData["Title"] = "Kê hoạch quan trắc";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+
+@section Scripts{
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+    <script>
+        var dataGrid, loadPanel, dataGridTmp;
+
+        $(function () {
+                    let currentYear = new Date().getFullYear();
+                    LoadData(currentYear);
+            });
+
+        function LoadData(txtYear) {
+                    dataGrid = $("#gridContainer").dxDataGrid("instance");
+                    loadPanel = $("#loadPanel").dxLoadPanel("instance");
+
+            loadPanel.show();
+            sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachQuanTrac", action = "QuanTracs" })', "GET", { year: txtYear })
+                    .always(() => { loadPanel.hide(); })
+                    .done((data) => {
+                        console.log(data);
+                        dataGrid.option("dataSource", data);
+                    });
+        }
+
+
+        function SaveKeHoachQuanTrac(e) {
+
+      var change = e.changes[0];
+      console.log(change);
+      if (change) {
+          e.cancel = true;
+          loadPanel.show();
+          e.promise = saveChange(change)
+              .always(() => { loadPanel.hide(); })
+              .done((data) => {
+                  var datas = e.component.option("dataSource");
+
+                  if (change.type === "insert") {
+                      change.data = data;
+                  }
+
+                  datas = DevExpress.data.applyChanges(datas, [change], { keyExpr: "Id" });
+
+                  e.component.option({
+                      dataSource: datas,
+                      editing: {
+                          editRowKey: null,
+                          changes: []
+                      }
+                  });
+              });
+      }
+    };
+
+        function saveChange(change) {
+
+            switch (change.type) {
+                    case "insert":
+                        return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachQuanTrac", action = "Insert" })', "POST", { values: JSON.stringify(change.data) });
+                    case "update":
+                        return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachQuanTrac", action = "Update" })', "PUT", { key: change.key, values: JSON.stringify(change.data) });
+                    case "remove":
+                      return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachQuanTrac", action = "Delete" })', "DELETE", { key: change.key });
+                }
+            };
+
+            function sendRequest(url, method, data) {
+                var d = $.Deferred();
+
+                method = method || "GET";
+
+                $.ajax(url, {
+                    method: method,
+                    data: data,
+                    cache: false,
+                    xhrFields: { withCredentials: true }
+                }).done(function (result) {
+                    d.resolve(method === "GET" ? result.data : result);
+                }).fail(function (xhr) {
+                    d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
+                });
+
+                return d.promise();
+        };
+
+        function selectedDate_changed(data) {
+
+            let sDate = data.value;
+            if (sDate == '') {
+                var date = new Date();
+            }
+            else {
+                var date = new Date(sDate);
+            }
+
+            // Get year, month, and day part from the date
+            var year = date.toLocaleString("default", { year: "numeric" });
+            LoadData(year);
+        };
+
+        // show popup chi tiet ngay thuc hien
+        function DetailChiTietNgayThuHien(e) {
+
+            console.log(e.data.NoiDung);
+
+            const popup = $("#detailNgayQuanTrac-popup").dxPopup("instance");
+            popup.option({
+                contentTemplate: $("#popup-template")
+            });
+            popup.show();
+
+            dataGridTmp = $("#gridContainer-NgayQuanTrac").dxDataGrid("instance");
+            sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachQuanTrac", action = "GetNgayQuanTrac" })', "GET", { key: e.key })
+                    .always(() => {  })
+                    .done((data) => {
+                        console.log(data);
+                        dataGridTmp.option("dataSource", data);
+                    });
+
+            $('#txtTitlePopup').text(e.data.NoiDung);
+            $('#txt_MaKHQuanTrac').val(e.key);
+        }
+
+         function saveChangeQuanTrac(change) {
+
+             let MaKHQuanTrac = $('#txt_MaKHQuanTrac').val();
+
+             if (change.type == "insert" || change.type == "update") {
+                 if (change.data.hasOwnProperty("NgayBatDauEx") && change.data.NgayBatDauEx instanceof Date) {
+                     change.data.NgayBatDauEx = change.data.NgayBatDauEx.toDateString();
+                 }
+
+                 if (change.data.hasOwnProperty("NgayKetThucEx") && change.data.NgayKetThucEx instanceof Date) {
+                     change.data.NgayKetThucEx = change.data.NgayKetThucEx.toDateString();
+                 }
+             }
+
+             console.log(change);
+
+            switch (change.type) {
+                    case "insert":
+                    return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachQuanTrac", action = "InsertNgayQuanTrac" })', "POST", { values: JSON.stringify(change.data), maKHQuanTrac: MaKHQuanTrac });
+                    case "update":
+                        return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachQuanTrac", action = "UpdateNgayQuanTrac" })', "PUT", { key: change.key, values: JSON.stringify(change.data) });
+                    case "remove":
+                      return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachQuanTrac", action = "DeleteNgayQuanTrac" })', "DELETE", { key: change.key });
+                }
+        };
+
+        // luu ngay quan trac
+        function SaveNgayQuanTrac(e) {
+            var change = e.changes[0];
+            console.log(change);
+            if (change) {
+                e.cancel = true;
+
+                e.promise = saveChangeQuanTrac(change)
+                    .always(() => {  })
+                    .done((data) => {
+                        var datas = e.component.option("dataSource");
+
+                        if (change.type === "insert") {
+                            change.data = data;
+                        }
+
+                        datas = DevExpress.data.applyChanges(datas, [change], { keyExpr: "Id" });
+
+                        e.component.option({
+                            dataSource: datas,
+                            editing: {
+                                editRowKey: null,
+                                changes: []
+                            }
+                        });
+                    });
+            }
+        }
+
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('KH quan trắc - 환경 평가');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'KH_Quan_Trac - 환경 평가.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        // IMPORT EXCEL START
+        $('#btn-import').on('click', function () {
+            $("#fileInputExcel").val(null);
+            $('#import_quantrac').modal('show');
+        });
+
+        $('#btnCloseImportExcel').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+            if (files.length > 0) {
+                $("#fileInputExcel").val(null);
+                $('#import_quantrac').modal('hide');
+                location.reload();
+            }
+        });
+
+        $('#btnCloseImport').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+            if (files.length > 0) {
+                $("#fileInputExcel").val(null);
+                $('#import_quantrac').modal('hide');
+                location.reload();
+            }
+        });
+
+        $('#btnImportExcel').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+
+            // Create FormData object  
+            var fileData = new FormData();
+            // Looping over all files and add it to FormData object  
+            for (var i = 0; i < files.length; i++) {
+                fileData.append("files", files[i]);
+            }
+
+            $.ajax({
+                url: '/Admin/EhsKeHoachQuanTrac/ImportExcel' ,
+                type: 'POST',
+                data: fileData,
+                processData: false,  // tell jQuery not to process the data
+                contentType: false,  // tell jQuery not to set contentType
+                success: function (data) {
+                    $('#import_quantrac').modal('hide');
+                    hrms.notify("Import success!", 'Success', 'alert', function () {
+                        location.reload();
+                    });
+                },
+                error: function (status) {
+                    hrms.notify('error: Import error!', 'error', 'alert', function () { });
+                }
+            });
+            return false;
+        });
+
+    </script>
+}
+@section Styles{}
+
+
+<div class="content container-fluid">
+    <div class="page-header" style="margin-bottom:-1rem">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="page-title">KẾ HOẠCH THỰC HIỆN QUAN TRẮC - 환경 평가</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="row align-items-center">
+        <div class="col">
+            <div class="form">
+                <div class="dx-fieldset">
+                    <div class="dx-field">
+                        <div>
+                            @(Html.DevExtreme().DateBox()
+                                  .ID("txt_year")
+                                  .Value(DateTime.Now.Year.ToString())
+                                  .CalendarOptions(x=>x.MaxZoomLevel(CalendarZoomLevel.Decade))
+                                  .DisplayFormat("yyyy")
+                                  .Width(200)
+                                  .Placeholder("Select...")
+                                  .Label("Year")
+                                  .OnValueChanged("selectedDate_changed")
+                            )
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-auto float-right ml-auto" style="margin-right:100px;">
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" id="btnImport" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Excel</button>
+                <div class="dropdown-menu" style="">
+                    <a class="dropdown-item" href="~/templates/KeHoachQuanTrac.xlsx">File mẫu kế hoạch quan trắc</a>
+                    <a class="dropdown-item" href="#" id="btn-import">Import Kế Hoạch Quan Trắc</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            @(Html.DevExtreme().LoadPanel()
+        .ID("loadPanel")
+        .Position(p => p.Of("#gridContainer"))
+        .Visible(false)
+)
+            @(Html.DevExtreme().DataGrid<EhsKeHoachQuanTracViewModel>
+    ()
+    .ID("gridContainer")
+    .KeyExpr("Id")
+    .Height(700)
+    .ShowBorders(true)
+      .RepaintChangesOnly(true)
+     .LoadPanel(loadPanel => loadPanel.Enabled(false))
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnMinWidth(50)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+    .OnExporting("exporting")
+    .Editing(editing =>
+    {
+        editing.Mode(GridEditMode.Row);
+        editing.AllowUpdating(true);
+        editing.AllowDeleting(true);
+        editing.AllowAdding(true);
+    })
+    .Columns(columns =>
+    {
+        columns.AddFor(m => m.Id).Visible(false).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.STT).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.Demuc).Caption("Đề mục[항목]").Width(150).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.LuatDinhLienQuan).Caption("Luật định liên quan").Width(100).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.NoiDung).Caption("Nội Dung[내용]").Width(150).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.ChuKyThucHien).Caption("Chu kỳ thực hiện[진행 주기]").Width(150).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.KhuVucLayMau).Caption("Khu vực lấy mẫu").Width(100).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.Year).Caption("Năm").Width(80).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+
+        columns.AddFor(m => m.NguoiPhuTrach).Caption("Người Phụ Trách").Width(80).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.NhaThau).Caption("Nhà Thầu").Width(80).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+
+        //columns.AddFor(m => m.Month_1).Caption("Thời Gian Thực Hiện Tháng 1").Width(100).AllowEditing(true);
+        //columns.AddFor(m => m.Month_2).Caption("Tháng 2").Width(100).AllowEditing(true);
+        //columns.AddFor(m => m.Month_3).Caption("Tháng 3").Width(100).AllowEditing(true);
+        //columns.AddFor(m => m.Month_4).Caption("Tháng 4").Width(100).AllowEditing(true);
+        //columns.AddFor(m => m.Month_5).Caption("Tháng 5").Width(100).AllowEditing(true);
+        //columns.AddFor(m => m.Month_6).Caption("Tháng 6").Width(100).AllowEditing(true);
+        //columns.AddFor(m => m.Month_7).Caption("Tháng 7").Width(100).AllowEditing(true);
+        //columns.AddFor(m => m.Month_8).Caption("Tháng 8").Width(100).AllowEditing(true);
+        //columns.AddFor(m => m.Month_9).Caption("Tháng 9").Width(100).AllowEditing(true);
+        //columns.AddFor(m => m.Month_10).Caption("Tháng 10").Width(100).AllowEditing(true);
+        //columns.AddFor(m => m.Month_11).Caption("Tháng 11").Width(100).AllowEditing(true);
+        //columns.AddFor(m => m.Month_12).Caption("Tháng 12").Width(100).AllowEditing(true);
+
+        columns.AddFor(m => m.LayMau_Month_1).Caption("Khu Vực Lấy Mẫu Tháng 1").Width(100).AllowEditing(true);
+        columns.AddFor(m => m.LayMau_Month_2).Caption("Tháng 2").Width(100).AllowEditing(true);
+        columns.AddFor(m => m.LayMau_Month_3).Caption("Tháng 3").Width(100).AllowEditing(true);
+        columns.AddFor(m => m.LayMau_Month_4).Caption("Tháng 4").Width(100).AllowEditing(true);
+        columns.AddFor(m => m.LayMau_Month_5).Caption("Tháng 5").Width(100).AllowEditing(true);
+        columns.AddFor(m => m.LayMau_Month_6).Caption("Tháng 6").Width(100).AllowEditing(true);
+        columns.AddFor(m => m.LayMau_Month_7).Caption("Tháng 7").Width(100).AllowEditing(true);
+        columns.AddFor(m => m.LayMau_Month_8).Caption("Tháng 8").Width(100).AllowEditing(true);
+        columns.AddFor(m => m.LayMau_Month_9).Caption("Tháng 9").Width(100).AllowEditing(true);
+        columns.AddFor(m => m.LayMau_Month_10).Caption("Tháng 10").Width(100).AllowEditing(true);
+        columns.AddFor(m => m.LayMau_Month_11).Caption("Tháng 11").Width(100).AllowEditing(true);
+        columns.AddFor(m => m.LayMau_Month_12).Caption("Tháng 12").Width(100).AllowEditing(true);
+
+        columns.AddFor(m => m.CostMonth_1).Caption("Chi Phí Tháng 1").AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_2).Caption("Tháng 2").AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_3).Caption("Tháng 3").AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_4).Caption("Tháng 4").AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_5).Caption("Tháng 5").AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_6).Caption("Tháng 6").AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_7).Caption("Tháng 7").AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_8).Caption("Tháng 8").AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_9).Caption("Tháng 9").AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_10).Caption("Tháng 10").AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_11).Caption("Tháng 11").AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_12).Caption("Tháng 12").AllowEditing(true).Format("#,##0");
+    }).WordWrapEnabled(true).Summary(s=>s.TotalItems(tt => {
+        tt.AddFor(m => m.CostMonth_1).SummaryType(SummaryType.Sum).DisplayFormat("Total: {0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.CostMonth_2).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.CostMonth_3).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.CostMonth_4).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.CostMonth_5).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.CostMonth_6).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.CostMonth_7).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.CostMonth_8).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.CostMonth_9).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.CostMonth_10).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.CostMonth_11).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.CostMonth_12).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+    })).OnSaving("SaveKeHoachQuanTrac").OnRowDblClick("DetailChiTietNgayThuHien")
+    )
+            @(Html.DevExtreme().Popup()
+        .ID("detailNgayQuanTrac-popup")
+        .Width(500)
+        .Height(500)
+        .Container("#gridContainer")
+        .ShowTitle(true)
+        .Title("Ngày Thực Hiện Chi Tiết")
+        .DragEnabled(false)
+        .HideOnParentScroll(true)
+        .ShowCloseButton(false)
+        .Position(positionConfig => positionConfig
+            .At(HorizontalAlignment.Center, VerticalAlignment.Center)
+            .My(HorizontalAlignment.Center, VerticalAlignment.Center)
+            .Collision(PositionResolveCollision.Fit, PositionResolveCollision.Fit)
+        )
+        .ToolbarItems(barItems => {
+            barItems.Add()
+                .Toolbar(Toolbar.Bottom)
+                .Location(ToolbarItemLocation.After)
+                .Widget(widget => widget.Button()
+                    .Text("Close")
+                    .OnClick(@<text>
+                        function hideInfo(data) {
+
+                           let _dataGridTmp = $("#gridContainer-NgayQuanTrac").dxDataGrid("instance");
+                               _dataGridTmp.option("dataSource", []);
+
+                            const popup = $("#detailNgayQuanTrac-popup").dxPopup("instance");
+                            popup.hide();
+                        }
+                    </text>)
+                );
+        })
+    )
+
+
+            @using (Html.DevExtreme().NamedTemplate("popup-template"))
+            {
+                <h4 id="txtTitlePopup"></h4>
+                <input hidden id="txt_MaKHQuanTrac" />
+                @(Html.DevExtreme().DataGrid<EhsNgayThucHienChiTietQuanTrac>()
+    .ID("gridContainer-NgayQuanTrac")
+      .KeyExpr("Id")
+    .ShowBorders(true)
+    .Paging(paging => paging.Enabled(false))
+    .Editing(editing => {
+        editing.Mode(GridEditMode.Row);
+        editing.AllowAdding(true);
+        editing.AllowDeleting(true);
+        editing.AllowUpdating(true);
+    })
+    .Columns(columns => {
+        columns.AddFor(m => m.NgayBatDauEx).Format("yyyy-MM-dd").Caption("Ngày Bắt Đầu").AllowEditing(true);
+        columns.AddFor(m => m.NgayKetThucEx).Format("yyyy-MM-dd").Caption("Ngày Kết Thúc").AllowEditing(true);
+    }).OnSaving("SaveNgayQuanTrac")
+)
+            }
+        </div>
+    </div>
+</div>
+
+<partial name="_ImportExcelModel" />

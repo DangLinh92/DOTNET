@@ -14,7 +14,10 @@ namespace HRMNS.Data.Entities
         public EHS_DM_KEHOACH()
         {
             EHS_LUATDINH_KEHOACH = new HashSet<EHS_LUATDINH_KEHOACH>();
-            EHS_NOIDUNG = new HashSet<EHS_NOIDUNG>();
+            EHS_KEHOACH_QUANTRAC = new HashSet<EHS_KEHOACH_QUANTRAC>();
+            EHS_KE_HOACH_KHAM_SK = new HashSet<EHS_KE_HOACH_KHAM_SK>();
+            EHS_KEHOACH_DAOTAO_ANTOAN_VSLD = new HashSet<EHS_KEHOACH_DAOTAO_ANTOAN_VSLD>();
+            EHS_KEHOACH_PCCC = new HashSet<EHS_KEHOACH_PCCC>();
         }
 
         public EHS_DM_KEHOACH(Guid id,string tenKeHoachVn,string tenKeHoachKR,int order)
@@ -46,6 +49,9 @@ namespace HRMNS.Data.Entities
         public int OrderDM { get; set; } 
 
         public virtual ICollection<EHS_LUATDINH_KEHOACH> EHS_LUATDINH_KEHOACH { get; set; }
-        public virtual ICollection<EHS_NOIDUNG> EHS_NOIDUNG { get; set; }
+        public virtual ICollection<EHS_KEHOACH_QUANTRAC> EHS_KEHOACH_QUANTRAC { get; set; }
+        public virtual ICollection<EHS_KE_HOACH_KHAM_SK> EHS_KE_HOACH_KHAM_SK { get; set; }
+        public virtual ICollection<EHS_KEHOACH_DAOTAO_ANTOAN_VSLD> EHS_KEHOACH_DAOTAO_ANTOAN_VSLD { get; set; }
+        public virtual ICollection<EHS_KEHOACH_PCCC> EHS_KEHOACH_PCCC { get; set; }
     }
 }

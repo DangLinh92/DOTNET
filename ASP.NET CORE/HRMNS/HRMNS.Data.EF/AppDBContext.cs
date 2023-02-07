@@ -21,7 +21,6 @@ namespace HRMNS.Data.EF
         {
 
         }
-
         public virtual DbSet<APP_USER> AppUsers { get; set; }
         public virtual DbSet<APP_ROLE> AppRoles { get; set; }
         public virtual DbSet<BOPHAN> BoPhans { get; set; }
@@ -66,13 +65,13 @@ namespace HRMNS.Data.EF
         public virtual DbSet<HR_THAISAN_CONNHO> HR_THAISAN_CONNHO { get; set; }
 
         public virtual DbSet<EHS_DM_KEHOACH> EHS_DM_KEHOACH { get; set; }
-        public virtual DbSet<EHS_DEMUC_KEHOACH> EHS_DEMUC_KEHOACH { get; set; }
-        public virtual DbSet<EHS_LUATDINH_DEMUC_KEHOACH> EHS_LUATDINH_DEMUC_KEHOACH { get; set; }
+        //public virtual DbSet<EHS_DEMUC_KEHOACH> EHS_DEMUC_KEHOACH { get; set; }
+        //public virtual DbSet<EHS_LUATDINH_DEMUC_KEHOACH> EHS_LUATDINH_DEMUC_KEHOACH { get; set; }
         public virtual DbSet<EHS_LUATDINH_KEHOACH> EHS_LUATDINH_KEHOACH { get; set; }
-        public virtual DbSet<EHS_NOIDUNG_KEHOACH> EHS_NOIDUNG_KEHOACH { get; set; }
-        public virtual DbSet<EHS_NOIDUNG> EHS_NOIDUNG { get; set; }
+        //public virtual DbSet<EHS_NOIDUNG_KEHOACH> EHS_NOIDUNG_KEHOACH { get; set; }
+        //public virtual DbSet<EHS_NOIDUNG> EHS_NOIDUNG { get; set; }
 
-        public virtual DbSet<EVENT_SHEDULE> EVENT_SHEDULE { get; set; }
+        //public virtual DbSet<EVENT_SHEDULE> EVENT_SHEDULE { get; set; }
         public virtual DbSet<EVENT_SHEDULE_PARENT> EVENT_SHEDULE_PARENT { get; set; }
         public virtual DbSet<HR_TRAINING> HR_TRAINING { get; set; }
         public virtual DbSet<TRAINING_NHANVIEN> TRAINING_NHANVIEN { get; set; }
@@ -81,7 +80,22 @@ namespace HRMNS.Data.EF
         public virtual DbSet<FILE_MANAGER> FILE_MANAGER { get; set; }
         public virtual DbSet<SAMSUNG_TRAINING> SAMSUNG_TRAINING { get; set; }
         public virtual DbSet<DANGKY_DIMUON_VSOM_NHANVIEN> DANGKY_DIMUON_VSOM_NHANVIEN { get; set; }
-        public virtual DbSet<EHS_CHIPHI_BY_MONTH> EHS_CHIPHI_BY_MONTH { get; set; }
+        //public virtual DbSet<EHS_CHIPHI_BY_MONTH> EHS_CHIPHI_BY_MONTH { get; set; }
+        public virtual DbSet<EHS_KEHOACH_QUANTRAC> EHS_KEHOACH_QUANTRAC { get; set; }
+        public virtual DbSet<EHS_NGAY_THUC_HIEN_CHITIET_QUANTRAC> EHS_NGAY_THUC_HIEN_CHITIET_QUANTRAC { get; set; }
+        public virtual DbSet<EHS_KE_HOACH_KHAM_SK> EHS_KE_HOACH_KHAM_SK { get; set; }
+        public virtual DbSet<EHS_NHANVIEN_KHAM_SK> EHS_NHANVIEN_KHAM_SK { get; set; }
+        public virtual DbSet<EHS_NGAY_THUC_HIEN_CHITIET_KHAM_SK> EHS_NGAY_THUC_HIEN_CHITIET_KHAM_SK { get; set; }
+
+
+        public virtual DbSet<EHS_KEHOACH_DAOTAO_ANTOAN_VSLD> EHS_KEHOACH_DAOTAO_ANTOAN_VSLD { get; set; }
+        public virtual DbSet<EHS_THOIGIAN_THUC_HIEN_DAOTAO_ATVSLD> EHS_THOIGIAN_THUC_HIEN_DAOTAO_ATVSLD { get; set; }
+
+        public virtual DbSet<EHS_KEHOACH_PCCC> EHS_KEHOACH_PCCC { get; set; }
+        public virtual DbSet<EHS_THOIGIAN_THUC_HIEN_PCCC> EHS_THOIGIAN_THUC_HIEN_PCCC { get; set; }
+
+        public virtual DbSet<EHS_KEHOACH_ANTOAN_BUCXA> EHS_KEHOACH_ANTOAN_BUCXA { get; set; }
+        public virtual DbSet<EHS_THOIGIAN_THUC_HIEN_ANTOAN_BUCXA> EHS_THOIGIAN_THUC_HIEN_ANTOAN_BUCXA { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -136,13 +150,13 @@ namespace HRMNS.Data.EF
 
             builder.AddConfiguration(new EhsDMKeHoachConfiguration());
             // builder.AddConfiguration(new EhsDMKeHoachByYearConfiguration());
-            builder.AddConfiguration(new EhsDeMucKeHoachConfiguration());
+            //builder.AddConfiguration(new EhsDeMucKeHoachConfiguration());
             builder.AddConfiguration(new EhsLuatDinhKeHoachConfiguration());
-            builder.AddConfiguration(new EhsLuatDinhDeMucKeHoachConfiguration());
-            builder.AddConfiguration(new EhsNoiDungKeHoachConfiguration());
-            builder.AddConfiguration(new EhsNoiDungConfiguration());
+            //builder.AddConfiguration(new EhsLuatDinhDeMucKeHoachConfiguration());
+            //builder.AddConfiguration(new EhsNoiDungKeHoachConfiguration());
+            //builder.AddConfiguration(new EhsNoiDungConfiguration());
             builder.AddConfiguration(new EventParentConfiguration());
-            builder.AddConfiguration(new EventConfiguration());
+            //builder.AddConfiguration(new EventConfiguration());
 
             builder.AddConfiguration(new TrainingConfigurationConfiguration());
             builder.AddConfiguration(new TrainingNhanVienConfiguration());
@@ -150,7 +164,21 @@ namespace HRMNS.Data.EF
             builder.AddConfiguration(new NhanVienCheDoDBConfiguration());
             builder.AddConfiguration(new FileManagementConfiguration());
             builder.AddConfiguration(new DKyELNhanVienConfiguration());
-            builder.AddConfiguration(new EhsChiPhiByMonthConfiguration());
+            //builder.AddConfiguration(new EhsChiPhiByMonthConfiguration());
+            builder.AddConfiguration(new EHS_NoiDungKeHoachNewConfiguration());
+            builder.AddConfiguration(new EHS_NgayThucHienChiTietConfiguration());
+
+            builder.AddConfiguration(new EHS_NhanVienKhamSKConfiguration());
+            builder.AddConfiguration(new EHS_KeHoachKhamSKConfiguration());
+            builder.AddConfiguration(new EHS_NgayThucHienKhamSKConfiguration());
+
+            builder.AddConfiguration(new EHS_KeHoachDaoTaoAnToanVSLDConfiguration());
+            builder.AddConfiguration(new EHS_ThoiGianThucHienAnToanVSLDConfiguration());
+
+            builder.AddConfiguration(new EHS_KeHoachPCCCConfiguration());
+            builder.AddConfiguration(new EHS_ThoiGianThucHienPCCCConfiguration());
+            builder.AddConfiguration(new EHS_KeHoachAntoanBucXaConfiguration());
+            builder.AddConfiguration(new EHS_ThoiGianThucHienAntoanBucXaConfiguration());
 
             //base.OnModelCreating(builder);
         }

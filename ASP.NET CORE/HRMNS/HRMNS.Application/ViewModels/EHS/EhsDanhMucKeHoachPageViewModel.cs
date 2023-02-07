@@ -9,17 +9,9 @@ namespace HRMNS.Application.ViewModels.EHS
         public EhsDanhMucKeHoachPageViewModel()
         {
             EhsDMKeHoachViewModels = new List<EhsDMKeHoachViewModel>(); // ke hoach
-            NoiDungKeHoachViewModels = new List<NoiDungKeHoachModel>(); // noi dung
-            EhsNoiDungKeHoachViewModels = new List<EhsNoiDungKeHoachViewModel>(); // noi dung chi tiet
-            EhsChiPhiByMonths = new List<EhsChiPhiByMonthViewModel>();
         }
-
-        public string Year { get; set; }
         public Guid? MaKeHoachActive { get; set; }
         public List<EhsDMKeHoachViewModel> EhsDMKeHoachViewModels { get; set; }
-        public List<NoiDungKeHoachModel> NoiDungKeHoachViewModels { get; set; }
-        public List<EhsNoiDungKeHoachViewModel> EhsNoiDungKeHoachViewModels { get; set; }
-        public List<EhsChiPhiByMonthViewModel> EhsChiPhiByMonths { get; set; }
     }
 
     public class NoiDungKeHoachModel

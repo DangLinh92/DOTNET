@@ -1,0 +1,602 @@
+﻿
+@{
+    ViewData["Title"] = "Kế Hoạch Khám Sức Khỏe";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts
+{
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+    <script>
+
+        /** Xử lý kế hoạch khám sức khỏe */
+        var dataGrid, loadPanel, dataGridTmp;
+
+        $(function ()
+        {
+            let currentYear = new Date().getFullYear();
+            LoadData(currentYear);
+        });
+
+        function LoadData(txtYear) {
+                    dataGrid = $("#gridContainer1").dxDataGrid("instance");
+                    loadPanel = $("#loadPanel").dxLoadPanel("instance");
+
+            loadPanel.show();
+            sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachKhamSucKhoe", action = "KhamSucKhoe" })', "GET", { year: txtYear })
+                    .always(() => { loadPanel.hide(); })
+                    .done((data) => {
+                        dataGrid.option("dataSource", data);
+                    });
+        }
+
+        function SaveKeHoachKhamSucKhoe(e) {
+
+       var change = e.changes[0];
+
+      if (change) {
+          e.cancel = true;
+          loadPanel.show();
+          e.promise = saveChange(change)
+              .always(() => { loadPanel.hide(); })
+              .done((data) => {
+                  var datas = e.component.option("dataSource");
+
+                  if (change.type === "insert") {
+                      change.data = data;
+                  }
+
+                  datas = DevExpress.data.applyChanges(datas, [change], { keyExpr: "Id" });
+
+                  e.component.option({
+                      dataSource: datas,
+                      editing: {
+                          editRowKey: null,
+                          changes: []
+                      }
+                  });
+              });
+      }
+    };
+
+        function saveChange(change)
+        {
+            switch (change.type)
+            {
+                    case "insert":
+                        return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachKhamSucKhoe", action = "Insert" })', "POST", { values: JSON.stringify(change.data) });
+                    case "update":
+                        return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachKhamSucKhoe", action = "Update" })', "PUT", { key: change.key, values: JSON.stringify(change.data) });
+                    case "remove":
+                        return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachKhamSucKhoe", action = "Delete" })', "DELETE", { key: change.key });
+            }
+        };
+
+            function sendRequest(url, method, data) {
+                var d = $.Deferred();
+
+                method = method || "GET";
+
+                $.ajax(url, {
+                    method: method,
+                    data: data,
+                    cache: false,
+                    xhrFields: { withCredentials: true }
+                }).done(function (result) {
+                    d.resolve(method === "GET" ? result.data : result);
+                }).fail(function (xhr) {
+                    d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
+                });
+
+                return d.promise();
+        };
+
+        // chon nam
+        function selectedDate_changed(data) {
+
+            let sDate = data.value;
+            if (sDate == '') {
+                var date = new Date();
+            }
+            else {
+                var date = new Date(sDate);
+            }
+
+            // Get year, month, and day part from the date
+            var year = date.toLocaleString("default", { year: "numeric" });
+            LoadData(year);
+        };
+
+        // Xuất kế hoạch khám sức khỏe
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('Kế Hoạch KSK - 건강검진 계획');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'Kế Hoạch KSK - 건강검진 계획.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+
+        // show popup chi tiet ngay thuc hien khám sức khỏe
+        function DetailChiTietNgayThuHien(e) {
+
+            console.log(e.data.NoiDung);
+
+            const popup = $("#detailNgayKhamSK-popup").dxPopup("instance");
+            popup.option({
+                contentTemplate: $("#popup-template")
+            });
+            popup.show();
+
+            dataGridTmp = $("#gridContainer-NgayKhamSK").dxDataGrid("instance");
+            sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachKhamSucKhoe", action = "GetNgayKhamSK" })', "GET", { key: e.key })
+                    .always(() => {  })
+                    .done((data) => {
+                        console.log(data);
+                        dataGridTmp.option("dataSource", data);
+                    });
+
+            $('#txtTitlePopup').text(e.data.NoiDung);
+            $('#txt_MaKHKhamSK').val(e.key);
+        }
+
+        function saveChangeKhamSK(change) {
+
+            let MaKHKhamSK = $('#txt_MaKHKhamSK').val();
+
+             if (change.type == "insert" || change.type == "update") {
+                 if (change.data.hasOwnProperty("NgayBatDauEx") && change.data.NgayBatDauEx instanceof Date) {
+                     change.data.NgayBatDauEx = change.data.NgayBatDauEx.toDateString();
+                 }
+
+                 if (change.data.hasOwnProperty("NgayKetThucEx") && change.data.NgayKetThucEx instanceof Date) {
+                     change.data.NgayKetThucEx = change.data.NgayKetThucEx.toDateString();
+                 }
+             }
+
+             console.log(change);
+
+            switch (change.type) {
+                    case "insert":
+                    return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachKhamSucKhoe", action = "InsertNgayKhamSK" })', "POST", { values: JSON.stringify(change.data), maKHKhamSK: MaKHKhamSK });
+                    case "update":
+                        return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachKhamSucKhoe", action = "UpdateNgayKhamSK" })', "PUT", { key: change.key, values: JSON.stringify(change.data) });
+                    case "remove":
+                      return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachKhamSucKhoe", action = "DeleteNgayKhamSK" })', "DELETE", { key: change.key });
+                }
+        };
+
+        // luu ngay khám sk
+        function SaveNgayKhamSK(e) {
+            var change = e.changes[0];
+            console.log(change);
+            if (change) {
+                e.cancel = true;
+
+                e.promise = saveChangeKhamSK(change)
+                    .always(() => { })
+                    .done((data) => {
+                        var datas = e.component.option("dataSource");
+
+                        if (change.type === "insert") {
+                            change.data = data;
+                        }
+
+                        datas = DevExpress.data.applyChanges(datas, [change], { keyExpr: "Id" });
+
+                        e.component.option({
+                            dataSource: datas,
+                            editing: {
+                                editRowKey: null,
+                                changes: []
+                            }
+                        });
+                    });
+            }
+        }
+
+
+        /* Import, export, insert,update,delete danh sách nhân viên khám sk */
+        function onImportNhanVienClick(e)
+        {
+            $("#fileInputExcel").val(null);
+            $('#hd-ImportData').val(e.row.data.Id);
+            $('#import_File').modal('show');
+        }
+
+        $('#btnCloseImportExcel').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+            if (files.length > 0) {
+                $("#fileInputExcel").val(null);
+                $('#hd-ImportData').val('');
+                $('#import_File').modal('hide');
+                location.reload();
+            }
+        });
+
+        $('#btnCloseImport').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+            if (files.length > 0) {
+                $("#fileInputExcel").val(null);
+                $('#hd-ImportData').val('');
+                $('#import_File').modal('hide');
+                location.reload();
+            }
+        });
+
+        $('#btnImportExcel').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+
+            // Create FormData object
+            var fileData = new FormData();
+
+            // Looping over all files and add it to FormData object
+            for (var i = 0; i < files.length; i++) {
+                fileData.append("files", files[i]);
+            }
+
+            let _MaKHKhamSK = $('#hd-ImportData').val();
+
+            $.ajax({
+                url: '/Admin/EhsKeHoachKhamSucKhoe/ImportExcel?Id=' + _MaKHKhamSK,
+                type: 'POST',
+                data: fileData,
+                processData: false,  // tell jQuery not to process the data
+                contentType: false,  // tell jQuery not to set contentType
+                success: function (data) {
+                    $('#import_File').modal('hide');
+                    hrms.notify("Import success!", 'Success', 'alert', function () {
+                        location.reload();
+                    });
+                },
+                error: function (status) {
+                    hrms.notify('error: Import error!', 'error', 'alert', function () { });
+                }
+            });
+            return false;
+        });
+
+        function ShowDanhSachNVClick(e) {
+
+            console.log(e.data);
+            $('#txtMaKHKhamSK').val(e.data.Id);
+
+            $.ajax({
+                url: '/Admin/EhsKeHoachKhamSucKhoe/GetDSNhanVienByKeHoach',
+                type: 'POST',
+                data: {
+                    maKHKhamSK: e.data.Id,
+                },
+                beforeSend: function () {
+                    hrms.run_waitMe($('#grid-container-detail'));
+                },
+                success: function (response) {
+                    hrms.hide_waitMe($('#grid-container-detail'));
+                    console.log(response);
+
+                    $("#grid-container-detail").dxDataGrid({
+                        dataSource: response
+                    });
+                },
+                error: function (status) {
+                    hrms.notify(status.responseText, 'error', 'alert', function () { });
+                    hrms.hide_waitMe($('#grid-container-detail'));
+                    $("#grid-container-detail").dxDataGrid({
+                        dataSource: []
+                    });
+                }
+            });
+        }
+
+        function SaveNhanVienKhamSK(e) {
+
+            var change = e.changes[0];
+            console.log(change);
+            if (change) {
+                e.cancel = true;
+
+                e.promise = saveChangeNhanVienKhamSK(change)
+                    .always(() => { })
+                    .done((data) => {
+                        var datas = e.component.option("dataSource");
+                        $('#txtMaKHKhamSK').val('');
+
+                        if (change.type === "insert") {
+                            change.data = data;
+                        }
+
+                        datas = DevExpress.data.applyChanges(datas, [change], { keyExpr: "Id" });
+
+                        e.component.option({
+                            dataSource: datas,
+                            editing: {
+                                editRowKey: null,
+                                changes: []
+                            }
+                        });
+                    });
+            }
+        }
+
+        function saveChangeNhanVienKhamSK(change) {
+
+            let MaKHKhamSK = $('#txtMaKHKhamSK').val();
+            switch (change.type)
+            {
+                    case "insert":
+                    return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachKhamSucKhoe", action = "InsertNhanVienKhamSK" })', "POST", { values: JSON.stringify(change.data), maKHKhamSK: MaKHKhamSK });
+                    case "update":
+                        return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachKhamSucKhoe", action = "UpdateNhanVienKhamSK" })', "PUT", { key: change.key, values: JSON.stringify(change.data) });
+                    case "remove":
+                      return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachKhamSucKhoe", action = "DeleteNhanVienKhamSK" })', "DELETE", { key: change.key });
+            }
+        };
+
+        function exporting_dsNhanVien(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('Danh Sach NV');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'Danh_Sach_Nhan_Vien_KhamSK.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+    </script>
+}
+
+<div class="content container-fluid">
+    <div class="page-header" style="margin-bottom:-1rem">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="page-title">KẾ HOẠCH KHÁM SỨC KHỎE-정기 건강검진 계획</h3>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row align-items-center">
+        <div class="col">
+            <div class="form">
+                <div class="dx-fieldset">
+                    <div class="dx-field">
+                        <div>
+                            @(Html.DevExtreme().DateBox()
+                                  .ID("txt_year")
+                                  .Value(DateTime.Now.Year.ToString())
+                                  .CalendarOptions(x=>x.MaxZoomLevel(CalendarZoomLevel.Decade))
+                                  .DisplayFormat("yyyy")
+                                  .Width(200)
+                                  .Placeholder("Select...")
+                                  .Label("Year")
+                                  .OnValueChanged("selectedDate_changed")
+                            )
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-auto float-right ml-auto" style="margin-right:100px;">
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" id="btnImport" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Excel</button>
+                <div class="dropdown-menu" style="">
+                    <a class="dropdown-item" href="~/templates/EHS_DanhSachNhanVienKhamSK.xlsx">File mẫu kế hoạch khám sức khỏe</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            @(Html.DevExtreme().LoadPanel()
+                      .ID("loadPanel")
+                      .Position(p => p.Of("#gridContainer1"))
+                      .Visible(false)
+                )
+            @(Html.DevExtreme().DataGrid<EhsKeHoachKhamSKViewModel>()
+    .ID("gridContainer1")
+    .KeyExpr("Id")
+    .Height(565)
+    .ShowBorders(true)
+    .RepaintChangesOnly(true)
+    .LoadPanel(loadPanel => loadPanel.Enabled(false))
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .FilterRow(filterRow => filterRow.Visible(true).ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+    .OnExporting("exporting")
+    .Editing(editing =>
+    {
+        editing.Mode(GridEditMode.Row);
+        editing.AllowUpdating(true);
+        editing.AllowDeleting(true);
+        editing.AllowAdding(true);
+    })
+    .Columns(columns =>
+    {
+        columns.AddFor(m => m.Id).Visible(false).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.NoiDung).Caption("Nội Dung[내용]").AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.LuatDinhLienQuan).Caption("Luật định liên quan").AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.ChuKyThucHien).Caption("Chu kỳ thực hiện[진행 주기]").AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.Year).Caption("Năm").AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.NguoiPhuTrach).Caption("Người Phụ Trách").AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.NhaThau).Caption("Nhà Thầu").AllowEditing(true);
+        columns.AddFor(m => m.CostMonth_1).Caption("Chi Phí Tháng 1").AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_2).Caption("Tháng 2").AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_3).Caption("Tháng 3").AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_4).Caption("Tháng 4").AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_5).Caption("Tháng 5").AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_6).Caption("Tháng 6").AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_7).Caption("Tháng 7").AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_8).Caption("Tháng 8").AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_9).Caption("Tháng 9").AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_10).Caption("Tháng 10").AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_11).Caption("Tháng 11").AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_12).Caption("Tháng 12").AllowEditing(true).Format("#,##0");
+        columns.Add().Type(GridCommandColumnType.Buttons).Width(110).Buttons(b =>
+            {
+                b.Add().Name(GridColumnButtonName.Edit);
+                b.Add().Name(GridColumnButtonName.Delete);
+
+                b.Add()
+                    .Hint("Add Nhân Viên")
+                    .Text("Import")
+                    .OnClick("onImportNhanVienClick");
+            });
+
+    }).WordWrapEnabled(true).Summary(s=>s.TotalItems(tt => {
+        tt.AddFor(m => m.CostMonth_1).SummaryType(SummaryType.Sum).DisplayFormat("Total: {0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.CostMonth_2).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.CostMonth_3).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.CostMonth_4).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.CostMonth_5).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.CostMonth_6).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.CostMonth_7).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.CostMonth_8).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.CostMonth_9).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.CostMonth_10).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.CostMonth_11).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.CostMonth_12).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+    })).OnSaving("SaveKeHoachKhamSucKhoe").OnRowDblClick("DetailChiTietNgayThuHien").OnCellClick("ShowDanhSachNVClick")
+    )
+            @(Html.DevExtreme().Popup()
+        .ID("detailNgayKhamSK-popup")
+        .Width(500)
+        .Height(500)
+        .Container("#gridContainer1")
+        .ShowTitle(true)
+        .Title("Ngày Thực Hiện Chi Tiết")
+        .DragEnabled(false)
+        .HideOnParentScroll(true)
+        .ShowCloseButton(false)
+        .Position(positionConfig => positionConfig
+            .At(HorizontalAlignment.Center, VerticalAlignment.Center)
+            .My(HorizontalAlignment.Center, VerticalAlignment.Center)
+            .Collision(PositionResolveCollision.Fit, PositionResolveCollision.Fit)
+        )
+        .ToolbarItems(barItems => {
+            barItems.Add()
+                .Toolbar(Toolbar.Bottom)
+                .Location(ToolbarItemLocation.After)
+                .Widget(widget => widget.Button()
+                    .Text("Close")
+                    .OnClick(@<text>
+                        function hideInfo(data) {
+
+                           let _dataGridTmp = $("#gridContainer-NgayKhamSK").dxDataGrid("instance");
+                               _dataGridTmp.option("dataSource", []);
+
+                            const popup = $("#detailNgayKhamSK-popup").dxPopup("instance");
+                            popup.hide();
+                        }
+                    </text>)
+                );
+        })
+    )
+
+
+            @using (Html.DevExtreme().NamedTemplate("popup-template"))
+            {
+                <h4 id="txtTitlePopup"></h4>
+                <input hidden id="txt_MaKHKhamSK" />
+                @(Html.DevExtreme().DataGrid<EhsNgayThucHienChiTietKhamSKViewModel>()
+    .ID("gridContainer-NgayKhamSK")
+      .KeyExpr("Id")
+    .ShowBorders(true)
+    .Paging(paging => paging.Enabled(false))
+    .Editing(editing => {
+        editing.Mode(GridEditMode.Row);
+        editing.AllowAdding(true);
+        editing.AllowDeleting(true);
+        editing.AllowUpdating(true);
+    })
+    .Columns(columns => {
+        columns.AddFor(m => m.NgayBatDauEx).Format("yyyy-MM-dd").Caption("Ngày Bắt Đầu").AllowEditing(true);
+        columns.AddFor(m => m.NgayKetThucEx).Format("yyyy-MM-dd").Caption("Ngày Kết Thúc").AllowEditing(true);
+    }).OnSaving("SaveNgayKhamSK")
+)
+            }
+        </div>
+    </div>
+    <div class="row" style="margin-top:20px">
+        <div class="col-sm-12">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item active" style="cursor: pointer;">
+                    <i class="fa fa-caret-right"></i> <strong>Danh Sách Nhân Viên Khám Sức Khỏe</strong>
+                </li>
+            </ul>
+        </div>
+        <div>
+            <input hidden id="txtMaKHKhamSK" />
+            @(Html.DevExtreme().DataGrid<EhsNhanVienKhamSucKhoe>()
+.ID("grid-container-detail")
+.KeyExpr("Id")
+.Height(280)
+.ShowBorders(true)
+.Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+.Paging(paging => paging.Enabled(false))
+.AllowColumnResizing(true)
+.ColumnMinWidth(50)
+.ColumnAutoWidth(true)
+.ShowColumnLines(true)
+.ShowRowLines(true)
+.RowAlternationEnabled(true)
+.FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+)
+.HeaderFilter(headerFilter => headerFilter.Visible(true))
+.HoverStateEnabled(true)
+.Selection(s => s.Mode(SelectionMode.Single))
+  .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+    .OnExporting("exporting_dsNhanVien")
+.Editing(editing =>
+    {
+        editing.Mode(GridEditMode.Row);
+        editing.AllowUpdating(true);
+        editing.AllowDeleting(true);
+        editing.AllowAdding(true);
+    })
+.Columns(columns =>
+{
+    columns.AddFor(m => m.MaNV).Caption("Mã Nhân Viên");
+    columns.AddFor(m => m.TenNV).Caption("Tên Nhân Viên");
+    columns.AddFor(m => m.Section).Caption("Bộ Phận");
+    columns.AddFor(m => m.ThoiGianKhamSK).Caption("Ngày Khám");
+    columns.AddFor(m => m.Note);
+
+}).Summary(s => s.TotalItems(items =>
+{
+    items.AddFor(m => m.MaNV).SummaryType(SummaryType.Count).DisplayFormat("Count: {0}").ValueFormat(Format.FixedPoint);
+})).OnSaving("SaveNhanVienKhamSK"))
+        </div>
+
+    </div>
+
+</div>
+<partial name="_ImportExcelModel" />

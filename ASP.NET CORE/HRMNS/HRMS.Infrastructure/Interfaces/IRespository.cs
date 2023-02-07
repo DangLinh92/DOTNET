@@ -36,5 +36,7 @@ namespace HRMS.Infrastructure.Interfaces
         ResultDB ExecProceduce2(string ProcName, Dictionary<string, string> Dictionary);
 
         string GetMaxDate(Expression<Func<T, string>> selector);
+
+        K GetMaxSequenceValue();
     }
 }

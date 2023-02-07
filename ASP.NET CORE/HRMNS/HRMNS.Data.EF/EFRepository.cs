@@ -201,5 +201,10 @@ namespace HRMNS.Data.EF
         {
            return _context.Set<T>().Max(selector);
         }
+
+        public K GetMaxSequenceValue()
+        {
+            return _context.Set<T>().Max(x => x.Id);
+        }
     }
 }

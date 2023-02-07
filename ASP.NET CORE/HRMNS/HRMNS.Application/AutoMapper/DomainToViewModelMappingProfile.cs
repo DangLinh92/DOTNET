@@ -56,17 +56,27 @@ namespace HRMNS.Application.AutoMapper
 
             CreateMap<EHS_DM_KEHOACH, EhsDMKeHoachViewModel>();
             CreateMap<EHS_LUATDINH_KEHOACH, EhsLuatDinhKeHoachViewModel>();
-            CreateMap<EHS_DEMUC_KEHOACH, EhsDeMucKeHoachViewModel>();
-            CreateMap<EHS_NOIDUNG, EhsNoiDungViewModel>();
-            CreateMap<EHS_NOIDUNG_KEHOACH, EhsNoiDungKeHoachViewModel>();
 
             CreateMap<TRAINING_TYPE, TrainingTypeViewModel>();
             CreateMap<HR_TRAINING, Hr_TrainingViewModel>();
             CreateMap<TRAINING_NHANVIEN, Training_NhanVienViewModel>();
             CreateMap<EVENT_SHEDULE_PARENT, EventScheduleParentViewModel>();
-            CreateMap<EVENT_SHEDULE, EventSheduleViewModel>();
             CreateMap<HR_NHANVIEN_CHEDO_DB, NhanVienCheDoDBViewModel>();
-            CreateMap<EHS_CHIPHI_BY_MONTH, EhsChiPhiByMonthViewModel>();
+            CreateMap<EHS_KEHOACH_QUANTRAC, EhsKeHoachQuanTracViewModel>();
+            CreateMap<EHS_NGAY_THUC_HIEN_CHITIET_QUANTRAC, EhsNgayThucHienChiTietQuanTrac>();
+
+            CreateMap<EHS_NHANVIEN_KHAM_SK, EhsNhanVienKhamSucKhoe>();
+            CreateMap<EHS_KE_HOACH_KHAM_SK, EhsKeHoachKhamSKViewModel>();
+            CreateMap<EHS_NGAY_THUC_HIEN_CHITIET_KHAM_SK, EhsNgayThucHienChiTietKhamSKViewModel>();
+
+            CreateMap<EHS_KEHOACH_DAOTAO_ANTOAN_VSLD, EhsKeHoachDaoTaoATLDViewModel>();
+            CreateMap<EHS_THOIGIAN_THUC_HIEN_DAOTAO_ATVSLD, EhsThoiGianThucHienDaoTaoATVSViewModel>();
+
+            CreateMap<EHS_KEHOACH_PCCC, Ehs_KeHoach_PCCCViewModel>();
+            CreateMap<EHS_THOIGIAN_THUC_HIEN_PCCC, EhsThoiGianThucHienPCCCViewModel>();
+
+            CreateMap<EHS_KEHOACH_ANTOAN_BUCXA, EhsKeHoachAnToanBucXaViewModel>();
+            CreateMap<EHS_THOIGIAN_THUC_HIEN_ANTOAN_BUCXA, EhsThoiGianThucHienAnToanBucXaViewModel>();
         }
     }
 }

@@ -92,35 +92,6 @@ namespace HRMS.Areas.Admin.Controllers
                     appointment.Location = value.Location;
                     appointment.Description = value.Description;
 
-                    if(appointment.MaNoiDungKH.ToString() != "00000000-0000-0000-0000-000000000000" && appointment.MaNoiDungKH != null)
-                    {
-                        var newModel = _danhMucKeHoachService.GetNoiDungKeHoachById(appointment.MaNoiDungKH.ToString());
-
-                        if(newModel != null)
-                        {
-                            string maNoiDung = newModel.EHS_NOIDUNG.Id.ToString();
-                            newModel.NhaThau = newModel.NhaThau;
-                            newModel.ChuKy = newModel.ChuKy;
-                            newModel.ViTri = value.Location;
-                            newModel.SoLuong = newModel.SoLuong;
-                            newModel.NgayThucHien = startTime.ToString("yyyy-MM-dd");
-                            newModel.ThoiGian_ThucHien = newModel.ThoiGian_ThucHien;
-                            newModel.YeuCau = newModel.YeuCau;
-                            newModel.NgayKhaiBaoThietBi = newModel.NgayKhaiBaoThietBi;
-                            newModel.ThoiGianThongBao = newModel.ThoiGianThongBao;
-                            newModel.Year = startTime.Year.ToString();
-
-                            newModel.MaHieuMayKiemTra = newModel.MaHieuMayKiemTra;
-                            newModel.TienDoHoanThanh = newModel.TienDoHoanThanh;
-                            newModel.KetQua = newModel.KetQua;
-                            newModel.Note = "Vendor: " + newModel.NhaThau + "\n" + " || Date: " + newModel.NgayThucHien + "\n" + "\n" + " || Result: " + newModel.KetQua;
-                            appointment.Description = newModel.Note;
-                            newModel.EHS_NOIDUNG = null;
-                            _danhMucKeHoachService.UpdateNoiDungKeHoachSingle(newModel);
-                            _danhMucKeHoachService.Save();
-                        }
-                    }
-
                     _eventScheduleParentService.EditEvent(appointment);
                     _eventScheduleParentService.Save();
 

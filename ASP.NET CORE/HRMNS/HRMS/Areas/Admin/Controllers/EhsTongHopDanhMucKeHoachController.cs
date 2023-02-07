@@ -30,17 +30,17 @@ namespace HRMS.Areas.Admin.Controllers
 
         public IActionResult Index()
         {
-            var model = _danhMucKeHoachService.TongHopKeHoachByYear("2023");
-            return View(model);
+            //var model = _danhMucKeHoachService.TongHopKeHoachByYear("2023");
+            return View(null);
         }
 
         [HttpPost]
         public IActionResult GetFileTongHopKeHoach(string year)
         {
-            var tonghopKeHoachs = _danhMucKeHoachService.TongHopKeHoachByYear(year);
+            //var tonghopKeHoachs = _danhMucKeHoachService.TongHopKeHoachByYear(year);
 
-            if (tonghopKeHoachs == null || tonghopKeHoachs.TongHopKeHoachViewModels.Count == 0)
-                return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
+            //if (tonghopKeHoachs == null || tonghopKeHoachs.TongHopKeHoachViewModels.Count == 0)
+            //    return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
 
             string sWebRootFolder = _hostingEnvironment.WebRootPath;
             string directory = Path.Combine(sWebRootFolder, "export-files");

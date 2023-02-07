@@ -13,8 +13,6 @@ namespace HRMNS.Application.Interfaces
         void DeleteEvent(Guid Id);
         EventScheduleParentViewModel GetEventById(Guid Id);
 
-        List<string> AddEvents(Guid maEvent,List<string> dates);
-
         void Save();
     }
 }

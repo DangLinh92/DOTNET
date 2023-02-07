@@ -132,6 +132,13 @@ namespace HRMS
             services.AddTransient<IRoleAndPermisstionService, RoleAndPermisstionService>();
             services.AddTransient<IAuthorizationHandler, BaseResourceAuthorizationHandler>();
             services.AddTransient<IBackgroundService, HmrsBackgroundService>();
+
+            services.AddTransient<IEhsKeHoachQuanTracService, EhsKeHoachQuanTracService>();
+            services.AddTransient<IEhsKeHoachKhamSKService, EhsKeHoachKhamSKService>();
+            services.AddTransient<IEhsKeHoachDaoTaoATVSLDService, EhsKeHoachDaoTaoATVSLDService>();
+            services.AddTransient<IEhsKeHoachPCCCService, EhsKeHoachPCCCService>();
+            services.AddTransient<IEhsKeHoachAnToanBucXaService, EhsKeHoachAnToanBucXaService>();
+
             services.AddMvc().AddJsonOptions(options => {
                 options.JsonSerializerOptions.PropertyNamingPolicy = null;
                 }).AddNewtonsoftJson(options =>

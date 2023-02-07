@@ -22,12 +22,10 @@ namespace HRMNS.Application.Implementation
         private IRespository<HR_TRAINING, Guid> _trainingListRepository;
         private IRespository<TRAINING_NHANVIEN, int> _trainingNhanVienRepository;
         private IRespository<EVENT_SHEDULE_PARENT, Guid> _eventScheduleParentRepository;
-        private IRespository<EVENT_SHEDULE, int> _eventScheduleRepository;
         private IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
         public TrainningListService(IRespository<EVENT_SHEDULE_PARENT, Guid> eventScheduleParentRepository,
-            IRespository<EVENT_SHEDULE, int> eventScheduleRepository,
             IRespository<TRAINING_TYPE, int> trainingTypeRepository,
             IRespository<HR_TRAINING, Guid> trainingListRepository,
             IRespository<TRAINING_NHANVIEN, int> trainingNhanVienRepository,
@@ -35,7 +33,6 @@ namespace HRMNS.Application.Implementation
             IHttpContextAccessor httpContextAccessor)
         {
             _eventScheduleParentRepository = eventScheduleParentRepository;
-            _eventScheduleRepository = eventScheduleRepository;
             _trainingTypeRepository = trainingTypeRepository;
             _trainingListRepository = trainingListRepository;
             _trainingNhanVienRepository = trainingNhanVienRepository;
@@ -60,17 +57,10 @@ namespace HRMNS.Application.Implementation
                 StartEvent = trainigModel.FromDate,
                 EndEvent = trainigModel.ToDate,
                 StartTime = DateTime.Parse(trainigModel.FromDate),
-                EndTime = DateTime.Parse(trainigModel.ToDate),
+                EndTime = DateTime.Parse(trainigModel.ToDate).AddDays(1),
                 Description = trainigModel.Description,
                 UserCreated = GetUserId()
             });
-            EVENT_SHEDULE even = null;
-            foreach (var item in EachDay.EachDays(DateTime.Parse(trainigModel.FromDate), DateTime.Parse(trainigModel.ToDate)))
-            {
-                even = new EVENT_SHEDULE(scheduleId, item.ToString("yyyy-MM-dd"));
-                even.UserCreated = GetUserId();
-                _eventScheduleRepository.Add(even);
-            }
 
             trainigModel.MaEventParent = scheduleId;
             var en = _mapper.Map<HR_TRAINING>(trainigModel);
@@ -93,20 +83,10 @@ namespace HRMNS.Application.Implementation
             scheduleParent.StartEvent = trainigModel.FromDate;
             scheduleParent.EndEvent = trainigModel.ToDate;
             scheduleParent.StartTime = DateTime.Parse(trainigModel.FromDate);
-            scheduleParent.EndTime = DateTime.Parse(trainigModel.ToDate);
+            scheduleParent.EndTime = DateTime.Parse(trainigModel.ToDate).AddDays(1) ;
             scheduleParent.Description = trainigModel.Description;
             scheduleParent.UserModified = GetUserId();
             _eventScheduleParentRepository.Update(scheduleParent);
-
-            _eventScheduleRepository.RemoveMultiple(_eventScheduleRepository.FindAll(x => x.MaEventParent.Equals(oldTraining.MaEventParent)).ToList());
-
-            EVENT_SHEDULE evnt = null;
-            foreach (var item in EachDay.EachDays(DateTime.Parse(trainigModel.FromDate), DateTime.Parse(trainigModel.ToDate)))
-            {
-                evnt = new EVENT_SHEDULE(oldTraining.MaEventParent, item.ToString("yyyy-MM-dd"));
-                evnt.UserCreated = GetUserId();
-                _eventScheduleRepository.Add(evnt);
-            }
         }
 
         public void Delete(Guid id)

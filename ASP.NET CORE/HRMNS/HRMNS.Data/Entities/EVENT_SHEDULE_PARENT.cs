@@ -99,7 +99,5 @@ namespace HRMNS.Data.Entities
 
         [StringLength(50)]
         public string UserModified { get; set; }
-
-        public virtual ICollection<EVENT_SHEDULE> EVENT_SHEDULE { get; set; }
     }
 }
