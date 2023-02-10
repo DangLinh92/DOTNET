@@ -7,7 +7,7 @@ namespace HRMNS.Application.Interfaces
 {
     public interface IEhsKeHoachAnToanBucXaService
     {
-        List<EhsKeHoachAnToanBucXaViewModel> GetList();
+        List<EhsKeHoachAnToanBucXaViewModel> GetList(string year);
         EhsKeHoachAnToanBucXaViewModel Update(EhsKeHoachAnToanBucXaViewModel model);
         EhsKeHoachAnToanBucXaViewModel Add(EhsKeHoachAnToanBucXaViewModel model);
         void Delete(Guid Id);

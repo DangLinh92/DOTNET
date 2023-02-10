@@ -124,7 +124,7 @@
                         dataGridTmp.option("dataSource", data);
                     });
 
-            $('#txtTitlePopup').text(e.data.NoiDung);
+            $('#txtTitlePopup').text(e.data.HangMuc);
             $('#txt_MaKH').val(e.key);
         }
 
@@ -350,7 +350,7 @@
         columns.AddFor(m => m.NoiDung).Caption("Nội Dung[내용]").Width(150).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
         columns.AddFor(m => m.ChuKyThucHien).Caption("Chu kỳ thực hiện[진행 주기]").Width(150).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
         columns.AddFor(m => m.ThoiGianDaoTao).Caption("Thời gian thực hiện 교육 기간").Width(100).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.Year).Caption("Năm").Width(80).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.Year).Caption("Year").Width(80).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
         columns.AddFor(m => m.NguoiPhuTrach).Caption("Người Phụ Trách").Width(80).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
         columns.AddFor(m => m.NhaThau).Caption("Nhà Thầu").Width(80).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
 
@@ -368,7 +368,7 @@
         columns.AddFor(m => m.CostMonth_12).Caption("Tháng 12").AllowEditing(true).Format("#,##0");
         columns.AddFor(m => m.CostTotal).Caption("Total").AllowEditing(false).Format("#,##0");
 
-    }).WordWrapEnabled(true).Summary(s=>s.TotalItems(tt => {
+    }).SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true).Summary(s=>s.TotalItems(tt => {
         tt.AddFor(m => m.CostMonth_1).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
         tt.AddFor(m => m.CostMonth_2).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
         tt.AddFor(m => m.CostMonth_3).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
@@ -427,6 +427,7 @@
                 @(Html.DevExtreme().DataGrid<EhsThoiGianThucHienPCCCViewModel>()
     .ID("gridContainer-NgayThucHien")
       .KeyExpr("Id")
+      .Height(300)
     .ShowBorders(true)
     .Paging(paging => paging.Enabled(false))
     .Editing(editing => {

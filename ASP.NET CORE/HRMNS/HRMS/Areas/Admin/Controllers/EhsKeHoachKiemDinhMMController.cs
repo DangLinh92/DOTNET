@@ -18,14 +18,14 @@ using System.Threading.Tasks;
 
 namespace HRMS.Areas.Admin.Controllers
 {
-    public class EhsKeHoachDaoTaoATVSLDController : AdminBaseController
+    public class EhsKeHoachKiemDinhMMController : AdminBaseController
     {
-        private readonly IEhsKeHoachDaoTaoATVSLDService EhsATLDService;
+        private readonly IEhsKeHoachKiemDinhMayMocService EhsKeHoachKiemDinhMayMocService;
         private readonly IWebHostEnvironment _hostingEnvironment;
 
-        public EhsKeHoachDaoTaoATVSLDController(IEhsKeHoachDaoTaoATVSLDService ehsATLDService, IWebHostEnvironment hostingEnvironment)
+        public EhsKeHoachKiemDinhMMController(IEhsKeHoachKiemDinhMayMocService ehsKeHoachKiemDinhMayMocService, IWebHostEnvironment hostingEnvironment)
         {
-            EhsATLDService = ehsATLDService;
+            EhsKeHoachKiemDinhMayMocService = ehsKeHoachKiemDinhMayMocService;
             _hostingEnvironment = hostingEnvironment;
         }
 
@@ -35,21 +35,20 @@ namespace HRMS.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public object ATVSLD(DataSourceLoadOptions loadOptions, string year)
+        public object KeHoachKiemDinhMayMoc(DataSourceLoadOptions loadOptions, string year)
         {
-            var lstModel = EhsATLDService.GetList(year);
+            var lstModel = EhsKeHoachKiemDinhMayMocService.GetList(year);
             return DataSourceLoader.Load(lstModel, loadOptions);
         }
-
 
         [HttpPost]
         public IActionResult Insert(string values)
         {
-            var khoach = new EhsKeHoachDaoTaoATLDViewModel();
+            var khoach = new EhsKeHoachKiemDinhMayMocViewModel();
             JsonConvert.PopulateObject(values, khoach);
 
-            EhsATLDService.Add(khoach);
-            EhsATLDService.Save();
+            EhsKeHoachKiemDinhMayMocService.Add(khoach);
+            EhsKeHoachKiemDinhMayMocService.Save();
 
             return Ok(khoach);
         }
@@ -57,63 +56,63 @@ namespace HRMS.Areas.Admin.Controllers
         [HttpPut]
         public IActionResult Update(Guid key, string values)
         {
-            var kehoach = EhsATLDService.GetById(key);
+            var kehoach = EhsKeHoachKiemDinhMayMocService.GetById(key);
             JsonConvert.PopulateObject(values, kehoach);
 
-            EhsATLDService.Update(kehoach);
-            EhsATLDService.Save();
+            EhsKeHoachKiemDinhMayMocService.Update(kehoach);
+            EhsKeHoachKiemDinhMayMocService.Save();
             return Ok(kehoach);
         }
 
         [HttpDelete]
         public void Delete(Guid key)
         {
-            EhsATLDService.Delete(key);
-            EhsATLDService.Save();
+            EhsKeHoachKiemDinhMayMocService.Delete(key);
+            EhsKeHoachKiemDinhMayMocService.Save();
         }
 
         [HttpGet]
-        public object GetThucHienATVSLD(DataSourceLoadOptions loadOptions, Guid key)
+        public object GetThucHienKiemDinhMayMoc(DataSourceLoadOptions loadOptions, Guid key)
         {
-            var kehoach = EhsATLDService.GetById(key);
-            return DataSourceLoader.Load(kehoach.EHS_THOIGIAN_THUC_HIEN_DAOTAO_ATVSLD.ToList(), loadOptions);
+            var kehoach = EhsKeHoachKiemDinhMayMocService.GetById(key);
+            return DataSourceLoader.Load(kehoach.EHS_THOIGIAN_THUC_HIEN_KIEMDINH_MM.OrderByDescending(x => x.NgayBatDau).ToList(), loadOptions);
         }
 
         [HttpPost]
-        public IActionResult AddThoiGianATVSLD(string values, Guid maKH)
+        public IActionResult AddThoiGianKiemDinhMayMoc(string values, Guid maKH)
         {
-            var khoach = new EhsThoiGianThucHienDaoTaoATVSViewModel();
+            var khoach = new EhsThoiGianKiemDinhMayMocViewModel();
             JsonConvert.PopulateObject(values, khoach);
 
-            khoach.MaKHDaoTaoATLD = maKH;
+            khoach.MaKH_KDMM = maKH;
             khoach.NgayBatDau = khoach.NgayBatDauEx.ToString("yyyy-MM-dd");
             khoach.NgayKetThuc = khoach.NgayKetThucEx.ToString("yyyy-MM-dd");
 
-            EhsATLDService.AddThoiGianATVSLD(khoach);
-            EhsATLDService.Save();
+            EhsKeHoachKiemDinhMayMocService.AddThoiGianKiemDinhMayMoc(khoach);
+            EhsKeHoachKiemDinhMayMocService.Save();
 
             return Ok(khoach);
         }
 
         [HttpPut]
-        public IActionResult UpdateThoiGianATVSLD(int key, string values)
+        public IActionResult UpdateThoiGianKiemDinhMayMoc(int key, string values)
         {
-            var kehoach = EhsATLDService.GetThoiGianATVSLDById(key);
+            var kehoach = EhsKeHoachKiemDinhMayMocService.GetThoiGianKiemDinhMayMocById(key);
             JsonConvert.PopulateObject(values, kehoach);
 
             kehoach.NgayBatDau = kehoach.NgayBatDauEx.ToString("yyyy-MM-dd");
             kehoach.NgayKetThuc = kehoach.NgayKetThucEx.ToString("yyyy-MM-dd");
 
-            EhsATLDService.UpdateThoiGianATVSLD(kehoach);
-            EhsATLDService.Save();
+            EhsKeHoachKiemDinhMayMocService.UpdateThoiGianKiemDinhMayMoc(kehoach);
+            EhsKeHoachKiemDinhMayMocService.Save();
             return Ok(kehoach);
         }
 
         [HttpDelete]
-        public void DeleteThoiGianATVSLD(int key)
+        public void DeleteThoiGianDinhMayMoc(int key)
         {
-            EhsATLDService.DeleteThoiGianATVSLD(key);
-            EhsATLDService.Save();
+            EhsKeHoachKiemDinhMayMocService.DeleteThoiKiemDinhMayMoc(key);
+            EhsKeHoachKiemDinhMayMocService.Save();
         }
 
         [HttpPost]
@@ -142,9 +141,10 @@ namespace HRMS.Areas.Admin.Controllers
                     fs.Flush();
                 }
 
-                string err = EhsATLDService.ImportExcel(filePath);
+                string err = EhsKeHoachKiemDinhMayMocService.ImportExcel(filePath);
+
                 if (err == "")
-                    EhsATLDService.Save();
+                    EhsKeHoachKiemDinhMayMocService.Save();
                 else
                 {
                     if (System.IO.File.Exists(filePath))

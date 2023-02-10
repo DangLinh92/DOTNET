@@ -35,9 +35,9 @@ namespace HRMS.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public object KeHoachATBX(DataSourceLoadOptions loadOptions)
+        public object KeHoachATBX(DataSourceLoadOptions loadOptions, string year)
         {
-           var lstModel = EhsKeHoachATBXService.GetList();
+            var lstModel = EhsKeHoachATBXService.GetList(year);
             return DataSourceLoader.Load(lstModel, loadOptions);
         }
 
@@ -72,14 +72,14 @@ namespace HRMS.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public object GetThucHienATBX(DataSourceLoadOptions loadOptions,Guid key)
+        public object GetThucHienATBX(DataSourceLoadOptions loadOptions, Guid key)
         {
             var kehoach = EhsKeHoachATBXService.GetById(key);
-            return DataSourceLoader.Load(kehoach.EHS_THOIGIAN_THUC_HIEN_ANTOAN_BUCXA.OrderByDescending(x=>x.NgayBatDau).ToList(), loadOptions);
+            return DataSourceLoader.Load(kehoach.EHS_THOIGIAN_THUC_HIEN_ANTOAN_BUCXA.OrderByDescending(x => x.NgayBatDau).ToList(), loadOptions);
         }
 
         [HttpPost]
-        public IActionResult AddThoiGianATBX(string values,Guid maKH)
+        public IActionResult AddThoiGianATBX(string values, Guid maKH)
         {
             var khoach = new EhsThoiGianThucHienAnToanBucXaViewModel();
             JsonConvert.PopulateObject(values, khoach);
@@ -141,8 +141,18 @@ namespace HRMS.Areas.Admin.Controllers
                     fs.Flush();
                 }
 
-                EhsKeHoachATBXService.ImportExcel(filePath);
-                EhsKeHoachATBXService.Save();
+                string err = EhsKeHoachATBXService.ImportExcel(filePath);
+                if (err == "")
+                    EhsKeHoachATBXService.Save();
+                else
+                {
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        // If file found, delete it    
+                        System.IO.File.Delete(filePath);
+                    }
+                    return new NotFoundObjectResult(err);
+                }
 
                 if (System.IO.File.Exists(filePath))
                 {

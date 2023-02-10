@@ -54,7 +54,7 @@ namespace HRMNS.Application.Implementation
                 var even = _EventScheduleParentRepository.FindById(evt);
                 if (even != null)
                 {
-                    even.Subject = model.NoiDung;
+                    even.Subject = model.HangMuc;
                     even.Description = "Phụ Trách: " + model.NguoiPhuTrach + " || Vendor: " + model.NhaThau;
                     even.UserModified = GetUserId();
                     _EventScheduleParentRepository.Update(even);
@@ -74,9 +74,9 @@ namespace HRMNS.Application.Implementation
             return _mapper.Map<EhsKeHoachAnToanBucXaViewModel>(_EHSKeHoachBucXaRepository.FindById(Id, x => x.EHS_THOIGIAN_THUC_HIEN_ANTOAN_BUCXA));
         }
 
-        public List<EhsKeHoachAnToanBucXaViewModel> GetList()
+        public List<EhsKeHoachAnToanBucXaViewModel> GetList(string year)
         {
-            return _mapper.Map<List<EhsKeHoachAnToanBucXaViewModel>>(_EHSKeHoachBucXaRepository.FindAll(x => x.EHS_THOIGIAN_THUC_HIEN_ANTOAN_BUCXA).OrderBy(x => x.STT));
+            return _mapper.Map<List<EhsKeHoachAnToanBucXaViewModel>>(_EHSKeHoachBucXaRepository.FindAll(x=>x.Year ==year,x => x.EHS_THOIGIAN_THUC_HIEN_ANTOAN_BUCXA).OrderBy(x => x.STT));
         }
 
         public EhsThoiGianThucHienAnToanBucXaViewModel AddThoiGianBucXa(EhsThoiGianThucHienAnToanBucXaViewModel model)
@@ -86,55 +86,56 @@ namespace HRMNS.Application.Implementation
             string nhaThau = kehoach.NhaThau.NullString();
             model.NoiDung = kehoach.NoiDung.NullString();
 
-            model.MaEvent = AddNewEvent(model.MaEvent.ToString(), model.NoiDung, model.NgayBatDau, model.NgayKetThuc, nguoiPhuTrach, nhaThau);
+            model.MaEvent = AddNewEvent(model.MaEvent.ToString(), kehoach.HangMuc, model.NgayBatDau, model.NgayKetThuc, nguoiPhuTrach, nhaThau);
             _EHSNgayThucHienBucXaRepository.Add(_mapper.Map<EHS_THOIGIAN_THUC_HIEN_ANTOAN_BUCXA>(model));
 
             Save();
 
             var en = _EHSKeHoachBucXaRepository.FindById(model.MaKH_ATBX);
+            en.ThoiGianCapL1 = "";
+            en.ThoiGianCapLai_L1 = "";
+            en.ThoiGianCapLai_L2 = "";
+            en.ThoiGianCapLai_L3 = "";
+            en.ThoiGianCapLai_L4 = "";
+
             string days = "";
             int count = 0;
-            foreach (var item in _EHSNgayThucHienBucXaRepository.FindAll(x => x.MaKH_ATBX.Equals(model.MaKH_ATBX)).OrderBy(x=>x.NgayBatDau))
+            foreach (var item in _EHSNgayThucHienBucXaRepository.FindAll(x => x.MaKH_ATBX.Equals(model.MaKH_ATBX)).OrderBy(x => x.NgayBatDau))
             {
+                if (!DateTime.TryParse(item.NgayBatDau, out _))
+                {
+                    continue;
+                }
+
                 count += 1;
-                if(count == 1)
+                if (count == 1)
                 {
                     en.ThoiGianCapL1 = item.NgayBatDau;
                 }
-                
-                if(count == 2)
+                else
+                if (DateTime.Now.CompareTo(DateTime.Parse(item.NgayBatDau)) <= 0)
                 {
-                    en.ThoiGianCapLai_L1 = item.NgayBatDau;
-                }
-
-                if (count == 3)
-                {
-                    en.ThoiGianCapLai_L2 = item.NgayBatDau;
-                }
-
-                if (count == 4)
-                {
-                    en.ThoiGianCapLai_L3 = item.NgayBatDau;
-                }
-
-                if (count == 5)
-                {
-                    en.ThoiGianCapLai_L4 = item.NgayBatDau;
-                }
-
-                if (count > 5)
-                {
-                    en.ThoiGianCapLai_L4 += "," + item.NgayBatDau;
-                }
-
-                if (count <= 5)
-                {
-                    days += item.NgayBatDau + ";";
+                    en.ThoiGianCapLai_L4 += item.NgayBatDau + ",";
                 }
                 else
                 {
-                    days += "..";
+                    if (en.ThoiGianCapLai_L1 == "")
+                    {
+                        en.ThoiGianCapLai_L1 = item.NgayBatDau;
+                    }
+
+                    if (en.ThoiGianCapLai_L2 == "")
+                    {
+                        en.ThoiGianCapLai_L2 = item.NgayBatDau;
+                    }
+
+                    if (en.ThoiGianCapLai_L3 == "")
+                    {
+                        en.ThoiGianCapLai_L3 = item.NgayBatDau;
+                    }
                 }
+
+                days += item.NgayBatDau + ",";
             }
 
             en.ThoiGianDaoTao = days.Substring(0, days.Length - 1);
@@ -148,55 +149,56 @@ namespace HRMNS.Application.Implementation
             string nguoiPhuTrach = kehoach.NguoiPhuTrach.NullString();
             string nhaThau = kehoach.NhaThau.NullString();
             model.NoiDung = kehoach.NoiDung.NullString();
-            model.MaEvent = AddNewEvent(model.MaEvent.ToString(), model.NoiDung, model.NgayBatDau, model.NgayKetThuc, nguoiPhuTrach, nhaThau);
+            model.MaEvent = AddNewEvent(model.MaEvent.ToString(), kehoach.HangMuc, model.NgayBatDau, model.NgayKetThuc, nguoiPhuTrach, nhaThau);
 
             _EHSNgayThucHienBucXaRepository.Update(_mapper.Map<EHS_THOIGIAN_THUC_HIEN_ANTOAN_BUCXA>(model));
             Save();
 
             var en = _EHSKeHoachBucXaRepository.FindById(model.MaKH_ATBX);
+            en.ThoiGianCapL1 = "";
+            en.ThoiGianCapLai_L1 = "";
+            en.ThoiGianCapLai_L2 = "";
+            en.ThoiGianCapLai_L3 = "";
+            en.ThoiGianCapLai_L4 = "";
+
             string days = "";
             int count = 0;
-            foreach (var item in _EHSNgayThucHienBucXaRepository.FindAll(x => x.MaKH_ATBX.Equals(model.MaKH_ATBX)).OrderBy(x=>x.NgayBatDau))
+            foreach (var item in _EHSNgayThucHienBucXaRepository.FindAll(x => x.MaKH_ATBX.Equals(model.MaKH_ATBX)).OrderBy(x => x.NgayBatDau))
             {
+                if (!DateTime.TryParse(item.NgayBatDau, out _))
+                {
+                    continue;
+                }
+
                 count += 1;
                 if (count == 1)
                 {
                     en.ThoiGianCapL1 = item.NgayBatDau;
                 }
-
-                if (count == 2)
+                else
+                if (DateTime.Now.CompareTo(DateTime.Parse(item.NgayBatDau)) <= 0)
                 {
-                    en.ThoiGianCapLai_L1 = item.NgayBatDau;
-                }
-
-                if (count == 3)
-                {
-                    en.ThoiGianCapLai_L2 = item.NgayBatDau;
-                }
-
-                if (count == 4)
-                {
-                    en.ThoiGianCapLai_L3 = item.NgayBatDau;
-                }
-
-                if (count == 5)
-                {
-                    en.ThoiGianCapLai_L4 = item.NgayBatDau;
-                }
-
-                if (count > 5)
-                {
-                    en.ThoiGianCapLai_L4 += "," + item.NgayBatDau;
-                }
-
-                if (count <= 5)
-                {
-                    days += item.NgayBatDau + ";";
+                    en.ThoiGianCapLai_L4 += item.NgayBatDau + ",";
                 }
                 else
                 {
-                    days += "..";
+                    if (en.ThoiGianCapLai_L1 == "")
+                    {
+                        en.ThoiGianCapLai_L1 = item.NgayBatDau;
+                    }
+
+                    if (en.ThoiGianCapLai_L2 == "")
+                    {
+                        en.ThoiGianCapLai_L2 = item.NgayBatDau;
+                    }
+
+                    if (en.ThoiGianCapLai_L3 == "")
+                    {
+                        en.ThoiGianCapLai_L3 = item.NgayBatDau;
+                    }
                 }
+
+                days += item.NgayBatDau + ",";
             }
 
             en.ThoiGianDaoTao = days.Substring(0, days.Length - 1);
@@ -225,6 +227,7 @@ namespace HRMNS.Application.Implementation
                     Guid kehoachId;
 
                     ((Data.EF.EFUnitOfWork)_unitOfWork).DBContext().Database.BeginTransaction();
+                    int j = 0;
 
                     for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
                     {
@@ -263,6 +266,12 @@ namespace HRMNS.Application.Implementation
                         kehoach.CostMonth_10 = double.Parse(worksheet.Cells[i, 24].Text.IfNullIsZero());
                         kehoach.CostMonth_11 = double.Parse(worksheet.Cells[i, 25].Text.IfNullIsZero());
                         kehoach.CostMonth_12 = double.Parse(worksheet.Cells[i, 26].Text.IfNullIsZero());
+                        kehoach.Year = worksheet.Cells[i, 27].Text.NullString();
+
+                        if (int.Parse(kehoach.Year) < DateTime.Now.Year)
+                        {
+                            throw new Exception("Năm nhỏ hơn năm hiện tại là không phù hợp!");
+                        }
 
                         _EHSKeHoachBucXaRepository.Add(kehoach);
 
@@ -278,9 +287,26 @@ namespace HRMNS.Application.Implementation
                                 continue;
                             }
 
+                            if (DateTime.Parse(day.NullString()).Year < DateTime.Now.Year)
+                            {
+                                continue;
+                            }
+                            j += 1;
+
+                            if (j == 1)
+                            {
+                                foreach (var item in _EHSNgayThucHienBucXaRepository.FindAll().ToList())
+                                {
+                                    if (DateTime.Parse(item.NgayBatDau).Year == int.Parse(kehoach.Year))
+                                    {
+                                        _EHSNgayThucHienBucXaRepository.Remove(item);
+                                    }
+                                }
+                            }
+
                             even = new EVENT_SHEDULE_PARENT();
                             even.Id = Guid.NewGuid();
-                            even.Subject = kehoach.NoiDung;
+                            even.Subject = kehoach.HangMuc;
                             even.StartEvent = day.NullString();
                             even.EndEvent = day.NullString();
                             even.StartTime = DateTime.Parse(day.NullString());

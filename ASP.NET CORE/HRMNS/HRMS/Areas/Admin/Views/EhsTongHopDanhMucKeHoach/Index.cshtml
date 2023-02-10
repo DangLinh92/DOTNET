@@ -1,51 +1,71 @@
-﻿@using Microsoft.AspNetCore.Authorization
-@using HRMS.Authorization
-@inject IAuthorizationService AuthorizationService
-@model TongHopKeHoachALL
-@{
-    ViewData["Title"] = "Index";
+﻿@{
+    ViewData["Title"] = "Kế Hoạch Kiểm Định Máy Móc";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
-@section Scripts
-{
-    <script src="https://cdn.datatables.net/fixedcolumns/4.0.2/js/dataTables.fixedColumns.min.js"></script>
-    <script src="https://cdn.datatables.net/fixedheader/3.2.2/js/dataTables.fixedHeader.min.js"></script>
-    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+
+@section Scripts{
     <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
     <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
     <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
     <script>
-        var deparment = JSON.parse('@Html.Raw(JsonSerializer.Serialize(User.FindFirst(x=>x.Type == "Deparment").Value+""))');
-        var roleUsers = JSON.parse('@Html.Raw(JsonSerializer.Serialize(User.FindFirst(x => x.Type == "Roles").Value + ""))');
+        var dataGrid, loadPanel, dataGridTmp;
 
-        function RowClickDataEvt(selectedItems) {
-            var data = selectedItems.selectedRowsData;
+        $(function () {
+            let currentYear = new Date().getFullYear();
+            LoadData(currentYear);
+            });
 
-            if (data.length > 0) {
+        function LoadData(txtYear) {
+                    dataGrid = $("#gridContainer").dxDataGrid("instance");
+                    loadPanel = $("#loadPanel").dxLoadPanel("instance");
 
-                let arrFilter = [];
-                console.log(data);
-                for (let value of data) {
-                    arrFilter.push(tempData.find((item) => item.LOT_ID == value.LOT_ID && item.DATE == value.DATE && item.MAIN_OPERATION == value.MAIN_OPERATION));
-                }
+            loadPanel.show();
+            sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsTongHopDanhMucKeHoach", action = "TongHopKeHoachByYear" })', "GET", { year: txtYear })
+                    .always(() => { loadPanel.hide(); })
+                    .done((data) => {
+                        console.log(data);
+                        dataGrid.option("dataSource", data);
+                    });
+        }
 
-                chartData = arrFilter;
-                _WLP1_ChartControl.DrawChart();
+            function sendRequest(url, method, data) {
+                var d = $.Deferred();
+
+                method = method || "GET";
+
+                $.ajax(url, {
+                    method: method,
+                    data: data,
+                    cache: false,
+                    xhrFields: { withCredentials: true }
+                }).done(function (result) {
+                    d.resolve(method === "GET" ? result.data : result);
+                }).fail(function (xhr) {
+                    d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
+                });
+
+                return d.promise();
+        };
+
+        function selectedDate_changed(data) {
+
+            let sDate = data.value;
+            if (sDate == '') {
+                var date = new Date();
             }
-        }
+            else {
+                var date = new Date(sDate);
+            }
 
-        function onRowDbl(e) {
-            let dataGrid = $("#grid-container_loi").dxDataGrid("instance");
-            dataGrid.deselectAll();
-            dataGrid.clearSelection();
+            // Get year, month, and day part from the date
+            var year = date.toLocaleString("default", { year: "numeric" });
+            LoadData(year);
+        };
 
-            chartData = tempData;
-            _WLP1_ChartControl.DrawChart();
-        }
-
-        function exporting(e) {
+        function exporting(e)
+        {
             var workbook = new ExcelJS.Workbook();
-            var worksheet = workbook.addWorksheet('Ke Hoach Thuc Hien');
+            var worksheet = workbook.addWorksheet('KH Thực Hiện Công Việc EHS');
 
             DevExpress.excelExporter.exportDataGrid({
                 component: e.component,
@@ -53,139 +73,82 @@
                 autoFilterEnabled: true
             }).then(function () {
                 workbook.xlsx.writeBuffer().then(function (buffer) {
-                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'KeHoachThucHien.xlsx');
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'KeHoach_ẸHS.xlsx');
                 });
             });
             e.cancel = true;
         }
-
-        var mergelements = {};
-        function OnCellPrepared(cellInfo)
-            {
-                if (cellInfo.rowType == "data") {
-                    cellInfo.cellElement.addClass("mergecells");
-                    //color cell on selection
-                    cellInfo.cellElement.click(function () {
-                        $(".mergecellselected").removeClass("mergecellselected")
-                        $(this).addClass("mergecellselected");
-                    });
-                    if (cellInfo.rowIndex > 0 && cellInfo.column.command != "edit") {
-                        if (cellInfo.component.cellValue(cellInfo.rowIndex - 1, cellInfo.column.dataField) == cellInfo.value) {
-                            if (cellInfo.component.cellValue(cellInfo.rowIndex - 1, cellInfo.column.dataField)) {
-                                var prev = mergelements[cellInfo.rowIndex - 1][cellInfo.column.dataField]
-                                if (!mergelements[cellInfo.rowIndex]) mergelements[cellInfo.rowIndex] = {};
-                                mergelements[cellInfo.rowIndex][cellInfo.column.dataField] = prev;
-                                if (prev) {
-                                    cellInfo.cellElement.css("display", "none");
-                                    var span = prev.attr('rowspan');
-                                    if (span)
-                                        prev.attr('rowspan', Number(span) + 1);
-                                    else
-                                        prev.attr('rowspan', 2);
-                                }
-                            }
-                            else {
-                                if (!mergelements[cellInfo.rowIndex]) mergelements[cellInfo.rowIndex] = {};
-                                mergelements[cellInfo.rowIndex][cellInfo.column.dataField] = cellInfo.cellElement;
-                            }
-
-                        }
-                        else {
-                            if (!mergelements[cellInfo.rowIndex]) mergelements[cellInfo.rowIndex] = {};
-                            mergelements[cellInfo.rowIndex][cellInfo.column.dataField] = cellInfo.cellElement;
-
-                        }
-                    }
-                    else {
-                        if (!mergelements[cellInfo.rowIndex]) mergelements[cellInfo.rowIndex] = {};
-                        mergelements[cellInfo.rowIndex][cellInfo.column.dataField] = cellInfo.cellElement;
-                    }
-                }
-
-            }
-
     </script>
-
-    @*<script src="~/app/controllers/bangCong/bangCongMns.js"></script>
-
-        <script>
-            var controller = new bangCongController();
-            controller.initialize();
-
-            onSuccess = controller.doAftersearch;
-            onBeginAjax = controller.beginSearch;
-
-            $(document).ready(function () {
-                $('#bangCongDataTable').DataTable({
-                    scrollY: 600,
-                    scrollX: true,
-                    scrollCollapse: true,
-                    paging: false,
-                    select: true,
-                    "searching": true,
-                    fixedColumns: {
-                        left: 5
-                    },
-                    fixedHeader: true
-                });
-
-                $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
-                $('select[name="bangCongDataTable_length"]').removeClass('form-control-sm');
-            });
-
-            $('#searchToTime').datetimepicker({
-                format: 'YYYY-MM',
-                icons: {
-                    up: "fa fa-angle-up",
-                    down: "fa fa-angle-down",
-                    next: 'fa fa-angle-right',
-                    previous: 'fa fa-angle-left'
-                }
-            });
-        </script>*@
 }
-@section Styles{
-    <style>
-        .mergecells {
-            display: table-cell;
-            vertical-align: middle !important;
-            /*border-color: rgba(61, 70, 109, 0.5) !important;*/
-/*            border-style: solid !important;
-            border-width: 0.1px 0.1px 0.1px 0.1px !important;*/
-            background: white !important;
-            color: black !important;
-        }
+@section Styles{}
 
-        .mergecellselected {
-            background: #ffebda !important;
-        }
-    </style>
-}
-<!-- Page Content -->
+
 <div class="content container-fluid">
-    <!-- Page Header -->
-    <div class="page-header">
-        <div class="row align-items-center">
-            <div class="col">
+    <div class="page-header" style="margin-bottom:-1rem">
+        <div class="row">
+            <div class="col-sm-12">
                 <h3 class="page-title">Tổng hợp kế hoạch EHS</h3>
-                <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/ehstonghopdanhmuckehoach/index">Home</a></li>
-                    <li class="breadcrumb-item active">Kế hoạch EHS</li>
-                </ul>
             </div>
         </div>
     </div>
-    <!-- /Page Header -->
+
+    <div class="row align-items-center">
+        <div class="col">
+            <div class="form" style="float:left">
+                <div class="dx-fieldset">
+                    <div class="dx-field">
+                        <div>
+                            @(Html.DevExtreme().DateBox()
+                                  .ID("txt_year")
+                                  .Value(DateTime.Now.Year.ToString())
+                                  .CalendarOptions(x=>x.MaxZoomLevel(CalendarZoomLevel.Decade))
+                                  .DisplayFormat("yyyy")
+                                  .Width(200)
+                                  .Placeholder("Select...")
+                                  .Label("Year")
+                                  .OnValueChanged("selectedDate_changed")
+                            )
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="options" style="margin-top: 20px;">
+                <div class="caption">Options</div>
+                <div class="option">
+                    @(Html.DevExtreme().CheckBox()
+            .ID("autoExpand")
+            .Text("Expand All Groups")
+            .Value(true)
+            .OnValueChanged(@<text>
+                function(data) {
+                    var dataGrid = $("#gridContainer").dxDataGrid("instance");
+                    dataGrid.option("grouping.autoExpandAll", data.value);
+                }
+            </text>)
+        )
+                </div>
+            </div>
+        </div>
+
+    </div>
 
     <div class="row">
         <div class="col-md-12">
-            <div class="table-responsive dx-viewport" id="gridDCChamCongIndex">
-                @(Html.DevExtreme().DataGrid<TotalAllItemByYear>
+
+
+            @(Html.DevExtreme().LoadPanel()
+        .ID("loadPanel")
+        .Position(p => p.Of("#gridContainer"))
+        .Visible(false)
+)
+            @(Html.DevExtreme().DataGrid<TotalAllItemByYear>
     ()
-    .ID("grid-container_loi")
-    .DataSource(Model.TotalByYear.ItemByYears)
-    .Height(750)
+    .ID("gridContainer")
+    .Height(700)
     .ShowBorders(true)
+      .RepaintChangesOnly(true)
+     .LoadPanel(loadPanel => loadPanel.Enabled(false))
     .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
     .Paging(paging => paging.Enabled(false))
     .AllowColumnResizing(true)
@@ -199,76 +162,59 @@
     .ApplyFilter(GridApplyFilterMode.Auto)
     )
     .HeaderFilter(headerFilter => headerFilter.Visible(true))
-    .HoverStateEnabled(true)
     .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
     .Export(e => e.Enabled(true).AllowExportSelectedData(true))
     .OnExporting("exporting")
     .Columns(columns =>
     {
-        columns.AddFor(m => m.KeyKH).Visible(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.STT).Caption("STT").Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.TenDeMuc).Caption("Đề mục\n항목").Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.TenNoiDung).Caption("Nội dung\n내용").Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.NhaThau).Caption("Nhà thầu").Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.ChuKy).Caption("Chu kỳ/lần").Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.Month_1).Format("#,##0").Caption("1월");
-        columns.AddFor(m => m.Month_2).Format("#,##0").Caption("2월");
-        columns.AddFor(m => m.Month_3).Format("#,##0").Caption("3월");
-        columns.AddFor(m => m.Month_4).Format("#,##0").Caption("4월");
-        columns.AddFor(m => m.Month_5).Format("#,##0").Caption("5월");
-        columns.AddFor(m => m.Month_6).Format("#,##0").Caption("6월");
-        columns.AddFor(m => m.Month_7).Format("#,##0").Caption("7월");
-        columns.AddFor(m => m.Month_8).Format("#,##0").Caption("8월");
-        columns.AddFor(m => m.Month_9).Format("#,##0").Caption("9월");
-        columns.AddFor(m => m.Month_10).Format("#,##0").Caption("10월");
-        columns.AddFor(m => m.Month_11).Format("#,##0").Caption("11월");
-        columns.AddFor(m => m.Month_12).Format("#,##0").Caption("12월");
-        columns.AddFor(m => m.ToTal).Format("#,##0").Caption("Total");
+        columns.AddFor(m => m.STT).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.TenDeMuc).GroupIndex(0).Caption("Đề mục\n항목").Width(150).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.TenNoiDung).Caption("Nội dung\n내용").Width(150).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.NhaThau).Caption("Nhà thầu").Fixed(true).Width(90).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.ChuKy).Caption("Chu kỳ/lần").Fixed(true).Width(120).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.NguoiPhuTrach).Caption("Người phụ trách").Fixed(true).Width(80).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.Month_1).Width(120).Format("#,##0").Caption("1월");
+        columns.AddFor(m => m.Month_2).Width(120).Format("#,##0").Caption("2월");
+        columns.AddFor(m => m.Month_3).Width(120).Format("#,##0").Caption("3월");
+        columns.AddFor(m => m.Month_4).Width(120).Format("#,##0").Caption("4월");
+        columns.AddFor(m => m.Month_5).Width(120).Format("#,##0").Caption("5월");
+        columns.AddFor(m => m.Month_6).Width(120).Format("#,##0").Caption("6월");
+        columns.AddFor(m => m.Month_7).Width(120).Format("#,##0").Caption("7월");
+        columns.AddFor(m => m.Month_8).Width(120).Format("#,##0").Caption("8월");
+        columns.AddFor(m => m.Month_9).Width(120).Format("#,##0").Caption("9월");
+        columns.AddFor(m => m.Month_10).Width(120).Format("#,##0").Caption("10월");
+        columns.AddFor(m => m.Month_11).Width(120).Format("#,##0").Caption("11월");
+        columns.AddFor(m => m.Month_12).Width(120).Format("#,##0").Caption("12월");
+        columns.AddFor(m => m.ToTal).Width(150).Format("#,##0").Caption("Total");
 
-    }).OnCellPrepared("OnCellPrepared").Summary(s => s.TotalItems(items =>
-    {
-        items.AddFor(m => m.Month_1).SummaryType(SummaryType.Sum).DisplayFormat("Total {0}").ValueFormat(Format.FixedPoint);
-        items.AddFor(m => m.Month_2).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
-        items.AddFor(m => m.Month_3).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
-        items.AddFor(m => m.Month_4).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
-        items.AddFor(m => m.Month_5).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
-        items.AddFor(m => m.Month_6).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
-        items.AddFor(m => m.Month_7).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
-        items.AddFor(m => m.Month_8).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
-        items.AddFor(m => m.Month_9).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
-        items.AddFor(m => m.Month_10).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
-        items.AddFor(m => m.Month_11).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
-        items.AddFor(m => m.Month_12).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
-        items.AddFor(m => m.ToTal).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
     })
-    ))
-            </div>
+     .AllowColumnReordering(true)
+    .ShowBorders(true)
+    .Grouping(grouping => grouping.AutoExpandAll(true))
+    .SearchPanel(searchPanel => searchPanel.Visible(true))
+    .GroupPanel(groupPanel => groupPanel.Visible(true))
+    .WordWrapEnabled(true).Summary(s=>s.TotalItems(tt => {
+        tt.AddFor(m => m.Month_1).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.Month_2).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.Month_3).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.Month_4).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.Month_5).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.Month_6).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.Month_7).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.Month_8).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.Month_9).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.Month_10).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.Month_11).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.Month_12).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.ToTal).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+    }))
+    )
+
+
         </div>
     </div>
 </div>
-<!-- /Page Content -->
-<!-- Delete overtime -->
-<div class="modal custom-modal fade" id="delete_DCChamCong" role="dialog">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body">
-                <div class="form-header">
-                    <input type="hidden" id="txtHiddenId" />
-                    <h3>Delete</h3>
-                    <p>Are you sure want to delete?</p>
-                </div>
-                <div class="modal-btn delete-action">
-                    <div class="row">
-                        <div class="col-6">
-                            <a href="javascript:void(0);" id="btnDeleteDCChamCong" class="btn btn-primary continue-btn">Delete</a>
-                        </div>
-                        <div class="col-6">
-                            <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Delete Expense Modal -->
+
+
+

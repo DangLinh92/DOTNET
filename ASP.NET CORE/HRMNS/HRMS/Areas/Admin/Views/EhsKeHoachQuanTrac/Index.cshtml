@@ -109,7 +109,7 @@
         // show popup chi tiet ngay thuc hien
         function DetailChiTietNgayThuHien(e) {
 
-            console.log(e.data.NoiDung);
+            console.log(e.data.Demuc);
 
             const popup = $("#detailNgayQuanTrac-popup").dxPopup("instance");
             popup.option({
@@ -125,7 +125,7 @@
                         dataGridTmp.option("dataSource", data);
                     });
 
-            $('#txtTitlePopup').text(e.data.NoiDung);
+            $('#txtTitlePopup').text(e.data.Demuc);
             $('#txt_MaKHQuanTrac').val(e.key);
         }
 
@@ -230,9 +230,9 @@
             var fileUpload = $("#fileInputExcel").get(0);
             var files = fileUpload.files;
 
-            // Create FormData object  
+            // Create FormData object
             var fileData = new FormData();
-            // Looping over all files and add it to FormData object  
+            // Looping over all files and add it to FormData object
             for (var i = 0; i < files.length; i++) {
                 fileData.append("files", files[i]);
             }
@@ -352,23 +352,10 @@
         columns.AddFor(m => m.NoiDung).Caption("Nội Dung[내용]").Width(150).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
         columns.AddFor(m => m.ChuKyThucHien).Caption("Chu kỳ thực hiện[진행 주기]").Width(150).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
         columns.AddFor(m => m.KhuVucLayMau).Caption("Khu vực lấy mẫu").Width(100).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.Year).Caption("Năm").Width(80).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.Year).Caption("Year").Width(80).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
 
         columns.AddFor(m => m.NguoiPhuTrach).Caption("Người Phụ Trách").Width(80).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
         columns.AddFor(m => m.NhaThau).Caption("Nhà Thầu").Width(80).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
-
-        //columns.AddFor(m => m.Month_1).Caption("Thời Gian Thực Hiện Tháng 1").Width(100).AllowEditing(true);
-        //columns.AddFor(m => m.Month_2).Caption("Tháng 2").Width(100).AllowEditing(true);
-        //columns.AddFor(m => m.Month_3).Caption("Tháng 3").Width(100).AllowEditing(true);
-        //columns.AddFor(m => m.Month_4).Caption("Tháng 4").Width(100).AllowEditing(true);
-        //columns.AddFor(m => m.Month_5).Caption("Tháng 5").Width(100).AllowEditing(true);
-        //columns.AddFor(m => m.Month_6).Caption("Tháng 6").Width(100).AllowEditing(true);
-        //columns.AddFor(m => m.Month_7).Caption("Tháng 7").Width(100).AllowEditing(true);
-        //columns.AddFor(m => m.Month_8).Caption("Tháng 8").Width(100).AllowEditing(true);
-        //columns.AddFor(m => m.Month_9).Caption("Tháng 9").Width(100).AllowEditing(true);
-        //columns.AddFor(m => m.Month_10).Caption("Tháng 10").Width(100).AllowEditing(true);
-        //columns.AddFor(m => m.Month_11).Caption("Tháng 11").Width(100).AllowEditing(true);
-        //columns.AddFor(m => m.Month_12).Caption("Tháng 12").Width(100).AllowEditing(true);
 
         columns.AddFor(m => m.LayMau_Month_1).Caption("Khu Vực Lấy Mẫu Tháng 1").Width(100).AllowEditing(true);
         columns.AddFor(m => m.LayMau_Month_2).Caption("Tháng 2").Width(100).AllowEditing(true);
@@ -395,7 +382,7 @@
         columns.AddFor(m => m.CostMonth_10).Caption("Tháng 10").AllowEditing(true).Format("#,##0");
         columns.AddFor(m => m.CostMonth_11).Caption("Tháng 11").AllowEditing(true).Format("#,##0");
         columns.AddFor(m => m.CostMonth_12).Caption("Tháng 12").AllowEditing(true).Format("#,##0");
-    }).WordWrapEnabled(true).Summary(s=>s.TotalItems(tt => {
+    }).SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true).Summary(s=>s.TotalItems(tt => {
         tt.AddFor(m => m.CostMonth_1).SummaryType(SummaryType.Sum).DisplayFormat("Total: {0}").ValueFormat(Format.FixedPoint);
         tt.AddFor(m => m.CostMonth_2).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
         tt.AddFor(m => m.CostMonth_3).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
@@ -453,6 +440,7 @@
                 @(Html.DevExtreme().DataGrid<EhsNgayThucHienChiTietQuanTrac>()
     .ID("gridContainer-NgayQuanTrac")
       .KeyExpr("Id")
+          .Height(300)
     .ShowBorders(true)
     .Paging(paging => paging.Enabled(false))
     .Editing(editing => {

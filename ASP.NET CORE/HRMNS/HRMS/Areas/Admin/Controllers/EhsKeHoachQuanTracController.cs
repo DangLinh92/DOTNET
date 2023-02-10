@@ -35,9 +35,9 @@ namespace HRMS.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public object QuanTracs(DataSourceLoadOptions loadOptions,string year)
+        public object QuanTracs(DataSourceLoadOptions loadOptions, string year)
         {
-           var lstModel =  EhsKeHoachQuanTracService.GetList(year);
+            var lstModel = EhsKeHoachQuanTracService.GetList(year);
             return DataSourceLoader.Load(lstModel, loadOptions);
         }
 
@@ -73,14 +73,14 @@ namespace HRMS.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public object GetNgayQuanTrac(DataSourceLoadOptions loadOptions,int key)
+        public object GetNgayQuanTrac(DataSourceLoadOptions loadOptions, int key)
         {
             var kehoach = EhsKeHoachQuanTracService.GetById(key);
             return DataSourceLoader.Load(kehoach.EHS_NGAY_THUC_HIEN_CHITIET_QUANTRAC.ToList(), loadOptions);
         }
 
         [HttpPost]
-        public IActionResult InsertNgayQuanTrac(string values,int maKHQuanTrac)
+        public IActionResult InsertNgayQuanTrac(string values, int maKHQuanTrac)
         {
             var khoach = new EhsNgayThucHienChiTietQuanTrac();
             JsonConvert.PopulateObject(values, khoach);
@@ -142,8 +142,13 @@ namespace HRMS.Areas.Admin.Controllers
                     fs.Flush();
                 }
 
-                EhsKeHoachQuanTracService.ImportExcel(filePath);
-                EhsKeHoachQuanTracService.Save();
+                string err = EhsKeHoachQuanTracService.ImportExcel(filePath);
+                if (err == "")
+                    EhsKeHoachQuanTracService.Save();
+                else
+                {
+                    return new NotFoundObjectResult(err);
+                }
 
                 if (System.IO.File.Exists(filePath))
                 {

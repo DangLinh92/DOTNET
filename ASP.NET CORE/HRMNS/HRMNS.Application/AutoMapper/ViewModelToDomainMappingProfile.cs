@@ -150,10 +150,18 @@ namespace HRMNS.Application.AutoMapper
             CreateMap<EhsKeHoachAnToanBucXaViewModel, EHS_KEHOACH_ANTOAN_BUCXA>()
           .ConstructUsing(c => new EHS_KEHOACH_ANTOAN_BUCXA(c.MaDMKeHoach, c.STT, c.NoiDung, c.ChuKyThucHien, c.Year, c.ThoiGianDaoTao, c.NguoiPhuTrach,
           c.NhaThau, c.CostMonth_1, c.CostMonth_2, c.CostMonth_3, c.CostMonth_4, c.CostMonth_5, c.CostMonth_6, c.CostMonth_7, c.CostMonth_8, c.CostMonth_9, c.CostMonth_10,
-          c.CostMonth_11, c.CostMonth_12, c.HangMuc, c.ThoiGianCapL1, c.ThoiGianCapLai_L1, c.ThoiGianCapLai_L2, c.ThoiGianCapLai_L3, c.YeuCau, c.QuyDinhVBPL, c.MaHieu,c.ThoiGianCapLai_L4));
+          c.CostMonth_11, c.CostMonth_12, c.HangMuc, c.ThoiGianCapL1, c.ThoiGianCapLai_L1, c.ThoiGianCapLai_L2, c.ThoiGianCapLai_L3, c.YeuCau, c.QuyDinhVBPL, c.MaHieu, c.ThoiGianCapLai_L4));
 
             CreateMap<EhsThoiGianThucHienAnToanBucXaViewModel, EHS_THOIGIAN_THUC_HIEN_ANTOAN_BUCXA>()
            .ConstructUsing(c => new EHS_THOIGIAN_THUC_HIEN_ANTOAN_BUCXA(c.MaEvent, c.MaKH_ATBX, c.NoiDung, c.NgayBatDau, c.NgayKetThuc));
+
+            CreateMap<EhsThoiGianKiemDinhMayMocViewModel, EHS_THOIGIAN_THUC_HIEN_KIEMDINH_MM>()
+            .ConstructUsing(c => new EHS_THOIGIAN_THUC_HIEN_KIEMDINH_MM(c.MaEvent, c.MaKH_KDMM, c.NoiDung, c.NgayBatDau, c.NgayKetThuc));
+
+            CreateMap<EhsKeHoachKiemDinhMayMocViewModel, EHS_KEHOACH_KIEMDINH_MAYMOC>()
+            .ConstructUsing(c => new EHS_KEHOACH_KIEMDINH_MAYMOC(c.MaDMKeHoach, c.STT, c.TenMayMoc, c.ChuKyKiemDinh, c.SoLuongThietBi, c.ViTri, c.NguoiPhuTrach, c.NhaThau,
+            c.CostMonth_1, c.CostMonth_2, c.CostMonth_3, c.CostMonth_4, c.CostMonth_5, c.CostMonth_6, c.CostMonth_7, c.CostMonth_8, c.CostMonth_9, c.CostMonth_10, c.CostMonth_11, c.CostMonth_12, c.LanKiemDinhKeTiep,
+            c.LanKiemDinhKeTiep1, c.LanKiemDinhKeTiep2, c.LanKiemDinhKeTiep3,c.Year));
         }
     }
 }

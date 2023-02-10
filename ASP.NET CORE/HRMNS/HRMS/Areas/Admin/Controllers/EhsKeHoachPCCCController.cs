@@ -35,9 +35,9 @@ namespace HRMS.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public object KeHoachPCCC(DataSourceLoadOptions loadOptions,string year)
+        public object KeHoachPCCC(DataSourceLoadOptions loadOptions, string year)
         {
-           var lstModel = EhsKeHoachPCCCService.GetList(year);
+            var lstModel = EhsKeHoachPCCCService.GetList(year);
             return DataSourceLoader.Load(lstModel, loadOptions);
         }
 
@@ -72,14 +72,14 @@ namespace HRMS.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public object GetThucHienPCCC(DataSourceLoadOptions loadOptions,Guid key)
+        public object GetThucHienPCCC(DataSourceLoadOptions loadOptions, Guid key)
         {
             var kehoach = EhsKeHoachPCCCService.GetById(key);
             return DataSourceLoader.Load(kehoach.EHS_THOIGIAN_THUC_HIEN_PCCC.ToList(), loadOptions);
         }
 
         [HttpPost]
-        public IActionResult AddThoiGianPCCC(string values,Guid maKH)
+        public IActionResult AddThoiGianPCCC(string values, Guid maKH)
         {
             var khoach = new EhsThoiGianThucHienPCCCViewModel();
             JsonConvert.PopulateObject(values, khoach);
@@ -141,8 +141,18 @@ namespace HRMS.Areas.Admin.Controllers
                     fs.Flush();
                 }
 
-                EhsKeHoachPCCCService.ImportExcel(filePath);
-                EhsKeHoachPCCCService.Save();
+                string err = EhsKeHoachPCCCService.ImportExcel(filePath);
+                if (err == "")
+                    EhsKeHoachPCCCService.Save();
+                else
+                {
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        // If file found, delete it    
+                        System.IO.File.Delete(filePath);
+                    }
+                    return new NotFoundObjectResult(err);
+                }
 
                 if (System.IO.File.Exists(filePath))
                 {

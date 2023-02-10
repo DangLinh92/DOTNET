@@ -12,15 +12,16 @@
         var dataGrid, loadPanel, dataGridTmp;
 
         $(function () {
-                    LoadData();
+            let currentYear = new Date().getFullYear();
+            LoadData(currentYear);
             });
 
-        function LoadData() {
+        function LoadData(txtYear) {
                     dataGrid = $("#gridContainer").dxDataGrid("instance");
                     loadPanel = $("#loadPanel").dxLoadPanel("instance");
 
             loadPanel.show();
-            sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachAnToanBucXa", action = "KeHoachATBX" })', "GET")
+            sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachAnToanBucXa", action = "KeHoachATBX" })', "GET", { year: txtYear })
                     .always(() => { loadPanel.hide(); })
                     .done((data) => {
                         console.log(data);
@@ -89,19 +90,19 @@
                 return d.promise();
         };
 
-        //function selectedDate_changed(data) {
+        function selectedDate_changed(data) {
 
-        //    let sDate = data.value;
-        //    if (sDate == '') {
-        //        var date = new Date();
-        //    }
-        //    else {
-        //        var date = new Date(sDate);
-        //    }
-        //    // Get year, month, and day part from the date
-        //    var year = date.toLocaleString("default", { year: "numeric" });
-        //    LoadData(year);
-        //};
+            let sDate = data.value;
+            if (sDate == '') {
+                var date = new Date();
+            }
+            else {
+                var date = new Date(sDate);
+            }
+            // Get year, month, and day part from the date
+            var year = date.toLocaleString("default", { year: "numeric" });
+            LoadData(year);
+        };
 
         // show popup chi tiet ngay thuc hien
 
@@ -123,7 +124,7 @@
                         dataGridTmp.option("dataSource", data);
                     });
 
-            $('#txtTitlePopup').text(e.data.NoiDung);
+            $('#txtTitlePopup').text(e.data.HangMuc);
             $('#txt_MaKH').val(e.key);
         }
 
@@ -271,7 +272,7 @@
 
     <div class="row align-items-center">
         <div class="col">
-            @*<div class="form">
+            <div class="form">
                 <div class="dx-fieldset">
                     <div class="dx-field">
                         <div>
@@ -285,11 +286,10 @@
                                   .Label("Year")
                                   .OnValueChanged("selectedDate_changed")
                             )
-
                         </div>
                     </div>
                 </div>
-            </div>*@
+            </div>
         </div>
         <div class="col-auto float-right ml-auto" style="margin-right:100px;">
             <div class="btn-group">
@@ -349,6 +349,7 @@
         columns.AddFor(m => m.NoiDung).Caption("Nội Dung[내용]").Width(150).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
         columns.AddFor(m => m.MaHieu).Caption("Mã hiệu").Width(150).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
         columns.AddFor(m => m.ChuKyThucHien).Caption("Chu kỳ thực hiện[진행 주기]").Width(80).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.Year).Caption("Year").Width(80).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
         columns.AddFor(m => m.ThoiGianCapL1).Caption("Thời gian cấp lần 1[1차 발급 시간]").Width(100).AllowEditing(false);
         columns.AddFor(m => m.ThoiGianCapLai_L1).Caption("Thời hạn cấp lại 이행 시간").Width(100).AllowEditing(false);
         columns.AddFor(m => m.ThoiGianCapLai_L2).Caption("Thời hạn cấp lại 이행 시간").Width(100).AllowEditing(false);
@@ -373,7 +374,7 @@
         columns.AddFor(m => m.CostMonth_12).Caption("Tháng 12").AllowEditing(true).Format("#,##0");
         columns.AddFor(m => m.CostTotal).Caption("Total").AllowEditing(false).Format("#,##0");
 
-    }).WordWrapEnabled(true).Summary(s=>s.TotalItems(tt => {
+    }).SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true).Summary(s=>s.TotalItems(tt => {
         tt.AddFor(m => m.CostMonth_1).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
         tt.AddFor(m => m.CostMonth_2).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
         tt.AddFor(m => m.CostMonth_3).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
@@ -432,6 +433,7 @@
                 @(Html.DevExtreme().DataGrid<EhsThoiGianThucHienAnToanBucXaViewModel>()
     .ID("gridContainer-NgayThucHien")
       .KeyExpr("Id")
+          .Height(300)
     .ShowBorders(true)
     .Paging(paging => paging.Enabled(false))
     .Editing(editing => {

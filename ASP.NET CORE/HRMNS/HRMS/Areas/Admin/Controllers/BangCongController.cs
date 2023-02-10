@@ -77,7 +77,7 @@ namespace HRMS.Areas.Admin.Controllers
             else
             if (department.NullString() == "KOREA")
             {
-                lst = lst.OrderBy(x => x.OrderBy).ToList(); ;
+                lst = lst.OrderBy(x => x.OrderBy).ToList();
             }
 
             string time = timeTo + "-01";

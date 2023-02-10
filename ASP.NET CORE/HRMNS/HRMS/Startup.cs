@@ -138,6 +138,7 @@ namespace HRMS
             services.AddTransient<IEhsKeHoachDaoTaoATVSLDService, EhsKeHoachDaoTaoATVSLDService>();
             services.AddTransient<IEhsKeHoachPCCCService, EhsKeHoachPCCCService>();
             services.AddTransient<IEhsKeHoachAnToanBucXaService, EhsKeHoachAnToanBucXaService>();
+            services.AddTransient<IEhsKeHoachKiemDinhMayMocService, EhsKeHoachKiemDinhMayMocService>();
 
             services.AddMvc().AddJsonOptions(options => {
                 options.JsonSerializerOptions.PropertyNamingPolicy = null;

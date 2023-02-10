@@ -19,7 +19,7 @@ namespace HRMNS.Application.Interfaces
         void DeleteNgayQuanTrac(int Id);
         EhsNgayThucHienChiTietQuanTrac GetNgayQuanTracById(int Id);
 
-        void ImportExcel(string filePath);
+        string ImportExcel(string filePath);
 
         void Save();
     }

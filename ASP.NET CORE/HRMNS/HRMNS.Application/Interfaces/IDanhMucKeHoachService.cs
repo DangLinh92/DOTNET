@@ -17,7 +17,7 @@ namespace HRMNS.Application.Interfaces
         EhsLuatDinhKeHoachViewModel UpdateLuatDinhKeHoach(EhsLuatDinhKeHoachViewModel model);
         EhsLuatDinhKeHoachViewModel DeleteLuatDinhKeHoach(int id);
 
-        //TongHopKeHoachALL TongHopKeHoachByYear(string year);
+        List<TotalAllItemByYear> TongHopKeHoachByYear(string year);
 
         void Save();
     }

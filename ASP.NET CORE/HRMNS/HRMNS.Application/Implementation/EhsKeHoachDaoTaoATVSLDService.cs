@@ -184,85 +184,123 @@ namespace HRMNS.Application.Implementation
             return Guid.Parse(evenId);
         }
 
-        public void ImportExcel(string filePath)
+        public string ImportExcel(string filePath)
         {
-            using (var packet = new ExcelPackage(new System.IO.FileInfo(filePath)))
+            try
             {
-                ExcelWorksheet worksheet = packet.Workbook.Worksheets[1];
-                EHS_KEHOACH_DAOTAO_ANTOAN_VSLD kehoach;
-                Guid kehoachId;
-                for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
+                using (var packet = new ExcelPackage(new System.IO.FileInfo(filePath)))
                 {
-                    kehoach = new EHS_KEHOACH_DAOTAO_ANTOAN_VSLD();
-                    kehoachId = Guid.NewGuid();
-                    kehoach.Id = kehoachId;
-                    kehoach.MaDMKeHoach = Guid.Parse("5f2ad5b3-8e86-4cd8-be84-ef4e7d82212b");
-                    kehoach.STT = int.Parse(worksheet.Cells[i, 1].Text.NullString());
-                    kehoach.NoiDung = worksheet.Cells[i, 2].Text.NullString();
-                    kehoach.NguoiThamGia = worksheet.Cells[i, 3].Text.NullString();
-                    kehoach.ChuKyThucHien = worksheet.Cells[i, 4].Text.NullString();
-                    kehoach.ThoiGianCapLanDau = worksheet.Cells[i, 5].Text.NullString();
-                    kehoach.ThoiGianHuanLuyenLanDau = worksheet.Cells[i, 6].Text.NullString();
-                    kehoach.ThoiGianHuanLuyenLai = worksheet.Cells[i, 7].Text.NullString();
-                    kehoach.ThoiGianDaoTao = worksheet.Cells[i, 8].Text.NullString();
-                    kehoach.Year = worksheet.Cells[i, 9].Text.NullString();
-                    kehoach.NguoiPhuTrach = worksheet.Cells[i, 10].Text.NullString();
+                    ((Data.EF.EFUnitOfWork)_unitOfWork).DBContext().Database.BeginTransaction();
 
-                    kehoach.CostMonth_1 = double.Parse(worksheet.Cells[i, 11].Text.IfNullIsZero());
-                    kehoach.CostMonth_2 = double.Parse(worksheet.Cells[i, 12].Text.IfNullIsZero());
-                    kehoach.CostMonth_3 = double.Parse(worksheet.Cells[i, 13].Text.IfNullIsZero());
-                    kehoach.CostMonth_4 = double.Parse(worksheet.Cells[i, 14].Text.IfNullIsZero());
-                    kehoach.CostMonth_5 = double.Parse(worksheet.Cells[i, 15].Text.IfNullIsZero());
-                    kehoach.CostMonth_6 = double.Parse(worksheet.Cells[i, 16].Text.IfNullIsZero());
-                    kehoach.CostMonth_7 = double.Parse(worksheet.Cells[i, 17].Text.IfNullIsZero());
-                    kehoach.CostMonth_8 = double.Parse(worksheet.Cells[i, 18].Text.IfNullIsZero());
-                    kehoach.CostMonth_9 = double.Parse(worksheet.Cells[i, 19].Text.IfNullIsZero());
-                    kehoach.CostMonth_10 = double.Parse(worksheet.Cells[i, 20].Text.IfNullIsZero());
-                    kehoach.CostMonth_11 = double.Parse(worksheet.Cells[i, 21].Text.IfNullIsZero());
-                    kehoach.CostMonth_12 = double.Parse(worksheet.Cells[i, 22].Text.IfNullIsZero());
-
-                    _EHSKeHoachDaoTaoATVSLDRepository.Add(kehoach);
-
-                    List<string> lstDay = new List<string>();
-                    lstDay.AddRange(kehoach.ThoiGianDaoTao.NullString().Split(","));
-
-                    EHS_THOIGIAN_THUC_HIEN_DAOTAO_ATVSLD ngaythuchien;
-                    EVENT_SHEDULE_PARENT even;
-                    foreach (var day in lstDay.Where(x => x != ""))
+                    ExcelWorksheet worksheet = packet.Workbook.Worksheets[1];
+                    EHS_KEHOACH_DAOTAO_ANTOAN_VSLD kehoach;
+                    Guid kehoachId;
+                    int j = 0;
+                    for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
                     {
-                        if (!DateTime.TryParse(day.NullString(), out _))
+                        kehoach = new EHS_KEHOACH_DAOTAO_ANTOAN_VSLD();
+                        kehoachId = Guid.NewGuid();
+                        kehoach.Id = kehoachId;
+                        kehoach.MaDMKeHoach = Guid.Parse("5f2ad5b3-8e86-4cd8-be84-ef4e7d82212b");
+                        kehoach.STT = int.Parse(worksheet.Cells[i, 1].Text.NullString());
+                        kehoach.NoiDung = worksheet.Cells[i, 2].Text.NullString();
+                        kehoach.NguoiThamGia = worksheet.Cells[i, 3].Text.NullString();
+                        kehoach.ChuKyThucHien = worksheet.Cells[i, 4].Text.NullString();
+                        kehoach.ThoiGianCapLanDau = worksheet.Cells[i, 5].Text.NullString();
+                        kehoach.ThoiGianHuanLuyenLanDau = worksheet.Cells[i, 6].Text.NullString();
+                        kehoach.ThoiGianHuanLuyenLai = worksheet.Cells[i, 7].Text.NullString();
+                        kehoach.ThoiGianDaoTao = worksheet.Cells[i, 8].Text.NullString();
+                        kehoach.Year = worksheet.Cells[i, 9].Text.NullString();
+
+                        if (int.Parse(kehoach.Year) < DateTime.Now.Year)
                         {
-                            continue;
+                            throw new Exception("Năm nhỏ hơn năm hiện tại là không phù hợp!");
                         }
 
-                        even = new EVENT_SHEDULE_PARENT();
-                        even.Id = Guid.NewGuid();
-                        even.Subject = kehoach.NoiDung;
-                        even.StartEvent = day.NullString();
-                        even.EndEvent = day.NullString();
-                        even.StartTime = DateTime.Parse(day.NullString());
-                        even.EndTime = DateTime.Parse(day.NullString()).AddDays(1);
-                        even.IsAllDay = true;
-                        even.Description = "Phụ Trách: " + kehoach.NguoiPhuTrach + " || Vendor: " + kehoach.NhaThau;
-                        even.UserCreated = GetUserId();
-                        _EventScheduleParentRepository.Add(even);
+                        kehoach.NguoiPhuTrach = worksheet.Cells[i, 10].Text.NullString();
 
-                        ngaythuchien = new EHS_THOIGIAN_THUC_HIEN_DAOTAO_ATVSLD()
+                        kehoach.CostMonth_1 = double.Parse(worksheet.Cells[i, 11].Text.IfNullIsZero());
+                        kehoach.CostMonth_2 = double.Parse(worksheet.Cells[i, 12].Text.IfNullIsZero());
+                        kehoach.CostMonth_3 = double.Parse(worksheet.Cells[i, 13].Text.IfNullIsZero());
+                        kehoach.CostMonth_4 = double.Parse(worksheet.Cells[i, 14].Text.IfNullIsZero());
+                        kehoach.CostMonth_5 = double.Parse(worksheet.Cells[i, 15].Text.IfNullIsZero());
+                        kehoach.CostMonth_6 = double.Parse(worksheet.Cells[i, 16].Text.IfNullIsZero());
+                        kehoach.CostMonth_7 = double.Parse(worksheet.Cells[i, 17].Text.IfNullIsZero());
+                        kehoach.CostMonth_8 = double.Parse(worksheet.Cells[i, 18].Text.IfNullIsZero());
+                        kehoach.CostMonth_9 = double.Parse(worksheet.Cells[i, 19].Text.IfNullIsZero());
+                        kehoach.CostMonth_10 = double.Parse(worksheet.Cells[i, 20].Text.IfNullIsZero());
+                        kehoach.CostMonth_11 = double.Parse(worksheet.Cells[i, 21].Text.IfNullIsZero());
+                        kehoach.CostMonth_12 = double.Parse(worksheet.Cells[i, 22].Text.IfNullIsZero());
+
+                        _EHSKeHoachDaoTaoATVSLDRepository.Add(kehoach);
+
+                        List<string> lstDay = new List<string>();
+                        lstDay.AddRange(kehoach.ThoiGianDaoTao.NullString().Split(","));
+
+                        EHS_THOIGIAN_THUC_HIEN_DAOTAO_ATVSLD ngaythuchien;
+                        EVENT_SHEDULE_PARENT even;
+                        foreach (var day in lstDay.Where(x => x != ""))
                         {
-                            MaKHDaoTaoATLD = kehoachId,
-                            NoiDung = kehoach.NoiDung,
-                            NgayBatDau = day.NullString(),
-                            NgayKetThuc = day.NullString(),
-                            MaEvent = even.Id,
-                            UserCreated = GetUserId()
-                        };
+                            if (!DateTime.TryParse(day.NullString(), out _))
+                            {
+                                continue;
+                            }
 
-                        _EHSNgayThucHienATVSLDRepository.Add(ngaythuchien);
+                            if (DateTime.Parse(day.NullString()).Year < DateTime.Now.Year)
+                            {
+                                continue;
+                            }
+                            j += 1;
+
+                            if (j == 1)
+                            {
+                                foreach (var item in _EHSNgayThucHienATVSLDRepository.FindAll().ToList())
+                                {
+                                    if (DateTime.Parse(item.NgayBatDau).Year == int.Parse(kehoach.Year))
+                                    {
+                                        _EHSNgayThucHienATVSLDRepository.Remove(item);
+                                    }
+                                }
+                            }
+
+                            even = new EVENT_SHEDULE_PARENT();
+                            even.Id = Guid.NewGuid();
+                            even.Subject = kehoach.NoiDung;
+                            even.StartEvent = day.NullString();
+                            even.EndEvent = day.NullString();
+                            even.StartTime = DateTime.Parse(day.NullString());
+                            even.EndTime = DateTime.Parse(day.NullString()).AddDays(1);
+                            even.IsAllDay = true;
+                            even.Description = "Phụ Trách: " + kehoach.NguoiPhuTrach + " || Vendor: " + kehoach.NhaThau;
+                            even.UserCreated = GetUserId();
+                            _EventScheduleParentRepository.Add(even);
+
+                            ngaythuchien = new EHS_THOIGIAN_THUC_HIEN_DAOTAO_ATVSLD()
+                            {
+                                MaKHDaoTaoATLD = kehoachId,
+                                NoiDung = kehoach.NoiDung,
+                                NgayBatDau = day.NullString(),
+                                NgayKetThuc = day.NullString(),
+                                MaEvent = even.Id,
+                                UserCreated = GetUserId()
+                            };
+
+                            _EHSNgayThucHienATVSLDRepository.Add(ngaythuchien);
+                        }
+
+                        Save();
                     }
 
-                    Save();
+                    ((Data.EF.EFUnitOfWork)_unitOfWork).DBContext().Database.CommitTransaction();
+                    return "";
                 }
             }
+            catch (Exception ex)
+            {
+                ((Data.EF.EFUnitOfWork)_unitOfWork).DBContext().Database.RollbackTransaction();
+                return ex.Message;
+            }
+
         }
     }
 }

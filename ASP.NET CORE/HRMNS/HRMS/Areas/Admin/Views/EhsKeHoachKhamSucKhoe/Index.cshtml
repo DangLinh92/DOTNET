@@ -399,7 +399,7 @@
             <div class="btn-group">
                 <button type="button" class="btn btn-info dropdown-toggle" id="btnImport" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Excel</button>
                 <div class="dropdown-menu" style="">
-                    <a class="dropdown-item" href="~/templates/EHS_DanhSachNhanVienKhamSK.xlsx">File mẫu kế hoạch khám sức khỏe</a>
+                    <a class="dropdown-item" href="~/templates/EHS_DanhSachNhanVienKhamSK.xlsx">File mẫu danh sách nhân viên khám sức khỏe</a>
                 </div>
             </div>
         </div>
@@ -443,7 +443,7 @@
         columns.AddFor(m => m.NoiDung).Caption("Nội Dung[내용]").AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
         columns.AddFor(m => m.LuatDinhLienQuan).Caption("Luật định liên quan").AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
         columns.AddFor(m => m.ChuKyThucHien).Caption("Chu kỳ thực hiện[진행 주기]").AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.Year).Caption("Năm").AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.Year).Caption("Year").AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
         columns.AddFor(m => m.NguoiPhuTrach).Caption("Người Phụ Trách").AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
         columns.AddFor(m => m.NhaThau).Caption("Nhà Thầu").AllowEditing(true);
         columns.AddFor(m => m.CostMonth_1).Caption("Chi Phí Tháng 1").AllowEditing(true).Format("#,##0");
@@ -459,17 +459,17 @@
         columns.AddFor(m => m.CostMonth_11).Caption("Tháng 11").AllowEditing(true).Format("#,##0");
         columns.AddFor(m => m.CostMonth_12).Caption("Tháng 12").AllowEditing(true).Format("#,##0");
         columns.Add().Type(GridCommandColumnType.Buttons).Width(110).Buttons(b =>
-            {
-                b.Add().Name(GridColumnButtonName.Edit);
-                b.Add().Name(GridColumnButtonName.Delete);
+        {
+            b.Add().Name(GridColumnButtonName.Edit);
+            b.Add().Name(GridColumnButtonName.Delete);
 
-                b.Add()
-                    .Hint("Add Nhân Viên")
-                    .Text("Import")
-                    .OnClick("onImportNhanVienClick");
-            });
+            b.Add()
+                .Hint("Add Nhân Viên")
+                .Text("Import")
+                .OnClick("onImportNhanVienClick");
+        });
 
-    }).WordWrapEnabled(true).Summary(s=>s.TotalItems(tt => {
+    }).SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true).Summary(s=>s.TotalItems(tt => {
         tt.AddFor(m => m.CostMonth_1).SummaryType(SummaryType.Sum).DisplayFormat("Total: {0}").ValueFormat(Format.FixedPoint);
         tt.AddFor(m => m.CostMonth_2).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
         tt.AddFor(m => m.CostMonth_3).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
@@ -527,6 +527,7 @@
                 @(Html.DevExtreme().DataGrid<EhsNgayThucHienChiTietKhamSKViewModel>()
     .ID("gridContainer-NgayKhamSK")
       .KeyExpr("Id")
+          .Height(300)
     .ShowBorders(true)
     .Paging(paging => paging.Enabled(false))
     .Editing(editing => {

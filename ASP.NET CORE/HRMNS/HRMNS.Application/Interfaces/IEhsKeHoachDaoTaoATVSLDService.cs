@@ -19,7 +19,7 @@ namespace HRMNS.Application.Interfaces
         void DeleteThoiGianATVSLD(int Id);
         EhsThoiGianThucHienDaoTaoATVSViewModel GetThoiGianATVSLDById(int Id);
 
-        void ImportExcel(string filePath);
+        string ImportExcel(string filePath);
 
         void Save();
     }

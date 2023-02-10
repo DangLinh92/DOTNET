@@ -101,4 +101,21 @@ namespace HRMNS.Data.EF.Configurations
             entity.Property(x => x.Id).ValueGeneratedOnAdd();
         }
     }
+
+    public class EHS_KeHoachKiemDinhMayMocConfiguration : DbEntityConfiguration<EHS_KEHOACH_KIEMDINH_MAYMOC>
+    {
+        public override void Configure(EntityTypeBuilder<EHS_KEHOACH_KIEMDINH_MAYMOC> entity)
+        {
+            entity.HasKey(x => x.Id);
+        }
+    }
+
+    public class EHS_ThoiGianKiemDinhMayMocConfiguration : DbEntityConfiguration<EHS_THOIGIAN_THUC_HIEN_KIEMDINH_MM>
+    {
+        public override void Configure(EntityTypeBuilder<EHS_THOIGIAN_THUC_HIEN_KIEMDINH_MM> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
 }

@@ -77,6 +77,9 @@ namespace HRMNS.Application.AutoMapper
 
             CreateMap<EHS_KEHOACH_ANTOAN_BUCXA, EhsKeHoachAnToanBucXaViewModel>();
             CreateMap<EHS_THOIGIAN_THUC_HIEN_ANTOAN_BUCXA, EhsThoiGianThucHienAnToanBucXaViewModel>();
+
+            CreateMap<EHS_KEHOACH_KIEMDINH_MAYMOC, EhsKeHoachKiemDinhMayMocViewModel>();
+            CreateMap<EHS_THOIGIAN_THUC_HIEN_KIEMDINH_MM, EhsThoiGianKiemDinhMayMocViewModel>();
         }
     }
 }

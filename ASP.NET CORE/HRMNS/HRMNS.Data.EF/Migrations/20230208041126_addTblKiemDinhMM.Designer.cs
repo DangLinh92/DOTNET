@@ -4,14 +4,16 @@ using HRMNS.Data.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HRMNS.Data.EF.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    partial class AppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230208041126_addTblKiemDinhMM")]
+    partial class addTblKiemDinhMM
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1213,10 +1215,6 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("ViTri")
                         .HasColumnType("nvarchar(250)")
                         .HasMaxLength(250);
-
-                    b.Property<string>("Year")
-                        .HasColumnType("nvarchar(10)")
-                        .HasMaxLength(10);
 
                     b.HasKey("Id");
 

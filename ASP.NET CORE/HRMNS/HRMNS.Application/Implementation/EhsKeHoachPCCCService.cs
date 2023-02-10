@@ -54,7 +54,7 @@ namespace HRMNS.Application.Implementation
                 var even = _EventScheduleParentRepository.FindById(evt);
                 if (even != null)
                 {
-                    even.Subject = model.NoiDung;
+                    even.Subject = model.HangMuc;
                     even.Description = "Phụ Trách: " + model.NguoiPhuTrach + " || Vendor: " + model.NhaThau;
                     even.UserModified = GetUserId();
                     _EventScheduleParentRepository.Update(even);
@@ -71,7 +71,7 @@ namespace HRMNS.Application.Implementation
 
         public Ehs_KeHoach_PCCCViewModel GetById(Guid Id)
         {
-            return _mapper.Map<Ehs_KeHoach_PCCCViewModel>(_EHSKeHoachPCCCRepository.FindById(Id,x=>x.EHS_THOIGIAN_THUC_HIEN_PCCC));
+            return _mapper.Map<Ehs_KeHoach_PCCCViewModel>(_EHSKeHoachPCCCRepository.FindById(Id, x => x.EHS_THOIGIAN_THUC_HIEN_PCCC));
         }
 
         public List<Ehs_KeHoach_PCCCViewModel> GetList(string year)
@@ -87,7 +87,7 @@ namespace HRMNS.Application.Implementation
             string nhaThau = kehoach.NhaThau.NullString();
             model.NoiDung = kehoach.NoiDung.NullString();
 
-            model.MaEvent = AddNewEvent(model.MaEvent.ToString(), model.NoiDung, model.NgayBatDau, model.NgayKetThuc, nguoiPhuTrach, nhaThau);
+            model.MaEvent = AddNewEvent(model.MaEvent.ToString(), kehoach.HangMuc, model.NgayBatDau, model.NgayKetThuc, nguoiPhuTrach, nhaThau);
             _EHSNgayThucHienPCCCRepository.Add(_mapper.Map<EHS_THOIGIAN_THUC_HIEN_PCCC>(model));
 
             Save();
@@ -120,7 +120,7 @@ namespace HRMNS.Application.Implementation
             string nguoiPhuTrach = kehoach.NguoiPhuTrach.NullString();
             string nhaThau = kehoach.NhaThau.NullString();
             model.NoiDung = kehoach.NoiDung.NullString();
-            model.MaEvent = AddNewEvent(model.MaEvent.ToString(), model.NoiDung, model.NgayBatDau, model.NgayKetThuc, nguoiPhuTrach, nhaThau);
+            model.MaEvent = AddNewEvent(model.MaEvent.ToString(), kehoach.HangMuc, model.NgayBatDau, model.NgayKetThuc, nguoiPhuTrach, nhaThau);
 
             _EHSNgayThucHienPCCCRepository.Update(_mapper.Map<EHS_THOIGIAN_THUC_HIEN_PCCC>(model));
             Save();
@@ -169,7 +169,7 @@ namespace HRMNS.Application.Implementation
                     Guid kehoachId;
 
                     ((Data.EF.EFUnitOfWork)_unitOfWork).DBContext().Database.BeginTransaction();
-
+                    int j = 0;
                     for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
                     {
                         kehoach = new EHS_KEHOACH_PCCC();
@@ -184,6 +184,11 @@ namespace HRMNS.Application.Implementation
                         kehoach.Year = worksheet.Cells[i, 6].Text.NullString();
                         kehoach.NguoiPhuTrach = worksheet.Cells[i, 7].Text.NullString();
                         kehoach.NhaThau = worksheet.Cells[i, 8].Text.NullString();
+
+                        if (int.Parse(kehoach.Year) < DateTime.Now.Year)
+                        {
+                            throw new Exception("Năm nhỏ hơn năm hiện tại là không phù hợp!");
+                        }
 
                         kehoach.CostMonth_1 = double.Parse(worksheet.Cells[i, 9].Text.IfNullIsZero());
                         kehoach.CostMonth_2 = double.Parse(worksheet.Cells[i, 10].Text.IfNullIsZero());
@@ -212,9 +217,26 @@ namespace HRMNS.Application.Implementation
                                 continue;
                             }
 
+                            if (DateTime.Parse(day.NullString()).Year < DateTime.Now.Year)
+                            {
+                                continue;
+                            }
+                            j += 1;
+
+                            if (j == 1)
+                            {
+                                foreach (var item in _EHSNgayThucHienPCCCRepository.FindAll().ToList())
+                                {
+                                    if (DateTime.Parse(item.NgayBatDau).Year == int.Parse(kehoach.Year))
+                                    {
+                                        _EHSNgayThucHienPCCCRepository.Remove(item);
+                                    }
+                                }
+                            }
+
                             even = new EVENT_SHEDULE_PARENT();
                             even.Id = Guid.NewGuid();
-                            even.Subject = kehoach.NoiDung;
+                            even.Subject = kehoach.HangMuc;
                             even.StartEvent = day.NullString();
                             even.EndEvent = day.NullString();
                             even.StartTime = DateTime.Parse(day.NullString());

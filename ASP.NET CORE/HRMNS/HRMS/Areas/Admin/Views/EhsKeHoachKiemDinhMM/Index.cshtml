@@ -1,6 +1,5 @@
-﻿
-@{
-    ViewData["Title"] = "Kế Hoạch Đào Tạo ATLD";
+﻿@{
+    ViewData["Title"] = "Kế Hoạch Kiểm Định Máy Móc";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
@@ -12,8 +11,8 @@
         var dataGrid, loadPanel, dataGridTmp;
 
         $(function () {
-                    let currentYear = new Date().getFullYear();
-                    LoadData(currentYear);
+            let currentYear = new Date().getFullYear();
+            LoadData(currentYear);
             });
 
         function LoadData(txtYear) {
@@ -21,7 +20,7 @@
                     loadPanel = $("#loadPanel").dxLoadPanel("instance");
 
             loadPanel.show();
-            sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachDaoTaoATVSLD", action = "ATVSLD" })', "GET", { year: txtYear })
+            sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachKiemDinhMM", action = "KeHoachKiemDinhMayMoc" })', "GET", { year: txtYear })
                     .always(() => { loadPanel.hide(); })
                     .done((data) => {
                         console.log(data);
@@ -63,11 +62,11 @@
 
             switch (change.type) {
                     case "insert":
-                        return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachDaoTaoATVSLD", action = "Insert" })', "POST", { values: JSON.stringify(change.data) });
+                        return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachKiemDinhMM", action = "Insert" })', "POST", { values: JSON.stringify(change.data) });
                     case "update":
-                        return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachDaoTaoATVSLD", action = "Update" })', "PUT", { key: change.key, values: JSON.stringify(change.data) });
+                        return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachKiemDinhMM", action = "Update" })', "PUT", { key: change.key, values: JSON.stringify(change.data) });
                     case "remove":
-                      return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachDaoTaoATVSLD", action = "Delete" })', "DELETE", { key: change.key });
+                      return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachKiemDinhMM", action = "Delete" })', "DELETE", { key: change.key });
                 }
             };
 
@@ -106,9 +105,10 @@
         };
 
         // show popup chi tiet ngay thuc hien
+
         function DetailChiTietNgayThuHien(e) {
 
-            console.log(e.data.NoiDung);
+            console.log(e.data.TenMayMoc);
 
             const popup = $("#detail-popup").dxPopup("instance");
             popup.option({
@@ -117,18 +117,18 @@
             popup.show();
 
             dataGridTmp = $("#gridContainer-NgayThucHien").dxDataGrid("instance");
-            sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachDaoTaoATVSLD", action = "GetThucHienATVSLD" })', "GET", { key: e.key })
+            sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachKiemDinhMM", action = "GetThucHienKiemDinhMayMoc" })', "GET", { key: e.key })
                     .always(() => {  })
                     .done((data) => {
                         console.log(data);
                         dataGridTmp.option("dataSource", data);
                     });
 
-            $('#txtTitlePopup').text(e.data.NoiDung);
+            $('#txtTitlePopup').text(e.data.TenMayMoc);
             $('#txt_MaKH').val(e.key);
         }
 
-         function saveChangeQuanTrac(change) {
+        function saveChangeNgayThucHien(change) {
 
              let _maKH = $('#txt_MaKH').val();
 
@@ -144,13 +144,14 @@
 
              console.log(change);
 
-            switch (change.type) {
+            switch (change.type)
+            {
                     case "insert":
-                    return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachDaoTaoATVSLD", action = "AddThoiGianATVSLD" })', "POST", { values: JSON.stringify(change.data), maKH: _maKH });
+                    return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachKiemDinhMM", action = "AddThoiGianKiemDinhMayMoc" })', "POST", { values: JSON.stringify(change.data), maKH: _maKH });
                     case "update":
-                        return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachDaoTaoATVSLD", action = "UpdateThoiGianATVSLD" })', "PUT", { key: change.key, values: JSON.stringify(change.data) });
+                        return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachKiemDinhMM", action = "UpdateThoiGianKiemDinhMayMoc" })', "PUT", { key: change.key, values: JSON.stringify(change.data) });
                     case "remove":
-                      return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachDaoTaoATVSLD", action = "DeleteThoiGianATVSLD" })', "DELETE", { key: change.key });
+                      return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsKeHoachKiemDinhMM", action = "DeleteThoiGianDinhMayMoc" })', "DELETE", { key: change.key });
                 }
         };
 
@@ -161,7 +162,7 @@
             if (change) {
                 e.cancel = true;
 
-                e.promise = saveChangeQuanTrac(change)
+                e.promise = saveChangeNgayThucHien(change)
                     .always(() => {  })
                     .done((data) => {
                         var datas = e.component.option("dataSource");
@@ -186,7 +187,7 @@
         function exporting(e)
         {
             var workbook = new ExcelJS.Workbook();
-            var worksheet = workbook.addWorksheet('KH Đào Tạo ATVSLD - 노동안전 교육');
+            var worksheet = workbook.addWorksheet('Kiểm định máy móc - 기계 검교정');
 
             DevExpress.excelExporter.exportDataGrid({
                 component: e.component,
@@ -194,7 +195,7 @@
                 autoFilterEnabled: true
             }).then(function () {
                 workbook.xlsx.writeBuffer().then(function (buffer) {
-                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'KH_DaoTao_ATVSLD - 노동안전 교육.xlsx');
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'KH_KiemDinhMayMoc - 기계 검교정.xlsx');
                 });
             });
             e.cancel = true;
@@ -238,7 +239,7 @@
             }
 
             $.ajax({
-                url: '/Admin/EhsKeHoachDaoTaoATVSLD/ImportExcel' ,
+                url: '/Admin/EhsKeHoachKiemDinhMM/ImportExcel' ,
                 type: 'POST',
                 data: fileData,
                 processData: false,  // tell jQuery not to process the data
@@ -265,7 +266,7 @@
     <div class="page-header" style="margin-bottom:-1rem">
         <div class="row">
             <div class="col-sm-12">
-                <h3 class="page-title">KẾ HOẠCH ĐÀO TẠO AN TOÀN VỆ SINH LAO ĐỘNG - 노동안전 교육</h3>
+                <h3 class="page-title">KẾ HOẠCH KIỂM ĐỊNH MÁY MÓC - 기계 검교정</h3>
             </div>
         </div>
     </div>
@@ -296,26 +297,25 @@
             <div class="btn-group">
                 <button type="button" class="btn btn-info dropdown-toggle" id="btnImport" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Excel</button>
                 <div class="dropdown-menu" style="">
-                    <a class="dropdown-item" href="~/templates/EHS_KeHoachDTATVSLD.xlsx">File mẫu kế hoạch đào tạo ATVSLD</a>
-                    <a class="dropdown-item" href="#" id="btn-import">Import Kế Hoạch đào tạo ATVSLD</a>
+                    <a class="dropdown-item" href="~/templates/EHS_KeHoach_KiemDinhMayMoc.xlsx">File mẫu Kế Hoạch Kiểm Định Máy Móc</a>
+                    <a class="dropdown-item" href="#" id="btn-import">Import Kế Hoạch Kiểm Định Máy Móc</a>
                 </div>
             </div>
         </div>
-
     </div>
 
-    <div class="row">
-        <div class="col-md-12">
-            @(Html.DevExtreme().LoadPanel()
+<div class="row">
+    <div class="col-md-12">
+        @(Html.DevExtreme().LoadPanel()
         .ID("loadPanel")
         .Position(p => p.Of("#gridContainer"))
         .Visible(false)
 )
-            @(Html.DevExtreme().DataGrid<EhsKeHoachDaoTaoATLDViewModel>
+        @(Html.DevExtreme().DataGrid<EhsKeHoachKiemDinhMayMocViewModel>
     ()
     .ID("gridContainer")
     .KeyExpr("Id")
-    .Height(700)
+    .Height(780)
     .ShowBorders(true)
       .RepaintChangesOnly(true)
      .LoadPanel(loadPanel => loadPanel.Enabled(false))
@@ -347,16 +347,17 @@
     {
         columns.AddFor(m => m.Id).Visible(false).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
         columns.AddFor(m => m.STT).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.NoiDung).Caption("Nội Dung[내용]").Width(150).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.ChuKyThucHien).Caption("Chu kỳ thực hiện[진행 주기]").Width(150).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.ThoiGianCapLanDau).Caption("Thời gian cấp lần đầu 최초 자격증 발급 기간").Width(100).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.ThoiGianHuanLuyenLanDau).Caption("Thời gian huấn luyện lần đầu 최초 훈련 시간").Width(100).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.ThoiGianHuanLuyenLai).Caption("Thời gian huấn luyện lại 재 훈련 시간").Width(100).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.ThoiGianDaoTao).Caption("Thời gian đào tạo 교육 기간").Width(100).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.Year).Caption("Year").Width(80).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.NguoiPhuTrach).Caption("Người Phụ Trách").Width(80).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.NhaThau).Caption("Nhà Thầu").Width(80).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.TenMayMoc).Caption("Tên máy móc/thiết bị[설비명]").Width(150).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.ChuKyKiemDinh).Caption("Chu kỳ kiểm định[검정 주기 (년/회)]").Width(80).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.ViTri).Caption("Vị trí[위치]").Width(100).AllowEditing(true);
+        columns.AddFor(m => m.SoLuongThietBi).Caption("Số lượng 수량").Width(100).AllowEditing(true);
+        columns.AddFor(m => m.LanKiemDinhKeTiep).Caption("Lần kiểm định kế tiếp 년 검정 일정").Width(100).AllowEditing(false);
+        columns.AddFor(m => m.LanKiemDinhKeTiep1).Caption("Lần kiểm định kế tiếp 년 검정 일정").Width(100).AllowEditing(false);
+        columns.AddFor(m => m.LanKiemDinhKeTiep2).Caption("Lần kiểm định kế tiếp 년 검정 일정").Width(100).AllowEditing(false);
+        columns.AddFor(m => m.LanKiemDinhKeTiep3).Caption("Lần kiểm định kế tiếp 년 검정 일정").Width(100).AllowEditing(false);
 
+        columns.AddFor(m => m.NguoiPhuTrach).Caption("Người Phụ Trách").Width(80).AllowEditing(true);
+        columns.AddFor(m => m.Year).Caption("Year").Width(80).AllowEditing(true);
         columns.AddFor(m => m.CostMonth_1).Caption("Chi Phí Tháng 1").AllowEditing(true).Format("#,##0");
         columns.AddFor(m => m.CostMonth_2).Caption("Tháng 2").AllowEditing(true).Format("#,##0");
         columns.AddFor(m => m.CostMonth_3).Caption("Tháng 3").AllowEditing(true).Format("#,##0");
@@ -372,7 +373,7 @@
         columns.AddFor(m => m.CostTotal).Caption("Total").AllowEditing(false).Format("#,##0");
 
     }).SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true).Summary(s=>s.TotalItems(tt => {
-        tt.AddFor(m => m.CostMonth_1).SummaryType(SummaryType.Sum).DisplayFormat("Total: {0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.CostMonth_1).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
         tt.AddFor(m => m.CostMonth_2).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
         tt.AddFor(m => m.CostMonth_3).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
         tt.AddFor(m => m.CostMonth_4).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
@@ -387,7 +388,7 @@
         tt.AddFor(m => m.CostTotal).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
     })).OnSaving("SaveKeHoach").OnRowDblClick("DetailChiTietNgayThuHien")
     )
-            @(Html.DevExtreme().Popup()
+        @(Html.DevExtreme().Popup()
         .ID("detail-popup")
         .Width(500)
         .Height(500)
@@ -423,11 +424,11 @@
     )
 
 
-            @using (Html.DevExtreme().NamedTemplate("popup-template"))
-            {
-                <h4 id="txtTitlePopup"></h4>
-                <input hidden id="txt_MaKH" />
-                @(Html.DevExtreme().DataGrid<EhsThoiGianThucHienDaoTaoATVSViewModel>()
+        @using (Html.DevExtreme().NamedTemplate("popup-template"))
+        {
+            <h4 id="txtTitlePopup"></h4>
+            <input hidden id="txt_MaKH" />
+            @(Html.DevExtreme().DataGrid<EhsThoiGianKiemDinhMayMocViewModel>()
     .ID("gridContainer-NgayThucHien")
       .KeyExpr("Id")
           .Height(300)
@@ -444,9 +445,9 @@
         columns.AddFor(m => m.NgayKetThucEx).Format("yyyy-MM-dd").Caption("Ngày Kết Thúc").AllowEditing(true);
     }).OnSaving("SaveNgayThucHien")
 )
-            }
-        </div>
+        }
     </div>
+</div>
 </div>
 
 <partial name="_ImportExcelModel" />

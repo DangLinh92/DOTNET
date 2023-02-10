@@ -440,11 +440,6 @@ namespace HRMNS.Application.Implementation
                                         NgayDangKy = dateCheck
                                     };
 
-                                    if (item.MaNV == "H2212001")
-                                    {
-
-                                    }
-
                                     // check hop dong
                                     hopDong_NV = item.lstHopDong.FirstOrDefault(x => string.Compare(dateCheck, x.NgayHieuLucHD) >= 0 && string.Compare(dateCheck, x.NgayHetHLHD) <= 0);
 

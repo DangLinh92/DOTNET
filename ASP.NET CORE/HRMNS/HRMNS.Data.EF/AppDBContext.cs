@@ -97,6 +97,9 @@ namespace HRMNS.Data.EF
         public virtual DbSet<EHS_KEHOACH_ANTOAN_BUCXA> EHS_KEHOACH_ANTOAN_BUCXA { get; set; }
         public virtual DbSet<EHS_THOIGIAN_THUC_HIEN_ANTOAN_BUCXA> EHS_THOIGIAN_THUC_HIEN_ANTOAN_BUCXA { get; set; }
 
+        public virtual DbSet<EHS_THOIGIAN_THUC_HIEN_KIEMDINH_MM> EHS_THOIGIAN_THUC_HIEN_KIEMDINH_MM { get; set; }
+        public virtual DbSet<EHS_KEHOACH_KIEMDINH_MAYMOC> EHS_KEHOACH_KIEMDINH_MAYMOC { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             #region
@@ -179,6 +182,9 @@ namespace HRMNS.Data.EF
             builder.AddConfiguration(new EHS_ThoiGianThucHienPCCCConfiguration());
             builder.AddConfiguration(new EHS_KeHoachAntoanBucXaConfiguration());
             builder.AddConfiguration(new EHS_ThoiGianThucHienAntoanBucXaConfiguration());
+
+            builder.AddConfiguration(new EHS_KeHoachKiemDinhMayMocConfiguration());
+            builder.AddConfiguration(new EHS_ThoiGianKiemDinhMayMocConfiguration());
 
             //base.OnModelCreating(builder);
         }
