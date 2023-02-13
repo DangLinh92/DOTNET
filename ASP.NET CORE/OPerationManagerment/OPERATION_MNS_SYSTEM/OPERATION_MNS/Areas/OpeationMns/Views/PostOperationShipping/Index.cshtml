@@ -1,0 +1,541 @@
+﻿
+@{
+    ViewData["Title"] = "Xuất Hàng";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts
+{
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+    <script>
+
+        var dataGrid, loadPanel, dataGridTmp;
+        var dataGrid_1, loadPanel_1;
+        var dataGrid_2, loadPanel_2;
+
+        $(function () {
+
+            let from = $("#txt_from").dxDateBox("instance").option('value');
+            let to = $("#txt_to").dxDateBox("instance").option('value');
+
+            $('#title3').text('THỐNG KÊ LƯỢNG XUẤT HÀNG NGÀY : ' + formatDate(from));
+            $('#title2').text('WLP1 출하 총합' + formatDate(from) +'일');
+            $('#title1').text('WLP1 출하 총합' + formatDate(from) +'일');
+
+            LoadData(formatDate(from), formatDate(to));
+        });
+
+        function LoadData(Timefrom,Timeto) {
+                    dataGrid = $("#gridContainer").dxDataGrid("instance");
+                    loadPanel = $("#loadPanel").dxLoadPanel("instance");
+
+                    dataGrid_1 = $("#gridContainer_1").dxDataGrid("instance");
+                    loadPanel_1 = $("#loadPanel_1").dxLoadPanel("instance");
+
+                    dataGrid_2 = $("#gridContainer_2").dxDataGrid("instance");
+                    loadPanel_2 = $("#loadPanel_2").dxLoadPanel("instance");
+
+                    loadPanel.show();
+                    loadPanel_1.show();
+                    loadPanel_2.show();
+
+                    sendRequest('@Url.RouteUrl(new { area = "OpeationMns", controller = "PostOperationShipping", action = "PostOperationShipping" })', "GET", { fromTime: Timefrom, toTime: Timeto})
+                                .always(() =>
+                                {
+                                    loadPanel.hide();
+                                    loadPanel_1.hide();
+                                    loadPanel_2.hide();
+                                })
+                                .done((data) => {
+                                    console.log(data);
+                                    dataGrid.option("dataSource", data[0].XuatHang3ViewModels);
+                                    dataGrid_1.option("dataSource", data[0].XuatHang2ViewModels);
+                                    dataGrid_2.option("dataSource", data[0].XuatHang1ViewModels);
+                                });
+        }
+
+        function sendRequest(url, method, data) {
+            var d = $.Deferred();
+
+            method = method || "GET";
+
+            $.ajax(url, {
+                method: method,
+                data: data,
+                cache: false,
+                xhrFields: { withCredentials: true }
+            }).done(function (result) {
+                d.resolve(method === "GET" ? result.data : result);
+            }).fail(function (xhr) {
+                d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
+            });
+
+            return d.promise();
+        };
+
+        function selectedDate_From_changed(data) {
+
+            let sDate = data.value;
+            if (sDate == '') {
+                var date = new Date();
+            }
+            else {
+                var date = new Date(sDate);
+            }
+
+            let txtTo = $("#txt_to").dxDateBox("instance").option('value');
+
+            $('#title3').text('THỐNG KÊ LƯỢNG XUẤT HÀNG NGÀY : ' + formatDate(date));
+
+            // Get year, month, and day part from the date
+            LoadData(formatDate(date), formatDate(txtTo));
+        };
+
+        function selectedDate_To_changed(data) {
+
+            let sDate = data.value;
+            if (sDate == '') {
+                var date = new Date();
+            }
+            else {
+                var date = new Date(sDate);
+            }
+
+            // Get year, month, and day part from the date
+
+            let txtFrom = $("#txt_from").dxDateBox("instance").option('value');
+            console.log(txtFrom);
+            // Get year, month, and day part from the date
+
+            LoadData(formatDate(txtFrom), formatDate(date));
+        };
+
+        function formatDate(date) {
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2)
+                month = '0' + month;
+            if (day.length < 2)
+                day = '0' + day;
+
+            return [year, month, day].join('-');
+        }
+
+        function exporting3(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('Xuất Hàng 3');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'XuatHang3.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        function exporting_1(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('Xuất Hàng 2');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'XuatHang2.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        function exporting_2(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('Xuất Hàng 1');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'XuatHang1.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        // saving
+       function onSaving_2(e) {
+        e.cancel = true;
+               console.log(e);
+           if (e.changes.length) {
+                e.promise = sendBatchRequest('@Url.RouteUrl(new { area = "OpeationMns", controller = "PostOperationShipping", action = "Batch_XH1"})', e.changes).done(() => {
+                e.component.refresh(true).done(() => {
+                    e.component.cancelEditData();
+                    SearchData();
+                });
+            });
+          }
+        }
+
+        function onSaving_1(e) {
+        e.cancel = true;
+            console.log(e);
+
+            let nguoiNhan = $("#txt_nguoinhan").dxTextBox("instance").option('value').trim();
+            let nguoiXuat = $("#txt_nguoixuat").dxTextBox("instance").option('value').trim();
+
+            if (!nguoiNhan || !nguoiXuat) {
+                confirm('Nhập người nhận, người xuất');
+                return;
+            }
+
+            for (var change of e.changes) {
+                change.data.NguoiXuat = nguoiXuat;
+                change.data.NguoiNhan = nguoiNhan;
+            }
+
+           if (e.changes.length) {
+                e.promise = sendBatchRequest('@Url.RouteUrl(new { area = "OpeationMns", controller = "PostOperationShipping", action = "Batch_XH2"})', e.changes).done(() => {
+                e.component.refresh(true).done(() => {
+                    e.component.cancelEditData();
+                    SearchData();
+                });
+            });
+          }
+       }
+
+    function sendBatchRequest(url, changes) {
+        var d = $.Deferred();
+
+        $.ajax(url, {
+            method: "POST",
+            data: JSON.stringify(changes),
+            cache: false,
+            contentType: 'application/json',
+            xhrFields: { withCredentials: true }
+        }).done(d.resolve).fail(function (xhr) {
+            d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
+        });
+
+        return d.promise();
+        }
+
+        function SearchData() {
+            let from = $("#txt_from").dxDateBox("instance").option('value');
+            let to = $("#txt_to").dxDateBox("instance").option('value');
+            LoadData(formatDate(from), formatDate(to));
+        }
+
+        $(document).ready(function () {
+
+            $('#show-hidden-grid-wlp11').click(function () {
+                $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+                $('.hidden-grid-wlp11').slideToggle("slow");
+
+            });
+
+            $('#show-hidden-grid-wlp12').click(function () {
+                $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+                $('.hidden-grid-wlp12').slideToggle("slow");
+            });
+
+            $('#show-hidden-grid-wlp2').click(function () {
+                $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+                $('.hidden-grid-wlp2').slideToggle("slow");
+            });
+
+        });
+    </script>
+
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Shipping /출하 WLP2</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Shipping /출하 WLP2</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="row align-items-center">
+        <div class="col">
+            <div class="form">
+                <div class="dx-fieldset">
+                    <div class="dx-field" style="float: left;width:250px">
+                        <div>
+                            @(Html.DevExtreme().DateBox()
+                                  .ID("txt_from")
+                                     .Type(DateBoxType.Date)
+                                  .Value(DateTime.Now.AddDays(-1))
+                                  .DisplayFormat("yyyy-MM-dd 08:00:00")
+                                  .Width(200)
+                                  .Placeholder("Select...")
+                                  .Label("From Date")
+                                  .OnValueChanged("selectedDate_From_changed")
+                            )
+
+                        </div>
+                    </div>
+                    <div class="dx-field" style="float: left; width: 200px">
+                        <div>
+                            @(Html.DevExtreme().DateBox()
+                                  .ID("txt_to")
+                                  .Type(DateBoxType.Date)
+                                  .Value(DateTime.Now)
+                                  .DisplayFormat("yyyy-MM-dd 07:59:59")
+                                  .Width(200)
+                                  .Placeholder("Select...")
+                                  .Label("To Date")
+                                  .OnValueChanged("selectedDate_To_changed")
+                            )
+                        </div>
+                    </div>
+                    <div class="dx-field" style="float: left; width: 250px;padding-top:7px">
+                        <div>
+                            <div class="dx-field-value">
+                                @(Html.DevExtreme().TextBox().ID("txt_nguoixuat").Width(200)
+                                        .Placeholder("Người Xuất")
+                                 )
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dx-field" style="float: left; width: 250px;padding-top:7px">
+                        <div>
+                            <div class="dx-field-value">
+                                @(Html.DevExtreme().TextBox().ID("txt_nguoinhan").Width(200)
+                                      .Placeholder("Người Nhận WLP2")
+                                 )
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dx-field" style="float: left; width: 250px;padding-top:7px">
+                        <div>
+                            <button type="button" class="btn btn-primary" hidden id="btnSearch" onclick="SearchData()" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100px; margin-left: 80px; ">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-auto float-right ml-auto" style="margin-right:100px;">
+           
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12" id="show-hidden-grid-wlp11">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item active" style="cursor: pointer;">
+                    <i class="fa fa-caret-right"></i> <strong id="title1">WLP1 출하 총합</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row hidden-grid-wlp11">
+        <div class="col-md-12">
+            @(Html.DevExtreme().LoadPanel()
+        .ID("loadPanel")
+        .Position(p => p.Of("#gridContainer"))
+        .Visible(false)
+)
+            @(Html.DevExtreme().DataGrid<XuatHang3ViewModel>
+    ()
+    .ID("gridContainer")
+    .KeyExpr("Key")
+    .Height(400)
+    .ShowBorders(true)
+      .RepaintChangesOnly(true)
+     .LoadPanel(loadPanel => loadPanel.Enabled(false))
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnMinWidth(50)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+    .OnExporting("exporting3")
+    .Columns(columns =>
+    {
+        columns.AddFor(m => m.Key).Visible(false);
+        columns.AddFor(m => m.Module).Caption("MODUL");
+        columns.AddFor(m => m.Model).Caption("MODEL");
+        columns.AddFor(m => m.WaferQty).Caption("WAFER QTY");
+        columns.AddFor(m => m.ChipQty).Caption("CHIP QTY");
+        columns.AddFor(m => m.GhiChu).Caption("NOTE");
+
+    }).SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true).Summary(s=>s.TotalItems(tt => {
+        tt.AddFor(m => m.WaferQty).SummaryType(SummaryType.Sum).DisplayFormat("Total: {0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.ChipQty).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+    }))
+    )
+        </div>
+    </div>
+
+    <div class="row" style="margin-top:20px">
+        <div class="col-sm-12" id="show-hidden-grid-wlp12">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item active" style="cursor: pointer;">
+                    <i class="fa fa-caret-right"></i> <strong id="title2">WLP1 출하 총합</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row hidden-grid-wlp12">
+        <div class="col-md-12">
+            @(Html.DevExtreme().LoadPanel()
+        .ID("loadPanel_1")
+        .Position(p => p.Of("#gridContainer_1"))
+        .Visible(false)
+)
+            @(Html.DevExtreme().DataGrid<XuatHang2ViewModel>
+    ()
+    .ID("gridContainer_1")
+    .KeyExpr("Key")
+    .Height(400)
+    .ShowBorders(true)
+      .RepaintChangesOnly(true)
+     .LoadPanel(loadPanel => loadPanel.Enabled(false))
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnMinWidth(50)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+    .OnExporting("exporting_1")
+    .Editing(editing =>
+    {
+        editing.Mode(GridEditMode.Batch);
+        editing.AllowUpdating(true);
+    })
+    .Columns(columns =>
+    {
+        columns.AddFor(m => m.Key).Visible(false);
+        columns.AddFor(m => m.STT).AllowEditing(false);
+        columns.AddFor(m => m.Ngay).Caption("Ngày Xuất").AllowEditing(false);
+        columns.AddFor(m => m.Module).Caption("Module").AllowEditing(false);
+        columns.AddFor(m => m.Model).Caption("Model").AllowEditing(false);
+        columns.AddFor(m => m.CasstteID).Caption("Cassette ID").AllowEditing(false);
+        columns.AddFor(m => m.WaferQty).Caption("Wafer Qty").AllowEditing(false);
+        columns.AddFor(m => m.ChipQty).Caption("Chip Qty").AllowEditing(false);
+        columns.AddFor(m => m.WaferID).Caption("Wafer ID").AllowEditing(false);
+        columns.AddFor(m => m.NguoiXuat).Caption("Người Xuất").AllowEditing(false);
+        columns.AddFor(m => m.KetQuaFAKiemTra).Caption("Kết Quả FA Kiểm Tra").AllowEditing(true);
+        columns.AddFor(m => m.NguoiKiemTra).Caption("Người Kiểm Tra").AllowEditing(true);
+        columns.AddFor(m => m.NguoiNhan).Caption("Người Nhận").AllowEditing(false);
+        columns.AddFor(m => m.GhiChu).Caption("Ghi chú").AllowEditing(true);
+
+    }).SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true).Summary(s=>s.TotalItems(tt => {
+        tt.AddFor(m => m.WaferQty).SummaryType(SummaryType.Sum).DisplayFormat("Total: {0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.ChipQty).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+    })).OnSaving("onSaving_1")
+    )
+        </div>
+    </div>
+
+    <div class="row" style="margin-top:20px">
+        <div class="col-sm-12" id="show-hidden-grid-wlp2">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item active" style="cursor: pointer;">
+                    <i class="fa fa-caret-right"></i> <strong id="title3">THỐNG KÊ LƯỢNG XUẤT HÀNG NGÀY : </strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row hidden-grid-wlp2">
+        <div class="col-md-12">
+            @(Html.DevExtreme().LoadPanel()
+        .ID("loadPanel_2")
+        .Position(p => p.Of("#gridContainer_2"))
+        .Visible(false)
+)
+            @(Html.DevExtreme().DataGrid<XuatHang1ViewModel>
+    ()
+    .ID("gridContainer_2")
+    .KeyExpr("Key")
+    .Height(400)
+    .ShowBorders(true)
+    .RepaintChangesOnly(true)
+    .LoadPanel(loadPanel => loadPanel.Enabled(false))
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnMinWidth(50)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+    .OnExporting("exporting_2")
+    .Editing(e => e
+        .Mode(GridEditMode.Batch)
+        .AllowUpdating(true)
+    )
+    .Columns(columns =>
+    {
+        columns.AddFor(m => m.Key).Visible(false).AllowEditing(false);
+        columns.AddFor(m => m.STT).AllowEditing(false);
+        columns.AddFor(m => m.NgayXuat).Caption("Ngày Xuất").AllowEditing(false);
+        columns.AddFor(m => m.LotID).Caption("Lot ID").AllowEditing(false);
+        columns.AddFor(m => m.Module).Caption("Module").AllowEditing(false);
+        columns.AddFor(m => m.WaferID).Caption("Wafer ID").AllowEditing(false);
+        columns.AddFor(m => m.CasstteID).Caption("Casset ID").AllowEditing(false);
+        columns.AddFor(m => m.Model).Caption("Model").AllowEditing(false);
+        columns.AddFor(m => m.DefaultChipQty).Caption("Default Chip Qty").AllowEditing(false);
+        columns.AddFor(m => m.ChipMesQty).Caption("Chip Mes Qty").AllowEditing(false);
+        columns.AddFor(m => m.ChipMapQty).Caption("Chip Map Qty").AllowEditing(true);
+        columns.AddFor(m => m.DiffMapMes).Caption("Chênh lệch Map-Mes").AllowEditing(false);
+        columns.AddFor(m => m.Rate).Caption("Tỉ Lệ(%)").Format(Format.Percent).AllowEditing(false);
+        columns.AddFor(m => m.VanDeDacBiet).Caption("Vấn đề đặc biệt").AllowEditing(true);
+    }).SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true).Summary(s=>s.TotalItems(tt => {
+        tt.AddFor(m => m.DefaultChipQty).SummaryType(SummaryType.Sum).DisplayFormat("Total: {0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.ChipMesQty).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        tt.AddFor(m => m.ChipMapQty).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+    })).OnSaving("onSaving_2")
+    )
+        </div>
+    </div>
+</div>
+

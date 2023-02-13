@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OPERATION_MNS.Data.EF;
 
 namespace OPERATION_MNS.Data.EF.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    partial class AppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230210024800_addPostOperationShiping")]
+    partial class addPostOperationShiping
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1030,9 +1032,6 @@ namespace OPERATION_MNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
-                    b.Property<double?>("ChipMapQty")
-                        .HasColumnType("float");
-
                     b.Property<double?>("ChipMesQty")
                         .HasColumnType("float");
 
@@ -1061,10 +1060,6 @@ namespace OPERATION_MNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(250)")
                         .HasMaxLength(250);
 
-                    b.Property<string>("KetQuaFAKiemTra")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
-
                     b.Property<string>("LotID")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
@@ -1082,8 +1077,7 @@ namespace OPERATION_MNS.Data.EF.Migrations
                         .HasMaxLength(50);
 
                     b.Property<string>("NguoiKiemTra")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NguoiKiemTraFA")
                         .HasColumnType("nvarchar(50)")
@@ -1116,11 +1110,8 @@ namespace OPERATION_MNS.Data.EF.Migrations
                         .HasMaxLength(250);
 
                     b.Property<string>("WaferId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WaferId_Mes")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<double?>("WaferQty")
                         .HasColumnType("float");

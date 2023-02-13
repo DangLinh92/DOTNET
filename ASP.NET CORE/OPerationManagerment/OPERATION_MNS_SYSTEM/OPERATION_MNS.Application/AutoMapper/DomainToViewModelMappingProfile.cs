@@ -23,6 +23,7 @@ namespace OPERATION_MNS.Application.AutoMapper
             CreateMap<MATERIAL_TO_SAP, MaterialToSapViewModel>();
             CreateMap<CTQ_SETTING, CTQSettingViewModel>();
             CreateMap<CTQ_EMAIL_RECEIV, CTQEmailReceivViewModel>();
+            CreateMap<POST_OPERATION_SHIPPING, PostOpeationShippingViewModel>();
         }
     }
 }

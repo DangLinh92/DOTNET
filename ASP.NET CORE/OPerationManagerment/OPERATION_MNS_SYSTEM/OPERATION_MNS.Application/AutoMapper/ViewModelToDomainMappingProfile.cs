@@ -41,6 +41,11 @@ namespace OPERATION_MNS.Application.AutoMapper
 
             CreateMap<CTQEmailReceivViewModel, CTQ_EMAIL_RECEIV>()
             .ConstructUsing(c => new CTQ_EMAIL_RECEIV(c.Id, c.Active, c.Department));
+
+            CreateMap<PostOpeationShippingViewModel, POST_OPERATION_SHIPPING>()
+            .ConstructUsing(c => new POST_OPERATION_SHIPPING(c.MoveOutTime,c.LotID,c.Model,c.CassetteID,c.Module,c.WaferId,c.DefaultChipQty,
+            c.OutputQty,c.ChipMesQty,c.DiffMapMes,c.Rate,c.VanDeDacBiet,c.WaferQty,c.ChipQty,c.NguoiXuat,c.NguoiKiemTraFA,
+            c.NguoiNhan,c.NguoiKiemTra,c.GhiChu_XH2,c.GhiChu_XH3,c.ChipMapQty,c.KetQuaFAKiemTra,c.WaferId_Mes));
         }
     }
 }

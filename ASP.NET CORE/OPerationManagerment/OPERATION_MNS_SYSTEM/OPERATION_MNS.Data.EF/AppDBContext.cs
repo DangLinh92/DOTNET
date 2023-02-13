@@ -41,6 +41,7 @@ namespace OPERATION_MNS.Data.EF
         public virtual DbSet<VIEW_CONTROL_CHART_MODEL> VIEW_CONTROL_CHART_MODEL { get; set; }
         public virtual DbSet<CTQ_SETTING> CTQ_SETTING { get; set; }
         public virtual DbSet<CTQ_EMAIL_RECEIV> CTQ_EMAIL_RECEIV { get; set; }
+        public virtual DbSet<POST_OPERATION_SHIPPING> POST_OPERATION_SHIPPING { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -69,6 +70,7 @@ namespace OPERATION_MNS.Data.EF
             builder.AddConfiguration(new CTQConfiguration());
             builder.AddConfiguration(new CTQSettingConfiguration());
             builder.AddConfiguration(new CtqEmailConfiguration());
+            builder.AddConfiguration(new PostOperationShippingConfiguration());
         }
 
         public override int SaveChanges()

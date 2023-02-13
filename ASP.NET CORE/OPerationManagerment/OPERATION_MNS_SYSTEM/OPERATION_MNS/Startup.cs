@@ -97,6 +97,7 @@ namespace OPERATION_MNS
             services.AddTransient<IMaterialToSapCodeService, MaterialToSapCodeService>();
             services.AddTransient<ILeadTimeService, LeadTimeService>();
             services.AddTransient<IUserMailService, UserMailService>();
+            services.AddTransient<IPostOprationShippingService, PostOprationShippingService>();
 
             services.AddSignalR(cfg =>cfg.EnableDetailedErrors = true);
 
