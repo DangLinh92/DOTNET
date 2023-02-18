@@ -1,5 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Authorization
 @using HRMS.Authorization
+
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
 @inject IAuthorizationService AuthorizationService
 @model List<FunctionViewModel>
 <div class="sidebar" id="sidebar">
@@ -11,7 +13,7 @@
                 </li>
                 @*<li class="submenu">*@
                 <li>
-                    <a href="/Admin/Home/Index" target="_self" onclick="linkClick(this)"><i class="la la-dashboard"></i> <span> Home</span></a>
+                    <a href="/Admin/Home/Index" target="_self" onclick="linkClick(this)"><i class="la la-dashboard"></i> <span> @localizer["Home"]</span></a>
                 </li>
 
 
@@ -28,11 +30,11 @@
                             @if (Model.Any(x => x.ParentId == subItem.Id))
                             {
                                 <li class="submenu">
-                                    <a href="#"><i class="@subItem.IconCss"></i> <span>@subItem.Name</span> <span class="menu-arrow"></span></a>
+                                    <a href="#"><i class="@subItem.IconCss"></i> <span>@(localizer[subItem.Id])</span> <span class="menu-arrow"></span></a>
                                     <ul style="display: none;">
                                         @foreach (var childItem in Model.Where(x => x.ParentId == subItem.Id))
                                         {
-                                            <li><a href="@childItem.URL" id="@childItem.Id" data-id="@childItem.Id" onclick="linkClick(this)">@childItem.Name</a></li>
+                                            <li><a href="@childItem.URL" id="@childItem.Id" data-id="@childItem.Id" onclick="linkClick(this)">@(localizer[childItem.Id])</a></li>
                                         }
                                     </ul>
                                 </li>
@@ -40,7 +42,7 @@
                             else
                             {
                                 <li id="@subItem.Id">
-                                    <a href="@subItem.URL" onclick="linkClick2('@subItem.Id')"><i class="@subItem.IconCss"></i> <span>@subItem.Name</span></a>
+                                    <a href="@subItem.URL" onclick="linkClick2('@subItem.Id')"><i class="@subItem.IconCss"></i> <span>@(localizer[subItem.Id])</span></a>
                                 </li>
                             }
                         }

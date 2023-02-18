@@ -1,4 +1,5 @@
-﻿@{
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
+@{
     ViewData["Title"] = "Kế Hoạch Kiểm Định Máy Móc";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
@@ -80,14 +81,43 @@
         }
     </script>
 }
-@section Styles{}
+@section Styles{
+    <style>
+        .inc {
+            color: #f00;
+        }
+
+        .dec { /* Created with https://www.css-gradient.com */
+            background: #2DBA6E;
+            background: -webkit-linear-gradient(right, #2DBA6E, #ABEE04);
+            background: -moz-linear-gradient(right, #2DBA6E, #ABEE04);
+            background: linear-gradient(to left, #2DBA6E, #ABEE04);
+            color: #2ab71b;
+            /* background-image: linear-gradient(to right, blue, green);*/
+            font-weight: bold;
+            padding-left: 10px;
+        }
+
+        .decTotal {
+            color: #2ab71b;
+            /* Created with https://www.css-gradient.com */
+            /* Created with https://www.css-gradient.com */
+            background: #2C8DD8;
+            background: -webkit-linear-gradient(right, #2C8DD8, #04C1EE);
+            background: -moz-linear-gradient(right, #2C8DD8, #04C1EE);
+            background: linear-gradient(to left, #2C8DD8, #04C1EE);
+            font-weight: bold;
+            padding-left: 10px;
+        }
+    </style>
+}
 
 
 <div class="content container-fluid">
     <div class="page-header" style="margin-bottom:-1rem">
         <div class="row">
             <div class="col-sm-12">
-                <h3 class="page-title">Tổng hợp kế hoạch EHS</h3>
+                <h3 class="page-title">@(localizer["TONGHOPKEHOACH"])</h3>
             </div>
         </div>
     </div>
@@ -169,24 +199,76 @@
     .Columns(columns =>
     {
         columns.AddFor(m => m.STT).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.TenDeMuc).GroupIndex(0).Caption("Đề mục\n항목").Width(150).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.TenNoiDung).Caption("Nội dung\n내용").Width(150).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.NhaThau).Caption("Nhà thầu").Fixed(true).Width(90).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.ChuKy).Caption("Chu kỳ/lần").Fixed(true).Width(120).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.NguoiPhuTrach).Caption("Người phụ trách").Fixed(true).Width(80).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.Month_1).Width(120).Format("#,##0").Caption("1월");
-        columns.AddFor(m => m.Month_2).Width(120).Format("#,##0").Caption("2월");
-        columns.AddFor(m => m.Month_3).Width(120).Format("#,##0").Caption("3월");
-        columns.AddFor(m => m.Month_4).Width(120).Format("#,##0").Caption("4월");
-        columns.AddFor(m => m.Month_5).Width(120).Format("#,##0").Caption("5월");
-        columns.AddFor(m => m.Month_6).Width(120).Format("#,##0").Caption("6월");
-        columns.AddFor(m => m.Month_7).Width(120).Format("#,##0").Caption("7월");
-        columns.AddFor(m => m.Month_8).Width(120).Format("#,##0").Caption("8월");
-        columns.AddFor(m => m.Month_9).Width(120).Format("#,##0").Caption("9월");
-        columns.AddFor(m => m.Month_10).Width(120).Format("#,##0").Caption("10월");
-        columns.AddFor(m => m.Month_11).Width(120).Format("#,##0").Caption("11월");
-        columns.AddFor(m => m.Month_12).Width(120).Format("#,##0").Caption("12월");
-        columns.AddFor(m => m.ToTal).Width(150).Format("#,##0").Caption("Total");
+        columns.AddFor(m => m.TenDeMuc).GroupIndex(0).Caption(@localizer["DE_MUC"].Value).Width(150).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.TenNoiDung).Caption(@localizer["NOI_DUNG"].Value).Width(150).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.NhaThau).Caption(@localizer["NHA_THAU"].Value).Fixed(true).Width(90).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.ChuKy).Caption(@localizer["CHU_KY_THUC_HIEN"].Value).Fixed(true).Width(120).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.NguoiPhuTrach).Caption(@localizer["NGUOI_PHU_TRACH"].Value).Fixed(true).Width(80).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.Month_1).Width(120).Format("#,##0").Caption("1월").CellTemplate(@<text>
+                                    <div class="<%- data.Month_1 > 0 ? 'dec' : 'inc' %>">
+                                        <span class="current-value" style="color:black"><%- text %></span>
+                                    </div>
+                                </text>);
+        columns.AddFor(m => m.Month_2).Width(120).Format("#,##0").Caption("2월").CellTemplate(@<text>
+                                    <div class="<%- data.Month_2 > 0 ? 'dec' : 'inc' %>">
+                                        <span class="current-value" style="color:black"><%- text %></span>
+                                    </div>
+                                </text>);
+        columns.AddFor(m => m.Month_3).Width(120).Format("#,##0").Caption("3월").CellTemplate(@<text>
+                                    <div class="<%- data.Month_3 > 0 ? 'dec' : 'inc' %>">
+                                        <span class="current-value" style="color:black"><%- text %></span>
+                                    </div>
+                                </text>);
+        columns.AddFor(m => m.Month_4).Width(120).Format("#,##0").Caption("4월").CellTemplate(@<text>
+                                    <div class="<%- data.Month_4 > 0 ? 'dec' : 'inc' %>">
+                                        <span class="current-value" style="color:black"><%- text %></span>
+                                    </div>
+                                </text>);
+        columns.AddFor(m => m.Month_5).Width(120).Format("#,##0").Caption("5월").CellTemplate(@<text>
+                                    <div class="<%- data.Month_5 > 0 ? 'dec' : 'inc' %>">
+                                        <span class="current-value" style="color:black"><%- text %></span>
+                                    </div>
+                                </text>);
+        columns.AddFor(m => m.Month_6).Width(120).Format("#,##0").Caption("6월").CellTemplate(@<text>
+                                    <div class="<%- data.Month_6 > 0 ? 'dec' : 'inc' %>">
+                                        <span class="current-value" style="color:black"><%- text %></span>
+                                    </div>
+                                </text>);
+        columns.AddFor(m => m.Month_7).Width(120).Format("#,##0").Caption("7월").CellTemplate(@<text>
+                                    <div class="<%- data.Month_7 > 0 ? 'dec' : 'inc' %>">
+                                        <span class="current-value" style="color:black"><%- text %></span>
+                                    </div>
+                                </text>);
+        columns.AddFor(m => m.Month_8).Width(120).Format("#,##0").Caption("8월").CellTemplate(@<text>
+                                    <div class="<%- data.Month_8 > 0 ? 'dec' : 'inc' %>">
+                                        <span class="current-value" style="color:black"><%- text %></span>
+                                    </div>
+                                </text>);
+        columns.AddFor(m => m.Month_9).Width(120).Format("#,##0").Caption("9월").CellTemplate(@<text>
+                                    <div class="<%- data.Month_9 > 0 ? 'dec' : 'inc' %>">
+                                        <span class="current-value" style="color:black"><%- text %></span>
+                                    </div>
+                                </text>);
+        columns.AddFor(m => m.Month_10).Width(120).Format("#,##0").Caption("10월").CellTemplate(@<text>
+                                    <div class="<%- data.Month_10 > 0 ? 'dec' : 'inc' %>">
+                                        <span class="current-value" style="color:black"><%- text %></span>
+                                    </div>
+                                </text>);
+        columns.AddFor(m => m.Month_11).Width(120).Format("#,##0").Caption("11월").CellTemplate(@<text>
+                                    <div class="<%- data.Month_11 > 0 ? 'dec' : 'inc' %>">
+                                        <span class="current-value" style="color:black"><%- text %></span>
+                                    </div>
+                                </text>);
+        columns.AddFor(m => m.Month_12).Width(120).Format("#,##0").Caption("12월").CellTemplate(@<text>
+                                    <div class="<%- data.Month_12 > 0 ? 'dec' : 'inc' %>">
+                                        <span class="current-value" style="color:black"><%- text %></span>
+                                    </div>
+                                </text>);
+        columns.AddFor(m => m.ToTal).Width(150).Format("#,##0").Caption("Total").CellTemplate(@<text>
+                                    <div class="<%- data.ToTal > 0 ? 'decTotal' : 'inc' %>">
+                                        <span class="current-value" style="color:white"><%- text %></span>
+                                    </div>
+                                </text>);;
 
     })
      .AllowColumnReordering(true)

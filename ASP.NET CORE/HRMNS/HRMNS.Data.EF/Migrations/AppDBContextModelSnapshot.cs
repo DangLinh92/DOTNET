@@ -1644,7 +1644,7 @@ namespace HRMNS.Data.EF.Migrations
                     b.ToTable("EHS_LUATDINH_KEHOACH");
                 });
 
-            modelBuilder.Entity("HRMNS.Data.Entities.EHS_NGAY_THUC_HIEN_CHITIET_KHAM_SK", b =>
+            modelBuilder.Entity("HRMNS.Data.Entities.EHS_MAIL_NOTIFY", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1658,6 +1658,50 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("DateModified")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EHS_MAIL_NOTIFY");
+                });
+
+            modelBuilder.Entity("HRMNS.Data.Entities.EHS_NGAY_THUC_HIEN_CHITIET_KHAM_SK", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ActualFinish")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("IsShowBoard")
+                        .HasColumnType("nvarchar(10)")
+                        .HasMaxLength(10);
 
                     b.Property<Guid>("MaEvent")
                         .HasColumnType("uniqueidentifier");
@@ -1676,6 +1720,17 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("NoiDung")
                         .HasColumnType("nvarchar(1000)")
                         .HasMaxLength(1000);
+
+                    b.Property<string>("Priority")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<int>("Progress")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("UserCreated")
                         .HasColumnType("nvarchar(50)")
@@ -1701,6 +1756,10 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("ActualFinish")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<string>("DateCreated")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
@@ -1708,6 +1767,10 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("DateModified")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
+
+                    b.Property<string>("IsShowBoard")
+                        .HasColumnType("nvarchar(10)")
+                        .HasMaxLength(10);
 
                     b.Property<Guid>("MaEvent")
                         .HasColumnType("uniqueidentifier");
@@ -1726,6 +1789,17 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("NoiDung")
                         .HasColumnType("nvarchar(1000)")
                         .HasMaxLength(1000);
+
+                    b.Property<string>("Priority")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<int>("Progress")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("UserCreated")
                         .HasColumnType("nvarchar(50)")
@@ -1804,6 +1878,10 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("ActualFinish")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<string>("DateCreated")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
@@ -1811,6 +1889,10 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("DateModified")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
+
+                    b.Property<string>("IsShowBoard")
+                        .HasColumnType("nvarchar(10)")
+                        .HasMaxLength(10);
 
                     b.Property<Guid>("MaEvent")
                         .HasColumnType("uniqueidentifier");
@@ -1829,6 +1911,17 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("NoiDung")
                         .HasColumnType("nvarchar(1000)")
                         .HasMaxLength(1000);
+
+                    b.Property<string>("Priority")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<int>("Progress")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("UserCreated")
                         .HasColumnType("nvarchar(50)")
@@ -1854,6 +1947,10 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("ActualFinish")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<string>("DateCreated")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
@@ -1861,6 +1958,10 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("DateModified")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
+
+                    b.Property<string>("IsShowBoard")
+                        .HasColumnType("nvarchar(10)")
+                        .HasMaxLength(10);
 
                     b.Property<Guid>("MaEvent")
                         .HasColumnType("uniqueidentifier");
@@ -1879,6 +1980,17 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("NoiDung")
                         .HasColumnType("nvarchar(1000)")
                         .HasMaxLength(1000);
+
+                    b.Property<string>("Priority")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<int>("Progress")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("UserCreated")
                         .HasColumnType("nvarchar(50)")
@@ -1904,6 +2016,10 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("ActualFinish")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<string>("DateCreated")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
@@ -1911,6 +2027,10 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("DateModified")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
+
+                    b.Property<string>("IsShowBoard")
+                        .HasColumnType("nvarchar(10)")
+                        .HasMaxLength(10);
 
                     b.Property<Guid>("MaEvent")
                         .HasColumnType("uniqueidentifier");
@@ -1929,6 +2049,17 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("NoiDung")
                         .HasColumnType("nvarchar(1000)")
                         .HasMaxLength(1000);
+
+                    b.Property<string>("Priority")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<int>("Progress")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("UserCreated")
                         .HasColumnType("nvarchar(50)")
@@ -1954,6 +2085,10 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("ActualFinish")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<string>("DateCreated")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
@@ -1961,6 +2096,10 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("DateModified")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
+
+                    b.Property<string>("IsShowBoard")
+                        .HasColumnType("nvarchar(10)")
+                        .HasMaxLength(10);
 
                     b.Property<Guid>("MaEvent")
                         .HasColumnType("uniqueidentifier");
@@ -1979,6 +2118,17 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("NoiDung")
                         .HasColumnType("nvarchar(1000)")
                         .HasMaxLength(1000);
+
+                    b.Property<string>("Priority")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<int>("Progress")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("UserCreated")
                         .HasColumnType("nvarchar(50)")
@@ -2056,6 +2206,9 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("Repeat")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
+
+                    b.Property<int>("RoomId")
+                        .HasColumnType("int");
 
                     b.Property<string>("StartEvent")
                         .HasColumnType("nvarchar(50)")
@@ -2979,9 +3132,6 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
-                    b.Property<Guid>("MaEventParent")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("ToDate")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
@@ -3002,8 +3152,6 @@ namespace HRMNS.Data.EF.Migrations
                         .HasMaxLength(50);
 
                     b.HasKey("Id");
-
-                    b.HasIndex("MaEventParent");
 
                     b.HasIndex("TrainnigType");
 
@@ -4050,12 +4198,6 @@ namespace HRMNS.Data.EF.Migrations
 
             modelBuilder.Entity("HRMNS.Data.Entities.HR_TRAINING", b =>
                 {
-                    b.HasOne("HRMNS.Data.Entities.EVENT_SHEDULE_PARENT", "EVENT_SHEDULE_PARENT")
-                        .WithMany()
-                        .HasForeignKey("MaEventParent")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("HRMNS.Data.Entities.TRAINING_TYPE", "TRAINING_TYPE")
                         .WithMany("HR_TRAINING")
                         .HasForeignKey("TrainnigType")

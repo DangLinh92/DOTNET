@@ -28,8 +28,6 @@ namespace HRMNS.Data.Entities
 
         public int TrainnigType { get; set; }
 
-        public Guid MaEventParent { get; set; }
-
         [StringLength(250)]
         public string Trainer { get; set; }
 
@@ -58,9 +56,6 @@ namespace HRMNS.Data.Entities
 
         [ForeignKey("TrainnigType")]
         public virtual TRAINING_TYPE TRAINING_TYPE { get; set; }
-
-        [ForeignKey("MaEventParent")]
-        public virtual EVENT_SHEDULE_PARENT EVENT_SHEDULE_PARENT { get; set; }
 
         public virtual ICollection<TRAINING_NHANVIEN> TRAINING_NHANVIEN { get; set; }
     }

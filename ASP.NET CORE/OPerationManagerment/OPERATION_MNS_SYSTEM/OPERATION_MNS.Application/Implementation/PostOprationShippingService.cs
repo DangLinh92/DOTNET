@@ -90,7 +90,8 @@ namespace OPERATION_MNS.Application.Implementation
                       group t by new
                       {
                           t.Module,
-                          t.Model
+                          t.Model,
+                          t.GhiChu_XH3
                       } into gr
                       select new XuatHang3ViewModel
                       {
@@ -98,12 +99,12 @@ namespace OPERATION_MNS.Application.Implementation
                           Module = gr.Key.Module,
                           WaferQty = gr.Count(),
                           ChipQty = gr.Sum(x => x.OutputQty),
-                          GhiChu = ""
+                          GhiChu = gr.Key.GhiChu_XH3,
                       };
 
             result.XuatHang3ViewModels.AddRange(xh3.ToList());
 
-            
+
             var xh2 = from t in data
                       group t by new
                       {
@@ -138,21 +139,22 @@ namespace OPERATION_MNS.Application.Implementation
             var lst = xh2.ToList();
             foreach (var item in lst)
             {
+                item.WaferID = "";
                 item.STT = ++stt;
-                foreach (var sub in data.OrderBy(x=>x.LotID))
+                foreach (var sub in data.OrderBy(x => x.LotID))
                 {
-                    if(item.CasstteID == sub.CassetteID 
-                        && item.Module == sub.Module 
+                    if (item.CasstteID == sub.CassetteID
+                        && item.Module == sub.Module
                         && item.Model == sub.Model
                         && item.Ngay == sub.MoveOutTime)
                     {
-                        item.WaferID += sub.LotID.Substring(sub.LotID.Length - 3, 1)+".";
+                        item.WaferID += sub.LotID.Substring(sub.LotID.Length - 3, 1) + ".";
                     }
                 }
 
                 if (item.WaferID.EndsWith("."))
                 {
-                    item.WaferID = item.WaferID.Substring(0,item.WaferID.Length - 1);
+                    item.WaferID = item.WaferID.Substring(0, item.WaferID.Length - 1);
                 }
             }
 
@@ -186,7 +188,7 @@ namespace OPERATION_MNS.Application.Implementation
 
         public PostOpeationShippingViewModel Add(PostOpeationShippingViewModel model)
         {
-           var en  = _mapper.Map<POST_OPERATION_SHIPPING>(model);
+            var en = _mapper.Map<POST_OPERATION_SHIPPING>(model);
             _PostOpeationRepository.Add(en);
             return model;
         }
@@ -214,6 +216,13 @@ namespace OPERATION_MNS.Application.Implementation
         {
             List<PostOpeationShippingViewModel> lst = new List<PostOpeationShippingViewModel>();
             lst = _mapper.Map<List<PostOpeationShippingViewModel>>(_PostOpeationRepository.FindAll(x => x.MoveOutTime + x.Module + x.Model + x.CassetteID == key)); //Ngay + Module + Model + CasstteID
+            return lst;
+        }
+
+        public List<PostOpeationShippingViewModel> FindItemXH3(string key)
+        {
+            List<PostOpeationShippingViewModel> lst = new List<PostOpeationShippingViewModel>();
+            lst = _mapper.Map<List<PostOpeationShippingViewModel>>(_PostOpeationRepository.FindAll(x => x.Module + x.Model == key)); //Module + Model
             return lst;
         }
 

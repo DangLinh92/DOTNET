@@ -48,6 +48,20 @@ namespace HRMNS.Application.ViewModels.EHS
         [StringLength(50)]
         public string UserModified { get; set; }
 
+        [StringLength(50)]
+        public string Status { get; set; }
+
+        public int Progress { get; set; }
+
+        [StringLength(50)]
+        public string Priority { get; set; }
+
+        [StringLength(10)]
+        public string IsShowBoard { get; set; }
+
+        [StringLength(50)]
+        public string ActualFinish { get; set; }
+
         public Ehs_KeHoach_PCCCViewModel EHS_KEHOACH_PCCC { get; set; }
 
         public EventScheduleParentViewModel EVENT_SHEDULE_PARENT { get; set; }

@@ -20,12 +20,26 @@
             let from = $("#txt_from").dxDateBox("instance").option('value');
             let to = $("#txt_to").dxDateBox("instance").option('value');
 
-            $('#title3').text('THỐNG KÊ LƯỢNG XUẤT HÀNG NGÀY : ' + formatDate(from));
-            $('#title2').text('WLP1 출하 총합' + formatDate(from) +'일');
-            $('#title1').text('WLP1 출하 총합' + formatDate(from) +'일');
+            $('#title3').text('THỐNG KÊ LƯỢNG XUẤT HÀNG NGÀY : ' + formatDate_2(from));
+            $('#title2').text('WLP1 출하 총합' + formatDate_2(from) +'일');
+            $('#title1').text('WLP1 출하 총합' + formatDate_2(from) +'일');
 
             LoadData(formatDate(from), formatDate(to));
         });
+
+        function checkBox_valueChanged(data) {
+            if (data.value) {
+                dataGrid.option("height", 'auto');
+                dataGrid_1.option("height", 'auto');
+                dataGrid_2.option("height", 'auto');
+            }
+            else
+            {
+                dataGrid.option("height", 400);
+                dataGrid_1.option("height", 400);
+                dataGrid_2.option("height", 400);
+            }
+        }
 
         function LoadData(Timefrom,Timeto) {
                     dataGrid = $("#gridContainer").dxDataGrid("instance");
@@ -39,7 +53,9 @@
 
                     loadPanel.show();
                     loadPanel_1.show();
-                    loadPanel_2.show();
+            loadPanel_2.show();
+
+
 
                     sendRequest('@Url.RouteUrl(new { area = "OpeationMns", controller = "PostOperationShipping", action = "PostOperationShipping" })', "GET", { fromTime: Timefrom, toTime: Timeto})
                                 .always(() =>
@@ -53,6 +69,17 @@
                                     dataGrid.option("dataSource", data[0].XuatHang3ViewModels);
                                     dataGrid_1.option("dataSource", data[0].XuatHang2ViewModels);
                                     dataGrid_2.option("dataSource", data[0].XuatHang1ViewModels);
+
+                                    if (data[0].XuatHang2ViewModels && data[0].XuatHang2ViewModels.length > 0) {
+                                        $("#txt_nguoinhan").dxTextBox("instance").option('value', data[0].XuatHang2ViewModels[0].NguoiNhan);
+                                        $("#txt_nguoixuat").dxTextBox("instance").option('value', data[0].XuatHang2ViewModels[0].NguoiXuat);
+                                    }
+                                    else {
+                                        $("#txt_nguoinhan").dxTextBox("instance").option('value', '');
+                                        $("#txt_nguoixuat").dxTextBox("instance").option('value', '');
+                                    }
+
+                                    
                                 });
         }
 
@@ -87,7 +114,9 @@
 
             let txtTo = $("#txt_to").dxDateBox("instance").option('value');
 
-            $('#title3').text('THỐNG KÊ LƯỢNG XUẤT HÀNG NGÀY : ' + formatDate(date));
+            $('#title3').text('THỐNG KÊ LƯỢNG XUẤT HÀNG NGÀY : ' + formatDate_2(date));
+            $('#title2').text('WLP1 출하 총합' + formatDate_2(date) + '일');
+            $('#title1').text('WLP1 출하 총합' + formatDate_2(date) + '일');
 
             // Get year, month, and day part from the date
             LoadData(formatDate(date), formatDate(txtTo));
@@ -112,7 +141,7 @@
             LoadData(formatDate(txtFrom), formatDate(date));
         };
 
-        function formatDate(date) {
+        function formatDate_2(date) {
             var d = new Date(date),
                 month = '' + (d.getMonth() + 1),
                 day = '' + d.getDate(),
@@ -124,6 +153,26 @@
                 day = '0' + day;
 
             return [year, month, day].join('-');
+        }
+
+        function padTo2Digits(num) {
+            return num.toString().padStart(2, '0');
+        }
+
+        function formatDate(date) {
+            return (
+                [
+                    date.getFullYear(),
+                    padTo2Digits(date.getMonth() + 1),
+                    padTo2Digits(date.getDate()),
+                ].join('-') +
+                ' ' +
+                [
+                    padTo2Digits(date.getHours()),
+                    padTo2Digits(date.getMinutes()),
+                    padTo2Digits(date.getSeconds()),
+                ].join(':')
+            );
         }
 
         function exporting3(e) {
@@ -175,6 +224,19 @@
         }
 
         // saving
+         function onSaving_3(e) {
+        e.cancel = true;
+               console.log(e);
+           if (e.changes.length) {
+                e.promise = sendBatchRequest('@Url.RouteUrl(new { area = "OpeationMns", controller = "PostOperationShipping", action = "Batch_XH3"})', e.changes).done(() => {
+                e.component.refresh(true).done(() => {
+                    e.component.cancelEditData();
+                    SearchData();
+                });
+            });
+          }
+        }
+
        function onSaving_2(e) {
         e.cancel = true;
                console.log(e);
@@ -194,11 +256,6 @@
 
             let nguoiNhan = $("#txt_nguoinhan").dxTextBox("instance").option('value').trim();
             let nguoiXuat = $("#txt_nguoixuat").dxTextBox("instance").option('value').trim();
-
-            if (!nguoiNhan || !nguoiXuat) {
-                confirm('Nhập người nhận, người xuất');
-                return;
-            }
 
             for (var change of e.changes) {
                 change.data.NguoiXuat = nguoiXuat;
@@ -234,7 +291,23 @@
         function SearchData() {
             let from = $("#txt_from").dxDateBox("instance").option('value');
             let to = $("#txt_to").dxDateBox("instance").option('value');
+
             LoadData(formatDate(from), formatDate(to));
+        }
+
+        // lưu nguoi xuât, nhận
+          function SaveData() {
+
+                  let nguoiNhan = $("#txt_nguoinhan").dxTextBox("instance").option('value').trim();
+                  let nguoiXuat = $("#txt_nguoixuat").dxTextBox("instance").option('value').trim();
+                  console.log(nguoiNhan, nguoiXuat);
+                  sendRequest('@Url.RouteUrl(new { area = "OpeationMns", controller = "PostOperationShipping", action = "SaveData" })', "GET", { nguoiNhan: nguoiNhan, nguoiXuat: nguoiXuat })
+                                .always(() =>
+                                {
+                                })
+                                .done((data) => {
+                                    SearchData();
+                                });
         }
 
         $(document).ready(function () {
@@ -254,6 +327,10 @@
                 $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
                 $('.hidden-grid-wlp2').slideToggle("slow");
             });
+
+            $('#btnSearch').on('click', function (e) {
+                SaveData();
+            })
 
         });
     </script>
@@ -282,9 +359,9 @@
                         <div>
                             @(Html.DevExtreme().DateBox()
                                   .ID("txt_from")
-                                     .Type(DateBoxType.Date)
+                                     .Type(DateBoxType.DateTime)
                                   .Value(DateTime.Now.AddDays(-1))
-                                  .DisplayFormat("yyyy-MM-dd 08:00:00")
+                                  .DisplayFormat("yyyy-MM-dd HH:mm:ss")
                                   .Width(200)
                                   .Placeholder("Select...")
                                   .Label("From Date")
@@ -297,9 +374,9 @@
                         <div>
                             @(Html.DevExtreme().DateBox()
                                   .ID("txt_to")
-                                  .Type(DateBoxType.Date)
+                                  .Type(DateBoxType.DateTime)
                                   .Value(DateTime.Now)
-                                  .DisplayFormat("yyyy-MM-dd 07:59:59")
+                                  .DisplayFormat("yyyy-MM-dd HH:mm:ss")
                                   .Width(200)
                                   .Placeholder("Select...")
                                   .Label("To Date")
@@ -326,16 +403,22 @@
                             </div>
                         </div>
                     </div>
-                    <div class="dx-field" style="float: left; width: 250px;padding-top:7px">
+                    <div class="dx-field" style="float: left; width: 300px; padding-top: 7px; margin-left: 73px;">
+                        <div class="dx-field-value" style="float: left; padding-right: 10px;">
+                            @(Html.DevExtreme().CheckBox().ID("txtExpandCollapse").Value(false).OnValueChanged("checkBox_valueChanged"))
+                        </div>
+                        <div class="dx-field-label">Expand/collapse</div>
+                    </div>
+                    <div class="dx-field" style="float: left; width: 250px; padding-top: 7px; padding-bottom: 10px;">
                         <div>
-                            <button type="button" class="btn btn-primary" hidden id="btnSearch" onclick="SearchData()" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100px; margin-left: 80px; ">Search</button>
+                            <button type="button" class="btn btn-primary" id="btnSearch" style="width: 100px;">Save</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-auto float-right ml-auto" style="margin-right:100px;">
-           
+
         </div>
     </div>
 
@@ -380,19 +463,24 @@
     .HoverStateEnabled(true)
     .Export(e => e.Enabled(true).AllowExportSelectedData(true))
     .OnExporting("exporting3")
+    .Editing(editing =>
+    {
+        editing.Mode(GridEditMode.Batch);
+        editing.AllowUpdating(true);
+    })
     .Columns(columns =>
     {
         columns.AddFor(m => m.Key).Visible(false);
-        columns.AddFor(m => m.Module).Caption("MODUL");
-        columns.AddFor(m => m.Model).Caption("MODEL");
-        columns.AddFor(m => m.WaferQty).Caption("WAFER QTY");
-        columns.AddFor(m => m.ChipQty).Caption("CHIP QTY");
-        columns.AddFor(m => m.GhiChu).Caption("NOTE");
+        columns.AddFor(m => m.Module).Width(300).Alignment(HorizontalAlignment.Center).Caption("MODULE").AllowEditing(false);
+        columns.AddFor(m => m.Model).Width(150).Alignment(HorizontalAlignment.Center).Caption("MODEL").AllowEditing(false);
+        columns.AddFor(m => m.WaferQty).Width(150).Caption("WAFER QTY").Format("#,##0").AllowEditing(false);
+        columns.AddFor(m => m.ChipQty).Width(150).Caption("CHIP QTY").Format("#,##0").AllowEditing(false);
+        columns.AddFor(m => m.GhiChu).Width(300).Alignment(HorizontalAlignment.Center).Caption("NOTE").AllowEditing(true);
 
     }).SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true).Summary(s=>s.TotalItems(tt => {
         tt.AddFor(m => m.WaferQty).SummaryType(SummaryType.Sum).DisplayFormat("Total: {0}").ValueFormat(Format.FixedPoint);
         tt.AddFor(m => m.ChipQty).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
-    }))
+    })).OnSaving("onSaving_3")
     )
         </div>
     </div>
@@ -446,19 +534,19 @@
     .Columns(columns =>
     {
         columns.AddFor(m => m.Key).Visible(false);
-        columns.AddFor(m => m.STT).AllowEditing(false);
-        columns.AddFor(m => m.Ngay).Caption("Ngày Xuất").AllowEditing(false);
-        columns.AddFor(m => m.Module).Caption("Module").AllowEditing(false);
-        columns.AddFor(m => m.Model).Caption("Model").AllowEditing(false);
-        columns.AddFor(m => m.CasstteID).Caption("Cassette ID").AllowEditing(false);
-        columns.AddFor(m => m.WaferQty).Caption("Wafer Qty").AllowEditing(false);
-        columns.AddFor(m => m.ChipQty).Caption("Chip Qty").AllowEditing(false);
-        columns.AddFor(m => m.WaferID).Caption("Wafer ID").AllowEditing(false);
-        columns.AddFor(m => m.NguoiXuat).Caption("Người Xuất").AllowEditing(false);
-        columns.AddFor(m => m.KetQuaFAKiemTra).Caption("Kết Quả FA Kiểm Tra").AllowEditing(true);
-        columns.AddFor(m => m.NguoiKiemTra).Caption("Người Kiểm Tra").AllowEditing(true);
-        columns.AddFor(m => m.NguoiNhan).Caption("Người Nhận").AllowEditing(false);
-        columns.AddFor(m => m.GhiChu).Caption("Ghi chú").AllowEditing(true);
+        columns.AddFor(m => m.STT).Alignment(HorizontalAlignment.Center).AllowEditing(false);
+        columns.AddFor(m => m.Ngay).Alignment(HorizontalAlignment.Center).Caption("Ngày Xuất").AllowEditing(false);
+        columns.AddFor(m => m.Module).Alignment(HorizontalAlignment.Center).Caption("Module").AllowEditing(false);
+        columns.AddFor(m => m.Model).Alignment(HorizontalAlignment.Center).Caption("Model").AllowEditing(false);
+        columns.AddFor(m => m.CasstteID).Alignment(HorizontalAlignment.Center).Caption("Cassette ID").AllowEditing(false);
+        columns.AddFor(m => m.WaferQty).Caption("Wafer Qty").AllowEditing(false).Format("#,##0");
+        columns.AddFor(m => m.ChipQty).Caption("Chip Qty").AllowEditing(false).Format("#,##0");
+        columns.AddFor(m => m.WaferID).Alignment(HorizontalAlignment.Center).Caption("Wafer ID").AllowEditing(false);
+        columns.AddFor(m => m.NguoiXuat).Alignment(HorizontalAlignment.Center).Caption("Người Xuất").AllowEditing(false);
+        columns.AddFor(m => m.KetQuaFAKiemTra).Alignment(HorizontalAlignment.Center).Caption("Kết Quả FA").AllowEditing(true);
+        columns.AddFor(m => m.NguoiKiemTra).Alignment(HorizontalAlignment.Center).Caption("Người Kiểm Tra").AllowEditing(true);
+        columns.AddFor(m => m.NguoiNhan).Alignment(HorizontalAlignment.Center).Caption("Người Nhận").AllowEditing(false);
+        columns.AddFor(m => m.GhiChu).Width(200).Alignment(HorizontalAlignment.Center).Caption("Ghi chú").AllowEditing(true);
 
     }).SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true).Summary(s=>s.TotalItems(tt => {
         tt.AddFor(m => m.WaferQty).SummaryType(SummaryType.Sum).DisplayFormat("Total: {0}").ValueFormat(Format.FixedPoint);
@@ -516,19 +604,19 @@
     .Columns(columns =>
     {
         columns.AddFor(m => m.Key).Visible(false).AllowEditing(false);
-        columns.AddFor(m => m.STT).AllowEditing(false);
-        columns.AddFor(m => m.NgayXuat).Caption("Ngày Xuất").AllowEditing(false);
-        columns.AddFor(m => m.LotID).Caption("Lot ID").AllowEditing(false);
-        columns.AddFor(m => m.Module).Caption("Module").AllowEditing(false);
-        columns.AddFor(m => m.WaferID).Caption("Wafer ID").AllowEditing(false);
-        columns.AddFor(m => m.CasstteID).Caption("Casset ID").AllowEditing(false);
-        columns.AddFor(m => m.Model).Caption("Model").AllowEditing(false);
-        columns.AddFor(m => m.DefaultChipQty).Caption("Default Chip Qty").AllowEditing(false);
-        columns.AddFor(m => m.ChipMesQty).Caption("Chip Mes Qty").AllowEditing(false);
-        columns.AddFor(m => m.ChipMapQty).Caption("Chip Map Qty").AllowEditing(true);
-        columns.AddFor(m => m.DiffMapMes).Caption("Chênh lệch Map-Mes").AllowEditing(false);
-        columns.AddFor(m => m.Rate).Caption("Tỉ Lệ(%)").Format(Format.Percent).AllowEditing(false);
-        columns.AddFor(m => m.VanDeDacBiet).Caption("Vấn đề đặc biệt").AllowEditing(true);
+        columns.AddFor(m => m.STT).Alignment(HorizontalAlignment.Center).AllowEditing(false);
+        columns.AddFor(m => m.NgayXuat).Caption("Ngày Xuất").Alignment(HorizontalAlignment.Center).AllowEditing(false);
+        columns.AddFor(m => m.LotID).Caption("Lot ID").Alignment(HorizontalAlignment.Center).AllowEditing(false);
+        columns.AddFor(m => m.Module).Caption("Module").Alignment(HorizontalAlignment.Center).AllowEditing(false);
+        columns.AddFor(m => m.WaferID).Caption("Wafer ID").Alignment(HorizontalAlignment.Center).AllowEditing(false);
+        columns.AddFor(m => m.CasstteID).Caption("Casset ID").Alignment(HorizontalAlignment.Center).AllowEditing(false);
+        columns.AddFor(m => m.Model).Caption("Model").Alignment(HorizontalAlignment.Center).AllowEditing(false);
+        columns.AddFor(m => m.DefaultChipQty).Caption("Default Chip Qty").AllowEditing(false).Format("#,##0");
+        columns.AddFor(m => m.ChipMesQty).Caption("Chip Mes Qty").AllowEditing(false).Format("#,##0");
+        columns.AddFor(m => m.ChipMapQty).Caption("Chip Map Qty").AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.DiffMapMes).Caption("Chênh lệch Map-Mes").AllowEditing(false).Format("#,##0");
+        columns.AddFor(m => m.Rate).Caption("Tỉ Lệ(%)").Alignment(HorizontalAlignment.Center).Format(Format.Percent).AllowEditing(false);
+        columns.AddFor(m => m.VanDeDacBiet).Caption("Vấn đề đặc biệt").Alignment(HorizontalAlignment.Center).AllowEditing(true);
     }).SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true).Summary(s=>s.TotalItems(tt => {
         tt.AddFor(m => m.DefaultChipQty).SummaryType(SummaryType.Sum).DisplayFormat("Total: {0}").ValueFormat(Format.FixedPoint);
         tt.AddFor(m => m.ChipMesQty).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);

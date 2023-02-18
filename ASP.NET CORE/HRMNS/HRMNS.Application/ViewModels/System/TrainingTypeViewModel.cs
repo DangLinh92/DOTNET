@@ -65,8 +65,6 @@ namespace HRMNS.Application.ViewModels.System
 
         public int TrainnigType { get; set; }
 
-        public Guid MaEventParent { get; set; }
-
         [StringLength(250)]
         public string Trainer { get; set; }
 

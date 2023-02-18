@@ -46,6 +46,112 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
             return DataSourceLoader.Load(lstModel, loadOptions);
         }
 
+        [HttpGet]
+        public object SaveData(DataSourceLoadOptions loadOptions,string nguoiNhan,string nguoiXuat)
+        {
+            var lstModel = ResetData();
+            if(lstModel.Count > 0)
+            {
+                PostOpeationShippingViewModel model;
+                foreach (var item in lstModel[0].DataXH)
+                {
+                    if(item.KetQuaFAKiemTra.NullString().ToUpper() == "OK" && item.InDB == "Y")
+                    {
+                        model = PostOprationShippingService.FindItemXH1(item.MoveOutTime + item.LotID);
+
+                        model.NguoiNhan = nguoiNhan;
+                        model.NguoiXuat = nguoiXuat;
+
+                        item.NguoiNhan = nguoiNhan;
+                        item.NguoiXuat = nguoiXuat;
+                        PostOprationShippingService.Update(model);
+                    }
+                }
+
+                PostOprationShippingService.Save();
+            }
+
+            return DataSourceLoader.Load(lstModel, loadOptions);
+        }
+
+        [HttpPost]
+        public object Batch_XH3([FromBody] List<DataChange> changes)
+        {
+            string key = "";
+            DataXH = new List<XuatHangViewModel>();
+            List<PostOpeationShippingViewModel> model;
+
+            _memoryCache.TryGetValue("DataXH", out DataXH);
+
+            foreach (var change in changes)
+            {
+                key = change.Key.NullString();
+
+                XuatHang3ViewModel xh1 = new XuatHang3ViewModel();
+                if (change.Type == "update" || change.Type == "remove")
+                {
+                    model = PostOprationShippingService.FindItemXH3(key);
+
+                    if (model == null || model.Count == 0)
+                    {
+                        if (DataXH != null && DataXH.Count > 0)
+                        {
+                            model = DataXH[0].DataXH.FindAll(x => x.Module + x.Model == key); // Module + Model
+                        }
+                        else
+                        {
+                            model = new List<PostOpeationShippingViewModel>() {};
+                        }
+                    }
+                    else
+                    {
+                        foreach (var item in model)
+                        {
+                            item.InDB = "Y";
+                        }
+                    }
+
+                    if (DataXH != null && DataXH.Count > 0)
+                    {
+                        xh1 = DataXH[0].XuatHang3ViewModels.FindAll(x => x.Key == key).FirstOrDefault();
+                    }
+                }
+                else
+                {
+                    model = new List<PostOpeationShippingViewModel>();
+                }
+
+                if (change.Type == "insert" || change.Type == "update")
+                {
+                    JsonConvert.PopulateObject(change.Data.ToString(), xh1);
+
+                    foreach (var item in model)
+                    {
+                        item.GhiChu_XH3 = xh1.GhiChu.NullString();
+
+                        if (change.Type == "insert" || item.InDB == "N")
+                        {
+                            PostOprationShippingService.Add(item);
+                        }
+                        else if (change.Type == "update" || item.InDB == "Y")
+                        {
+                            PostOprationShippingService.Update(item);
+                        }
+                    }
+
+                    change.Data = xh1;
+                }
+                else if (change.Type == "remove")
+                {
+                    //PostOprationShippingService.Delete(model);
+                }
+            }
+
+            PostOprationShippingService.Save();
+
+            return Ok(changes);
+        }
+
 
         [HttpPost]
         public object Batch_XH1([FromBody] List<DataChange> changes)
@@ -68,11 +174,15 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
                     if (model == null)
                     {
                         if (DataXH != null && DataXH.Count > 0)
-                            model = DataXH[0].DataXH.Find(x => DateTime.Parse(x.MoveOutTime).ToString("yyyyMMddHHmmss") + x.LotID == key); //NgayXuat + LotID
+                            model = DataXH[0].DataXH.Find(x => x.MoveOutTime + x.LotID == key); //NgayXuat + LotID
                         else
                         {
-                            model = new PostOpeationShippingViewModel();
+                            model = new PostOpeationShippingViewModel() { InDB = "N"};
                         }
+                    }
+                    else
+                    {
+                        model.InDB = "Y";
                     }
 
                     if (DataXH != null && DataXH.Count > 0)
@@ -82,7 +192,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
                 }
                 else
                 {
-                    model = new PostOpeationShippingViewModel();
+                    model = new PostOpeationShippingViewModel() { InDB = "N" };
                 }
 
                 if (change.Type == "insert" || change.Type == "update")
@@ -95,7 +205,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
 
                     xh1.DiffMapMes = model.DiffMapMes;
 
-                    if (change.Type == "insert" || model.InDB != "Y")
+                    if (change.Type == "insert" || model.InDB == "N")
                     {
                         PostOprationShippingService.Add(model);
                     }
@@ -126,9 +236,6 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
 
             _memoryCache.TryGetValue("DataXH", out DataXH);
 
-            string nguoiNhan = "";
-            string nguoiXuat = "";
-
             foreach (var change in changes)
             {
                 key = change.Key.NullString();
@@ -136,17 +243,24 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
                 XuatHang2ViewModel xh1 = new XuatHang2ViewModel();
                 if (change.Type == "update" || change.Type == "remove")
                 {
-                     model = PostOprationShippingService.FindItemXH2(key);
+                    model = PostOprationShippingService.FindItemXH2(key);
 
                     if (model == null || model.Count == 0)
                     {
                         if (DataXH != null && DataXH.Count > 0)
                         {
-                            model = DataXH[0].DataXH.FindAll(x => DateTime.Parse(x.MoveOutTime).ToString("yyyyMMddHHmmss") + x.Module + x.Model + x.CassetteID == key); // Ngay + Module + Model + CasstteID
+                            model = DataXH[0].DataXH.FindAll(x => x.MoveOutTime + x.Module + x.Model + x.CassetteID == key); // Ngay + Module + Model + CasstteID
                         }
                         else
                         {
                             model = new List<PostOpeationShippingViewModel>();
+                        }
+                    }
+                    else
+                    {
+                        foreach (var item in model)
+                        {
+                            item.InDB = "Y";
                         }
                     }
 
@@ -164,25 +278,13 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
                 {
                     JsonConvert.PopulateObject(change.Data.ToString(), xh1);
 
-                    if(nguoiNhan == "")
-                    {
-                        nguoiNhan = xh1.NguoiNhan;
-                    }
-
-                    if (nguoiXuat == "")
-                    {
-                        nguoiXuat = xh1.NguoiXuat;
-                    }
-
                     foreach (var item in model)
                     {
-                        item.GhiChu_XH2 = xh1.GhiChu;
+                        item.GhiChu_XH2 = xh1.GhiChu.NullString();
                         item.KetQuaFAKiemTra = xh1.KetQuaFAKiemTra.NullString();
-                        item.NguoiKiemTra = xh1.NguoiKiemTra;
-                        item.NguoiNhan = xh1.NguoiNhan;
-                        item.NguoiXuat = xh1.NguoiXuat;
+                        item.NguoiKiemTra = xh1.NguoiKiemTra.NullString();
 
-                        if (change.Type == "insert" || item.InDB != "Y")
+                        if (change.Type == "insert" || item.InDB == "N")
                         {
                             PostOprationShippingService.Add(item);
                         }
@@ -202,39 +304,10 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
 
             PostOprationShippingService.Save();
 
-            // save all
-
-            //string fromTime = "";
-            //string toTime = "";
-            //_memoryCache.TryGetValue("FromTime", out fromTime);
-            //_memoryCache.TryGetValue("ToTime", out toTime);
-
-            //if(fromTime != "" && toTime != "")
-            //{
-            //    List<PostOpeationShippingViewModel> dataShipping = new List<PostOpeationShippingViewModel>();
-            //    dataShipping = PostOprationShippingService.GetPostOpeationShipping(fromTime,toTime);
-            //    foreach (var item in dataShipping)
-            //    {
-            //        item.NguoiNhan = nguoiNhan;
-            //        item.NguoiXuat = nguoiXuat;
-
-            //        if (item.InDB != "Y")
-            //        {
-            //            PostOprationShippingService.Add(item);
-            //        }
-            //        else if (item.InDB == "Y")
-            //        {
-            //            PostOprationShippingService.Update(item);
-            //        }
-            //    }
-
-            //    PostOprationShippingService.Save();
-            //}
-
             return Ok(changes);
         }
 
-        private void ResetData()
+        private List<XuatHangViewModel> ResetData()
         {
             _ = _memoryCache.TryGetValue("FromTime", out string fromTime);
             _ = _memoryCache.TryGetValue("ToTime", out string toTime);
@@ -242,6 +315,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
             var lstModel = PostOprationShippingService.GetXuatHangViewModel(fromTime, toTime);
             _memoryCache.Remove("DataXH");
             _memoryCache.Set("DataXH", lstModel);
+            return lstModel;
         }
     }
 }

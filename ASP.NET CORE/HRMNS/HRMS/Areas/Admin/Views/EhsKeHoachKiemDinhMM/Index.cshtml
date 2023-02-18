@@ -1,4 +1,5 @@
-﻿@{
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
+@{
     ViewData["Title"] = "Kế Hoạch Kiểm Định Máy Móc";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
@@ -257,6 +258,13 @@
             return false;
         });
 
+        function getStatus() {
+            return ["Pending", "TODO", "Inprogress", "Completed"];
+        };
+
+        function getShowBoard() {
+            return ["Y", "N"];
+        };
     </script>
 }
 @section Styles{}
@@ -266,7 +274,7 @@
     <div class="page-header" style="margin-bottom:-1rem">
         <div class="row">
             <div class="col-sm-12">
-                <h3 class="page-title">KẾ HOẠCH KIỂM ĐỊNH MÁY MÓC - 기계 검교정</h3>
+                <h3 class="page-title">@(localizer["KEHOACH_KIEMDINH_MM"])</h3>
             </div>
         </div>
     </div>
@@ -304,14 +312,14 @@
         </div>
     </div>
 
-<div class="row">
-    <div class="col-md-12">
-        @(Html.DevExtreme().LoadPanel()
+    <div class="row">
+        <div class="col-md-12">
+            @(Html.DevExtreme().LoadPanel()
         .ID("loadPanel")
         .Position(p => p.Of("#gridContainer"))
         .Visible(false)
 )
-        @(Html.DevExtreme().DataGrid<EhsKeHoachKiemDinhMayMocViewModel>
+            @(Html.DevExtreme().DataGrid<EhsKeHoachKiemDinhMayMocViewModel>
     ()
     .ID("gridContainer")
     .KeyExpr("Id")
@@ -347,29 +355,29 @@
     {
         columns.AddFor(m => m.Id).Visible(false).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
         columns.AddFor(m => m.STT).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.TenMayMoc).Caption("Tên máy móc/thiết bị[설비명]").Width(150).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.ChuKyKiemDinh).Caption("Chu kỳ kiểm định[검정 주기 (년/회)]").Width(80).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.ViTri).Caption("Vị trí[위치]").Width(100).AllowEditing(true);
-        columns.AddFor(m => m.SoLuongThietBi).Caption("Số lượng 수량").Width(100).AllowEditing(true);
-        columns.AddFor(m => m.LanKiemDinhKeTiep).Caption("Lần kiểm định kế tiếp 년 검정 일정").Width(100).AllowEditing(false);
-        columns.AddFor(m => m.LanKiemDinhKeTiep1).Caption("Lần kiểm định kế tiếp 년 검정 일정").Width(100).AllowEditing(false);
-        columns.AddFor(m => m.LanKiemDinhKeTiep2).Caption("Lần kiểm định kế tiếp 년 검정 일정").Width(100).AllowEditing(false);
-        columns.AddFor(m => m.LanKiemDinhKeTiep3).Caption("Lần kiểm định kế tiếp 년 검정 일정").Width(100).AllowEditing(false);
+        columns.AddFor(m => m.TenMayMoc).Caption(@localizer["TEN_THIET_BI_MAY_MOC"].Value).Width(150).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.ChuKyKiemDinh).Caption(@localizer["CHU_KY_THUC_HIEN"].Value).Width(80).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.ViTri).Caption(@localizer["VI_TRI"].Value).Width(100).AllowEditing(true);
+        columns.AddFor(m => m.SoLuongThietBi).Caption(@localizer["SO_LUONG"].Value).Width(100).AllowEditing(true);
+        columns.AddFor(m => m.LanKiemDinhKeTiep).Caption(@localizer["KIEM_DINH_KE_TIEP"].Value).Width(100).AllowEditing(false);
+        columns.AddFor(m => m.LanKiemDinhKeTiep1).Caption(@localizer["KIEM_DINH_KE_TIEP"].Value).Width(100).AllowEditing(false);
+        columns.AddFor(m => m.LanKiemDinhKeTiep2).Caption(@localizer["KIEM_DINH_KE_TIEP"].Value).Width(100).AllowEditing(false);
+        columns.AddFor(m => m.LanKiemDinhKeTiep3).Caption(@localizer["KIEM_DINH_KE_TIEP"].Value).Width(100).AllowEditing(false);
 
-        columns.AddFor(m => m.NguoiPhuTrach).Caption("Người Phụ Trách").Width(80).AllowEditing(true);
-        columns.AddFor(m => m.Year).Caption("Year").Width(80).AllowEditing(true);
-        columns.AddFor(m => m.CostMonth_1).Caption("Chi Phí Tháng 1").AllowEditing(true).Format("#,##0");
-        columns.AddFor(m => m.CostMonth_2).Caption("Tháng 2").AllowEditing(true).Format("#,##0");
-        columns.AddFor(m => m.CostMonth_3).Caption("Tháng 3").AllowEditing(true).Format("#,##0");
-        columns.AddFor(m => m.CostMonth_4).Caption("Tháng 4").AllowEditing(true).Format("#,##0");
-        columns.AddFor(m => m.CostMonth_5).Caption("Tháng 5").AllowEditing(true).Format("#,##0");
-        columns.AddFor(m => m.CostMonth_6).Caption("Tháng 6").AllowEditing(true).Format("#,##0");
-        columns.AddFor(m => m.CostMonth_7).Caption("Tháng 7").AllowEditing(true).Format("#,##0");
-        columns.AddFor(m => m.CostMonth_8).Caption("Tháng 8").AllowEditing(true).Format("#,##0");
-        columns.AddFor(m => m.CostMonth_9).Caption("Tháng 9").AllowEditing(true).Format("#,##0");
-        columns.AddFor(m => m.CostMonth_10).Caption("Tháng 10").AllowEditing(true).Format("#,##0");
-        columns.AddFor(m => m.CostMonth_11).Caption("Tháng 11").AllowEditing(true).Format("#,##0");
-        columns.AddFor(m => m.CostMonth_12).Caption("Tháng 12").AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.NguoiPhuTrach).Caption(@localizer["NGUOI_PHU_TRACH"].Value).Width(80).AllowEditing(true);
+        columns.AddFor(m => m.Year).Caption(@localizer["YEAR"].Value).Width(80).AllowEditing(true);
+        columns.AddFor(m => m.CostMonth_1).Caption(@localizer["CHI_PHI_THANG_1"].Value).AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_2).Caption(@localizer["CHI_PHI_THANG_2"].Value).AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_3).Caption(@localizer["CHI_PHI_THANG_3"].Value).AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_4).Caption(@localizer["CHI_PHI_THANG_4"].Value).AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_5).Caption(@localizer["CHI_PHI_THANG_5"].Value).AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_6).Caption(@localizer["CHI_PHI_THANG_6"].Value).AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_7).Caption(@localizer["CHI_PHI_THANG_7"].Value).AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_8).Caption(@localizer["CHI_PHI_THANG_8"].Value).AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_9).Caption(@localizer["CHI_PHI_THANG_9"].Value).AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_10).Caption(@localizer["CHI_PHI_THANG_10"].Value).AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_11).Caption(@localizer["CHI_PHI_THANG_11"].Value).AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_12).Caption(@localizer["CHI_PHI_THANG_12"].Value).AllowEditing(true).Format("#,##0");
         columns.AddFor(m => m.CostTotal).Caption("Total").AllowEditing(false).Format("#,##0");
 
     }).SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true).Summary(s=>s.TotalItems(tt => {
@@ -388,9 +396,9 @@
         tt.AddFor(m => m.CostTotal).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
     })).OnSaving("SaveKeHoach").OnRowDblClick("DetailChiTietNgayThuHien")
     )
-        @(Html.DevExtreme().Popup()
+            @(Html.DevExtreme().Popup()
         .ID("detail-popup")
-        .Width(500)
+        .Width(800)
         .Height(500)
         .Container("#gridContainer")
         .ShowTitle(true)
@@ -424,11 +432,11 @@
     )
 
 
-        @using (Html.DevExtreme().NamedTemplate("popup-template"))
-        {
-            <h4 id="txtTitlePopup"></h4>
-            <input hidden id="txt_MaKH" />
-            @(Html.DevExtreme().DataGrid<EhsThoiGianKiemDinhMayMocViewModel>()
+            @using (Html.DevExtreme().NamedTemplate("popup-template"))
+            {
+                <h4 id="txtTitlePopup"></h4>
+                <input hidden id="txt_MaKH" />
+                @(Html.DevExtreme().DataGrid<EhsThoiGianKiemDinhMayMocViewModel>()
     .ID("gridContainer-NgayThucHien")
       .KeyExpr("Id")
           .Height(300)
@@ -441,13 +449,25 @@
         editing.AllowUpdating(true);
     })
     .Columns(columns => {
-        columns.AddFor(m => m.NgayBatDauEx).Format("yyyy-MM-dd").Caption("Ngày Bắt Đầu").AllowEditing(true);
-        columns.AddFor(m => m.NgayKetThucEx).Format("yyyy-MM-dd").Caption("Ngày Kết Thúc").AllowEditing(true);
+        columns.AddFor(m => m.NgayBatDauEx).Format("yyyy-MM-dd").Caption(@localizer["THOI_GIAN_BAT_DAU"].Value).AllowEditing(true);
+        columns.AddFor(m => m.NgayKetThucEx).Format("yyyy-MM-dd").Caption(@localizer["THOI_GIAN_KET_THUC"].Value).AllowEditing(true);
+
+        columns.AddFor(m => m.Status).Caption(@localizer["STATUS"].Value)
+        .AllowEditing(true)
+        .Lookup(lookup => lookup.DataSource("getStatus"));
+
+        columns.AddFor(m => m.Progress).Caption(@localizer["TIEN_DO"].Value)
+        .AllowEditing(true);
+
+        columns.AddFor(m => m.IsShowBoard).Caption("Hiển thị lên bảng công việc")
+        .AllowEditing(true)
+        .Lookup(lookup => lookup.DataSource("getShowBoard")
+                );
     }).OnSaving("SaveNgayThucHien")
 )
-        }
+            }
+        </div>
     </div>
-</div>
 </div>
 
 <partial name="_ImportExcelModel" />

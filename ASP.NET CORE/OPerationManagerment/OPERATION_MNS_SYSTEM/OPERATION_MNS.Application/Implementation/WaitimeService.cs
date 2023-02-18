@@ -30,7 +30,7 @@ namespace OPERATION_MNS.Application.Implementation
         }
 
         List<string> arrWall = new List<string>() { "OP30500", "OP30700", "OP31000", "OP34000", "OP35000", "OP36000", "OP37000", "OP37500", "OP38000", "OP39000" };
-        List<string> arrRoof = new List<string>() { "OP39500", "OP40000", "OP38000", "OP40500", "OP41000", "OP43000", "OP44000", "OP45000", "OP46000", "OP46500", "OP47000", "OP47100", "OP48000", "OP48500", "OP49000", "OP50000", "OP51000" };
+        List<string> arrRoof = new List<string>() { "OP39500", "OP40000", "OP40500", "OP41000", "OP43000", "OP44000", "OP45000", "OP46000", "OP46500", "OP47000", "OP47100", "OP48000", "OP48500", "OP49000", "OP50000", "OP51000" };
         List<string> arrPlate = new List<string>() { "OP52500", "OP53000", "OP55000", "OP56000", "OP56500", "OP57000", "OP58000", "OP59000" };
         List<string> arrSeed = new List<string>() { "OP52000" };
         List<string> arrPlated = new List<string>() { "OP59500", "OP60000", "OP61000", "OP65000", "OP62000", "OP62500", "OP63000", "OP64000", "OP69000", "OP69500", "OP70000" };

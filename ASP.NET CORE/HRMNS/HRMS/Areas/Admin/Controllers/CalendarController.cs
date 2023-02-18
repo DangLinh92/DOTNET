@@ -32,7 +32,17 @@ namespace HRMS.Areas.Admin.Controllers
         {
             DateTime start = param.StartDate;
             DateTime end = param.EndDate;
-            var data = _eventScheduleParentService.GetAllEvent().Where(app => (app.StartTime >= start && app.StartTime <= end) || (app.RecurrenceRule != null && app.RecurrenceRule != "")).ToList();
+            var data = _eventScheduleParentService.GetAllEventWithTime(start, end);  //.GetAllEvent().Where(app => (app.StartTime >= start && app.StartTime <= end) || (app.RecurrenceRule != null && app.RecurrenceRule != "")).ToList();
+
+            //List<RoomData> rooms = new List<RoomData>();
+            //rooms.Add(new RoomData { Name = "Todo", Id = 0, Color = "#42a5f5" });
+            //rooms.Add(new RoomData { Name = "Pending", Id = 1, Color = "#ef5350" });
+            //rooms.Add(new RoomData { Name = "Inprogress", Id = 2, Color = "#ffb300" });
+            //rooms.Add(new RoomData { Name = "Completed", Id = 3, Color = "#4caf50" });
+            //ViewBag.RoomDatas = rooms;
+            //string[] resources = new string[] { "TaskRoom" };
+            //ViewBag.ResourceNames = resources;
+
             return Json(data);
         }
 
@@ -133,6 +143,13 @@ namespace HRMS.Areas.Admin.Controllers
             public List<EventScheduleParentViewModel> changed { get; set; }
             public List<EventScheduleParentViewModel> deleted { get; set; }
             public EventScheduleParentViewModel value { get; set; }
+        }
+
+        public class RoomData
+        {
+            public string Name { get; set; }
+            public int Id { get; set; }
+            public string Color { get; set; }
         }
     }
 

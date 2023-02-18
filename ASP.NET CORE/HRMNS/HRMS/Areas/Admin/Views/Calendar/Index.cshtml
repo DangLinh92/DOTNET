@@ -23,13 +23,6 @@
         CrudUrl = "UpdateData",
         CrossDomain = true
     };
-
-    List<ScheduleView> viewOption = new List<ScheduleView>()
-    {
-        new ScheduleView { Option = Syncfusion.EJ2.Schedule.View.Day },
-        new ScheduleView { Option = Syncfusion.EJ2.Schedule.View.Week },
-        new ScheduleView { Option = Syncfusion.EJ2.Schedule.View.Month }
-    };
 }
 <div class="content container-fluid">
     <div class="page-header">
@@ -51,12 +44,14 @@
                         <div class="col-md-12">
 
                             <!-- Calendar -->
-                            <ejs-schedule id="schedule" currentView="Month" timezone="Asia/Saigon" height="700" selectedDate="DateTime.Now" actionBegin="onActionBegin">
+                            <ejs-schedule id="schedule" currentView="Month" timezone="Asia/Saigon" height="700" selectedDate="DateTime.Now" actionBegin="onActionBegin" eventRendered="onEventRendered">
                                 <e-schedule-views>
                                     <e-schedule-view option="Day" displayName="Day"></e-schedule-view>
                                     <e-schedule-view option="Week" displayName="Week"></e-schedule-view>
                                     <e-schedule-view option="Month" displayName="Month"></e-schedule-view>
                                     <e-schedule-view option="Year" interval="12" displayName="Year"></e-schedule-view>
+                                    <e-schedule-view option="Agenda" agendaDaysCount="7" eventTemplate="<div class='template-wrap'><div class='subject'>${Subject}</div></div>" allowVirtualScrolling="false"></e-schedule-view>
+                                    <e-schedule-view option="MonthAgenda" displayName="MonthAgenda"></e-schedule-view>
                                 </e-schedule-views>
                                 <e-schedule-eventsettings dataSource="dataManager"></e-schedule-eventsettings>
                             </ejs-schedule>
@@ -82,4 +77,33 @@
             }
         }
     }
+
+    function onEventRendered(args) {
+        console.log(args);
+        var scheduleObj = document.getElementById('schedule').ej2_instances[0];
+        var categoryColor = '#42a5f5';
+
+        if (args.data.RoomId == 0 || !args.data.RoomId) {
+            categoryColor = '#42a5f5';
+        }
+        else if (args.data.RoomId == 1) {
+            categoryColor = '#ef5350';
+        }
+        else if (args.data.RoomId == 2) {
+            categoryColor = '#ffb300';
+        }
+        else if (args.data.RoomId == 3) {
+            categoryColor = '#4caf50';
+        }
+
+        if (!args.element || !categoryColor) {
+            return;
+        }
+        if (scheduleObj.currentView === 'Agenda' || scheduleObj.currentView == 'MonthAgenda') {
+            (args.element.firstChild).style.borderLeftColor = categoryColor;
+        } else {
+            args.element.style.backgroundColor = categoryColor;
+        }
+    }
+        
 </script>

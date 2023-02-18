@@ -71,5 +71,10 @@ namespace HRMNS.Application.Implementation
         {
             _unitOfWork.Commit();
         }
+
+        public List<EventScheduleParentViewModel> GetAllEventWithTime(DateTime? start, DateTime? end)
+        {
+            return _mapper.Map<List<EventScheduleParentViewModel>>(_eventParentRepository.FindAll(app=> (app.StartTime >= start && app.StartTime <= end) || (app.RecurrenceRule != null && app.RecurrenceRule != "")));
+        }
     }
 }

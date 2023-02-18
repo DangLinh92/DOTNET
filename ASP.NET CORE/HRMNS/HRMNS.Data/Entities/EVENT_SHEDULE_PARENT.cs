@@ -18,7 +18,7 @@ namespace HRMNS.Data.Entities
         public EVENT_SHEDULE_PARENT(Guid id, string title, string startevent, string endevent, string repeat, string content, string bophan,
             string timealert, Guid manoidungkh, DateTime? startTime, DateTime? endTime, 
             bool? isAllDay,string recurrenceRule,string startTimezone,string endTimezone,
-            int? recurrenceID, string recurrenceException, int? conferenceId,string location)
+            int? recurrenceID, string recurrenceException, int? conferenceId,string location,int roomId)
         {
             Id = id;
             Subject = title;
@@ -39,6 +39,7 @@ namespace HRMNS.Data.Entities
             RecurrenceException = recurrenceException;
             ConferenceId = conferenceId;
             Location = location;
+            RoomId = roomId;
         }
 
         [StringLength(250)]
@@ -84,6 +85,8 @@ namespace HRMNS.Data.Entities
         public int? RecurrenceID { get; set; }
         public string RecurrenceException { get; set; }
         public int? ConferenceId { get; set; }
+
+        public int RoomId { get; set; }
 
         [StringLength(250)]
         public string Location { get; set; }

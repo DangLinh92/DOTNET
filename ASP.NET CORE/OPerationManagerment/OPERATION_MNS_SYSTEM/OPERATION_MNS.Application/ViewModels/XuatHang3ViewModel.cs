@@ -16,7 +16,7 @@ namespace OPERATION_MNS.Application.ViewModels
 
     public class XuatHang2ViewModel
     {
-        public string Key { get => DateTime.Parse(Ngay).ToString("yyyyMMddHHmmss") + Module + Model + CasstteID; }
+        public string Key { get => Ngay + Module + Model + CasstteID; }
         public int STT { get; set; }
         public string Ngay { get; set; }
         public string Module { get; set; }
@@ -34,7 +34,7 @@ namespace OPERATION_MNS.Application.ViewModels
 
     public class XuatHang1ViewModel
     {
-        public string Key { get => DateTime.Parse(NgayXuat).ToString("yyyyMMddHHmmss") + LotID; }
+        public string Key { get => NgayXuat + LotID; }
         public int STT { get; set; }
         public string NgayXuat { get; set; }
         public string LotID { get; set; }

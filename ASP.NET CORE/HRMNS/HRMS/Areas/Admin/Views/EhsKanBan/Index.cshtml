@@ -1,0 +1,509 @@
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
+@model List<KanbanViewModel>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+@section Styles{
+    <style>
+
+        .kanban-list {
+            width: 25%;
+        }
+    </style>
+
+}
+
+@section Scripts
+{
+    <script>
+        var arrPending = @Html.Raw(JsonSerializer.Serialize(Model.Where(x => x.Status == "Pending").Select(x=>x.Id)));
+        var arrTodo =@Html.Raw(JsonSerializer.Serialize(Model.Where(x => x.Status == "TODO").Select(x => x.Id)));
+        var arrInprogress = @Html.Raw(JsonSerializer.Serialize(Model.Where(x => x.Status == "Inprogress").Select(x => x.Id)));
+        var arrComplete = @Html.Raw(JsonSerializer.Serialize(Model.Where(x => x.Status == "Completed").Select(x => x.Id)));
+
+        $('#btnSave').on('click', function (e) {
+            let lstPending = [];
+            let lstTodo = [];
+            let lstInprogress = [];
+            let lstComplete = [];
+
+            console.log(arrPending);
+            console.log(arrTodo);
+            console.log(arrInprogress);
+            console.log(arrComplete);
+
+            var peddings = $('#kanban-Pending').find('.card');
+            var todos = $('#kanban-Todo').find('.card');
+            var inprogress = $('#kanban-Inprogress').find('.card');
+            var completed = $('#kanban-Completed').find('.card');
+
+            for (var p of peddings) {
+                if (!arrPending.includes(p.id)) {
+                    lstPending.push(p.id);
+                }
+            }
+
+            for (var p of todos) {
+                if (!arrTodo.includes(p.id)) {
+                    lstTodo.push(p.id);
+                }
+            }
+
+            for (var p of inprogress) {
+                if (!arrInprogress.includes(p.id)) {
+                    lstInprogress.push(p.id);
+                }
+            }
+
+            for (var p of completed) {
+                if (!arrComplete.includes(p.id)) {
+                    lstComplete.push(p.id);
+                }
+            }
+
+            console.log(lstPending);
+            console.log(lstTodo);
+            console.log(lstInprogress);
+            console.log(lstComplete);
+
+            $.ajax({
+                url: '/admin/EhsKanBan/UpdateEventAfterDrag',
+                type: 'POST',
+                data: {
+                    pendings: lstPending,
+                    todos: lstTodo,
+                    inprogress: lstInprogress,
+                    complete: lstComplete
+                },
+                success: function (response) {
+                    console.log(response);
+                    hrms.notify("Success!", 'Success', 'alert', function () {
+                        location.reload();
+                    });
+                },
+                error: function (status) {
+                    hrms.notify(status.responseText, 'error', 'alert', function () { });
+                }
+            });
+
+        });
+
+        $('body').on('click', '.editTask', function (e) {
+            e.preventDefault();
+
+            var _id = $(this).data('id');
+
+            $('#taskId').val(_id);
+            $('#txtTitle').val('');
+            $('#txtPriority').val('');
+            $('#txtProgress').val('');
+            $('#txtBeginTime').val('');
+            $('#txtActualFinish').val('');
+            $('#txtNguoiPhuTrach').val('');
+            $('#txtStatus').val('');
+
+            $.ajax({
+                url: '/Admin/EhsKanBan/GetTaskById',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    id: _id
+                },
+                success: function (data)
+                {
+                    $('#txtTitle').val(data.Title);
+                    $('#txtPriority').val(data.Priority);
+                    $('#txtProgress').val(data.Progress);
+                    $('#txtBeginTime').val(data.BeginTime);
+                    $('#txtActualFinish').val(data.ActualFinish);
+                    $('#txtNguoiPhuTrach').val(data.NguoiPhuTrach);
+                    $('#txtStatus').val(data.Status);
+
+                    $('#txtPriority').trigger('change');
+                    $('#txtStatus').trigger('change');
+                },
+                error: function (status) {
+                    hrms.notify('error:' + status.responseText, 'error', 'alert', function () { });
+                }
+            });
+
+            $('#edit_task_modal').modal('show');
+        });
+
+        $('body').on('click', '.deleteTask', function (e) {
+            e.preventDefault();
+
+            var _id = $(this).data('id');
+            $('#txtHiddenId').val(_id);
+            $('#delete_task').modal('show');
+        });
+
+        $('#btnDeleteTask').on('click', function (e) {
+
+            let _id = $('#txtHiddenId').val();
+            $.ajax({
+                url: '/Admin/EhsKanBan/HideTask',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    id: _id
+                },
+                success: function (data) {
+                    hrms.notify("Success!", 'Success', 'alert', function () {
+                        location.reload();
+                    });
+                },
+                error: function (status) {
+                    hrms.notify('error:' + status.responseText, 'error', 'alert', function () { });
+                }
+            });
+        });
+    </script>
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="page-title">@(localizer["KANBAN_KEHOACH"])</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/admin/home/index">Home</a></li>
+                    <li class="breadcrumb-item active">@(localizer["KANBAN_KEHOACH"])</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+    <div class="row board-view-header">
+        <div class="col-4">
+        </div>
+        <div class="col-8 text-right">
+            <a href="#" class="btn btn-primary float-right ml-2" style="width:100px" id="btnSave">Save </a>
+        </div>
+    </div>
+    <div class="kanban-board card mb-0">
+        <div class="card-body">
+            <div class="kanban-cont">
+                <div class="kanban-list kanban-danger">
+                    <div class="kanban-header">
+                        <span class="status-title">Pending</span>
+                    </div>
+                    <div class="kanban-wrap" id="kanban-Pending">
+
+                        @foreach (var ev in Model.Where(x => x.Status == "Pending"))
+                        {
+                            <div class="card panel" id="@(ev.Id)">
+                                <div class="kanban-box">
+                                    <div class="task-board-header">
+                                        <span class="status-title"><a href="#">@ev.Title</a></span>
+                                        <div class="dropdown kanban-task-action">
+                                            <a href="" data-toggle="dropdown">
+                                                <i class="fa fa-angle-down"></i>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a class="dropdown-item editTask" href="#" data-toggle="modal" data-id="@(ev.Id)" data-target="#edit_task_modal">Edit</a>
+                                                <a class="dropdown-item deleteTask" href="#" data-id="@(ev.Id)">Delete</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="task-board-body">
+                                        <div class="kanban-info">
+                                            <div class="progress progress-xs">
+                                                <div class="progress-bar" role="progressbar" style="width: @(ev.Progress)% " aria-valuenow="@ev.Progress" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                            <span>@ev.Progress%</span>
+                                        </div>
+                                        <div class="kanban-footer">
+                                            <span class="task-info-cont">
+                                                <span class="task-date"><i class="fa fa-clock-o"></i>@(ev.BeginTime)</span>
+                                                @if (ev.Priority == "Normal")
+                                                {
+                                                    <span class="task-priority badge bg-inverse-warning">@(ev.Priority)</span>
+                                                }
+                                                else if (ev.Priority == "High")
+                                                {
+                                                    <span class="task-priority badge bg-inverse-danger">@(ev.Priority)</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="task-priority badge bg-inverse-success">@(ev.Priority)</span>
+                                                }
+                                            </span>
+                                            <span class="task-users badge bg-inverse-success">
+                                                @(ev.NguoiPhuTrach)
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="kanban-list kanban-info">
+                    <div class="kanban-header">
+                        <span class="status-title">Ready To Start</span>
+                    </div>
+                    <div class="kanban-wrap" id="kanban-Todo">
+                        @foreach (var ev in Model.Where(x => x.Status == "TODO"))
+                        {
+                            <div class="card panel" id="@(ev.Id)">
+                                <div class="kanban-box">
+                                    <div class="task-board-header">
+                                        <span class="status-title"><a href="#">@ev.Title</a></span>
+                                        <div class="dropdown kanban-task-action">
+                                            <a href="" data-toggle="dropdown">
+                                                <i class="fa fa-angle-down"></i>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a class="dropdown-item editTask" href="#" data-toggle="modal" data-id="@(ev.Id)" data-target="#edit_task_modal">Edit</a>
+                                                <a class="dropdown-item deleteTask" href="#" data-id="@(ev.Id)">Delete</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="task-board-body">
+                                        <div class="kanban-info">
+                                            <div class="progress progress-xs">
+                                                <div class="progress-bar" role="progressbar" style="width: @(ev.Progress)% " aria-valuenow="@ev.Progress" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                            <span>@ev.Progress%</span>
+                                        </div>
+                                        <div class="kanban-footer">
+                                            <span class="task-info-cont">
+                                                <span class="task-date"><i class="fa fa-clock-o"></i>@(ev.BeginTime)</span>
+                                                @if (ev.Priority == "Normal")
+                                                {
+                                                    <span class="task-priority badge bg-inverse-warning">@(ev.Priority)</span>
+                                                }
+                                                else if (ev.Priority == "High")
+                                                {
+                                                    <span class="task-priority badge bg-inverse-danger">@(ev.Priority)</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="task-priority badge bg-inverse-success">@(ev.Priority)</span>
+                                                }
+
+                                                @if (ev.BeginTime.CompareTo(DateTime.Now.ToString("yyyy-MM-dd")) < 0)
+                                                {
+                                                    <span class="task-priority badge bg-inverse-danger">Over Time</span>
+                                                }
+                                            </span>
+                                            <span class="task-users badge bg-inverse-primary">
+                                                @(ev.NguoiPhuTrach)
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="kanban-list kanban-warning">
+                    <div class="kanban-header">
+                        <span class="status-title">Inprogress</span>
+                    </div>
+                    <div class="kanban-wrap" id="kanban-Inprogress">
+                        @foreach (var ev in Model.Where(x => x.Status == "Inprogress"))
+                        {
+                            <div class="card panel" id="@(ev.Id)">
+                                <div class="kanban-box">
+                                    <div class="task-board-header">
+                                        <span class="status-title"><a href="#">@ev.Title</a></span>
+                                        <div class="dropdown kanban-task-action">
+                                            <a href="" data-toggle="dropdown">
+                                                <i class="fa fa-angle-down"></i>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a class="dropdown-item editTask" href="#" data-toggle="modal" data-id="@(ev.Id)" data-target="#edit_task_modal">Edit</a>
+                                                <a class="dropdown-item deleteTask" href="#" data-id="@(ev.Id)">Delete</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="task-board-body">
+                                        <div class="kanban-info">
+                                            <div class="progress progress-xs">
+                                                <div class="progress-bar" role="progressbar" style="width: @(ev.Progress)% " aria-valuenow="@ev.Progress" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                            <span>@ev.Progress%</span>
+                                        </div>
+                                        <div class="kanban-footer">
+                                            <span class="task-info-cont">
+                                                <span class="task-date"><i class="fa fa-clock-o"></i>@(ev.BeginTime)</span>
+                                                @if (ev.Priority == "Normal")
+                                                {
+                                                    <span class="task-priority badge bg-inverse-warning">@(ev.Priority)</span>
+                                                }
+                                                else if (ev.Priority == "High")
+                                                {
+                                                    <span class="task-priority badge bg-inverse-danger">@(ev.Priority)</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="task-priority badge bg-inverse-success">@(ev.Priority)</span>
+                                                }
+                                            </span>
+                                            <span class="task-users badge bg-inverse-success">
+                                                @(ev.NguoiPhuTrach)
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="kanban-list kanban-success">
+                    <div class="kanban-header">
+                        <span class="status-title">Completed</span>
+                    </div>
+
+                    <div class="kanban-wrap" id="kanban-Completed">
+                        @foreach (var ev in Model.Where(x => x.Status == "Completed").OrderByDescending(x => x.ActualFinish))
+                        {
+                            <div class="card panel" id="@(ev.Id)">
+                                <div class="kanban-box">
+                                    <div class="task-board-header">
+                                        <span class="status-title"><a href="#">@ev.Title</a></span>
+                                        <div class="dropdown kanban-task-action">
+                                            <a href="" data-toggle="dropdown">
+                                                <i class="fa fa-angle-down"></i>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a class="dropdown-item editTask" href="#" data-toggle="modal" data-id="@(ev.Id)" data-target="#edit_task_modal">Edit</a>
+                                                <a class="dropdown-item deleteTask" href="#" data-id="@(ev.Id)">Delete</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="task-board-body">
+                                        <div class="kanban-info">
+                                            <div class="progress progress-xs">
+                                                <div class="progress-bar" role="progressbar" style="width: @(ev.Progress)% " aria-valuenow="@ev.Progress" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                            <span>@ev.Progress%</span>
+                                        </div>
+                                        <div class="kanban-footer">
+                                            <span class="task-info-cont">
+                                                <span class="task-date"><i class="fa fa-clock-o"></i>@(ev.BeginTime)</span>
+
+                                                @if (ev.Priority == "Normal")
+                                                {
+                                                    <span class="task-priority badge bg-inverse-warning">@(ev.Priority)</span>
+                                                }
+                                                else if (ev.Priority == "High")
+                                                {
+                                                    <span class="task-priority badge bg-inverse-danger">@(ev.Priority)</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="task-priority badge bg-inverse-success">@(ev.Priority)</span>
+                                                }
+                                            </span>
+                                            <span class="task-users badge bg-inverse-success">
+                                                @(ev.NguoiPhuTrach)
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Edit Task Modal -->
+<div id="edit_task_modal" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Edit Task</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form action="/admin/EhsKanBan/UpdateTask" method="post">
+                    <input hidden id="taskId" name="Id" />
+                    <div class="form-group">
+                        <label>Task Name</label>
+                        <input type="text" id="txtTitle" name="Title" class="form-control" value="Website Redesign" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Task Priority(Ưu tiên)</label>
+                        <select class="form-control select" id="txtPriority" name="Priority">
+                            <option value="Normal">Normal</option>
+                            <option value="High">High</option>
+                            <option value="Low">Low</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Progress(Tiến độ hoàn thành)</label>
+                        <input class="form-control" type="number" min="0" max="100" name="Progress" id="txtProgress" />
+                    </div>
+                    <div class="form-group">
+                        <label>Status(Trạng thái)</label>
+                        <select class="form-control select" id="txtStatus" name="Status">
+                            <option value="Pending">Pending</option>
+                            <option value="TODO">Ready To Start</option>
+                            <option value="Inprogress">Inprogress</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Start Date(Ngày bắt đầu)</label>
+                        <div class="cal-icon">
+                            <input class="form-control datetimepicker" type="text" value="20/08/2019" id="txtBeginTime" name="BeginTime" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>End Date(Ngày thực tế kết thúc)</label>
+                        <div class="cal-icon">
+                            <input class="form-control datetimepicker" type="text" value="20/08/2019" id="txtActualFinish" name="ActualFinish">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Người phụ trách</label>
+                        <input class="form-control" type="text" value="" id="txtNguoiPhuTrach" name="NguoiPhuTrach" readonly>
+                    </div>
+                    <div class="submit-section text-center">
+                        <button class="btn btn-primary submit-btn" type="submit">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Edit Task Modal -->
+<!-- Delete Modal -->
+<div class="modal custom-modal fade" id="delete_task" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header">
+                    <input type="hidden" id="txtHiddenId" />
+                    <h3>Delete Task</h3>
+                    <p>Are you sure want to delete?</p>
+                </div>
+                <div class="modal-btn delete-action">
+                    <div class="row">
+                        <div class="col-6">
+                            <a href="javascript:void(0);" id="btnDeleteTask" class="btn btn-primary continue-btn">Delete</a>
+                        </div>
+                        <div class="col-6">
+                            <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Delete Modal -->

@@ -15,6 +15,7 @@ namespace OPERATION_MNS.Application.Interfaces
 
         PostOpeationShippingViewModel FindItemXH1(string key);
         List<PostOpeationShippingViewModel> FindItemXH2(string key);
+        List<PostOpeationShippingViewModel> FindItemXH3(string key);
 
         void Delete(PostOpeationShippingViewModel model);
 

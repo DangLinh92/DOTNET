@@ -1,4 +1,4 @@
-﻿
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
 @{
     ViewData["Title"] = "Kế Hoạch An Toàn Bức Xạ";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
@@ -256,6 +256,13 @@
             return false;
         });
 
+        function getStatus() {
+            return ["Pending", "TODO", "Inprogress", "Completed"];
+        };
+
+        function getShowBoard() {
+            return ["Y", "N"];
+        };
     </script>
 }
 @section Styles{}
@@ -265,7 +272,7 @@
     <div class="page-header" style="margin-bottom:-1rem">
         <div class="row">
             <div class="col-sm-12">
-                <h3 class="page-title">CÔNG VIỆC THỰC HIỆN AN TOÀN BỨC XẠ HẠT NHÂN HÀNG NĂM - 매년 핵 방사 안전 실시 업무</h3>
+                <h3 class="page-title">@(localizer["KEHOACH_ATBX"])</h3>
             </div>
         </div>
     </div>
@@ -345,33 +352,33 @@
     {
         columns.AddFor(m => m.Id).Visible(false).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
         columns.AddFor(m => m.STT).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.HangMuc).Caption("Hạng mục[항목]").Width(150).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.NoiDung).Caption("Nội Dung[내용]").Width(150).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.MaHieu).Caption("Mã hiệu").Width(150).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.ChuKyThucHien).Caption("Chu kỳ thực hiện[진행 주기]").Width(80).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.Year).Caption("Year").Width(80).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.ThoiGianCapL1).Caption("Thời gian cấp lần 1[1차 발급 시간]").Width(100).AllowEditing(false);
-        columns.AddFor(m => m.ThoiGianCapLai_L1).Caption("Thời hạn cấp lại 이행 시간").Width(100).AllowEditing(false);
-        columns.AddFor(m => m.ThoiGianCapLai_L2).Caption("Thời hạn cấp lại 이행 시간").Width(100).AllowEditing(false);
-        columns.AddFor(m => m.ThoiGianCapLai_L3).Caption("Thời hạn cấp lại 이행 시간").Width(100).AllowEditing(false);
-        columns.AddFor(m => m.ThoiGianCapLai_L4).Caption("Thời hạn cấp lại 이행 시간").Width(100).AllowEditing(false);
+        columns.AddFor(m => m.HangMuc).Caption(@localizer["HANG_MUC"].Value).Width(150).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.NoiDung).Caption(@localizer["NOI_DUNG"].Value).Width(150).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.MaHieu).Caption(@localizer["MA_HIEU"].Value).Width(150).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.ChuKyThucHien).Caption(@localizer["CHU_KY_THUC_HIEN"].Value).Width(80).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.Year).Caption(@localizer["YEAR"].Value).Width(80).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.ThoiGianCapL1).Caption(@localizer["THOI_GIAN_CAP_LAN_DAU"].Value).Width(100).AllowEditing(false);
+        columns.AddFor(m => m.ThoiGianCapLai_L1).Caption(@localizer["THOI_GIAN_CAP_LAI"].Value).Width(100).AllowEditing(false);
+        columns.AddFor(m => m.ThoiGianCapLai_L2).Caption(@localizer["THOI_GIAN_CAP_LAI"].Value).Width(100).AllowEditing(false);
+        columns.AddFor(m => m.ThoiGianCapLai_L3).Caption(@localizer["THOI_GIAN_CAP_LAI"].Value).Width(100).AllowEditing(false);
+        columns.AddFor(m => m.ThoiGianCapLai_L4).Caption(@localizer["THOI_GIAN_CAP_LAI"].Value).Width(100).AllowEditing(false);
 
-        columns.AddFor(m => m.YeuCau).Caption("Yêu cầu 요구 사항").Width(100).AllowEditing(true);
-        columns.AddFor(m => m.QuyDinhVBPL).Caption("Quy định VBPL 연관 법률 규정").Width(100).AllowEditing(true);
-        columns.AddFor(m => m.NguoiPhuTrach).Caption("Người Phụ Trách").Width(80).AllowEditing(true);
-        columns.AddFor(m => m.NhaThau).Caption("Nhà Thầu").Width(80).AllowEditing(true);
-        columns.AddFor(m => m.CostMonth_1).Caption("Chi Phí Tháng 1").AllowEditing(true).Format("#,##0");
-        columns.AddFor(m => m.CostMonth_2).Caption("Tháng 2").AllowEditing(true).Format("#,##0");
-        columns.AddFor(m => m.CostMonth_3).Caption("Tháng 3").AllowEditing(true).Format("#,##0");
-        columns.AddFor(m => m.CostMonth_4).Caption("Tháng 4").AllowEditing(true).Format("#,##0");
-        columns.AddFor(m => m.CostMonth_5).Caption("Tháng 5").AllowEditing(true).Format("#,##0");
-        columns.AddFor(m => m.CostMonth_6).Caption("Tháng 6").AllowEditing(true).Format("#,##0");
-        columns.AddFor(m => m.CostMonth_7).Caption("Tháng 7").AllowEditing(true).Format("#,##0");
-        columns.AddFor(m => m.CostMonth_8).Caption("Tháng 8").AllowEditing(true).Format("#,##0");
-        columns.AddFor(m => m.CostMonth_9).Caption("Tháng 9").AllowEditing(true).Format("#,##0");
-        columns.AddFor(m => m.CostMonth_10).Caption("Tháng 10").AllowEditing(true).Format("#,##0");
-        columns.AddFor(m => m.CostMonth_11).Caption("Tháng 11").AllowEditing(true).Format("#,##0");
-        columns.AddFor(m => m.CostMonth_12).Caption("Tháng 12").AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.YeuCau).Caption(@localizer["YEU_CAU"].Value).Width(100).AllowEditing(true);
+        columns.AddFor(m => m.QuyDinhVBPL).Caption(@localizer["LUAT_DINH_LIEN_QUAN"].Value).Width(100).AllowEditing(true);
+        columns.AddFor(m => m.NguoiPhuTrach).Caption(@localizer["NGUOI_PHU_TRACH"].Value).Width(80).AllowEditing(true);
+        columns.AddFor(m => m.NhaThau).Caption(@localizer["NHA_THAU"].Value).Width(80).AllowEditing(true);
+        columns.AddFor(m => m.CostMonth_1).Caption(@localizer["CHI_PHI_THANG_1"].Value).AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_2).Caption(@localizer["CHI_PHI_THANG_2"].Value).AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_3).Caption(@localizer["CHI_PHI_THANG_3"].Value).AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_4).Caption(@localizer["CHI_PHI_THANG_4"].Value).AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_5).Caption(@localizer["CHI_PHI_THANG_5"].Value).AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_6).Caption(@localizer["CHI_PHI_THANG_6"].Value).AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_7).Caption(@localizer["CHI_PHI_THANG_7"].Value).AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_8).Caption(@localizer["CHI_PHI_THANG_8"].Value).AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_9).Caption(@localizer["CHI_PHI_THANG_9"].Value).AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_10).Caption(@localizer["CHI_PHI_THANG_10"].Value).AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_11).Caption(@localizer["CHI_PHI_THANG_11"].Value).AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.CostMonth_12).Caption(@localizer["CHI_PHI_THANG_12"].Value).AllowEditing(true).Format("#,##0");
         columns.AddFor(m => m.CostTotal).Caption("Total").AllowEditing(false).Format("#,##0");
 
     }).SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true).Summary(s=>s.TotalItems(tt => {
@@ -392,7 +399,7 @@
     )
             @(Html.DevExtreme().Popup()
         .ID("detail-popup")
-        .Width(500)
+        .Width(800)
         .Height(500)
         .Container("#gridContainer")
         .ShowTitle(true)
@@ -443,8 +450,20 @@
         editing.AllowUpdating(true);
     })
     .Columns(columns => {
-        columns.AddFor(m => m.NgayBatDauEx).Format("yyyy-MM-dd").Caption("Ngày Bắt Đầu").AllowEditing(true);
-        columns.AddFor(m => m.NgayKetThucEx).Format("yyyy-MM-dd").Caption("Ngày Kết Thúc").AllowEditing(true);
+        columns.AddFor(m => m.NgayBatDauEx).Format("yyyy-MM-dd").Caption(@localizer["THOI_GIAN_BAT_DAU"].Value).AllowEditing(true);
+        columns.AddFor(m => m.NgayKetThucEx).Format("yyyy-MM-dd").Caption(@localizer["THOI_GIAN_KET_THUC"].Value).AllowEditing(true);
+
+        columns.AddFor(m => m.Status).Caption(@localizer["STATUS"].Value)
+        .AllowEditing(true)
+        .Lookup(lookup => lookup.DataSource("getStatus"));
+
+        columns.AddFor(m => m.Progress).Caption(@localizer["TIEN_DO"].Value)
+        .AllowEditing(true);
+
+        columns.AddFor(m => m.IsShowBoard).Caption("Hiển thị lên bảng công việc")
+        .AllowEditing(true)
+        .Lookup(lookup => lookup.DataSource("getShowBoard")
+                );
     }).OnSaving("SaveNgayThucHien")
 )
             }

@@ -14,7 +14,7 @@ namespace HRMNS.Application.ViewModels.System
         public EventScheduleParentViewModel(Guid id, string title, string startevent, string endevent, string repeat, string content, string bophan,
              string timealert, Guid manoidungkh, DateTime? startTime, DateTime? endTime,
              bool? isAllDay, string recurrenceRule, string startTimezone, string endTimezone,
-             int? recurrenceID, string recurrenceException, int? conferenceId,string location)
+             int? recurrenceID, string recurrenceException, int? conferenceId,string location,int roomId)
         {
             Id = id;
             Subject = title;
@@ -35,6 +35,7 @@ namespace HRMNS.Application.ViewModels.System
             RecurrenceException = recurrenceException;
             ConferenceId = conferenceId;
             Location = location;
+            RoomId = roomId;
         }
 
         public Guid Id { get; set; }
@@ -95,6 +96,8 @@ namespace HRMNS.Application.ViewModels.System
 
         [StringLength(250)]
         public string Location { get; set; }
+
+        public int RoomId { get; set; }
 
         public ICollection<EventSheduleViewModel> EVENT_SHEDULE { get; set; }
     }

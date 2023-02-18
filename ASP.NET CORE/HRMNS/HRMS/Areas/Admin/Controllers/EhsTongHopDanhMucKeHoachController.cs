@@ -45,6 +45,24 @@ namespace HRMS.Areas.Admin.Controllers
             var model = _danhMucKeHoachService.TongHopKeHoachByYear(year);
             return DataSourceLoader.Load(model, loadOptions);
         }
-       
+
+        public IActionResult List()
+        {
+            return View();
+        }
+
+        /// <summary>
+        /// Get kế hoạch trong khoảng thời gian
+        /// </summary>
+        /// <param name="loadOptions"></param>
+        /// <param name="fromTime"></param>
+        /// <param name="toTime"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public object ListKeHoach(DataSourceLoadOptions loadOptions, string fromTime, string toTime)
+        {
+           var data =  _danhMucKeHoachService.DanhSachKeHoachByTime(fromTime, toTime);
+            return DataSourceLoader.Load(data, loadOptions);
+        }
     }
 }

@@ -61,7 +61,7 @@ namespace HRMNS.Application.Implementation
         public EhsDanhMucKeHoachPageViewModel GetDataDanhMucKeHoachPage(Guid? maKeHoach)
         {
             EhsDanhMucKeHoachPageViewModel model = new EhsDanhMucKeHoachPageViewModel();
-            model.EhsDMKeHoachViewModels = GetDMKehoach();
+            model.EhsDMKeHoachViewModels = GetDMKehoach().OrderBy(x => x.OrderDM).ToList();
 
             if (maKeHoach == null)
             {
@@ -130,12 +130,12 @@ namespace HRMNS.Application.Implementation
 
         public List<TotalAllItemByYear> TongHopKeHoachByYear(string year)
         {
-            List<EHS_KEHOACH_QUANTRAC> quantrac = _ehsKeHoachQuanTracRepository.FindAll(x => x.Year == year).OrderBy(x=>x.STT).ToList();
+            List<EHS_KEHOACH_QUANTRAC> quantrac = _ehsKeHoachQuanTracRepository.FindAll(x => x.Year == year).OrderBy(x => x.STT).ToList();
             List<EHS_KE_HOACH_KHAM_SK> khamsuckhoe = _ehsKeHoachKhamSKRepository.FindAll(x => x.Year == year).ToList();
-            List<EHS_KEHOACH_DAOTAO_ANTOAN_VSLD> atld = _ehsKeHoachDaoTaoATLDRepository.FindAll(x => x.Year == year).OrderBy(x=>x.STT).ToList();
-            List<EHS_KEHOACH_KIEMDINH_MAYMOC> kiemdinhmaymoc = _ehsKiemDinhMMRepository.FindAll(x => x.Year == year).OrderBy(x=>x.STT).ToList();
-            List<EHS_KEHOACH_PCCC> phongchayCC = _ehsKeHoachPCCCRepository.FindAll(x => x.Year == year).OrderBy(x=>x.STT).ToList();
-            List<EHS_KEHOACH_ANTOAN_BUCXA> antoanbucxa = _ehsKehoachATBXRepository.FindAll(x => x.Year == year).OrderBy(x=>x.STT).ToList();
+            List<EHS_KEHOACH_DAOTAO_ANTOAN_VSLD> atld = _ehsKeHoachDaoTaoATLDRepository.FindAll(x => x.Year == year).OrderBy(x => x.STT).ToList();
+            List<EHS_KEHOACH_KIEMDINH_MAYMOC> kiemdinhmaymoc = _ehsKiemDinhMMRepository.FindAll(x => x.Year == year).OrderBy(x => x.STT).ToList();
+            List<EHS_KEHOACH_PCCC> phongchayCC = _ehsKeHoachPCCCRepository.FindAll(x => x.Year == year).OrderBy(x => x.STT).ToList();
+            List<EHS_KEHOACH_ANTOAN_BUCXA> antoanbucxa = _ehsKehoachATBXRepository.FindAll(x => x.Year == year).OrderBy(x => x.STT).ToList();
 
             List<TotalAllItemByYear> report = new List<TotalAllItemByYear>();
             TotalAllItemByYear item;
@@ -260,7 +260,7 @@ namespace HRMNS.Application.Implementation
                     STT = kh.STT,
                     OrderItem = 5,
                     TenDeMuc = "PCCC 소방에 관한 계획",
-                    TenNoiDung = kh.HangMuc ,
+                    TenNoiDung = kh.HangMuc,
                     NhaThau = kh.NhaThau,
                     ChuKy = kh.ChuKyThucHien,
                     NguoiPhuTrach = kh.NguoiPhuTrach,
@@ -309,6 +309,96 @@ namespace HRMNS.Application.Implementation
             }
 
             return report.OrderBy(x => x.OrderItem).ThenBy(x => x.STT).ToList();
+        }
+
+        public List<EhsKeHoachItemModel> DanhSachKeHoachByTime(string fromTime, string ToTime)
+        {
+            List<EhsKeHoachItemModel> rs = new List<EhsKeHoachItemModel>();
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic.Add("A_FROM", fromTime);
+            dic.Add("A_TO", ToTime);
+            ResultDB resultDB = _ehsDanhMucKHRespository.ExecProceduce2("PKG_BUSINESS@GET_LIST_KEHOACH", dic);
+            if (resultDB.ReturnInt == 0)
+            {
+                if (resultDB.ReturnDataSet.Tables[0].Rows.Count > 0)
+                {
+                    DataTable data = resultDB.ReturnDataSet.Tables[0];
+                    EhsKeHoachItemModel item;
+                    int rowN = 0;
+                    foreach (DataRow row in data.Rows)
+                    {
+                        item = new EhsKeHoachItemModel()
+                        {
+                            Demuc = row["Demuc"].NullString(),
+                            NoiDung = row["NoiDung"].NullString(),
+                            ThoiGian = row["NgayBatDau"].NullString(),
+                            NguoiPhuTrach = row["NguoiPhuTrach"].NullString(),
+                            SoNgayConLai = int.Parse(row["DIFF"].IfNullIsZero()),
+                            ActualFinish = row["ActualFinish"].NullString(),
+                            Progress = int.Parse(row["Progress"].IfNullIsZero()),
+                            Status = row["Status"].NullString(),
+                            STT = ++rowN
+                        };
+                        rs.Add(item);
+                    }
+                }
+            }
+            return rs;
+        }
+
+        public List<KanbanViewModel> GetKanBanBoard()
+        {
+            List<KanbanViewModel> rs = new List<KanbanViewModel>();
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            ResultDB resultDB = _ehsDanhMucKHRespository.ExecProceduce2("PKG_BUSINESS@GET_KANBAN_KEHOACH", dic);
+
+            if (resultDB.ReturnInt == 0)
+            {
+                if (resultDB.ReturnDataSet.Tables[0].Rows.Count > 0)
+                {
+                    DataTable data = resultDB.ReturnDataSet.Tables[0];
+                    KanbanViewModel item;
+                    foreach (DataRow row in data.Rows)
+                    {
+                        item = new KanbanViewModel()
+                        {
+                            Id = row["Id"].NullString(),
+                            Title = row["Demuc"].NullString(),
+                            BeginTime = row["NgayBatDau"].NullString(),
+                            Status = row["Status"].NullString(),
+                            NguoiPhuTrach = row["NguoiPhuTrach"].NullString(),
+                            Priority = row["Priority"].NullString(),
+                            IsShowBoard = row["IsShowBoard"].NullString(),
+                            Progress = int.Parse(row["Progress"].IfNullIsZero()),
+                            ActualFinish = row["ActualFinish"].NullString()
+                        };
+                        rs.Add(item);
+                    }
+                }
+            }
+
+            return rs;
+        }
+
+        public int UpdateEvent(string id, string status, string priority, string progress, string actualFinish, string begindate, string action)
+        {
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic.Add("A_ID", id.NullString());
+            dic.Add("A_STATUS", status.NullString());
+            dic.Add("A_PRIORITY", priority.NullString());
+            dic.Add("A_PROGRESS", progress.NullString());
+            dic.Add("A_ACTUAL_FINISH", actualFinish.NullString());
+            dic.Add("A_BEGIN_DATE", begindate.NullString());
+            dic.Add("A_ACTION", action.NullString());
+
+            ResultDB resultDB = _ehsDanhMucKHRespository.ExecProceduce2("PKG_BUSINESS@UPDATE_EVENT_BY_ID", dic);
+
+            return resultDB.ReturnInt;
+        }
+
+        public KanbanViewModel GetEvenById(string id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

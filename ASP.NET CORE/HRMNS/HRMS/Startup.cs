@@ -29,10 +29,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -183,6 +185,21 @@ namespace HRMS
             services.Configure<IISServerOptions>(options =>
             {
                 options.AllowSynchronousIO = true;
+                options.MaxRequestBodySize = 209715200;
+            });
+
+            services.AddLocalization(options => options.ResourcesPath = "Resources");
+            services.AddMvc()
+                .AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix,opts=> { opts.ResourcesPath = "Resources"; })
+                .AddDataAnnotationsLocalization();
+
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                var cultures = new List<CultureInfo> {new CultureInfo("vi-VN"),new CultureInfo("ko-KR")
+                };
+                options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("vi-VN");
+                options.SupportedCultures = cultures;
+                options.SupportedUICultures = cultures;
             });
 
             //string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -219,11 +236,7 @@ namespace HRMS
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            //app.UseStaticFiles(new StaticFileOptions
-            //{
-            //    FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "node_modules")),
-            //    RequestPath = "/node_modules"
-            //});
+
             app.UseMinResponse();
             app.UseRouting();
 
@@ -231,7 +244,9 @@ namespace HRMS
 
             app.UseAuthentication();
             app.UseAuthorization();
-            
+
+            app.UseRequestLocalization(app.ApplicationServices.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
+
             app.UseEndpoints(routes =>
             {
                 routes.MapControllerRoute(

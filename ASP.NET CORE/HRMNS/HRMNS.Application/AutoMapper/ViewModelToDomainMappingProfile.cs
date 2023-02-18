@@ -92,7 +92,7 @@ namespace HRMNS.Application.AutoMapper
             CreateMap<EventScheduleParentViewModel, EVENT_SHEDULE_PARENT>()
              .ConstructUsing(c => new EVENT_SHEDULE_PARENT(c.Id, c.Subject, c.StartEvent, c.EndEvent, c.Repeat, c.Description, c.BoPhan, c.TimeAlert,
                                                            c.MaNoiDungKH, c.StartTime, c.EndTime, c.IsAllDay, c.RecurrenceRule,
-                                                           c.StartTimezone, c.EndTimezone, c.RecurrenceID, c.RecurrenceException, c.ConferenceId, c.Location));
+                                                           c.StartTimezone, c.EndTimezone, c.RecurrenceID, c.RecurrenceException, c.ConferenceId, c.Location,c.RoomId));
 
             CreateMap<NhanVienCheDoDBViewModel, HR_NHANVIEN_CHEDO_DB>()
            .ConstructUsing(c => new HR_NHANVIEN_CHEDO_DB(c.MaNhanVien, c.CheDoDB, c.Note));
@@ -104,7 +104,7 @@ namespace HRMNS.Application.AutoMapper
       c.LayMau_Month_1, c.LayMau_Month_2, c.LayMau_Month_3, c.LayMau_Month_4, c.LayMau_Month_5, c.LayMau_Month_6, c.LayMau_Month_7, c.LayMau_Month_8, c.LayMau_Month_9, c.LayMau_Month_10, c.LayMau_Month_11, c.LayMau_Month_12));
 
             CreateMap<EhsNgayThucHienChiTietQuanTrac, EHS_NGAY_THUC_HIEN_CHITIET_QUANTRAC>()
-         .ConstructUsing(c => new EHS_NGAY_THUC_HIEN_CHITIET_QUANTRAC(c.MaEvent, c.MaKHQuanTrac, c.NoiDung, c.NgayBatDau, c.NgayKetThuc));
+         .ConstructUsing(c => new EHS_NGAY_THUC_HIEN_CHITIET_QUANTRAC(c.MaEvent, c.MaKHQuanTrac, c.NoiDung, c.NgayBatDau, c.NgayKetThuc, c.Status, c.Progress, c.Priority, c.IsShowBoard,c.ActualFinish));
 
             CreateMap<EhsNhanVienKhamSucKhoe, EHS_NHANVIEN_KHAM_SK>()
        .ConstructUsing(c => new EHS_NHANVIEN_KHAM_SK(c.MaKHKhamSK, c.ThoiGianKhamSK, c.MaNV, c.TenNV, c.Section, c.Note));
@@ -114,7 +114,7 @@ namespace HRMNS.Application.AutoMapper
      c.CostMonth_3, c.CostMonth_4, c.CostMonth_5, c.CostMonth_6, c.CostMonth_7, c.CostMonth_8, c.CostMonth_9, c.CostMonth_10, c.CostMonth_11, c.CostMonth_12, c.MaDMKeHoach, c.NhaThau, c.NguoiPhuTrach));
 
             CreateMap<EhsNgayThucHienChiTietKhamSKViewModel, EHS_NGAY_THUC_HIEN_CHITIET_KHAM_SK>()
-             .ConstructUsing(c => new EHS_NGAY_THUC_HIEN_CHITIET_KHAM_SK(c.MaEvent, c.MaKHKhamSK, c.NoiDung, c.NgayBatDau, c.NgayKetThuc));
+             .ConstructUsing(c => new EHS_NGAY_THUC_HIEN_CHITIET_KHAM_SK(c.MaEvent, c.MaKHKhamSK, c.NoiDung, c.NgayBatDau, c.NgayKetThuc,c.Status,c.Progress,c.Priority,c.IsShowBoard,c.ActualFinish));
 
 
             CreateMap<EhsKeHoachDaoTaoATLDViewModel, EHS_KEHOACH_DAOTAO_ANTOAN_VSLD>()
@@ -135,7 +135,7 @@ namespace HRMNS.Application.AutoMapper
      c.CostMonth_12));
 
             CreateMap<EhsThoiGianThucHienDaoTaoATVSViewModel, EHS_THOIGIAN_THUC_HIEN_DAOTAO_ATVSLD>()
-            .ConstructUsing(c => new EHS_THOIGIAN_THUC_HIEN_DAOTAO_ATVSLD(c.MaEvent, c.MaKHDaoTaoATLD, c.NoiDung, c.NgayBatDau, c.NgayKetThuc));
+            .ConstructUsing(c => new EHS_THOIGIAN_THUC_HIEN_DAOTAO_ATVSLD(c.MaEvent, c.MaKHDaoTaoATLD, c.NoiDung, c.NgayBatDau, c.NgayKetThuc, c.Status, c.Progress, c.Priority, c.IsShowBoard,c.ActualFinish));
 
             CreateMap<Ehs_KeHoach_PCCCViewModel, EHS_KEHOACH_PCCC>()
             .ConstructUsing(c => new EHS_KEHOACH_PCCC(
@@ -145,7 +145,7 @@ namespace HRMNS.Application.AutoMapper
                 c.CostMonth_11, c.CostMonth_12, c.HangMuc));
 
             CreateMap<EhsThoiGianThucHienPCCCViewModel, EHS_THOIGIAN_THUC_HIEN_PCCC>()
-            .ConstructUsing(c => new EHS_THOIGIAN_THUC_HIEN_PCCC(c.MaEvent, c.MaKH_PCCC, c.NoiDung, c.NgayBatDau, c.NgayKetThuc));
+            .ConstructUsing(c => new EHS_THOIGIAN_THUC_HIEN_PCCC(c.MaEvent, c.MaKH_PCCC, c.NoiDung, c.NgayBatDau, c.NgayKetThuc, c.Status, c.Progress, c.Priority, c.IsShowBoard,c.ActualFinish));
 
             CreateMap<EhsKeHoachAnToanBucXaViewModel, EHS_KEHOACH_ANTOAN_BUCXA>()
           .ConstructUsing(c => new EHS_KEHOACH_ANTOAN_BUCXA(c.MaDMKeHoach, c.STT, c.NoiDung, c.ChuKyThucHien, c.Year, c.ThoiGianDaoTao, c.NguoiPhuTrach,
@@ -153,10 +153,10 @@ namespace HRMNS.Application.AutoMapper
           c.CostMonth_11, c.CostMonth_12, c.HangMuc, c.ThoiGianCapL1, c.ThoiGianCapLai_L1, c.ThoiGianCapLai_L2, c.ThoiGianCapLai_L3, c.YeuCau, c.QuyDinhVBPL, c.MaHieu, c.ThoiGianCapLai_L4));
 
             CreateMap<EhsThoiGianThucHienAnToanBucXaViewModel, EHS_THOIGIAN_THUC_HIEN_ANTOAN_BUCXA>()
-           .ConstructUsing(c => new EHS_THOIGIAN_THUC_HIEN_ANTOAN_BUCXA(c.MaEvent, c.MaKH_ATBX, c.NoiDung, c.NgayBatDau, c.NgayKetThuc));
+           .ConstructUsing(c => new EHS_THOIGIAN_THUC_HIEN_ANTOAN_BUCXA(c.MaEvent, c.MaKH_ATBX, c.NoiDung, c.NgayBatDau, c.NgayKetThuc, c.Status, c.Progress, c.Priority, c.IsShowBoard,c.ActualFinish));
 
             CreateMap<EhsThoiGianKiemDinhMayMocViewModel, EHS_THOIGIAN_THUC_HIEN_KIEMDINH_MM>()
-            .ConstructUsing(c => new EHS_THOIGIAN_THUC_HIEN_KIEMDINH_MM(c.MaEvent, c.MaKH_KDMM, c.NoiDung, c.NgayBatDau, c.NgayKetThuc));
+            .ConstructUsing(c => new EHS_THOIGIAN_THUC_HIEN_KIEMDINH_MM(c.MaEvent, c.MaKH_KDMM, c.NoiDung, c.NgayBatDau, c.NgayKetThuc, c.Status, c.Progress, c.Priority, c.IsShowBoard,c.ActualFinish));
 
             CreateMap<EhsKeHoachKiemDinhMayMocViewModel, EHS_KEHOACH_KIEMDINH_MAYMOC>()
             .ConstructUsing(c => new EHS_KEHOACH_KIEMDINH_MAYMOC(c.MaDMKeHoach, c.STT, c.TenMayMoc, c.ChuKyKiemDinh, c.SoLuongThietBi, c.ViTri, c.NguoiPhuTrach, c.NhaThau,

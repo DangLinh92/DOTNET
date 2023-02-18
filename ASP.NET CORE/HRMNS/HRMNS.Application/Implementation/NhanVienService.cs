@@ -204,14 +204,22 @@ namespace HRMNS.Application.Implementation
         {
             ExcelWorksheet worksheet = packet.Workbook.Worksheets[1];
             HR_NHANVIEN nhanvien;
+            bool isUpdate = false;
             for (int i = worksheet.Dimension.Start.Row + 2; i <= worksheet.Dimension.End.Row; i++)
             {
+                isUpdate = false;
                 nhanvien = new HR_NHANVIEN();
                 nhanvien.Id = worksheet.Cells[i, 2].Text.NullString().ToUpper();
 
-                if (string.IsNullOrEmpty(nhanvien.Id) || _nhanvienRepository.FindById(nhanvien.Id) != null)
+                if (string.IsNullOrEmpty(nhanvien.Id))
                 {
                     continue;
+                }
+              
+                if (_nhanvienRepository.FindById(nhanvien.Id) != null)
+                {
+                    nhanvien = _nhanvienRepository.FindById(nhanvien.Id);
+                    isUpdate = true;
                 }
 
                 nhanvien.MaChucDanh = worksheet.Cells[i, 3].Text.NullString();
@@ -282,6 +290,7 @@ namespace HRMNS.Application.Implementation
 
                 if (!string.IsNullOrEmpty(nhanvien.MaBHXH))
                 {
+                    nhanvien.HR_BHXH.Clear();
                     nhanvien.HR_BHXH.Add(new HR_BHXH()
                     {
                         Id = nhanvien.MaBHXH,
@@ -303,6 +312,7 @@ namespace HRMNS.Application.Implementation
                 float.TryParse(worksheet.Cells[i, 33].Text.NullString(), out totalPhepNam);
                 float.TryParse(worksheet.Cells[i, 34].Text.NullString(), out remainPhepNam);
 
+                nhanvien.HR_PHEP_NAM.Clear();
                 nhanvien.HR_PHEP_NAM.Add(new HR_PHEP_NAM()
                 {
                     MaNhanVien = nhanvien.Id,
@@ -330,7 +340,14 @@ namespace HRMNS.Application.Implementation
                 nhanvien.UserCreated = GetUserId();
                 nhanvien.UserModified = GetUserId();
 
-                _nhanvienRepository.Add(nhanvien);
+                if (!isUpdate)
+                {
+                    _nhanvienRepository.Add(nhanvien);
+                }
+                else
+                {
+                    _nhanvienRepository.Update(nhanvien);
+                }
             }
         }
 

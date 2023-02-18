@@ -118,4 +118,13 @@ namespace HRMNS.Data.EF.Configurations
             entity.Property(x => x.Id).ValueGeneratedOnAdd();
         }
     }
+
+    public class EHS_EmailNotifyConfiguration : DbEntityConfiguration<EHS_MAIL_NOTIFY>
+    {
+        public override void Configure(EntityTypeBuilder<EHS_MAIL_NOTIFY> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
 }

@@ -1,0 +1,240 @@
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
+@{
+    ViewData["Title"] = "List";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+@section Scripts{
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+    <script>
+        var dataGrid, loadPanel;
+
+        $(function () {
+
+            let from = $("#txt_from").dxDateBox("instance").option('value');
+            let to = $("#txt_to").dxDateBox("instance").option('value');
+
+            LoadData(formatDate(from), formatDate(to));
+        });
+
+                function LoadData(Timefrom,Timeto) {
+                    dataGrid = $("#gridContainer").dxDataGrid("instance");
+                    loadPanel = $("#loadPanel").dxLoadPanel("instance");
+
+                    loadPanel.show();
+                    sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsTongHopDanhMucKeHoach", action = "ListKeHoach" })', "GET", { fromTime: Timefrom, toTime: Timeto})
+                                .always(() =>
+                                {
+                                    loadPanel.hide();
+                                })
+                                .done((data) => {
+                                    dataGrid.option("dataSource", data);
+                                });
+        }
+
+        function sendRequest(url, method, data) {
+            var d = $.Deferred();
+
+            method = method || "GET";
+
+            $.ajax(url, {
+                method: method,
+                data: data,
+                cache: false,
+                xhrFields: { withCredentials: true }
+            }).done(function (result) {
+                d.resolve(method === "GET" ? result.data : result);
+            }).fail(function (xhr) {
+                d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
+            });
+
+            return d.promise();
+        };
+
+        function formatDate(date) {
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2)
+                month = '0' + month;
+            if (day.length < 2)
+                day = '0' + day;
+
+            return [year, month, day].join('-');
+        }
+
+        function padTo2Digits(num) {
+            return num.toString().padStart(2, '0');
+        }
+
+        function selectedDate_From_changed(data) {
+
+            let sDate = data.value;
+            if (sDate == '') {
+                var date = new Date();
+            }
+            else {
+                var date = new Date(sDate);
+            }
+
+            let txtTo = $("#txt_to").dxDateBox("instance").option('value');
+
+            // Get year, month, and day part from the date
+            LoadData(formatDate(date), formatDate(txtTo));
+        };
+
+        function selectedDate_To_changed(data) {
+
+            let sDate = data.value;
+            if (sDate == '') {
+                var date = new Date();
+            }
+            else {
+                var date = new Date(sDate);
+            }
+
+            // Get year, month, and day part from the date
+
+            let txtFrom = $("#txt_from").dxDateBox("instance").option('value');
+            console.log(txtFrom);
+            // Get year, month, and day part from the date
+
+            LoadData(formatDate(txtFrom), formatDate(date));
+        };
+
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('DanhSachKeHoach');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'DanhSachKeHoach.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+    </script>
+}
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">@(localizer["DANHSACHKEHOACH"])</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/admin/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">@(localizer["DANHSACHKEHOACH"])</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="row align-items-center">
+        <div class="col">
+            <div class="form">
+                <div class="dx-fieldset">
+                    <div class="dx-field" style="float: left;width:250px">
+                        <div>
+                            @(Html.DevExtreme().DateBox()
+                                  .ID("txt_from")
+                                     .Type(DateBoxType.Date)
+                                  .Value(DateTime.Now.AddDays(-1))
+                                  .DisplayFormat("yyyy-MM-dd")
+                                  .Width(200)
+                                  .Placeholder("Select...")
+                                  .Label("From Date")
+                                  .OnValueChanged("selectedDate_From_changed")
+                            )
+
+                        </div>
+                    </div>
+                    <div class="dx-field" style="float: left; width: 200px">
+                        <div>
+                            @(Html.DevExtreme().DateBox()
+                                  .ID("txt_to")
+                                  .Type(DateBoxType.Date)
+                                  .Value(DateTime.Now)
+                                  .DisplayFormat("yyyy-MM-dd")
+                                  .Width(200)
+                                  .Placeholder("Select...")
+                                  .Label("To Date")
+                                  .OnValueChanged("selectedDate_To_changed")
+                            )
+                        </div>
+                    </div>
+                    <div class="dx-field" style="float: left; width: 250px;padding-top:7px">
+                        <div>
+                            <div class="dx-field-value">
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dx-field" style="float: left; width: 250px;padding-top:7px">
+                        <div>
+                            <div class="dx-field-value">
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        @(Html.DevExtreme().LoadPanel()
+        .ID("loadPanel")
+        .Position(p => p.Of("#gridContainer"))
+        .Visible(false)
+)
+        @(Html.DevExtreme().DataGrid<EhsKeHoachItemModel>
+    ()
+    .ID("gridContainer")
+    .Height(650)
+    .ShowBorders(true)
+    .RepaintChangesOnly(true)
+    .LoadPanel(loadPanel => loadPanel.Enabled(false))
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnMinWidth(50)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+    .OnExporting("exporting")
+    .Columns(columns =>
+    {
+        columns.AddFor(m => m.STT).Width(80);
+        columns.AddFor(m => m.Demuc).Caption(@localizer["DE_MUC"].Value).Width(250);
+        columns.AddFor(m => m.NoiDung).Caption(@localizer["NOI_DUNG"].Value);
+        columns.AddFor(m => m.ThoiGian).Caption(@localizer["THOI_GIAN_BAT_DAU"].Value).Width(120);
+        columns.AddFor(m => m.ActualFinish).Caption(@localizer["THOI_GIAN_KET_THUC"].Value).Width(100);
+        columns.AddFor(m => m.Progress).Caption(@localizer["TIEN_DO"].Value).Width(120);
+        columns.AddFor(m => m.Status).Caption(@localizer["STATUS"].Value).Width(120);
+        columns.AddFor(m => m.NguoiPhuTrach).Caption(@localizer["NGUOI_PHU_TRACH"].Value).Width(120);
+        columns.AddFor(m => m.SoNgayConLai).Caption(@localizer["SO_NGAY_CON_LAI"].Value).Width(100);
+
+    }).SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true)
+    )
+    </div>
+
+</div>
+

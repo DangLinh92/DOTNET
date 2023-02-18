@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Authorization
 @using HRMS.Authorization
 @inject IAuthorizationService AuthorizationService
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
 @model EhsDanhMucKeHoachPageViewModel
 @{
     ViewData["Title"] = "Index";
@@ -89,7 +90,7 @@
     <div class="page-header">
         <div class="row">
             <div class="col-sm-12">
-                <h3 class="page-title">Kế Hoạch EHS</h3>
+                <h3 class="page-title">@(localizer["DMKEHOACH"])</h3>
             </div>
         </div>
     </div>
@@ -97,7 +98,7 @@
 
     <div class="row">
         <div class="col-md-12">
-            <a href="#" class="btn btn-primary btn-block" style="width:162px" id="btnShowAddKH" data-toggle="modal" data-target="#add_kehoach"><i class="fa fa-plus"></i>Thêm Kế Hoạch</a>
+            <a href="#" class="btn btn-primary btn-block" style="width:162px" id="btnShowAddKH" data-toggle="modal" data-target="#add_kehoach"><i class="fa fa-plus"></i>Add New</a>
             <div class="roles-menu">
                 <ul>
                     @foreach (var item in Model.EhsDMKeHoachViewModels)
@@ -111,8 +112,8 @@
                                         <i class="material-icons">edit</i>
                                     </span>
                                     @*<span class="action-circle large delete-btn" data-toggle="modal" onclick="uDeleteClick('@item.Id', '@item.TenKeHoach_VN', event)" data-target="#delete_kehoach">
-                                        <i class="material-icons">delete</i>
-                                    </span>*@
+                                            <i class="material-icons">delete</i>
+                                        </span>*@
                                 </span>
                             </a>
                             <hr style="width: 80%;text-align: center;margin: 0 auto;">

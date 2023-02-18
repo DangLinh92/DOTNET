@@ -21,18 +21,16 @@ namespace HRMNS.Application.Implementation
         private IRespository<TRAINING_TYPE, int> _trainingTypeRepository;
         private IRespository<HR_TRAINING, Guid> _trainingListRepository;
         private IRespository<TRAINING_NHANVIEN, int> _trainingNhanVienRepository;
-        private IRespository<EVENT_SHEDULE_PARENT, Guid> _eventScheduleParentRepository;
         private IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public TrainningListService(IRespository<EVENT_SHEDULE_PARENT, Guid> eventScheduleParentRepository,
+        public TrainningListService(
             IRespository<TRAINING_TYPE, int> trainingTypeRepository,
             IRespository<HR_TRAINING, Guid> trainingListRepository,
             IRespository<TRAINING_NHANVIEN, int> trainingNhanVienRepository,
             IUnitOfWork unitOfWork, IMapper mapper,
             IHttpContextAccessor httpContextAccessor)
         {
-            _eventScheduleParentRepository = eventScheduleParentRepository;
             _trainingTypeRepository = trainingTypeRepository;
             _trainingListRepository = trainingListRepository;
             _trainingNhanVienRepository = trainingNhanVienRepository;
@@ -48,21 +46,6 @@ namespace HRMNS.Application.Implementation
 
         public Hr_TrainingViewModel AddTraining(Hr_TrainingViewModel trainigModel)
         {
-            Guid scheduleId = Guid.NewGuid();
-            string trainName = _trainingTypeRepository.FindById(trainigModel.TrainnigType).TrainName;
-            _eventScheduleParentRepository.Add(new EVENT_SHEDULE_PARENT()
-            {
-                Id = scheduleId,
-                Subject = trainName,
-                StartEvent = trainigModel.FromDate,
-                EndEvent = trainigModel.ToDate,
-                StartTime = DateTime.Parse(trainigModel.FromDate),
-                EndTime = DateTime.Parse(trainigModel.ToDate).AddDays(1),
-                Description = trainigModel.Description,
-                UserCreated = GetUserId()
-            });
-
-            trainigModel.MaEventParent = scheduleId;
             var en = _mapper.Map<HR_TRAINING>(trainigModel);
             en.UserCreated = GetUserId();
             _trainingListRepository.Add(en);
@@ -76,25 +59,11 @@ namespace HRMNS.Application.Implementation
             oldTraining.CopyPropertiesFrom(trainigModel, new List<string>() { "Id", "DateCreated", "DateModified", "UserCreated", "UserModified", "MaEventParent" });
             oldTraining.UserModified = GetUserId();
             _trainingListRepository.Update(oldTraining);
-
-            var scheduleParent = _eventScheduleParentRepository.FindById(oldTraining.MaEventParent);
-            string trainName = _trainingTypeRepository.FindById(trainigModel.TrainnigType).TrainName;
-            scheduleParent.Subject = trainName;
-            scheduleParent.StartEvent = trainigModel.FromDate;
-            scheduleParent.EndEvent = trainigModel.ToDate;
-            scheduleParent.StartTime = DateTime.Parse(trainigModel.FromDate);
-            scheduleParent.EndTime = DateTime.Parse(trainigModel.ToDate).AddDays(1) ;
-            scheduleParent.Description = trainigModel.Description;
-            scheduleParent.UserModified = GetUserId();
-            _eventScheduleParentRepository.Update(scheduleParent);
         }
 
         public void Delete(Guid id)
-        {
-            var en = _trainingListRepository.FindById(id);
-            var scheduleParent = _eventScheduleParentRepository.FindById(en.MaEventParent);
+        {       
             _trainingListRepository.Remove(id);
-            _eventScheduleParentRepository.Remove(scheduleParent);
         }
 
         public List<Hr_TrainingViewModel> GetAll()

@@ -16,13 +16,19 @@ namespace HRMNS.Data.Entities
 
         }
 
-        public EHS_NGAY_THUC_HIEN_CHITIET_KHAM_SK(Guid maEvent, Guid maKHKhamSK,string noidung,string ngayBatDau,string ngayKetThuc)
+        public EHS_NGAY_THUC_HIEN_CHITIET_KHAM_SK(Guid maEvent, Guid maKHKhamSK,string noidung,string ngayBatDau,string ngayKetThuc,
+            string status,int progress,string priority,string isShowBoard,string actualFinish)
         {
             MaEvent = maEvent;
             MaKHKhamSK = maKHKhamSK;
             NoiDung = noidung;
             NgayKetThuc = ngayBatDau;
             NgayKetThuc = ngayKetThuc;
+            Status = status;
+            Progress = progress;
+            Priority = priority;
+            IsShowBoard = isShowBoard;
+            ActualFinish = actualFinish;
         }
 
         public Guid MaEvent { get; set; }
@@ -49,6 +55,20 @@ namespace HRMNS.Data.Entities
 
         [StringLength(50)]
         public string UserModified { get; set; }
+
+        [StringLength(50)]
+        public string Status { get; set; }
+
+        public int Progress { get; set; }
+
+        [StringLength(50)]
+        public string Priority { get; set; }
+
+        [StringLength(10)]
+        public string IsShowBoard { get; set; }
+
+        [StringLength(50)]
+        public string ActualFinish { get; set; }
 
         [ForeignKey("MaKHKhamSK")]
         public virtual EHS_KE_HOACH_KHAM_SK EHS_KE_HOACH_KHAM_SK { get; set; }
