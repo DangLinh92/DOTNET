@@ -28,7 +28,8 @@
                                 {
                                     loadPanel.hide();
                                 })
-                                .done((data) => {
+                        .done((data) => {
+                            console.log(data);
                                     dataGrid.option("dataSource", data);
                                 });
         }
@@ -122,6 +123,60 @@
         }
     </script>
 }
+
+@section Styles{
+    <style>
+
+        .complete { /* Created with https://www.css-gradient.com */
+            /* Created with https://www.css-gradient.com */
+            /* Created with https://www.css-gradient.com */
+            background: #57EE6C;
+            background: -webkit-linear-gradient(right, #57EE6C, #055220);
+            background: -moz-linear-gradient(right, #57EE6C, #055220);
+            background: linear-gradient(to left, #57EE6C, #055220);
+            color: #2ab71b;
+            /* background-image: linear-gradient(to right, blue, green);*/
+            font-weight: bold;
+            padding-left: 10px;
+        }
+
+        .todo {
+            color: #2ab71b;
+            /* Created with https://www.css-gradient.com */
+            background: #58CAFC;
+            background: -webkit-linear-gradient(right, #58CAFC, #19A4E1);
+            background: -moz-linear-gradient(right, #58CAFC, #19A4E1);
+            background: linear-gradient(to left, #58CAFC, #19A4E1);
+            font-weight: bold;
+            padding-left: 10px;
+        }
+
+        .pending {
+            color: #2ab71b;
+            /* Created with https://www.css-gradient.com */
+            /* Created with https://www.css-gradient.com */
+            background: #EE6057;
+            background: -webkit-linear-gradient(right, #EE6057, #E12519);
+            background: -moz-linear-gradient(right, #EE6057, #E12519);
+            background: linear-gradient(to left, #EE6057, #E12519);
+            font-weight: bold;
+            padding-left: 10px;
+        }
+
+        .inprogress {
+            color: #2ab71b;
+            /* Created with https://www.css-gradient.com */
+            background: #EED557;
+            background: -webkit-linear-gradient(right, #EED557, #F1BB2B);
+            background: -moz-linear-gradient(right, #EED557, #F1BB2B);
+            background: linear-gradient(to left, #EED557, #F1BB2B);
+            font-weight: bold;
+            padding-left: 10px;
+        }
+    </style>
+}
+
+
 <div class="content container-fluid">
     <!-- Page Header -->
     <div class="page-header">
@@ -228,7 +283,11 @@
         columns.AddFor(m => m.ThoiGian).Caption(@localizer["THOI_GIAN_BAT_DAU"].Value).Width(120);
         columns.AddFor(m => m.ActualFinish).Caption(@localizer["THOI_GIAN_KET_THUC"].Value).Width(100);
         columns.AddFor(m => m.Progress).Caption(@localizer["TIEN_DO"].Value).Width(120);
-        columns.AddFor(m => m.Status).Caption(@localizer["STATUS"].Value).Width(120);
+        columns.AddFor(m => m.Status).Caption(@localizer["STATUS"].Value).Width(120).CellTemplate(@<text>
+                                    <div class="<%- data.Status == 'Completed' ? 'complete' : (data.Status == 'Inprogress' ? 'inprogress' : (data.Status == 'Ready To Start' ? 'todo' : (data.Status == 'Pending' ? 'pending' :''))) %>">
+                                        <span class="current-value" style="color:white"><%- text %></span>
+                                    </div>
+                                </text>);;
         columns.AddFor(m => m.NguoiPhuTrach).Caption(@localizer["NGUOI_PHU_TRACH"].Value).Width(120);
         columns.AddFor(m => m.SoNgayConLai).Caption(@localizer["SO_NGAY_CON_LAI"].Value).Width(100);
 

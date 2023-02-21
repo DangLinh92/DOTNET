@@ -12,7 +12,7 @@
     <span>@User.GetSpecificClaim("FullName")</span>
 </a>
 <div class="dropdown-menu">
-    @if (!User.IsInRole("Staff") && !User.IsInRole("GrLeader") && !User.IsInRole("AssLeader") && !User.IsInRole("KRManager"))
+    @if (User.IsInRole("Admin"))
     {
         <a class="dropdown-item" href="/admin/account/register">Register</a>
     }

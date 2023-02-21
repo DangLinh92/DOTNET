@@ -325,15 +325,17 @@ namespace HRMNS.Application.Implementation
                     DataTable data = resultDB.ReturnDataSet.Tables[0];
                     EhsKeHoachItemModel item;
                     int rowN = 0;
+                    int dayOff = 0;
                     foreach (DataRow row in data.Rows)
                     {
+                        dayOff = int.Parse(row["DIFF"].IfNullIsZero()) >= 0 ? int.Parse(row["DIFF"].IfNullIsZero()) : 0;
                         item = new EhsKeHoachItemModel()
                         {
                             Demuc = row["Demuc"].NullString(),
                             NoiDung = row["NoiDung"].NullString(),
                             ThoiGian = row["NgayBatDau"].NullString(),
                             NguoiPhuTrach = row["NguoiPhuTrach"].NullString(),
-                            SoNgayConLai = int.Parse(row["DIFF"].IfNullIsZero()),
+                            SoNgayConLai = dayOff,
                             ActualFinish = row["ActualFinish"].NullString(),
                             Progress = int.Parse(row["Progress"].IfNullIsZero()),
                             Status = row["Status"].NullString(),

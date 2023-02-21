@@ -14,7 +14,7 @@ namespace OMNS_Weebhook_Service
         public string SMTP_ID = "dhshin";
         public string SMTP_PW = "dhshin";
         public string FROM_ADDRESS = "whcpi1@wisol.co.kr";
-        private const string FROM_NAME = "CTQ Notification";
+        public string FROM_NAME = "Notification";
 
         private List<string> _toEmailAddressList = new List<string>();
         private List<string> _ccEmailAddressList = new List<string>();

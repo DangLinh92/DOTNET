@@ -1,4 +1,5 @@
-﻿var gulp = require("gulp"),
+﻿/// <binding BeforeBuild='clean, min' Clean='clean' />
+var gulp = require("gulp"),
   rimraf = require("rimraf"),
   concat = require("gulp-concat"),
   cssmin = require("gulp-cssmin"),

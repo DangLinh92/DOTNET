@@ -127,7 +127,7 @@ namespace HRMNS.Application.Implementation
 
                         row["HeSoOT"] = worksheet.Cells[i, 4].Text.NullString();
                         row["NoiDung"] = worksheet.Cells[i, 6].Text.NullString();
-                        row["SoGioOT"] = float.Parse(worksheet.Cells[i, 5].Text.NullString());
+                        row["SoGioOT"] = float.Parse(worksheet.Cells[i, 5].Text.NullString()); //double.Parse(overtime.SoGioOT_1, System.Globalization.CultureInfo.InvariantCulture);
 
                         table.Rows.Add(row);
                     }

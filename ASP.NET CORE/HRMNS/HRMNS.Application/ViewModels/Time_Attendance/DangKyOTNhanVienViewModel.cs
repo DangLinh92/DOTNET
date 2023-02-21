@@ -54,5 +54,7 @@ namespace HRMNS.Application.ViewModels.Time_Attendance
 
         [ForeignKey("MaNV")]
         public NhanVienViewModel HR_NHANVIEN { get; set; }
+
+        public string SoGioOT_1 { get; set; }
     }
 }

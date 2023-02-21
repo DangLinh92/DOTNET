@@ -142,7 +142,7 @@
                         Id: code,
                         MaNV: maNv,
                         NgayOT: ngayOT,
-                        SoGioOT: timeOT,
+                        SoGioOT_1: timeOT,
                         HeSoOT: hesoOT,
                         NoiDung: content
                     },

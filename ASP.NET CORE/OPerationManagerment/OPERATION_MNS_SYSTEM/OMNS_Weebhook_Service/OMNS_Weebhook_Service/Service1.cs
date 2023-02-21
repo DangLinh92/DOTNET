@@ -173,6 +173,7 @@ namespace OMNS_Weebhook_Service
                             {
                                 // SEND MAIL
                                 EmailSender emailSender = new EmailSender();
+                                emailSender.FROM_NAME = "CTQ Notification";
                                 emailSender.FROM_ADDRESS = "whcpi1@wisol.co.kr";
                                 emailSender.Subject = "THÔNG BÁO LỖI CHỈ SỐ CTQ";
 
@@ -304,6 +305,7 @@ namespace OMNS_Weebhook_Service
                             {
                                 // SEND MAIL
                                 EmailSender emailSender = new EmailSender();
+                                emailSender.FROM_NAME = "EHS Notification";
                                 emailSender.FROM_ADDRESS = "whcpi1@wisol.co.kr";
                                 emailSender.Subject = "Thông Báo Kế Hoạch EHS Sắp Tới";
 

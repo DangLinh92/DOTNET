@@ -63,6 +63,7 @@ namespace HRMS.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult RegisterOvertime(DangKyOTNhanVienViewModel overtime, [FromQuery] string action)
         {
+
             if (!ModelState.IsValid)
             {
                 IEnumerable<ModelError> allErrors = ModelState.Values.SelectMany(v => v.Errors);
@@ -70,6 +71,7 @@ namespace HRMS.Areas.Admin.Controllers
             }
             else
             {
+                overtime.SoGioOT = double.Parse(overtime.SoGioOT_1, System.Globalization.CultureInfo.InvariantCulture);
                 if (action == "Add")
                 {
                     DangKyOTNhanVienViewModel itemCheck = _overtimeService.CheckExist(0, overtime.MaNV, overtime.NgayOT, overtime.HeSoOT);
