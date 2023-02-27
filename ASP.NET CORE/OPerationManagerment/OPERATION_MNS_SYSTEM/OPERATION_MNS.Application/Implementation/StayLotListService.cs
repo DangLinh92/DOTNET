@@ -137,7 +137,7 @@ namespace OPERATION_MNS.Application.Implementation
                     }
                     else
                     {
-                        lot = new STAY_LOT_LIST(item.LotId.NullString(), model.PhuongAnXuLy.NullString(), model.TenLoi.NullString(), model.NguoiXuLy.NullString(), item.CassetteId.NullString(), item.history_seq,item.PhanLoaiLoi);
+                        lot = new STAY_LOT_LIST(item.LotId.NullString(), model.PhuongAnXuLy.NullString(), model.TenLoi.NullString(), model.NguoiXuLy.NullString(), item.CassetteId.NullString(), item.history_seq, model.PhanLoaiLoi);
                         lot.UserModified = GetUserId();
                         lot.UserCreated = GetUserId();
                         _StayLotListRepository.Add(lot);

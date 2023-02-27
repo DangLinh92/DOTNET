@@ -80,6 +80,7 @@ namespace HRMNS.Application.AutoMapper
 
             CreateMap<EHS_KEHOACH_KIEMDINH_MAYMOC, EhsKeHoachKiemDinhMayMocViewModel>();
             CreateMap<EHS_THOIGIAN_THUC_HIEN_KIEMDINH_MM, EhsThoiGianKiemDinhMayMocViewModel>();
+            CreateMap<EHS_FILES, EhsFilesViewModel>();
         }
     }
 }

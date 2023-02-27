@@ -39,7 +39,8 @@ namespace HRMNS.Application.Implementation
             // Id trong table EHS_DM_KEHOACH
             model.Id = Guid.NewGuid();
             model.MaDMKeHoach = Guid.Parse("8b5cb6e4-e925-4a8b-b14d-594b310b6a4f");
-            _EHSKeHoachPCCCRepository.Add(_mapper.Map<EHS_KEHOACH_PCCC>(model));
+            EHS_KEHOACH_PCCC en = _mapper.Map<EHS_KEHOACH_PCCC>(model);
+            _EHSKeHoachPCCCRepository.Add(en);
             return model;
         }
 
@@ -88,7 +89,8 @@ namespace HRMNS.Application.Implementation
             model.NoiDung = kehoach.NoiDung.NullString();
 
             model.MaEvent = AddNewEvent(model.MaEvent.ToString(), kehoach.HangMuc, model.NgayBatDau, model.NgayKetThuc, nguoiPhuTrach, nhaThau);
-            _EHSNgayThucHienPCCCRepository.Add(_mapper.Map<EHS_THOIGIAN_THUC_HIEN_PCCC>(model));
+            EHS_THOIGIAN_THUC_HIEN_PCCC enModel = _mapper.Map<EHS_THOIGIAN_THUC_HIEN_PCCC>(model);
+            _EHSNgayThucHienPCCCRepository.Add(enModel);
 
             Save();
 
@@ -111,7 +113,7 @@ namespace HRMNS.Application.Implementation
 
             en.ThoiGianDaoTao = days.Substring(0, days.Length - 1);
             _EHSKeHoachPCCCRepository.Update(en);
-            return model;
+            return _mapper.Map<EhsThoiGianThucHienPCCCViewModel>(enModel); ;
         }
 
         public EhsThoiGianThucHienPCCCViewModel UpdateThoiGianPCCC(EhsThoiGianThucHienPCCCViewModel model)

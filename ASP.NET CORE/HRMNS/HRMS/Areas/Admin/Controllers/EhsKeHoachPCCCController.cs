@@ -47,7 +47,7 @@ namespace HRMS.Areas.Admin.Controllers
             var khoach = new Ehs_KeHoach_PCCCViewModel();
             JsonConvert.PopulateObject(values, khoach);
 
-            EhsKeHoachPCCCService.Add(khoach);
+            khoach = EhsKeHoachPCCCService.Add(khoach);
             EhsKeHoachPCCCService.Save();
 
             return Ok(khoach);
@@ -75,6 +75,12 @@ namespace HRMS.Areas.Admin.Controllers
         public object GetThucHienPCCC(DataSourceLoadOptions loadOptions, Guid key)
         {
             var kehoach = EhsKeHoachPCCCService.GetById(key);
+
+            if(kehoach == null)
+            {
+                return DataSourceLoader.Load(new List<EhsThoiGianThucHienPCCCViewModel>(), loadOptions);
+            }
+
             return DataSourceLoader.Load(kehoach.EHS_THOIGIAN_THUC_HIEN_PCCC.ToList(), loadOptions);
         }
 
@@ -88,7 +94,7 @@ namespace HRMS.Areas.Admin.Controllers
             khoach.NgayBatDau = khoach.NgayBatDauEx.ToString("yyyy-MM-dd");
             khoach.NgayKetThuc = khoach.NgayKetThucEx.ToString("yyyy-MM-dd");
 
-            EhsKeHoachPCCCService.AddThoiGianPCCC(khoach);
+            khoach = EhsKeHoachPCCCService.AddThoiGianPCCC(khoach);
             EhsKeHoachPCCCService.Save();
 
             return Ok(khoach);

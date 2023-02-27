@@ -48,7 +48,7 @@ namespace HRMS.Areas.Admin.Controllers
             var khoach = new EhsKeHoachQuanTracViewModel();
             JsonConvert.PopulateObject(values, khoach);
 
-            EhsKeHoachQuanTracService.Add(khoach);
+            khoach = EhsKeHoachQuanTracService.Add(khoach);
             EhsKeHoachQuanTracService.Save();
 
             return Ok(khoach);
@@ -76,6 +76,12 @@ namespace HRMS.Areas.Admin.Controllers
         public object GetNgayQuanTrac(DataSourceLoadOptions loadOptions, int key)
         {
             var kehoach = EhsKeHoachQuanTracService.GetById(key);
+
+            if(kehoach == null)
+            {
+                return DataSourceLoader.Load(new List<EhsNgayThucHienChiTietQuanTrac>(), loadOptions);
+            }
+
             return DataSourceLoader.Load(kehoach.EHS_NGAY_THUC_HIEN_CHITIET_QUANTRAC.ToList(), loadOptions);
         }
 
@@ -89,7 +95,7 @@ namespace HRMS.Areas.Admin.Controllers
             khoach.NgayBatDau = khoach.NgayBatDauEx.ToString("yyyy-MM-dd");
             khoach.NgayKetThuc = khoach.NgayKetThucEx.ToString("yyyy-MM-dd");
 
-            EhsKeHoachQuanTracService.AddNgayQuanTrac(khoach);
+            khoach = EhsKeHoachQuanTracService.AddNgayQuanTrac(khoach);
             EhsKeHoachQuanTracService.Save();
 
             return Ok(khoach);

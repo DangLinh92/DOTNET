@@ -47,7 +47,7 @@ namespace HRMS.Areas.Admin.Controllers
             var khoach = new EhsKeHoachKiemDinhMayMocViewModel();
             JsonConvert.PopulateObject(values, khoach);
 
-            EhsKeHoachKiemDinhMayMocService.Add(khoach);
+            khoach = EhsKeHoachKiemDinhMayMocService.Add(khoach);
             EhsKeHoachKiemDinhMayMocService.Save();
 
             return Ok(khoach);
@@ -75,6 +75,12 @@ namespace HRMS.Areas.Admin.Controllers
         public object GetThucHienKiemDinhMayMoc(DataSourceLoadOptions loadOptions, Guid key)
         {
             var kehoach = EhsKeHoachKiemDinhMayMocService.GetById(key);
+
+            if(kehoach == null)
+            {
+                return DataSourceLoader.Load(new List<EhsThoiGianKiemDinhMayMocViewModel>(), loadOptions);
+            }
+
             return DataSourceLoader.Load(kehoach.EHS_THOIGIAN_THUC_HIEN_KIEMDINH_MM.OrderByDescending(x => x.NgayBatDau).ToList(), loadOptions);
         }
 
@@ -88,7 +94,7 @@ namespace HRMS.Areas.Admin.Controllers
             khoach.NgayBatDau = khoach.NgayBatDauEx.ToString("yyyy-MM-dd");
             khoach.NgayKetThuc = khoach.NgayKetThucEx.ToString("yyyy-MM-dd");
 
-            EhsKeHoachKiemDinhMayMocService.AddThoiGianKiemDinhMayMoc(khoach);
+            khoach = EhsKeHoachKiemDinhMayMocService.AddThoiGianKiemDinhMayMoc(khoach);
             EhsKeHoachKiemDinhMayMocService.Save();
 
             return Ok(khoach);

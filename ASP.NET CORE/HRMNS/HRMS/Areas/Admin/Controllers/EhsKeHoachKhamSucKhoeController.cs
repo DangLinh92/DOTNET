@@ -46,7 +46,7 @@ namespace HRMS.Areas.Admin.Controllers
             var khoach = new EhsKeHoachKhamSKViewModel();
             JsonConvert.PopulateObject(values, khoach);
 
-            EhsKeHoachKhamSKService.Add(khoach);
+            khoach = EhsKeHoachKhamSKService.Add(khoach);
             EhsKeHoachKhamSKService.Save();
 
             return Ok(khoach);
@@ -74,6 +74,12 @@ namespace HRMS.Areas.Admin.Controllers
         public object GetNgayKhamSK(DataSourceLoadOptions loadOptions, Guid key)
         {
             var kehoach = EhsKeHoachKhamSKService.GetById(key);
+
+            if(kehoach == null)
+            {
+                return DataSourceLoader.Load(new List<EhsNgayThucHienChiTietKhamSKViewModel>(), loadOptions);
+            }
+
             return DataSourceLoader.Load(kehoach.EHS_NGAY_THUC_HIEN_CHITIET_KHAM_SK.ToList(), loadOptions);
         }
 
@@ -88,7 +94,7 @@ namespace HRMS.Areas.Admin.Controllers
             khoach.NgayBatDau = khoach.NgayBatDauEx.ToString("yyyy-MM-dd");
             khoach.NgayKetThuc = khoach.NgayKetThucEx.ToString("yyyy-MM-dd");
 
-            EhsKeHoachKhamSKService.AddNgayKhamSK(khoach);
+            khoach = EhsKeHoachKhamSKService.AddNgayKhamSK(khoach);
             EhsKeHoachKhamSKService.Save();
 
             return Ok(khoach);
@@ -123,7 +129,7 @@ namespace HRMS.Areas.Admin.Controllers
             JsonConvert.PopulateObject(values, khoach);
 
             khoach.MaKHKhamSK = maKHKhamSK;
-            EhsKeHoachKhamSKService.AddNhanVienKhamSK(khoach);
+            khoach = EhsKeHoachKhamSKService.AddNhanVienKhamSK(khoach);
             EhsKeHoachKhamSKService.Save();
 
             return Ok(khoach);
@@ -150,6 +156,11 @@ namespace HRMS.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult GetDSNhanVienByKeHoach(string maKHKhamSK)
         {
+            if(maKHKhamSK == null || maKHKhamSK == "")
+            {
+                return new OkObjectResult(new List<EhsNhanVienKhamSucKhoe>());
+            }
+
            var data = EhsKeHoachKhamSKService.GetNhanVienKhamSKByKeHoach(Guid.Parse(maKHKhamSK));
             return new OkObjectResult(data);
         }

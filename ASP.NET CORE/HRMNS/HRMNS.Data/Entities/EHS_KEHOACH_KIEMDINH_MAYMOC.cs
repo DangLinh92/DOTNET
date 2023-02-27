@@ -16,13 +16,14 @@ namespace HRMNS.Data.Entities
             EHS_THOIGIAN_THUC_HIEN_KIEMDINH_MM = new HashSet<EHS_THOIGIAN_THUC_HIEN_KIEMDINH_MM>();
         }
 
-        public EHS_KEHOACH_KIEMDINH_MAYMOC(
+        public EHS_KEHOACH_KIEMDINH_MAYMOC(Guid id,
             Guid maKh,int stt,string tenMayMoc, string chuky,
             int soLuongThietBi, string vitri,string nguoiphutrach,string nhathau,
             double cost1, double cost2, double cost3, double cost4, double cost5, 
             double cost6, double cost7, double cost8, double cost9, double cost10, double cost11, double cost12,
             string lanKiemDinhKeTiep, string lanKiemDinhKeTiep1, string lanKiemDinhKeTiep2, string lanKiemDinhKeTiep3,string year)
         {
+            Id = id;
             MaDMKeHoach = maKh;
             STT = stt;
             NguoiPhuTrach = nguoiphutrach;

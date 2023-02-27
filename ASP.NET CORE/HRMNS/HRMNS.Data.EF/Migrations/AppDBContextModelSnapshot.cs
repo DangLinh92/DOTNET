@@ -869,6 +869,49 @@ namespace HRMNS.Data.EF.Migrations
                     b.ToTable("EHS_DM_KEHOACH");
                 });
 
+            modelBuilder.Entity("HRMNS.Data.Entities.EHS_FILES", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("DanhMuc")
+                        .HasColumnType("nvarchar(150)")
+                        .HasMaxLength(150);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("FileName")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("MaNgayChiTiet")
+                        .HasColumnType("nvarchar(500)")
+                        .HasMaxLength(500);
+
+                    b.Property<string>("UrlFile")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EHS_FILES");
+                });
+
             modelBuilder.Entity("HRMNS.Data.Entities.EHS_KEHOACH_ANTOAN_BUCXA", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1699,6 +1742,10 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
+                    b.Property<string>("FileNameResult")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
                     b.Property<string>("IsShowBoard")
                         .HasColumnType("nvarchar(10)")
                         .HasMaxLength(10);
@@ -1731,6 +1778,9 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
+
+                    b.Property<string>("UrlFileNameResult")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserCreated")
                         .HasColumnType("nvarchar(50)")
@@ -1768,6 +1818,10 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
+                    b.Property<string>("FileNameResult")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
                     b.Property<string>("IsShowBoard")
                         .HasColumnType("nvarchar(10)")
                         .HasMaxLength(10);
@@ -1800,6 +1854,9 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
+
+                    b.Property<string>("UrlFileNameResult")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserCreated")
                         .HasColumnType("nvarchar(50)")
@@ -1890,6 +1947,10 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
+                    b.Property<string>("FileNameResult")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
                     b.Property<string>("IsShowBoard")
                         .HasColumnType("nvarchar(10)")
                         .HasMaxLength(10);
@@ -1922,6 +1983,9 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
+
+                    b.Property<string>("UrlFileNameResult")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserCreated")
                         .HasColumnType("nvarchar(50)")
@@ -1959,6 +2023,10 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
+                    b.Property<string>("FileNameResult")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
                     b.Property<string>("IsShowBoard")
                         .HasColumnType("nvarchar(10)")
                         .HasMaxLength(10);
@@ -1991,6 +2059,9 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
+
+                    b.Property<string>("UrlFileNameResult")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserCreated")
                         .HasColumnType("nvarchar(50)")
@@ -2028,6 +2099,10 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
+                    b.Property<string>("FileNameResult")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
                     b.Property<string>("IsShowBoard")
                         .HasColumnType("nvarchar(10)")
                         .HasMaxLength(10);
@@ -2060,6 +2135,9 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
+
+                    b.Property<string>("UrlFileNameResult")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserCreated")
                         .HasColumnType("nvarchar(50)")
@@ -2097,6 +2175,10 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
+                    b.Property<string>("FileNameResult")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
                     b.Property<string>("IsShowBoard")
                         .HasColumnType("nvarchar(10)")
                         .HasMaxLength(10);
@@ -2129,6 +2211,9 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
+
+                    b.Property<string>("UrlFileNameResult")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserCreated")
                         .HasColumnType("nvarchar(50)")

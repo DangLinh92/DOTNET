@@ -29,6 +29,15 @@ namespace HRMNS.Application.Implementation
         private IRespository<EHS_KEHOACH_ANTOAN_BUCXA, Guid> _ehsKehoachATBXRepository;
         private IRespository<EHS_KEHOACH_KIEMDINH_MAYMOC, Guid> _ehsKiemDinhMMRepository;
 
+        private IRespository<EHS_NGAY_THUC_HIEN_CHITIET_QUANTRAC, int> _ngayQuanTracRepository;
+        private IRespository<EHS_NGAY_THUC_HIEN_CHITIET_KHAM_SK, int> _ngayKhamSKRepository;
+        private IRespository<EHS_THOIGIAN_THUC_HIEN_DAOTAO_ATVSLD, int> _ngayATVSLDRepository;
+        private IRespository<EHS_THOIGIAN_THUC_HIEN_PCCC, int> _ngayPCCCRepository;
+        private IRespository<EHS_THOIGIAN_THUC_HIEN_ANTOAN_BUCXA, int> _ngayATBXRepository;
+        private IRespository<EHS_THOIGIAN_THUC_HIEN_KIEMDINH_MM, int> _ngayKiemDinhMMRepository;
+
+        private IRespository<EHS_FILES, int> _ehsFileRepository;
+
         private IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
@@ -41,6 +50,16 @@ namespace HRMNS.Application.Implementation
             IRespository<EHS_KEHOACH_PCCC, Guid> ehsKeHoachPCCCRepository,
             IRespository<EHS_KEHOACH_ANTOAN_BUCXA, Guid> ehsKehoachATBXRepository,
             IRespository<EHS_KEHOACH_KIEMDINH_MAYMOC, Guid> ehsKiemDinhMMRepository,
+
+            IRespository<EHS_NGAY_THUC_HIEN_CHITIET_QUANTRAC, int> ngayQuanTracRepository,
+            IRespository<EHS_NGAY_THUC_HIEN_CHITIET_KHAM_SK, int> ngayKhamSKRepository,
+            IRespository<EHS_THOIGIAN_THUC_HIEN_DAOTAO_ATVSLD, int> ngayATVSLDRepository,
+            IRespository<EHS_THOIGIAN_THUC_HIEN_PCCC, int> ngayPCCCRepository,
+            IRespository<EHS_THOIGIAN_THUC_HIEN_ANTOAN_BUCXA, int> ngayATBXRepository,
+            IRespository<EHS_THOIGIAN_THUC_HIEN_KIEMDINH_MM, int> ngayKiemDinhMMRepository,
+
+            IRespository<EHS_FILES, int> ehsFileRepository,
+
             IHttpContextAccessor httpContextAccessor,
             IUnitOfWork unitOfWork,
             IMapper mapper)
@@ -56,6 +75,16 @@ namespace HRMNS.Application.Implementation
             _ehsKeHoachPCCCRepository = ehsKeHoachPCCCRepository;
             _ehsKehoachATBXRepository = ehsKehoachATBXRepository;
             _ehsKiemDinhMMRepository = ehsKiemDinhMMRepository;
+
+            _ngayQuanTracRepository = ngayQuanTracRepository;
+            _ngayKhamSKRepository = ngayKhamSKRepository;
+            _ngayATVSLDRepository = ngayATVSLDRepository;
+            _ngayPCCCRepository = ngayPCCCRepository;
+            _ngayATBXRepository = ngayATBXRepository;
+            _ngayKiemDinhMMRepository = ngayKiemDinhMMRepository;
+
+            _ehsFileRepository = ehsFileRepository;
+
         }
 
         public EhsDanhMucKeHoachPageViewModel GetDataDanhMucKeHoachPage(Guid? maKeHoach)
@@ -163,7 +192,8 @@ namespace HRMNS.Application.Implementation
                     Month_9 = kh.CostMonth_9,
                     Month_10 = kh.CostMonth_10,
                     Month_11 = kh.CostMonth_11,
-                    Month_12 = kh.CostMonth_12
+                    Month_12 = kh.CostMonth_12,
+                    MaKeHoach = kh.Id + "quantrac"
                 };
                 report.Add(item);
             }
@@ -191,7 +221,8 @@ namespace HRMNS.Application.Implementation
                     Month_9 = kh.CostMonth_9,
                     Month_10 = kh.CostMonth_10,
                     Month_11 = kh.CostMonth_11,
-                    Month_12 = kh.CostMonth_12
+                    Month_12 = kh.CostMonth_12,
+                    MaKeHoach = kh.Id.ToString() + "khamsuckhoe"
                 };
                 report.Add(item);
             }
@@ -219,7 +250,8 @@ namespace HRMNS.Application.Implementation
                     Month_9 = kh.CostMonth_9,
                     Month_10 = kh.CostMonth_10,
                     Month_11 = kh.CostMonth_11,
-                    Month_12 = kh.CostMonth_12
+                    Month_12 = kh.CostMonth_12,
+                    MaKeHoach = kh.Id.ToString() + "atvsld"
                 };
                 report.Add(item);
             }
@@ -247,7 +279,8 @@ namespace HRMNS.Application.Implementation
                     Month_9 = kh.CostMonth_9,
                     Month_10 = kh.CostMonth_10,
                     Month_11 = kh.CostMonth_11,
-                    Month_12 = kh.CostMonth_12
+                    Month_12 = kh.CostMonth_12,
+                    MaKeHoach = kh.Id.ToString() + "kiemdinhmaymoc"
                 };
                 report.Add(item);
             }
@@ -275,7 +308,8 @@ namespace HRMNS.Application.Implementation
                     Month_9 = kh.CostMonth_9,
                     Month_10 = kh.CostMonth_10,
                     Month_11 = kh.CostMonth_11,
-                    Month_12 = kh.CostMonth_12
+                    Month_12 = kh.CostMonth_12,
+                    MaKeHoach = kh.Id.ToString() + "pccc"
                 };
                 report.Add(item);
             }
@@ -303,7 +337,8 @@ namespace HRMNS.Application.Implementation
                     Month_9 = kh.CostMonth_9,
                     Month_10 = kh.CostMonth_10,
                     Month_11 = kh.CostMonth_11,
-                    Month_12 = kh.CostMonth_12
+                    Month_12 = kh.CostMonth_12,
+                    MaKeHoach = kh.Id.ToString() + "atbucxa"
                 };
                 report.Add(item);
             }
@@ -326,8 +361,13 @@ namespace HRMNS.Application.Implementation
                     EhsKeHoachItemModel item;
                     int rowN = 0;
                     int dayOff = 0;
+                    string maNgayThucHien = "";
+                    string folder = "";
                     foreach (DataRow row in data.Rows)
                     {
+                        maNgayThucHien = row["MaNgayTH"].NullString();
+                        folder = GetFolderKetQua(maNgayThucHien);
+
                         dayOff = int.Parse(row["DIFF"].IfNullIsZero()) >= 0 ? int.Parse(row["DIFF"].IfNullIsZero()) : 0;
                         item = new EhsKeHoachItemModel()
                         {
@@ -339,6 +379,8 @@ namespace HRMNS.Application.Implementation
                             ActualFinish = row["ActualFinish"].NullString(),
                             Progress = int.Parse(row["Progress"].IfNullIsZero()),
                             Status = row["Status"].NullString(),
+                            MaNgayThucHien = maNgayThucHien,
+                            Folder = folder,
                             STT = ++rowN
                         };
                         rs.Add(item);
@@ -401,6 +443,174 @@ namespace HRMNS.Application.Implementation
         public KanbanViewModel GetEvenById(string id)
         {
             throw new NotImplementedException();
+        }
+
+        public List<EhsFileKetQuaViewModel> GetFileByNoiDung(string makehoach)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Ehs_ThoiGianThucHien> GetThoiGianThucHien(string maKeHoach)
+        {
+            List<Ehs_ThoiGianThucHien> result = new List<Ehs_ThoiGianThucHien>();
+            Ehs_ThoiGianThucHien thoigian;
+
+            if (maKeHoach.Contains("quantrac"))
+            {
+                // Quan Trắc
+                var qtracs = _ngayQuanTracRepository.FindAll(x => x.MaKHQuanTrac.ToString() + "quantrac" == maKeHoach).ToList();
+                foreach (var item in qtracs)
+                {
+                    thoigian = new Ehs_ThoiGianThucHien()
+                    {
+                        MaKeHoach = maKeHoach,
+                        MaNgayChiTiet = item.Id + "quantrac",
+                        ThoiGianBatDau = item.NgayBatDau,
+                        ThoiGianKetThuc = item.NgayKetThuc,
+                        Status = item.Status == "TODO" ? "Ready To Start" : item.Status
+                    };
+
+                    result.Add(thoigian);
+                }
+            }
+            else if (maKeHoach.Contains("khamsuckhoe"))
+            {
+                // Khám SK
+                var qtracs = _ngayKhamSKRepository.FindAll(x => x.MaKHKhamSK.ToString() + "khamsuckhoe" == maKeHoach).ToList();
+                foreach (var item in qtracs)
+                {
+                    thoigian = new Ehs_ThoiGianThucHien()
+                    {
+                        MaKeHoach = maKeHoach,
+                        MaNgayChiTiet = item.Id + "khamsuckhoe",
+                        ThoiGianBatDau = item.NgayBatDau,
+                        ThoiGianKetThuc = item.NgayKetThuc,
+                        Status = item.Status == "TODO" ? "Ready To Start" : item.Status
+                    };
+
+                    result.Add(thoigian);
+                }
+            }
+            else if (maKeHoach.Contains("atvsld"))
+            {
+                // ATVSLD
+                var qtracs = _ngayATVSLDRepository.FindAll(x => x.MaKHDaoTaoATLD.ToString() + "atvsld" == maKeHoach).ToList();
+                foreach (var item in qtracs)
+                {
+                    thoigian = new Ehs_ThoiGianThucHien()
+                    {
+                        MaKeHoach = maKeHoach,
+                        MaNgayChiTiet = item.Id + "atvsld",
+                        ThoiGianBatDau = item.NgayBatDau,
+                        ThoiGianKetThuc = item.NgayKetThuc,
+                        Status = item.Status == "TODO" ? "Ready To Start" : item.Status
+                    };
+
+                    result.Add(thoigian);
+                }
+            }
+            else if (maKeHoach.Contains("kiemdinhmaymoc"))
+            {
+                // KDMM
+                var qtracs = _ngayKiemDinhMMRepository.FindAll(x => x.MaKH_KDMM.ToString() + "kiemdinhmaymoc" == maKeHoach).ToList();
+                foreach (var item in qtracs)
+                {
+                    thoigian = new Ehs_ThoiGianThucHien()
+                    {
+                        MaKeHoach = maKeHoach,
+                        MaNgayChiTiet = item.Id + "kiemdinhmaymoc",
+                        ThoiGianBatDau = item.NgayBatDau,
+                        ThoiGianKetThuc = item.NgayKetThuc,
+                        Status = item.Status == "TODO" ? "Ready To Start" : item.Status
+                    };
+
+                    result.Add(thoigian);
+                }
+            }
+            else if (maKeHoach.Contains("pccc"))
+            {
+                // PCCC
+                var qtracs = _ngayPCCCRepository.FindAll(x => x.MaKH_PCCC.ToString() + "pccc" == maKeHoach).ToList();
+                foreach (var item in qtracs)
+                {
+                    thoigian = new Ehs_ThoiGianThucHien()
+                    {
+                        MaKeHoach = maKeHoach,
+                        MaNgayChiTiet = item.Id + "pccc",
+                        ThoiGianBatDau = item.NgayBatDau,
+                        ThoiGianKetThuc = item.NgayKetThuc,
+                        Status = item.Status == "TODO" ? "Ready To Start" : item.Status
+                    };
+
+                    result.Add(thoigian);
+                }
+            }
+            else if (maKeHoach.Contains("atbucxa"))
+            {
+                // ATBX
+                var qtracs = _ngayATBXRepository.FindAll(x => x.MaKH_ATBX.ToString() + "atbucxa" == maKeHoach).ToList();
+                foreach (var item in qtracs)
+                {
+                    thoigian = new Ehs_ThoiGianThucHien()
+                    {
+                        MaKeHoach = maKeHoach,
+                        MaNgayChiTiet = item.Id + "atbucxa",
+                        ThoiGianBatDau = item.NgayBatDau,
+                        ThoiGianKetThuc = item.NgayKetThuc,
+                        Status = item.Status == "TODO" ? "Ready To Start" : item.Status
+                    };
+
+                    result.Add(thoigian);
+                }
+            }
+
+            return result.OrderBy(x=>x.ThoiGianBatDau).ToList();
+
+        }
+
+        // Lấy folder cha chung của các file
+        public string GetFolderKetQua(string maNgayChitiet)
+        {
+            var files = _ehsFileRepository.FindAll(x => x.MaNgayChiTiet == maNgayChitiet).ToList();
+
+            if(files.Count == 0)
+            {
+                return "";
+            }
+
+            string folder = "/";
+            List<string> itemFolders = new List<string>();
+            string[] strArr;
+            int k = 0;
+            foreach (var item in files)
+            {
+                if (k++ == 0)
+                {
+                    itemFolders.AddRange(item.UrlFile.Split("/"));
+                }
+                else
+                {
+                    strArr = item.UrlFile.Split("/");
+                    for (int i = 0; i < strArr.Length; i++)
+                    {
+                        if (itemFolders.ToList().Count >= i + 1)
+                        {
+                            if (itemFolders[i] != strArr[i])
+                            {
+                                itemFolders.RemoveRange(i, itemFolders.Count - i);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            foreach (var item in itemFolders.Where(x=>x != ""))
+            {
+                folder += item + "/";
+            }
+
+            return folder;
         }
     }
 }

@@ -33,7 +33,7 @@ namespace HRMNS.Application.ViewModels.EHS
 
         }
 
-        public Guid MaKeHoach { get; set; }
+        public string MaKeHoach { get; set; }
         public int OrderItem { get; set; }
         public int STT { get; set; }
         public string TenDeMuc { get; set; }

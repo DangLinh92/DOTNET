@@ -39,8 +39,9 @@ namespace HRMNS.Application.Implementation
             // Id trong table EHS_DM_KEHOACH
             model.Id = Guid.NewGuid();
             model.MaDMKeHoach = Guid.Parse("5bbdc8cc-fc22-4be9-a3b8-f468ef04efe0");
-            _EHSKeHoachKiemDinhMayMocRepository.Add(_mapper.Map<EHS_KEHOACH_KIEMDINH_MAYMOC>(model));
-            return model;
+            EHS_KEHOACH_KIEMDINH_MAYMOC en = _mapper.Map<EHS_KEHOACH_KIEMDINH_MAYMOC>(model);
+            _EHSKeHoachKiemDinhMayMocRepository.Add(en);
+            return _mapper.Map<EhsKeHoachKiemDinhMayMocViewModel>(en);
         }
 
         public EhsKeHoachKiemDinhMayMocViewModel Update(EhsKeHoachKiemDinhMayMocViewModel model)
@@ -87,7 +88,8 @@ namespace HRMNS.Application.Implementation
             model.NoiDung = kehoach.TenMayMoc.NullString();
 
             model.MaEvent = AddNewEvent(model.MaEvent.ToString(), model.NoiDung, model.NgayBatDau, model.NgayKetThuc, nguoiPhuTrach, vitri);
-            _EHSNgayThucHienKiemDinhMayMocRepository.Add(_mapper.Map<EHS_THOIGIAN_THUC_HIEN_KIEMDINH_MM>(model));
+            EHS_THOIGIAN_THUC_HIEN_KIEMDINH_MM enModel = _mapper.Map<EHS_THOIGIAN_THUC_HIEN_KIEMDINH_MM>(model);
+            _EHSNgayThucHienKiemDinhMayMocRepository.Add(enModel);
 
             Save();
 
@@ -128,7 +130,7 @@ namespace HRMNS.Application.Implementation
             }
 
             _EHSKeHoachKiemDinhMayMocRepository.Update(en);
-            return model;
+            return _mapper.Map<EhsThoiGianKiemDinhMayMocViewModel>(enModel); ;
         }
 
         public EhsThoiGianKiemDinhMayMocViewModel UpdateThoiGianKiemDinhMayMoc(EhsThoiGianKiemDinhMayMocViewModel model)

@@ -16,8 +16,9 @@ namespace HRMNS.Data.Entities
 
         }
 
-        public EHS_NHANVIEN_KHAM_SK(Guid maKhamSK,string thoigian,string mavn,string tenvn,string section,string note)
+        public EHS_NHANVIEN_KHAM_SK(int id,Guid maKhamSK,string thoigian,string mavn,string tenvn,string section,string note)
         {
+            Id = id;
             MaKHKhamSK = maKhamSK;
             ThoiGianKhamSK = thoigian;
             MaNV = mavn;

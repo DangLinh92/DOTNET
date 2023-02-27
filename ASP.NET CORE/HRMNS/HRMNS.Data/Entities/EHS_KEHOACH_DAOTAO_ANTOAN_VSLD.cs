@@ -16,10 +16,11 @@ namespace HRMNS.Data.Entities
             EHS_THOIGIAN_THUC_HIEN_DAOTAO_ATVSLD = new HashSet<EHS_THOIGIAN_THUC_HIEN_DAOTAO_ATVSLD>();
         }
 
-        public EHS_KEHOACH_DAOTAO_ANTOAN_VSLD(Guid maKh,int stt,string noidung,string nguoithamgia,string chuky,string thoigiancaplandau,
+        public EHS_KEHOACH_DAOTAO_ANTOAN_VSLD(Guid id,Guid maKh,int stt,string noidung,string nguoithamgia,string chuky,string thoigiancaplandau,
             string thoigianhuanluyenlandau,string thoigianhuanluyenlai,string year,string thoigiandaotao,string nguoiphutrach,string nhathau,
             double cost1, double cost2, double cost3, double cost4, double cost5, double cost6, double cost7, double cost8, double cost9, double cost10, double cost11, double cost12)
         {
+            Id = id;
             MaDMKeHoach = maKh;
             STT = stt;
             NoiDung = noidung;

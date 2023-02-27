@@ -16,7 +16,7 @@ namespace HRMNS.Data.Entities
             EHS_NGAY_THUC_HIEN_CHITIET_QUANTRAC = new HashSet<EHS_NGAY_THUC_HIEN_CHITIET_QUANTRAC>();
         }
 
-        public EHS_KEHOACH_QUANTRAC(int stt, Guid maDMKeHoach,string demuc,string luatDinhLienQuan,string noiDung,string chuKyThucHien,
+        public EHS_KEHOACH_QUANTRAC(int id,int stt, Guid maDMKeHoach,string demuc,string luatDinhLienQuan,string noiDung,string chuKyThucHien,
             string year,bool month1, bool month2, bool month3, bool month4, bool month5, bool month6, bool month7, bool month8, bool month9, bool month10, bool month11, bool month12,
             double costMonth_1, double costMonth_2, double costMonth_3, double costMonth_4, double costMonth_5, double costMonth_6, double costMonth_7, double costMonth_8,
             double costMonth_9, double costMonth_10, double costMonth_11, double costMonth_12,
@@ -25,6 +25,7 @@ namespace HRMNS.Data.Entities
             string layMau_Month_6, string layMau_Month_7, string layMau_Month_8, string layMau_Month_9,
              string layMau_Month_10, string layMau_Month_11, string layMau_Month_12)
         {
+            Id = id;
             STT = stt;
             MaDMKeHoach = maDMKeHoach;
             Demuc = demuc;

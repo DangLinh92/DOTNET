@@ -48,7 +48,7 @@ namespace HRMS.Areas.Admin.Controllers
             var khoach = new EhsKeHoachDaoTaoATLDViewModel();
             JsonConvert.PopulateObject(values, khoach);
 
-            EhsATLDService.Add(khoach);
+            khoach = EhsATLDService.Add(khoach);
             EhsATLDService.Save();
 
             return Ok(khoach);
@@ -76,6 +76,10 @@ namespace HRMS.Areas.Admin.Controllers
         public object GetThucHienATVSLD(DataSourceLoadOptions loadOptions, Guid key)
         {
             var kehoach = EhsATLDService.GetById(key);
+            if(kehoach == null)
+            {
+                return DataSourceLoader.Load(new List<EhsThoiGianThucHienDaoTaoATVSViewModel>(), loadOptions);
+            }
             return DataSourceLoader.Load(kehoach.EHS_THOIGIAN_THUC_HIEN_DAOTAO_ATVSLD.ToList(), loadOptions);
         }
 
@@ -89,7 +93,7 @@ namespace HRMS.Areas.Admin.Controllers
             khoach.NgayBatDau = khoach.NgayBatDauEx.ToString("yyyy-MM-dd");
             khoach.NgayKetThuc = khoach.NgayKetThucEx.ToString("yyyy-MM-dd");
 
-            EhsATLDService.AddThoiGianATVSLD(khoach);
+            khoach = EhsATLDService.AddThoiGianATVSLD(khoach);
             EhsATLDService.Save();
 
             return Ok(khoach);

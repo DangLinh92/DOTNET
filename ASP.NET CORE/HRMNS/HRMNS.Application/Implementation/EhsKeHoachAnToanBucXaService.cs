@@ -39,8 +39,9 @@ namespace HRMNS.Application.Implementation
             // Id trong table EHS_DM_KEHOACH
             model.Id = Guid.NewGuid();
             model.MaDMKeHoach = Guid.Parse("7c60f914-c6d2-453a-841f-5afd0fb4a3bc");
-            _EHSKeHoachBucXaRepository.Add(_mapper.Map<EHS_KEHOACH_ANTOAN_BUCXA>(model));
-            return model;
+            EHS_KEHOACH_ANTOAN_BUCXA en = _mapper.Map<EHS_KEHOACH_ANTOAN_BUCXA>(model);
+            _EHSKeHoachBucXaRepository.Add(en);
+            return _mapper.Map<EhsKeHoachAnToanBucXaViewModel>(en);
         }
 
         public EhsKeHoachAnToanBucXaViewModel Update(EhsKeHoachAnToanBucXaViewModel model)
@@ -87,7 +88,8 @@ namespace HRMNS.Application.Implementation
             model.NoiDung = kehoach.NoiDung.NullString();
 
             model.MaEvent = AddNewEvent(model.MaEvent.ToString(), kehoach.HangMuc, model.NgayBatDau, model.NgayKetThuc, nguoiPhuTrach, nhaThau);
-            _EHSNgayThucHienBucXaRepository.Add(_mapper.Map<EHS_THOIGIAN_THUC_HIEN_ANTOAN_BUCXA>(model));
+            EHS_THOIGIAN_THUC_HIEN_ANTOAN_BUCXA enModel = _mapper.Map<EHS_THOIGIAN_THUC_HIEN_ANTOAN_BUCXA>(model);
+            _EHSNgayThucHienBucXaRepository.Add(enModel);
 
             Save();
 
@@ -140,7 +142,7 @@ namespace HRMNS.Application.Implementation
 
             en.ThoiGianDaoTao = days.Substring(0, days.Length - 1);
             _EHSKeHoachBucXaRepository.Update(en);
-            return model;
+            return _mapper.Map<EhsThoiGianThucHienAnToanBucXaViewModel>(enModel); ;
         }
 
         public EhsThoiGianThucHienAnToanBucXaViewModel UpdateThoiGianBucXa(EhsThoiGianThucHienAnToanBucXaViewModel model)

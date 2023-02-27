@@ -16,10 +16,11 @@ namespace HRMNS.Data.Entities
             EHS_THOIGIAN_THUC_HIEN_ANTOAN_BUCXA = new HashSet<EHS_THOIGIAN_THUC_HIEN_ANTOAN_BUCXA>();
         }
 
-        public EHS_KEHOACH_ANTOAN_BUCXA(Guid maKh,int stt,string noidung,string chuky,string year,string thoigiandaotao,string nguoiphutrach,string nhathau,
+        public EHS_KEHOACH_ANTOAN_BUCXA(Guid id,Guid maKh,int stt,string noidung,string chuky,string year,string thoigiandaotao,string nguoiphutrach,string nhathau,
             double cost1, double cost2, double cost3, double cost4, double cost5, double cost6, double cost7, double cost8, double cost9, double cost10, double cost11, double cost12,string hangmuc,
             string thoiGianCapL1,string thoiGianCapLai_L1,string thoiGianCapLai_L2,string thoiGianCapLai_L3,string yeuCau,string yeucauVBLP,string maHieu,string thoiGianCapLai_L4)
         {
+            Id = id;
             MaDMKeHoach = maKh;
             STT = stt;
             NoiDung = noidung;

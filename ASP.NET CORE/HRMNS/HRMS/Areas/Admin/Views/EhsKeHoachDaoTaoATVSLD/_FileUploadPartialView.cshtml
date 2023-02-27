@@ -1,0 +1,131 @@
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
+@{
+    var defaultanimation = new Syncfusion.EJ2.Popups.DialogAnimationSettings { Effect = Syncfusion.EJ2.Popups.DialogEffect.None };
+}
+<div class="control-section">
+    <div class="sample-container">
+        <div id='container' class="fileupload">
+            @*<ejs-uploader id="UploadFile"> </ejs-uploader>*@
+            @*<ejs-button id="openBtn" content="Browse..."></ejs-button>*@
+        </div>
+        <div id='target' class="control-section">
+            <ejs-dialog id="dialog" animationSettings="defaultanimation" width="850px" target="#target" visible="false" open="dialogOpen" close="dialogClose" showCloseIcon="true" header="Open">
+                <e-content-template>
+                    <ejs-filemanager id="filemanager" allowMultiSelection="false" view="Details">
+                        <e-filemanager-ajaxsettings url="/admin/FileManager/FileOperations"
+                                                    downloadUrl="/admin/FileManager/Download"
+                                                    uploadUrl="/admin/FileManager/Upload"
+                                                    getImageUrl="/admin/FileManager/GetImage">
+                        </e-filemanager-ajaxsettings>
+                        <e-filemanager-uploadsettings maxFileSize="2097152000" minFileSize="50" autoUpload="false"></e-filemanager-uploadsettings>
+                    </ejs-filemanager>
+                </e-content-template>
+            </ejs-dialog>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-8">
+        <input hidden id="txt_MaKH" />
+        @(Html.DevExtreme().DataGrid<EhsThoiGianThucHienDaoTaoATVSViewModel>()
+    .ID("gridContainer-NgayThucHien")
+      .KeyExpr("Id")
+          .Height(400)
+    .ShowBorders(true)
+      .RepaintChangesOnly(true)
+     .LoadPanel(loadPanel => loadPanel.Enabled(false))
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnMinWidth(50)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+    .Editing(editing => {
+        editing.Mode(GridEditMode.Row);
+        editing.AllowAdding(true);
+        editing.AllowDeleting(true);
+        editing.AllowUpdating(true);
+    })
+    .Columns(columns => {
+        columns.AddFor(m => m.EHS_KEHOACH_DAOTAO_ANTOAN_VSLD.NoiDung).Caption("Nội Dung").AllowEditing(false);
+        columns.AddFor(m => m.NgayBatDauEx).Format("yyyy-MM-dd").Caption("Bắt Đầu").Width(150).AllowEditing(true);
+        columns.AddFor(m => m.NgayKetThucEx).Format("yyyy-MM-dd").Caption("Kết Thúc").Width(150).AllowEditing(true);
+
+        columns.AddFor(m => m.Status).Caption("Trạng Thái")
+        .AllowEditing(true)
+        .Lookup(lookup => lookup.DataSource("getStatus"));
+
+        columns.AddFor(m => m.Progress).Caption("Tiến Độ")
+        .AllowEditing(true);
+
+        columns.AddFor(m => m.IsShowBoard).Caption("Hiển thị lên bảng công việc")
+        .AllowEditing(true)
+        .Lookup(lookup => lookup.DataSource("getShowBoard")
+                );
+
+        columns.Add().Type(GridCommandColumnType.Buttons).Width(110).Buttons(b =>
+        {
+            b.Add().Name(GridColumnButtonName.Edit);
+            b.Add().Name(GridColumnButtonName.Delete);
+        });
+
+        columns.Add().Type(GridCommandColumnType.Buttons).Width(110).Buttons(b =>
+        {
+            b.Add()
+                .Hint("Kết Quả")
+                .Text("Upload Kết Quả")
+                .OnClick("onImportKetQuaClick");
+        });
+
+    }).SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true).OnSaving("SaveNgayThucHien").OnRowClick("LoadFilesData")
+)
+    </div>
+    <div class="col-md-4">
+        @(Html.DevExtreme().DataGrid<EHS_FILES>()
+    .ID("gridContainer-Files")
+      .KeyExpr("Id")
+          .Height(400)
+    .ShowBorders(true)
+      .RepaintChangesOnly(true)
+     .LoadPanel(loadPanel => loadPanel.Enabled(false))
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnMinWidth(50)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+
+    .Columns(columns => {
+        columns.AddFor(m => m.FileName).Caption("File Name");
+        columns.AddFor(m => m.UrlFile).Caption("Url");
+        columns.Add().Type(GridCommandColumnType.Buttons).Width(110).Buttons(b =>
+        {
+            b.Add()
+                .Hint("Kết Quả")
+                .Text("View File Kết Quả")
+                .OnClick("onShowKetQuaFileClick");
+        });
+
+    }).SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true)
+)
+    </div>
+</div>
+

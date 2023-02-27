@@ -127,4 +127,13 @@ namespace HRMNS.Data.EF.Configurations
             entity.Property(x => x.Id).ValueGeneratedOnAdd();
         }
     }
+
+    public class EHS_FilesConfiguration : DbEntityConfiguration<EHS_FILES>
+    {
+        public override void Configure(EntityTypeBuilder<EHS_FILES> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
 }

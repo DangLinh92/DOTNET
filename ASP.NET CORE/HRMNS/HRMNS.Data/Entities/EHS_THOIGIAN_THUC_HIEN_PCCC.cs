@@ -16,8 +16,9 @@ namespace HRMNS.Data.Entities
 
         }
 
-        public EHS_THOIGIAN_THUC_HIEN_PCCC(Guid maEvent, Guid maKHPCCC, string noidung, string ngayBatDau, string ngayKetThuc, string status, int progress, string priority, string isShowBoard,string actualFinish)
+        public EHS_THOIGIAN_THUC_HIEN_PCCC(int id,Guid maEvent, Guid maKHPCCC, string noidung, string ngayBatDau, string ngayKetThuc, string status, int progress, string priority, string isShowBoard,string actualFinish, string fileName, string fileUrl)
         {
+            Id = id;
             MaEvent = maEvent;
             MaKH_PCCC = maKHPCCC;
             NoiDung = noidung;
@@ -28,7 +29,8 @@ namespace HRMNS.Data.Entities
             Progress = progress;
             Priority = priority;
             IsShowBoard = isShowBoard;
-
+            FileNameResult = fileName;
+            UrlFileNameResult = fileUrl;
             ActualFinish = actualFinish;
         }
 
@@ -70,6 +72,11 @@ namespace HRMNS.Data.Entities
 
         [StringLength(50)]
         public string ActualFinish { get; set; }
+
+        [StringLength(250)]
+        public string FileNameResult { get; set; }
+
+        public string UrlFileNameResult { get; set; }
 
         [ForeignKey("MaKH_PCCC")]
         public virtual EHS_KEHOACH_PCCC EHS_KEHOACH_PCCC { get; set; }

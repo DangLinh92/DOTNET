@@ -62,6 +62,11 @@ namespace HRMNS.Application.ViewModels.EHS
         [StringLength(50)]
         public string ActualFinish { get; set; }
 
+        [StringLength(250)]
+        public string FileNameResult { get; set; }
+
+        public string UrlFileNameResult { get; set; }
+
         public EhsKeHoachKiemDinhMayMocViewModel EHS_KEHOACH_KIEMDINH_MAYMOC { get; set; }
 
         public EventScheduleParentViewModel EVENT_SHEDULE_PARENT { get; set; }

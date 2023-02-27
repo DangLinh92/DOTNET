@@ -60,6 +60,11 @@ namespace HRMNS.Application.ViewModels.EHS
         [StringLength(50)]
         public string ActualFinish { get; set; }
 
+        [StringLength(250)]
+        public string FileNameResult { get; set; }
+
+        public string UrlFileNameResult { get; set; }
+
         public EhsKeHoachDaoTaoATLDViewModel EHS_KEHOACH_DAOTAO_ANTOAN_VSLD { get; set; }
 
         public EventScheduleParentViewModel EVENT_SHEDULE_PARENT { get; set; }

@@ -1,0 +1,79 @@
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
+@{
+    var defaultanimation = new Syncfusion.EJ2.Popups.DialogAnimationSettings { Effect = Syncfusion.EJ2.Popups.DialogEffect.None };
+    string[] items = new string[] { "Download", "SortBy", "Refresh", "Selection", "View", "Details" };
+    string[] contextmenuItems = new string[] { "Open", "|", "Details","Download" };
+}
+<div class="control-section">
+    <div class="sample-container">
+        <div id='container' class="fileupload">
+        </div>
+        <div id='target' class="control-section">
+            <ejs-dialog id="dialog" animationSettings="defaultanimation" width="850px" target="#target" visible="false" open="dialogOpen" close="dialogClose" showCloseIcon="true" header="Open">
+                <e-content-template>
+                    <ejs-filemanager id="filemanager" allowMultiSelection="false" view="Details">
+                        <e-filemanager-ajaxsettings url="/admin/FileManager/FileOperations"
+                                                    downloadUrl="/admin/FileManager/Download"
+                                                    uploadUrl="/admin/FileManager/Upload"
+                                                    getImageUrl="/admin/FileManager/GetImage">
+                        </e-filemanager-ajaxsettings>
+                        <e-filemanager-toolbarsettings items="items"></e-filemanager-toolbarsettings>
+                        <e-filemanager-contextmenusettings file="contextmenuItems" folder="contextmenuItems"> </e-filemanager-contextmenusettings>
+                        <e-filemanager-uploadsettings maxFileSize="2097152000" minFileSize="50" autoUpload="false"></e-filemanager-uploadsettings>
+                    </ejs-filemanager>
+                </e-content-template>
+            </ejs-dialog>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        @(Html.DevExtreme().DataGrid<EhsFileKetQuaViewModel>()
+    .ID("gridContainer-Files")
+      .KeyExpr("MaNgayChiTiet")
+          .Height(400)
+    .ShowBorders(true)
+      .RepaintChangesOnly(true)
+     .LoadPanel(loadPanel => loadPanel.Enabled(false))
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnMinWidth(50)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+
+    .Columns(columns => {
+        columns.AddFor(m => m.TenDeMuc).Caption(@localizer["DE_MUC"].Value).Width(300);
+        columns.AddFor(m => m.NoiDung).Caption(@localizer["NOI_DUNG"].Value).Width(400);
+        columns.AddFor(m => m.ThoiGianBatDau).Caption(@localizer["THOI_GIAN_BAT_DAU"].Value);
+        columns.AddFor(m => m.ThoiGianKetThuc).Caption(@localizer["THOI_GIAN_KET_THUC"].Value);
+        columns.AddFor(m => m.NguoiPhuTrach).Caption(@localizer["NGUOI_PHU_TRACH"].Value);
+        columns.AddFor(m => m.Status).Caption(@localizer["STATUS"].Value).CellTemplate(@<text>
+                                    <div class="<%- data.Status == 'Completed' ? 'complete' : (data.Status == 'Inprogress' ? 'inprogress' : (data.Status == 'Ready To Start' ? 'todo' : (data.Status == 'Pending' ? 'pending' :''))) %>">
+                                        <span class="current-value" style="color:white"><%- text %></span>
+                                    </div>
+                                </text>);
+        columns.AddFor(m => m.UrlFile).Caption("Folder");
+        columns.Add().Type(GridCommandColumnType.Buttons).Width(110).Buttons(b =>
+        {
+            b.Add()
+                .Hint("Kết Quả")
+                .Text("Download File")
+                .OnClick("onShowKetQuaFileClick");
+        });
+
+    }).SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true)
+)
+    </div>
+</div>
+
+

@@ -40,8 +40,9 @@ namespace HRMNS.Application.Implementation
             // Id trong table EHS_DM_KEHOACH
             model.Id = Guid.NewGuid();
             model.MaDMKeHoach = Guid.Parse("5f2ad5b3-8e86-4cd8-be84-ef4e7d82212b");
-            _EHSKeHoachDaoTaoATVSLDRepository.Add(_mapper.Map<EHS_KEHOACH_DAOTAO_ANTOAN_VSLD>(model));
-            return model;
+            EHS_KEHOACH_DAOTAO_ANTOAN_VSLD en = _mapper.Map<EHS_KEHOACH_DAOTAO_ANTOAN_VSLD>(model);
+            _EHSKeHoachDaoTaoATVSLDRepository.Add(en);
+            return _mapper.Map<EhsKeHoachDaoTaoATLDViewModel>(en);
         }
 
         public void Delete(Guid Id)
@@ -121,7 +122,8 @@ namespace HRMNS.Application.Implementation
             model.NoiDung = quantrac.NoiDung.NullString();
 
             model.MaEvent = AddNewEvent(model.MaEvent.ToString(), model.NoiDung, model.NgayBatDau, model.NgayKetThuc, nguoiPhuTrach, nhaThau);
-            _EHSNgayThucHienATVSLDRepository.Add(_mapper.Map<EHS_THOIGIAN_THUC_HIEN_DAOTAO_ATVSLD>(model));
+            EHS_THOIGIAN_THUC_HIEN_DAOTAO_ATVSLD enModel = _mapper.Map<EHS_THOIGIAN_THUC_HIEN_DAOTAO_ATVSLD>(model);
+            _EHSNgayThucHienATVSLDRepository.Add(enModel);
 
             Save();
 
@@ -134,7 +136,7 @@ namespace HRMNS.Application.Implementation
 
             en.ThoiGianDaoTao = days.Substring(0, days.Length - 1);
             _EHSKeHoachDaoTaoATVSLDRepository.Update(en);
-            return model;
+            return _mapper.Map<EhsThoiGianThucHienDaoTaoATVSViewModel>(enModel);
         }
 
         public void DeleteThoiGianATVSLD(int Id)

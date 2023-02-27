@@ -16,5 +16,7 @@ namespace HRMNS.Application.ViewModels.EHS
         public int Progress { get; set; }
         public string Status { get; set; }
         public string ActualFinish { get; set; }
+        public string Folder { get; set; }
+        public string MaNgayThucHien { get; set; }
     }
 }

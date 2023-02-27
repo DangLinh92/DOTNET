@@ -16,9 +16,10 @@ namespace HRMNS.Data.Entities
             EHS_THOIGIAN_THUC_HIEN_PCCC = new HashSet<EHS_THOIGIAN_THUC_HIEN_PCCC>();
         }
 
-        public EHS_KEHOACH_PCCC(Guid maKh,int stt,string noidung,string chuky,string year,string thoigiandaotao,string nguoiphutrach,string nhathau,
+        public EHS_KEHOACH_PCCC(Guid id,Guid maKh,int stt,string noidung,string chuky,string year,string thoigiandaotao,string nguoiphutrach,string nhathau,
             double cost1, double cost2, double cost3, double cost4, double cost5, double cost6, double cost7, double cost8, double cost9, double cost10, double cost11, double cost12,string hangmuc)
         {
+            Id = id;
             MaDMKeHoach = maKh;
             STT = stt;
             NoiDung = noidung;

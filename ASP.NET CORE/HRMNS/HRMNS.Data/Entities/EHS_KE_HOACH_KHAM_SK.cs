@@ -17,10 +17,11 @@ namespace HRMNS.Data.Entities
             EHS_NGAY_THUC_HIEN_CHITIET_KHAM_SK = new HashSet<EHS_NGAY_THUC_HIEN_CHITIET_KHAM_SK>();
         }
 
-        public EHS_KE_HOACH_KHAM_SK(string noidung,string luatDinh,string chuky,string year,
+        public EHS_KE_HOACH_KHAM_SK(Guid id,string noidung,string luatDinh,string chuky,string year,
             double costMonth_1, double costMonth_2, double costMonth_3, double costMonth_4, double costMonth_5, double costMonth_6, double costMonth_7,
             double costMonth_8, double costMonth_9, double costMonth_10, double costMonth_11, double costMonth_12,Guid maDKKeHoach,string nhathau,string nguoiPhuTrach)
         {
+            Id = id;
             NoiDung = noidung;
             LuatDinhLienQuan = luatDinh;
             ChuKyThucHien = chuky;

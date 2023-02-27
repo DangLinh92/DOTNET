@@ -24,21 +24,31 @@ namespace OMNS_Weebhook_Service
         private Timer timer2 = null;
         protected override void OnStart(string[] args)
         {
+            count = 0;
             timer1 = new Timer();
             this.timer1.Interval = 60000; //every 1 p
             this.timer1.Elapsed += new System.Timers.ElapsedEventHandler(this.timer1_Tick);
             timer1.Enabled = true;
 
             timer2 = new Timer();
-            this.timer2.Interval = 86400000; //every 1 day
+            this.timer2.Interval = 3600000; //every 1 h
             this.timer2.Elapsed += new ElapsedEventHandler(this.timer2_Tick);
             timer2.Enabled = true;
             LogFile.WriteErrorLog("window service START");
         }
 
+        int count = 0;
         private async void timer2_Tick(object sender, ElapsedEventArgs e)
         {
-            await Process_EHS();
+            if(DateTime.Now.DayOfWeek == DayOfWeek.Monday && DateTime.Now.Hour > 7 && DateTime.Now.Hour < 9 && count == 0)
+            {
+                count++;
+                await Process_EHS();
+            }
+            else
+            {
+                count = 0;
+            }
         }
 
         private async void timer1_Tick(object sender, ElapsedEventArgs e)
@@ -50,6 +60,7 @@ namespace OMNS_Weebhook_Service
         {
             timer1.Enabled = false;
             timer2.Enabled = false;
+            count = 0;
             LogFile.WriteErrorLog("window service stopped");
         }
 

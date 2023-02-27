@@ -41,8 +41,10 @@ namespace HRMNS.Application.Implementation
         {
             // Id trong table EHS_DM_KEHOACH
             model.MaDMKeHoach = Guid.Parse("44ba2130-8336-4853-b226-7234e592c52c");
-            _EHSKeHoachQuanTracRepository.Add(_mapper.Map<EHS_KEHOACH_QUANTRAC>(model));
-            return model;
+
+            EHS_KEHOACH_QUANTRAC en = _mapper.Map<EHS_KEHOACH_QUANTRAC>(model);
+            _EHSKeHoachQuanTracRepository.Add(en);
+            return _mapper.Map<EhsKeHoachQuanTracViewModel>(en);
         }
 
         public void Delete(int Id)
@@ -112,8 +114,9 @@ namespace HRMNS.Application.Implementation
 
             model.MaEvent = AddNewEvent(model.MaEvent.ToString(), model.NoiDung, model.NgayBatDau, model.NgayKetThuc, nguoiPhuTrach, nhaThau);
 
-            _EHSNgayThucHienQuanTracRepository.Add(_mapper.Map<EHS_NGAY_THUC_HIEN_CHITIET_QUANTRAC>(model));
-            return model;
+            EHS_NGAY_THUC_HIEN_CHITIET_QUANTRAC en = _mapper.Map<EHS_NGAY_THUC_HIEN_CHITIET_QUANTRAC>(model);
+            _EHSNgayThucHienQuanTracRepository.Add(en);
+            return _mapper.Map<EhsNgayThucHienChiTietQuanTrac>(en);
         }
 
         public void DeleteNgayQuanTrac(int Id)

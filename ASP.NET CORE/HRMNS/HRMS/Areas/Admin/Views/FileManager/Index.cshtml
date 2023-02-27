@@ -189,6 +189,26 @@
 
 <script>
 
+    $(function () {
+        onResetKetQuaClick();
+    });
+
+    function onResetKetQuaClick() {
+
+        $.ajax({
+            url: '/Admin/FileManager/ResetMaNgayChiTiet',
+            type: 'GET',
+            success: function (fileUrl) {
+                console.log(fileUrl);
+            },
+            error: function (status) {
+                console.log(status.responseText);
+                hrms.notify('error:' + status.responseText, 'error', 'alert', function () { });
+            }
+        });
+    }
+
+
     $(document).ready(function () {
         $('#btnUpdateLocationAndDate').on('click', function (e) {
   

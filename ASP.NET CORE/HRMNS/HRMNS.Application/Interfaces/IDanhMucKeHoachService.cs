@@ -19,10 +19,16 @@ namespace HRMNS.Application.Interfaces
 
         List<TotalAllItemByYear> TongHopKeHoachByYear(string year);
 
+        List<EhsFileKetQuaViewModel> GetFileByNoiDung(string makehoach);
+
         List<EhsKeHoachItemModel> DanhSachKeHoachByTime(string fromTime, string ToTime);
 
         List<KanbanViewModel> GetKanBanBoard();
         KanbanViewModel GetEvenById(string id);
+
+        List<Ehs_ThoiGianThucHien> GetThoiGianThucHien(string maKeHoach);
+
+        string GetFolderKetQua(string maNgayChitiet);
 
         int UpdateEvent(string id,string status,string priority,string progress,string actualFinish,string begindate,string action);
 

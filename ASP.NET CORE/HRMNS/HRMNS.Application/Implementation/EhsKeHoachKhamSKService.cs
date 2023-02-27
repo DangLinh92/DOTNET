@@ -46,8 +46,9 @@ namespace HRMNS.Application.Implementation
         public EhsKeHoachKhamSKViewModel Add(EhsKeHoachKhamSKViewModel model)
         {
             model.MaDMKeHoach = Guid.Parse("ffe65d73-1066-4f1b-af5b-0c0e33d494dd");
-            _EHSKeHoachKhamSKRepository.Add(_mapper.Map<EHS_KE_HOACH_KHAM_SK>(model));
-            return model;
+            EHS_KE_HOACH_KHAM_SK en = _mapper.Map<EHS_KE_HOACH_KHAM_SK>(model);
+            _EHSKeHoachKhamSKRepository.Add(en);
+            return _mapper.Map<EhsKeHoachKhamSKViewModel>(en);
         }
 
         public EhsKeHoachKhamSKViewModel Update(EhsKeHoachKhamSKViewModel model)
@@ -69,8 +70,9 @@ namespace HRMNS.Application.Implementation
             model.NoiDung = quantrac.NoiDung.NullString();
             model.MaEvent = AddNewEvent(model.MaEvent.ToString(), model.NoiDung, model.NgayBatDau, model.NgayKetThuc, nguoiPhuTrach, nhaThau);
 
-            _EHSNgayThucHienKhamSKRepository.Add(_mapper.Map<EHS_NGAY_THUC_HIEN_CHITIET_KHAM_SK>(model));
-            return model;
+            EHS_NGAY_THUC_HIEN_CHITIET_KHAM_SK en = _mapper.Map<EHS_NGAY_THUC_HIEN_CHITIET_KHAM_SK>(model);
+            _EHSNgayThucHienKhamSKRepository.Add(en);
+            return _mapper.Map<EhsNgayThucHienChiTietKhamSKViewModel>(en);
         }
 
         public EhsNgayThucHienChiTietKhamSKViewModel UpdateNgayKhamSK(EhsNgayThucHienChiTietKhamSKViewModel model)
@@ -97,8 +99,9 @@ namespace HRMNS.Application.Implementation
 
         public EhsNhanVienKhamSucKhoe AddNhanVienKhamSK(EhsNhanVienKhamSucKhoe model)
         {
-            _EHNhanVienKhamSKRepository.Add(_mapper.Map<EHS_NHANVIEN_KHAM_SK>(model));
-            return model;
+            EHS_NHANVIEN_KHAM_SK en = _mapper.Map<EHS_NHANVIEN_KHAM_SK>(model);
+            _EHNhanVienKhamSKRepository.Add(en);
+            return _mapper.Map<EhsNhanVienKhamSucKhoe>(en);
         }
 
         public EhsNhanVienKhamSucKhoe UpdateNhanVienKhamSK(EhsNhanVienKhamSucKhoe model)

@@ -16,9 +16,10 @@ namespace HRMNS.Data.Entities
 
         }
 
-        public EHS_THOIGIAN_THUC_HIEN_KIEMDINH_MM(Guid maEvent, Guid maKHKDMM, string noidung, string ngayBatDau, string ngayKetThuc, 
-            string status, int progress, string priority, string isShowBoard,string actualFinish)
+        public EHS_THOIGIAN_THUC_HIEN_KIEMDINH_MM(int id,Guid maEvent, Guid maKHKDMM, string noidung, string ngayBatDau, string ngayKetThuc, 
+            string status, int progress, string priority, string isShowBoard,string actualFinish, string fileName, string fileUrl)
         {
+            Id = id;
             MaEvent = maEvent;
             MaKH_KDMM = maKHKDMM;
             NoiDung = noidung;
@@ -29,7 +30,8 @@ namespace HRMNS.Data.Entities
             Progress = progress;
             Priority = priority;
             IsShowBoard = isShowBoard;
-
+            FileNameResult = fileName;
+            UrlFileNameResult = fileUrl;
             ActualFinish = actualFinish;
         }
 
@@ -71,6 +73,11 @@ namespace HRMNS.Data.Entities
 
         [StringLength(50)]
         public string ActualFinish { get; set; }
+
+        [StringLength(250)]
+        public string FileNameResult { get; set; }
+
+        public string UrlFileNameResult { get; set; }
 
         [ForeignKey("MaKH_KDMM")]
         public virtual EHS_KEHOACH_KIEMDINH_MAYMOC EHS_KEHOACH_KIEMDINH_MAYMOC { get; set; }

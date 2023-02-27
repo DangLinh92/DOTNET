@@ -13,11 +13,25 @@ using System.Collections.Generic;
 using Syncfusion.EJ2.FileManager.PhysicalFileProvider;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
+using HRMNS.Data.Entities;
+using HRMS.Infrastructure.Interfaces;
+using AutoMapper;
+using Microsoft.Extensions.Caching.Memory;
+using System.Linq;
+using DevExtreme.AspNet.Mvc;
+using DevExtreme.AspNet.Data;
+using HRMNS.Data.EF.Extensions;
 
 namespace HRMS.Areas.Admin.Controllers
 {
     public class FileManagerController : AdminBaseController
     {
+        private IRespository<EHS_FILES, int> _filesRepository;
+        private IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+        private readonly IMemoryCache _memoryCache;
+        private string maNgayChiTiet;
+
         public IActionResult Index()
         {
             return View();
@@ -122,14 +136,19 @@ namespace HRMS.Areas.Admin.Controllers
         string root = "wwwroot\\FileData\\Ehs_Documents";
 
         [Obsolete]
-        public FileManagerController(IHostingEnvironment hostingEnvironment)
+        public FileManagerController(IHostingEnvironment hostingEnvironment, IRespository<EHS_FILES, int> filesRepository, IUnitOfWork unitOfWork, IMapper mapper, IMemoryCache memoryCache)
         {
+            _filesRepository = filesRepository;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+            _memoryCache = memoryCache;
+
             this.basePath = hostingEnvironment.ContentRootPath;
             this.operation = new PhysicalFileProvider();
             this.operation.RootFolder("D:\\HRMS_DOCUMENT");//(this.basePath + "\\" + this.root);
         }
 
-        //[Route("FileOperations")]
+        //[Route("FileOperations")] 
         public object FileOperations([FromBody] FileManagerDirectoryContent args)
         {
             if (args.Action == "delete" || args.Action == "rename")
@@ -147,12 +166,18 @@ namespace HRMS.Areas.Admin.Controllers
                     // reads the file(s) or folder(s) from the given path.
                     return this.operation.ToCamelCase(this.operation.GetFiles(args.Path, args.ShowHiddenItems));
                 case "delete":
+                    UpdateFileResult(args.IsFile, args.Path, args.Names[0].ToString(), "", "", "delete");
+
                     // deletes the selected file(s) or folder(s) from the given path.
                     return this.operation.ToCamelCase(this.operation.Delete(args.Path, args.Names));
                 case "copy":
+                    UpdateFileResult(args.IsFile, args.Path, args.Names[0].ToString(), args.TargetPath, args.Names[0].ToString(), "copy");
+
                     // copies the selected file(s) or folder(s) from a path and then pastes them into a given target path.
                     return this.operation.ToCamelCase(this.operation.Copy(args.Path, args.TargetPath, args.Names, args.RenameFiles, args.TargetData));
                 case "move":
+                    UpdateFileResult(args.IsFile, args.Path, args.Names[0].ToString(), args.TargetPath, args.Names[0].ToString(), "move");
+
                     // cuts the selected file(s) or folder(s) from a path and then pastes them into a given target path.
                     return this.operation.ToCamelCase(this.operation.Move(args.Path, args.TargetPath, args.Names, args.RenameFiles, args.TargetData));
                 case "details":
@@ -165,6 +190,9 @@ namespace HRMS.Areas.Admin.Controllers
                     // gets the list of file(s) or folder(s) from a given path based on the searched key string.
                     return this.operation.ToCamelCase(this.operation.Search(args.Path, args.SearchString, args.ShowHiddenItems, args.CaseSensitive));
                 case "rename":
+
+                    UpdateFileResult(args.IsFile, args.Path, args.Name, args.Path, args.NewName, "rename");
+
                     // renames a file or folder.
                     return this.operation.ToCamelCase(this.operation.Rename(args.Path, args.Name, args.NewName));
             }
@@ -175,7 +203,11 @@ namespace HRMS.Areas.Admin.Controllers
         //[Route("Upload")]
         public IActionResult Upload(string path, IList<IFormFile> uploadFiles, string action)
         {
+            _memoryCache.TryGetValue("MaNgayChiTiet", out maNgayChiTiet);
+
             FileManagerResponse uploadResponse;
+            List<EHS_FILES> files = new List<EHS_FILES>();
+            EHS_FILES ehsFile;
             foreach (var file in uploadFiles)
             {
                 var folders = (file.FileName).Split('/');
@@ -192,7 +224,16 @@ namespace HRMS.Areas.Admin.Controllers
                         path += folders[i] + "/";
                     }
                 }
+
+                ehsFile = new EHS_FILES()
+                {
+                    FileName = file.FileName,
+                    UrlFile = path,
+                    MaNgayChiTiet = maNgayChiTiet
+                };
+                files.Add(ehsFile);
             }
+
             uploadResponse = operation.Upload(path, uploadFiles, action, null);
             if (uploadResponse.Error != null)
             {
@@ -201,7 +242,49 @@ namespace HRMS.Areas.Admin.Controllers
                 Response.StatusCode = Convert.ToInt32(uploadResponse.Error.Code);
                 Response.HttpContext.Features.Get<IHttpResponseFeature>().ReasonPhrase = uploadResponse.Error.Message;
             }
+            else
+            {
+                _filesRepository.AddRange(files);
+                _unitOfWork.Commit();
+            }
+
             return Content("");
+        }
+
+        private void UpdateFileResult(bool isFile, string oldPath, string oldName, string newPath, string newName, string action)
+        {
+            _memoryCache.TryGetValue("MaNgayChiTiet", out maNgayChiTiet);
+
+            if (action == "delete")
+            {
+                if (isFile)
+                {
+                    var file = _filesRepository.FindSingle(x => x.MaNgayChiTiet == maNgayChiTiet && x.FileName == oldName && x.UrlFile == oldPath);
+
+                    if (file != null)
+                        _filesRepository.Remove(file);
+                }
+                else
+                {
+                    var files = _filesRepository.FindAll(x => x.MaNgayChiTiet == maNgayChiTiet && x.UrlFile.Contains(oldPath)).ToList();
+                    if (files != null && files.Count() > 0)
+                        _filesRepository.RemoveMultiple(files);
+                }
+
+                _unitOfWork.Commit();
+            }
+            else
+            {
+                var file = _filesRepository.FindSingle(x => x.MaNgayChiTiet == maNgayChiTiet && x.FileName == oldName && x.UrlFile == oldPath);
+                if (file != null)
+                {
+                    file.FileName = newName;
+                    file.UrlFile = newPath;
+                }
+
+                _filesRepository.Update(file);
+                _unitOfWork.Commit();
+            }
         }
 
         // downloads the selected file(s) and folder(s)
@@ -219,5 +302,42 @@ namespace HRMS.Areas.Admin.Controllers
             return this.operation.GetImage(args.Path, args.Id, false, null, null);
         }
         #endregion
+
+        [HttpPost]
+        public IActionResult SaveMaNgayChiTiet(string key)
+        {
+            _memoryCache.Remove("MaNgayChiTiet");
+            _memoryCache.Set("MaNgayChiTiet", key.NullString());
+            var files = _filesRepository.FindAll(x => x.MaNgayChiTiet == key).ToList();
+            if (files != null && files.Count > 0)
+            {
+                return new OkObjectResult(files[0].UrlFile);
+            }
+
+            return new OkObjectResult("/");
+        }
+
+        [HttpGet]
+        public IActionResult ResetMaNgayChiTiet()
+        {
+            //_memoryCache.Remove("MaNgayChiTiet");
+            //_memoryCache.Set("MaNgayChiTiet", "");
+
+            return new OkObjectResult("/");
+        }
+
+        [HttpGet]
+        public object GetfileUrl(DataSourceLoadOptions loadOptions, string key)
+        {
+            var files = _filesRepository.FindAll(x => x.MaNgayChiTiet == key).ToList();
+            return DataSourceLoader.Load(files, loadOptions);
+        }
+
+        [HttpPost]
+        public IActionResult GetUrlFileDetail(int id)
+        {
+            var file = _filesRepository.FindById(id);
+            return new OkObjectResult(file.UrlFile);
+        }
     }
 }
