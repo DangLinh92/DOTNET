@@ -17,10 +17,12 @@ namespace HRMNS.Data.EF
 {
     public class AppDBContext : IdentityDbContext<APP_USER, APP_ROLE, Guid>
     {
-        public AppDBContext(DbContextOptions<AppDBContext> options) : base(options)
+        public IHttpContextAccessor _httpContextAccessor;
+        public AppDBContext(DbContextOptions<AppDBContext> options, IHttpContextAccessor httpContextAccessor) : base(options)
         {
-
+            _httpContextAccessor = httpContextAccessor;
         }
+
         public virtual DbSet<APP_USER> AppUsers { get; set; }
         public virtual DbSet<APP_ROLE> AppRoles { get; set; }
         public virtual DbSet<BOPHAN> BoPhans { get; set; }
@@ -101,6 +103,9 @@ namespace HRMNS.Data.EF
         public virtual DbSet<EHS_KEHOACH_KIEMDINH_MAYMOC> EHS_KEHOACH_KIEMDINH_MAYMOC { get; set; }
         public virtual DbSet<EHS_MAIL_NOTIFY> EHS_MAIL_NOTIFY { get; set; }
         public virtual DbSet<EHS_FILES> EHS_FILES { get; set; }
+        public virtual DbSet<EHS_HANGMUC_NG> EHS_HANGMUC_NG { get; set; }
+        public virtual DbSet<EHS_QUANLY_GIAY_PHEP> EHS_QUANLY_GIAY_PHEP { get; set; }
+        public virtual DbSet<EHS_COQUAN_KIEMTRA> EHS_COQUAN_KIEMTRA { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -189,6 +194,9 @@ namespace HRMNS.Data.EF
             builder.AddConfiguration(new EHS_ThoiGianKiemDinhMayMocConfiguration());
             builder.AddConfiguration(new EHS_EmailNotifyConfiguration());
             builder.AddConfiguration(new EHS_FilesConfiguration());
+            builder.AddConfiguration(new EHS_HangMucNGConfiguration());
+            builder.AddConfiguration(new EHSQuanLyGiayPhepConfiguration());
+            builder.AddConfiguration(new EHSCoquanKtraConfiguration());
 
             //base.OnModelCreating(builder);
         }
@@ -204,8 +212,15 @@ namespace HRMNS.Data.EF
                     if (item.State == EntityState.Added)
                     {
                         changeOrAddedItem.DateCreated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+                        if(_httpContextAccessor.HttpContext != null)
+                            changeOrAddedItem.UserCreated = _httpContextAccessor.HttpContext.User?.Identity?.Name;
                     }
+
                     changeOrAddedItem.DateModified = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+                    if (_httpContextAccessor.HttpContext != null)
+                        changeOrAddedItem.UserModified = _httpContextAccessor.HttpContext.User?.Identity?.Name;
                 }
             }
             return base.SaveChanges();
@@ -214,6 +229,16 @@ namespace HRMNS.Data.EF
 
     public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<AppDBContext>
     {
+        public DesignTimeDbContextFactory()
+        {
+
+        }
+
+        public IHttpContextAccessor _httpContextAccessor;
+        public DesignTimeDbContextFactory(IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
         public AppDBContext CreateDbContext(string[] args)
         {
             IConfiguration configuration = new ConfigurationBuilder()
@@ -222,7 +247,7 @@ namespace HRMNS.Data.EF
             var builder = new DbContextOptionsBuilder<AppDBContext>();
             var connectionString = configuration.GetConnectionString("DefaultConnection");
             builder.UseSqlServer(connectionString);
-            return new AppDBContext(builder.Options);
+            return new AppDBContext(builder.Options, _httpContextAccessor);
         }
     }
 }

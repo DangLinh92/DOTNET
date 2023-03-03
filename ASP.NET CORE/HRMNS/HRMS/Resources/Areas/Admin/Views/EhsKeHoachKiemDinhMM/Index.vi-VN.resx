@@ -363,4 +363,22 @@
   <data name="YEAR" xml:space="preserve">
     <value>Năm</value>
   </data>
+	<data name="TIEU_DE_THONGTIN" xml:space="preserve">
+    <value>Thông tin ngày bắt đầu,kết thúc và Import File Kết quả</value>
+  </data>
+	<data name="TINH_HINH_CAI_TIEN" xml:space="preserve">
+    <value>Tình hình cải tiến</value>
+  </data>
+	<data name="NOI_DUNG_NG" xml:space="preserve">
+    <value>Nội dung NG</value>
+  </data>
+	<data name="NGUYEN_NHAN" xml:space="preserve">
+    <value>Nguyên nhân NG</value>
+  </data>
+	<data name="DOI_SACH_CAI_TIEN" xml:space="preserve">
+    <value>Đối sách cải tiến</value>
+  </data>
+	<data name="HANG_MUC_NG" xml:space="preserve">
+    <value>Hạng mục NG</value>
+  </data>
 </root>

@@ -126,6 +126,9 @@
   <data name="CHAMCONG" xml:space="preserve">
     <value>Chấm Công</value>
   </data>
+  <data name="CO_QUAN_KTRA" xml:space="preserve">
+    <value>Cơ quan nhà nước kiêm tra</value>
+  </data>
   <data name="DANHSACHKEHOACH" xml:space="preserve">
     <value>Danh Sách Kế Hoạch</value>
   </data>
@@ -137,6 +140,9 @@
   </data>
   <data name="DOCUMENT" xml:space="preserve">
     <value>Quản Lý Tài Liệu</value>
+  </data>
+  <data name="EHS_CAI_TIEN_NG" xml:space="preserve">
+    <value>Cải Tiến NG</value>
   </data>
   <data name="Home" xml:space="preserve">
     <value>Home</value>
@@ -182,6 +188,9 @@
   </data>
   <data name="OVERTIME" xml:space="preserve">
     <value>Đăng ký tăng ca</value>
+  </data>
+  <data name="QUAN_LY_GIAY_PHEP" xml:space="preserve">
+    <value>Quản lý các loại giấy phép</value>
   </data>
   <data name="REGIS_TIMEKEEPING" xml:space="preserve">
     <value>Chấm công bổ sung</value>

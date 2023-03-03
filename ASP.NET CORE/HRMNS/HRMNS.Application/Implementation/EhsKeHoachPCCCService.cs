@@ -41,7 +41,8 @@ namespace HRMNS.Application.Implementation
             model.MaDMKeHoach = Guid.Parse("8b5cb6e4-e925-4a8b-b14d-594b310b6a4f");
             EHS_KEHOACH_PCCC en = _mapper.Map<EHS_KEHOACH_PCCC>(model);
             _EHSKeHoachPCCCRepository.Add(en);
-            return model;
+            Save();
+            return _mapper.Map<Ehs_KeHoach_PCCCViewModel>(en);
         }
 
         public Ehs_KeHoach_PCCCViewModel Update(Ehs_KeHoach_PCCCViewModel model)

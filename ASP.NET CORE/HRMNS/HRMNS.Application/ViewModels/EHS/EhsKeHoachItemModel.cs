@@ -18,5 +18,6 @@ namespace HRMNS.Application.ViewModels.EHS
         public string ActualFinish { get; set; }
         public string Folder { get; set; }
         public string MaNgayThucHien { get; set; }
+        public string KetQua { get; set; }
     }
 }

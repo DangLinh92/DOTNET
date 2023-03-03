@@ -168,6 +168,15 @@
   <data name="KEHOACH_QUANTRAC" xml:space="preserve">
     <value>Kế Hoạch Quan Trắc</value>
   </data>
+  <data name="KET_QUA" xml:space="preserve">
+    <value>Kết Quả</value>
+  </data>
+  <data name="NGAY_BAT_DAU" xml:space="preserve">
+    <value>Ngày Bắt Đầu</value>
+  </data>
+  <data name="NGUOI_PHU_TRACH" xml:space="preserve">
+    <value>Người Phụ Trách</value>
+  </data>
   <data name="NHANSU" xml:space="preserve">
     <value>Nhân Sự</value>
   </data>
@@ -179,6 +188,9 @@
   </data>
   <data name="NHANVIEN_NGHIVIEC" xml:space="preserve">
     <value>Danh Sách Nghỉ Việc</value>
+  </data>
+  <data name="NOI_DUNG" xml:space="preserve">
+    <value>Nội dung</value>
   </data>
   <data name="OVERTIME" xml:space="preserve">
     <value>Đăng ký tăng ca</value>
@@ -197,6 +209,9 @@
   </data>
   <data name="SHIFT_SCHEDULE" xml:space="preserve">
     <value>Phân ca</value>
+  </data>
+  <data name="STATUS" xml:space="preserve">
+    <value>Trạng Thái</value>
   </data>
   <data name="THAISAN" xml:space="preserve">
     <value>Thai sản</value>

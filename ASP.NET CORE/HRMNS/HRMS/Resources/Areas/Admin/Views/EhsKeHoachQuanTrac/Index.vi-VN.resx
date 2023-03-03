@@ -183,6 +183,12 @@
   <data name="DOCUMENT" xml:space="preserve">
     <value>Quản Lý Tài Liệu</value>
   </data>
+  <data name="DOI_SACH_CAI_TIEN" xml:space="preserve">
+    <value>Đối sách cải tiến</value>
+  </data>
+  <data name="HANG_MUC_NG" xml:space="preserve">
+    <value>Hạng mục NG</value>
+  </data>
   <data name="Home" xml:space="preserve">
     <value>Home</value>
   </data>
@@ -267,6 +273,9 @@
   <data name="NGUOI_PHU_TRACH" xml:space="preserve">
     <value>Người phụ trách</value>
   </data>
+  <data name="NGUYEN_NHAN" xml:space="preserve">
+    <value>Nguyên nhân NG</value>
+  </data>
   <data name="NHANSU" xml:space="preserve">
     <value>Nhân Sự</value>
   </data>
@@ -284,6 +293,9 @@
   </data>
   <data name="NOI_DUNG" xml:space="preserve">
     <value>Nội dung</value>
+  </data>
+  <data name="NOI_DUNG_NG" xml:space="preserve">
+    <value>Nội dung NG</value>
   </data>
   <data name="OVERTIME" xml:space="preserve">
     <value>Đăng ký tăng ca</value>
@@ -336,8 +348,14 @@
   <data name="TIEN_DO" xml:space="preserve">
     <value>Tiến Độ(%)</value>
   </data>
+  <data name="TIEU_DE_THONGTIN" xml:space="preserve">
+    <value>Thông tin ngày bắt đầu,kết thúc và Import File Kết quả</value>
+  </data>
   <data name="TIMEKEEPING" xml:space="preserve">
     <value>Dữ liệu vào/ra</value>
+  </data>
+  <data name="TINH_HINH_CAI_TIEN" xml:space="preserve">
+    <value>Tình hình cải tiến</value>
   </data>
   <data name="TONGHOPKEHOACH" xml:space="preserve">
     <value>Chi phí hàng tháng</value>

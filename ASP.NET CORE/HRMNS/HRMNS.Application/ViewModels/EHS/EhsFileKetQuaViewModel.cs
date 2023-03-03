@@ -23,5 +23,7 @@ namespace HRMNS.Application.ViewModels.EHS
 
         public string UrlFile { get; set; }
 
+        public string KetQua { get; set; }
+
     }
 }

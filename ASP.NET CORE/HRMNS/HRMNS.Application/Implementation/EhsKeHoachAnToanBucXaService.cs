@@ -41,6 +41,7 @@ namespace HRMNS.Application.Implementation
             model.MaDMKeHoach = Guid.Parse("7c60f914-c6d2-453a-841f-5afd0fb4a3bc");
             EHS_KEHOACH_ANTOAN_BUCXA en = _mapper.Map<EHS_KEHOACH_ANTOAN_BUCXA>(model);
             _EHSKeHoachBucXaRepository.Add(en);
+            Save();
             return _mapper.Map<EhsKeHoachAnToanBucXaViewModel>(en);
         }
 

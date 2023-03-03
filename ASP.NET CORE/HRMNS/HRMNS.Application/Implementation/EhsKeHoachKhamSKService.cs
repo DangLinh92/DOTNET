@@ -48,6 +48,7 @@ namespace HRMNS.Application.Implementation
             model.MaDMKeHoach = Guid.Parse("ffe65d73-1066-4f1b-af5b-0c0e33d494dd");
             EHS_KE_HOACH_KHAM_SK en = _mapper.Map<EHS_KE_HOACH_KHAM_SK>(model);
             _EHSKeHoachKhamSKRepository.Add(en);
+            Save();
             return _mapper.Map<EhsKeHoachKhamSKViewModel>(en);
         }
 
@@ -72,6 +73,7 @@ namespace HRMNS.Application.Implementation
 
             EHS_NGAY_THUC_HIEN_CHITIET_KHAM_SK en = _mapper.Map<EHS_NGAY_THUC_HIEN_CHITIET_KHAM_SK>(model);
             _EHSNgayThucHienKhamSKRepository.Add(en);
+            Save();
             return _mapper.Map<EhsNgayThucHienChiTietKhamSKViewModel>(en);
         }
 

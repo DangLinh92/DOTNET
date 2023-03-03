@@ -12,6 +12,8 @@ namespace HRMNS.Application.ViewModels.EHS
         }
         public Guid? MaKeHoachActive { get; set; }
         public List<EhsDMKeHoachViewModel> EhsDMKeHoachViewModels { get; set; }
+
+        public TaskStatistics TaskStatistics { get; set; }
     }
 
     public class NoiDungDeMucKH

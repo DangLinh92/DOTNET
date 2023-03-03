@@ -1,0 +1,182 @@
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts{
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+    <script>
+
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('GiayPhep');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'Quan Ly Giay Phep.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        function getStatus() {
+            return ["TODO", "Inprogress", "Completed", "Pending"]
+        }
+    </script>
+}
+
+@section Styles{
+    <style>
+
+        .complete { /* Created with https://www.css-gradient.com */
+            /* Created with https://www.css-gradient.com */
+            /* Created with https://www.css-gradient.com */
+            background: #57EE6C;
+            background: -webkit-linear-gradient(right, #57EE6C, #055220);
+            background: -moz-linear-gradient(right, #57EE6C, #055220);
+            background: linear-gradient(to left, #57EE6C, #055220);
+            color: #2ab71b;
+            /* background-image: linear-gradient(to right, blue, green);*/
+            font-weight: bold;
+            padding-left: 10px;
+        }
+
+        .todo {
+            color: #2ab71b;
+            /* Created with https://www.css-gradient.com */
+            background: #58CAFC;
+            background: -webkit-linear-gradient(right, #58CAFC, #19A4E1);
+            background: -moz-linear-gradient(right, #58CAFC, #19A4E1);
+            background: linear-gradient(to left, #58CAFC, #19A4E1);
+            font-weight: bold;
+            padding-left: 10px;
+        }
+
+        .pending {
+            color: #2ab71b;
+            /* Created with https://www.css-gradient.com */
+            /* Created with https://www.css-gradient.com */
+            background: #EE6057;
+            background: -webkit-linear-gradient(right, #EE6057, #E12519);
+            background: -moz-linear-gradient(right, #EE6057, #E12519);
+            background: linear-gradient(to left, #EE6057, #E12519);
+            font-weight: bold;
+            padding-left: 10px;
+        }
+
+        .inprogress {
+            color: #2ab71b;
+            /* Created with https://www.css-gradient.com */
+            background: #EED557;
+            background: -webkit-linear-gradient(right, #EED557, #F1BB2B);
+            background: -moz-linear-gradient(right, #EED557, #F1BB2B);
+            background: linear-gradient(to left, #EED557, #F1BB2B);
+            font-weight: bold;
+            padding-left: 10px;
+        }
+    </style>
+}
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="page-title">@(localizer["QUAN_LY_GIAY_PHEP"]) </h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div id="data-grid-demo">
+                @(Html.DevExtreme().DataGrid<EhsQuanLyGiayPhepViewModel>()
+        .ID("gridContainer")
+        .ShowBorders(true)
+        .Paging(p => p.Enabled(false))
+        .AllowColumnResizing(true)
+    .ColumnMinWidth(50)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+    .OnExporting("exporting")
+        .Editing(e => e.Mode(GridEditMode.Popup)
+            .AllowUpdating(true)
+            .AllowAdding(true)
+            .AllowDeleting(true)
+            .Popup(p => p
+                .Title("Infomation")
+                .ShowTitle(true)
+                .Width(700)
+                .Height(600)
+            )
+            .Form(f => f.Items(items => {
+                items.AddGroup()
+                    .ColCount(2)
+                    .ColSpan(2)
+                    .Items(groupItems => {
+                        groupItems.AddSimpleFor(m => m.Demuc).ColSpan(2);
+                        groupItems.AddSimpleFor(m => m.NoiDung).ColSpan(2);
+                        groupItems.AddSimpleFor(m => m.LuatDinhLienQuan).ColSpan(2);
+                        groupItems.AddSimpleFor(m => m.LyDoThucHien).ColSpan(2);
+                        groupItems.AddSimpleFor(m => m.ThoiGian);
+                        groupItems.AddSimpleFor(m => m.SoNgayBaoTruoc) ;
+                        groupItems.AddSimpleFor(m => m.TienDo);
+                        groupItems.AddSimpleFor(m => m.Status);
+                        groupItems.AddSimpleFor(m => m.NguoiThucHien).ColSpan(2);
+                        groupItems.AddSimpleFor(m => m.KetQua)
+                            .ColSpan(2)
+                            .Editor(editor => editor.TextArea().Height(100));
+                    });
+            }))
+        )
+        .Columns(columns => {
+            columns.AddFor(m => m.Id).Visible(false);
+
+            columns.AddFor(m => m.Demuc).Caption(@localizer["DE_MUC"].Value);
+
+            columns.AddFor(m => m.NoiDung).Caption(@localizer["NOI_DUNG"].Value);
+
+            columns.AddFor(m => m.LuatDinhLienQuan).Caption(@localizer["LUAT_DINH_LIEN_QUAN"].Value);
+
+            columns.AddFor(m => m.LyDoThucHien).Caption(@localizer["LY_DO_THUC_HIEN"].Value);
+
+            columns.AddFor(m => m.ThoiGian).Caption(@localizer["THOI_GIAN_BAT_DAU"].Value);
+            columns.AddFor(m => m.SoNgayBaoTruoc).Caption(@localizer["SO_NGAY_BAO_TRUOC"].Value);
+
+            columns.AddFor(m => m.TienDo).Caption(@localizer["TIEN_DO"].Value); ;
+            columns.AddFor(m => m.NguoiThucHien).Caption(@localizer["NGUOI_PHU_TRACH"].Value);
+            columns.AddFor(m => m.Status).Caption(@localizer["STATUS"].Value).Lookup(lookup => lookup.DataSource("getStatus"));
+
+            columns.AddFor(m => m.KetQua).Caption(@localizer["KET_QUA"].Value);
+        })
+        .DataSource(d => d.Mvc()
+            .Controller("QuanLyGiayPhep")
+            .Area("admin")
+            .LoadAction("Get")
+            .InsertAction("Post")
+            .UpdateAction("Put")
+            .DeleteAction("Delete")
+            .Key("Id")
+        )
+    )
+            </div>
+
+        </div>
+    </div>
+</div>
+

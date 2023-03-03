@@ -42,6 +42,7 @@ namespace HRMNS.Application.Implementation
             model.MaDMKeHoach = Guid.Parse("5f2ad5b3-8e86-4cd8-be84-ef4e7d82212b");
             EHS_KEHOACH_DAOTAO_ANTOAN_VSLD en = _mapper.Map<EHS_KEHOACH_DAOTAO_ANTOAN_VSLD>(model);
             _EHSKeHoachDaoTaoATVSLDRepository.Add(en);
+            Save();
             return _mapper.Map<EhsKeHoachDaoTaoATLDViewModel>(en);
         }
 

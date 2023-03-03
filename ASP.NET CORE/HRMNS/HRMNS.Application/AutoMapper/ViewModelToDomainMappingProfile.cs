@@ -92,30 +92,33 @@ namespace HRMNS.Application.AutoMapper
             CreateMap<EventScheduleParentViewModel, EVENT_SHEDULE_PARENT>()
              .ConstructUsing(c => new EVENT_SHEDULE_PARENT(c.Id, c.Subject, c.StartEvent, c.EndEvent, c.Repeat, c.Description, c.BoPhan, c.TimeAlert,
                                                            c.MaNoiDungKH, c.StartTime, c.EndTime, c.IsAllDay, c.RecurrenceRule,
-                                                           c.StartTimezone, c.EndTimezone, c.RecurrenceID, c.RecurrenceException, c.ConferenceId, c.Location,c.RoomId));
+                                                           c.StartTimezone, c.EndTimezone, c.RecurrenceID, c.RecurrenceException, c.ConferenceId, c.Location, c.RoomId));
 
             CreateMap<NhanVienCheDoDBViewModel, HR_NHANVIEN_CHEDO_DB>()
            .ConstructUsing(c => new HR_NHANVIEN_CHEDO_DB(c.MaNhanVien, c.CheDoDB, c.Note));
 
             CreateMap<EhsKeHoachQuanTracViewModel, EHS_KEHOACH_QUANTRAC>()
-      .ConstructUsing(c => new EHS_KEHOACH_QUANTRAC(c.Id,c.STT, c.MaDMKeHoach, c.Demuc, c.LuatDinhLienQuan, c.NoiDung, c.ChuKyThucHien, c.Year, c.Month_1, c.Month_2,
+      .ConstructUsing(c => new EHS_KEHOACH_QUANTRAC(c.Id, c.STT, c.MaDMKeHoach, c.Demuc, c.LuatDinhLienQuan, c.NoiDung, c.ChuKyThucHien, c.Year, c.Month_1, c.Month_2,
       c.Month_3, c.Month_4, c.Month_5, c.Month_6, c.Month_7, c.Month_8, c.Month_9, c.Month_10, c.Month_11, c.Month_12, c.CostMonth_1, c.CostMonth_2, c.CostMonth_3, c.CostMonth_4,
       c.CostMonth_5, c.CostMonth_6, c.CostMonth_7, c.CostMonth_8, c.CostMonth_9, c.CostMonth_10, c.CostMonth_11, c.CostMonth_12, c.KhuVucLayMau, c.NhaThau, c.NguoiPhuTrach, c.TienDoHoanThanh,
       c.LayMau_Month_1, c.LayMau_Month_2, c.LayMau_Month_3, c.LayMau_Month_4, c.LayMau_Month_5, c.LayMau_Month_6, c.LayMau_Month_7, c.LayMau_Month_8, c.LayMau_Month_9, c.LayMau_Month_10, c.LayMau_Month_11, c.LayMau_Month_12));
 
             CreateMap<EhsNgayThucHienChiTietQuanTrac, EHS_NGAY_THUC_HIEN_CHITIET_QUANTRAC>()
-         .ConstructUsing(c => new EHS_NGAY_THUC_HIEN_CHITIET_QUANTRAC(c.Id,c.MaEvent, c.MaKHQuanTrac, c.NoiDung, c.NgayBatDau, c.NgayKetThuc, c.Status, c.Progress, c.Priority, c.IsShowBoard,c.ActualFinish,c.FileNameResult, c.UrlFileNameResult));
+         .ConstructUsing(c => new EHS_NGAY_THUC_HIEN_CHITIET_QUANTRAC(c.Id, c.MaEvent, c.MaKHQuanTrac, c.NoiDung, c.NgayBatDau, c.NgayKetThuc,
+         c.Status, c.Progress, c.Priority, c.IsShowBoard,
+         c.ActualFinish, c.FileNameResult, c.UrlFileNameResult, c.KetQua, c.DoiSachCaiTien));
 
             CreateMap<EhsNhanVienKhamSucKhoe, EHS_NHANVIEN_KHAM_SK>()
-       .ConstructUsing(c => new EHS_NHANVIEN_KHAM_SK(c.Id,c.MaKHKhamSK, c.ThoiGianKhamSK, c.MaNV, c.TenNV, c.Section, c.Note));
+       .ConstructUsing(c => new EHS_NHANVIEN_KHAM_SK(c.Id, c.MaKHKhamSK, c.ThoiGianKhamSK, c.MaNV, c.TenNV, c.Section, c.Note));
 
             CreateMap<EhsKeHoachKhamSKViewModel, EHS_KE_HOACH_KHAM_SK>()
-     .ConstructUsing(c => new EHS_KE_HOACH_KHAM_SK(c.Id,c.NoiDung, c.LuatDinhLienQuan, c.ChuKyThucHien, c.Year, c.CostMonth_1, c.CostMonth_2,
+     .ConstructUsing(c => new EHS_KE_HOACH_KHAM_SK(c.Id, c.NoiDung, c.LuatDinhLienQuan, c.ChuKyThucHien, c.Year, c.CostMonth_1, c.CostMonth_2,
      c.CostMonth_3, c.CostMonth_4, c.CostMonth_5, c.CostMonth_6, c.CostMonth_7, c.CostMonth_8, c.CostMonth_9, c.CostMonth_10, c.CostMonth_11, c.CostMonth_12, c.MaDMKeHoach, c.NhaThau, c.NguoiPhuTrach));
 
             CreateMap<EhsNgayThucHienChiTietKhamSKViewModel, EHS_NGAY_THUC_HIEN_CHITIET_KHAM_SK>()
-             .ConstructUsing(c => new EHS_NGAY_THUC_HIEN_CHITIET_KHAM_SK(c.Id,c.MaEvent, c.MaKHKhamSK, c.NoiDung, c.NgayBatDau, c.NgayKetThuc,c.Status,c.Progress,c.Priority,c.IsShowBoard,c.ActualFinish,c.FileNameResult,c.UrlFileNameResult));
-
+             .ConstructUsing(c => new EHS_NGAY_THUC_HIEN_CHITIET_KHAM_SK(c.Id, c.MaEvent, c.MaKHKhamSK, c.NoiDung, c.NgayBatDau,
+             c.NgayKetThuc, c.Status, c.Progress, c.Priority
+             , c.IsShowBoard, c.ActualFinish, c.FileNameResult, c.UrlFileNameResult, c.KetQua, c.DoiSachCaiTien));
 
             CreateMap<EhsKeHoachDaoTaoATLDViewModel, EHS_KEHOACH_DAOTAO_ANTOAN_VSLD>()
      .ConstructUsing(c => new EHS_KEHOACH_DAOTAO_ANTOAN_VSLD(c.Id,
@@ -135,7 +138,8 @@ namespace HRMNS.Application.AutoMapper
      c.CostMonth_12));
 
             CreateMap<EhsThoiGianThucHienDaoTaoATVSViewModel, EHS_THOIGIAN_THUC_HIEN_DAOTAO_ATVSLD>()
-            .ConstructUsing(c => new EHS_THOIGIAN_THUC_HIEN_DAOTAO_ATVSLD(c.Id,c.MaEvent, c.MaKHDaoTaoATLD, c.NoiDung, c.NgayBatDau, c.NgayKetThuc, c.Status, c.Progress, c.Priority, c.IsShowBoard,c.ActualFinish,c.FileNameResult,c.UrlFileNameResult));
+            .ConstructUsing(c => new EHS_THOIGIAN_THUC_HIEN_DAOTAO_ATVSLD(c.Id, c.MaEvent, c.MaKHDaoTaoATLD, c.NoiDung, c.NgayBatDau, c.NgayKetThuc, c.Status,
+            c.Progress, c.Priority, c.IsShowBoard, c.ActualFinish, c.FileNameResult, c.UrlFileNameResult, c.KetQua, c.DoiSachCaiTien));
 
             CreateMap<Ehs_KeHoach_PCCCViewModel, EHS_KEHOACH_PCCC>()
             .ConstructUsing(c => new EHS_KEHOACH_PCCC(c.Id,
@@ -145,26 +149,39 @@ namespace HRMNS.Application.AutoMapper
                 c.CostMonth_11, c.CostMonth_12, c.HangMuc));
 
             CreateMap<EhsThoiGianThucHienPCCCViewModel, EHS_THOIGIAN_THUC_HIEN_PCCC>()
-            .ConstructUsing(c => new EHS_THOIGIAN_THUC_HIEN_PCCC(c.Id,c.MaEvent, c.MaKH_PCCC, c.NoiDung, c.NgayBatDau, c.NgayKetThuc, c.Status, c.Progress, c.Priority, c.IsShowBoard,c.ActualFinish,c.FileNameResult,c.UrlFileNameResult));
+            .ConstructUsing(c => new EHS_THOIGIAN_THUC_HIEN_PCCC(c.Id, c.MaEvent, c.MaKH_PCCC, c.NoiDung, c.NgayBatDau, c.NgayKetThuc,
+            c.Status, c.Progress, c.Priority, c.IsShowBoard, c.ActualFinish, c.FileNameResult, c.UrlFileNameResult, c.KetQua, c.DoiSachCaiTien));
 
             CreateMap<EhsKeHoachAnToanBucXaViewModel, EHS_KEHOACH_ANTOAN_BUCXA>()
-          .ConstructUsing(c => new EHS_KEHOACH_ANTOAN_BUCXA(c.Id,c.MaDMKeHoach, c.STT, c.NoiDung, c.ChuKyThucHien, c.Year, c.ThoiGianDaoTao, c.NguoiPhuTrach,
+          .ConstructUsing(c => new EHS_KEHOACH_ANTOAN_BUCXA(c.Id, c.MaDMKeHoach, c.STT, c.NoiDung, c.ChuKyThucHien, c.Year, c.ThoiGianDaoTao, c.NguoiPhuTrach,
           c.NhaThau, c.CostMonth_1, c.CostMonth_2, c.CostMonth_3, c.CostMonth_4, c.CostMonth_5, c.CostMonth_6, c.CostMonth_7, c.CostMonth_8, c.CostMonth_9, c.CostMonth_10,
           c.CostMonth_11, c.CostMonth_12, c.HangMuc, c.ThoiGianCapL1, c.ThoiGianCapLai_L1, c.ThoiGianCapLai_L2, c.ThoiGianCapLai_L3, c.YeuCau, c.QuyDinhVBPL, c.MaHieu, c.ThoiGianCapLai_L4));
 
             CreateMap<EhsThoiGianThucHienAnToanBucXaViewModel, EHS_THOIGIAN_THUC_HIEN_ANTOAN_BUCXA>()
-           .ConstructUsing(c => new EHS_THOIGIAN_THUC_HIEN_ANTOAN_BUCXA(c.Id,c.MaEvent, c.MaKH_ATBX, c.NoiDung, c.NgayBatDau, c.NgayKetThuc, c.Status, c.Progress, c.Priority, c.IsShowBoard,c.ActualFinish,c.FileNameResult,c.UrlFileNameResult));
+           .ConstructUsing(c => new EHS_THOIGIAN_THUC_HIEN_ANTOAN_BUCXA(c.Id, c.MaEvent, c.MaKH_ATBX, c.NoiDung, c.NgayBatDau, c.NgayKetThuc, c.Status, c.Progress,
+           c.Priority, c.IsShowBoard, c.ActualFinish, c.FileNameResult, c.UrlFileNameResult, c.KetQua, c.DoiSachCaiTien));
 
             CreateMap<EhsThoiGianKiemDinhMayMocViewModel, EHS_THOIGIAN_THUC_HIEN_KIEMDINH_MM>()
-            .ConstructUsing(c => new EHS_THOIGIAN_THUC_HIEN_KIEMDINH_MM(c.Id,c.MaEvent, c.MaKH_KDMM, c.NoiDung, c.NgayBatDau, c.NgayKetThuc, c.Status, c.Progress, c.Priority, c.IsShowBoard,c.ActualFinish,c.FileNameResult,c.UrlFileNameResult));
+            .ConstructUsing(c => new EHS_THOIGIAN_THUC_HIEN_KIEMDINH_MM(c.Id, c.MaEvent, c.MaKH_KDMM, c.NoiDung, c.NgayBatDau, c.NgayKetThuc, c.Status, c.Progress,
+            c.Priority, c.IsShowBoard, c.ActualFinish, c.FileNameResult, c.UrlFileNameResult, c.KetQua, c.DoiSachCaiTien));
 
             CreateMap<EhsKeHoachKiemDinhMayMocViewModel, EHS_KEHOACH_KIEMDINH_MAYMOC>()
-            .ConstructUsing(c => new EHS_KEHOACH_KIEMDINH_MAYMOC(c.Id,c.MaDMKeHoach, c.STT, c.TenMayMoc, c.ChuKyKiemDinh, c.SoLuongThietBi, c.ViTri, c.NguoiPhuTrach, c.NhaThau,
+            .ConstructUsing(c => new EHS_KEHOACH_KIEMDINH_MAYMOC(c.Id, c.MaDMKeHoach, c.STT, c.TenMayMoc, c.ChuKyKiemDinh, c.SoLuongThietBi, c.ViTri, c.NguoiPhuTrach, c.NhaThau,
             c.CostMonth_1, c.CostMonth_2, c.CostMonth_3, c.CostMonth_4, c.CostMonth_5, c.CostMonth_6, c.CostMonth_7, c.CostMonth_8, c.CostMonth_9, c.CostMonth_10, c.CostMonth_11, c.CostMonth_12, c.LanKiemDinhKeTiep,
-            c.LanKiemDinhKeTiep1, c.LanKiemDinhKeTiep2, c.LanKiemDinhKeTiep3,c.Year));
+            c.LanKiemDinhKeTiep1, c.LanKiemDinhKeTiep2, c.LanKiemDinhKeTiep3, c.Year));
 
             CreateMap<EhsFilesViewModel, EHS_FILES>()
-  .ConstructUsing(c => new EHS_FILES(c.Id,c.FileName,c.UrlFile,c.MaNgayChiTiet,c.DanhMuc));
+  .ConstructUsing(c => new EHS_FILES(c.Id, c.FileName, c.UrlFile, c.MaNgayChiTiet, c.DanhMuc));
+
+            CreateMap<EhsHangMucNGViewModel, EHS_HANGMUC_NG>()
+.ConstructUsing(c => new EHS_HANGMUC_NG(c.Id, c.MaNgayChiTiet, c.HangMucNG, c.NoiDungVanDeNG, c.NguyenNhan, c.DoiSachCaiTien, c.TinhHinhCaiTien, c.DeMuc));
+
+            CreateMap<EhsQuanLyGiayPhepViewModel, EHS_QUANLY_GIAY_PHEP>()
+            .ConstructUsing(c => new EHS_QUANLY_GIAY_PHEP(c.Id, c.Demuc, c.NoiDung, c.LuatDinhLienQuan, c.LyDoThucHien, c.TienDo,
+            c.ThoiGianThucHien, c.SoNgayBaoTruoc, c.KetQua, c.NguoiThucHien, c.MaEvent, c.Status));
+
+            CreateMap<EhsCoQuanKiemTraViewModel, EHS_COQUAN_KIEMTRA>()
+ .ConstructUsing(c => new EHS_COQUAN_KIEMTRA(c.Id, c.Demuc, c.CoQuanKiemTra, c.NgayKiemTra, c.NoiDungKiemTra, c.KetQua, c.NoiDungNG, c.NguyenNhan, c.DoiSachCaiTien, c.TienDoCaiTien));
         }
     }
 }

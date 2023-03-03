@@ -26,9 +26,9 @@
                 $('.roles-menu>ul li').removeClass('active');
                 $(elm).addClass('active');
 
-                //var khId = $(elm).data('val');
-                //$('#hdKeHoachId').val(khId);
-                //$('#frmkhChange').submit();
+                var khId = $(elm).data('val');
+                $('#hdKeHoachId').val(khId);
+                $('#frmkhChange').submit();
             };
 
             ulClick = function (kehoachId, kehoachVN, kehoachKR, noidung, e) {
@@ -92,14 +92,15 @@
             <div class="col-sm-12">
                 <h3 class="page-title">@(localizer["DMKEHOACH"])</h3>
             </div>
+            <div>
+                <a href="#" class="btn btn-primary btn-block" style="width:162px" id="btnShowAddKH" data-toggle="modal" data-target="#add_kehoach"><i class="fa fa-plus"></i>Add New</a>
+            </div>
         </div>
     </div>
     <!-- /Page Header -->
-
     <div class="row">
-        <div class="col-md-12">
-            <a href="#" class="btn btn-primary btn-block" style="width:162px" id="btnShowAddKH" data-toggle="modal" data-target="#add_kehoach"><i class="fa fa-plus"></i>Add New</a>
-            <div class="roles-menu">
+        <div class="col-md-12 col-lg-6 col-xl-6 d-flex">
+            <div class="roles-menu" style="width:100%; margin-top:0">
                 <ul>
                     @foreach (var item in Model.EhsDMKeHoachViewModels)
                     {
@@ -120,11 +121,89 @@
                         </li>
                     }
                 </ul>
-                <form id="frmkhChange" action="/Admin/EhsDanhMucKeHoach/GetDeMucKH" method="post">
+                <form id="frmkhChange" action="/Admin/EhsDanhMucKeHoach/GetStatistics" method="post">
                     <input type="hidden" id="hdKeHoachId" name="kehoachID" />
                 </form>
             </div>
         </div>
+
+        <div class="col-md-12 col-lg-6 col-xl-6 d-flex">
+            <div class="card flex-fill">
+                <div class="card-body">
+                    <h4 class="card-title">Task Statistics</h4>
+                    <div class="statistics">
+                        <div class="row">
+                            <div class="col-md-4 col-4 text-center">
+                                <div class="stats-box mb-4">
+                                    <p>Total Tasks</p>
+                                    <h3>@Model.TaskStatistics.TotalTask</h3>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-4 text-center">
+                                <div class="stats-box mb-4">
+                                    <p>NG Tasks</p>
+                                    <h3>@Model.TaskStatistics.NGTask</h3>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-4 text-center">
+                                <div class="stats-box mb-4">
+                                    <p>Overdue Tasks</p>
+                                    <h3>@Model.TaskStatistics.OverdueTask</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="progress mb-4">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: @(Model.TaskStatistics.PercenCompleteTask)%" aria-valuenow="@(Model.TaskStatistics.PercenCompleteTask)" aria-valuemin="0" aria-valuemax="100">@Model.TaskStatistics.PercenCompleteTask%</div>
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: @(Model.TaskStatistics.PercenInprogressTask)%" aria-valuenow="@(Model.TaskStatistics.PercenInprogressTask)" aria-valuemin="0" aria-valuemax="100">@Model.TaskStatistics.PercenInprogressTask%</div>
+                        <div class="progress-bar bg-info" role="progressbar" style="width: @(Model.TaskStatistics.PercenHoldTask)%" aria-valuenow="@(Model.TaskStatistics.PercenHoldTask)" aria-valuemin="0" aria-valuemax="100">@Model.TaskStatistics.PercenHoldTask%</div>
+                        <div class="progress-bar bg-danger" role="progressbar" style="width: @(Model.TaskStatistics.PercenPendingTask)%" aria-valuenow="@(Model.TaskStatistics.PercenPendingTask)" aria-valuemin="0" aria-valuemax="100">@Model.TaskStatistics.PercenPendingTask%</div>
+                    </div>
+                    <div>
+                        <p><i class="fa fa-dot-circle-o text-success mr-2"></i>Completed Tasks <span class="float-right">@Model.TaskStatistics.CompleteTask</span></p>
+                        <p><i class="fa fa-dot-circle-o text-warning mr-2"></i>Inprogress Tasks <span class="float-right">@Model.TaskStatistics.InprogressTask</span></p>
+                        <p><i class="fa fa-dot-circle-o text-info mr-2"></i>Ready To Start Tasks <span class="float-right">@Model.TaskStatistics.HoldTask</span></p>
+                        <p><i class="fa fa-dot-circle-o text-danger mr-2"></i>Pending Tasks <span class="float-right">@Model.TaskStatistics.PendingTask</span></p>
+                        <p class="mb-0"><i class="fa fa-dot-circle-o text-purple mr-2"></i>NG Tasks <span class="float-right">@Model.TaskStatistics.NGTask</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        @(Html.DevExtreme().DataGrid()
+    .ID("gridContainer")
+    .Height(320)
+    .ShowBorders(true)
+      .RepaintChangesOnly(true)
+     .LoadPanel(loadPanel => loadPanel.Enabled(false))
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnMinWidth(50)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+    .DataSource(@Model.TaskStatistics.Tasks)
+    .Columns(c => {
+        c.Add().DataField("STT").Width(80);
+        c.Add().DataField("NoiDung").Caption(@localizer["NOI_DUNG"].Value).Width(600);
+        c.Add().DataField("NgayBatDau").Caption(@localizer["NGAY_BAT_DAU"].Value);
+        c.Add().DataField("Status").Caption(@localizer["STATUS"].Value);
+        c.Add().DataField("KetQua").Caption(@localizer["KET_QUA"].Value);
+        c.Add().DataField("NguoiPhuTrach").Caption(@localizer["NGUOI_PHU_TRACH"].Value);
+    }).WordWrapEnabled(true)
+)
+
     </div>
 </div>
 <!-- Add Role Modal -->

@@ -4,6 +4,7 @@ using HRMNS.Application.ViewModels.EHS;
 using HRMNS.Data.EF.Extensions;
 using HRMNS.Data.Entities;
 using HRMNS.Utilities.Common;
+using HRMNS.Utilities.Constants;
 using HRMNS.Utilities.Dtos;
 using HRMS.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -98,6 +99,8 @@ namespace HRMNS.Application.Implementation
             }
 
             model.MaKeHoachActive = maKeHoach;
+
+            model.TaskStatistics = GetStatistics(maKeHoach.ToString());
             return model;
         }
 
@@ -381,7 +384,8 @@ namespace HRMNS.Application.Implementation
                             Status = row["Status"].NullString(),
                             MaNgayThucHien = maNgayThucHien,
                             Folder = folder,
-                            STT = ++rowN
+                            STT = ++rowN,
+                            KetQua = row["KetQua"].NullString()
                         };
                         rs.Add(item);
                     }
@@ -467,7 +471,8 @@ namespace HRMNS.Application.Implementation
                         MaNgayChiTiet = item.Id + "quantrac",
                         ThoiGianBatDau = item.NgayBatDau,
                         ThoiGianKetThuc = item.NgayKetThuc,
-                        Status = item.Status == "TODO" ? "Ready To Start" : item.Status
+                        Status = item.Status == "TODO" ? "Ready To Start" : item.Status,
+                        KetQua = item.KetQua
                     };
 
                     result.Add(thoigian);
@@ -485,7 +490,8 @@ namespace HRMNS.Application.Implementation
                         MaNgayChiTiet = item.Id + "khamsuckhoe",
                         ThoiGianBatDau = item.NgayBatDau,
                         ThoiGianKetThuc = item.NgayKetThuc,
-                        Status = item.Status == "TODO" ? "Ready To Start" : item.Status
+                        Status = item.Status == "TODO" ? "Ready To Start" : item.Status,
+                        KetQua = item.KetQua
                     };
 
                     result.Add(thoigian);
@@ -503,7 +509,8 @@ namespace HRMNS.Application.Implementation
                         MaNgayChiTiet = item.Id + "atvsld",
                         ThoiGianBatDau = item.NgayBatDau,
                         ThoiGianKetThuc = item.NgayKetThuc,
-                        Status = item.Status == "TODO" ? "Ready To Start" : item.Status
+                        Status = item.Status == "TODO" ? "Ready To Start" : item.Status,
+                        KetQua = item.KetQua
                     };
 
                     result.Add(thoigian);
@@ -521,7 +528,8 @@ namespace HRMNS.Application.Implementation
                         MaNgayChiTiet = item.Id + "kiemdinhmaymoc",
                         ThoiGianBatDau = item.NgayBatDau,
                         ThoiGianKetThuc = item.NgayKetThuc,
-                        Status = item.Status == "TODO" ? "Ready To Start" : item.Status
+                        Status = item.Status == "TODO" ? "Ready To Start" : item.Status,
+                        KetQua = item.KetQua
                     };
 
                     result.Add(thoigian);
@@ -539,7 +547,8 @@ namespace HRMNS.Application.Implementation
                         MaNgayChiTiet = item.Id + "pccc",
                         ThoiGianBatDau = item.NgayBatDau,
                         ThoiGianKetThuc = item.NgayKetThuc,
-                        Status = item.Status == "TODO" ? "Ready To Start" : item.Status
+                        Status = item.Status == "TODO" ? "Ready To Start" : item.Status,
+                        KetQua = item.KetQua
                     };
 
                     result.Add(thoigian);
@@ -557,14 +566,15 @@ namespace HRMNS.Application.Implementation
                         MaNgayChiTiet = item.Id + "atbucxa",
                         ThoiGianBatDau = item.NgayBatDau,
                         ThoiGianKetThuc = item.NgayKetThuc,
-                        Status = item.Status == "TODO" ? "Ready To Start" : item.Status
+                        Status = item.Status == "TODO" ? "Ready To Start" : item.Status,
+                        KetQua = item.KetQua
                     };
 
                     result.Add(thoigian);
                 }
             }
 
-            return result.OrderBy(x=>x.ThoiGianBatDau).ToList();
+            return result.OrderBy(x => x.ThoiGianBatDau).ToList();
 
         }
 
@@ -573,7 +583,7 @@ namespace HRMNS.Application.Implementation
         {
             var files = _ehsFileRepository.FindAll(x => x.MaNgayChiTiet == maNgayChitiet).ToList();
 
-            if(files.Count == 0)
+            if (files.Count == 0)
             {
                 return "";
             }
@@ -605,12 +615,195 @@ namespace HRMNS.Application.Implementation
                 }
             }
 
-            foreach (var item in itemFolders.Where(x=>x != ""))
+            foreach (var item in itemFolders.Where(x => x != ""))
             {
                 folder += item + "/";
             }
 
             return folder;
+        }
+
+        /// <summary>
+        /// Thống kê task theo kế hoạch
+        /// </summary>
+        /// <param name="maKeHoach"></param>
+        /// <returns></returns>
+        public TaskStatistics GetStatistics(string maKeHoach)
+        {
+            TaskStatistics statistic = new TaskStatistics();
+            string year = DateTime.Now.Year.ToString();
+
+            if (maKeHoach == "ffe65d73-1066-4f1b-af5b-0c0e33d494dd") // kham sk
+            {
+                var lst = _ngayKhamSKRepository.FindAll(x => x.EHS_KE_HOACH_KHAM_SK.Year == year, x => x.EHS_KE_HOACH_KHAM_SK).ToList();
+
+                Task task;
+                int i = 0;
+                foreach (var item in lst)
+                {
+                    task = new Task()
+                    {
+                        STT = ++i,
+                        NoiDung = item.NoiDung,
+                        NgayBatDau = item.NgayBatDau,
+                        NguoiPhuTrach = item.EHS_KE_HOACH_KHAM_SK.NguoiPhuTrach,
+                        KetQua = item.KetQua,
+                        Status = item.Status
+                    };
+                    statistic.Tasks.Add(task);
+                }
+
+                statistic.TotalTask = lst.Count;
+                statistic.OverdueTask = lst.Where(x => (x.Status == "" || x.Status == null || x.Status == CommonConstants.TODO) && x.NgayBatDau.CompareTo(DateTime.Now.ToString("yyyy-MM-dd")) < 0).Count();
+                statistic.CompleteTask = lst.Where(x => x.Status == CommonConstants.COMPLETED).Count();
+                statistic.PendingTask = lst.Where(x => x.Status == CommonConstants.PENDING).Count();
+                statistic.InprogressTask = lst.Where(x => x.Status == CommonConstants.INPROGRESS).Count();
+                statistic.HoldTask = lst.Where(x => x.Status == "" || x.Status == null || x.Status == CommonConstants.TODO).Count();
+                statistic.NGTask = lst.Where(x => x.KetQua == "NG").Count();
+            }
+            else if (maKeHoach == "8b5cb6e4-e925-4a8b-b14d-594b310b6a4f") // PCCC
+            {
+                var lst = _ngayPCCCRepository.FindAll(x => x.EHS_KEHOACH_PCCC.Year == year, x => x.EHS_KEHOACH_PCCC).ToList();
+
+                Task task;
+                int i = 0;
+                foreach (var item in lst)
+                {
+                    task = new Task()
+                    {
+                        STT = ++i,
+                        NoiDung = item.NoiDung,
+                        NgayBatDau = item.NgayBatDau,
+                        NguoiPhuTrach = item.EHS_KEHOACH_PCCC.NguoiPhuTrach,
+                        KetQua = item.KetQua,
+                        Status = item.Status
+                    };
+                    statistic.Tasks.Add(task);
+                }
+
+                statistic.TotalTask = lst.Count;
+                statistic.OverdueTask = lst.Where(x => (x.Status == "" || x.Status == null || x.Status == CommonConstants.TODO) && x.NgayBatDau.CompareTo(DateTime.Now.ToString("yyyy-MM-dd")) < 0).Count();
+                statistic.CompleteTask = lst.Where(x => x.Status == CommonConstants.COMPLETED).Count();
+                statistic.PendingTask = lst.Where(x => x.Status == CommonConstants.PENDING).Count();
+                statistic.InprogressTask = lst.Where(x => x.Status == CommonConstants.INPROGRESS).Count();
+                statistic.HoldTask = lst.Where(x => x.Status == "" || x.Status == null || x.Status == CommonConstants.TODO).Count();
+                statistic.NGTask = lst.Where(x => x.KetQua == "NG").Count();
+            }
+            else if (maKeHoach == "7c60f914-c6d2-453a-841f-5afd0fb4a3bc") // An toàn bức xạ
+            {
+                var lst = _ngayATBXRepository.FindAll(x => x.EHS_KEHOACH_ANTOAN_BUCXA.Year == year, x => x.EHS_KEHOACH_ANTOAN_BUCXA).ToList();
+
+                Task task;
+                int i = 0;
+                foreach (var item in lst)
+                {
+                    task = new Task()
+                    {
+                        STT = ++i,
+                        NoiDung = item.NoiDung,
+                        NgayBatDau = item.NgayBatDau,
+                        NguoiPhuTrach = item.EHS_KEHOACH_ANTOAN_BUCXA.NguoiPhuTrach,
+                        KetQua = item.KetQua,
+                        Status = item.Status
+                    };
+                    statistic.Tasks.Add(task);
+                }
+
+                statistic.TotalTask = lst.Count;
+                statistic.OverdueTask = lst.Where(x => (x.Status == "" || x.Status == null || x.Status == CommonConstants.TODO) && x.NgayBatDau.CompareTo(DateTime.Now.ToString("yyyy-MM-dd")) < 0).Count();
+                statistic.CompleteTask = lst.Where(x => x.Status == CommonConstants.COMPLETED).Count();
+                statistic.PendingTask = lst.Where(x => x.Status == CommonConstants.PENDING).Count();
+                statistic.InprogressTask = lst.Where(x => x.Status == CommonConstants.INPROGRESS).Count();
+                statistic.HoldTask = lst.Where(x => x.Status == "" || x.Status == null || x.Status == CommonConstants.TODO).Count();
+                statistic.NGTask = lst.Where(x => x.KetQua == "NG").Count();
+            }
+            else if (maKeHoach == "44ba2130-8336-4853-b226-7234e592c52c") // QUAN TRẮC
+            {
+                var lst = _ngayQuanTracRepository.FindAll(x => x.EHS_KEHOACH_QUANTRAC.Year == year, x => x.EHS_KEHOACH_QUANTRAC).ToList();
+
+                Task task;
+                int i = 0;
+                foreach (var item in lst)
+                {
+                    task = new Task()
+                    {
+                        STT = ++i,
+                        NoiDung = item.NoiDung,
+                        NgayBatDau = item.NgayBatDau,
+                        NguoiPhuTrach = item.EHS_KEHOACH_QUANTRAC.NguoiPhuTrach,
+                        KetQua = item.KetQua,
+                        Status = item.Status
+                    };
+                    statistic.Tasks.Add(task);
+                }
+
+                statistic.TotalTask = lst.Count;
+                statistic.OverdueTask = lst.Where(x => (x.Status == "" || x.Status == null || x.Status == CommonConstants.TODO) && x.NgayBatDau.CompareTo(DateTime.Now.ToString("yyyy-MM-dd")) < 0).Count();
+                statistic.CompleteTask = lst.Where(x => x.Status == CommonConstants.COMPLETED).Count();
+                statistic.PendingTask = lst.Where(x => x.Status == CommonConstants.PENDING).Count();
+                statistic.InprogressTask = lst.Where(x => x.Status == CommonConstants.INPROGRESS).Count();
+                statistic.HoldTask = lst.Where(x => x.Status == "" || x.Status == null || x.Status == CommonConstants.TODO).Count();
+                statistic.NGTask = lst.Where(x => x.KetQua == "NG").Count();
+            }
+            else if (maKeHoach == "5f2ad5b3-8e86-4cd8-be84-ef4e7d82212b") // VS ATLD
+            {
+                var lst = _ngayATVSLDRepository.FindAll(x => x.EHS_KEHOACH_DAOTAO_ANTOAN_VSLD.Year == year, x => x.EHS_KEHOACH_DAOTAO_ANTOAN_VSLD).ToList();
+
+                Task task;
+                int i = 0;
+                foreach (var item in lst)
+                {
+                    task = new Task()
+                    {
+                        STT = ++i,
+                        NoiDung = item.NoiDung,
+                        NgayBatDau = item.NgayBatDau,
+                        NguoiPhuTrach = item.EHS_KEHOACH_DAOTAO_ANTOAN_VSLD.NguoiPhuTrach,
+                        KetQua = item.KetQua,
+                        Status = item.Status
+                    };
+                    statistic.Tasks.Add(task);
+                }
+
+                statistic.TotalTask = lst.Count;
+                statistic.OverdueTask = lst.Where(x => (x.Status == "" || x.Status == null || x.Status == CommonConstants.TODO) && x.NgayBatDau.CompareTo(DateTime.Now.ToString("yyyy-MM-dd")) < 0).Count();
+                statistic.CompleteTask = lst.Where(x => x.Status == CommonConstants.COMPLETED).Count();
+                statistic.PendingTask = lst.Where(x => x.Status == CommonConstants.PENDING).Count();
+                statistic.InprogressTask = lst.Where(x => x.Status == CommonConstants.INPROGRESS).Count();
+                statistic.HoldTask = lst.Where(x => x.Status == "" || x.Status == null || x.Status == CommonConstants.TODO).Count();
+                statistic.NGTask = lst.Where(x => x.KetQua == "NG").Count();
+            }
+
+            else if (maKeHoach == "5bbdc8cc-fc22-4be9-a3b8-f468ef04efe0") // Kiem Dinh MM
+            {
+                var lst = _ngayKiemDinhMMRepository.FindAll(x => x.EHS_KEHOACH_KIEMDINH_MAYMOC.Year == year, x => x.EHS_KEHOACH_KIEMDINH_MAYMOC).ToList();
+
+                Task task;
+                int i = 0;
+                foreach (var item in lst)
+                {
+                    task = new Task()
+                    {
+                        STT = ++i,
+                        NoiDung = item.NoiDung,
+                        NgayBatDau = item.NgayBatDau,
+                        NguoiPhuTrach = item.EHS_KEHOACH_KIEMDINH_MAYMOC.NguoiPhuTrach,
+                        KetQua = item.KetQua,
+                        Status = item.Status
+                    };
+                    statistic.Tasks.Add(task);
+                }
+
+                statistic.TotalTask = lst.Count;
+                statistic.OverdueTask = lst.Where(x => (x.Status == "" || x.Status == null || x.Status == CommonConstants.TODO) && x.NgayBatDau.CompareTo(DateTime.Now.ToString("yyyy-MM-dd")) < 0).Count();
+                statistic.CompleteTask = lst.Where(x => x.Status == CommonConstants.COMPLETED).Count();
+                statistic.PendingTask = lst.Where(x => x.Status == CommonConstants.PENDING).Count();
+                statistic.InprogressTask = lst.Where(x => x.Status == CommonConstants.INPROGRESS).Count();
+                statistic.HoldTask = lst.Where(x => x.Status == "" || x.Status == null || x.Status == CommonConstants.TODO).Count();
+                statistic.NGTask = lst.Where(x => x.KetQua == "NG").Count();
+            }
+
+            return statistic;
         }
     }
 }

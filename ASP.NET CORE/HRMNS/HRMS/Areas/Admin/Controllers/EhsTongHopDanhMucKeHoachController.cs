@@ -86,7 +86,8 @@ namespace HRMS.Areas.Admin.Controllers
                             ThoiGianKetThuc = tg.ThoiGianKetThuc,
                             MaNgayChiTiet = tg.MaNgayChiTiet,
                             Status = tg.Status,
-                            UrlFile = url
+                            UrlFile = url,
+                            KetQua = tg.KetQua
                         };
                         lstKetQua.Add(kq);
                     }

@@ -65,6 +65,12 @@ namespace HRMNS.Application.ViewModels.EHS
 
         public string UrlFileNameResult { get; set; }
 
+        [StringLength(50)]
+        public string KetQua { get; set; }
+
+        [StringLength(500)]
+        public string DoiSachCaiTien { get; set; }
+
         public EhsKeHoachDaoTaoATLDViewModel EHS_KEHOACH_DAOTAO_ANTOAN_VSLD { get; set; }
 
         public EventScheduleParentViewModel EVENT_SHEDULE_PARENT { get; set; }

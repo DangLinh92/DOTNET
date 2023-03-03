@@ -375,4 +375,23 @@
   <data name="YEU_CAU" xml:space="preserve">
     <value>요구 사항</value>
   </data>
+
+	<data name="TIEU_DE_THONGTIN" xml:space="preserve">
+    <value>시작일자, 종료일자 정보 및 결과 파일 import</value>
+  </data>
+	<data name="DOI_SACH_CAI_TIEN" xml:space="preserve">
+    <value>개선대책</value>
+  </data>
+	<data name="HANG_MUC_NG" xml:space="preserve">
+    <value>NG항목</value>
+  </data>
+	<data name="NGUYEN_NHAN" xml:space="preserve">
+    <value>NG원인</value>
+  </data>
+	<data name="NOI_DUNG_NG" xml:space="preserve">
+    <value>NG내용</value>
+  </data>
+	<data name="TINH_HINH_CAI_TIEN" xml:space="preserve">
+    <value>개선 현황</value>
+  </data>
 </root>

@@ -216,6 +216,9 @@
   <data name="KEHOACH_QUANTRAC" xml:space="preserve">
     <value>측정 계획</value>
   </data>
+  <data name="KET_QUA" xml:space="preserve">
+    <value>결과</value>
+  </data>
   <data name="KHU_VUC_LAY_MAU" xml:space="preserve">
     <value>채수 구역</value>
   </data>

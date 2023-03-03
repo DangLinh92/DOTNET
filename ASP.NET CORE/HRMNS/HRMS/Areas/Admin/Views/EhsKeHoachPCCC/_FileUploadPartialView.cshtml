@@ -56,21 +56,24 @@
         editing.AllowUpdating(true);
     })
     .Columns(columns => {
-        columns.AddFor(m => m.NoiDung).Caption("Nội Dung").AllowEditing(false);
-        columns.AddFor(m => m.NgayBatDauEx).Format("yyyy-MM-dd").Caption("Bắt Đầu").Width(150).AllowEditing(true);
-        columns.AddFor(m => m.NgayKetThucEx).Format("yyyy-MM-dd").Caption("Kết Thúc").Width(150).AllowEditing(true);
+        columns.AddFor(m => m.NoiDung).Caption(@localizer["NOI_DUNG"].Value).AllowEditing(false);
+        columns.AddFor(m => m.NgayBatDauEx).Format("yyyy-MM-dd").Caption(@localizer["THOI_GIAN_BAT_DAU"].Value).Width(150).AllowEditing(true);
+        columns.AddFor(m => m.NgayKetThucEx).Format("yyyy-MM-dd").Caption(@localizer["THOI_GIAN_KET_THUC"].Value).Width(150).AllowEditing(true);
 
-        columns.AddFor(m => m.Status).Caption("Trạng Thái")
+        columns.AddFor(m => m.Status).Caption(@localizer["STATUS"].Value)
         .AllowEditing(true)
         .Lookup(lookup => lookup.DataSource("getStatus"));
 
-        columns.AddFor(m => m.Progress).Caption("Tiến Độ")
+        columns.AddFor(m => m.Progress).Caption(@localizer["TIEN_DO"].Value)
         .AllowEditing(true);
 
-        columns.AddFor(m => m.IsShowBoard).Caption("Hiển thị lên bảng công việc")
+        columns.AddFor(m => m.IsShowBoard).Caption(@localizer["HIEN_THI_BANG_CV"].Value)
         .AllowEditing(true)
         .Lookup(lookup => lookup.DataSource("getShowBoard")
                 );
+
+        columns.AddFor(m => m.KetQua).Caption(@localizer["KET_QUA"].Value).AllowEditing(true).Lookup(lookup => lookup.DataSource("getNG_OK"));
+        columns.AddFor(m => m.DoiSachCaiTien).Caption(@localizer["DOI_SACH"].Value).AllowEditing(true);
 
         columns.Add().Type(GridCommandColumnType.Buttons).Width(110).Buttons(b =>
         {
@@ -81,12 +84,12 @@
         columns.Add().Type(GridCommandColumnType.Buttons).Width(110).Buttons(b =>
         {
             b.Add()
-                .Hint("Kết Quả")
+                .Hint(@localizer["KET_QUA"].Value)
                 .Text("Upload Kết Quả")
                 .OnClick("onImportKetQuaClick");
         });
 
-    }).SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true).OnSaving("SaveNgayThucHien").OnRowClick("LoadFilesData")
+    }).SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true).OnSaving("SaveNgayThucHien").OnRowClick("LoadFilesData").OnCellDblClick("ShowNGDetail")
 )
     </div>
     <div class="col-md-4">
@@ -119,7 +122,7 @@
         columns.Add().Type(GridCommandColumnType.Buttons).Width(110).Buttons(b =>
         {
             b.Add()
-                .Hint("Kết Quả")
+                .Hint(@localizer["KET_QUA"].Value)
                 .Text("View File Kết Quả")
                 .OnClick("onShowKetQuaFileClick");
         });

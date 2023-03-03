@@ -44,6 +44,7 @@ namespace HRMNS.Application.Implementation
 
             EHS_KEHOACH_QUANTRAC en = _mapper.Map<EHS_KEHOACH_QUANTRAC>(model);
             _EHSKeHoachQuanTracRepository.Add(en);
+            Save();
             return _mapper.Map<EhsKeHoachQuanTracViewModel>(en);
         }
 
@@ -116,6 +117,7 @@ namespace HRMNS.Application.Implementation
 
             EHS_NGAY_THUC_HIEN_CHITIET_QUANTRAC en = _mapper.Map<EHS_NGAY_THUC_HIEN_CHITIET_QUANTRAC>(model);
             _EHSNgayThucHienQuanTracRepository.Add(en);
+            Save();
             return _mapper.Map<EhsNgayThucHienChiTietQuanTrac>(en);
         }
 

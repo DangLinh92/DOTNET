@@ -87,5 +87,12 @@ namespace HRMS.Areas.Admin.Controllers
             _danhMucKeHoachService.Save();
             return new OkObjectResult(maKeHoach);
         }
+
+        [HttpPost]
+        public IActionResult GetStatistics(string kehoachID)
+        {
+            EhsDanhMucKeHoachPageViewModel model = _danhMucKeHoachService.GetDataDanhMucKeHoachPage(Guid.Parse(kehoachID));
+            return View("Index", model);
+        }
     }
 }

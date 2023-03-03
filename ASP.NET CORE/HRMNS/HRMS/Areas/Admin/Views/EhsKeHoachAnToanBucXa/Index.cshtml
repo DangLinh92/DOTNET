@@ -366,6 +366,79 @@
                         });
             }
         }
+
+        // Show NG detail
+        function ShowNGDetail(e)
+        {
+            if (e.column.dataField == 'KetQua') {
+
+                let maNgayCT = e.key + "atbucxa";
+              
+                sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsHangMucNG", action = "GetByKey" })', "GET", { key: maNgayCT })
+                    .always(() => {  })
+                    .done((data) => {
+
+                        const popup = $("#detail_NG_popup").dxPopup("instance");
+                        popup.option({
+                            contentTemplate: $("#popup-template")
+                        });
+                        popup.show();
+
+                        $('#txt_MaNgayCT').val(maNgayCT);
+
+                        let dataGridNG = $("#gridContainer-NG").dxDataGrid("instance")
+                        dataGridNG.option("dataSource", data);
+                    });
+            }
+        }
+
+        function SaveChangeHangMucNG(change) {
+
+            let maNgayCT = $('#txt_MaNgayCT').val();
+
+             switch (change.type) {
+                case "insert":
+                return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsHangMucNG", action = "Insert" })', "POST", { values: JSON.stringify(change.data), maNgayCT: maNgayCT });
+                case "update":
+                    return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsHangMucNG", action = "Update" })', "PUT", { key: change.key, values: JSON.stringify(change.data) });
+                case "remove":
+                  return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsHangMucNG", action = "Delete" })', "DELETE", { key: change.key });
+            }
+
+        }
+
+        function SaveHangMucNG(e) {
+
+            var change = e.changes[0];
+            if (change) {
+                e.cancel = true;
+                e.promise = SaveChangeHangMucNG(change)
+                    .always(() => {  })
+                    .done((data) => {
+                        var datas = e.component.option("dataSource");
+
+                        if (change.type === "insert") {
+                            change.data = data;
+                        }
+
+                        datas = DevExpress.data.applyChanges(datas, [change], { keyExpr: "Id" });
+
+                        e.component.option({
+                            dataSource: datas,
+                            editing: {
+                                editRowKey: null,
+                                changes: []
+                            }
+                        });
+                    });
+            }
+        };
+
+        function getNG_OK() {
+            return ["OK", "NG"];
+        };
+
+        // end NG
     </script>
 }
 @section Styles{
@@ -605,13 +678,77 @@
         <div class="col-sm-12">
             <ul class="breadcrumb">
                 <li class="breadcrumb-item active" style="cursor: pointer;">
-                    <i class="fa fa-caret-right"></i> <strong>Thông tin ngày bắt đầu,kết thúc và  Import File Kết quả</strong>
+                    <i class="fa fa-caret-right"></i> <strong>@localizer["TIEU_DE_THONGTIN"].Value</strong>
                 </li>
             </ul>
         </div>
         <div>
             <partial name="_FileUploadPartialView" />
         </div>
+    </div>
+
+    <div>
+        @(Html.DevExtreme().Popup()
+        .ID("detail_NG_popup")
+        .Width(800)
+        .Height(500)
+        .Container(".container-fluid")
+        .ShowTitle(true)
+        .Title("Thông Tin NG")
+        .DragEnabled(false)
+        .HideOnParentScroll(true)
+        .ShowCloseButton(false)
+        .Position(positionConfig => positionConfig
+            .At(HorizontalAlignment.Center, VerticalAlignment.Center)
+            .My(HorizontalAlignment.Center, VerticalAlignment.Center)
+            .Collision(PositionResolveCollision.Fit, PositionResolveCollision.Fit)
+        )
+        .ToolbarItems(barItems => {
+            barItems.Add()
+                .Toolbar(Toolbar.Bottom)
+                .Location(ToolbarItemLocation.After)
+                .Widget(widget => widget.Button()
+                    .Text("Close")
+                    .OnClick(@<text>
+                        function hideInfo(data) {
+
+                           let _dataGridTmp = $("#gridContainer-NG").dxDataGrid("instance");
+                               _dataGridTmp.option("dataSource", []);
+
+                            const popup = $("#detail_NG_popup").dxPopup("instance");
+                            popup.hide();
+                        }
+                    </text>)
+                );
+        }))
+
+        @using (Html.DevExtreme().NamedTemplate("popup-template"))
+        {
+            <h4 id="txtTitlePopup">Thông Tin NG</h4>
+            <input hidden id="txt_MaNgayCT" />
+            @(Html.DevExtreme().DataGrid<EhsHangMucNGViewModel>()
+                    .ID("gridContainer-NG")
+                    .KeyExpr("Id")
+                    .Height(300)
+                    .ShowBorders(true)
+                    .Paging(paging => paging.Enabled(false))
+                    .Editing(editing =>
+                    {
+                        editing.Mode(GridEditMode.Row);
+                        editing.AllowAdding(true);
+                        editing.AllowDeleting(true);
+                        editing.AllowUpdating(true);
+                    })
+                    .Columns(columns =>
+                    {
+                        columns.AddFor(m => m.MaNgayChiTiet).Visible(false).AllowEditing(false);
+                        columns.AddFor(m => m.HangMucNG).Caption(@localizer["HANG_MUC_NG"].Value).AllowEditing(true);
+                        columns.AddFor(m => m.NoiDungVanDeNG).Caption(@localizer["NOI_DUNG_NG"].Value).AllowEditing(true);
+                        columns.AddFor(m => m.NguyenNhan).Caption(@localizer["NGUYEN_NHAN"].Value).AllowEditing(true);
+                        columns.AddFor(m => m.DoiSachCaiTien).Caption(@localizer["DOI_SACH_CAI_TIEN"].Value).AllowEditing(true);
+                        columns.AddFor(m => m.TinhHinhCaiTien).Caption(@localizer["TINH_HINH_CAI_TIEN"].Value).AllowEditing(true);
+                    }).OnSaving("SaveHangMucNG"))
+        }
     </div>
 </div>
 

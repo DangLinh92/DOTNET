@@ -17,7 +17,8 @@ namespace HRMNS.Data.Entities
         }
 
         public EHS_THOIGIAN_THUC_HIEN_DAOTAO_ATVSLD(int id,Guid maEvent, Guid maKHDaoTaoATLD, string noidung, string ngayBatDau, string ngayKetThuc,
-            string status, int progress, string priority, string isShowBoard,string actualFinish, string fileName, string fileUrl)
+            string status, int progress, string priority, string isShowBoard,string actualFinish, string fileName, string fileUrl,
+            string ketqua,string doisach)
         {
             Id = id;
             MaEvent = maEvent;
@@ -33,6 +34,9 @@ namespace HRMNS.Data.Entities
 
             FileNameResult = fileName;
             UrlFileNameResult = fileUrl;
+
+            KetQua = ketqua;
+            DoiSachCaiTien = doisach;
         }
 
         public Guid MaEvent { get; set; }
@@ -78,6 +82,12 @@ namespace HRMNS.Data.Entities
         public string FileNameResult { get; set; }
 
         public string UrlFileNameResult { get; set; }
+
+        [StringLength(50)]
+        public string KetQua { get; set; }
+
+        [StringLength(500)]
+        public string DoiSachCaiTien { get; set; }
 
         [ForeignKey("MaKHDaoTaoATLD")]
         public virtual EHS_KEHOACH_DAOTAO_ANTOAN_VSLD EHS_KEHOACH_DAOTAO_ANTOAN_VSLD { get; set; }

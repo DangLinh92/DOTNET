@@ -11,5 +11,6 @@ namespace HRMNS.Application.ViewModels.EHS
         public string Status { get; set; }
         public string MaNgayChiTiet { get; set; }
         public string MaKeHoach { get; set; }
+        public string KetQua { get; set; }
     }
 }

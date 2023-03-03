@@ -13,6 +13,8 @@ namespace HRMNS.Application.Interfaces
         EhsDMKeHoachViewModel UpdateDMKeHoach(EhsDMKeHoachViewModel kehoach);
         Guid DeleteDMKeHoach(Guid id);
 
+        TaskStatistics GetStatistics(string maKeHoach);
+
         List<EhsLuatDinhKeHoachViewModel> GetLuatDinhKeHoach(Guid? maKeHoach);
         EhsLuatDinhKeHoachViewModel UpdateLuatDinhKeHoach(EhsLuatDinhKeHoachViewModel model);
         EhsLuatDinhKeHoachViewModel DeleteLuatDinhKeHoach(int id);

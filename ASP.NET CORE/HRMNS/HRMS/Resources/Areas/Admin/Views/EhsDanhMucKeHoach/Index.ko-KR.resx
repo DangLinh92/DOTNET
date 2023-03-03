@@ -168,6 +168,15 @@
   <data name="KEHOACH_QUANTRAC" xml:space="preserve">
     <value>측정 계획</value>
   </data>
+  <data name="KET_QUA" xml:space="preserve">
+    <value>결과</value>
+  </data>
+  <data name="NGAY_BAT_DAU" xml:space="preserve">
+    <value>시작시간</value>
+  </data>
+  <data name="NGUOI_PHU_TRACH" xml:space="preserve">
+    <value>담당자</value>
+  </data>
   <data name="NHANSU" xml:space="preserve">
     <value>인사 관리</value>
   </data>
@@ -179,6 +188,9 @@
   </data>
   <data name="NHANVIEN_NGHIVIEC" xml:space="preserve">
     <value>퇴사자 명단</value>
+  </data>
+  <data name="NOI_DUNG" xml:space="preserve">
+    <value>내용</value>
   </data>
   <data name="OVERTIME" xml:space="preserve">
     <value>OT 신청</value>
@@ -197,6 +209,9 @@
   </data>
   <data name="SHIFT_SCHEDULE" xml:space="preserve">
     <value>교대 분할 관리</value>
+  </data>
+  <data name="STATUS" xml:space="preserve">
+    <value>계획 실시 상태</value>
   </data>
   <data name="THAISAN" xml:space="preserve">
     <value>출산</value>

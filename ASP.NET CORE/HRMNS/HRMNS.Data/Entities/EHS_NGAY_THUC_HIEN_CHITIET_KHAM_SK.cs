@@ -17,7 +17,8 @@ namespace HRMNS.Data.Entities
         }
 
         public EHS_NGAY_THUC_HIEN_CHITIET_KHAM_SK(int id,Guid maEvent, Guid maKHKhamSK,string noidung,string ngayBatDau,string ngayKetThuc,
-            string status,int progress,string priority,string isShowBoard,string actualFinish,string fileName,string fileUrl)
+            string status,int progress,string priority,string isShowBoard,string actualFinish,string fileName,string fileUrl,
+            string ketqua,string doisach)
         {
             Id = id;
             MaEvent = maEvent;
@@ -32,6 +33,8 @@ namespace HRMNS.Data.Entities
             ActualFinish = actualFinish;
             FileNameResult = fileName;
             UrlFileNameResult = fileUrl;
+            KetQua = ketqua;
+            DoiSachCaiTien = doisach;
         }
 
         public Guid MaEvent { get; set; }
@@ -77,6 +80,12 @@ namespace HRMNS.Data.Entities
         public string FileNameResult { get; set; }
 
         public string UrlFileNameResult { get; set; }
+
+        [StringLength(50)]
+        public string KetQua { get; set; }
+
+        [StringLength(500)]
+        public string DoiSachCaiTien { get; set; }
 
         [ForeignKey("MaKHKhamSK")]
         public virtual EHS_KE_HOACH_KHAM_SK EHS_KE_HOACH_KHAM_SK { get; set; }

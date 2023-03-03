@@ -216,6 +216,9 @@
   <data name="KEHOACH_QUANTRAC" xml:space="preserve">
     <value>Kế Hoạch Quan Trắc</value>
   </data>
+  <data name="KET_QUA" xml:space="preserve">
+    <value>Kết Quả</value>
+  </data>
   <data name="KHU_VUC_LAY_MAU" xml:space="preserve">
     <value>Khu vực lấy mẫu</value>
   </data>

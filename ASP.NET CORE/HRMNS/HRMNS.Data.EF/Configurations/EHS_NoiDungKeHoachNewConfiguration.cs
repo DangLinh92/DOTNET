@@ -136,4 +136,31 @@ namespace HRMNS.Data.EF.Configurations
             entity.Property(x => x.Id).ValueGeneratedOnAdd();
         }
     }
+
+    public class EHS_HangMucNGConfiguration : DbEntityConfiguration<EHS_HANGMUC_NG>
+    {
+        public override void Configure(EntityTypeBuilder<EHS_HANGMUC_NG> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
+
+    public class EHSQuanLyGiayPhepConfiguration : DbEntityConfiguration<EHS_QUANLY_GIAY_PHEP>
+    {
+        public override void Configure(EntityTypeBuilder<EHS_QUANLY_GIAY_PHEP> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
+
+    public class EHSCoquanKtraConfiguration : DbEntityConfiguration<EHS_COQUAN_KIEMTRA>
+    {
+        public override void Configure(EntityTypeBuilder<EHS_COQUAN_KIEMTRA> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
 }

@@ -241,6 +241,32 @@ namespace HRMS.Areas.Admin.Controllers
             return View();
         }
 
+        private async Task GetUser()
+        {
+            var lstUser = _userManager.Users.Where(x => x.UserName != "admin").ToList();
+            RegisterViewModel register = new RegisterViewModel();
+            List<RegisterViewModel> registerModels = new List<RegisterViewModel>();
+            List<string> roles;
+            foreach (var user in lstUser)
+            {
+                roles = (List<string>)await _userManager.GetRolesAsync(user);
+                register = new RegisterViewModel()
+                {
+                    FullName = user.FullName,
+                    Username = user.UserName,
+                    Department = user.Department
+                };
+                if (roles.Count > 0)
+                {
+                    register.Role = roles[0];
+                }
+
+                registerModels.Add(register);
+            }
+
+            ViewBag.UserList = registerModels;
+        }
+
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -267,6 +293,8 @@ namespace HRMS.Areas.Admin.Controllers
                     }
 
                     _logger.LogInformation("User created a new account with password.");
+
+                   //await GetUser();
 
                     return RedirectToAction("Register");
                 }

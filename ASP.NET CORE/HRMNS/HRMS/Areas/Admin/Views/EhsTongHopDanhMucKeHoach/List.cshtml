@@ -412,6 +412,7 @@
                                         <span class="current-value" style="color:white"><%- text %></span>
                                     </div>
                                 </text>);
+        columns.AddFor(m => m.KetQua).Caption(@localizer["KETQUA"].Value).Width(80);
         columns.AddFor(m => m.NguoiPhuTrach).Caption(@localizer["NGUOI_PHU_TRACH"].Value).Width(120);
         columns.AddFor(m => m.SoNgayConLai).Caption(@localizer["SO_NGAY_CON_LAI"].Value).Width(100);
         columns.AddFor(m => m.Folder).Caption("Folder");

@@ -1,0 +1,161 @@
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+@section Scripts{
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+    <script>
+            $(function () {
+                    let currentYear = new Date().getFullYear();
+                    LoadData(currentYear);
+            });
+
+        function LoadData(txtYear) {
+                    dataGrid = $("#gridContainer").dxDataGrid("instance");
+                    loadPanel = $("#loadPanel").dxLoadPanel("instance");
+
+            loadPanel.show();
+            sendRequest('@Url.RouteUrl(new { area = "admin", controller = "EhsHangMucNG", action = "GetNGByYear" })', "GET", { year: txtYear })
+                    .always(() => { loadPanel.hide(); })
+                    .done((data) => {
+                        console.log(data);
+                        dataGrid.option("dataSource", data);
+                    });
+        }
+
+        function sendRequest(url, method, data) {
+            var d = $.Deferred();
+
+            method = method || "GET";
+
+            $.ajax(url, {
+                method: method,
+                data: data,
+                cache: false,
+                xhrFields: { withCredentials: true }
+            }).done(function (result) {
+                d.resolve(method === "GET" ? result.data : result);
+            }).fail(function (xhr) {
+                d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
+            });
+
+            return d.promise();
+        };
+
+
+    function selectedDate_changed(data) {
+
+        let sDate = data.value;
+        if (sDate == '') {
+            var date = new Date();
+        }
+        else {
+            var date = new Date(sDate);
+        }
+
+        // Get year, month, and day part from the date
+        var year = date.toLocaleString("default", { year: "numeric" });
+        LoadData(year);
+    };
+
+
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('Hang Muc NG');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'HangMucNG.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+    </script>
+}
+<div class="content container-fluid">
+    <div class="page-header" style="margin-bottom:-1rem">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="page-title">@(localizer["EHS_CAI_TIEN_NG"])</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="row align-items-center">
+        <div class="col">
+            <div class="form">
+                <div class="dx-fieldset">
+                    <div class="dx-field">
+                        <div>
+                            @(Html.DevExtreme().DateBox()
+                                  .ID("txt_year")
+                                  .Value(DateTime.Now.Year.ToString())
+                                  .CalendarOptions(x=>x.MaxZoomLevel(CalendarZoomLevel.Decade))
+                                  .DisplayFormat("yyyy")
+                                  .Width(200)
+                                  .Placeholder("Select...")
+                                  .Label("Year")
+                                  .OnValueChanged("selectedDate_changed")
+                            )
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            @(Html.DevExtreme().LoadPanel()
+        .ID("loadPanel")
+        .Position(p => p.Of("#gridContainer"))
+        .Visible(false)
+)
+            @(Html.DevExtreme().DataGrid<EhsHangMucNGViewModel>
+    ()
+    .ID("gridContainer")
+    .Height(700)
+    .ShowBorders(true)
+      .RepaintChangesOnly(true)
+     .LoadPanel(loadPanel => loadPanel.Enabled(false))
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnMinWidth(50)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+    .OnExporting("exporting")
+    .Columns(columns =>
+    {
+        columns.AddFor(m => m.DeMuc).Caption(@localizer["DE_MUC"].Value);
+        columns.AddFor(m => m.HangMucNG).Caption(@localizer["HANG_MUC"].Value);
+        columns.AddFor(m => m.NoiDungVanDeNG).Caption(@localizer["NOI_DUNG"].Value);
+        columns.AddFor(m => m.NguyenNhan).Caption(@localizer["NGUYEN_NHAN"].Value);
+        columns.AddFor(m => m.DoiSachCaiTien).Caption(@localizer["DOI_SACH_CAI_TIEN"].Value);
+        columns.AddFor(m => m.TinhHinhCaiTien).Caption(@localizer["TIEN_DO"].Value);
+
+    }).SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true)
+    )
+
+        </div>
+    </div>
+</div>
+

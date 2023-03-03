@@ -142,7 +142,12 @@ namespace HRMNS.Utilities.Constants
             "2022-10-01",
             "2022-10-08",
             "2022-10-15",
-             "2022-10-22"
+            "2022-10-22"
         };
+
+        public static string COMPLETED = "Completed";
+        public static string INPROGRESS = "Inprogress";
+        public static string TODO = "TODO";
+        public static string PENDING = "Pending";
     }
 }

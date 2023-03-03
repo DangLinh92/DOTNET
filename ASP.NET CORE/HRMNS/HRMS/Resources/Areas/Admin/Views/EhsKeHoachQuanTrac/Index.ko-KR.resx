@@ -183,6 +183,12 @@
   <data name="DOCUMENT" xml:space="preserve">
     <value>자료 관리</value>
   </data>
+  <data name="DOI_SACH_CAI_TIEN" xml:space="preserve">
+    <value>개선대책</value>
+  </data>
+  <data name="HANG_MUC_NG" xml:space="preserve">
+    <value>NG항목</value>
+  </data>
   <data name="Home" xml:space="preserve">
     <value>Home</value>
   </data>
@@ -267,6 +273,9 @@
   <data name="NGUOI_PHU_TRACH" xml:space="preserve">
     <value>담당자</value>
   </data>
+  <data name="NGUYEN_NHAN" xml:space="preserve">
+    <value>NG원인</value>
+  </data>
   <data name="NHANSU" xml:space="preserve">
     <value>인사 관리</value>
   </data>
@@ -284,6 +293,9 @@
   </data>
   <data name="NOI_DUNG" xml:space="preserve">
     <value>내용</value>
+  </data>
+  <data name="NOI_DUNG_NG" xml:space="preserve">
+    <value>NG내용</value>
   </data>
   <data name="OVERTIME" xml:space="preserve">
     <value>OT 신청</value>
@@ -336,8 +348,14 @@
   <data name="TIEN_DO" xml:space="preserve">
     <value>업무 진척</value>
   </data>
+  <data name="TIEU_DE_THONGTIN" xml:space="preserve">
+    <value>시작일자, 종료일자 정보 및 결과 파일 import</value>
+  </data>
   <data name="TIMEKEEPING" xml:space="preserve">
     <value>근태 데이터 관리</value>
+  </data>
+  <data name="TINH_HINH_CAI_TIEN" xml:space="preserve">
+    <value>개선 현황</value>
   </data>
   <data name="TONGHOPKEHOACH" xml:space="preserve">
     <value>월 비용 취합</value>

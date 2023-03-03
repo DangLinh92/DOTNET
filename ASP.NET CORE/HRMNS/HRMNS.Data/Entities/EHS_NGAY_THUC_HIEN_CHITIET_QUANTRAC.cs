@@ -17,7 +17,8 @@ namespace HRMNS.Data.Entities
         }
 
         public EHS_NGAY_THUC_HIEN_CHITIET_QUANTRAC(int id,Guid maEvent,int maKHQuanTrac,string noidung,string ngayBatDau,string ngayKetThuc,
-            string status, int progress, string priority, string isShowBoard,string actualFinish, string fileName, string fileUrl)
+            string status, int progress, string priority, string isShowBoard,string actualFinish, string fileName, string fileUrl,
+            string ketqua,string doisach)
         {
             Id = id;
             MaEvent = maEvent;
@@ -32,6 +33,8 @@ namespace HRMNS.Data.Entities
             ActualFinish = actualFinish;
             FileNameResult = fileName;
             UrlFileNameResult = fileUrl;
+            KetQua = ketqua;
+            DoiSachCaiTien = doisach;
         }
 
         public Guid MaEvent { get; set; }
@@ -77,6 +80,12 @@ namespace HRMNS.Data.Entities
         public string FileNameResult { get; set; }
 
         public string UrlFileNameResult { get; set; }
+
+        [StringLength(50)]
+        public string KetQua { get; set; }
+
+        [StringLength(500)]
+        public string DoiSachCaiTien { get; set; }
 
         [ForeignKey("MaKHQuanTrac")]
         public virtual EHS_KEHOACH_QUANTRAC EHS_KEHOACH_QUANTRAC { get; set; }

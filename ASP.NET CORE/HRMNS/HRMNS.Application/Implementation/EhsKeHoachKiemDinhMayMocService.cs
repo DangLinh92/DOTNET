@@ -41,6 +41,7 @@ namespace HRMNS.Application.Implementation
             model.MaDMKeHoach = Guid.Parse("5bbdc8cc-fc22-4be9-a3b8-f468ef04efe0");
             EHS_KEHOACH_KIEMDINH_MAYMOC en = _mapper.Map<EHS_KEHOACH_KIEMDINH_MAYMOC>(model);
             _EHSKeHoachKiemDinhMayMocRepository.Add(en);
+            Save();
             return _mapper.Map<EhsKeHoachKiemDinhMayMocViewModel>(en);
         }
 
