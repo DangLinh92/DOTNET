@@ -16,7 +16,7 @@ namespace HRMNS.Data.Entities
 
         }
 
-        public DC_CHAM_CONG(int id,int? dmDC,string maNV,string ngayDCFrom,string ngayDCTo,string noiDung,double? giatridc,string status)
+        public DC_CHAM_CONG(int id,int? dmDC,string maNV,string ngayDCFrom,string ngayDCTo,string noiDung,double? giatridc,string status,string thoigiantra)
         {
             Id = id;
             DM_DieuChinhCong = dmDC;
@@ -26,6 +26,7 @@ namespace HRMNS.Data.Entities
             NoiDungDC = noiDung;
             GiaTriBoXung = giatridc;
             TrangThaiChiTra = status;
+            ChiTraVaoLuongThang = thoigiantra;
         }
         public int? DM_DieuChinhCong { get; set; }
 
@@ -45,6 +46,9 @@ namespace HRMNS.Data.Entities
 
         [StringLength(20)]
         public string TrangThaiChiTra { get; set; }
+
+        [StringLength(50)]
+        public string ChiTraVaoLuongThang { get; set; }
 
         [StringLength(50)]
         public string DateCreated { get; set; }

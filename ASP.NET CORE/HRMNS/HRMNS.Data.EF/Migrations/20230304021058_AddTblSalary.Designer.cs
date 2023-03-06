@@ -4,14 +4,16 @@ using HRMNS.Data.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HRMNS.Data.EF.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    partial class AppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230304021058_AddTblSalary")]
+    partial class AddTblSalary
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -647,10 +649,6 @@ namespace HRMNS.Data.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("ChiTraVaoLuongThang")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
 
                     b.Property<int?>("DM_DieuChinhCong")
                         .HasColumnType("int");
@@ -3263,12 +3261,6 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<float>("SoPhepNam")
                         .HasColumnType("real");
 
-                    b.Property<decimal>("SoTienChiTra")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime?>("ThoiGianChiTra")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("UserCreated")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
@@ -3361,6 +3353,10 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
+                    b.Property<string>("EventDate")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<decimal>("FullAttendanceSupport")
                         .HasColumnType("decimal(18,2)");
 
@@ -3388,6 +3384,9 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<decimal>("LivingAllowance")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<Guid>("MaEventParent")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("MaNV")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
@@ -3407,8 +3406,7 @@ namespace HRMNS.Data.EF.Migrations
                         .HasMaxLength(50);
 
                     b.Property<string>("Year")
-                        .HasColumnType("nvarchar(4)")
-                        .HasMaxLength(4);
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

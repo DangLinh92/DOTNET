@@ -1,0 +1,284 @@
+﻿@{
+    ViewData["Title"] = "Phép Năm";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts
+{
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+    <script>
+
+        var dataGrid, loadPanel, dataGridTmp;
+
+        $(function ()
+        {
+            let currentYear = new Date().getFullYear();
+            LoadData(currentYear);
+        });
+
+        function LoadData(txtYear) {
+                    dataGrid = $("#gridContainer1").dxDataGrid("instance");
+                    loadPanel = $("#loadPanel").dxLoadPanel("instance");
+
+            loadPanel.show();
+            sendRequest('@Url.RouteUrl(new { area = "admin", controller = "phepnam", action = "PhepNams" })', "GET", { year: txtYear })
+                    .always(() => { loadPanel.hide(); })
+                    .done((data) => {
+                        dataGrid.option("dataSource", data);
+                    });
+        }
+
+        function SavePhepNam(e) {
+
+       var change = e.changes[0];
+
+      if (change) {
+          e.cancel = true;
+          loadPanel.show();
+          e.promise = saveChange(change)
+              .always(() => { loadPanel.hide(); })
+              .done((data) => {
+                  var datas = e.component.option("dataSource");
+
+                  if (change.type === "insert") {
+                      change.data = data;
+                  }
+
+                  datas = DevExpress.data.applyChanges(datas, [change], { keyExpr: "Id" });
+
+                  e.component.option({
+                      dataSource: datas,
+                      editing: {
+                          editRowKey: null,
+                          changes: []
+                      }
+                  });
+              });
+      }
+    };
+
+        function saveChange(change)
+        {
+            console.log(change);
+            switch (change.type)
+            {
+                    case "insert":
+                        return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "phepnam", action = "Insert" })', "POST", { values: JSON.stringify(change.data) });
+                    case "update":
+                        return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "phepnam", action = "Update" })', "PUT", { key: change.key, values: JSON.stringify(change.data) });
+                    case "remove":
+                        return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "phepnam", action = "Delete" })', "DELETE", { key: change.key });
+            }
+        };
+
+            function sendRequest(url, method, data) {
+                var d = $.Deferred();
+
+                method = method || "GET";
+
+                $.ajax(url, {
+                    method: method,
+                    data: data,
+                    cache: false,
+                    xhrFields: { withCredentials: true }
+                }).done(function (result) {
+                    d.resolve(method === "GET" ? result.data : result);
+                }).fail(function (xhr) {
+                    d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
+                });
+
+                return d.promise();
+        };
+
+        // chon nam
+        function selectedDate_changed(data) {
+
+            let sDate = data.value;
+            if (sDate == '') {
+                var date = new Date();
+            }
+            else {
+                var date = new Date(sDate);
+            }
+
+            // Get year, month, and day part from the date
+            var year = date.toLocaleString("default", { year: "numeric" });
+            LoadData(year);
+        };
+
+        // Xuất excel phep nam
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('Phep Nam');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'Phep Nam.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        /* Import, export, insert,update,delete danh sách nhân viên khám sk */
+        function ImportExcel()
+        {
+            $("#fileInputExcel").val(null);
+            $('#import_File').modal('show');
+        }
+
+        $('#btnCloseImportExcel').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+            if (files.length > 0) {
+                $("#fileInputExcel").val(null);
+                $('#hd-ImportData').val('');
+                $('#import_File').modal('hide');
+                location.reload();
+            }
+        });
+
+        $('#btnCloseImport').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+            if (files.length > 0) {
+                $("#fileInputExcel").val(null);
+                $('#hd-ImportData').val('');
+                $('#import_File').modal('hide');
+                location.reload();
+            }
+        });
+
+        $('#btnImportExcel').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+
+            // Create FormData object
+            var fileData = new FormData();
+
+            // Looping over all files and add it to FormData object
+            for (var i = 0; i < files.length; i++) {
+                fileData.append("files", files[i]);
+            }
+
+
+
+            $.ajax({
+                url: '/Admin/phepnam/ImportExcel',
+                type: 'POST',
+                data: fileData,
+                processData: false,  // tell jQuery not to process the data
+                contentType: false,  // tell jQuery not to set contentType
+                success: function (data) {
+                    $('#import_File').modal('hide');
+                    hrms.notify("Import success!", 'Success', 'alert', function () {
+                        location.reload();
+                    });
+                },
+                error: function (status) {
+                    hrms.notify('error: Import error!', 'error', 'alert', function () { });
+                }
+            });
+            return false;
+        });
+    </script>
+}
+
+
+<div class="content container-fluid">
+    <div class="page-header" style="margin-bottom:-1rem">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="page-title">Quản Lý Phép Năm</h3>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row align-items-center">
+        <div class="col">
+            <div class="form">
+                <div class="dx-fieldset">
+                    <div class="dx-field">
+                        <div>
+                            @(Html.DevExtreme().DateBox()
+                                  .ID("txt_year")
+                                  .Value(DateTime.Now.Year.ToString())
+                                  .CalendarOptions(x=>x.MaxZoomLevel(CalendarZoomLevel.Decade))
+                                  .DisplayFormat("yyyy")
+                                  .Width(200)
+                                  .Placeholder("Select...")
+                                  .Label("Year")
+                                  .OnValueChanged("selectedDate_changed")
+                            )
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-auto float-right ml-auto" style="margin-right:100px;">
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" id="btnImport" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Excel</button>
+                <div class="dropdown-menu" style="">
+                    <a class="dropdown-item" href="~/templates/PhepNamTemplate.xlsx">File mẫu import phép năm</a>
+                    <a class="dropdown-item" id="btnImport" onclick="ImportExcel()">Import Phép Năm</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            @(Html.DevExtreme().LoadPanel()
+                      .ID("loadPanel")
+                      .Position(p => p.Of("#gridContainer1"))
+                      .Visible(false)
+                )
+            @(Html.DevExtreme().DataGrid<PhepNamViewModel>()
+    .ID("gridContainer1")
+    .KeyExpr("Id")
+    .Height(700)
+    .ShowBorders(true)
+    .RepaintChangesOnly(true)
+    .LoadPanel(loadPanel => loadPanel.Enabled(false))
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .FilterRow(filterRow => filterRow.Visible(true).ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+    .OnExporting("exporting")
+    .Editing(editing =>
+    {
+        editing.Mode(GridEditMode.Row);
+        editing.AllowUpdating(true);
+        editing.AllowDeleting(true);
+        editing.AllowAdding(true);
+    })
+    .Columns(columns =>
+    {
+        columns.AddFor(m => m.Id).Visible(false).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.MaNhanVien).Caption("Mã Nhân Viên").AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.HR_NHANVIEN.TenNV).Caption("Tên Nhân Viên").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.SoPhepNam).Caption("Tổng Phép Năm").AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.SoPhepConLai).Caption("Số Phép Năm Còn Lại").AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.Year).Caption("Năm").AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.SoTienChiTra).Caption("Chi Trả Phép Năm").AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.ThoiGianChiTra).Caption("Thời Gian Chi Trả").AllowEditing(true);
+    }).SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true).OnSaving("SavePhepNam")
+    )
+        </div>
+    </div>
+</div>
+<partial name="_ImportExcelModel" />
+

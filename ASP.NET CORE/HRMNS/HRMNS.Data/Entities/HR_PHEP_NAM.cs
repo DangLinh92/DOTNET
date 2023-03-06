@@ -16,12 +16,15 @@ namespace HRMNS.Data.Entities
 
         }
 
-        public HR_PHEP_NAM(string maNV,float soPhepNam,float soPhepConLai,int year)
+        public HR_PHEP_NAM(int id,string maNV,float soPhepNam,float soPhepConLai,int year,decimal sotientra,DateTime? thoigiantra)
         {
+            Id = id;
             MaNhanVien = maNV;
             SoPhepNam = soPhepNam;
             SoPhepConLai = soPhepConLai;
             Year = year;
+            SoTienChiTra = sotientra;
+            ThoiGianChiTra = thoigiantra;
         }
 
         [StringLength(50)]
@@ -29,6 +32,11 @@ namespace HRMNS.Data.Entities
         public float SoPhepNam { get; set; }
         public float SoPhepConLai { get; set; }
         public int Year { get; set; }
+
+        public decimal SoTienChiTra { get; set; }
+
+        public DateTime? ThoiGianChiTra { get; set; }
+
         [StringLength(50)]
         public string DateCreated { get; set; }
         [StringLength(50)]

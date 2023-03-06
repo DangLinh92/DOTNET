@@ -29,6 +29,9 @@ namespace HRMNS.Application.ViewModels.Time_Attendance
         public string TrangThaiChiTra { get; set; }
 
         [StringLength(50)]
+        public string ChiTraVaoLuongThang { get; set; }
+
+        [StringLength(50)]
         public string DateCreated { get; set; }
 
         [StringLength(50)]

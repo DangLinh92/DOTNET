@@ -27,6 +27,7 @@ namespace HRMNS.Data.Entities
             ATTENDANCE_RECORD = new HashSet<ATTENDANCE_RECORD>();
             TRAINING_NHANVIEN = new HashSet<TRAINING_NHANVIEN>();
             HR_THAISAN_CONNHO = new HashSet<HR_THAISAN_CONNHO>();
+            HR_SALARY = new HashSet<HR_SALARY>();
         }
 
         public HR_NHANVIEN
@@ -216,5 +217,6 @@ namespace HRMNS.Data.Entities
 
         public virtual ICollection<TRAINING_NHANVIEN> TRAINING_NHANVIEN { get; set; }
         public virtual ICollection<DANGKY_DIMUON_VSOM_NHANVIEN> DANGKY_DIMUON_VSOM_NHANVIEN { get; set; }
+        public virtual ICollection<HR_SALARY> HR_SALARY { get; set; }
     }
 }

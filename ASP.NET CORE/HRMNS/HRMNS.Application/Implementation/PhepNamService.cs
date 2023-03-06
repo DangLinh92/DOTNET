@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using HRMNS.Application.Interfaces;
 using HRMNS.Application.ViewModels.HR;
+using HRMNS.Data.EF.Extensions;
 using HRMNS.Data.Entities;
 using HRMS.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Http;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +33,8 @@ namespace HRMNS.Application.Implementation
             phepNam.DateModified = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             phepNam.UserCreated = GetUserId();
             _phepNamRepository.Add(phepNam);
-            return phepNamVm;
+            Save();
+            return _mapper.Map<PhepNamViewModel>(phepNam);
         }
 
         public void Delete(int id)
@@ -49,14 +52,16 @@ namespace HRMNS.Application.Implementation
             _unitOfWork.Commit();
         }
 
-        public void Update(PhepNamViewModel phepNamVm)
+        public PhepNamViewModel Update(PhepNamViewModel phepNamVm)
         {
             var phepNam = _mapper.Map<PhepNamViewModel, HR_PHEP_NAM>(phepNamVm);
             phepNam.UserModified = GetUserId();
             _phepNamRepository.Update(phepNam);
+            Save();
+            return _mapper.Map<PhepNamViewModel>(phepNam);
         }
 
-        public void UpdateSingle(PhepNamViewModel phepNamVm)
+        public PhepNamViewModel UpdateSingle(PhepNamViewModel phepNamVm)
         {
             throw new NotImplementedException();
         }
@@ -64,6 +69,41 @@ namespace HRMNS.Application.Implementation
         public PhepNamViewModel GetById(int id)
         {
             return _mapper.Map<HR_PHEP_NAM, PhepNamViewModel>(_phepNamRepository.FindById(id));
+        }
+
+        public List<PhepNamViewModel> GetList(string year)
+        {
+            int _year = int.Parse(year);
+            var lst = _phepNamRepository.FindAll(x => x.Year == _year, x => x.HR_NHANVIEN).ToList();
+            return _mapper.Map<List<PhepNamViewModel>>(lst);
+        }
+
+        public void ImportExcel(string filePath)
+        {
+            using (var packet = new ExcelPackage(new System.IO.FileInfo(filePath)))
+            {
+                ExcelWorksheet worksheet = packet.Workbook.Worksheets[1];
+                HR_PHEP_NAM phepNam; ;
+
+                for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
+                {
+                    phepNam = new HR_PHEP_NAM();
+                    phepNam.MaNhanVien = worksheet.Cells[i, 1].Text.NullString();
+                    phepNam.SoPhepNam = float.Parse(worksheet.Cells[i, 3].Text.NullString());
+                    phepNam.SoPhepConLai = float.Parse(worksheet.Cells[i, 4].Text.NullString());
+                    phepNam.Year = int.Parse(worksheet.Cells[i, 5].Text.NullString());
+                    phepNam.SoTienChiTra = decimal.Parse(worksheet.Cells[i, 6].Text.NullString());
+                    if(DateTime.TryParse(worksheet.Cells[i, 7].Text.NullString(),out _))
+                    {
+                        phepNam.ThoiGianChiTra = DateTime.Parse(worksheet.Cells[i, 7].Text.NullString());
+                    }
+                    else
+                    {
+                        phepNam.ThoiGianChiTra = null;
+                    }
+                    _phepNamRepository.Add(phepNam);
+                }
+            }
         }
     }
 }

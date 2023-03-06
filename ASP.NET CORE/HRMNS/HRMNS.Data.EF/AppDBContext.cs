@@ -106,6 +106,7 @@ namespace HRMNS.Data.EF
         public virtual DbSet<EHS_HANGMUC_NG> EHS_HANGMUC_NG { get; set; }
         public virtual DbSet<EHS_QUANLY_GIAY_PHEP> EHS_QUANLY_GIAY_PHEP { get; set; }
         public virtual DbSet<EHS_COQUAN_KIEMTRA> EHS_COQUAN_KIEMTRA { get; set; }
+        public virtual DbSet<HR_SALARY> HR_SALARY { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -197,6 +198,7 @@ namespace HRMNS.Data.EF
             builder.AddConfiguration(new EHS_HangMucNGConfiguration());
             builder.AddConfiguration(new EHSQuanLyGiayPhepConfiguration());
             builder.AddConfiguration(new EHSCoquanKtraConfiguration());
+            builder.AddConfiguration(new HrSalaryConfiguration());
 
             //base.OnModelCreating(builder);
         }

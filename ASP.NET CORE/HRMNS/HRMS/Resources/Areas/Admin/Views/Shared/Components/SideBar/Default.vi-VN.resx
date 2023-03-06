@@ -135,6 +135,9 @@
   <data name="DAO_TAO_EVENT" xml:space="preserve">
     <value>Kế Hoạch Đào Tạo</value>
   </data>
+  <data name="DIEU_CHINH_CONG" xml:space="preserve">
+    <value>Điều Chỉnh Công</value>
+  </data>
   <data name="DMKEHOACH" xml:space="preserve">
     <value>Danh Mục Kế Hoạch</value>
   </data>
@@ -188,6 +191,9 @@
   </data>
   <data name="OVERTIME" xml:space="preserve">
     <value>Đăng ký tăng ca</value>
+  </data>
+  <data name="PHEP_NAM" xml:space="preserve">
+    <value>Phép Năm</value>
   </data>
   <data name="QUAN_LY_GIAY_PHEP" xml:space="preserve">
     <value>Quản lý các loại giấy phép</value>

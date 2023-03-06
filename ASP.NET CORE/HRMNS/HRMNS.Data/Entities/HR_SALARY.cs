@@ -9,7 +9,7 @@ using System.Text;
 namespace HRMNS.Data.Entities
 {
     [Table("HR_SALARY")]
-    public class HR_SALARY : DomainEntity<string>
+    public class HR_SALARY : DomainEntity<int>, IDateTracking
     {
         public HR_SALARY()
         {
@@ -27,8 +27,29 @@ namespace HRMNS.Data.Entities
         public decimal IncentiveTechnical { get; set; }
         public decimal IncentiveOther { get; set; }
 
+        [StringLength(4)]
+        public string Year { get; set; }
+
+        public decimal IncentiveSixMonth1 { get; set; }
+        public decimal IncentiveSixMonth2 { get; set; }
+
+        public decimal CI_SixMonth1 { get; set; }
+        public decimal CI_SixMonth2 { get; set; }
+
         [StringLength(50)]
         public string MaNV { get; set; }
+
+        [StringLength(50)]
+        public string DateCreated { get; set; }
+
+        [StringLength(50)]
+        public string DateModified { get; set; }
+
+        [StringLength(50)]
+        public string UserCreated { get; set; }
+
+        [StringLength(50)]
+        public string UserModified { get; set; }
 
         [ForeignKey("MaNV")]
         public virtual HR_NHANVIEN HR_NHANVIEN { get; set; }

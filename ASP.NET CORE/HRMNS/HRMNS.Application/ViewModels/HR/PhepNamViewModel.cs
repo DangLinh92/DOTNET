@@ -18,6 +18,11 @@ namespace HRMNS.Application.ViewModels.HR
         public float SoPhepNam { get; set; }
         public float SoPhepConLai { get; set; }
         public int Year { get; set; }
+
+        public decimal SoTienChiTra { get; set; }
+
+        public DateTime? ThoiGianChiTra { get; set; }
+
         [StringLength(50)]
         public string DateCreated { get; set; }
         [StringLength(50)]
@@ -28,8 +33,8 @@ namespace HRMNS.Application.ViewModels.HR
         public string UserModified { get; set; }
 
         [ForeignKey("MaNhanVien")]
-        [JsonIgnore]
-        [IgnoreDataMember]
+        //[JsonIgnore]
+        //[IgnoreDataMember]
         public HR_NHANVIEN HR_NHANVIEN { get; set; }
     }
 }
