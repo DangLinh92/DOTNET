@@ -24,10 +24,12 @@ namespace OPERATION_MNS.Application.ViewModels
     {
         public int Index { get; set; }
         public string Model { get; set; }
+        public string CassetteId { get; set; }
         public decimal QtyWF { get; set; }
         public decimal QtyChip { get; set; }
         public string TenLoi { get; set; }
         public string PhanLoaiLoi { get; set; }
+        public string OperationName { get; set; }
     }
 
     public class StayLotListViewModel
@@ -98,10 +100,12 @@ namespace OPERATION_MNS.Application.ViewModels
         public string FABLotID { get; set; }
 
         public string HoldTime { get; set; }
+        public string LotCategory { get; set; }
 
         public string HoldCode { get; set; }
 
         public string HoldUserName { get; set; }
+        public string HoldUser { get; set; }
 
         public string HoldComment { get; set; }
 
@@ -131,8 +135,10 @@ namespace OPERATION_MNS.Application.ViewModels
         public ViewHistoryHoldLotModel()
         {
             STAY_LOT_LIST_HISTORY_DATA = new List<STAY_LOT_LIST_HISTORY>();
+            STAY_LOT_LIST_HISTORY_WLP2_DATA = new List<STAY_LOT_LIST_HISTORY_WLP2>();
         }
        public  List<STAY_LOT_LIST_HISTORY> STAY_LOT_LIST_HISTORY_DATA;
+       public  List<STAY_LOT_LIST_HISTORY_WLP2> STAY_LOT_LIST_HISTORY_WLP2_DATA;
         public string LotId { get; set; }
         public string CasseteId { get; set; }
         public string FromTime { get; set; }

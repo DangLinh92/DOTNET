@@ -15,4 +15,12 @@ namespace OPERATION_MNS.Data.EF.Configurations
             entity.HasKey(x => new { x.LotId, x.History_seq });
         }
     }
+
+    public class StayLotListHistoryWlp2Configuration : DbEntityConfiguration<STAY_LOT_LIST_HISTORY_WLP2>
+    {
+        public override void Configure(EntityTypeBuilder<STAY_LOT_LIST_HISTORY_WLP2> entity)
+        {
+            entity.HasKey(x => new { x.LotId, x.History_seq });
+        }
+    }
 }

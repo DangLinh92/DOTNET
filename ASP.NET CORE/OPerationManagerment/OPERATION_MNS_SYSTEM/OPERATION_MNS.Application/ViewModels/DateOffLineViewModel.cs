@@ -18,6 +18,12 @@ namespace OPERATION_MNS.Application.ViewModels
         [StringLength(50)]
         public string WLP { get; set; }
 
+        [StringLength(50)]
+        public string OWNER { get; set; }
+
+        [StringLength(50)]
+        public string DanhMuc { get; set; }
+
 
         [StringLength(50)]
         public string DateCreated { get; set; }

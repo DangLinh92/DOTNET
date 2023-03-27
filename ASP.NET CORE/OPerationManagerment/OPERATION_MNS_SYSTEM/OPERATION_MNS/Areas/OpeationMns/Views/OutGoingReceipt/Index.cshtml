@@ -1,0 +1,248 @@
+﻿@using Microsoft.AspNetCore.Http
+@using OPERATION_MNS.Application.ViewModels
+@{
+    ViewData["Title"] = "Outgoing Receipt";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <style>
+        #gridContainer span.current-value {
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        #gridContainer span.diff {
+            width: 50px;
+            display: inline-block;
+        }
+
+        #gridContainer .inc {
+            color: #2ab71b;
+        }
+
+        #gridContainer .dec {
+            color: #f00;
+        }
+
+            #gridContainer .inc .arrow,
+            #gridContainer .dec .arrow {
+                display: inline-block;
+                height: 10px;
+                width: 10px;
+                background-repeat: no-repeat;
+                background-size: 10px 10px;
+            }
+
+        #gridContainer .inc .arrow {
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAADKSURBVHjaYtTaLs1ABEiG0nPRJa56PEHhsxBhmCUQT4OyrwHxcXyKmQgYJgHE64CYDYrXQcXIMhCbAcgWkGzgNKh38QUB0QamIUUErkhKI9ZAGyCeTERkTYaqxWsgKA2txhdG6GGsvUNGGpeBRMUiGhCFGsqGzUBQQJsxkA5AemaiG5hDIBIIgQSgK0FmMDACs549kN5FZLjhA7+A2A2U9YSAOBeLAk4gnoBDczoOcSFGPIUDPxB/wCHHiKtwYGKgMhg1cBAaCBBgAJTUIL3ToPZfAAAAAElFTkSuQmCC');
+        }
+
+        #gridContainer .dec .arrow {
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAADJSURBVHjaYvzPgBfgkhYA4o8QFahKmBioDEYNHIQGsgBxIBCLkqgvAYi/g1mMjMjir0EJzR6If/6HpChKMMgMe3DKBeIcKhiY8x/MYoDj+RQYNgdkGLqBbEB8kgzDToL1YjEQhKWB+BUJhj0H64Eahs1AELYhMpJ+gtUiGYbLQBBOI8LANLBaIg1kAAc0vkiAqSPBQFAkHcNi2DGoHMkGgrAENOCRI0ECRQ2JBoKwJTQCfkLZDPgMZPxPXN5NhtJzMSsJVBMAAgwAyWSY2svfmrwAAAAASUVORK5CYII=');
+        }
+
+        #Yield_Id {
+            margin-top: 15px;
+        }
+
+        #begindate-date {
+            float: left;
+            margin-right: 10px;
+        }
+
+        #slChipWafer {
+            float: left;
+            margin-right: 10px;
+            margin-top: 6px;
+        }
+
+        .dx-cell-focus-disabled[role="gridcell"] {
+            background-color: #004e89 !important;
+            color: #ffff !important;
+        }
+
+        .styleHeader {
+            color: #FEF5AC;
+            font-weight: bold;
+            border-right-width: medium !important;
+            /* border-right-color: #FEF5AC !important;*/
+        }
+
+        .zeroHide {
+            display: none;
+        }
+    </style>
+
+}
+
+@section Scripts
+{
+    <script src="~/js/dataTables.fixedColumns.min.js"></script>
+    <script src="~/js/dataTables.fixedHeader.min.js"></script>
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+    <script>
+
+    function exporting(e) {
+        var workbook = new ExcelJS.Workbook();
+        var worksheet = workbook.addWorksheet('Outgoing Receipt');
+
+        DevExpress.excelExporter.exportDataGrid({
+            component: e.component,
+            worksheet: worksheet,
+            autoFilterEnabled: true
+        }).then(function () {
+            workbook.xlsx.writeBuffer().then(function (buffer) {
+                saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'OutgoingReceipt.xlsx');
+            });
+        });
+        e.cancel = true;
+        };
+
+        function refreshGrid() {
+            $("#gridContainer").dxDataGrid("refresh");
+        }
+    </script>
+
+}
+
+@{
+
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header" style="margin-bottom:-1rem">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">@ViewData["Title"]</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Outgoing Receipt</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+    <div class="row" style="margin-bottom:-1rem">
+        <div class="col-md-12">
+            <div class="form">
+                <div class="dx-fieldset">
+                    <div class="dx-field">
+                        <div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            @(Html.DevExtreme().DataGrid<OUTGOING_RECEIPT_WLP2>
+    ()
+    .ID("gridContainer")
+    .DataSourceOptions(o => o.ReshapeOnPush(true))
+    .ShowBorders(true)
+    .RepaintChangesOnly(true)
+    .HighlightChanges(true)
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .SearchPanel(searchPanel => searchPanel
+    .Visible(true)
+    .Width(240)
+    .Placeholder("Search...")
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+    .Editing(editing =>
+    {
+        editing.Mode(GridEditMode.Row);
+        editing.AllowUpdating(true);
+    })
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+    .OnExporting("exporting")
+    .Height(700)
+    .ColumnFixing(x=>x.Enabled(true))
+    .Columns(columns => {
+
+        columns.AddFor(m => m.Module).Caption("Model SMT").Fixed(true).FixedPosition(HorizontalEdge.Left).AllowEditing(false);
+        columns.AddFor(m => m.SapCode).Caption("WLP reel code").Fixed(true).FixedPosition(HorizontalEdge.Left).AllowEditing(false);
+        columns.AddFor(m => m.SoLuongYeuCau).Caption("Số Lượng SMT Yêu Cầu").Fixed(true).FixedPosition(HorizontalEdge.Left).DataType(GridColumnDataType.Number).Format("#,##0").AllowEditing(false);
+
+        columns.Add().Caption("Số Lượng WLP2 Xuất Hàng Dự Kiến ").Columns(c => {
+
+            c.AddFor(m => m.LuongDuKien_1).Caption("08h ~ 12h59").DataType(GridColumnDataType.Number).Format("#,##0");
+            c.AddFor(m => m.LuongDuKien_2).Caption("13h ~ 20h").DataType(GridColumnDataType.Number).Format("#,##0");
+            c.AddFor(m => m.LuongDuKien_3).Caption("20h ~ 23h59").DataType(GridColumnDataType.Number).Format("#,##0");
+            c.AddFor(m => m.LuongDuKien_4).Caption("00h ~ 8h").DataType(GridColumnDataType.Number).Format("#,##0");
+
+        }).CssClass("styleHeader");
+
+
+        columns.AddFor(m => m.ChenhLechDuKien).Caption("Chênh lệch").DataType(GridColumnDataType.Number).Format("#,##0").AllowEditing(false).CellTemplate(@<text>
+                <span class="<%- data.ChenhLechDuKien > 0 ? 'inc' : (data.ChenhLechDuKien < 0) ? 'dec' : 'zeroHide' %>">
+                  <%- text %>
+                </span>
+            </text>);
+
+        columns.Add().Caption("Số Lượng WLP2 Xuất Hàng Thực Tế").Columns(c => {
+
+            c.AddFor(m => m.LuongThucTe_1).Caption("08h ~ 12h59").DataType(GridColumnDataType.Number).Format("#,##0").AllowEditing(false);
+            c.AddFor(m => m.LuongThucTe_2).Caption("13h ~ 20h").DataType(GridColumnDataType.Number).Format("#,##0").AllowEditing(false);
+            c.AddFor(m => m.LuongThucTe_3).Caption("20h ~ 23h59").DataType(GridColumnDataType.Number).Format("#,##0").AllowEditing(false);
+            c.AddFor(m => m.LuongThucTe_4).Caption("00h ~ 8h").DataType(GridColumnDataType.Number).Format("#,##0").AllowEditing(false);
+
+        }).CssClass("styleHeader");
+
+        columns.AddFor(m => m.ChenhLechThucTe).Caption("Chênh lệch").DataType(GridColumnDataType.Number).Format("#,##0").AllowEditing(false).CellTemplate(@<text>
+                <span class="<%- data.ChenhLechThucTe > 0 ? 'inc' : (data.ChenhLechThucTe < 0) ? 'dec' : 'zeroHide' %>">
+                  <%- text %>
+                </span>
+            </text>);
+
+        columns.AddFor(m => m.Note).Caption("Note").Width(300);
+
+    }).DataSource(d => d.Mvc()
+    .Area("OpeationMns")
+    .Controller("OutGoingReceipt")
+    .LoadAction("Get")
+    .UpdateAction("Put")
+    .OnUpdated("refreshGrid")
+    .Key("Key")
+    ).Summary(s=>s.TotalItems(items=> {
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("Total: {0}").ValueFormat(Format.FixedPoint).Column("SoLuongYeuCau");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("LuongDuKien_1");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("LuongDuKien_2");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("LuongDuKien_3");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("LuongDuKien_4");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("ChenhLechDuKien");
+
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("LuongThucTe_1");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("LuongThucTe_2");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("LuongThucTe_3");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("LuongThucTe_4");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("ChenhLechThucTe");
+    })))
+        </div>
+    </div>
+</div>
+
+
+
+

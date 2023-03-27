@@ -98,6 +98,10 @@ namespace OPERATION_MNS
             services.AddTransient<ILeadTimeService, LeadTimeService>();
             services.AddTransient<IUserMailService, UserMailService>();
             services.AddTransient<IPostOprationShippingService, PostOprationShippingService>();
+            services.AddTransient<ISMTReturnWlp2Service, SMTReturnWlp2Service>();
+            services.AddTransient<IDeNghiXuatNVLService, DeNghiXuatNVLService>();
+            services.AddTransient<IOutGoingReceiptService, OutGoingReceiptService>();
+            services.AddTransient<IShippingSMTHistoryService, ShippingSMTHistoryService>();
 
             services.AddSignalR(cfg =>cfg.EnableDetailedErrors = true);
 

@@ -13,8 +13,6 @@ namespace HRMNS.Data.EF.Configurations
         {
             entity.HasKey(c => c.Id);
             entity.Property(c => c.Id).ValueGeneratedOnAdd();
-
-            entity.HasMany(x => x.DC_CHAM_CONG).WithOne(x => x.DM_DIEUCHINH_CHAMCONG).OnDelete(Microsoft.EntityFrameworkCore.DeleteBehavior.SetNull);
         }
     }
 }

@@ -5,12 +5,30 @@
             <th>User Id</th>
             <th>User Name</th>
             <th>Department</th>
-            <th>Category</th>
-            <th>Begin Time</th>
-            <th>End Time</th>
+            <th>Ngày Điều Chỉnh</th>
+            <th>Ngày Công</th>
+            <th>30%(DS->NS)</th>
+            <th>
+                260%
+                (NS->BH)
+            </th>
+            <th>85%</th>
+            <th>150%</th>
+            <th>190%</th>
+            <th>200%</th>
+            <th>210%</th>
+            <th>270%</th>
+            <th>300%</th>
+            <th>390%</th>
+            <th>Hỗ trợ 50%</th>
+            <th>Hỗ trợ 150%</th>
+            <th>Hỗ trợ 200%</th>
+            <th>Hỗ trợ 390%</th>
+            <th>Hỗ trợ 100k</th>
+            <th>EL/LC</th>
             <th>Value</th>
             <th class="text-nowrap">Content</th>
-            <th>Status</th>
+            <th>Tháng Lương Chi Trả</th>
             <th class="text-right no-sort">Action</th>
         </tr>
     </thead>
@@ -21,21 +39,29 @@
             <td>@item.MaNV</td>
             <td>@item.HR_NHANVIEN?.TenNV</td>
             <td>@item.HR_NHANVIEN?.MaBoPhan</td>
-            <td>@item.DM_DIEUCHINH_CHAMCONG?.TieuDe</td>
-            <td>@item.NgayCanDieuChinh_From</td>
-            <td>@item.NgayCanDieuChinh_To</td>
-            <td>@item.GiaTriBoXung</td>
+            <td>@item.NgayDieuChinh2</td>
+            <td>@item.NgayCong</td>
+            <td>@item.DSNS</td>
+            <td>@item.NSBH</td>
+            <td>@item.DC85</td>
+            <td>@item.DC150</td>
+            <td>@item.DC190</td>
+            <td>@item.DC200</td>
+            <td>@item.DC210</td>
+            <td>@item.DC270</td>
+            <td>@item.DC300</td>
+            <td>@item.DC390</td>
+            <td>@item.HT50</td>
+            <td>@item.HT150</td>
+            <td>@item.HT200</td>
+            <td>@item.HT390</td>
+            <td>@item.HT100</td>
+            <td>@item.ELLC</td>
+            <td>@item.TongSoTien</td>
+
             <td>@item.NoiDungDC</td>
-            <td>
-                @if (item.TrangThaiChiTra == CommonConstants.Y)
-                {
-                    <span class="badge bg-inverse-success">Yes</span>
-                }
-                else
-                {
-                    <span class="badge bg-inverse-dark">No</span>
-                }
-            </td>
+            <td>@item.ChiTraVaoLuongThang</td>
+            
             <td class="text-right">
                 <div class="dropdown dropdown-action">
                     <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>

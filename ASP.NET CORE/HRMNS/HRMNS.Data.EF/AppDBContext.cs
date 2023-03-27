@@ -215,13 +215,13 @@ namespace HRMNS.Data.EF
                     {
                         changeOrAddedItem.DateCreated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
-                        if(_httpContextAccessor.HttpContext != null)
+                        if(_httpContextAccessor.HttpContext != null && changeOrAddedItem.UserCreated.NullString() == "")
                             changeOrAddedItem.UserCreated = _httpContextAccessor.HttpContext.User?.Identity?.Name;
                     }
 
                     changeOrAddedItem.DateModified = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
-                    if (_httpContextAccessor.HttpContext != null)
+                    if (_httpContextAccessor.HttpContext != null && changeOrAddedItem.UserModified.NullString() == "")
                         changeOrAddedItem.UserModified = _httpContextAccessor.HttpContext.User?.Identity?.Name;
                 }
             }

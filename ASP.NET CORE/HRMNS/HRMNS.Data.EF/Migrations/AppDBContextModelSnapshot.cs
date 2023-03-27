@@ -652,8 +652,32 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
-                    b.Property<int?>("DM_DieuChinhCong")
-                        .HasColumnType("int");
+                    b.Property<float?>("DC150")
+                        .HasColumnType("real");
+
+                    b.Property<float?>("DC190")
+                        .HasColumnType("real");
+
+                    b.Property<float?>("DC200")
+                        .HasColumnType("real");
+
+                    b.Property<float?>("DC210")
+                        .HasColumnType("real");
+
+                    b.Property<float?>("DC270")
+                        .HasColumnType("real");
+
+                    b.Property<float?>("DC300")
+                        .HasColumnType("real");
+
+                    b.Property<float?>("DC390")
+                        .HasColumnType("real");
+
+                    b.Property<float?>("DC85")
+                        .HasColumnType("real");
+
+                    b.Property<float?>("DSNS")
+                        .HasColumnType("real");
 
                     b.Property<string>("DateCreated")
                         .HasColumnType("nvarchar(50)")
@@ -663,24 +687,50 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
-                    b.Property<double?>("GiaTriBoXung")
-                        .HasColumnType("float");
+                    b.Property<float?>("ELLC")
+                        .HasColumnType("real");
+
+                    b.Property<float?>("HT100")
+                        .HasColumnType("real");
+
+                    b.Property<float?>("HT150")
+                        .HasColumnType("real");
+
+                    b.Property<float?>("HT200")
+                        .HasColumnType("real");
+
+                    b.Property<float?>("HT390")
+                        .HasColumnType("real");
+
+                    b.Property<float?>("HT50")
+                        .HasColumnType("real");
 
                     b.Property<string>("MaNV")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
-                    b.Property<string>("NgayCanDieuChinh_From")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
+                    b.Property<float?>("NSBH")
+                        .HasColumnType("real");
 
-                    b.Property<string>("NgayCanDieuChinh_To")
+                    b.Property<float?>("NgayCong")
+                        .HasColumnType("real");
+
+                    b.Property<DateTime?>("NgayDieuChinh")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NgayDieuChinh2")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
                     b.Property<string>("NoiDungDC")
                         .HasColumnType("nvarchar(300)")
                         .HasMaxLength(300);
+
+                    b.Property<float?>("Other")
+                        .HasColumnType("real");
+
+                    b.Property<double?>("TongSoTien")
+                        .HasColumnType("float");
 
                     b.Property<string>("TrangThaiChiTra")
                         .HasColumnType("nvarchar(20)")
@@ -695,8 +745,6 @@ namespace HRMNS.Data.EF.Migrations
                         .HasMaxLength(50);
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DM_DieuChinhCong");
 
                     b.HasIndex("MaNV");
 
@@ -4333,11 +4381,6 @@ namespace HRMNS.Data.EF.Migrations
 
             modelBuilder.Entity("HRMNS.Data.Entities.DC_CHAM_CONG", b =>
                 {
-                    b.HasOne("HRMNS.Data.Entities.DM_DIEUCHINH_CHAMCONG", "DM_DIEUCHINH_CHAMCONG")
-                        .WithMany("DC_CHAM_CONG")
-                        .HasForeignKey("DM_DieuChinhCong")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("HRMNS.Data.Entities.HR_NHANVIEN", "HR_NHANVIEN")
                         .WithMany("DC_CHAM_CONG")
                         .HasForeignKey("MaNV")

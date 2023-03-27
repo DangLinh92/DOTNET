@@ -92,17 +92,18 @@
 
                 var store = new DevExpress.data.CustomStore({
                     load: function () {
-                        return connection.invoke("GetDailyPlan");
+                        return connection.invoke("getDailyPlans");
                     },
                     key: "model"
                 });
 
                $("#gridContainer").dxDataGrid({
                    dataSource: store,
-                   reshapeOnPush: true
+                   //reshapeOnPush: true
+                   visible: true
                });
 
-                connection.on("UpdateDaiLyPlan", function (dataObj) {
+                connection.on("updateDaiLyPlan", function (dataObj) {
 
                     store.push([{ type: "update", key: dataObj.model, data: dataObj }]);
                 });
@@ -387,6 +388,7 @@
         <div class="col-md-12">
             @(Html.DevExtreme().DataGrid<DailyPlanViewModel>()
     .ID("gridContainer")
+    .Visible(false)
     .DataSourceOptions(o => o.ReshapeOnPush(true))
     .ShowBorders(true)
     .RepaintChangesOnly(true)

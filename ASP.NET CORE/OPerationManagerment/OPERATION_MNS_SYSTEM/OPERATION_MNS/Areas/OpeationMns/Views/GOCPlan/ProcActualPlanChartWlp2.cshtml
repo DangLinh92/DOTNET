@@ -1,0 +1,243 @@
+﻿@using OPERATION_MNS.Data.EF.Extensions
+@model List<ProcActualPlanModel>
+@{
+    ViewData["Title"] = "Production Report";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+
+    List<string> dayOffLine = ViewBag.dayOffLine;
+}
+
+@section Styles {
+    <style>
+        #tbl-content tr td {
+            background-color: #F2F3F4;
+        }
+
+        .sorting, .sorting_asc, .sorting_desc {
+            background: none;
+        }
+    </style>
+}
+
+@section Scripts
+{
+    <script src="~/js/dataTables.fixedColumns.min.js"></script>
+    <script src="~/js/dataTables.fixedHeader.min.js"></script>
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+
+    <script>
+        var DayOfMonth = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.FirstOrDefault()?.DayOfMonth))');
+        var QuantityByDays = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.FirstOrDefault(x=>x.CFAB == "CHIP")?.QuantityByDays))');
+
+        $('#txtYear').datetimepicker({
+            format: 'YYYY',
+            icons:
+            {
+                up: "fa fa-angle-up",
+                down: "fa fa-angle-down",
+                next: 'fa fa-angle-right',
+                previous: 'fa fa-angle-left'
+            }
+        });
+
+        $('#txtMonth').datetimepicker({
+            format: 'MM',
+            icons:
+            {
+                up: "fa fa-angle-up",
+                down: "fa fa-angle-down",
+                next: 'fa fa-angle-right',
+                previous: 'fa fa-angle-left'
+            }
+        });
+
+
+        $('#show-hidden-grid-wlp').click(function () {
+            $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+            $('.hidden-grid-wlp').slideToggle("slow");
+
+        });
+
+        $('#show-hidden-grid-wlp-wf').click(function () {
+            $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+            $('.hidden-grid-wlp-wf').slideToggle("slow");
+
+        });
+
+        $('#show-hidden-grid-wlp-fab').click(function () {
+            $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+            $('.hidden-grid-wlp-fab').slideToggle("slow");
+
+        });
+    </script>
+    <script src="~/app/controllers/GocPlan/Goc_Chart _WLP2.js"></script>
+    <script>
+        var _Goc_Chart = new Goc_Chart();
+        _Goc_Chart.DrawChart();
+
+        $(document).ready(function () {
+            var aTable = $('#gocPlanDataChartTable').DataTable({
+                scrollX: true,
+                paging: false,
+                "searching": false,
+                "ordering": false,
+                "order": [],
+                fixedColumns: {
+                    left: 2
+                },
+                info: false
+            });
+        });
+
+    </script>
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">@ViewData["Title"]</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Prod. Act & Plan Trend</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="myHeader">
+        <form action="/OpeationMns/GOCPlan/GetDataChartWlp2" method="post">
+            <div class="row filter-row">
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2"></div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2"></div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <div class="form-group form-focus select-focus">
+                        <select class="select floating" id="cboDanhMuc" name="danhmuc" value="@Model.FirstOrDefault().DanhMuc">
+                            <!option value="NHAP_KHO" @(Model.FirstOrDefault().DanhMuc == "NHAP_KHO" ? "selected" : "false")>Wafer nhập kho wlp (후공정 자재 입고실적)</!option>
+                            <!option value="SAN_XUAT" @(Model.FirstOrDefault().DanhMuc == "SAN_XUAT" ? "selected" : "false")>WLP sản xuất (후공정 생산실적)</!option>
+                            <!option value="XUAT_SMT" @(Model.FirstOrDefault().DanhMuc == "XUAT_SMT" ? "selected" : "false")>WLP xuất smt (후공정 smt 출하실적)</!option>
+                        </select>
+                        <label class="focus-label">Category</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <div class="form-group form-focus select-focus">
+                        <div class="cal-icon"><input id="txtYear" name="year" value="@Model.FirstOrDefault()?.Month.Split("-")[0]" class="form-control datetimepicker" type="text"></div>
+                        <label class="focus-label">Year</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <div class="form-group form-focus select-focus">
+                        <div class="cal-icon"><input id="txtMonth" name="month" value="@Model.FirstOrDefault()?.Month.Split("-")[1]" class="form-control datetimepicker" type="text"></div>
+                        <label class="focus-label">Month</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <button id="btnSearch" type="submit" class="btn btn-success btn-block"> Search </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="row contentChart">
+        <div class="col-sm-12" id="show-hidden-grid-wlp">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item active" style="cursor: pointer;">
+                    <i class="fa fa-caret-right"></i> <strong>WLP전공정_ 생산 지표 현황(K Chip)</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row hidden-grid-wlp">
+        <div class="col-md-12 d-flex">
+            <div class="card flex-fill dash-statistics">
+                <div class="card-header">
+                    <h5 id="wlp_byYear" class="card-title mb-0">
+                        @Model.FirstOrDefault()?.Month.Split("-")[1]월 생산 현황(단위 - K Chip)
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="chartjs-wrapper-demo">
+                        <canvas id="chartsLine_wlp_byDay" class="h-300" style="height:250px;width:auto;margin-left:115px"></canvas>
+                    </div>
+                    <div class="table-responsive" style="margin-top:10px">
+                        <table class="table table-bordered mb-0 custom-table datatable" id="gocPlanDataChartTable" style="width:100%">
+                            <thead>
+                                <tr style="color:#ffff;text-align:center">
+                                    <td style="background-color: #004e89;">구분</td>
+                                    <td style="background-color: #004e89;"></td>
+                                    @for (int i = 1; i <= Model.FirstOrDefault(x => x.CFAB == "CHIP").DayOfMonth; i++)
+                                    {
+                                        @if (DateTime.Parse(Model.FirstOrDefault()?.Month + "-" + i).DayOfWeek == DayOfWeek.Sunday || dayOffLine.Contains(DateTime.Parse(Model.FirstOrDefault()?.Month + "-" + i).ToString("yyyy-MM-dd")))
+                                        {
+                                            <td style="background-color: #004e89;color:red">@(i+ "일")</td>
+                                        }
+                                        else
+                                        {
+                                            <td style="background-color: #004e89;">@(i+ "일")</td>
+                                        }
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody id="tbl-content">
+                                <tr>
+                                    <td style="background-color: #F2F3F4">Prod. Plan</td>
+                                    <td>Day</td>
+                                    @foreach (var item in Model.FirstOrDefault(x => x.CFAB == "CHIP").QuantityByDays)
+                                    {
+                                        <td>@item.QuantityPlan.ViewChipWf("CHIP").ChipWFFormat("N0")</td>
+                                    }
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>YTD</td>
+                                    @foreach (var item in Model.FirstOrDefault(x => x.CFAB == "CHIP").QuantityByDays)
+                                    {
+                                        <td>@item.QtyPlan_Ytd.ViewChipWf("CHIP").ChipWFFormat("N0")</td>
+                                    }
+                                </tr>
+
+                                <tr>
+                                    <td>Prod. Actual</td>
+                                    <td>Day</td>
+                                    @foreach (var item in Model.FirstOrDefault(x => x.CFAB == "CHIP").QuantityByDays)
+                                    {
+                                        <td>@item.QuantityActual.ViewChipWf("CHIP").ChipWFFormat("N0")</td>
+                                    }
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>YTD</td>
+                                    @foreach (var item in Model.FirstOrDefault(x => x.CFAB == "CHIP").QuantityByDays)
+                                    {
+                                        <td>@item.QtyActual_Ytd.ViewChipWf("CHIP").ChipWFFormat("N0")</td>
+                                    }
+                                </tr>
+
+                                <tr>
+                                    <td>Gap</td>
+                                    <td>Day</td>
+                                    @foreach (var item in Model.FirstOrDefault(x => x.CFAB == "CHIP").QuantityByDays)
+                                    {
+                                        <td style="color:@item.QuantityGap.ChipWFFormatColor()">@item.QuantityGap.ViewChipWf("CHIP").ChipWFFormat("N0")</td>
+                                    }
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>YTD</td>
+                                    @foreach (var item in Model.FirstOrDefault(x => x.CFAB == "CHIP").QuantityByDays)
+                                    {
+                                        <td style="color:@item.QtyGap_Ytd.ChipWFFormatColor()">@item.QtyGap_Ytd.ViewChipWf("CHIP").ChipWFFormat("N0")</td>
+                                    }
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+

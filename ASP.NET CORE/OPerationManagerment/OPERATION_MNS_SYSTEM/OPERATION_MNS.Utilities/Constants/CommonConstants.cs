@@ -45,5 +45,11 @@ namespace OPERATION_MNS.Utilities.Constants
 
         public const string ON = "ON";
         public const string OFF = "OFF";
+        public const string WLP1 = "WLP1";
+        public const string WLP2 = "WLP2";
+
+        public const string NHAP_KHO = "NHAP_KHO"; //"Wafer NHẬP KHO WLP ( 후공정 자재 입고실적)"
+        public const string SAN_XUAT = "SAN_XUAT"; //"Wafer NHẬP KHO WLP ( 후공정 자재 입고실적)"
+        public const string XUAT_SMT = "XUAT_SMT"; //"Wafer NHẬP KHO WLP ( 후공정 자재 입고실적)"
     }
 }

@@ -34,6 +34,7 @@ namespace HRMS.Areas.Admin.Controllers
 
         public IActionResult Index()
         {
+            _memoryCache.Remove("MaNgayChiTiet");
             return View();
         }
 

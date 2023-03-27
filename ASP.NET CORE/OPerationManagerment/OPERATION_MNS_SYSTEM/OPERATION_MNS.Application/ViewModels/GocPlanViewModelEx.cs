@@ -29,6 +29,10 @@ namespace OPERATION_MNS.Application.ViewModels
         [StringLength(50)]
         public string Division { get; set; }
 
+        public string Type { get; set; }
+
+        public string DanhMuc { get; set; }
+
         public float StandardQtyForMonth { get; set; }
 
         [StringLength(50)]
@@ -70,6 +74,8 @@ namespace OPERATION_MNS.Application.ViewModels
 
         public string Month { get; set; }
         public int DayOfMonth { get; set; }
+
+        public string DanhMuc { get; set; }
 
         public string CFAB { get; set; }
 

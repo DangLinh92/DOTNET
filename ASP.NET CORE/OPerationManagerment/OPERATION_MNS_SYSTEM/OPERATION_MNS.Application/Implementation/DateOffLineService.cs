@@ -29,9 +29,9 @@ namespace OPERATION_MNS.Application.Implementation
             GC.SuppressFinalize(this);
         }
 
-        public List<DateOffLineViewModel> GetDateOffLine()
+        public List<DateOffLineViewModel> GetDateOffLine(string owner,string danhmuc)
         {
-          return _mapper.Map<List<DateOffLineViewModel>>(_dateOffLineRepository.FindAll(x=>x.ON_OFF == "OFF"));
+          return _mapper.Map<List<DateOffLineViewModel>>(_dateOffLineRepository.FindAll(x=>x.ON_OFF == "OFF" && x.OWNER == owner && x.DanhMuc == danhmuc));
         }
 
         public int GetLeadTime()

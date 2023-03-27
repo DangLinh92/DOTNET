@@ -14,6 +14,73 @@
     <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
 
 <script>
+
+    $('#btn-import-GocPlan').on('click', function () {
+        $("#fileInputExcel").val(null);
+        $('#import_gocPlan').modal('show');
+    });
+
+    $('#btnCloseImportExcel').on('click', function () {
+        var fileUpload = $("#fileInputExcel").get(0);
+        var files = fileUpload.files;
+        if (files.length > 0) {
+            $("#fileInputExcel").val(null);
+            $('#hd-ImportType').val('');
+            $('#import_gocPlan').modal('hide');
+            location.reload();
+        }
+    });
+
+    $('#btnCloseImport').on('click', function () {
+        var fileUpload = $("#fileInputExcel").get(0);
+        var files = fileUpload.files;
+        if (files.length > 0) {
+            $("#fileInputExcel").val(null);
+            $('#hd-ImportType').val('');
+            $('#import_gocPlan').modal('hide');
+            location.reload();
+        }
+    });
+
+    $('#btnImportExcel').on('click', function () {
+        var fileUpload = $("#fileInputExcel").get(0);
+        var files = fileUpload.files;
+
+        // Create FormData object  
+        var fileData = new FormData();
+        // Looping over all files and add it to FormData object  
+        for (var i = 0; i < files.length; i++) {
+            fileData.append("files", files[i]);
+        }
+        // Adding one more key to FormData object  
+        // fileData.append('categoryId', $('#ddlCategoryIdImportExcel').combotree('getValue'));
+
+        $.ajax({
+            url: '/OpeationMns/MaterialToSapCode/ImportExcel',
+            type: 'POST',
+            data: fileData,
+            processData: false,  // tell jQuery not to process the data
+            contentType: false,  // tell jQuery not to set contentType
+            beforeSend: function () {
+                hrms.run_waitMe($('#import_gocPlan'));
+            },
+            success: function (data) {
+                $('#import_gocPlan').modal('hide');
+                hrms.hide_waitMe($('#import_gocPlan'));
+                hrms.notify("Import success!", 'Success', 'alert', function () {
+
+                    location.reload();
+                });
+            },
+            error: function (status) {
+                hrms.notify('error: Import error!' + status.responseText, 'error', 'alert', function () { });
+                hrms.hide_waitMe($('#import_gocPlan'));
+            }
+        });
+        return false;
+    });
+
+
     function exporting(e) {
         var workbook = new ExcelJS.Workbook();
         var worksheet = workbook.addWorksheet('Material To Sap Code');
@@ -42,6 +109,15 @@
                     <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
                     <li class="breadcrumb-item active">Material To Sap Code</li>
                 </ul>
+            </div>
+            <div class="col-auto float-right ml-auto">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info dropdown-toggle" id="btnImport" style="margin-right:100px;width:100px" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Excel</button>
+                    <div class="dropdown-menu" style="">
+                        <a class="dropdown-item" href="~/templates/MaterialToSapCodeTemplate.xlsx">File mẫu chuyển Material -> SAP Code</a>
+                        <a class="dropdown-item" href="#" id="btn-import-GocPlan">Import Material -> SAP Code</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -77,8 +153,8 @@
         })
         .Columns(columns => {
             columns.AddFor(m => m.Material);
-
             columns.AddFor(m => m.SAP_Code);
+            columns.AddFor(m => m.Department).AllowEditing(false);
         })
         .DataSource(d => d.Mvc()
             .Area("OpeationMns")
@@ -93,3 +169,5 @@
         </div>
     </div>
 </div>
+
+<partial name="_ImportExcelModel" />

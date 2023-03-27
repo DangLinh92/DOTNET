@@ -76,7 +76,7 @@ namespace HRMNS.Application.Implementation
                     {
                         return GetAll("", includeProperties);
                     }
-                    return _mapper.Map<List<DCChamCongViewModel>>(_dcChamCongRepository.FindAll(x => string.Compare(x.NgayCanDieuChinh_From, timeFrom) >= 0 && string.Compare(x.NgayCanDieuChinh_To, timeTo) <= 0, includeProperties));
+                    return _mapper.Map<List<DCChamCongViewModel>>(_dcChamCongRepository.FindAll(x =>  string.Compare(x.NgayDieuChinh2, timeFrom) >= 0 && string.Compare(x.NgayDieuChinh2, timeTo) <= 0, includeProperties));
                 }
                 else
                 {
@@ -85,7 +85,7 @@ namespace HRMNS.Application.Implementation
                         return _mapper.Map<List<DCChamCongViewModel>>(_dcChamCongRepository.FindAll(x => x.TrangThaiChiTra == status, includeProperties));
                     }
 
-                    return _mapper.Map<List<DCChamCongViewModel>>(_dcChamCongRepository.FindAll(x => x.TrangThaiChiTra == status && string.Compare(x.NgayCanDieuChinh_From, timeFrom) >= 0 && string.Compare(x.NgayCanDieuChinh_To, timeTo) <= 0, includeProperties));
+                    return _mapper.Map<List<DCChamCongViewModel>>(_dcChamCongRepository.FindAll(x => x.TrangThaiChiTra == status && string.Compare(x.NgayDieuChinh2, timeFrom) >= 0 && string.Compare(x.NgayDieuChinh2, timeTo) <= 0, includeProperties));
                 }
             }
             else
@@ -97,7 +97,7 @@ namespace HRMNS.Application.Implementation
                         return _mapper.Map<List<DCChamCongViewModel>>(_dcChamCongRepository.FindAll(x =>x.HR_NHANVIEN.MaBoPhan == dept, includeProperties));
                     }
 
-                    return _mapper.Map<List<DCChamCongViewModel>>(_dcChamCongRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && string.Compare(x.NgayCanDieuChinh_From, timeFrom) >= 0 && string.Compare(x.NgayCanDieuChinh_To, timeTo) <= 0, includeProperties));
+                    return _mapper.Map<List<DCChamCongViewModel>>(_dcChamCongRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && string.Compare(x.NgayDieuChinh2, timeFrom) >= 0 && string.Compare(x.NgayDieuChinh2, timeTo) <= 0, includeProperties));
                 }
                 else
                 {
@@ -106,7 +106,7 @@ namespace HRMNS.Application.Implementation
                         return _mapper.Map<List<DCChamCongViewModel>>(_dcChamCongRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && x.TrangThaiChiTra == status, includeProperties));
                     }
 
-                    return _mapper.Map<List<DCChamCongViewModel>>(_dcChamCongRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && x.TrangThaiChiTra == status && string.Compare(x.NgayCanDieuChinh_From, timeFrom) >= 0 && string.Compare(x.NgayCanDieuChinh_To, timeTo) <= 0, includeProperties));
+                    return _mapper.Map<List<DCChamCongViewModel>>(_dcChamCongRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && x.TrangThaiChiTra == status && string.Compare(x.NgayDieuChinh2, timeFrom) >= 0 && string.Compare(x.NgayDieuChinh2, timeTo) <= 0, includeProperties));
                 }
             }
         }

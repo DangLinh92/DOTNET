@@ -33,4 +33,67 @@ namespace OPERATION_MNS.Data.EF.Configurations
             entity.Property(x => x.Id).ValueGeneratedOnAdd();
         }
     }
+
+    public class GocPlanWLP2Configuration : DbEntityConfiguration<GOC_PLAN_WLP2>
+    {
+        public override void Configure(EntityTypeBuilder<GOC_PLAN_WLP2> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
+
+    public class ViewWipPostConfiguration : DbEntityConfiguration<VIEW_WIP_POST_WLP>
+    {
+        public override void Configure(EntityTypeBuilder<VIEW_WIP_POST_WLP> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
+
+    public class SmtReturnConfiguration : DbEntityConfiguration<SMT_RETURN_WLP2>
+    {
+        public override void Configure(EntityTypeBuilder<SMT_RETURN_WLP2> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
+
+    public class BoPhanDeNghiXuatConfiguration : DbEntityConfiguration<BOPHAN_DE_NGHI_XUAT_NLIEU>
+    {
+        public override void Configure(EntityTypeBuilder<BOPHAN_DE_NGHI_XUAT_NLIEU> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
+
+    public class OutGoingReceipConfiguration : DbEntityConfiguration<OUTGOING_RECEIPT_WLP2>
+    {
+        public override void Configure(EntityTypeBuilder<OUTGOING_RECEIPT_WLP2> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
+
+    public class KhungThoiGianXuatConfiguration : DbEntityConfiguration<KHUNG_THOI_GIAN_XUAT_HANG_WLP2>
+    {
+        public override void Configure(EntityTypeBuilder<KHUNG_THOI_GIAN_XUAT_HANG_WLP2> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
+
+    public class StayLotListPrioryConfiguration : DbEntityConfiguration<STAY_LOT_LIST_PRIORY_WLP2>
+    {
+        public override void Configure(EntityTypeBuilder<STAY_LOT_LIST_PRIORY_WLP2> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
 }

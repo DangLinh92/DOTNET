@@ -25,6 +25,15 @@ namespace OPERATION_MNS.Data.EF.Configurations
         }
     }
 
+    public class StayLotListWlp2Configuration : DbEntityConfiguration<STAY_LOT_LIST_WLP2>
+    {
+        public override void Configure(EntityTypeBuilder<STAY_LOT_LIST_WLP2> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
+
 
     public class CTQSettingConfiguration : DbEntityConfiguration<CTQ_SETTING>
     {

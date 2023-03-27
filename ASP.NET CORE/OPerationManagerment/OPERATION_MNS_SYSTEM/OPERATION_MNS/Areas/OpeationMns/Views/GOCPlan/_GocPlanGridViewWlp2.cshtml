@@ -1,0 +1,346 @@
+﻿@using OPERATION_MNS.Data.EF.Extensions
+@model List<GocPlanViewModelEx>
+@{
+    List<string> daysSearch = ViewBag.daysSearch;
+    List<string> daysOff = ViewBag.dayOff;
+    string viewType = ViewBag.ViewType;
+}
+
+<table class="table table-bordered mb-0 custom-table datatable" id="gocPlanDataTable">
+    <thead>
+        <tr style="background-color: #004e89;color:#ffff;text-align:center">
+            <th colspan="5">Chip (Kea)</th>
+            @{
+                @foreach (var item in daysSearch)
+                {
+                    if (DateTime.TryParse(item, out DateTime _dateCheck))
+                    {
+                        var dayOfWeek = _dateCheck.DayOfWeek.ToString().Substring(0, 3);
+
+                        if (dayOfWeek == "Sun" || daysOff.Contains(item))
+                        {
+                <th class="text-danger">
+                    @dayOfWeek
+                </th>
+                        }
+                        else
+                        {
+                <th>
+                    @dayOfWeek
+                </th>
+                        }
+                    }
+                    else
+                    {
+                <th>
+                </th>
+                    }
+                }
+            }
+        </tr>
+        <tr style="background-color: #1a659e;color:#ffff">
+            <th>Module</th>
+            <th>Model</th>
+            <th>종류</th>
+            <th>공급지</th>
+            <th>Total</th>
+            @{
+                @foreach (var item in daysSearch)
+                {
+                    if (DateTime.TryParse(item, out DateTime _dateCheck))
+                    {
+                <th>@_dateCheck.Day</th>
+                    }
+                    else
+                    {
+                <th>@item</th>
+                    }
+                }
+            }
+        </tr>
+
+    </thead>
+    <tbody id="tbl-content">
+        @{
+            int k = 0;
+
+            Dictionary<string, float> lstTotalPlan = new Dictionary<string, float>();
+            Dictionary<string, float> lstTotalActual = new Dictionary<string, float>();
+            Dictionary<string, float> lstTotalGap = new Dictionary<string, float>();
+        }
+
+        @foreach (var item in Model)
+        {
+            string style1 = k++ % 2 == 0 ? "background-color: #F2F3F4" : "background-color: #F8F9F9";
+
+        <tr>
+            <td style="@style1">@item.Module</td>
+            <td style="@style1">@item.Model</td>
+            <td style="@style1">@item.Type</td>
+            <td style="@style1">@item.Division</td>
+            <td style="@style1">
+                <table class="table table-bordered mb-0 custom-table">
+                    @if (viewType == "" || viewType == "PLAN")
+                        {
+                    <tr>
+                        <td style="color:black">@item.Total_Plan.ToString("N0")</td>
+                    </tr>
+                        }
+
+                    @if (viewType == "" || viewType == "ACTUAL")
+                        {
+                    <tr>
+                        <td style="color:green">@item.Total_Actual.ToString("N0")</td>
+                    </tr>
+                        }
+
+                    @if (viewType == "" || viewType == "GAP")
+                        {
+                    <tr>
+                        @if (item.Total_Gap < 0)
+                                {
+                        <td style="color:red">@item.Total_Gap.ToString("N0")</td>
+                                }
+                                else
+                                {
+                        <td style="color: blue">@item.Total_Gap.ToString("N0")</td>
+                                }
+                    </tr>
+                        }
+
+                </table>
+            </td>
+
+            @foreach (var day in daysSearch)
+                {
+                    if (item.QuantityByDays.Count > 0)
+                    {
+                        foreach (var qty in item.QuantityByDays)
+                        {
+                            if (item.QuantityByDays.Any(x => x.DatePlan == day))
+                            {
+                                if (qty.DatePlan == day)
+                                {
+                                    if (lstTotalPlan.ContainsKey(day))
+                                    {
+                                        lstTotalPlan[day] += qty.QuantityPlan;
+                                    }
+                                    else
+                                    {
+                                        lstTotalPlan.Add(day, qty.QuantityPlan);
+                                    }
+
+                                    if (lstTotalActual.ContainsKey(day))
+                                    {
+                                        lstTotalActual[day] += qty.QuantityActual;
+                                    }
+                                    else
+                                    {
+                                        lstTotalActual.Add(day, qty.QuantityActual);
+                                    }
+
+                                    if (lstTotalGap.ContainsKey(day))
+                                    {
+                                        lstTotalGap[day] += qty.QuantityGap;
+                                    }
+                                    else
+                                    {
+                                        lstTotalGap.Add(day, qty.QuantityGap);
+                                    }
+
+            <td>
+                <table class="table mb-0 custom-table">
+                    @if (viewType == "" || viewType == "PLAN")
+                                            {
+                    <tr>
+                        <td style="color: black">@qty.QuantityPlan.ViewChipWf(Model.FirstOrDefault()?.Unit).ToString("N0")</td>
+                    </tr>
+                                            }
+                    @if (viewType == "" || viewType == "ACTUAL")
+                                            {
+                    <tr>
+                        <td style="color: green">@(qty.QuantityActual.ViewChipWf(Model.FirstOrDefault()?.Unit).ToString("N0"))</td>
+                    </tr>
+                                            }
+                    @if (viewType == "" || viewType == "GAP")
+                                            {
+                    <tr>
+                        @if (qty.QuantityGap < 0)
+                                                    {
+                        <td style="color: red">@qty.QuantityGap.ViewChipWf(Model.FirstOrDefault()?.Unit).ToString("N0")</td>
+                                                    }
+                                                    else
+                                                    {
+                        <td style="color: blue">@qty.QuantityGap.ViewChipWf(Model.FirstOrDefault()?.Unit).ToString("N0")</td>
+                                                    }
+                    </tr>
+                                            }
+
+                </table>
+            </td>
+                                }
+                            }
+                            else
+                            {
+            <td>
+                <table class="table mb-0 custom-table">
+                    @if (viewType == "" || viewType == "PLAN")
+                                        {
+                    <tr>
+                        <td style="color: black">-</td>
+                    </tr>
+                                        }
+                    @if (viewType == "" || viewType == "ACTUAL")
+                                        {
+                    <tr>
+                        <td style="color: green">-</td>
+                    </tr>
+                                        }
+                    @if (viewType == "" || viewType == "GAP")
+                                        {
+                    <tr>
+                        <td style="color: blue">-</td>
+                    </tr>
+                                        }
+                </table>
+            </td>
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+            <td>
+                <table class="table mb-0 custom-table">
+                    @if (viewType == "" || viewType == "PLAN")
+                                {
+                    <tr>
+                        <td>0</td>
+                    </tr>
+                                }
+                    @if (viewType == "" || viewType == "ACTUAL")
+                                {
+                    <tr>
+                        <td>0</td>
+                    </tr>
+                                }
+                    @if (viewType == "" || viewType == "GAP")
+                                {
+                    <tr>
+                        <td>0</td>
+                    </tr>
+                                }
+                </table>
+            </td>
+                    }
+                }
+
+        </tr>
+        }
+
+    </tbody>
+    <tfoot>
+        <tr style="background-color: #F2F3F4">
+            <td style="background-color: #F2F3F4"></td>
+            <td style="background-color: #F2F3F4"></td>
+            <td style="background-color: #F2F3F4">Total</td>
+            <td style="background-color: #F2F3F4">
+                <table class="table table-bordered mb-0 custom-table">
+                    @if (viewType == "" || viewType == "PLAN")
+                    {
+                    <tr>
+                        <td>Plan</td>
+                    </tr>
+                    }
+
+                    @if (viewType == "" || viewType == "ACTUAL")
+                    {
+                    <tr>
+                        <td>Actual</td>
+                    </tr>
+                    }
+                    @if (viewType == "" || viewType == "GAP")
+                    {
+                    <tr>
+                        <td>Gap daily</td>
+                    </tr>
+                    <tr>
+                        <td>Gap YTD</td>
+                    </tr>
+                    }
+                </table>
+            </td>
+            <td style="background-color: #F2F3F4">
+                <table class="table table-bordered mb-0 custom-table">
+                    @if (viewType == "" || viewType == "PLAN")
+                    {
+                    <tr>
+                        <td>@lstTotalPlan.Sum(x=>x.Value).ViewChipWf(Model.FirstOrDefault()?.Unit).ToString("N0")</td>
+                    </tr>
+                    }
+
+                    @if (viewType == "" || viewType == "ACTUAL")
+                    {
+                    <tr>
+                        <td style="color:green">@lstTotalActual.Sum(x => x.Value).ViewChipWf(Model.FirstOrDefault()?.Unit).ToString("N0")</td>
+                    </tr>
+                    }
+                    @if (viewType == "" || viewType == "GAP")
+                    {
+                    <tr>
+                        <td style="color: red">@((lstTotalActual.Sum(x => x.Value) - lstTotalPlan.Sum(x => x.Value)).ViewChipWf("CHIP").ToString("N0"))</td>
+                    </tr>
+                    <tr>
+                        <td style="color: blue">-</td>
+                    </tr>
+                    }
+                </table>
+            </td>
+            @foreach (var sum in lstTotalPlan)
+            {
+            <td>
+                <table class="table table-bordered mb-0 custom-table">
+                    @if (viewType == "" || viewType == "PLAN")
+                        {
+                    <tr>
+                        <td>@sum.Value.ViewChipWf(Model.FirstOrDefault()?.Unit).ToString("N0")</td>
+                    </tr>
+                        }
+
+                    @if (viewType == "" || viewType == "ACTUAL")
+                        {
+                    <tr>
+                        <td style="color:green">@(lstTotalActual[sum.Key].ViewChipWf(Model.FirstOrDefault()?.Unit).ToString("N0"))</td>
+                    </tr>
+                        }
+
+                    @if (viewType == "" || viewType == "GAP")
+                        {
+                    <tr>
+
+                        @if (lstTotalActual[sum.Key] - sum.Value >= 0)
+                                {
+                        <td style="color: blue">@((lstTotalActual[sum.Key] - sum.Value).ViewChipWf(Model.FirstOrDefault()?.Unit).ToString("N0"))</td>
+                                }
+                                else
+                                {
+                        <td style="color: red">@((lstTotalActual[sum.Key] - sum.Value).ViewChipWf(Model.FirstOrDefault()?.Unit).ToString("N0"))</td>
+                                }
+                    </tr>
+                    <tr>
+                        @if (lstTotalGap[sum.Key] < 0)
+                                {
+                        <td style="color:red">@lstTotalGap[sum.Key].ViewChipWf(Model.FirstOrDefault()?.Unit).ToString("N0")</td>
+                                }
+                                else
+                                {
+                        <td style="color: blue">@lstTotalGap[sum.Key].ViewChipWf(Model.FirstOrDefault()?.Unit).ToString("N0")</td>
+                                }
+                    </tr>
+                        }
+                </table>
+            </td>
+            }
+        </tr>
+    </tfoot>
+</table>

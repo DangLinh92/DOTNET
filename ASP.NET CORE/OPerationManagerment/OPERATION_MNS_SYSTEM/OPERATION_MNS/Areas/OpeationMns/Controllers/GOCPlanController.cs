@@ -45,7 +45,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
             }
 
             ViewBag.daysSearch = lstDate;
-            ViewBag.dayOff = _GocPlanService.DateOffLine(DateTime.Now.ToString("yyyy")) ;
+            ViewBag.dayOff = _GocPlanService.DateOffLine(DateTime.Now.ToString("yyyy"), CommonConstants.WLP1, CommonConstants.WLP1);
             ViewBag.ViewType = "";
             var lst = _GocPlanService.GetByTime(CommonConstants.CHIP, fromDate, toDate);
             return View(lst);
@@ -63,7 +63,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
             }
 
             ViewBag.daysSearch = lstDate;
-            ViewBag.dayOff = _GocPlanService.DateOffLine(DateTime.Now.ToString("yyyy"));
+            ViewBag.dayOff = _GocPlanService.DateOffLine(DateTime.Now.ToString("yyyy"), CommonConstants.WLP1, CommonConstants.WLP1);
             ViewBag.ViewType = "";
             var lst = _GocPlanService.GetByTime(CommonConstants.CHIP, fromDate, toDate);
             return View(lst);
@@ -72,53 +72,111 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
         [HttpPost]
         public IActionResult DeleteGocPlan(int standarQtyId, string from, string to)
         {
-            _GocPlanService.DeleteGocModel(standarQtyId, from, to);
-            return new OkObjectResult(standarQtyId);
+            _GocPlanService.DeleteGocModel(standarQtyId, from, to, CommonConstants.WLP1);
+            return new OkObjectResult(new { standarQtyId = standarQtyId });
         }
 
+
         [HttpPost]
-        public IActionResult Search(string chipWafer, string fromTime, string toTime,string actualPlanGap)
+        public IActionResult Search(string chipWafer, string fromTime, string toTime, string actualPlanGap, string wlp, string danhmuc,string inputWlp2)
         {
-            if (string.IsNullOrEmpty(chipWafer) || string.IsNullOrEmpty(fromTime) || string.IsNullOrEmpty(toTime))
-            {
-                if (!string.IsNullOrEmpty(chipWafer) && string.IsNullOrEmpty(fromTime) && string.IsNullOrEmpty(toTime))
-                {
-                    string fromDate = DateTime.Now.ToString("yyyy-MM") + "-01";
-                    string toDate = DateTime.Parse(fromDate).AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd");
-                    List<string> lstDate1 = new List<string>();
+            danhmuc = danhmuc.NullString();
 
-                    foreach (var item in EachDay.EachDays(DateTime.Parse(fromDate), DateTime.Parse(toDate)))
+            if (wlp == CommonConstants.WLP1)
+            {
+                if (string.IsNullOrEmpty(chipWafer) || string.IsNullOrEmpty(fromTime) || string.IsNullOrEmpty(toTime))
+                {
+                    if (!string.IsNullOrEmpty(chipWafer) && string.IsNullOrEmpty(fromTime) && string.IsNullOrEmpty(toTime))
                     {
-                        lstDate1.Add(item.ToString("yyyy-MM-dd"));
+                        string fromDate = DateTime.Now.ToString("yyyy-MM") + "-01";
+                        string toDate = DateTime.Parse(fromDate).AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd");
+                        List<string> lstDate1 = new List<string>();
+
+                        foreach (var item in EachDay.EachDays(DateTime.Parse(fromDate), DateTime.Parse(toDate)))
+                        {
+                            lstDate1.Add(item.ToString("yyyy-MM-dd"));
+                        }
+
+                        ViewBag.daysSearch = lstDate1;
+                        ViewBag.dayOff = _GocPlanService.DateOffLine(DateTime.Now.ToString("yyyy"), CommonConstants.WLP1, CommonConstants.WLP1);
+                        ViewBag.ViewType = actualPlanGap.NullString();
+                        var lst1 = _GocPlanService.GetByTime(chipWafer, fromDate, toDate);
+                        return PartialView("_GocPlanGridView", lst1);
                     }
-
-                    ViewBag.daysSearch = lstDate1;
-                    ViewBag.dayOff = _GocPlanService.DateOffLine(DateTime.Now.ToString("yyyy"));
-                    ViewBag.ViewType = actualPlanGap.NullString();
-                    var lst1 = _GocPlanService.GetByTime(chipWafer, fromDate, toDate);
-                    return PartialView("_GocPlanGridView", lst1);
+                    else
+                    {
+                        ViewBag.daysSearch = new List<string>();
+                        ViewBag.dayOff = _GocPlanService.DateOffLine(DateTime.Now.ToString("yyyy"), CommonConstants.WLP1, CommonConstants.WLP1);
+                        ViewBag.ViewType = actualPlanGap.NullString();
+                        return PartialView("_GocPlanGridView", new List<GocPlanViewModelEx>());
+                    }
                 }
-                else
+
+                List<string> lstDate = new List<string>();
+
+                foreach (var item in EachDay.EachDays(DateTime.Parse(fromTime), DateTime.Parse(toTime)))
                 {
-                    ViewBag.daysSearch = new List<string>();
-                    ViewBag.dayOff = _GocPlanService.DateOffLine(DateTime.Now.ToString("yyyy"));
-                    ViewBag.ViewType = actualPlanGap.NullString();
-                    return PartialView("_GocPlanGridView", new List<GocPlanViewModelEx>());
+                    lstDate.Add(item.ToString("yyyy-MM-dd"));
                 }
+
+                ViewBag.daysSearch = lstDate;
+                ViewBag.dayOff = _GocPlanService.DateOffLine(DateTime.Parse(fromTime).ToString("yyyy"), CommonConstants.WLP1, CommonConstants.WLP1);
+                ViewBag.ViewType = actualPlanGap.NullString();
+                var lst = _GocPlanService.GetByTime(chipWafer, fromTime, toTime);
+                return PartialView("_GocPlanGridView", lst);
             }
-
-            List<string> lstDate = new List<string>();
-
-            foreach (var item in EachDay.EachDays(DateTime.Parse(fromTime), DateTime.Parse(toTime)))
+            else if (wlp == CommonConstants.WLP2)
             {
-                lstDate.Add(item.ToString("yyyy-MM-dd"));
+                string partialView = "_GocPlanGridViewWlp2";
+
+                if(inputWlp2 == "InputWlp2")
+                {
+                    partialView = "_InputGocPlanGridViewWlp2";
+                }
+
+                if (string.IsNullOrEmpty(fromTime) || string.IsNullOrEmpty(toTime))
+                {
+                    if (string.IsNullOrEmpty(fromTime) && string.IsNullOrEmpty(toTime))
+                    {
+                        string fromDate = DateTime.Now.ToString("yyyy-MM") + "-01";
+                        string toDate = DateTime.Parse(fromDate).AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd");
+                        List<string> lstDate1 = new List<string>();
+
+                        foreach (var item in EachDay.EachDays(DateTime.Parse(fromDate), DateTime.Parse(toDate)))
+                        {
+                            lstDate1.Add(item.ToString("yyyy-MM-dd"));
+                        }
+
+                        ViewBag.daysSearch = lstDate1;
+                        ViewBag.dayOff = _GocPlanService.DateOffLine(DateTime.Now.ToString("yyyy"), CommonConstants.WLP2, CommonConstants.WLP2, danhmuc);
+                        ViewBag.ViewType = actualPlanGap.NullString();
+                        var lst1 = _GocPlanService.GetByTime(chipWafer, fromDate, toDate, CommonConstants.WLP2, danhmuc);
+                        return PartialView(partialView, lst1);
+                    }
+                    else
+                    {
+                        ViewBag.daysSearch = new List<string>();
+                        ViewBag.dayOff = _GocPlanService.DateOffLine(DateTime.Now.ToString("yyyy"), CommonConstants.WLP2, CommonConstants.WLP2, danhmuc);
+                        ViewBag.ViewType = actualPlanGap.NullString();
+                        return PartialView(partialView, new List<GocPlanViewModelEx>());
+                    }
+                }
+
+                List<string> lstDate = new List<string>();
+
+                foreach (var item in EachDay.EachDays(DateTime.Parse(fromTime), DateTime.Parse(toTime)))
+                {
+                    lstDate.Add(item.ToString("yyyy-MM-dd"));
+                }
+
+                ViewBag.daysSearch = lstDate;
+                ViewBag.dayOff = _GocPlanService.DateOffLine(DateTime.Parse(fromTime).ToString("yyyy"), CommonConstants.WLP2, CommonConstants.WLP2, danhmuc);
+                ViewBag.ViewType = actualPlanGap.NullString();
+                var lst = _GocPlanService.GetByTime(chipWafer, fromTime, toTime, CommonConstants.WLP2, danhmuc);
+                return PartialView(partialView, lst);
             }
 
-            ViewBag.daysSearch = lstDate;
-            ViewBag.dayOff = _GocPlanService.DateOffLine(DateTime.Parse(fromTime).ToString("yyyy"));
-            ViewBag.ViewType = actualPlanGap.NullString();
-            var lst = _GocPlanService.GetByTime(chipWafer, fromTime, toTime);
-            return PartialView("_GocPlanGridView", lst);
+            return PartialView("_GocPlanGridView", new List<GocPlanViewModelEx>());
         }
 
         [HttpPost]
@@ -173,9 +231,10 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
             return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
         }
 
+
         public IActionResult ProcActualPlanChart()
         {
-            ViewBag.dayOffLine = _GocPlanService.DateOffLine(DateTime.Now.ToString("yyyy"));
+            ViewBag.dayOffLine = _GocPlanService.DateOffLine(DateTime.Now.ToString("yyyy"), CommonConstants.WLP1, CommonConstants.WLP1);
             var data = _GocPlanService.GetProcActualPlanModel(DateTime.Now.ToString("yyyy-MM"));
             return View(data);
         }
@@ -184,7 +243,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
         public IActionResult GetDataChart(string year, string month)
         {
             string m = year + "-" + month;
-            ViewBag.dayOffLine = _GocPlanService.DateOffLine(year);
+            ViewBag.dayOffLine = _GocPlanService.DateOffLine(year, CommonConstants.WLP1, CommonConstants.WLP1);
             var data = _GocPlanService.GetProcActualPlanModel(m);
             return View("ProcActualPlanChart", data);
         }
@@ -314,7 +373,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
         }
 
         [HttpPost]
-        public IActionResult GetDataControlChart(string fromDay, string toDay,string operation, string matertial)
+        public IActionResult GetDataControlChart(string fromDay, string toDay, string operation, string matertial)
         {
             ViewControlChartDataModel model = _GocPlanService.GetDataControlChart(fromDay, toDay, operation.NullString(), matertial.NullString());
 
@@ -323,7 +382,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
 
             model.Operation = operation;
             model.MatertialID = matertial;
-            
+
             return View("ViewControlChart", model);
         }
 
@@ -369,5 +428,119 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
             _GocPlanService.DeleteCTQ(ctq);
             _GocPlanService.Save();
         }
+
+        #region WLP2
+
+        public IActionResult Wlp2()
+        {
+            string fromDate = DateTime.Now.ToString("yyyy-MM") + "-01";
+            string toDate = DateTime.Parse(fromDate).AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd");
+            List<string> lstDate = new List<string>();
+
+            foreach (var item in EachDay.EachDays(DateTime.Parse(fromDate), DateTime.Parse(toDate)))
+            {
+                lstDate.Add(item.ToString("yyyy-MM-dd"));
+            }
+
+            ViewBag.daysSearch = lstDate;
+            ViewBag.dayOff = _GocPlanService.DateOffLine(DateTime.Now.ToString("yyyy"), CommonConstants.WLP2, CommonConstants.WLP2, CommonConstants.NHAP_KHO);
+            ViewBag.ViewType = "";
+            var lst = _GocPlanService.GetByTime(CommonConstants.CHIP, fromDate, toDate, CommonConstants.WLP2, CommonConstants.NHAP_KHO);
+            return View(lst);
+        }
+
+        [HttpPost]
+        public IActionResult GetDataChartWlp2(string year, string month, string danhmuc)
+        {
+            string m = year + "-" + month;
+            ViewBag.dayOffLine = _GocPlanService.DateOffLine(year, CommonConstants.WLP2, CommonConstants.WLP2, danhmuc);
+            var data = _GocPlanService.GetProcActualPlanWlp2Model(m, danhmuc);
+            return View("ProcActualPlanChartWlp2", data);
+        }
+
+        public IActionResult ProcActualPlanChartWlp2()
+        {
+            ViewBag.dayOffLine = _GocPlanService.DateOffLine(DateTime.Now.ToString("yyyy"), CommonConstants.WLP2, CommonConstants.WLP2, CommonConstants.NHAP_KHO);
+            var data = _GocPlanService.GetProcActualPlanWlp2Model(DateTime.Now.ToString("yyyy-MM"), CommonConstants.NHAP_KHO);
+            return View(data);
+        }
+
+        public IActionResult Inputgocwlp2()
+        {
+            string fromDate = DateTime.Now.ToString("yyyy-MM") + "-01";
+            string toDate = DateTime.Parse(fromDate).AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd");
+            List<string> lstDate = new List<string>();
+
+            foreach (var item in EachDay.EachDays(DateTime.Parse(fromDate), DateTime.Parse(toDate)))
+            {
+                lstDate.Add(item.ToString("yyyy-MM-dd"));
+            }
+
+            ViewBag.daysSearch = lstDate;
+            ViewBag.dayOff = _GocPlanService.DateOffLine(DateTime.Now.ToString("yyyy"), CommonConstants.WLP2, CommonConstants.WLP2, CommonConstants.NHAP_KHO);
+            ViewBag.ViewType = "";
+            var lst = _GocPlanService.GetByTime(CommonConstants.CHIP, fromDate, toDate, CommonConstants.WLP2, CommonConstants.NHAP_KHO);
+            return View(lst);
+        }
+
+        [HttpPost]
+        public IActionResult DeleteGocPlanWlp2(string model, string from, string to, string danhmuc)
+        {
+            _GocPlanService.DeleteGocModelWlp2(model, from, to, danhmuc);
+            return new OkObjectResult(new { model = model });
+        }
+
+        [HttpPost]
+        [RequestFormLimits(MultipartBodyLengthLimit = 209715200)]
+        [RequestSizeLimit(209715200)]
+        public IActionResult ImportExcel_Wlp2(IList<IFormFile> files, [FromQuery] string param)
+        {
+            _logger.LogInformation("Begin import exce");
+            if (files != null && files.Count > 0)
+            {
+                var file = files[0];
+                var filename = ContentDispositionHeaderValue
+                                   .Parse(file.ContentDisposition)
+                                   .FileName
+                                   .Trim('"');
+
+                string folder = _hostingEnvironment.WebRootPath + $@"\uploaded\excels";
+                if (!Directory.Exists(folder))
+                {
+                    Directory.CreateDirectory(folder);
+                }
+                string fName = CorrelationIdGenerator.GetNextId() + filename;
+                string filePath = Path.Combine(folder, fName);
+                using (FileStream fs = System.IO.File.Create(filePath))
+                {
+                    file.CopyTo(fs);
+                    fs.Flush();
+                }
+                ResultDB rs = _GocPlanService.ImportExcel_Wlp2(filePath, param);
+
+                if (rs.ReturnInt == 0)
+                {
+                    _GocPlanService.Save();
+                }
+                else
+                {
+                    _logger.LogInformation("Import error:" + rs.ReturnString);
+                    return new NotFoundObjectResult(rs.ReturnString);
+                }
+
+                if (System.IO.File.Exists(filePath))
+                {
+                    // If file found, delete it    
+                    System.IO.File.Delete(filePath);
+                }
+
+                _logger.LogInformation("Import success");
+                return new OkObjectResult(filePath);
+            }
+
+            _logger.LogInformation("File null");
+            return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
+        }
+        #endregion
     }
 }

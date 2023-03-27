@@ -84,24 +84,44 @@ namespace HRMNS.Application.Implementation
             {
                 ExcelWorksheet worksheet = packet.Workbook.Worksheets[1];
                 HR_PHEP_NAM phepNam; ;
-
+                string maNV = "";
+                int month;
+                int year;
                 for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
                 {
-                    phepNam = new HR_PHEP_NAM();
-                    phepNam.MaNhanVien = worksheet.Cells[i, 1].Text.NullString();
-                    phepNam.SoPhepNam = float.Parse(worksheet.Cells[i, 3].Text.NullString());
-                    phepNam.SoPhepConLai = float.Parse(worksheet.Cells[i, 4].Text.NullString());
-                    phepNam.Year = int.Parse(worksheet.Cells[i, 5].Text.NullString());
-                    phepNam.SoTienChiTra = decimal.Parse(worksheet.Cells[i, 6].Text.NullString());
-                    if(DateTime.TryParse(worksheet.Cells[i, 7].Text.NullString(),out _))
+                    maNV = worksheet.Cells[i, 1].Text.NullString();
+                    month = int.Parse(DateTime.Parse(worksheet.Cells[i, 7].Text.NullString()).ToString("MM"));
+                    year = int.Parse(DateTime.Parse(worksheet.Cells[i, 7].Text.NullString()).ToString("yyyy"));
+
+                    phepNam = _phepNamRepository.FindSingle(x => x.MaNhanVien == maNV && month == x.ThoiGianChiTra.Value.Month && year == x.ThoiGianChiTra.Value.Year);
+
+                    if(phepNam == null)
                     {
-                        phepNam.ThoiGianChiTra = DateTime.Parse(worksheet.Cells[i, 7].Text.NullString());
+                        phepNam = new HR_PHEP_NAM();
+                        phepNam.MaNhanVien = worksheet.Cells[i, 1].Text.NullString();
+                        phepNam.SoPhepNam = float.Parse(worksheet.Cells[i, 3].Text.NullString());
+                        phepNam.SoPhepConLai = float.Parse(worksheet.Cells[i, 4].Text.NullString());
+                        phepNam.Year = int.Parse(worksheet.Cells[i, 5].Text.NullString());
+                        phepNam.SoTienChiTra = decimal.Parse(worksheet.Cells[i, 6].Text.NullString());
+                        if (DateTime.TryParse(worksheet.Cells[i, 7].Text.NullString(), out _))
+                        {
+                            phepNam.ThoiGianChiTra = DateTime.Parse(worksheet.Cells[i, 7].Text.NullString());
+                        }
+                        else
+                        {
+                            phepNam.ThoiGianChiTra = null;
+                        }
+
+                        _phepNamRepository.Add(phepNam);
                     }
                     else
                     {
-                        phepNam.ThoiGianChiTra = null;
+                        phepNam.SoPhepNam = float.Parse(worksheet.Cells[i, 3].Text.NullString());
+                        phepNam.SoPhepConLai = float.Parse(worksheet.Cells[i, 4].Text.NullString());
+                        phepNam.Year = int.Parse(worksheet.Cells[i, 5].Text.NullString());
+                        phepNam.SoTienChiTra = decimal.Parse(worksheet.Cells[i, 6].Text.NullString());
+                        _phepNamRepository.Update(phepNam);
                     }
-                    _phepNamRepository.Add(phepNam);
                 }
             }
         }

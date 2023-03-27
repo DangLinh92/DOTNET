@@ -11,58 +11,163 @@
             </div>
             <div class="modal-body">
                 <form id="frmDCChamCongAddEdit">
-                    <div class="form-group">
-                        <input type="hidden" id="_txtId" />
-                        <label for="_txtMaNV">Mã Nhân Viên<span class="text-danger">*</span></label>
-                        <select id="_txtMaNV" class="form-control nested" name="MaNV" required>
-                            <option value="">Choose...</option>
-                            <optgroup label="Group1">
-                                <option selected="selected">orange</option>
-                                <option>white</option>
-                                <option>purple</option>
-                            </optgroup>
-                            <optgroup label="Group2">
-                                <option>purple</option>
-                                <option>orange</option>
-                                <option>white</option>
-                            </optgroup>
-                            <optgroup label="Group3">
-                                <option>white</option>
-                                <option>purple</option>
-                                <option>orange</option>
-                            </optgroup>
-                        </select>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <input type="hidden" id="_txtId" />
+                            <label for="_txtMaNV">Mã Nhân Viên<span class="text-danger">*</span></label>
+                            <select id="_txtMaNV" class="form-control nested" name="MaNV" required>
+                                <option value="">Choose...</option>
+                                <optgroup label="Group1">
+                                    <option selected="selected">orange</option>
+                                    <option>white</option>
+                                    <option>purple</option>
+                                </optgroup>
+                                <optgroup label="Group2">
+                                    <option>purple</option>
+                                    <option>orange</option>
+                                    <option>white</option>
+                                </optgroup>
+                                <optgroup label="Group3">
+                                    <option>white</option>
+                                    <option>purple</option>
+                                    <option>orange</option>
+                                </optgroup>
+                            </select>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="_txtDM_DieuChinhCong">Danh mục điều chỉnh công<span class="text-danger">*</span></label>
-                        <select id="_txtDM_DieuChinhCong" class="select" name="DM_DieuChinhCong" required>
-                            <option>Daniel Porter</option>
-                            <option>Roger Dixon</option>
-                        </select>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="_txtNgayDieuChinh">Ngày Điều Chỉnh<span class="text-danger">*</span></label>
+                            <div class="cal-icon"><input id="_txtNgayDieuChinh" class="form-control datetimepicker" name="NgayDieuChinh" type="text" required></div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="_txtNgayCanDieuChinh_From">Ngày Điều Chỉnh(From)<span class="text-danger">*</span></label>
-                        <div class="cal-icon"><input id="_txtNgayCanDieuChinh_From" class="form-control datetimepicker" name="NgayCanDieuChinh_From" type="text" required></div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="_txtNgayCong">Ngày Công<span class="text-danger">*</span></label>
+                            <input id="_txtNgayCong" class="form-control" name="NgayCong" type="text" required>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="_txtNgayCanDieuChinh_To">Ngày Điều Chỉnh(To)<span class="text-danger">*</span></label>
-                        <div class="cal-icon"><input id="_txtNgayCanDieuChinh_To" class="form-control datetimepicker" name="NgayCanDieuChinh_To" type="text" required></div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="_txtDSNS">
+                                30%(DS->NS)
+                            </label>
+                            <input class="form-control" type="text" name="DSNS" id="_txtDSNS">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="_txtGiaTriBoXung">Giá trị điều Chỉnh<span class="text-danger">*</span></label>
-                        <input class="form-control" type="text" name="GiaTriBoXung" id="_txtGiaTriBoXung" required>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="_txtNSBH">260%(NS->BH)</label>
+                            <input class="form-control" type="text" name="NSBH" id="_txtNSBH">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="_txtContent">Nội Dung</label>
-                        <textarea rows="4" class="form-control" id="_txtContent" name="NoiDungDC"></textarea>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="_txtDC85">85%</label>
+                            <input class="form-control" type="text" name="DC85" id="_txtDC85">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="_txtTrangThaiChiTra">Trạng Thái Chi Trả<span class="text-danger">*</span></label>
-                        <select id="_txtTrangThaiChiTra" class="select" name="TrangThaiChiTra" required>
-                            <option value="">Choose...</option>
-                            <option value="Y">Đã chi trả</option>
-                            <option value="N">Chưa chi trả</option>
-                        </select>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="_txtDC150">150%</label>
+                            <input class="form-control" type="text" name="DC150" id="_txtDC150">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="_txtDC190">190%</label>
+                            <input class="form-control" type="text" name="DC190" id="_txtDC190">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="_txtDC200">200%</label>
+                            <input class="form-control" type="text" name="DC200" id="_txtDC200">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="_txtDC210">210%</label>
+                            <input class="form-control" type="text" name="DC210" id="_txtDC210">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="_txtDC270">270%</label>
+                            <input class="form-control" type="text" name="DC270" id="_txtDC270">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="_txtDC300">300%</label>
+                            <input class="form-control" type="text" name="DC300" id="_txtDC300">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="_txtDC390">390%</label>
+                            <input class="form-control" type="text" name="DC390" id="_txtDC390">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="_txtHT50">Hỗ trợ 50%</label>
+                            <input class="form-control" type="text" name="HT50" id="_txtHT50">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="_txtHT150">Hỗ trợ 150%</label>
+                            <input class="form-control" type="text" name="HT150" id="_txtHT150">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="_txtHT200">Hỗ trợ 200%</label>
+                            <input class="form-control" type="text" name="HT200" id="_txtHT200">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="_txtHT390">Hỗ trợ 390%</label>
+                            <input class="form-control" type="text" name="HT390" id="_txtHT390">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="_txtHT100">Hỗ trợ 100K</label>
+                            <input class="form-control" type="text" name="HT100" id="_txtHT100">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="_txtELLC">ELLC</label>
+                            <input class="form-control" type="text" name="ELLC" id="_txtELLC">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="_txtOther">Hộ trợ khác</label>
+                            <input class="form-control" type="text" name="Other" id="_txtOther">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="_txtNoiDungDC">Nội Dung</label>
+                            <textarea class="form-control" type="text" name="NoiDungDC" id="_txtNoiDungDC" rows="2" />
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="_txtTongSoTien">Số Tiền Trả</label>
+                            <input class="form-control" type="text" name="TongSoTien" id="_txtTongSoTien" />
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="_txtChiTraVaoLuongThang">Trả vào lương tháng</label>
+                            <div class="cal-icon"><input id="_txtChiTraVaoLuongThang" class="form-control datetimepicker" name="ChiTraVaoLuongThang" type="text" required></div>
+                        </div>
                     </div>
                     <div class="submit-section">
                         <button class="btn btn-primary submit-btn" id="btnSaveDieuChinhChamCong">Save</button>

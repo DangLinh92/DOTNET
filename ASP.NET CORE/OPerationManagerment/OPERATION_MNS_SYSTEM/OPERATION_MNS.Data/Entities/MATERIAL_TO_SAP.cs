@@ -15,11 +15,14 @@ namespace OPERATION_MNS.Data.Entities
         {
 
         }
-        public MATERIAL_TO_SAP(string material,string sapcode)
+
+        public MATERIAL_TO_SAP(string material,string sapcode,string department)
         {
             Material = material;
             SAP_Code = sapcode;
+            Department = department;
         }
+
         [Required]
         [StringLength(50)]
         public string Material { get; set; }
@@ -27,5 +30,9 @@ namespace OPERATION_MNS.Data.Entities
         [Required]
         [StringLength(50)]
         public string SAP_Code { get; set; }
+
+        [Required]
+        [StringLength(50)]
+        public string Department { get; set; }
     }
 }

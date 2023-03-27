@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace OPERATION_MNS.Application.ViewModels
 {
@@ -54,8 +55,11 @@ namespace OPERATION_MNS.Application.ViewModels
         public decimal GapActualPlan_SH { get; set; }
 
         public decimal GapActualPlan_EA { get; set; }
+
         public string LastUpdate { get; set; }
+
         public int STT { get; set; }
+
         public decimal YieldPlan { get; set; }
         public decimal YieldActual { get; set; }
         public decimal YieldGap { get; set; }

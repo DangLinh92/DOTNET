@@ -273,8 +273,8 @@
         columns.AddFor(m => m.SoPhepNam).Caption("Tổng Phép Năm").AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
         columns.AddFor(m => m.SoPhepConLai).Caption("Số Phép Năm Còn Lại").AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
         columns.AddFor(m => m.Year).Caption("Năm").AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.SoTienChiTra).Caption("Chi Trả Phép Năm").AllowEditing(true).Format("#,##0");
-        columns.AddFor(m => m.ThoiGianChiTra).Caption("Thời Gian Chi Trả").AllowEditing(true);
+        columns.AddFor(m => m.SoTienChiTra).Caption("Số Tiên Chi Trả Phép Năm").AllowEditing(true).Format("#,##0");
+        columns.AddFor(m => m.ThoiGianChiTra).Caption("Chi Trả Vào Lương Tháng").AllowEditing(true);
     }).SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true).OnSaving("SavePhepNam")
     )
         </div>

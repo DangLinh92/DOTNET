@@ -1,0 +1,216 @@
+﻿@{
+    ViewData["Title"] = "Shipping SMT History";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+
+}
+
+@section Scripts
+{
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+
+    <script>
+
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('Shipping SMT');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'ShippingSMT.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        function exporting2(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('Shipping SMT By Sap Code');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'TotalShippingSMT.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        function getDateBoxValueFrom() {
+            return $("#begindate-date").dxDateBox("option", "text");
+        }
+
+        function getDateBoxValueTo() {
+            return $("#todate-date").dxDateBox("option", "text");
+        }
+
+        function refreshGrid() {
+
+            let fromDate = new Date($("#begindate-date").dxDateBox("option", "text"));
+            let toDate = new Date($("#todate-date").dxDateBox("option", "text"));
+
+            if (fromDate <= toDate) {
+                $("#gridContainer").dxDataGrid("refresh");
+                $("#gridContainer_2").dxDataGrid("refresh");
+            }
+        }
+
+    </script>
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center" style="margin-bottom:-1rem">
+            <div class="col">
+                <h3 class="page-title">Shipping SMT History </h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Shipping SMT History </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form">
+                <div class="dx-fieldset">
+                    <div class="dx-field">
+                        <div style="float:left;display:inline-block;margin-right:10px">
+
+                            @(Html.DevExtreme().DateBox()
+                                  .ID("begindate-date")
+                                  .Type(DateBoxType.Date)
+                                  .Value(DateTime.Now)
+                                  .DisplayFormat("yyyy-MM-dd")
+                                  .Width(200)
+                                  .Placeholder("Select...")
+                                  .Label("From Date")
+                                  .OnValueChanged("refreshGrid")
+                            )
+                            
+                        </div>
+                        <div style="display:inline-block">
+                            @(Html.DevExtreme().DateBox()
+                                  .ID("todate-date")
+                                  .Type(DateBoxType.Date)
+                                  .Value(DateTime.Now)
+                                  .DisplayFormat("yyyy-MM-dd")
+                                  .Width(200)
+                                  .Placeholder("Select...")
+                                  .Label("To Date")
+                                  .OnValueChanged("refreshGrid")
+                            )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            @(Html.DevExtreme().DataGrid<ShippingSMTHistoryByLotIdViewModel>
+    ()
+    .ID("gridContainer")
+    .Height(680)
+    .ShowBorders(true)
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnMinWidth(50)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+    .OnExporting("exporting")
+    .FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+    .Columns(columns =>
+    {
+        columns.Add().Caption("Danh Sách Model Xuất Hàng SMT ").Columns(c =>
+        {
+            c.AddFor(m => m.MoveOutTime).Caption("Move Out Time");
+            c.AddFor(m => m.LotID).Caption("Lot ID");
+            c.AddFor(m => m.SapMaterial).Caption("Sap Material");
+            c.AddFor(m => m.OutPutQty).Caption("Output Qty").Format(Format.FixedPoint);
+            c.AddFor(m => m.Note);
+        });
+    })
+    .DataSource(d => d.Mvc()
+    .Area("OpeationMns")
+    .Controller("ShippingSMTHistory")
+    .LoadAction("GetSMTShipByLot")
+    .LoadParams(new { fromTime = new JS("getDateBoxValueFrom"), toTime = new JS("getDateBoxValueTo") })
+    ).Summary(s => s
+    .TotalItems(totalItems =>
+    {
+        totalItems.AddFor(m => m.OutPutQty).SummaryType(SummaryType.Sum).DisplayFormat("Total: {0}").ValueFormat(Format.FixedPoint);
+    })
+    )
+    )
+</div>
+
+        <div class="col-md-4">
+            @(Html.DevExtreme().DataGrid<ShippingSMTHistoryBySapCodeViewModel>
+    ()
+    .ID("gridContainer_2")
+    .Height(680)
+    .ShowBorders(true)
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnMinWidth(50)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+    .OnExporting("exporting2")
+    .FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+    .Columns(columns =>
+    {
+        columns.Add().Caption("Tổng Lượng Xuất Hàng SMT Theo Sap Material").Columns(c =>
+        {
+            c.AddFor(m => m.SapMaterial).Caption("Sap Material");
+            c.AddFor(m => m.OutPutQty).Caption("Output Qty").Format(Format.FixedPoint);
+        });
+    })
+    .DataSource(d => d.Mvc()
+    .Area("OpeationMns")
+    .Controller("ShippingSMTHistory")
+    .LoadAction("GetSMTShipByTime")
+    .LoadParams(new { fromTime = new JS("getDateBoxValueFrom"), toTime = new JS("getDateBoxValueTo") })
+    ).Summary(s => s
+    .TotalItems(totalItems =>
+    {
+        totalItems.AddFor(m => m.OutPutQty).SummaryType(SummaryType.Sum).DisplayFormat("Total: {0}").ValueFormat(Format.FixedPoint);
+    })
+    )
+    )
+</div>
+    </div>
+</div>

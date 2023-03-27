@@ -7,7 +7,7 @@ namespace OPERATION_MNS.Application.Interfaces
 {
     public interface IDateOffLineService : IDisposable
     {
-        List<DateOffLineViewModel> GetDateOffLine();
+        List<DateOffLineViewModel> GetDateOffLine(string owner, string danhmuc);
         int GetLeadTime();
     }
 }

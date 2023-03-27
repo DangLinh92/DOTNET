@@ -9,17 +9,17 @@
 
         // Show and update danh muc dieu chinh cham cong
         // Open popup add dieu chinh cham cong
-        $('#btnCreateDmDCChamCong').on('click', function (e) {
+        //$('#btnCreateDmDCChamCong').on('click', function (e) {
 
-            e.preventDefault();
+        //    e.preventDefault();
 
-            initDanhMucDieuChinh(true);
+        //    initDanhMucDieuChinh(true);
 
-            $('#hd_dmdieuChinhChamCong').val('Add');
-            $('#_txtTieuDe').val('');
-            $('#_txtTieuDe').attr('disabled', false);
-            $('#addDMDieuChinhChamCongModel').modal('show');
-        });
+        //    $('#hd_dmdieuChinhChamCong').val('Add');
+        //    $('#_txtTieuDe').val('');
+        //    $('#_txtTieuDe').attr('disabled', false);
+        //    $('#addDMDieuChinhChamCongModel').modal('show');
+        //});
 
         function initDanhMucDieuChinh(isDMDC) {
 
@@ -167,13 +167,9 @@
             $('#_txtMaNV').val('');
             $('#_txtMaNV').trigger('change');
 
-            $('#_txtDM_DieuChinhCong').val('');
-            $('#_txtDM_DieuChinhCong').trigger('change');
-
-            $('#_txtNgayCanDieuChinh_From').val('');
-            $('#_txtNgayCanDieuChinh_To').val('');
-            $('#_txtGiaTriBoXung').val('');
-            $('#_txtContent').val('');
+            $('#_txtNgayDieuChinh').val('');
+            $('#_txtNgayCong').val('');
+            $('#_txtDSNS').val('');
 
             $('#_txtTrangThaiChiTra').val('');
             $('#_txtTrangThaiChiTra').trigger('change');

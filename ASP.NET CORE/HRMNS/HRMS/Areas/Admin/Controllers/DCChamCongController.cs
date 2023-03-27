@@ -89,13 +89,13 @@ namespace HRMS.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Search(string department, string status, string timeFrom, string timeTo)
         {
-            var lst = _dcChamCongService.Search(status, department, timeFrom, timeTo, x => x.HR_NHANVIEN, y => y.DM_DIEUCHINH_CHAMCONG);
+            var lst = _dcChamCongService.Search(status, department, timeFrom, timeTo, x => x.HR_NHANVIEN);
             return PartialView("_gridDCChamCongPartialView", lst);
         }
 
         public IActionResult Index()
         {
-            var lst = _dcChamCongService.GetAll("", x => x.DM_DIEUCHINH_CHAMCONG, y => y.HR_NHANVIEN);
+            var lst = _dcChamCongService.GetAll("", y => y.HR_NHANVIEN);
             return View(lst);
         }
     }

@@ -1,0 +1,259 @@
+﻿@using OPERATION_MNS.Areas.OpeationMns.Models.SignalR
+@{
+    ViewData["Title"] = "WLP2 재공수량";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <style>
+        #gridContainer span.current-value {
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        #gridContainer span.diff {
+            width: 50px;
+            display: inline-block;
+        }
+
+        .styleHeader {
+            color: #FEF5AC;
+            font-weight: bold;
+            border-right-width: medium !important;
+           /* border-right-color: #FEF5AC !important;*/
+        }
+
+        .styleColumn {
+            border-right-width: medium !important;
+         /*   border-right-color: #FEF5AC !important;*/
+        }
+
+        .styleColumn3 {
+            background-color: papayawhip;
+            font-weight: bold;
+            color:midnightblue;
+        }
+
+
+    </style>
+
+}
+
+@section Scripts
+{
+    <script src="~/js/dataTables.fixedColumns.min.js"></script>
+    <script src="~/js/dataTables.fixedHeader.min.js"></script>
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+    <script>
+
+     var connection = new signalR.HubConnectionBuilder()
+            .withUrl("@Url.Content("~/liveUpdateSignalRHub")")
+            .configureLogging(signalR.LogLevel.Information)
+        .build();
+
+    $(function () {
+
+        connection.start()
+            .then(function () {
+
+                var store = new DevExpress.data.CustomStore({
+                    load: function () {
+                        return connection.invoke("getWlp2StockHold");
+                    },
+                    key: "sapCode"
+                });
+
+               $("#gridContainer").dxDataGrid({
+                   dataSource: store,
+                   reshapeOnPush: true,
+                   visible: true
+               });
+
+                connection.on("getStockWLP2", function (dataObj) {
+
+                    store.push([{ type: "update", key: dataObj.sapCode, data: dataObj }]);
+                });
+            });
+    });
+
+    function exporting(e) {
+        var workbook = new ExcelJS.Workbook();
+        var worksheet = workbook.addWorksheet('WLP2 Stock');
+
+        DevExpress.excelExporter.exportDataGrid({
+            component: e.component,
+            worksheet: worksheet,
+            autoFilterEnabled: true
+        }).then(function () {
+            workbook.xlsx.writeBuffer().then(function (buffer) {
+                saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'WLP2Stock.xlsx');
+            });
+        });
+        e.cancel = true;
+        }
+
+
+
+     function onSaving(e) {
+        e.cancel = true;
+
+        if (e.changes.length) {
+            e.promise = sendBatchRequest('@Url.RouteUrl(new { controller = "Inventory",area= "OpeationMns", action = "Batch" })', e.changes).done(() => {
+                e.component.refresh(true).done(() => {
+                    e.component.cancelEditData();
+                });
+            });
+        }
+    }
+
+    function sendBatchRequest(url, changes) {
+        var d = $.Deferred();
+
+        $.ajax(url, {
+            method: "POST",
+            data: JSON.stringify(changes),
+            cache: false,
+            contentType: 'application/json',
+            xhrFields: { withCredentials: true }
+        }).done(d.resolve).fail(function (xhr) {
+            d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
+        });
+
+        return d.promise();
+    }
+    </script>
+
+}
+
+@{
+    string ViewOption_Actual = ViewBag.ViewOption_Actual;
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">@ViewData["Title"]</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">TỒN CÔNG ĐOẠN WLP2[WLP2 재공수량]</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+    <!-- /Page Header -->
+    <div class="row">
+        <div class="col-md-12">
+            @(Html.DevExtreme().DataGrid<StockHoldPositionViewModel>
+    ()
+    .ID("gridContainer")
+    .KeyExpr("SapCode")
+    .DataSourceOptions(o => o.ReshapeOnPush(true))
+    .ShowBorders(true)
+    .RepaintChangesOnly(true)
+    .HighlightChanges(true)
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnMinWidth(100)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .SearchPanel(searchPanel => searchPanel
+    .Visible(true)
+    .Width(240)
+    .Placeholder("Search...")
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+    .OnExporting("exporting")
+    .Height(750)
+    .ColumnFixing(x=>x.Enabled(true))
+    .Editing(editing =>
+    {
+        editing.Mode(GridEditMode.Batch);
+        editing.AllowUpdating(true);
+        editing.SelectTextOnEditStart(true);
+        editing.StartEditAction(GridStartEditAction.Click);
+    })
+    .Columns(columns => {
+        columns.AddFor(m => m.LastUpdate).DataField("lastUpdate").Fixed(true).FixedPosition(HorizontalEdge.Left).CssClass("styleColumn2").AllowEditing(false);
+        columns.AddFor(m => m.Module).DataField("module").Fixed(true).FixedPosition(HorizontalEdge.Left).CssClass("styleColumn2").AllowEditing(false);
+        columns.AddFor(m => m.SapCode).DataField("sapCode").Caption("Code SAP").Fixed(true).FixedPosition(HorizontalEdge.Left).CssClass("styleColumn").CssClass("styleColumn2").AllowEditing(false);
+
+        columns.Add().Caption("WLP2 재공수량").Columns(c => {
+            c.AddFor(m => m.WaferNguyenLieu).DataField("waferNguyenLieu").Caption("반제품 Wafer Nguyên Liệu").Format("#,##0").CssClass("styleColumn2").AllowEditing(false);
+            c.AddFor(m => m.BanThanhPham).DataField("banThanhPham").Caption("반제품 Reel Bán Thành Phẩm").Format("#,##0").CssClass("styleColumn2").AllowEditing(false);
+            c.AddFor(m => m.ChoXuatHang).DataField("choXuatHang").Caption("출하대기 Chờ Xuất Hàng").Format("#,##0").CssClass("styleColumn2").AllowEditing(false);
+            c.AddFor(m => m.Sum).DataField("sum").Caption("SUM").Format("#,##0").CssClass("styleColumn").CssClass("styleColumn2").AllowEditing(false);
+        }).CssClass("styleHeader");
+
+        columns.Add().Caption("Hold 수량").Columns(c =>
+        {
+            c.AddFor(m => m.HoldWafer).DataField("holdWafer").Caption("Hold Wafer").Format("#,##0").CssClass("styleColumn2").AllowEditing(false);
+            c.AddFor(m => m.HoldReel).DataField("holdReel").Caption("Hold Reel").Format("#,##0").CssClass("styleColumn2").AllowEditing(false);
+            c.AddFor(m => m.HoldOQC).DataField("holdOQC").Caption("Hold OQC").Format("#,##0").CssClass("styleColumn2").AllowEditing(false);
+            c.AddFor(m => m.SmtReturn).DataField("smtReturn").Caption("SMT trả về").Format("#,##0").CssClass("styleColumn").CssClass("styleColumn3").AllowEditing(true);
+        }).CssClass("styleHeader");
+
+        columns.Add().Caption("TỒN VỊ TRÍ THIẾT BỊ").Columns(c =>
+        {
+            c.AddFor(m => m.AtmosphericProcess).DataField("atmosphericProcess").Caption("대기공정").Format("#,##0").CssClass("styleColumn2").AllowEditing(false);
+            c.AddFor(m => m.WatingProcess).DataField("watingProcess").Caption("후공정 생산대기").Format("#,##0").CssClass("styleColumn2").AllowEditing(false);
+            c.AddFor(m => m.BG).DataField("bG").Caption("BG").Format("#,##0").CssClass("styleColumn2").AllowEditing(false);
+            c.AddFor(m => m.WaferOven).DataField("waferOven").Caption("Wafer Oven").Format("#,##0").Format("#,##0").CssClass("styleColumn2").AllowEditing(false);
+            c.AddFor(m => m.Dicing).DataField("dicing").Caption("Dicing").Format("#,##0").Format("#,##0").CssClass("styleColumn2").AllowEditing(false);
+            c.AddFor(m => m.ChipInspection).DataField("chipInspection").Caption("Chip Inspection").Format("#,##0").CssClass("styleColumn2").AllowEditing(false);
+            c.AddFor(m => m.ReelPacking).DataField("reelPacking").Caption("Reel Packing").Format("#,##0").CssClass("styleColumn2").AllowEditing(false);
+            c.AddFor(m => m.ReelInspection).DataField("reelInspection").Caption("Reel Inspection").Format("#,##0").CssClass("styleColumn2").AllowEditing(false);
+            c.AddFor(m => m.ReelCounter).DataField("reelCounter").Caption("Reel Counter").Format("#,##0").CssClass("styleColumn2").AllowEditing(false);
+            c.AddFor(m => m.ReelOven).DataField("reelOven").Caption("Reel Oven").Format("#,##0").CssClass("styleColumn2").AllowEditing(false);
+            c.AddFor(m => m.OQC).DataField("oQC").Caption("OQC").Format("#,##0").CssClass("styleColumn2").AllowEditing(false);
+            c.AddFor(m => m.WaitingforShipment).DataField("waitingforShipment").Caption("출하대기").Format("#,##0").CssClass("styleColumn").CssClass("styleColumn2").AllowEditing(false);
+        }).CssClass("styleHeader");
+
+    }).OnSaving("onSaving")
+    .Summary(s => s.TotalItems(items =>
+    {
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("waferNguyenLieu");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("banThanhPham");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("choXuatHang");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("sum");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("holdWafer");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("holdReel");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("holdOQC");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("smtReturn");
+
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("atmosphericProcess");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("watingProcess");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("bG");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("waferOven");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("dicing");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("chipInspection");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("reelPacking");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("reelInspection");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("reelCounter");
+
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("reelOven");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("oQC");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("waitingforShipment");
+    })
+    ))
+        </div>
+    </div>
+</div>
+

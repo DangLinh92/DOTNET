@@ -1,0 +1,157 @@
+﻿@model List<GocPlanViewModelEx>
+@{
+    ViewData["Title"] = "Input GOC Plan";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts
+{
+    <script src="~/js/dataTables.fixedColumns.min.js"></script>
+    <script src="~/js/dataTables.fixedHeader.min.js"></script>
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+
+    <script src="~/app/controllers/GocPlan/GocPlanWLP2Controller.js"></script>
+    <script>
+        var controller = new GocPlanWLP2Controller();
+        controller.initialize();
+
+        onSuccess = controller.doAftersearch;
+        onBeginAjax = controller.beginSearch;
+
+        $(document).ready(function () {
+            $('#gocPlanDataTable').DataTable({
+                scrollY: 530,
+                scrollX: true,
+                scrollCollapse: true,
+                paging: false,
+                select: true,
+                "searching": true,
+                fixedColumns: {
+                    left: 6
+                },
+                fixedHeader: true
+            });
+
+            $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
+            $('select[name="gocPlanDataTable_length"]').removeClass('form-control-sm');
+        });
+    </script>
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">@ViewData["Title"]</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Input GOC Plan</li>
+                </ul>
+            </div>
+            <div class="col-auto float-right ml-auto">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info dropdown-toggle" id="btnImport" style="margin-right:100px;width:100px" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Excel</button>
+                    <div class="dropdown-menu" style="">
+                        <a class="dropdown-item" href="~/templates/GocPlan_Template_WLP2.xlsx">File mẫu import GOC Plan</a>
+                        <a class="dropdown-item" href="#" id="btn-import-GocPlan">Import GOC Plan</a>
+                        <a class="dropdown-item" href="~/templates/StandarQtyChip_Wafer_Template.xlsx">File mẫu import Standard Q.ty</a>
+                        <a class="dropdown-item" href="#" id="btn-import-standarQty">Import Standard Q.ty</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+
+    <form id="frmSearch" method="post" data-ajax="true" data-ajax-url="/OpeationMns/GOCPlan/Search" data-ajax-update="#gridGocPlan" data-ajax-mode='replace' data-ajax-begin="onBeginAjax" data-ajax-success="onSuccess">
+        <div class="row filter-row">
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <input type="hidden" name="chipWafer" value="CHIP" />
+                <input type="hidden" name="wlp" value="WLP2" />
+                <input type="hidden" name="inputWlp2" value="InputWlp2" />
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus select-focus">
+                    <select class="select floating" id="cboView" name="actualPlanGap">
+                        <option value="">ALL</option>
+                        <option value="ACTUAL">ACTUAL</option>
+                        <option value="PLAN">PLAN</option>
+                        <option value="GAP">GAP</option>
+                    </select>
+                    <label class="focus-label">Actual/Plan/Gap</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus select-focus">
+                    <select class="select floating" id="cboDanhMuc" name="danhmuc">
+                        <option value="NHAP_KHO">Wafer nhập kho wlp (후공정 자재 입고실적)</option>
+                        <option value="SAN_XUAT">WLP sản xuất (후공정 생산실적)</option>
+                        <option value="XUAT_SMT">WLP xuất smt (후공정 smt 출하실적)</option>
+                    </select>
+                    <label class="focus-label">Category</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus">
+                    <div class="cal-icon">
+                        <input class="form-control floating datetimepicker" type="text" id="searchFromTime" name="fromTime">
+                    </div>
+                    <label class="focus-label">From</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus">
+                    <div class="cal-icon">
+                        <input class="form-control floating datetimepicker" type="text" id="searchToTime" name="toTime">
+                    </div>
+                    <label class="focus-label">To</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <button href="#" class="btn btn-success btn-block" id="btnSearch" type="submit"> Search </button>
+            </div>
+        </div>
+    </form>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive" id="gridGocPlan">
+                @await Html.PartialAsync("_InputGocPlanGridViewWlp2", Model)
+            </div>
+        </div>
+    </div>
+</div>
+
+<partial name="_ImportExcelModel" />
+
+
+<div class="modal custom-modal fade" id="delete_PlanGOC" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header">
+                    <input type="hidden" id="txtHiddenId" />
+                    <input type="hidden" id="txtFromDate" />
+                    <input type="hidden" id="txtToDate" />
+                    <input type="hidden" id="txtDanhMuc" />
+                    <h3>Delete</h3>
+                    <p id="headerDelete">Bạn có muốn xóa model và kế hoạch của model?</p>
+                </div>
+                <div class="modal-btn delete-action">
+                    <div class="row">
+                        <div class="col-6">
+                            <a href="javascript:void(0);" id="btnDeletePlanGOC" class="btn btn-primary continue-btn">Delete</a>
+                        </div>
+                        <div class="col-6">
+                            <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

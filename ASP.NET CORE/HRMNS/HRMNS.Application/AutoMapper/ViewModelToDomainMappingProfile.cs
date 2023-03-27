@@ -64,7 +64,8 @@ namespace HRMNS.Application.AutoMapper
           .ConstructUsing(c => new DM_DIEUCHINH_CHAMCONG(c.Id, c.TieuDe));
 
             CreateMap<DCChamCongViewModel, DC_CHAM_CONG>()
-           .ConstructUsing(c => new DC_CHAM_CONG(c.Id, c.DM_DieuChinhCong, c.MaNV, c.NgayCanDieuChinh_From, c.NgayCanDieuChinh_To, c.NoiDungDC, c.GiaTriBoXung, c.TrangThaiChiTra,c.ChiTraVaoLuongThang));
+           .ConstructUsing(c => new DC_CHAM_CONG(c.Id,c.MaNV,c.NgayDieuChinh,c.NoiDungDC,c.TongSoTien,c.TrangThaiChiTra,c.ChiTraVaoLuongThang,c.NgayCong,
+           c.DSNS,c.NSBH,c.DC85,c.DC150,c.DC190,c.DC200,c.DC210,c.DC270,c.DC300,c.DC390,c.HT50,c.HT100,c.HT150,c.HT200,c.HT390,c.ELLC,c.NgayDieuChinh2));
 
             CreateMap<RoleViewModel, APP_ROLE>()
           .ConstructUsing(c => new APP_ROLE(c.Name, c.Description));

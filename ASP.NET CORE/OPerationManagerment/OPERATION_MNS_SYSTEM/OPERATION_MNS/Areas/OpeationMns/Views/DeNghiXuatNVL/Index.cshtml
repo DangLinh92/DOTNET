@@ -1,0 +1,214 @@
+﻿@{
+    ViewData["Title"] = "ĐỀ NGHỊ XUẤT NGUYÊN VẬT LIỆU SAW - WLP";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+
+}
+
+@section Scripts
+{
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+
+    <script>
+
+        $('#btn-import-GocPlan').on('click', function () {
+            $("#fileInputExcel").val(null);
+            $('#import_gocPlan').modal('show');
+        });
+
+        $('#btnCloseImportExcel').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+            if (files.length > 0) {
+                $("#fileInputExcel").val(null);
+                $('#hd-ImportType').val('');
+                $('#import_gocPlan').modal('hide');
+                location.reload();
+            }
+        });
+
+        $('#btnCloseImport').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+            if (files.length > 0) {
+                $("#fileInputExcel").val(null);
+                $('#hd-ImportType').val('');
+                $('#import_gocPlan').modal('hide');
+                location.reload();
+            }
+        });
+
+        $('#btnImportExcel').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+
+            // Create FormData object
+            var fileData = new FormData();
+            // Looping over all files and add it to FormData object
+            for (var i = 0; i < files.length; i++) {
+                fileData.append("files", files[i]);
+            }
+            // Adding one more key to FormData object
+            // fileData.append('categoryId', $('#ddlCategoryIdImportExcel').combotree('getValue'));
+
+            $.ajax({
+                url: '/OpeationMns/DeNghiXuatNVL/ImportExcel',
+                type: 'POST',
+                data: fileData,
+                processData: false,  // tell jQuery not to process the data
+                contentType: false,  // tell jQuery not to set contentType
+                beforeSend: function () {
+                    hrms.run_waitMe($('#import_gocPlan'));
+                },
+                success: function (data) {
+                    $('#import_gocPlan').modal('hide');
+                    hrms.hide_waitMe($('#import_gocPlan'));
+                    hrms.notify("Import success!", 'Success', 'alert', function () {
+
+                        location.reload();
+                    });
+                },
+                error: function (status) {
+                    hrms.notify('error: Import error!' + status.responseText, 'error', 'alert', function () { });
+                    hrms.hide_waitMe($('#import_gocPlan'));
+                }
+            });
+            return false;
+        });
+
+
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('Đề nghị xuất nguyên vật liệu SAW -WLP');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'XuatNguyenVatLieu.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        function getDateBoxValue() {
+            return $("#begindate-date").dxDateBox("option", "text");
+        }
+
+        function refreshGrid() {
+            $("#gridContainer").dxDataGrid("refresh");
+        }
+
+    </script>
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center" style="margin-bottom:-1rem">
+            <div class="col">
+                <h3 class="page-title">ĐỀ NGHỊ XUẤT NGUYÊN VẬT LIỆU SAW- WLP</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Đề nghị xuất nguyên vật liệu SAW -WLP</li>
+                </ul>
+            </div>
+            <div class="col-auto float-right ml-auto">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info dropdown-toggle" id="btnImport" style="margin-right:100px;width:100px" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Excel</button>
+                    <div class="dropdown-menu" style="">
+                        <a class="dropdown-item" href="~/templates/SAW_WLP_De_Nghi_Xuat_Nguyen_Lieu.xlsx">File mẫu đề nghị xuất NVL</a>
+                        <a class="dropdown-item" href="#" id="btn-import-GocPlan">Import Đề Nghị Xuất NVL</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form">
+                <div class="dx-fieldset">
+                    <div class="dx-field">
+                        <div>
+
+                            @(Html.DevExtreme().DateBox()
+                                  .ID("begindate-date")
+                                  .Type(DateBoxType.Date)
+                                  .Value(DateTime.Now)
+                                  .DisplayFormat("yyyy-MM-dd")
+                                  .Width(200)
+                                  .Placeholder("Select...")
+                                  .Label("Begin Date")
+                                  .OnValueChanged("refreshGrid")
+                            )
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            @(Html.DevExtreme().DataGrid<BoPhanDeNghiXuatNVLViewModel>()
+        .ID("gridContainer")
+        .Height(680)
+    .ShowBorders(true)
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnMinWidth(50)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+     .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+     .OnExporting("exporting")
+    .FilterRow(filterRow => filterRow
+        .Visible(true)
+        .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+        .Editing(editing => {
+            editing.Mode(GridEditMode.Form);
+            editing.AllowUpdating(true);
+            editing.AllowAdding(true);
+            editing.AllowDeleting(true);
+        })
+        .Columns(columns =>
+        {
+            columns.AddFor(m => m.Id).Visible(false).AllowEditing(false);
+            columns.AddFor(m => m.NgayDeNghi2).Caption("Ngày Đề Nghị Xuất Hàng");
+            columns.AddFor(m => m.Module);
+            columns.AddFor(m => m.SapCode);
+            columns.AddFor(m => m.DinhMuc).Caption("Định Mức");
+            columns.AddFor(m => m.DonVi).Caption("Đơn Vị");
+            columns.AddFor(m => m.SoLuongYeuCau).Caption("Số Lượng Yêu Cầu").Format(Format.FixedPoint);
+            columns.AddFor(m => m.LuongThucTe).Caption("Lượng Thực Tế");
+            columns.AddFor(m => m.Note);
+        })
+        .DataSource(d => d.Mvc()
+            .Area("OpeationMns")
+            .Controller("DeNghiXuatNVL")
+            .LoadAction("Get")
+            .LoadParams(new { date = new JS("getDateBoxValue") })
+            .UpdateAction("Put")
+            .InsertAction("Post")
+            .DeleteAction("Delete")
+            .Key("Id")
+        )
+    )
+        </div>
+    </div>
+</div>
+
+<partial name="_ImportExcelModel" />

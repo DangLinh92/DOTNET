@@ -20,9 +20,10 @@ namespace OPERATION_MNS.Application.Implementation
     public class GocPlanService : BaseService, IGocPlanService
     {
         private IRespository<GOC_PLAN, int> _GocPlanRepository;
+        private IRespository<GOC_PLAN_WLP2, int> _GocPlanWLP2Repository;
         private IRespository<FAB_PLAN, int> _FABPlanRepository;
         private IRespository<GOC_STANDAR_QTY, int> _GocStandarQtyRepository;
-        private IRespository<MATERIAL_TO_SAP, int> _MaterialToSapRepository;
+
         private IRespository<CTQ_SETTING, int> _CTQ_SettingRepository;
         private IRespository<DATE_OFF_LINE, int> _DateOffLineRepository;
         private IRespository<LEAD_TIME_WLP, int> _LeadTimeRepository;
@@ -30,12 +31,12 @@ namespace OPERATION_MNS.Application.Implementation
         private readonly IMapper _mapper;
 
         public GocPlanService(IRespository<GOC_PLAN, int> GocPlanRepository,
-                              IRespository<MATERIAL_TO_SAP, int> MaterialToSapRepository,
                               IRespository<CTQ_SETTING, int> CTQ_SettingRepository,
                               IRespository<GOC_STANDAR_QTY, int> GocStandarQtyRepository,
                               IRespository<DATE_OFF_LINE, int> DateOffLineRepository,
                               IRespository<FAB_PLAN, int> FABPlanRepository,
                               IRespository<LEAD_TIME_WLP, int> LeadTimeRepository,
+                              IRespository<GOC_PLAN_WLP2, int> GocPlanWLP2Repository,
                               IUnitOfWork unitOfWork, IMapper mapper,
                               IHttpContextAccessor httpContextAccessor)
         {
@@ -43,12 +44,12 @@ namespace OPERATION_MNS.Application.Implementation
             _GocPlanRepository = GocPlanRepository;
             _FABPlanRepository = FABPlanRepository;
             _GocStandarQtyRepository = GocStandarQtyRepository;
-            _MaterialToSapRepository = MaterialToSapRepository;
             _CTQ_SettingRepository = CTQ_SettingRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
             _DateOffLineRepository = DateOffLineRepository;
+            _GocPlanWLP2Repository = GocPlanWLP2Repository;
         }
 
         public void Dispose()
@@ -101,13 +102,13 @@ namespace OPERATION_MNS.Application.Implementation
                             GOC_STANDAR_QTY standarQtyEN = new GOC_STANDAR_QTY()
                             {
                                 Module = chipSheet.Cells[i, 3].Text.NullString(),
-                                Model = chipSheet.Cells[i, 2].Text.NullString(),
+                                Model = chipSheet.Cells[i, 2].Text.NullString(),// SAP CODE
                                 Material = chipSheet.Cells[i, 1].Text.NullString(),
                                 Division = chipSheet.Cells[i, 5].Text.NullString(),
                                 StandardQtyForMonth = float.TryParse(chipSheet.Cells[i, 4].Value.IfNullIsZero(), out _) ? float.Parse(chipSheet.Cells[i, 4].Value.IfNullIsZero()) : 0,
                                 UserCreated = GetUserId(),
                                 Unit = CommonConstants.CHIP,
-                                Department = GetDepartment(),
+                                Department = CommonConstants.WLP1,
                                 DateModified = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
                             };
 
@@ -120,7 +121,7 @@ namespace OPERATION_MNS.Application.Implementation
                                 StandardQtyForMonth = float.TryParse(chipSheet.Cells[i, 4].Value.IfNullIsZero(), out _) ? float.Parse(chipSheet.Cells[i, 4].Value.IfNullIsZero()) : 0,
                                 UserCreated = GetUserId(),
                                 Unit = CommonConstants.WAFER,
-                                Department = GetDepartment(),
+                                Department = CommonConstants.WLP1,
                                 DateModified = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
                             };
                             lstChipStandarQty.Add(standarQtyEN);
@@ -130,7 +131,7 @@ namespace OPERATION_MNS.Application.Implementation
                         GOC_STANDAR_QTY en;
                         foreach (var item in lstChipStandarQty)
                         {
-                            en = _GocStandarQtyRepository.FindSingle(x => x.Model == item.Model);
+                            en = _GocStandarQtyRepository.FindSingle(x => x.Model == item.Model && x.Department == CommonConstants.WLP1);
                             if (en != null)
                             {
                                 _GocStandarQtyRepository.Remove(en);
@@ -316,16 +317,20 @@ namespace OPERATION_MNS.Application.Implementation
                                 {
                                     ItemValue = item.Key,
                                     ON_OFF = CommonConstants.OFF,
-                                    WLP = "WLP1",
-                                    UserCreated = GetUserId()
+                                    WLP = CommonConstants.WLP1,
+                                    UserCreated = GetUserId(),
+                                    OWNER = CommonConstants.WLP1,
+                                    DanhMuc = ""
                                 };
 
                                 dateOff2 = new DATE_OFF_LINE()
                                 {
                                     ItemValue = item.Key,
                                     ON_OFF = CommonConstants.OFF,
-                                    WLP = "WLP2",
-                                    UserCreated = GetUserId()
+                                    WLP = CommonConstants.WLP2,
+                                    UserCreated = GetUserId(),
+                                    OWNER = CommonConstants.WLP1,
+                                    DanhMuc = ""
                                 };
 
                                 lstDateOff.Add(dateOff);
@@ -333,7 +338,7 @@ namespace OPERATION_MNS.Application.Implementation
                             }
                         }
 
-                        var lstOff = _DateOffLineRepository.FindAll(x => x.ItemValue.CompareTo(beginDate) >= 0 && x.ItemValue.CompareTo(EndDate) <= 0 && x.WLP.Contains("WLP")).ToList();
+                        var lstOff = _DateOffLineRepository.FindAll(x => x.ItemValue.CompareTo(beginDate) >= 0 && x.ItemValue.CompareTo(EndDate) <= 0 && x.OWNER.Contains("WLP1")).ToList();
                         _DateOffLineRepository.RemoveMultiple(lstOff);
                         _DateOffLineRepository.AddRange(lstDateOff);
                         _DateOffLineRepository.AddRange(lstDateOffWlp2);
@@ -561,57 +566,125 @@ namespace OPERATION_MNS.Application.Implementation
             throw new NotImplementedException();
         }
 
-        public List<GocPlanViewModelEx> GetByTime(string unit, string fromDate, string toDate)
+        public List<GocPlanViewModelEx> GetByTime(string unit, string fromDate, string toDate, string wlp = "WLP1", string danhmuc = "")
         {
             List<GocPlanViewModelEx> lstResult = new List<GocPlanViewModelEx>();
 
-            var lstStandar = _GocStandarQtyRepository.FindAll(x => x.Unit == unit);
-
-            GocPlanViewModelEx plan;
-
-            foreach (var item in lstStandar.ToList())
+            if (wlp == CommonConstants.WLP1)
             {
-                plan = new GocPlanViewModelEx()
+                var lstStandar = _GocStandarQtyRepository.FindAll(x => x.Unit == unit && x.Department == wlp);
+
+                GocPlanViewModelEx plan;
+
+                foreach (var item in lstStandar.ToList())
                 {
-                    Id = item.Id,
-                    Module = item.Module,
-                    Model = item.Model,
-                    Material = item.Material,
-                    Division = item.Division,
-                    StandardQtyForMonth = item.StandardQtyForMonth,
-                    Unit = unit
-                };
+                    plan = new GocPlanViewModelEx()
+                    {
+                        Id = item.Id,
+                        Module = item.Module,
+                        Model = item.Model,
+                        Material = item.Material,
+                        Division = item.Division,
+                        StandardQtyForMonth = item.StandardQtyForMonth,
+                        Unit = unit
+                    };
 
-                var lstQty = _GocPlanRepository.FindAll(x =>
-                x.Model == item.Model &&
-                x.Unit == unit &&
-                x.DatePlan.CompareTo(fromDate) >= 0 && x.DatePlan.CompareTo(toDate) <= 0);
+                    var lstQty = _GocPlanRepository.FindAll(x =>
+                    x.Model == item.Model &&
+                    x.Unit == unit &&
+                    x.DatePlan.CompareTo(fromDate) >= 0 && x.DatePlan.CompareTo(toDate) <= 0);
 
+                    float totalPlan = 0;
+                    float totalActual = 0;
+                    float totalGap = 0;
+
+                    foreach (var qty in lstQty.ToList())
+                    {
+                        plan.QuantityByDays.Add(new QuantityByDay()
+                        {
+                            DatePlan = qty.DatePlan,
+                            Id = qty.Id,
+                            QuantityPlan = qty.QuantityPlan,//unit == CommonConstants.CHIP ? (float)Math.Round(qty.QuantityPlan / 1000) : (float)Math.Round(qty.QuantityPlan),
+                            QuantityActual = qty.QuantityActual,// unit == CommonConstants.CHIP ? (float)Math.Round(qty.QuantityActual / 1000, 0) : (float)Math.Round(qty.QuantityActual),
+                            QuantityGap = qty.QuantityGap//unit == CommonConstants.CHIP ? (float)Math.Round(qty.QuantityGap / 1000, 0) : (float)Math.Round(qty.QuantityGap),
+                        });
+
+                        totalPlan += qty.QuantityPlan;//unit == CommonConstants.CHIP ? (float)Math.Round(qty.QuantityPlan / 1000, 0) : (float)Math.Round(qty.QuantityPlan);
+                        totalActual += qty.QuantityActual;//unit == CommonConstants.CHIP ? (float)Math.Round(qty.QuantityActual / 1000, 0) : (float)Math.Round(qty.QuantityActual);
+                        totalGap += qty.QuantityGap;//unit == CommonConstants.CHIP ? (float)Math.Round(qty.QuantityGap / 1000, 0) : (float)Math.Round(qty.QuantityGap);
+                    }
+
+                    plan.Total_Plan = unit == CommonConstants.CHIP ? (float)Math.Round(totalPlan / 1000, 0) : (float)Math.Round(totalPlan, 0);
+                    plan.Total_Actual = unit == CommonConstants.CHIP ? (float)Math.Round(totalActual / 1000, 0) : (float)Math.Round(totalActual, 0);
+                    plan.Total_Gap = -plan.Total_Plan + plan.Total_Actual;//unit == CommonConstants.CHIP ? (float)Math.Round(totalGap / 1000, 0) : (float)Math.Round(totalGap, 0);
+
+                    lstResult.Add(plan);
+                }
+            }
+            else if (wlp == CommonConstants.WLP2)
+            {
+                GocPlanViewModelEx plan = null;
+                var lstQty = _GocPlanWLP2Repository.FindAll(x => x.DanhMuc == danhmuc && x.Unit == CommonConstants.CHIP && x.DatePlan.CompareTo(fromDate) >= 0 && x.DatePlan.CompareTo(toDate) <= 0);
+                var lstStandar = _GocStandarQtyRepository.FindAll(x => x.Unit == CommonConstants.CHIP && x.Department == CommonConstants.WLP2);
+
+                List<string> lstModel = lstQty.Select(x => x.Model).Distinct().ToList();
+                List<GOC_PLAN_WLP2> gocModels;
                 float totalPlan = 0;
                 float totalActual = 0;
                 float totalGap = 0;
-
-                foreach (var qty in lstQty.ToList())
+                int number = 0;
+                float standarQty = 0;
+                foreach (var item in lstModel)
                 {
-                    plan.QuantityByDays.Add(new QuantityByDay()
+                    gocModels = lstQty.Where(x => x.Model == item).ToList();
+
+                    totalPlan = 0;
+                    totalActual = 0;
+                    totalGap = 0;
+                    number = 0;
+
+                    foreach (var qty in gocModels.ToList())
                     {
-                        DatePlan = qty.DatePlan,
-                        Id = qty.Id,
-                        QuantityPlan = qty.QuantityPlan,//unit == CommonConstants.CHIP ? (float)Math.Round(qty.QuantityPlan / 1000) : (float)Math.Round(qty.QuantityPlan),
-                        QuantityActual = qty.QuantityActual,// unit == CommonConstants.CHIP ? (float)Math.Round(qty.QuantityActual / 1000, 0) : (float)Math.Round(qty.QuantityActual),
-                        QuantityGap = qty.QuantityGap//unit == CommonConstants.CHIP ? (float)Math.Round(qty.QuantityGap / 1000, 0) : (float)Math.Round(qty.QuantityGap),
-                    });
+                        if (number++ == 0)
+                        {
+                            standarQty = lstStandar.FirstOrDefault(x => x.Model == item) != null ? lstStandar.FirstOrDefault(x => x.Model == item).StandardQtyForMonth : 1;
+                            plan = new GocPlanViewModelEx()
+                            {
+                                Id = qty.Id,
+                                Module = qty.Module,
+                                Model = qty.Model,
+                                Material = qty.Material,
+                                Division = qty.Division,
+                                DanhMuc = qty.DanhMuc,
+                                StandardQtyForMonth = standarQty,
+                                Unit = unit,
+                                Type = qty.Type
+                            };
+                        }
 
-                    totalPlan += qty.QuantityPlan;//unit == CommonConstants.CHIP ? (float)Math.Round(qty.QuantityPlan / 1000, 0) : (float)Math.Round(qty.QuantityPlan);
-                    totalActual += qty.QuantityActual;//unit == CommonConstants.CHIP ? (float)Math.Round(qty.QuantityActual / 1000, 0) : (float)Math.Round(qty.QuantityActual);
-                    totalGap += qty.QuantityGap;//unit == CommonConstants.CHIP ? (float)Math.Round(qty.QuantityGap / 1000, 0) : (float)Math.Round(qty.QuantityGap);
+                        plan.QuantityByDays.Add(new QuantityByDay()
+                        {
+                            Id = qty.Id,
+                            QuantityPlan = qty.QuantityPlan,
+                            QuantityActual = qty.QuantityActual,
+                            QuantityGap = qty.QuantityGap,
+                            DatePlan = qty.DatePlan
+                        });
+
+                        totalPlan += qty.QuantityPlan;
+                        totalActual += qty.QuantityActual;
+                        totalGap += qty.QuantityGap;
+                    }
+
+                    if (plan != null)
+                    {
+                        plan.Total_Plan = unit == CommonConstants.CHIP ? (float)Math.Round(totalPlan / 1000, 0) : (float)Math.Round(totalPlan, 0);
+                        plan.Total_Actual = unit == CommonConstants.CHIP ? (float)Math.Round(totalActual / 1000, 0) : (float)Math.Round(totalActual, 0);
+                        plan.Total_Gap = -plan.Total_Plan + plan.Total_Actual;
+
+                        lstResult.Add(plan);
+                    }
                 }
-
-                plan.Total_Plan = unit == CommonConstants.CHIP ? (float)Math.Round(totalPlan / 1000, 0) : (float)Math.Round(totalPlan, 0);
-                plan.Total_Actual = unit == CommonConstants.CHIP ? (float)Math.Round(totalActual / 1000, 0) : (float)Math.Round(totalActual, 0);
-                plan.Total_Gap =  - plan.Total_Plan + plan.Total_Actual;//unit == CommonConstants.CHIP ? (float)Math.Round(totalGap / 1000, 0) : (float)Math.Round(totalGap, 0);
-
-                lstResult.Add(plan);
             }
 
             return lstResult;
@@ -621,7 +694,7 @@ namespace OPERATION_MNS.Application.Implementation
         {
             List<GocPlanViewModelEx> lstResult = new List<GocPlanViewModelEx>();
 
-            var lstStandar = _GocStandarQtyRepository.FindAll(x => x.Unit == unit);
+            var lstStandar = _GocStandarQtyRepository.FindAll(x => x.Unit == unit && x.Department == CommonConstants.WLP1);
 
             GocPlanViewModelEx plan;
 
@@ -673,14 +746,17 @@ namespace OPERATION_MNS.Application.Implementation
             return lstResult;
         }
 
-        public void DeleteGocModel(int Id, string fromDate, string toDate)
+        public void DeleteGocModel(int Id, string fromDate, string toDate, string wlp)
         {
-            GOC_STANDAR_QTY en = _GocStandarQtyRepository.FindById(Id);
-            string model = en.Model;
-            var lst = _GocPlanRepository.FindAll(x => x.Model == model && x.DatePlan.CompareTo(fromDate) >= 0 && x.DatePlan.CompareTo(toDate) <= 0).ToList();
-            _GocPlanRepository.RemoveMultiple(lst);
-            _GocStandarQtyRepository.Remove(Id);
-            _unitOfWork.Commit();
+            if (wlp == CommonConstants.WLP1)
+            {
+                GOC_STANDAR_QTY en = _GocStandarQtyRepository.FindById(Id);
+                string model = en.Model;
+                var lst = _GocPlanRepository.FindAll(x => x.Model == model && x.Department == wlp && x.DatePlan.CompareTo(fromDate) >= 0 && x.DatePlan.CompareTo(toDate) <= 0).ToList();
+                _GocPlanRepository.RemoveMultiple(lst);
+                _GocStandarQtyRepository.Remove(Id);
+                _unitOfWork.Commit();
+            }
         }
 
         public List<ProcActualPlanModel> GetProcActualPlanModel(string month)
@@ -872,7 +948,7 @@ namespace OPERATION_MNS.Application.Implementation
                 DataTable tbl_Err = rs.ReturnDataSet.Tables[1];
                 DataTable tbl_MatertialId = rs.ReturnDataSet.Tables[2];
 
-              
+
 
                 foreach (DataRow row in tbl.Rows)
                 {
@@ -1017,7 +1093,7 @@ namespace OPERATION_MNS.Application.Implementation
 
             result.STDEV = Math.Round(stdev, 1);
 
-            if((operation == "OP50000" || operation == "OP69000") && AvgItem.Count  > 0 && LslItem.Count > 0 && stdev != 0)
+            if ((operation == "OP50000" || operation == "OP69000") && AvgItem.Count > 0 && LslItem.Count > 0 && stdev != 0)
             {
                 result.CPK_bst = Math.Round((AvgItem.Average() - LslItem.Average()) / (3 * stdev), 1);
             }
@@ -1027,7 +1103,7 @@ namespace OPERATION_MNS.Application.Implementation
             {
                 result.CPK_Thickness = Math.Round(Math.MinMagnitude((UslItem.Average() - AvgItem.Average()) / (3 * stdev), (AvgItem.Average() - LslItem.Average()) / (3 * stdev)), 1);
             }
-          
+
             return result;
         }
 
@@ -1063,9 +1139,324 @@ namespace OPERATION_MNS.Application.Implementation
             return _mapper.Map<CTQSettingViewModel>(_CTQ_SettingRepository.FindById(Id));
         }
 
-       public List<string> DateOffLine(string year)
+        public List<string> DateOffLine(string year, string owner, string wlp, string danhmuc = "")
         {
-           return _DateOffLineRepository.FindAll(x => x.ON_OFF == "OFF" && x.WLP == "WLP1" && x.ItemValue.StartsWith(year)).Select(x => x.ItemValue).ToList();
+            if (danhmuc == "")
+            {
+                return _DateOffLineRepository.FindAll(x => x.ON_OFF == "OFF" && x.WLP == wlp && x.OWNER == owner && x.ItemValue.StartsWith(year)).Select(x => x.ItemValue).ToList();
+            }
+            else
+            {
+                return _DateOffLineRepository.FindAll(x => x.ON_OFF == "OFF" && x.WLP == wlp && x.OWNER == owner && x.ItemValue.StartsWith(year) && x.DanhMuc == danhmuc).Select(x => x.ItemValue).ToList();
+            }
+        }
+
+        public ResultDB ImportExcel_Wlp2(string filePath, string param)
+        {
+            ResultDB resultDB = new ResultDB();
+
+            try
+            {
+                if (param == "STANDAR_QTY")
+                {
+                    using (var packet = new ExcelPackage(new System.IO.FileInfo(filePath)))
+                    {
+                        ExcelWorksheet chipSheet = packet.Workbook.Worksheets[1];
+                        List<GOC_STANDAR_QTY> lstChipStandarQty = new List<GOC_STANDAR_QTY>();
+
+                        // import chip
+                        for (int i = chipSheet.Dimension.Start.Row + 2; i <= chipSheet.Dimension.End.Row; i++)
+                        {
+                            if (chipSheet.Cells[i, 2].Text.NullString() == "")
+                            {
+                                break;
+                            }
+
+                            GOC_STANDAR_QTY standarQtyEN = new GOC_STANDAR_QTY()
+                            {
+                                Module = chipSheet.Cells[i, 3].Text.NullString(),
+                                Model = chipSheet.Cells[i, 2].Text.NullString(),// SAP CODE
+                                Material = chipSheet.Cells[i, 1].Text.NullString(),
+                                Division = chipSheet.Cells[i, 5].Text.NullString(),
+                                StandardQtyForMonth = float.TryParse(chipSheet.Cells[i, 4].Value.IfNullIsZero(), out _) ? float.Parse(chipSheet.Cells[i, 4].Value.IfNullIsZero()) : 0,
+                                UserCreated = GetUserId(),
+                                Unit = CommonConstants.CHIP,
+                                Department = CommonConstants.WLP2,
+                                DateModified = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                            };
+                            lstChipStandarQty.Add(standarQtyEN);
+                        }
+
+                        GOC_STANDAR_QTY en;
+                        foreach (var item in lstChipStandarQty)
+                        {
+                            en = _GocStandarQtyRepository.FindSingle(x => x.Model == item.Model && x.Department == CommonConstants.WLP2);
+                            if (en != null)
+                            {
+                                _GocStandarQtyRepository.Remove(en);
+                            }
+                        }
+
+                        _GocStandarQtyRepository.AddRange(lstChipStandarQty);
+                    }
+                }
+                else if (param == "GOC_PLAN")
+                {
+
+                    string beginDate = "";
+                    string EndDate = "";
+                    string danhmuc = "";
+
+                    using (var packet = new ExcelPackage(new System.IO.FileInfo(filePath)))
+                    {
+                        ExcelWorksheet chipSheet = packet.Workbook.Worksheets[1];
+                        List<GOC_PLAN_WLP2> lstChipPlanQty = new List<GOC_PLAN_WLP2>();
+                        Dictionary<string, string> DayNoPlan = new Dictionary<string, string>();
+                        string Sapcode = "";
+                        // import chip
+                        for (int i = chipSheet.Dimension.Start.Row + 3; i <= chipSheet.Dimension.End.Row; i++)
+                        {
+                            if (chipSheet.Cells[i, 2].Text.NullString() == "")
+                            {
+                                break;
+                            }
+
+                            Sapcode = chipSheet.Cells[i, 2].Text.NullString();
+
+                            if (Sapcode.ToLower() == "sample")
+                            {
+                                Sapcode = "Sample";
+                            }
+
+                            if (chipSheet.Cells[i, 1].Text.NullString() == CommonConstants.NHAP_KHO)
+                            {
+                                danhmuc = CommonConstants.NHAP_KHO;
+                            }
+                            else if (chipSheet.Cells[i, 1].Text.NullString() == CommonConstants.SAN_XUAT)
+                            {
+                                danhmuc = CommonConstants.SAN_XUAT;
+                            }
+                            else if (chipSheet.Cells[i, 1].Text.NullString() == CommonConstants.XUAT_SMT)
+                            {
+                                danhmuc = CommonConstants.XUAT_SMT;
+                            }
+
+                            if (danhmuc.NullString() == "")
+                            {
+                                break;
+                            }
+
+                            for (int k = 7; k <= 60; k++)
+                            {
+                                if (!DateTime.TryParse(chipSheet.Cells[3, 7].Text.NullString(), out DateTime date) || !chipSheet.Cells[3, 7].Text.NullString().Contains("-") || chipSheet.Cells[3, 7].Text.NullString().Contains("2021"))
+                                {
+                                    resultDB.ReturnInt = -1;
+                                    resultDB.ReturnString = "Format ngày tháng theo định dạng yyyy-MM-dd và ngày tháng phải >= 2023";
+                                    return resultDB;
+                                }
+
+                                if (!DateTime.TryParse(chipSheet.Cells[3, k].Text.NullString(), out _))
+                                {
+                                    break;
+                                }
+
+                                if (k == 7)
+                                {
+                                    beginDate = DateTime.Parse(chipSheet.Cells[3, k].Text.NullString()).ToString("yyyy-MM-dd");
+                                    EndDate = DateTime.Parse(beginDate).AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd");
+                                }
+
+                                GOC_PLAN_WLP2 standarQtyEN = new GOC_PLAN_WLP2()
+                                {
+                                    DanhMuc = danhmuc,
+                                    Model = Sapcode, // Sap code
+                                    Module = chipSheet.Cells[i, 3].Text.NullString(),
+                                    Type = chipSheet.Cells[i, 4].Text.NullString(),
+                                    Division = chipSheet.Cells[i, 5].Text.NullString(),
+
+                                    UserCreated = GetUserId(),
+                                    Unit = CommonConstants.CHIP,
+                                    Department = GetDepartment(),
+                                    QuantityPlan = float.TryParse(chipSheet.Cells[i, k].Value.IfNullIsZero(), out _) ? float.Parse(chipSheet.Cells[i, k].Value.IfNullIsZero()) : 0,
+                                    DatePlan = DateTime.Parse(chipSheet.Cells[3, k].Text.NullString()).ToString("yyyy-MM-dd"),
+                                    DateModified = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                                };
+
+                                if (standarQtyEN.QuantityPlan == 0 || standarQtyEN.Model.ToLower() == "sample")
+                                {
+                                    if (!DayNoPlan.ContainsKey(standarQtyEN.DatePlan))
+                                    {
+                                        DayNoPlan.Add(standarQtyEN.DatePlan, "Y");
+                                    }
+                                }
+                                else if (standarQtyEN.QuantityPlan > 0)
+                                {
+                                    if (DayNoPlan.ContainsKey(standarQtyEN.DatePlan) && DayNoPlan[standarQtyEN.DatePlan] == "Y" && standarQtyEN.Model.ToLower() != "sample")
+                                    {
+                                        DayNoPlan[standarQtyEN.DatePlan] = "N";
+                                    }
+                                }
+
+                                lstChipPlanQty.Add(standarQtyEN);
+                            }
+                        }
+
+                        // xoa item đã có sẵn, add item mới
+                        GOC_PLAN_WLP2 en;
+                        foreach (var item in lstChipPlanQty.ToList())
+                        {
+                            en = _GocPlanWLP2Repository.FindSingle(x => x.Model == item.Model && x.DatePlan == item.DatePlan && x.Unit == item.Unit && x.DanhMuc == item.DanhMuc);
+                            if (en != null)
+                            {
+                                en.Module = item.Module;
+                                en.Model = item.Model;
+                                en.Material = item.Material;
+                                en.Division = item.Division;
+                                en.StandardQtyForMonth = item.StandardQtyForMonth;
+                                en.UserCreated = item.UserCreated;
+                                en.Unit = item.Unit;
+                                en.Department = item.Department;
+                                en.QuantityPlan = item.QuantityPlan;
+                                en.DatePlan = item.DatePlan;
+                                en.DateModified = item.DateModified;
+                                en.Type = item.Type;
+                                en.DanhMuc = item.DanhMuc;
+
+                                _GocPlanWLP2Repository.Update(en);
+
+                                lstChipPlanQty.Remove(item);
+                            }
+                        }
+
+                        if (lstChipPlanQty.Count > 0)
+                        {
+                            _GocPlanWLP2Repository.AddRange(lstChipPlanQty);
+                        }
+
+                        // lưu ngày không kế hoạch 
+                        DATE_OFF_LINE dateOff;
+                        List<DATE_OFF_LINE> lstDateOff = new List<DATE_OFF_LINE>();
+                        List<string> dayOff = new List<string>();
+                        foreach (KeyValuePair<string, string> item in DayNoPlan)
+                        {
+                            if (item.Value == "Y")
+                            {
+                                dateOff = new DATE_OFF_LINE()
+                                {
+                                    ItemValue = item.Key,
+                                    ON_OFF = CommonConstants.OFF,
+                                    WLP = CommonConstants.WLP2,
+                                    UserCreated = GetUserId(),
+                                    OWNER = CommonConstants.WLP2,
+                                    DanhMuc = danhmuc
+                                };
+
+                                lstDateOff.Add(dateOff);
+                            }
+                        }
+
+                        var lstOff = _DateOffLineRepository.FindAll(x => x.ItemValue.CompareTo(beginDate) >= 0 && x.ItemValue.CompareTo(EndDate) <= 0 && x.OWNER.Contains("WLP2") && x.DanhMuc == danhmuc).ToList();
+                        _DateOffLineRepository.RemoveMultiple(lstOff);
+                        _DateOffLineRepository.AddRange(lstDateOff);
+
+                        //dayOff = lstDateOff.Select(x => x.ItemValue.Replace("-", "")).ToList();
+
+                        ////TODO: THÊM DK CHO wlp = WLP1,WLP2 nếu k cùng date off
+                        //var leadTimes = _LeadTimeRepository.FindAll(x => x.WorkDate.CompareTo(beginDate.Replace("-", "")) >= 0 && x.WorkDate.CompareTo(EndDate.Replace("-", "")) <= 0 && x.WLP.Contains("WLP"));
+
+                        //foreach (var item in leadTimes)
+                        //{
+                        //    if (dayOff.Contains(item.WorkDate))
+                        //    {
+                        //        item.Ox = "X";
+                        //    }
+                        //    else
+                        //    {
+                        //        item.Ox = "";
+                        //    }
+
+                        //    _LeadTimeRepository.Update(item);
+                        //}
+
+                        Save();
+
+                        Dictionary<string, string> dic = new Dictionary<string, string>();
+                        dic.Add("A_BEGIN_MONTH", beginDate);
+
+                        // LẤY LẠI SẢN LƯỢNG NHẬP TỪ WLP1 THỰC TẾ trong thang
+                        var rs = _GocPlanWLP2Repository.ExecProceduce2("GET_QTY_ACTUAL_CHIP_BY_DAY_MANUAL_WLP2", dic);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                resultDB.ReturnInt = -1;
+                resultDB.ReturnString = ex.Message;
+                return resultDB;
+            }
+
+            resultDB.ReturnInt = 0;
+            return resultDB;
+        }
+
+        public void DeleteGocModelWlp2(string model, string fromDate, string toDate, string danhmuc)
+        {
+            var lst = _GocPlanWLP2Repository.FindAll(x => x.Model == model && x.DanhMuc == danhmuc && x.DatePlan.CompareTo(fromDate) >= 0 && x.DatePlan.CompareTo(toDate) <= 0).ToList();
+            _GocPlanWLP2Repository.RemoveMultiple(lst);
+            _unitOfWork.Commit();
+        }
+
+        public List<ProcActualPlanModel> GetProcActualPlanWlp2Model(string month, string danhmuc)
+        {
+            int dayOfMonth = DateTime.Parse(month + "-01").AddMonths(1).AddDays(-1).Day;
+
+            List<ProcActualPlanModel> result = new List<ProcActualPlanModel>();
+            var lstGoc = _GocPlanWLP2Repository.FindAll(x => x.DatePlan.Contains(month) && x.DanhMuc == danhmuc && x.Unit == CommonConstants.CHIP);
+
+            // CHIP
+            var lstGroupChip = (from p in lstGoc.AsEnumerable()
+                                group p by new
+                                {
+                                    Day = p.DatePlan
+                                } into g
+                                select new QuantityByDay
+                                {
+                                    DatePlan = g.Key.Day.Split("-")[2],
+                                    QuantityPlan = g.Sum(x => x.QuantityPlan),
+                                    QuantityActual = g.Sum(x => x.QuantityActual),
+                                    QuantityGap = g.Sum(x => x.QuantityActual) - g.Sum(x => x.QuantityPlan),
+                                }).OrderBy(x => int.Parse(x.DatePlan)).ToList();
+
+            var lstChips = UpdateDataLost(lstGroupChip, dayOfMonth);
+
+            if (lstChips.Count > 0)
+            {
+                for (int i = 1; i <= dayOfMonth; i++)
+                {
+                    for (int j = 1; j <= i; j++)
+                    {
+                        lstChips[i - 1].QtyPlan_Ytd += lstChips[j - 1].QuantityPlan;
+                        lstChips[i - 1].QtyActual_Ytd += lstChips[j - 1].QuantityActual;
+                        lstChips[i - 1].QtyGap_Ytd += lstChips[j - 1].QuantityGap;
+                    }
+                }
+
+                float totalYtdPlan = lstChips.Last().QtyPlan_Ytd;
+                foreach (var item in lstChips)
+                {
+                    item.Qty_Percen_Ytd = Math.Round((item.QtyActual_Ytd / totalYtdPlan) * 100, 1);
+                }
+            }
+
+            ProcActualPlanModel proc = new ProcActualPlanModel();
+            proc.QuantityByDays = lstChips;
+            proc.Month = month;
+            proc.DayOfMonth = dayOfMonth;
+            proc.CFAB = CommonConstants.CHIP;
+            proc.DanhMuc = danhmuc;
+            result.Add(proc);
+
+            return result;
         }
     }
 }

@@ -50,7 +50,8 @@
 
                $("#gridContainer").dxDataGrid({
                    dataSource: store,
-                   reshapeOnPush: true
+                   //reshapeOnPush: true
+                   visible: true
                });
 
                 connection.on("updateInventory", function (dataObj) {
@@ -147,6 +148,7 @@
     .ID("gridContainer")
     .DataSourceOptions(o => o.ReshapeOnPush(true))
     .ShowBorders(true)
+    .Visible(false)
     .RepaintChangesOnly(true)
     .HighlightChanges(true)
     .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))

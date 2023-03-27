@@ -40,6 +40,12 @@ namespace OPERATION_MNS.Application.ViewModels
         [StringLength(50)]
         public string Unit { get; set; } // chip , wafe
 
+        public string DanhMuc { get; set; } // Nhập kho, sản xuất, xuất SMT
+
+        [StringLength(50)]
+        public string Type { get; set; }
+
+
         [StringLength(50)]
         public string DateCreated { get; set; }
 

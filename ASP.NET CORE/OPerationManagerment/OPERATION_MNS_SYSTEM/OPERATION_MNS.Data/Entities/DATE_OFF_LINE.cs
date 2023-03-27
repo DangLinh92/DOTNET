@@ -16,11 +16,13 @@ namespace OPERATION_MNS.Data.Entities
 
         }
 
-        public DATE_OFF_LINE(string value,string onOff,string wlp)
+        public DATE_OFF_LINE(string value,string onOff,string wlp,string danhmuc,string owner)
         {
             ItemValue = value;
             ON_OFF = onOff;
             WLP = wlp;
+            DanhMuc = danhmuc;
+            OWNER = owner;
         }
 
         [StringLength(50)]
@@ -31,6 +33,12 @@ namespace OPERATION_MNS.Data.Entities
 
         [StringLength(50)]
         public string WLP { get; set; }
+
+        [StringLength(50)]
+        public string OWNER { get; set; }
+
+        [StringLength(50)]
+        public string DanhMuc { get; set; }
 
         [StringLength(50)]
         public string DateCreated { get; set; }

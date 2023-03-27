@@ -19,7 +19,6 @@ namespace HRMNS.Data.Entities
 
         public DM_DIEUCHINH_CHAMCONG()
         {
-            DC_CHAM_CONG = new HashSet<DC_CHAM_CONG>();
         }
 
         [StringLength(250)]
@@ -36,7 +35,5 @@ namespace HRMNS.Data.Entities
 
         [StringLength(50)]
         public string UserModified { get; set; }
-
-        public virtual ICollection<DC_CHAM_CONG> DC_CHAM_CONG { get; set; }
     }
 }

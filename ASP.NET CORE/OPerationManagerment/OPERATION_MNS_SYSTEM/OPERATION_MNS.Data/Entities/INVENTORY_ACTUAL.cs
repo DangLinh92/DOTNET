@@ -89,6 +89,9 @@ namespace OPERATION_MNS.Data.Entities
         public float Wafer_Probe_IR { get; set; }
         public float Shipping_Wait { get; set; }
         public float Post_Operation_Shipping { get; set; }
+        public float Shipping { get; set; }
+        public float Wait { get; set; }
+        public float St_Packing_Label { get; set; }
 
         [StringLength(50)]
         public string Unit { get; set; } // chip , wafe
@@ -110,5 +113,8 @@ namespace OPERATION_MNS.Data.Entities
 
         [StringLength(50)]
         public string Material_SAP_CODE { get; set; }
+
+        [StringLength(50)]
+        public string Material_SAP_CODE_WLP2 { get; set; }
     }
 }

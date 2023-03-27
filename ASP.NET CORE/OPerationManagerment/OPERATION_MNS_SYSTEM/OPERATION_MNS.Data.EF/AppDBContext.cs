@@ -42,6 +42,14 @@ namespace OPERATION_MNS.Data.EF
         public virtual DbSet<CTQ_SETTING> CTQ_SETTING { get; set; }
         public virtual DbSet<CTQ_EMAIL_RECEIV> CTQ_EMAIL_RECEIV { get; set; }
         public virtual DbSet<POST_OPERATION_SHIPPING> POST_OPERATION_SHIPPING { get; set; }
+        public virtual DbSet<VIEW_WIP_POST_WLP> VIEW_WIP_POST_WLP { get; set; }
+        public virtual DbSet<SMT_RETURN_WLP2> SMT_RETURN_WLP2 { get; set; }
+        public virtual DbSet<STAY_LOT_LIST_WLP2> STAY_LOT_LIST_WLP2 { get; set; }
+        public virtual DbSet<STAY_LOT_LIST_HISTORY_WLP2> STAY_LOT_LIST_HISTORY_WLP2 { get; set; }
+        public virtual DbSet<BOPHAN_DE_NGHI_XUAT_NLIEU> BOPHAN_DE_NGHI_XUAT_NLIEU { get; set; }
+        public virtual DbSet<OUTGOING_RECEIPT_WLP2> OUTGOING_RECEIPT_WLP2 { get; set; }
+        public virtual DbSet<KHUNG_THOI_GIAN_XUAT_HANG_WLP2> KHUNG_THOI_GIAN_XUAT_HANG_WLP2 { get; set; }
+        public virtual DbSet<STAY_LOT_LIST_PRIORY_WLP2> STAY_LOT_LIST_PRIORY_WLP2 { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -71,6 +79,15 @@ namespace OPERATION_MNS.Data.EF
             builder.AddConfiguration(new CTQSettingConfiguration());
             builder.AddConfiguration(new CtqEmailConfiguration());
             builder.AddConfiguration(new PostOperationShippingConfiguration());
+            builder.AddConfiguration(new GocPlanWLP2Configuration());
+            builder.AddConfiguration(new ViewWipPostConfiguration());
+            builder.AddConfiguration(new SmtReturnConfiguration());
+            builder.AddConfiguration(new StayLotListWlp2Configuration());
+            builder.AddConfiguration(new StayLotListHistoryWlp2Configuration());
+            builder.AddConfiguration(new BoPhanDeNghiXuatConfiguration());
+            builder.AddConfiguration(new OutGoingReceipConfiguration());
+            builder.AddConfiguration(new KhungThoiGianXuatConfiguration());
+            builder.AddConfiguration(new StayLotListPrioryConfiguration());
         }
 
         public override int SaveChanges()

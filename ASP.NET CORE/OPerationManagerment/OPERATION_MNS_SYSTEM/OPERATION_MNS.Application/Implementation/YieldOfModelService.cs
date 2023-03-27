@@ -5,6 +5,7 @@ using OPERATION_MNS.Application.Interfaces;
 using OPERATION_MNS.Application.ViewModels;
 using OPERATION_MNS.Data.Entities;
 using OPERATION_MNS.Infrastructure.Interfaces;
+using OPERATION_MNS.Utilities.Constants;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,7 +74,7 @@ namespace OPERATION_MNS.Application.Implementation
 
         public List<string> GetAllModel()
         {
-            var lst = _GocStandQtyResponsitory.FindAll().ToList().Select(x => x.Model).ToList();
+            var lst = _GocStandQtyResponsitory.FindAll(x=>x.Department == CommonConstants.WLP1).ToList().Select(x => x.Model).ToList();
             return lst;
         }
 

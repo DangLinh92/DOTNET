@@ -281,6 +281,70 @@ namespace OPERATION_MNS.Data.EF.Migrations
                     b.ToTable("APP_USER");
                 });
 
+            modelBuilder.Entity("OPERATION_MNS.Data.Entities.BOPHAN_DE_NGHI_XUAT_NLIEU", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("BoPhanDeNghi")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<float>("DinhMuc")
+                        .HasColumnType("real");
+
+                    b.Property<string>("DonVi")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("LuongThucTe")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Module")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("NgayDeNghi")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("SanPham")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("SapCode")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<float>("SoLuongYeuCau")
+                        .HasColumnType("real");
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BOPHAN_DE_NGHI_XUAT_NLIEU");
+                });
+
             modelBuilder.Entity("OPERATION_MNS.Data.Entities.CTQ_EMAIL_RECEIV", b =>
                 {
                     b.Property<string>("Id")
@@ -362,6 +426,10 @@ namespace OPERATION_MNS.Data.EF.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("DanhMuc")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<string>("DateCreated")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
@@ -377,6 +445,10 @@ namespace OPERATION_MNS.Data.EF.Migrations
                     b.Property<string>("ON_OFF")
                         .HasColumnType("nvarchar(10)")
                         .HasMaxLength(10);
+
+                    b.Property<string>("OWNER")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("UserCreated")
                         .HasColumnType("nvarchar(50)")
@@ -585,6 +657,84 @@ namespace OPERATION_MNS.Data.EF.Migrations
                     b.ToTable("GOC_PLAN");
                 });
 
+            modelBuilder.Entity("OPERATION_MNS.Data.Entities.GOC_PLAN_WLP2", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("DanhMuc")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DatePlan")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Department")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Division")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Material")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Model")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Module")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("MonthPlan")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("QuantityActual")
+                        .HasColumnType("real");
+
+                    b.Property<float>("QuantityGap")
+                        .HasColumnType("real");
+
+                    b.Property<float>("QuantityPlan")
+                        .HasColumnType("real");
+
+                    b.Property<float>("StandardQtyForMonth")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Unit")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GOC_PLAN_WLP2");
+                });
+
             modelBuilder.Entity("OPERATION_MNS.Data.Entities.GOC_STANDAR_QTY", b =>
                 {
                     b.Property<int>("Id")
@@ -702,6 +852,10 @@ namespace OPERATION_MNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
+                    b.Property<string>("Material_SAP_CODE_WLP2")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<string>("Model")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
@@ -806,7 +960,13 @@ namespace OPERATION_MNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
+                    b.Property<float>("Shipping")
+                        .HasColumnType("real");
+
                     b.Property<float>("Shipping_Wait")
+                        .HasColumnType("real");
+
+                    b.Property<float>("St_Packing_Label")
                         .HasColumnType("real");
 
                     b.Property<float>("St_Plate_Visual_Inspection")
@@ -837,6 +997,9 @@ namespace OPERATION_MNS.Data.EF.Migrations
                         .HasColumnType("real");
 
                     b.Property<float>("Wafer_Sorting")
+                        .HasColumnType("real");
+
+                    b.Property<float>("Wait")
                         .HasColumnType("real");
 
                     b.Property<float>("WaitMarkingIDCHK")
@@ -875,6 +1038,42 @@ namespace OPERATION_MNS.Data.EF.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("INVENTORY_ACTUAL");
+                });
+
+            modelBuilder.Entity("OPERATION_MNS.Data.Entities.KHUNG_THOI_GIAN_XUAT_HANG_WLP2", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("ThoiGianBatDau")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("ThoiGianKetThuc")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("KHUNG_THOI_GIAN_XUAT_HANG_WLP2");
                 });
 
             modelBuilder.Entity("OPERATION_MNS.Data.Entities.LANGUAGE", b =>
@@ -959,6 +1158,11 @@ namespace OPERATION_MNS.Data.EF.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Department")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<string>("Material")
                         .IsRequired()
                         .HasColumnType("nvarchar(50)")
@@ -972,6 +1176,135 @@ namespace OPERATION_MNS.Data.EF.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("MATERIAL_TO_SAP");
+                });
+
+            modelBuilder.Entity("OPERATION_MNS.Data.Entities.OUTGOING_RECEIPT_WLP2", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("LotId")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<float>("LuongDuKien_1")
+                        .HasColumnType("real");
+
+                    b.Property<float>("LuongDuKien_2")
+                        .HasColumnType("real");
+
+                    b.Property<float>("LuongDuKien_3")
+                        .HasColumnType("real");
+
+                    b.Property<float>("LuongDuKien_4")
+                        .HasColumnType("real");
+
+                    b.Property<float>("LuongDuKien_5")
+                        .HasColumnType("real");
+
+                    b.Property<float>("LuongThucTe_1")
+                        .HasColumnType("real");
+
+                    b.Property<float>("LuongThucTe_2")
+                        .HasColumnType("real");
+
+                    b.Property<float>("LuongThucTe_3")
+                        .HasColumnType("real");
+
+                    b.Property<float>("LuongThucTe_4")
+                        .HasColumnType("real");
+
+                    b.Property<float>("LuongThucTe_5")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Module")
+                        .HasColumnType("nvarchar(150)")
+                        .HasMaxLength(150);
+
+                    b.Property<string>("NgayXuat")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("NguoiGiao")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("NguoiNhan")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("SapCode")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<float>("SoLuongYeuCau")
+                        .HasColumnType("real");
+
+                    b.Property<string>("ThoiGianDuKien_1")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("ThoiGianDuKien_2")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("ThoiGianDuKien_3")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("ThoiGianDuKien_4")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("ThoiGianDuKien_5")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("ThoiGianThucTe_1")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("ThoiGianThucTe_2")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("ThoiGianThucTe_3")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("ThoiGianThucTe_4")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("ThoiGianThucTe_5")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OUTGOING_RECEIPT_WLP2");
                 });
 
             modelBuilder.Entity("OPERATION_MNS.Data.Entities.PERMISSION", b =>
@@ -1160,6 +1493,41 @@ namespace OPERATION_MNS.Data.EF.Migrations
                     b.ToTable("SETTING_ITEMS");
                 });
 
+            modelBuilder.Entity("OPERATION_MNS.Data.Entities.SMT_RETURN_WLP2", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("SapCode")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<int>("SmtReturn")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SMT_RETURN_WLP2");
+                });
+
             modelBuilder.Entity("OPERATION_MNS.Data.Entities.STAY_LOT_LIST", b =>
                 {
                     b.Property<int>("Id")
@@ -1341,6 +1709,265 @@ namespace OPERATION_MNS.Data.EF.Migrations
                     b.HasKey("LotId", "History_seq");
 
                     b.ToTable("STAY_LOT_LIST_HISTORY");
+                });
+
+            modelBuilder.Entity("OPERATION_MNS.Data.Entities.STAY_LOT_LIST_HISTORY_WLP2", b =>
+                {
+                    b.Property<string>("LotId")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<double>("History_seq")
+                        .HasColumnType("float");
+
+                    b.Property<string>("CassetteId")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<decimal>("ChipQty")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("ERPProductOrder")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("FABLotID")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("History_delete_flag")
+                        .HasColumnType("nvarchar(1)")
+                        .HasMaxLength(1);
+
+                    b.Property<string>("HoldCode")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("HoldComment")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("HoldTime")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("HoldUserCode")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("HoldUserName")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("LotCategory")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Material")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("NguoiXuLy")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("OperationID")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("OperationName")
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.Property<string>("PhanLoaiLoi")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("PhuongAnXuLy")
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.Property<string>("ReleaseCode")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("ReleaseComment")
+                        .HasColumnType("nvarchar(2000)")
+                        .HasMaxLength(2000);
+
+                    b.Property<string>("ReleaseFlag")
+                        .HasColumnType("nvarchar(1)")
+                        .HasMaxLength(1);
+
+                    b.Property<string>("ReleaseName")
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.Property<string>("ReleaseTime")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("ReleaseUser")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<decimal>("StayDay")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("TenLoi")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("LotId", "History_seq");
+
+                    b.ToTable("STAY_LOT_LIST_HISTORY_WLP2");
+                });
+
+            modelBuilder.Entity("OPERATION_MNS.Data.Entities.STAY_LOT_LIST_PRIORY_WLP2", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CassetteID")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<float>("ChipQty")
+                        .HasColumnType("real");
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("ERPProductionOrder")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("LotID")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Material")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<int>("Number_Priory")
+                        .HasColumnType("int");
+
+                    b.Property<string>("OperationId")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("OperationName")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<bool>("Priory")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SapCode")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<float>("StayDay")
+                        .HasColumnType("real");
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("STAY_LOT_LIST_PRIORY_WLP2");
+                });
+
+            modelBuilder.Entity("OPERATION_MNS.Data.Entities.STAY_LOT_LIST_WLP2", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CassetteId")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("History_delete_flag")
+                        .HasColumnType("nvarchar(1)")
+                        .HasMaxLength(1);
+
+                    b.Property<double>("History_seq")
+                        .HasColumnType("float");
+
+                    b.Property<string>("LotId")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("NguoiXuLy")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("PhanLoaiLoi")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("PhuongAnXuLy")
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.Property<string>("ReleaseFlag")
+                        .HasColumnType("nvarchar(1)")
+                        .HasMaxLength(1);
+
+                    b.Property<string>("TenLoi")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("STAY_LOT_LIST_WLP2");
                 });
 
             modelBuilder.Entity("OPERATION_MNS.Data.Entities.VIEW_CONTROL_CHART_MODEL", b =>
@@ -1533,6 +2160,148 @@ namespace OPERATION_MNS.Data.EF.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("VIEW_CONTROL_CHART_MODEL");
+                });
+
+            modelBuilder.Entity("OPERATION_MNS.Data.Entities.VIEW_WIP_POST_WLP", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("BackGrinding")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CassetteInputStock")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Category")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<int>("ChipVisualInspection")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<int>("DeTaping")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Hold_Flag")
+                        .HasColumnType("nvarchar(5)")
+                        .HasMaxLength(5);
+
+                    b.Property<int>("InputCheck")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Marking")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Material")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Material_SAP_CODE")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Model")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<int>("NgoaiQuanSauBackGrinding")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NgoaiQuanSauLamination")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NgoaiQuanSauMDS")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NgoaiQuanSauMarking")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OQC")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OQC_WaferInspection")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OneSTPacking")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OneStPackingLabel")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PostOperationInputWait")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ReelCounter")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ReelOperationInput")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ReelOven")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ReelPacking")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ReelVisualInspection")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Series")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<int>("Shipping")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TapeDelamination")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TapeLamination")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Total")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UVInspection")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<int>("WaferCarrierPacking")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WaferDicing")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WaferOven")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WaferShipping")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Wait")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("VIEW_WIP_POST_WLP");
                 });
 
             modelBuilder.Entity("OPERATION_MNS.Data.Entities.YIELD_OF_MODEL", b =>

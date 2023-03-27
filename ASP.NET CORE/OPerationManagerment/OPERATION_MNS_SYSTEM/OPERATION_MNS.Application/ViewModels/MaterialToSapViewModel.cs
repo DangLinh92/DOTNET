@@ -10,5 +10,6 @@ namespace OPERATION_MNS.Application.ViewModels
         public int Id { get; set; }
         public string Material { get; set; }
         public string SAP_Code { get; set; }
+        public string Department { get; set; }
     }
 }

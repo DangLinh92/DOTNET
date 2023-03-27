@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using OPERATION_MNS.Application.ViewModels;
 using OPERATION_MNS.Application.ViewModels.System;
+using OPERATION_MNS.Application.ViewModels.Wlp2;
 using OPERATION_MNS.Data.Entities;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,11 @@ namespace OPERATION_MNS.Application.AutoMapper
             CreateMap<CTQ_SETTING, CTQSettingViewModel>();
             CreateMap<CTQ_EMAIL_RECEIV, CTQEmailReceivViewModel>();
             CreateMap<POST_OPERATION_SHIPPING, PostOpeationShippingViewModel>();
+
+            CreateMap<GOC_PLAN_WLP2, GocPlanViewModel>();
+            CreateMap<SMT_RETURN_WLP2, SmtReturnWlp2ViewModel>();
+            CreateMap<BOPHAN_DE_NGHI_XUAT_NLIEU, BoPhanDeNghiXuatNVLViewModel>();
+            CreateMap<STAY_LOT_LIST_PRIORY_WLP2, Stay_lot_list_priory_wlp2ViewModel>();
         }
     }
 }

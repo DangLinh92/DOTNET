@@ -1,0 +1,719 @@
+﻿@using Microsoft.AspNetCore.Http
+@using OPERATION_MNS.Application.ViewModels
+@{
+    ViewData["Title"] = "WLP2 Daily Plan";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <style>
+        #gridContainer span.current-value {
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        #gridContainer span.diff {
+            width: 50px;
+            display: inline-block;
+        }
+
+        #gridContainer .inc {
+            color: #2ab71b;
+        }
+
+        #gridContainer .dec {
+            color: #f00;
+        }
+
+            #gridContainer .inc .arrow,
+            #gridContainer .dec .arrow {
+                display: inline-block;
+                height: 10px;
+                width: 10px;
+                background-repeat: no-repeat;
+                background-size: 10px 10px;
+            }
+
+        #gridContainer .inc .arrow {
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAADKSURBVHjaYtTaLs1ABEiG0nPRJa56PEHhsxBhmCUQT4OyrwHxcXyKmQgYJgHE64CYDYrXQcXIMhCbAcgWkGzgNKh38QUB0QamIUUErkhKI9ZAGyCeTERkTYaqxWsgKA2txhdG6GGsvUNGGpeBRMUiGhCFGsqGzUBQQJsxkA5AemaiG5hDIBIIgQSgK0FmMDACs549kN5FZLjhA7+A2A2U9YSAOBeLAk4gnoBDczoOcSFGPIUDPxB/wCHHiKtwYGKgMhg1cBAaCBBgAJTUIL3ToPZfAAAAAElFTkSuQmCC');
+        }
+
+        #gridContainer .dec .arrow {
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAADJSURBVHjaYvzPgBfgkhYA4o8QFahKmBioDEYNHIQGsgBxIBCLkqgvAYi/g1mMjMjir0EJzR6If/6HpChKMMgMe3DKBeIcKhiY8x/MYoDj+RQYNgdkGLqBbEB8kgzDToL1YjEQhKWB+BUJhj0H64Eahs1AELYhMpJ+gtUiGYbLQBBOI8LANLBaIg1kAAc0vkiAqSPBQFAkHcNi2DGoHMkGgrAENOCRI0ECRQ2JBoKwJTQCfkLZDPgMZPxPXN5NhtJzMSsJVBMAAgwAyWSY2svfmrwAAAAASUVORK5CYII=');
+        }
+
+        #Yield_Id {
+            margin-top: 15px;
+        }
+
+        #begindate-date {
+            float: left;
+            margin-right: 10px;
+        }
+
+        #slChipWafer {
+            float: left;
+            margin-right: 10px;
+            margin-top: 6px;
+        }
+
+        .dx-cell-focus-disabled[role="gridcell"] {
+            background-color: #004e89 !important;
+            color: #ffff !important;
+        }
+
+        .styleHeader {
+            color: #FEF5AC;
+            font-weight: bold;
+            border-right-width: medium !important;
+            /* border-right-color: #FEF5AC !important;*/
+        }
+
+        .zeroHide {
+            display: none;
+        }
+
+        .stylePriory1 {
+            background-color: #FF5D5D !important;
+            color:black !important;
+        }
+
+        .stylePriory2 {
+            background-color: #FF8C8C !important;
+        }
+
+        .stylePriory3 {
+            background-color: #FFC3C3 !important;
+        }
+
+        .stylePriory4 {
+            background-color: #FFE3A9 !important;
+        }
+
+        .stylePriory5 {
+            background-color: #FAF0D7 !important;
+        }
+
+        .stylePriory6 {
+            background-color: #BDE6F1 !important;
+        }
+
+        .stylePriory7 {
+            background-color: #CCF3EE !important;
+        }
+
+        .stylePriory8 {
+            background-color: #E8F9FD !important;
+        }
+
+        .stylePriory9 {
+            background-color: #F9F3EE !important;
+        }
+
+        .stylePriory10 {
+            background-color: #FFA500 !important;
+        }
+    </style>
+
+}
+
+@section Scripts
+{
+    <script src="~/js/dataTables.fixedColumns.min.js"></script>
+    <script src="~/js/dataTables.fixedHeader.min.js"></script>
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+    <script>
+
+     var connection = new signalR.HubConnectionBuilder()
+            .withUrl("@Url.Content("~/liveUpdateSignalRHub")")
+            .configureLogging(signalR.LogLevel.Information)
+        .build();
+
+    $(function () {
+
+        connection.start()
+            .then(function () {
+
+                var store = new DevExpress.data.CustomStore({
+                    onLoading: function (loadOptions) {
+                        hrms.run_waitMe($('#gridContainer'));
+                    },
+                    onLoaded: function (result) {
+                        hrms.hide_waitMe($('#gridContainer'));
+                    },
+                    load: function () {
+                        return connection.invoke("getWlp2DailyPlans");
+                    },
+                    key: "sapCode"
+                });
+
+               $("#gridContainer").dxDataGrid({
+                   dataSource: store,
+                   reshapeOnPush: true,
+                   visible: true
+               });
+
+                connection.on("getDailyWLP2", function (dataObj) {
+
+                    store.push([{ type: "update", key: dataObj.sapCode, data: dataObj }]);
+
+                    if (dataObj.isLoadPage != null && dataObj.isLoadPage != '') {
+
+                        let isLoadPage = localStorage.getItem('isLoadPageKey');
+
+                        if (isLoadPage != dataObj.isLoadPage) {
+
+                            localStorage.setItem('isLoadPageKey', dataObj.isLoadPage);
+                            location.reload();
+                        }
+                    }
+                });
+            });
+    });
+
+    function exporting(e) {
+        var workbook = new ExcelJS.Workbook();
+        var worksheet = workbook.addWorksheet('Daily Plan');
+
+        DevExpress.excelExporter.exportDataGrid({
+            component: e.component,
+            worksheet: worksheet,
+            autoFilterEnabled: true
+        }).then(function () {
+            workbook.xlsx.writeBuffer().then(function (buffer) {
+                saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'DailyPlanWLP2.xlsx');
+            });
+        });
+        e.cancel = true;
+        };
+
+        function checkBox_OPView_valueChanged(data) {
+
+            $("#gridContainer").dxDataGrid("columnOption", "toTalWip", "visible", !data.value);
+            $("#gridContainer").dxDataGrid("columnOption", "choXuatHang", "visible", !data.value);
+            $("#gridContainer").dxDataGrid("columnOption", "holdNVL", "visible", !data.value);
+            $("#gridContainer").dxDataGrid("columnOption", "nguyenLieuOKSX", "visible", !data.value);
+            $("#gridContainer").dxDataGrid("columnOption", "khsxTheoNgay", "visible", !data.value);
+            $("#gridContainer").dxDataGrid("columnOption", "soLuongConLaiSauKHSX", "visible", !data.value);
+      };
+
+    function selectedDate_changed(data) {
+
+        let _beginDate = formatDate(data.value);
+        hrms.run_waitMe($('#gridContainer'));
+        $.ajax({
+            url: '/OpeationMns/DailyPlan/SetBeginDateWLP2',
+            type: 'POST',
+            data: {
+                beginDate: _beginDate
+            },
+            success: function (response) {
+                hrms.hide_waitMe($('#gridContainer'));
+                location.reload();
+            },
+            error: function (status) {
+                hrms.notify(status.responseText, 'error', 'alert', function () { });
+                hrms.hide_waitMe($('#gridContainer'));
+            }
+        });
+        };
+
+    function formatDate(sDate) {
+
+        if (sDate == '') {
+            var date = new Date();
+        }
+        else
+        {
+            var date = new Date(sDate);
+        }
+
+        // Get year, month, and day part from the date
+        var year = date.toLocaleString("default", { year: "numeric" });
+        var month = date.toLocaleString("default", { month: "2-digit" });
+        var day = date.toLocaleString("default", { day: "2-digit" });
+
+        // Generate yyyy-mm-dd date string
+        var formattedDate = year + '-' + month + '-' + day;
+        return formattedDate;
+        }
+
+        var arrOperationData = ["backGrinding", "waferOven", "dicing", "chipInspection", "packing", "reelInspection","qC_Pass"];
+
+        var arrOperation_ID = ["OPT2000", "OP01100", "OP02000", "OP05000-OP04500-OP04000", "OP06000", "OP06500-OP07000","OP10000-OP09000-OP11000" ];
+
+
+        function OnCellClick(e) {
+            //e.cellElement.style.backgroundColor = "lightgreen";
+            // e.cellElement.css("background-color", "red")
+
+            let operationNameIndex = arrOperationData.indexOf(e.column.dataField);
+
+            if (operationNameIndex < 0) {
+                return;
+            }
+
+            let operationID = arrOperation_ID[operationNameIndex];
+
+            $.ajax({
+                url: '/OpeationMns/DailyPlan/GetstayLotInfoWlp2',
+                type: 'POST',
+                data: {
+                    model: e.key,
+                    operation: operationID
+                },
+                beforeSend: function () {
+                    hrms.run_waitMe($('#grid-container-detail'));
+                },
+                success: function (response) {
+                    hrms.hide_waitMe($('#grid-container-detail'));
+
+                    $("#grid-container-detail").dxDataGrid({
+                        dataSource: response
+                    });
+                },
+                error: function (status) {
+                    hrms.notify(status.responseText, 'error', 'alert', function () { });
+                    hrms.hide_waitMe($('#grid-container-detail'));
+                    $("#grid-container-detail").dxDataGrid({
+                        dataSource: []
+                    });
+                }
+            });
+        }
+
+        $('#show-hidden-grid-wlp').click(function () {
+            $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+            $('.hidden-grid-wlp').slideToggle("slow");
+
+        });
+
+            function onSaving(e) {
+        var change = e.changes[0];
+
+        if (change) {
+            e.cancel = true;
+
+            e.promise = saveChange(change)
+                .always(() => { })
+                .done((data) => {
+                    var orders = e.component.option("dataSource");
+
+                    if (change.type === "insert") {
+                        change.data = data;
+                    }
+                    orders = DevExpress.data.applyChanges(orders, [change], { keyExpr: "OrderID" });
+
+                    e.component.option({
+                        dataSource: orders,
+                        editing: {
+                            editRowKey: null,
+                            changes: []
+                        }
+                    });
+                });
+        }
+    };
+
+    @*function saveChange(change) {
+        switch (change.type) {
+            case "insert":
+                return sendRequest('@Url.RouteUrl(new { area="OpeationMns",controller = "DailyPlan", action = "InsertOrder" })', "POST", { values: JSON.stringify(change.data) });
+            case "update":
+                return sendRequest('@Url.RouteUrl(new { area="OpeationMns",controller = "DailyPlan", action = "UpdatePrioryWlp2" })', "PUT", { key: change.key, values: JSON.stringify(change.data) });
+            case "remove":
+                return sendRequest('@Url.RouteUrl(new { area="OpeationMns",controller = "DailyPlan", action = "DeleteOrder" })', "DELETE", { key: change.key });
+        }
+    };
+
+    function sendRequest(url, method, data) {
+        var d = $.Deferred();
+
+        method = method || "GET";
+
+        $.ajax(url, {
+            method: method,
+            data: data,
+            cache: false,
+            xhrFields: { withCredentials: true }
+        }).done(function (result) {
+            d.resolve(method === "GET" ? result.data : result);
+        }).fail(function (xhr) {
+            d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
+        });
+
+        return d.promise();
+        };
+
+*@
+ function onSaving(e) {
+        e.cancel = true;
+
+        if (e.changes.length) {
+            e.promise = sendBatchRequest('@Url.RouteUrl(new { area="OpeationMns",controller = "DailyPlan", action = "UpdatePrioryWlp2" })', e.changes).done(() => {
+                e.component.refresh(true).done(() => {
+                    e.component.cancelEditData();
+
+                    let model = e.changes[0].key.split("^")[0];
+                    let operationID = e.changes[0].key.split("^")[1];
+                    $.ajax({
+                        url: '/OpeationMns/DailyPlan/GetstayLotInfoWlp2',
+                        type: 'POST',
+                        data: {
+                            model: model,
+                            operation: operationID
+                        },
+                        beforeSend: function () {
+                            hrms.run_waitMe($('#grid-container-detail'));
+                        },
+                        success: function (response) {
+                            hrms.hide_waitMe($('#grid-container-detail'));
+
+                            $("#grid-container-detail").dxDataGrid({
+                                dataSource: response
+                            });
+                        },
+                        error: function (status) {
+                            hrms.notify(status.responseText, 'error', 'alert', function () { });
+                            hrms.hide_waitMe($('#grid-container-detail'));
+                            $("#grid-container-detail").dxDataGrid({
+                                dataSource: []
+                            });
+                        }
+                    });
+                });
+            });
+        }
+     }
+
+    function sendBatchRequest(url, changes) {
+        var d = $.Deferred();
+
+        $.ajax(url, {
+            method: "POST",
+            data: JSON.stringify(changes),
+            cache: false,
+            contentType: 'application/json',
+            xhrFields: { withCredentials: true }
+        }).done(d.resolve).fail(function (xhr) {
+            d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
+        });
+
+        return d.promise();
+        }
+
+
+        function SetBackgroundColorPriory(e) {
+            if (e.rowType === "data" && e.data.Priory == true) {
+
+                if (e.data.Number_Priory == 1) {
+                    e.rowElement.addClass("stylePriory1");
+                }
+                else if (e.data.Number_Priory == 2) {
+                    e.rowElement.addClass("stylePriory2");
+                }
+                else if (e.data.Number_Priory == 3) {
+                    e.rowElement.addClass("stylePriory3");
+                }
+                else if (e.data.Number_Priory == 4) {
+                    e.rowElement.addClass("stylePriory4");
+                }
+                else if (e.data.Number_Priory == 5) {
+                    e.rowElement.addClass("stylePriory5");
+                }
+                else if (e.data.Number_Priory == 6) {
+                    e.rowElement.addClass("stylePriory6");
+                }
+                else if (e.data.Number_Priory == 7) {
+                    e.rowElement.addClass("stylePriory7");
+                }
+                else if (e.data.Number_Priory == 8) {
+                    e.rowElement.addClass("stylePriory8");
+                }
+                else
+                {
+                    e.rowElement.addClass("stylePriory9");
+                }
+            }
+        }
+
+        function SetBackgroundCellColorPriory(e) {
+          
+            if (e.rowType === "data" && e.data.prioryInOperation != null) {
+
+                if (e.column.dataField === "sapCode" || e.column.dataField === "module" || e.column.dataField === "type"
+                    || e.column.dataField === "cumYield" || e.column.dataField === "qtyChipBase" || e.column.dataField === "lastUpdate") {
+                    e.cellElement.addClass("stylePriory10");
+                }
+
+                let operationNameIndex = arrOperationData.indexOf(e.column.dataField);
+
+                if (operationNameIndex < 0) {
+                    return;
+                }
+
+                let operationID = arrOperation_ID[operationNameIndex];
+
+                const myArray = e.data.prioryInOperation.split("-");
+
+                for (var op of myArray) {
+                    if (operationID.indexOf(op) >= 0) {
+                        e.cellElement.addClass("stylePriory10");
+                    }
+                }
+            }
+        }
+
+        function refreshGrid() {
+            $("#gridContainer").dxDataGrid("refresh");
+        }
+    </script>
+
+}
+
+@{
+    string daysPlan = ViewBag.DayPlanWLP2;
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header" style="margin-bottom:-1rem">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">@ViewData["Title"]</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Daily Plan</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+    <div class="row" style="margin-bottom:-1rem">
+        <div class="col-md-12">
+            <div class="form">
+                <div class="dx-fieldset">
+                    <div class="dx-field">
+                        <div>
+                            @(Html.DevExtreme().DateBox()
+                                  .ID("begindate-date")
+                                  .Value(DateTime.Parse(daysPlan))
+                                  .DisplayFormat("yyyy-MM-dd")
+                                  .Width(200)
+                                  .Placeholder("Select...")
+                                  .Label("Begin Date")
+                                  .OnValueChanged("selectedDate_changed")
+                            )
+                            @(Html.DevExtreme().CheckBox()
+                                    .ID("Yield_Id")
+                                    .Value(false).Text("OP View")
+                                    .OnValueChanged("checkBox_OPView_valueChanged")
+                            )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            @(Html.DevExtreme().DataGrid<DailyPlanWlp2ViewModel>()
+    .ID("gridContainer")
+    .Visible(false)
+    .DataSourceOptions(o => o.ReshapeOnPush(true))
+    .ShowBorders(true)
+    .RepaintChangesOnly(true)
+    .HighlightChanges(true)
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnMinWidth(20)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .FilterRow(filterRow => filterRow
+        .Visible(true)
+        .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .SearchPanel(searchPanel => searchPanel
+        .Visible(true)
+        .Width(240)
+        .Placeholder("Search...")
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+     .OnExporting("exporting")
+    .Height(700)
+    .ColumnFixing(x=>x.Enabled(true))
+    .Columns(columns => {
+
+        columns.AddFor(m => m.LastUpdate).DataField("lastUpdate").Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.Module).DataField("module").Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.Type).DataField("type").Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.CumYield).DataField("cumYield").Fixed(true).FixedPosition(HorizontalEdge.Left).DataType(GridColumnDataType.Number).Format("#,##0.##%");
+        columns.AddFor(m => m.QtyChipBase).DataField("qtyChipBase").Caption("Chip Cơ Bản").Fixed(true).FixedPosition(HorizontalEdge.Left).DataType(GridColumnDataType.Number).Format("#,##0");
+        columns.AddFor(m => m.SapCode).DataField("sapCode").Caption("Model").Fixed(true).FixedPosition(HorizontalEdge.Left);
+
+        columns.Add().Caption("Tồn Kho Công Đoạn").Columns(c => {
+
+            c.AddFor(m => m.ToTalWip).DataField("toTalWip").Caption("Tổng WIP").DataType(GridColumnDataType.Number).Format("#,##0");
+            c.AddFor(m => m.ChoXuatHang).DataField("choXuatHang").Caption("Chờ xuất hàng").DataType(GridColumnDataType.Number).Format("#,##0").CellTemplate(@<text>
+                <span class="<%- data.choXuatHang > 0 ? 'inc' : (data.choXuatHang < 0) ? 'dec' : 'zeroHide' %>">
+                  <%- text %>
+                </span>
+            </text>);
+            c.AddFor(m => m.HoldNVL).DataField("holdNVL").Caption("Hold NVL").DataType(GridColumnDataType.Number).Format("#,##0").CellTemplate(@<text>
+                <span class="<%- data.holdNVL > 0 ? 'inc' : (data.holdNVL < 0) ? 'dec' : 'zeroHide' %>">
+                  <%- text %>
+                </span>
+            </text>);
+            c.AddFor(m => m.NguyenLieuOKSX).DataField("nguyenLieuOKSX").Caption("Nguyên Liệu OK Sản Xuất").DataType(GridColumnDataType.Number).Format("#,##0").CellTemplate(@<text>
+                <span class="<%- data.nguyenLieuOKSX > 0 ? 'inc' : (data.nguyenLieuOKSX < 0) ? 'dec' : 'zeroHide' %>">
+                  <%- text %>
+                </span>
+            </text>);
+
+            c.AddFor(m => m.KHSXTheoNgay).DataField("khsxTheoNgay").Caption("KHSX Theo Ngày").DataType(GridColumnDataType.Number).Format("#,##0").CellTemplate(@<text>
+                <span class="<%- data.khsxTheoNgay > 0 ? 'inc' : (data.khsxTheoNgay < 0) ? 'dec' : 'zeroHide' %>">
+                  <%- text %>
+                </span>
+            </text>);
+            c.AddFor(m => m.SoLuongConLaiSauKHSX).DataField("soLuongConLaiSauKHSX").Caption("Số Lượng Còn Lại Sau KHSX").DataType(GridColumnDataType.Number).Format("#,##0").CellTemplate(@<text>
+                <span class="<%- data.soLuongConLaiSauKHSX > 0 ? 'inc' : (data.soLuongConLaiSauKHSX < 0) ? 'dec' : 'zeroHide' %>">
+                    <span class="current-value"><%- text %></span>
+                    <span class="arrow"></span>
+                </span>
+            </text>);
+        }).CssClass("styleHeader");
+
+    columns.Add().Caption("Kế Hoạch Sản Xuất").Columns(c => {
+
+    c.AddFor(m => m.BackGrinding).DataField("backGrinding").Caption("Back Grinding").DataType(GridColumnDataType.Number).Format("#,##0").CellTemplate(@<text>
+                <span class="<%- data.backGrinding > 0 ? 'inc' : (data.backGrinding < 0) ? 'dec' : 'zeroHide' %>">
+                  <%- text %>
+                </span>
+            </text>);
+             c.AddFor(m => m.WaferOven).DataField("waferOven").Caption("Wafer Oven").DataType(GridColumnDataType.Number).Format("#,##0").CellTemplate(@<text>
+                <span class="<%- data.waferOven > 0 ? 'inc' : (data.waferOven < 0) ? 'dec' : 'zeroHide'  %>">
+                  <%- text %>
+                </span>
+            </text>);
+             c.AddFor(m => m.Dicing).DataField("dicing").Caption("Dicing").DataType(GridColumnDataType.Number).Format("#,##0").CellTemplate(@<text>
+                <span class="<%- data.dicing > 0 ? 'inc' : (data.dicing < 0) ? 'dec' : 'zeroHide' %>">
+                  <%- text %>
+                </span>
+            </text>);
+            c.AddFor(m => m.ChipInspection).DataField("chipInspection").Caption("Chip Inspection").DataType(GridColumnDataType.Number).Format("#,##0").CellTemplate(@<text>
+                <span class="<%- data.chipInspection > 0 ? 'inc' : (data.chipInspection < 0) ? 'dec' : 'zeroHide' %>">
+                  <%- text %>
+                </span>
+            </text>);
+             c.AddFor(m => m.Packing).DataField("packing").Caption("Packing").DataType(GridColumnDataType.Number).Format("#,##0").CellTemplate(@<text>
+                <span class="<%- data.packing > 0 ? 'inc' : (data.packing < 0) ? 'dec' : 'zeroHide' %>">
+                  <%- text %>
+                </span>
+            </text>);
+             c.AddFor(m => m.ReelInspection).DataField("reelInspection").Caption("Reel Inspection").DataType(GridColumnDataType.Number).Format("#,##0").CellTemplate(@<text>
+                <span class="<%- data.reelInspection > 0 ? 'inc' : (data.reelInspection < 0) ? 'dec' : 'zeroHide'  %>">
+                  <%- text %>
+                </span>
+            </text>);
+            c.AddFor(m => m.QC_Pass).DataField("qC_Pass").Caption("QC Pass").DataType(GridColumnDataType.Number).Format("#,##0").CellTemplate(@<text>
+                <span class="<%- data.qC_Pass > 0 ? 'inc' : (data.qC_Pass < 0) ? 'dec' : 'zeroHide' %>">
+                  <%- text %>
+                </span>
+            </text>);
+        }).CssClass("styleHeader");
+    })
+    .Summary(s=>s.TotalItems(totalItems => {
+
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("toTalWip").Name("toTalWip").DisplayFormat("Total: {0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("choXuatHang").Name("choXuatHang").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("holdNVL").Name("holdNVL").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("nguyenLieuOKSX").Name("nguyenLieuOKSX").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("khsxTheoNgay").Name("khsxTheoNgay").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("soLuongConLaiSauKHSX").Name("soLuongConLaiSauKHSX").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("backGrinding").Name("backGrinding").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("waferOven").Name("waferOven").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("dicing").Name("dicing").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("chipInspection").Name("chipInspection").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("packing").Name("packing").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("reelInspection").Name("reelInspection").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("qC_Pass").Name("qC_Pass").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+    })
+    ).OnCellClick("OnCellClick").OnCellPrepared("SetBackgroundCellColorPriory"))
+
+            <div id="holdLotInfo" style="margin-top:20px">
+                <div class="col-sm-12" id="show-hidden-grid-wlp">
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item active" style="cursor: pointer;">
+                            <i class="fa fa-caret-right"></i> <strong>View Stay Lot List</strong>
+                        </li>
+                    </ul>
+                </div>
+                <div class="row hidden-grid-wlp">
+                    @(Html.DevExtreme().DataGrid<Stay_lot_list_priory_wlp2ViewModel>()
+.ID("grid-container-detail")
+.KeyExpr("Key")
+.RepaintChangesOnly(true)
+.Height(350)
+.ShowBorders(true)
+.Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+.Paging(paging => paging.Enabled(false))
+.AllowColumnResizing(true)
+.ColumnMinWidth(50)
+.ColumnAutoWidth(true)
+.ShowColumnLines(true)
+.ShowRowLines(true)
+.RowAlternationEnabled(false)
+.FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+)
+.HeaderFilter(headerFilter => headerFilter.Visible(true))
+.Editing(editing =>
+    {
+        editing.Mode(GridEditMode.Batch);
+        editing.AllowUpdating(true);
+    })
+.HoverStateEnabled(true)
+.Selection(s => s.Mode(SelectionMode.Single))
+.Columns(columns =>
+{
+    columns.AddFor(m => m.STT).Caption("No").Width(60).AllowEditing(false);
+    columns.AddFor(m => m.Priory).Width(150).Caption("Hàng Ưu Tiên").AllowEditing(true);
+    columns.AddFor(m => m.Number_Priory).Caption("STT Ưu Tiên").Width(120).AllowEditing(true);
+    columns.AddFor(m => m.CassetteID).AllowEditing(false);
+    columns.AddFor(m => m.Material).AllowEditing(false);
+    columns.AddFor(m => m.LotID).AllowEditing(false);
+    columns.AddFor(m => m.OperationName).AllowEditing(false);
+    columns.AddFor(m => m.ERPProductionOrder).AllowEditing(false);
+    columns.AddFor(m => m.ChipQty).Format(Format.FixedPoint).AllowEditing(false);
+    columns.AddFor(m => m.StayDay).Format(Format.FixedPoint).AllowEditing(false);
+
+}).Summary(s => s.TotalItems(items =>
+{
+    items.AddFor(m => m.ChipQty).SummaryType(SummaryType.Sum).DisplayFormat("Sum: {0}").ValueFormat(Format.FixedPoint);
+    items.AddFor(m => m.StayDay).SummaryType(SummaryType.Avg).DisplayFormat("Average: {0}").ValueFormat(Format.FixedPoint);
+})).OnSaving("onSaving").OnRowPrepared("SetBackgroundColorPriory"))
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
