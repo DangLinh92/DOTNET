@@ -4268,6 +4268,8 @@ namespace HRMNS.Application.Implementation
 
         public double SimpleValueOT(double value)
         {
+            value = Math.Round(value, 1);
+
             int pnguyen = (int)value;
             double pthaphan = value - pnguyen;
 
@@ -4284,6 +4286,7 @@ namespace HRMNS.Application.Implementation
 
         public double Block30mValueOT(double value)
         {
+            value = Math.Round(value, 1);
             Dictionary<int, double> blockTime = new Dictionary<int, double>()
             {
                 { 0,0},{10,0},

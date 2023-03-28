@@ -1,151 +1,275 @@
-﻿@model List<DCChamCongViewModel>
+﻿
 @{
-    ViewData["Title"] = "Timekeeping adjustments";
+    ViewData["Title"] = "Điều Chỉnh Công";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
+@section Styles {
+
+}
+
 @section Scripts
 {
-    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
-    @*<script src="~/app/controllers/dieuchinhChamCong/dieuChinhChamCongMns.js"></script>*@
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
 
     <script>
-        var controller = new dieuchinhChamcongController();
-        controller.initialize();
 
-        onSuccess = controller.doAftersearch;
-        onBeginAjax = controller.beginSearch;
+        //$('#btn-import-GocPlan').on('click', function () {
+        //    $("#fileInputExcel").val(null);
+        //    $('#import_gocPlan').modal('show');
+        //});
 
-        $(document).ready(function ()
-        {
-            $('#dcChamCongDataTable').DataTable({
-                "order": [9, 'asc']
+        //$('#btnCloseImportExcel').on('click', function () {
+        //    var fileUpload = $("#fileInputExcel").get(0);
+        //    var files = fileUpload.files;
+        //    if (files.length > 0) {
+        //        $("#fileInputExcel").val(null);
+        //        $('#hd-ImportType').val('');
+        //        $('#import_gocPlan').modal('hide');
+        //        location.reload();
+        //    }
+        //});
+
+        //$('#btnCloseImport').on('click', function () {
+        //    var fileUpload = $("#fileInputExcel").get(0);
+        //    var files = fileUpload.files;
+        //    if (files.length > 0) {
+        //        $("#fileInputExcel").val(null);
+        //        $('#hd-ImportType').val('');
+        //        $('#import_gocPlan').modal('hide');
+        //        location.reload();
+        //    }
+        //});
+
+        //$('#btnImportExcel').on('click', function () {
+        //    var fileUpload = $("#fileInputExcel").get(0);
+        //    var files = fileUpload.files;
+
+        //    // Create FormData object
+        //    var fileData = new FormData();
+        //    // Looping over all files and add it to FormData object
+        //    for (var i = 0; i < files.length; i++) {
+        //        fileData.append("files", files[i]);
+        //    }
+        //    // Adding one more key to FormData object
+        //    // fileData.append('categoryId', $('#ddlCategoryIdImportExcel').combotree('getValue'));
+
+        //    $.ajax({
+        //        url: '/OpeationMns/MaterialToSapCode/ImportExcel',
+        //        type: 'POST',
+        //        data: fileData,
+        //        processData: false,  // tell jQuery not to process the data
+        //        contentType: false,  // tell jQuery not to set contentType
+        //        beforeSend: function () {
+        //            hrms.run_waitMe($('#import_gocPlan'));
+        //        },
+        //        success: function (data) {
+        //            $('#import_gocPlan').modal('hide');
+        //            hrms.hide_waitMe($('#import_gocPlan'));
+        //            hrms.notify("Import success!", 'Success', 'alert', function () {
+
+        //                location.reload();
+        //            });
+        //        },
+        //        error: function (status) {
+        //            hrms.notify('error: Import error!' + status.responseText, 'error', 'alert', function () { });
+        //            hrms.hide_waitMe($('#import_gocPlan'));
+        //        }
+        //    });
+        //    return false;
+        //});
+
+
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('DieuChinhLuong');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'DieuChinhLuong.xlsx');
+                });
             });
+            e.cancel = true;
+        }
 
-            $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
-            $('select[name="dcChamCongDataTable_length"]').removeClass('form-control-sm');
+        function calculateFilterExpression(filterValue, selectedFilterOperation, target) {
+            if (target === "search" && typeof (filterValue) === "string") {
+                return [this.dataField, "contains", filterValue]
+            }
 
-            // init select 2 jquery
-            $(".nested").select2({
-                tags: true
-            });
-        });
+            return function (data) {
+                return (data.AssignedEmployee || []).indexOf(filterValue) !== -1
+            }
+        }
+
+        // chon thang
+        function selectedDate_changed(data) {
+            console.log(data.value);
+            const dataGridDataSource = $("#gridContainer").dxDataGrid("getDataSource");
+            dataGridDataSource.reload();
+        };
+
+        function getMonth() {
+
+            var dateBox = $("#txt_month").dxDateBox("instance");
+
+            let sDate = dateBox.option('value');
+
+            return sDate;
+        }
     </script>
 }
-@section Styles{
-    <style>
 
-        #btnCreate {
-            float: none;
-            margin-right: 10px;
-        }
-
-        #btnManagement {
-            min-width: 150px;
-            border-radius: 50px;
-        }
-    </style>
-}
-<!-- Page Content -->
 <div class="content container-fluid">
     <!-- Page Header -->
     <div class="page-header">
         <div class="row align-items-center">
             <div class="col">
-                <h3 class="page-title">Điều chỉnh công.</h3>
+                <h3 class="page-title">Điều Chỉnh Chấm Công</h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/admin/home/index">Home</a></li>
-                    <li class="breadcrumb-item active">Điều chỉnh công</li>
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Điều Chỉnh Chấm Công</li>
                 </ul>
-            </div>
-            <div class="col-auto float-right ml-auto">
-                <a href="#" id="btnCreate" class="btn add-btn" data-toggle="modal" data-target="#addDieuChinhChamCongModel"><i class="fa fa-plus"></i> Đăng ký </a>
             </div>
         </div>
     </div>
-    <!-- /Page Header -->
-    <!-- Search Filter -->
-    <form id="frmSearch" method="post" data-ajax="true" data-ajax-url="/Admin/DCChamCong/Search" data-ajax-update="#gridDCChamCongIndex" data-ajax-mode='replace' data-ajax-success="onSuccess">
-        <div class="row filter-row">
-            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-            </div>
-            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-                <div class="form-group form-focus select-focus">
-                    <select class="select floating" id="cboDepartment" name="department">
-                        <option value=""> -- Select -- </option>
-                        <option value="New">New</option>
-                        <option value="Active">Active</option>
-                        <option value="InActive">InActive</option>
-                    </select>
-                    <label class="focus-label">Deparment</label>
-                </div>
-            </div>
-            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-                <div class="form-group form-focus select-focus">
-                    <select class="select floating" id="searchStatus" name="status">
-                        <option value=""> -- Select -- </option>
-                        <option value="Y">Đã chi trả</option>
-                        <option value="N">Chưa chi trả</option>
-                    </select>
-                    <label class="focus-label">Status</label>
-                </div>
-            </div>
-            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-                <div class="form-group form-focus">
-                    <div class="cal-icon">
-                        <input class="form-control floating datetimepicker" type="text" id="searchFromTime" name="timeFrom">
+
+    <div class="row align-items-center">
+        <div class="col">
+            <div class="form">
+                <div class="dx-fieldset">
+                    <div class="dx-field">
+                        <div>
+                            @(Html.DevExtreme().DateBox()
+                                  .ID("txt_month")
+                                  .Value(DateTime.Now.ToString("yyyy-MM-dd"))
+                                  .CalendarOptions(x=>x.MaxZoomLevel(CalendarZoomLevel.Year))
+                                  .DisplayFormat("yyyy-MM")
+                                  .Width(200)
+                                  .Placeholder("Select...")
+                                  .Label("Year")
+                                  .OnValueChanged("selectedDate_changed")
+                            )
+
+                        </div>
                     </div>
-                    <label class="focus-label">From</label>
                 </div>
-            </div>
-            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-                <div class="form-group form-focus">
-                    <div class="cal-icon">
-                        <input class="form-control floating datetimepicker" type="text" id="searchToTime" name="timeTo">
-                    </div>
-                    <label class="focus-label">To</label>
-                </div>
-            </div>
-            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
-                <button href="#" class="btn btn-success btn-block" id="btnSearch" type="submit"> Search </button>
             </div>
         </div>
-    </form>
-
-    <!-- /Search Filter -->
+    </div>
 
     <div class="row">
         <div class="col-md-12">
-            <div class="table-responsive" id="gridDCChamCongIndex">
-                @await Html.PartialAsync("_gridDCChamCongPartialView", Model)
-            </div>
-        </div>
-    </div>
-</div>
-<!-- /Page Content -->
-<!-- Delete overtime -->
-<div class="modal custom-modal fade" id="delete_DCChamCong" role="dialog">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body">
-                <div class="form-header">
-                    <input type="hidden" id="txtHiddenId" />
-                    <h3>Delete</h3>
-                    <p>Are you sure want to delete?</p>
-                </div>
-                <div class="modal-btn delete-action">
-                    <div class="row">
-                        <div class="col-6">
-                            <a href="javascript:void(0);" id="btnDeleteDCChamCong" class="btn btn-primary continue-btn">Delete</a>
-                        </div>
-                        <div class="col-6">
-                            <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Delete Expense Modal -->
+            @(Html.DevExtreme().DataGrid<DCChamCongViewModel>
+    ()
+    .ID("gridContainer")
+    .Height(720)
+    .ShowBorders(true)
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnMinWidth(50)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+    .OnExporting("exporting")
+    .FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+    .Editing(editing => {
+        editing.Mode(GridEditMode.Popup);
+        editing.AllowUpdating(true);
+        editing.AllowAdding(true);
+        editing.AllowDeleting(true);
+    })
+    .Columns(columns => {
+        columns.AddFor(m => m.STT).Caption("STT").AllowEditing(false);
+        columns.AddFor(m => m.HR_NHANVIEN.TenNV).Caption("Họ Tên").AllowEditing(false);
 
-<partial name="_dieuChinhChamCongModelView" />
+        columns.AddFor(m => m.MaNV)
+                .Caption("Mã NV").AllowEditing(true)
+                .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("DCChamCong").LoadAction("Employees").Key("Id"))
+                .ValueExpr("Id")
+                .DisplayExpr("TenNV")
+            )
+        .CalculateFilterExpression("calculateFilterExpression")
+        .Width(200);
+
+        columns.AddFor(m => m.HR_NHANVIEN.MaBoPhan).Caption("Bộ Phận").AllowEditing(false);
+        columns.AddFor(m => m.NgayDieuChinh).Caption("Ngày Điều Chỉnh").AllowEditing(true);
+
+        columns.Add().Caption("Kết quả điều chỉnh").Columns(c =>
+        {
+            c.AddFor(m => m.NgayCong).Caption("Ngày Công").AllowEditing(true);
+            c.AddFor(m => m.DSNS).Caption("30% (DS-NS)").AllowEditing(true);
+            c.AddFor(m => m.NSBH).Caption("260% (NS-NH)").AllowEditing(true);
+            c.AddFor(m => m.DC85).Caption("85%").AllowEditing(true);
+            c.AddFor(m => m.DC100).Caption("100%").AllowEditing(true);
+            c.AddFor(m => m.DC150).Caption("150%").AllowEditing(true);
+            c.AddFor(m => m.DC190).Caption("190%").AllowEditing(true);
+            c.AddFor(m => m.DC200).Caption("200%").AllowEditing(true);
+            c.AddFor(m => m.DC210).Caption("210%").AllowEditing(true);
+            c.AddFor(m => m.DC270).Caption("270%").AllowEditing(true);
+            c.AddFor(m => m.DC300).Caption("300%").AllowEditing(true);
+            c.AddFor(m => m.DC390).Caption("390%").AllowEditing(true);
+            c.AddFor(m => m.ELLC).Caption("EL/LC").AllowEditing(true);
+            c.AddFor(m => m.Other).Caption("Chi Trả Khác").AllowEditing(true);
+        });
+
+
+        columns.AddFor(m => m.NoiDungDC).Caption("Nội Dung").AllowEditing(true);
+        columns.AddFor(m => m.TongSoTien).Caption("Số Tiền").AllowEditing(true);
+        columns.AddFor(m => m.ChiTraVaoLuongThang).Caption("Trả Vào Lương Tháng").AllowEditing(true);
+    })
+    .DataSource(d => d.Mvc()
+    .Area("Admin")
+    .Controller("DCChamCong")
+    .LoadAction("Get")
+    .LoadParams(new {month = new JS("getMonth") })
+    .UpdateAction("Put")
+    .InsertAction("Post")
+    .DeleteAction("Delete")
+    .Key("Id")
+    )
+    )
+
+            @using (Html.DevExtreme().NamedTemplate("EmbeddedDataGridSingle"))
+            {
+                @(Html.DevExtreme().DataGrid()
+        .ID("embedded-datagrid")
+        .DataSource(new JS(@"component.getDataSource()"))
+        .Columns(columns => {
+            columns.Add().DataField("Id");
+            columns.Add().DataField("TenNV");
+        })
+        .HoverStateEnabled(true)
+        .Paging(p => p.PageSize(10))
+        .FilterRow(f => f.Visible(true))
+        .Scrolling(s => s.Mode(GridScrollingMode.Virtual))
+        .Height(345)
+        .Selection(s => s.Mode(SelectionMode.Single))
+        .SelectedRowKeys(new JS(@"component.option(""value"") ? [component.option(""value"")] : []"))
+        .OnSelectionChanged(@<text>
+            function(selectedItems) {
+                var keys = selectedItems.selectedRowKeys;
+                component.option("value", keys);
+                component.close();
+            }
+        </text>)
+    )
+            }
+        </div>
+    </div>
+</div>

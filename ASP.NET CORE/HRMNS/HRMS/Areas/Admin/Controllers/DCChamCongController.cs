@@ -1,8 +1,11 @@
-﻿using HRMNS.Application.Interfaces;
+﻿using DevExtreme.AspNet.Data;
+using DevExtreme.AspNet.Mvc;
+using HRMNS.Application.Interfaces;
 using HRMNS.Application.ViewModels.Time_Attendance;
 using HRMNS.Data.EF.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,10 +17,12 @@ namespace HRMS.Areas.Admin.Controllers
     {
         private readonly IWebHostEnvironment _hostingEnvironment;
         IDM_DCChamCongService _dmDieuChinhService;
+        INhanVienService _nhanVienService;
         IDCChamCongService _dcChamCongService;
 
-        public DCChamCongController(IDM_DCChamCongService dmDCChamCongservice, IDCChamCongService dcChamCongService, IWebHostEnvironment webHost)
+        public DCChamCongController(INhanVienService nhanVienService, IDM_DCChamCongService dmDCChamCongservice, IDCChamCongService dcChamCongService, IWebHostEnvironment webHost)
         {
+            _nhanVienService = nhanVienService;
             _hostingEnvironment = webHost;
             _dmDieuChinhService = dmDCChamCongservice;
             _dcChamCongService = dcChamCongService;
@@ -79,18 +84,16 @@ namespace HRMS.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Delete(int id)
-        {
-            _dcChamCongService.Delete(id);
-            _dcChamCongService.Save();
-            return new OkObjectResult(id);
-        }
-
-        [HttpPost]
         public IActionResult Search(string department, string status, string timeFrom, string timeTo)
         {
             var lst = _dcChamCongService.Search(status, department, timeFrom, timeTo, x => x.HR_NHANVIEN);
             return PartialView("_gridDCChamCongPartialView", lst);
+        }
+
+        [HttpGet]
+        public object Employees(DataSourceLoadOptions loadOptions)
+        {
+            return DataSourceLoader.Load(_nhanVienService.GetAll().Where(x => x.Status == "Active" && x.MaBoPhan != "KOREA").Select(x => new { Id = x.Id, TenNV = x.Id + "-" + x.TenNV }), loadOptions);
         }
 
         public IActionResult Index()
@@ -98,5 +101,41 @@ namespace HRMS.Areas.Admin.Controllers
             var lst = _dcChamCongService.GetAll("", y => y.HR_NHANVIEN);
             return View(lst);
         }
+
+        #region POS PUT DELETE
+        [HttpGet]
+        public object Get(DataSourceLoadOptions loadOptions, string month)
+        {
+            string _month = DateTime.Parse(month).ToString("yyyy-MM") + "-01";
+            return DataSourceLoader.Load(_dcChamCongService.GetAll("", y => y.HR_NHANVIEN).Where(x => string.Compare(x.NgayDieuChinh?.ToString("yyyy-MM-dd"), _month) >= 0), loadOptions);
+        }
+
+        [HttpPost]
+        public IActionResult Post(string values)
+        {
+            DCChamCongViewModel model = new DCChamCongViewModel();
+            JsonConvert.PopulateObject(values, model);
+
+            _dcChamCongService.Add(model);
+
+            return Ok();
+        }
+
+        [HttpPut]
+        public IActionResult Put(int key, string values)
+        {
+            var entity = _dcChamCongService.GetById(key);
+
+            JsonConvert.PopulateObject(values, entity);
+            _dcChamCongService.Update(entity);
+            return Ok();
+        }
+
+        [HttpDelete]
+        public void Delete(int key)
+        {
+            _dcChamCongService.Delete(key);
+        }
+        #endregion
     }
 }

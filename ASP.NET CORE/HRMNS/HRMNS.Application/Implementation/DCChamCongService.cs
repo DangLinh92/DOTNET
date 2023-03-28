@@ -31,12 +31,14 @@ namespace HRMNS.Application.Implementation
             dmDcChamCongVm.UserCreated = GetUserId();
             var entity = _mapper.Map<DC_CHAM_CONG>(dmDcChamCongVm);
             _dcChamCongRepository.Add(entity);
-            return dmDcChamCongVm;
+            Save();
+            return _mapper.Map<DCChamCongViewModel>(entity);
         }
 
         public void Delete(int id)
         {
             _dcChamCongRepository.Remove(id);
+            Save();
         }
 
         public void Dispose()
@@ -116,6 +118,7 @@ namespace HRMNS.Application.Implementation
             dmDCChamCongVm.UserModified = GetUserId();
             var entity = _mapper.Map<DC_CHAM_CONG>(dmDCChamCongVm);
             _dcChamCongRepository.Update(entity);
+            Save();
         }
     }
 }

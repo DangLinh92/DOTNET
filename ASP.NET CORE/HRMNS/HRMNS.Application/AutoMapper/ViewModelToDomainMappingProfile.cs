@@ -25,7 +25,10 @@ namespace HRMNS.Application.AutoMapper
                 .ConstructUsing(c => new HR_BHXH(c.Id, c.MaNV, c.NgayThamGia, c.NgayKetThuc));
 
             CreateMap<PhepNamViewModel, HR_PHEP_NAM>()
-               .ConstructUsing(c => new HR_PHEP_NAM(c.Id,c.MaNhanVien, c.SoPhepNam, c.SoPhepConLai, c.Year,c.SoTienChiTra,c.ThoiGianChiTra));
+               .ConstructUsing(c => new HR_PHEP_NAM(c.Id,c.MaNhanVien, c.SoPhepNam, c.SoPhepConLai, c.Year,c.SoTienChiTra,c.ThoiGianChiTra,c.ThangBatDauDocHai,
+               c.ThangKetThucDocHai,c.SoPhepDocHai,c.SoPhepCongThem,c.SoPhepDaUng,c.SoPhepDuocHuong,c.NghiThang_1,
+               c.NghiThang_2,c.NghiThang_3,c.NghiThang_4,c.NghiThang_5,c.NghiThang_6,c.NghiThang_7,c.NghiThang_8,c.NghiThang_9,
+               c.NghiThang_10,c.NghiThang_11,c.NghiThang_12,c.SoPhepKhongDuocSuDung,c.SoPhepTonThang,c.SoPhepThanhToanNghiViec,c.MucThanhToan,c.SoPhepTonNam));
 
             CreateMap<TinhTrangHoSoViewModel, HR_TINHTRANGHOSO>()
                .ConstructUsing(c => new HR_TINHTRANGHOSO(c.Id, c.MaNV, c.SoYeuLyLich, c.CMTND, c.SoHoKhau, c.GiayKhaiSinh, c.BangTotNghiep, c.XacNhanDanSu, c.AnhThe));
@@ -65,7 +68,7 @@ namespace HRMNS.Application.AutoMapper
 
             CreateMap<DCChamCongViewModel, DC_CHAM_CONG>()
            .ConstructUsing(c => new DC_CHAM_CONG(c.Id,c.MaNV,c.NgayDieuChinh,c.NoiDungDC,c.TongSoTien,c.TrangThaiChiTra,c.ChiTraVaoLuongThang,c.NgayCong,
-           c.DSNS,c.NSBH,c.DC85,c.DC150,c.DC190,c.DC200,c.DC210,c.DC270,c.DC300,c.DC390,c.HT50,c.HT100,c.HT150,c.HT200,c.HT390,c.ELLC,c.NgayDieuChinh2));
+           c.DSNS,c.NSBH,c.DC85,c.DC150,c.DC190,c.DC200,c.DC210,c.DC270,c.DC300,c.DC390,c.HT50,c.HT100,c.HT150,c.HT200,c.HT390,c.ELLC,c.NgayDieuChinh2,c.DC100));
 
             CreateMap<RoleViewModel, APP_ROLE>()
           .ConstructUsing(c => new APP_ROLE(c.Name, c.Description));

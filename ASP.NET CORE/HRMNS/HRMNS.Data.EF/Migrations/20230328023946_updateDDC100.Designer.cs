@@ -4,14 +4,16 @@ using HRMNS.Data.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HRMNS.Data.EF.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    partial class AppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230328023946_updateDDC100")]
+    partial class updateDDC100
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3307,89 +3309,17 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
-                    b.Property<float>("MucThanhToan")
-                        .HasColumnType("real");
-
-                    b.Property<float>("NghiThang_1")
-                        .HasColumnType("real");
-
-                    b.Property<float>("NghiThang_10")
-                        .HasColumnType("real");
-
-                    b.Property<float>("NghiThang_11")
-                        .HasColumnType("real");
-
-                    b.Property<float>("NghiThang_12")
-                        .HasColumnType("real");
-
-                    b.Property<float>("NghiThang_2")
-                        .HasColumnType("real");
-
-                    b.Property<float>("NghiThang_3")
-                        .HasColumnType("real");
-
-                    b.Property<float>("NghiThang_4")
-                        .HasColumnType("real");
-
-                    b.Property<float>("NghiThang_5")
-                        .HasColumnType("real");
-
-                    b.Property<float>("NghiThang_6")
-                        .HasColumnType("real");
-
-                    b.Property<float>("NghiThang_7")
-                        .HasColumnType("real");
-
-                    b.Property<float>("NghiThang_8")
-                        .HasColumnType("real");
-
-                    b.Property<float>("NghiThang_9")
-                        .HasColumnType("real");
-
                     b.Property<float>("SoPhepConLai")
-                        .HasColumnType("real");
-
-                    b.Property<float>("SoPhepCongThem")
-                        .HasColumnType("real");
-
-                    b.Property<float>("SoPhepDaUng")
-                        .HasColumnType("real");
-
-                    b.Property<float>("SoPhepDocHai")
-                        .HasColumnType("real");
-
-                    b.Property<float>("SoPhepDuocHuong")
-                        .HasColumnType("real");
-
-                    b.Property<float>("SoPhepKhongDuocSuDung")
                         .HasColumnType("real");
 
                     b.Property<float>("SoPhepNam")
                         .HasColumnType("real");
 
-                    b.Property<float>("SoPhepThanhToanNghiViec")
-                        .HasColumnType("real");
-
-                    b.Property<float>("SoPhepTonNam")
-                        .HasColumnType("real");
-
-                    b.Property<float>("SoPhepTonThang")
-                        .HasColumnType("real");
-
                     b.Property<decimal>("SoTienChiTra")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime?>("ThangBatDauDocHai")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("ThangKetThucDocHai")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime?>("ThoiGianChiTra")
                         .HasColumnType("datetime2");
-
-                    b.Property<float>("TongNgayNghi")
-                        .HasColumnType("real");
 
                     b.Property<string>("UserCreated")
                         .HasColumnType("nvarchar(50)")

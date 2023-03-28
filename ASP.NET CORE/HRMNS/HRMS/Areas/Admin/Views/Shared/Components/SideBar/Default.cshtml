@@ -16,7 +16,6 @@
                     <a href="/Admin/Home/Index" target="_self" onclick="linkClick(this)"><i class="la la-dashboard"></i> <span> @localizer["Home"]</span></a>
                 </li>
 
-
                 @foreach (var item in Model.Where(x => string.IsNullOrEmpty(x.ParentId)))
                 {
                     <li class="menu-title">

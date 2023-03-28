@@ -23,8 +23,7 @@ namespace HRMNS.Application.ViewModels.Time_Attendance
         [StringLength(20)]
         public string TrangThaiChiTra { get; set; }
 
-        [StringLength(50)]
-        public string ChiTraVaoLuongThang { get; set; }
+        public DateTime? ChiTraVaoLuongThang { get; set; }
 
         public string NgayDieuChinh2 { get; set; }
 
@@ -33,6 +32,7 @@ namespace HRMNS.Application.ViewModels.Time_Attendance
         public float? NSBH { get; set; } // 260%
 
         public float? DC85 { get; set; }
+        public float? DC100 { get; set; }
         public float? DC150 { get; set; }
         public float? DC190 { get; set; }
         public float? DC200 { get; set; }
@@ -61,5 +61,7 @@ namespace HRMNS.Application.ViewModels.Time_Attendance
         public string UserModified { get; set; }
 
         public NhanVienViewModel HR_NHANVIEN { get; set; }
+
+        public int STT { get; set; }
     }
 }

@@ -16,7 +16,7 @@ namespace HRMNS.Data.Entities
 
         }
 
-        public DC_CHAM_CONG(int id, string maNV, DateTime? ngayDCFrom, string noiDung, double? giatridc, string status, string thoigiantra
+        public DC_CHAM_CONG(int id, string maNV, DateTime? ngayDCFrom, string noiDung, double? giatridc, string status, DateTime? thoigiantra
        , float? ngayCong
        , float? dSNS
        , float? nSBH
@@ -34,7 +34,8 @@ namespace HRMNS.Data.Entities
        , float? hT200
        , float? hT390
        , float? eLLC
-       ,string ngayDieuChinh2)
+       ,string ngayDieuChinh2
+       ,float? dc100)
         {
             Id = id;
             MaNV = maNV;
@@ -61,6 +62,7 @@ namespace HRMNS.Data.Entities
             HT390 = hT390;
             ELLC = eLLC;
             NgayDieuChinh2 = ngayDieuChinh2;
+            DC100 = dc100;
         }
 
         [StringLength(50)]
@@ -79,14 +81,14 @@ namespace HRMNS.Data.Entities
         [StringLength(20)]
         public string TrangThaiChiTra { get; set; }
 
-        [StringLength(50)]
-        public string ChiTraVaoLuongThang { get; set; }
+        public DateTime? ChiTraVaoLuongThang { get; set; }
 
         public float? NgayCong { get; set; }
         public float? DSNS { get; set; } // 30%
         public float? NSBH { get; set; } // 30%
 
         public float? DC85 { get; set; }
+        public float? DC100 { get; set; }
         public float? DC150 { get; set; }
         public float? DC190 { get; set; }
         public float? DC200 { get; set; }
