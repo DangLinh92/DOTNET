@@ -10,7 +10,7 @@ namespace OPERATION_MNS.Application.Interfaces
         List<OUTGOING_RECEIPT_WLP2> GetAllToDay();
         List<OUTGOING_RECEIPT_WLP2> GetAllByDay(string day);
 
-        OUTGOING_RECEIPT_WLP2 Update(OUTGOING_RECEIPT_WLP2 model);
+        OUTGOING_RECEIPT_WLP2 Update(OUTGOING_RECEIPT_WLP2 model,string key);
         OUTGOING_RECEIPT_WLP2 GetById(int id);
         OUTGOING_RECEIPT_WLP2 GetByKey(string key);
 

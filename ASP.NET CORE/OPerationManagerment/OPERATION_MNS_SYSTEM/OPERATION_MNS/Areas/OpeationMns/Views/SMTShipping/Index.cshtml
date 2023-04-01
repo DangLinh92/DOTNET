@@ -1,0 +1,691 @@
+﻿
+@{
+    ViewData["Title"] = "Shipping SMT";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <style>
+        /* Out going receive*/
+
+        #gridContainer_outGoingReceipt span.current-value {
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        #gridContainer_outGoingReceipt span.diff {
+            width: 50px;
+            display: inline-block;
+        }
+
+        #gridContainer_outGoingReceipt .inc {
+            color: #2ab71b;
+        }
+
+        #gridContainer_outGoingReceipt .dec {
+            color: #f00;
+        }
+
+            #gridContainer_outGoingReceipt .inc .arrow,
+            #gridContainer_outGoingReceipt .dec .arrow {
+                display: inline-block;
+                height: 10px;
+                width: 10px;
+                background-repeat: no-repeat;
+                background-size: 10px 10px;
+            }
+
+        #gridContainer_outGoingReceipt .inc .arrow {
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAADKSURBVHjaYtTaLs1ABEiG0nPRJa56PEHhsxBhmCUQT4OyrwHxcXyKmQgYJgHE64CYDYrXQcXIMhCbAcgWkGzgNKh38QUB0QamIUUErkhKI9ZAGyCeTERkTYaqxWsgKA2txhdG6GGsvUNGGpeBRMUiGhCFGsqGzUBQQJsxkA5AemaiG5hDIBIIgQSgK0FmMDACs549kN5FZLjhA7+A2A2U9YSAOBeLAk4gnoBDczoOcSFGPIUDPxB/wCHHiKtwYGKgMhg1cBAaCBBgAJTUIL3ToPZfAAAAAElFTkSuQmCC');
+        }
+
+        #gridContainer_outGoingReceipt .dec .arrow {
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAADJSURBVHjaYvzPgBfgkhYA4o8QFahKmBioDEYNHIQGsgBxIBCLkqgvAYi/g1mMjMjir0EJzR6If/6HpChKMMgMe3DKBeIcKhiY8x/MYoDj+RQYNgdkGLqBbEB8kgzDToL1YjEQhKWB+BUJhj0H64Eahs1AELYhMpJ+gtUiGYbLQBBOI8LANLBaIg1kAAc0vkiAqSPBQFAkHcNi2DGoHMkGgrAENOCRI0ECRQ2JBoKwJTQCfkLZDPgMZPxPXN5NhtJzMSsJVBMAAgwAyWSY2svfmrwAAAAASUVORK5CYII=');
+        }
+
+        .dx-cell-focus-disabled[role="gridcell"] {
+            background-color: #004e89 !important;
+            color: #ffff !important;
+        }
+
+        .styleHeader {
+            color: #FEF5AC;
+            font-weight: bold;
+            border-right-width: medium !important;
+            /* border-right-color: #FEF5AC !important;*/
+        }
+
+        .zeroHide {
+            display: none;
+        }
+    </style>
+}
+
+@section Scripts
+{
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+
+    <!-- SMT Request -->
+    <script>
+
+        $('#btn-import-GocPlan').on('click', function () {
+            $("#fileInputExcel").val(null);
+            $('#import_gocPlan').modal('show');
+        });
+
+        $('#btnCloseImportExcel').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+            if (files.length > 0) {
+                $("#fileInputExcel").val(null);
+                $('#hd-ImportType').val('');
+                $('#import_gocPlan').modal('hide');
+                location.reload();
+            }
+        });
+
+        $('#btnCloseImport').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+            if (files.length > 0) {
+                $("#fileInputExcel").val(null);
+                $('#hd-ImportType').val('');
+                $('#import_gocPlan').modal('hide');
+                location.reload();
+            }
+        });
+
+        $('#btnImportExcel').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+
+            // Create FormData object
+            var fileData = new FormData();
+            // Looping over all files and add it to FormData object
+            for (var i = 0; i < files.length; i++) {
+                fileData.append("files", files[i]);
+            }
+            // Adding one more key to FormData object
+            // fileData.append('categoryId', $('#ddlCategoryIdImportExcel').combotree('getValue'));
+
+            $.ajax({
+                url: '/OpeationMns/DeNghiXuatNVL/ImportExcel',
+                type: 'POST',
+                data: fileData,
+                processData: false,  // tell jQuery not to process the data
+                contentType: false,  // tell jQuery not to set contentType
+                beforeSend: function () {
+                    hrms.run_waitMe($('#import_gocPlan'));
+                },
+                success: function (data) {
+                    $('#import_gocPlan').modal('hide');
+                    hrms.hide_waitMe($('#import_gocPlan'));
+                    hrms.notify("Import success!", 'Success', 'alert', function () {
+
+                        location.reload();
+                    });
+                },
+                error: function (status) {
+                    hrms.notify('error: Import error!' + status.responseText, 'error', 'alert', function () { });
+                    hrms.hide_waitMe($('#import_gocPlan'));
+                }
+            });
+            return false;
+        });
+
+
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('Đề nghị xuất nguyên vật liệu SAW -WLP');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'DeNghiXuatNguyenVatLieu.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        function getDateBoxValue() {
+            return $("#begindate-date").dxDateBox("option", "text");
+        }
+
+        function refreshGrid_SmtRequest() {
+            $("#gridContainer").dxDataGrid("refresh");
+        }
+
+    </script>
+
+    <script>
+
+        $(document).ready(function () {
+
+            $('#show-hidden-grid-wlp11').click(function () {
+                $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+                $('.hidden-grid-wlp11').slideToggle("slow");
+
+            });
+
+            $('#show-hidden-grid-wlp12').click(function () {
+                $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+                $('.hidden-grid-wlp12').slideToggle("slow");
+            });
+
+            $('#show-hidden-grid-wlp2').click(function () {
+                $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+                $('.hidden-grid-wlp2').slideToggle("slow");
+            });
+
+        });
+    </script>
+
+
+    <!-- Out going receipt -->
+    <script>
+
+        function exportingOutGoingReceipt(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('Outgoing Receipt');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'OutgoingReceipt.xlsx');
+                });
+            });
+            e.cancel = true;
+        };
+
+        function refreshGrid_OutGoingReceipt() {
+            $("#gridContainer_outGoingReceipt").dxDataGrid("refresh");
+        }
+
+        function getDateBoxValueOutGoing() {
+            return $("#dateOutGoing").dxDateBox("option", "text");
+        }
+
+        function passUserOngoing(operation, ajaxSettings) {
+
+            if (operation == "update") {
+                ajaxSettings.data.userName = $("#txtUserOutGoing").dxTextBox("option", "text");
+            }
+        }
+    </script>
+
+    <!-- Shipping SMT History -->
+    <script>
+
+        function exporting_shippingSMTHistory(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('Shipping SMT History');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'ShippingSMTHistory.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        function exporting2_shippingSMTHistory(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('Shipping SMT By Sap Code');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'TotalShippingSMT.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        function getDateBoxValueFrom() {
+            return $("#begindate-date_shippingSMTHistory").dxDateBox("option", "text");
+        }
+
+        function getDateBoxValueTo() {
+            return $("#todate-date_shippingSMTHistory").dxDateBox("option", "text");
+        }
+
+        function refreshGrid_shippingSMTHistory() {
+
+            let fromDate = new Date($("#begindate-date_shippingSMTHistory").dxDateBox("option", "text"));
+            let toDate = new Date($("#todate-date_shippingSMTHistory").dxDateBox("option", "text"));
+
+            if (fromDate <= toDate) {
+                $("#gridContainer_shippingSMTHistory").dxDataGrid("refresh");
+                $("#gridContainer_2_shippingSMTHistory").dxDataGrid("refresh");
+            }
+        }
+
+
+
+
+    </script>
+}
+
+@{
+  var today = ViewBag.DateWip;
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center" style="margin-bottom:-1rem">
+            <div class="col">
+                <h3 class="page-title">Shipping SMT</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Shipping SMT</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style=" margin-bottom: -2rem;">
+        <div class="col-sm-12" id="show-hidden-grid-wlp11">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item active" style="cursor: pointer;">
+                    <i class="fa fa-caret-right"></i> <strong>Đề Nghị Xuất Nguyên Vật Liệu Saw- WLP</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row hidden-grid-wlp11">
+        <div class="row" style="display: contents">
+            <div class="col-md-12">
+                <div class="form" style="display:inline-block">
+                    <div class="dx-fieldset">
+                        <div class="dx-field">
+                            <div>
+
+                                @(Html.DevExtreme().DateBox()
+                                  .ID("begindate-date")
+                                  .Type(DateBoxType.Date)
+                                  .Value(today)
+                                  .DisplayFormat("yyyy-MM-dd")
+                                  .Width(200)
+                                  .Placeholder("Select...")
+                                  .Label("Begin Date")
+                                  .OnValueChanged("refreshGrid_SmtRequest")
+                            )
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="btn-group" style="float: right; margin-top: 40px;">
+                    <button type="button" class="btn btn-info dropdown-toggle" id="btnImport" style="margin-right:100px;width:100px" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Excel</button>
+                    <div class="dropdown-menu" style="">
+                        <a class="dropdown-item" href="~/templates/SAW_WLP_De_Nghi_Xuat_Nguyen_Lieu.xlsx">File mẫu đề nghị xuất NVL</a>
+                        <a class="dropdown-item" href="#" id="btn-import-GocPlan">Import Đề Nghị Xuất NVL</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                @(Html.DevExtreme().DataGrid<BoPhanDeNghiXuatNVLViewModel>()
+        .ID("gridContainer")
+        .Height(450)
+    .ShowBorders(true)
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnMinWidth(50)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+     .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+     .OnExporting("exporting")
+    .FilterRow(filterRow => filterRow
+        .Visible(true)
+        .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+        .Editing(editing => {
+            editing.Mode(GridEditMode.Form);
+            editing.AllowUpdating(true);
+            editing.AllowAdding(true);
+            editing.AllowDeleting(true);
+        })
+        .Columns(columns =>
+        {
+            columns.AddFor(m => m.Id).Visible(false).AllowEditing(false);
+            columns.AddFor(m => m.NgayDeNghi2).Caption("Ngày Đề Nghị Xuất Hàng").Width(200);
+            columns.AddFor(m => m.Module);
+            columns.AddFor(m => m.SapCode);
+            columns.AddFor(m => m.DinhMuc).Caption("Định Mức");
+            columns.AddFor(m => m.DonVi).Caption("Đơn Vị");
+            columns.AddFor(m => m.SoLuongYeuCau).Caption("Số Lượng Yêu Cầu").Format(Format.FixedPoint).Width(150);
+            columns.AddFor(m => m.LuongThucTe).Caption("Lượng Thực Tế").Width(150);
+            columns.AddFor(m => m.Note);
+        })
+        .DataSource(d => d.Mvc()
+            .Area("OpeationMns")
+            .Controller("DeNghiXuatNVL")
+            .LoadAction("Get")
+            .LoadParams(new { date = new JS("getDateBoxValue") })
+            .UpdateAction("Put")
+            .InsertAction("Post")
+            .DeleteAction("Delete")
+            .Key("Id")
+        )
+    )
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top: 20px; margin-bottom: -2rem;">
+        <div class="col-sm-12" id="show-hidden-grid-wlp12">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item active" style="cursor: pointer;">
+                    <i class="fa fa-caret-right"></i> <strong>Outgoing Receipt(Phiếu Xuất Kho)</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row hidden-grid-wlp12">
+        <div class="row" style="display: contents">
+            <div class="col-md-12">
+                <div class="form">
+                    <div class="dx-fieldset">
+                        <div class="dx-field">
+                            <div style="float:left;display:inline-block;margin-right:10px">
+
+                                @(Html.DevExtreme().DateBox()
+                                  .ID("dateOutGoing")
+                                  .Type(DateBoxType.Date)
+                                  .Value(today)
+                                  .DisplayFormat("yyyy-MM-dd")
+                                  .Width(200)
+                                  .Placeholder("Select...")
+                                  .Label("Select Date")
+                                  .OnValueChanged("refreshGrid_OutGoingReceipt")
+                            )
+
+                            </div>
+                            <div style="float: right; display: inline-block; margin-right: 88px;">
+                                @(Html.DevExtreme().TextBox()
+                                  .ID("txtUserOutGoing")
+                                  .Width(200)
+                                  .Placeholder("Enter user name...")
+                                  .Label("Người Giao Hàng")
+                                )
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            @(Html.DevExtreme().DataGrid<OUTGOING_RECEIPT_WLP2>
+    ()
+    .ID("gridContainer_outGoingReceipt")
+    .DataSourceOptions(o => o.ReshapeOnPush(true))
+    .ShowBorders(true)
+    .RepaintChangesOnly(true)
+    .HighlightChanges(true)
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .SearchPanel(searchPanel => searchPanel
+    .Visible(true)
+    .Width(240)
+    .Placeholder("Search...")
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+    .Editing(editing =>
+    {
+        editing.Mode(GridEditMode.Row);
+        editing.AllowUpdating(true);
+    })
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+    .OnExporting("exportingOutGoingReceipt")
+    .Height(500)
+    .ColumnFixing(x=>x.Enabled(true))
+    .Columns(columns => {
+
+        columns.AddFor(m => m.Module).Caption("Model SMT").Fixed(true).FixedPosition(HorizontalEdge.Left).AllowEditing(false);
+        columns.AddFor(m => m.SapCode).Caption("WLP reel code").Fixed(true).FixedPosition(HorizontalEdge.Left).AllowEditing(false);
+        columns.AddFor(m => m.SoLuongYeuCau).Caption("Số Lượng SMT Yêu Cầu").Fixed(true).FixedPosition(HorizontalEdge.Left).DataType(GridColumnDataType.Number).Format("#,##0").AllowEditing(false);
+
+        columns.Add().Caption("Số Lượng WLP2 Xuất Hàng Dự Kiến ").Columns(c => {
+
+            c.AddFor(m => m.LuongDuKien_1).Caption("08h ~ 12h59").DataType(GridColumnDataType.Number).Format("#,##0").AllowEditing(false);
+            c.AddFor(m => m.LuongDuKien_2).Caption("13h ~ 20h").DataType(GridColumnDataType.Number).Format("#,##0");
+            c.AddFor(m => m.LuongDuKien_3).Caption("20h ~ 23h59").DataType(GridColumnDataType.Number).Format("#,##0");
+            c.AddFor(m => m.LuongDuKien_4).Caption("00h ~ 8h").DataType(GridColumnDataType.Number).Format("#,##0");
+
+        }).CssClass("styleHeader");
+
+
+        columns.AddFor(m => m.ChenhLechDuKien).Caption("Chênh lệch").DataType(GridColumnDataType.Number).Format("#,##0").AllowEditing(false).CellTemplate(@<text>
+                <span class="<%- data.ChenhLechDuKien > 0 ? 'inc' : (data.ChenhLechDuKien < 0) ? 'dec' : 'zeroHide' %>">
+                  <%- text %>
+                </span>
+            </text>);
+
+        columns.Add().Caption("Số Lượng WLP2 Xuất Hàng Thực Tế").Columns(c => {
+
+            c.AddFor(m => m.LuongThucTe_1).Caption("08h ~ 12h59").DataType(GridColumnDataType.Number).Format("#,##0").AllowEditing(false);
+            c.AddFor(m => m.LuongThucTe_2).Caption("13h ~ 20h").DataType(GridColumnDataType.Number).Format("#,##0").AllowEditing(false);
+            c.AddFor(m => m.LuongThucTe_3).Caption("20h ~ 23h59").DataType(GridColumnDataType.Number).Format("#,##0").AllowEditing(false);
+            c.AddFor(m => m.LuongThucTe_4).Caption("00h ~ 8h").DataType(GridColumnDataType.Number).Format("#,##0").AllowEditing(false);
+
+        }).CssClass("styleHeader");
+
+        columns.AddFor(m => m.ChenhLechThucTe).Caption("Chênh lệch").DataType(GridColumnDataType.Number).Format("#,##0").AllowEditing(false).CellTemplate(@<text>
+                <span class="<%- data.ChenhLechThucTe > 0 ? 'inc' : (data.ChenhLechThucTe < 0) ? 'dec' : 'zeroHide' %>">
+                  <%- text %>
+                </span>
+            </text>);
+
+        columns.AddFor(m => m.Note).Caption("Note").Width(300);
+        columns.AddFor(m => m.NguoiGiao).Caption("Người Giao Hàng").AllowEditing(false);
+
+    }).DataSource(d => d.Mvc()
+    .Area("OpeationMns")
+    .Controller("OutGoingReceipt")
+    .LoadAction("Get")
+    .LoadParams(new { day = new JS("getDateBoxValueOutGoing") })
+    .UpdateAction("Put")
+    .OnBeforeSend("passUserOngoing")
+    .OnUpdated("refreshGrid_OutGoingReceipt")
+    .Key("Key")
+    ).Summary(s=>s.TotalItems(items=> {
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("Total: {0}").ValueFormat(Format.FixedPoint).Column("SoLuongYeuCau");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("LuongDuKien_1");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("LuongDuKien_2");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("LuongDuKien_3");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("LuongDuKien_4");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("ChenhLechDuKien");
+
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("LuongThucTe_1");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("LuongThucTe_2");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("LuongThucTe_3");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("LuongThucTe_4");
+        items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("ChenhLechThucTe");
+    })))
+        </div>
+    </div>
+
+    <div class="row" style="margin-top: 20px; margin-bottom: -2rem;">
+        <div class="col-sm-12" id="show-hidden-grid-wlp2">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item active" style="cursor: pointer;">
+                    <i class="fa fa-caret-right"></i> <strong>Shipping SMT History(Lịch Sử Xuất Hàng SMT)</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row hidden-grid-wlp2">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form">
+                        <div class="dx-fieldset">
+                            <div class="dx-field">
+                                <div style="float:left;display:inline-block;margin-right:10px">
+
+                                    @(Html.DevExtreme().DateBox()
+                                  .ID("begindate-date_shippingSMTHistory")
+                                  .Type(DateBoxType.Date)
+                                  .Value(today)
+                                  .DisplayFormat("yyyy-MM-dd")
+                                  .Width(200)
+                                  .Placeholder("Select...")
+                                  .Label("From Date")
+                                  .OnValueChanged("refreshGrid_shippingSMTHistory")
+                            )
+
+                                </div>
+                                <div style="display:inline-block">
+                                    @(Html.DevExtreme().DateBox()
+                                  .ID("todate-date_shippingSMTHistory")
+                                  .Type(DateBoxType.Date)
+                                  .Value(today)
+                                  .DisplayFormat("yyyy-MM-dd")
+                                  .Width(200)
+                                  .Placeholder("Select...")
+                                  .Label("To Date")
+                                  .OnValueChanged("refreshGrid_shippingSMTHistory")
+                            )
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-8">
+                    @(Html.DevExtreme().DataGrid<ShippingSMTHistoryByLotIdViewModel>
+    ()
+    .ID("gridContainer_shippingSMTHistory")
+    .Height(680)
+    .ShowBorders(true)
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnMinWidth(50)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+    .OnExporting("exporting_shippingSMTHistory")
+    .FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+    .Columns(columns =>
+    {
+        columns.Add().Caption("Danh Sách Model Xuất Hàng SMT ").Columns(c =>
+        {
+            c.AddFor(m => m.MoveOutTime).Caption("Move Out Time");
+            c.AddFor(m => m.LotID).Caption("Lot ID");
+            c.AddFor(m => m.SapMaterial).Caption("Sap Material");
+            c.AddFor(m => m.OutPutQty).Caption("Output Qty").Format(Format.FixedPoint).Width(150);
+            c.AddFor(m => m.Note);
+        });
+    })
+    .DataSource(d => d.Mvc()
+    .Area("OpeationMns")
+    .Controller("ShippingSMTHistory")
+    .LoadAction("GetSMTShipByLot")
+    .LoadParams(new { fromTime = new JS("getDateBoxValueFrom"), toTime = new JS("getDateBoxValueTo") })
+    ).Summary(s => s
+    .TotalItems(totalItems =>
+    {
+        totalItems.AddFor(m => m.OutPutQty).SummaryType(SummaryType.Sum).DisplayFormat("Total: {0}").ValueFormat(Format.FixedPoint);
+    })
+    )
+    )
+                </div>
+
+                <div class="col-md-4">
+                    @(Html.DevExtreme().DataGrid<ShippingSMTHistoryBySapCodeViewModel>
+    ()
+    .ID("gridContainer_2_shippingSMTHistory")
+    .Height(680)
+    .ShowBorders(true)
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnMinWidth(50)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+    .OnExporting("exporting2_shippingSMTHistory")
+    .FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+    .Columns(columns =>
+    {
+        columns.Add().Caption("Tổng Lượng Xuất Hàng SMT Theo Sap Material").Columns(c =>
+        {
+            c.AddFor(m => m.SapMaterial).Caption("Sap Material");
+            c.AddFor(m => m.OutPutQty).Caption("Output Qty").Format(Format.FixedPoint).Width(150);
+        });
+    })
+    .DataSource(d => d.Mvc()
+    .Area("OpeationMns")
+    .Controller("ShippingSMTHistory")
+    .LoadAction("GetSMTShipByTime")
+    .LoadParams(new { fromTime = new JS("getDateBoxValueFrom"), toTime = new JS("getDateBoxValueTo") })
+    ).Summary(s => s
+    .TotalItems(totalItems =>
+    {
+        totalItems.AddFor(m => m.OutPutQty).SummaryType(SummaryType.Sum).DisplayFormat("Total: {0}").ValueFormat(Format.FixedPoint);
+    })
+    )
+    )
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<partial name="_ImportExcelModel" />
+

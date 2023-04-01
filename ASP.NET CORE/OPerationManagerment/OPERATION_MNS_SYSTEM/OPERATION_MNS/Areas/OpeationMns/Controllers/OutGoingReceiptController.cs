@@ -39,19 +39,25 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
         }
 
         [HttpGet]
-        public object Get(DataSourceLoadOptions loadOptions)
+        public object Get(DataSourceLoadOptions loadOptions,string day)
         {
-            return DataSourceLoader.Load(_IOutGoingReceiptService.GetAllToDay(), loadOptions);
+            string date = DateTime.Parse(day).ToString("yyyyMMdd");
+            return DataSourceLoader.Load(_IOutGoingReceiptService.GetAllByDay(date), loadOptions);
         }
 
         [HttpPut]
-        public IActionResult Put(string key, string values)
+        public IActionResult Put(string key, string values,string userName)
         {
-            OUTGOING_RECEIPT_WLP2 model = _IOutGoingReceiptService.GetAllToDay().Find(x=>x.Key == key);
+            OUTGOING_RECEIPT_WLP2 model = new OUTGOING_RECEIPT_WLP2();
 
             JsonConvert.PopulateObject(values, model);
 
-            _IOutGoingReceiptService.Update(model);
+            if (!string.IsNullOrEmpty(userName))
+            {
+                model.NguoiGiao = userName;
+            }
+            
+            _IOutGoingReceiptService.Update(model,key);
             return Ok();
         }
 
