@@ -166,6 +166,11 @@
     </script>
 }
 
+@{
+    bool isView = User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+                 User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] != "WLP2_VIEW";
+}
+
 <div class="content container-fluid">
     <!-- Page Header -->
     <div class="page-header">
@@ -278,7 +283,7 @@
         .Position(p => p.Of("#grid-container-detail"))
         .Visible(false)
 )
-@(Html.DevExtreme().DataGrid<StayLotList_Ex_ViewModel>()
+            @(Html.DevExtreme().DataGrid<StayLotList_Ex_ViewModel>()
 .ID("grid-container-detail")
 .KeyExpr("Key")
 .Height(480)
@@ -306,7 +311,7 @@
     .Editing(editing =>
     {
         editing.Mode(GridEditMode.Row);
-        editing.AllowUpdating(true);
+        editing.AllowUpdating(isView);
     })
 .Columns(columns =>
 {

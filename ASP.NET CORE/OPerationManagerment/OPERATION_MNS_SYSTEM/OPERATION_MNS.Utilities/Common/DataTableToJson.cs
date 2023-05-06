@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -9,28 +10,33 @@ namespace OPERATION_MNS.Utilities.Common
 {
     public static class DeepEqual
     {
-        public static bool DeepEquals(this object obj, object another,List<string> ignore)
+        public static bool DeepEquals(this object obj, object another, List<string> ignore)
         {
             if (ReferenceEquals(obj, another)) return true;
             if ((obj == null) || (another == null)) return false;
             //So sánh class của 2 object, nếu khác nhau thì trả fail
             if (obj.GetType() != another.GetType()) return false;
 
+            if (!obj.GetType().IsClass) return obj.Equals(another);
+
             var result = true;
             //Lấy toàn bộ các properties của obj
             //sau đó so sánh giá trị của từng property
-            foreach (var property in obj.GetType().GetProperties())
+            foreach (var property in obj.GetType().GetProperties().Where(p => !p.GetIndexParameters().Any()))
             {
                 if (!ignore.Contains(property.Name))
                 {
                     var objValue = property.GetValue(obj);
                     var anotherValue = property.GetValue(another);
 
-                    if ((objValue == null && anotherValue != null) || 
-                        (objValue != null && anotherValue == null) || 
-                        (objValue != null && !objValue.Equals(anotherValue))
+                    if ((objValue == null && anotherValue != null) ||
+                        (objValue != null && anotherValue == null) ||
+                        (objValue != null && !objValue.DeepEquals(anotherValue, ignore))
                        )
+                    {
                         result = false;
+                    }
+
                 }
             }
 

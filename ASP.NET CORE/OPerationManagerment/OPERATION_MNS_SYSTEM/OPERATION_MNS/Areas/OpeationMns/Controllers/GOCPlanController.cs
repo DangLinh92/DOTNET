@@ -430,6 +430,40 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
         }
 
         #region WLP2
+        // vẽ chart Actual & Prod. Plan
+        [HttpPost]
+        public IActionResult GetDataActualPlanChartWlp2(string fromDay,string toDay,string danhmuc)
+        {
+            string fromDate = fromDay;
+            string toDate = toDay;
+            if (string.IsNullOrEmpty(fromDay))
+            {
+                 fromDate = DateTime.Now.ToString("yyyy-MM") + "-01";
+            }
+
+            if (string.IsNullOrEmpty(toDay))
+            {
+                toDate = DateTime.Parse(fromDate.Substring(0,7)+"-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd");
+            }
+
+            var data = _GocPlanService.GetDataByDay(fromDate, toDate, danhmuc).OrderBy(x=>x.Model).ThenBy(x=>x.DatePlan).ToList();
+            List<GocPlanViewModel> newData = new List<GocPlanViewModel>();
+            foreach (var item in data)
+            {
+                if (!newData.Exists(x => x.Model == item.Model))
+                {
+                    newData.Add(item);
+                }
+                else
+                {
+                    GocPlanViewModel pl = newData.FirstOrDefault(x => x.Model == item.Model);
+                    pl.QuantityPlan += item.QuantityPlan;
+                    pl.QuantityActual += item.QuantityActual;
+                    pl.QuantityGap = item.QuantityGap;
+                }
+            }
+            return new OkObjectResult(newData.OrderBy(x=>x.Model).ToList());
+        }
 
         public IActionResult Wlp2()
         {
@@ -540,6 +574,79 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
 
             _logger.LogInformation("File null");
             return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
+        }
+
+        // View control chart wlp2
+        public IActionResult ViewControlChartWlp2()
+        {
+            string date = DateTime.Now.ToString("yyyy-MM-dd");
+            string toDate = date;
+            ViewControlChartDataModel model = _GocPlanService.GetDataControlChartWLP2(date, toDate, "OP77000", "");
+
+            model.FromDay = DateTime.Now.ToString("yyyy-MM-dd");
+            model.ToDay = DateTime.Now.ToString("yyyy-MM-dd");
+
+            model.Operation = "OP77000";
+            model.MatertialID = "";
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult GetDataControlChartWlp2(string fromDay, string toDay, string operation, string matertial)
+        {
+            ViewControlChartDataModel model = _GocPlanService.GetDataControlChartWLP2(fromDay, toDay, operation.NullString(), matertial.NullString());
+
+            model.FromDay = fromDay;
+            model.ToDay = toDay;
+
+            model.Operation = operation;
+            model.MatertialID = matertial;
+
+            return View("ViewControlChartWlp2", model);
+        }
+
+        // CTQ WLP2
+        public IActionResult CTQSettingWlp2()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public object GetCTQ_WLP2(DataSourceLoadOptions loadOptions)
+        {
+            return DataSourceLoader.Load(_GocPlanService.GetCTQ_Wlp2(), loadOptions);
+        }
+
+        [HttpPost]
+        public IActionResult PostCTQ_WLP2(string values)
+        {
+            var ctq = new CTQSettingWLP2ViewModel();
+            JsonConvert.PopulateObject(values, ctq);
+
+            _GocPlanService.PostCTQ_Wlp2(ctq);
+            _GocPlanService.Save();
+
+            return Ok();
+        }
+
+        [HttpPut]
+        public IActionResult PutCTQ_WLP2(int key, string values)
+        {
+            var ctq = _GocPlanService.GetCTQ_Wlp2_Id(key);
+            JsonConvert.PopulateObject(values, ctq);
+            _GocPlanService.PutCTQ_Wlp2(ctq);
+            _GocPlanService.Save();
+
+            return Ok();
+        }
+
+        [HttpDelete]
+        public void DeleteCTQ_WLP2(int key)
+        {
+            var ctq = _GocPlanService.GetCTQ_Wlp2_Id(key);
+            _GocPlanService.DeleteCTQ_Wlp2(ctq);
+            _GocPlanService.Save();
         }
         #endregion
     }

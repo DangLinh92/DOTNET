@@ -102,6 +102,7 @@ namespace OPERATION_MNS
             services.AddTransient<IDeNghiXuatNVLService, DeNghiXuatNVLService>();
             services.AddTransient<IOutGoingReceiptService, OutGoingReceiptService>();
             services.AddTransient<IShippingSMTHistoryService, ShippingSMTHistoryService>();
+            services.AddTransient<IThicknessWlp2Service, ThicknessWlp2Service>();
 
             services.AddSignalR(cfg =>cfg.EnableDetailedErrors = true);
 

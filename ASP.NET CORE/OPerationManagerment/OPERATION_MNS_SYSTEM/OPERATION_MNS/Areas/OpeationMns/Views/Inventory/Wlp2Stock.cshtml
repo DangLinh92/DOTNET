@@ -1,4 +1,7 @@
 ﻿@using OPERATION_MNS.Areas.OpeationMns.Models.SignalR
+@using Microsoft.AspNetCore.Authorization
+@using OPERATION_MNS.Authorization
+@inject IAuthorizationService AuthorizationService
 @{
     ViewData["Title"] = "WLP2 재공수량";
     Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
@@ -20,21 +23,19 @@
             color: #FEF5AC;
             font-weight: bold;
             border-right-width: medium !important;
-           /* border-right-color: #FEF5AC !important;*/
+            /* border-right-color: #FEF5AC !important;*/
         }
 
         .styleColumn {
             border-right-width: medium !important;
-         /*   border-right-color: #FEF5AC !important;*/
+            /*   border-right-color: #FEF5AC !important;*/
         }
 
         .styleColumn3 {
             background-color: papayawhip;
             font-weight: bold;
-            color:midnightblue;
+            color: midnightblue;
         }
-
-
     </style>
 
 }
@@ -50,6 +51,8 @@
     <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
     <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
     <script>
+
+     var roleUsers = JSON.parse('@Html.Raw(JsonSerializer.Serialize(User.FindFirst(x => x.Type == "Roles").Value + ""))');
 
      var connection = new signalR.HubConnectionBuilder()
             .withUrl("@Url.Content("~/liveUpdateSignalRHub")")
@@ -99,17 +102,24 @@
 
 
 
-     function onSaving(e) {
-        e.cancel = true;
+        function onSaving(e) {
 
-        if (e.changes.length) {
-            e.promise = sendBatchRequest('@Url.RouteUrl(new { controller = "Inventory",area= "OpeationMns", action = "Batch" })', e.changes).done(() => {
-                e.component.refresh(true).done(() => {
-                    e.component.cancelEditData();
-                });
-            });
-        }
-    }
+            e.cancel = true;
+            if (roleUsers.split(';')[0] == "WLP2_VIEW") {
+                alert('Không Có Quyền Chỉnh Sửa Dữ Liệu');
+                return;
+            }
+            else
+            {
+                if (e.changes.length) {
+                    e.promise = sendBatchRequest('@Url.RouteUrl(new { controller = "Inventory",area= "OpeationMns", action = "Batch" })', e.changes).done(() => {
+                        e.component.refresh(true).done(() => {
+                            e.component.cancelEditData();
+                        });
+                    });
+                }
+            }
+     }
 
     function sendBatchRequest(url, changes) {
         var d = $.Deferred();
@@ -132,6 +142,8 @@
 
 @{
     string ViewOption_Actual = ViewBag.ViewOption_Actual;
+    bool isView = User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 && 
+                  User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] != "WLP2_VIEW";
 }
 
 <div class="content container-fluid">
@@ -186,8 +198,8 @@
     .Editing(editing =>
     {
         editing.Mode(GridEditMode.Batch);
-        editing.AllowUpdating(true);
-        editing.SelectTextOnEditStart(true);
+        editing.AllowUpdating(isView);
+        editing.SelectTextOnEditStart(isView);
         editing.StartEditAction(GridStartEditAction.Click);
     })
     .Columns(columns => {

@@ -13,5 +13,12 @@ namespace OPERATION_MNS.Application.Interfaces
         void PostMail(CTQEmailReceivViewModel email);
         void DeleteMail(string email);
         CTQEmailReceivViewModel GetMail(string email);
+
+
+        List<CTQEmailReceivViewModel> GetListMailWlp2();
+        void PutMailWlp2(CTQEmailReceivViewModel email);
+        void PostMailWlp2(CTQEmailReceivViewModel email);
+        void DeleteMailWlp2(string email);
+        CTQEmailReceivViewModel GetMailWlp2(string email);
     }
 }

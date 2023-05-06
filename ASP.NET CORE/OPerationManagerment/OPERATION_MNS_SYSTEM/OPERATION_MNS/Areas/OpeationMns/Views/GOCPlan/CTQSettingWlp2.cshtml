@@ -1,0 +1,104 @@
+﻿@model List<CTQSettingViewModel>
+@{
+    ViewData["Title"] = "Setting CTQ WLP2";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts
+{
+    <script>
+    function exporting(e) {
+        var workbook = new ExcelJS.Workbook();
+        var worksheet = workbook.addWorksheet('CTQ Setting');
+
+        DevExpress.excelExporter.exportDataGrid({
+            component: e.component,
+            worksheet: worksheet,
+            autoFilterEnabled: true
+        }).then(function () {
+            workbook.xlsx.writeBuffer().then(function (buffer) {
+                saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'CTQ_Setting.xlsx');
+            });
+        });
+        e.cancel = true;
+    }
+    </script>
+
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">@ViewData["Title"]</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Setting CTQ</li>
+                </ul>
+            </div>
+            <div class="col-auto float-right ml-auto">
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                @(Html.DevExtreme().DataGrid<CTQSettingWLP2ViewModel>()
+    .ID("gridContainer")
+    .DataSourceOptions(o => o.ReshapeOnPush(true))
+    .ShowBorders(true)
+    .RepaintChangesOnly(true)
+    .HighlightChanges(true)
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnMinWidth(100)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .FilterRow(filterRow => filterRow
+        .Visible(true)
+        .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .SearchPanel(searchPanel => searchPanel
+        .Visible(true)
+        .Width(240)
+        .Placeholder("Search...")
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+     .OnExporting("exporting")
+    .Editing(editing => {
+        editing.Mode(GridEditMode.Row);
+        editing.AllowAdding(true);
+        editing.AllowDeleting(true);
+        editing.AllowUpdating(true);
+    })
+    .Columns(columns => {
+        columns.AddFor(m => m.Id).Visible(false).AllowEditing(false);
+        columns.AddFor(m => m.OperationID);
+        columns.AddFor(m => m.OperationName);
+        columns.AddFor(m => m.MinV).Caption("Min");
+        columns.AddFor(m => m.MaxV).Caption("Max");
+        columns.AddFor(m => m.ThickNet).Caption("Độ Dày");
+        columns.AddFor(m => m.SpeacialModel).Caption("Model Đặc Biệt");
+    })
+    .DataSource(d => d.Mvc()
+        .Controller("GocPlan")
+        .LoadAction("GetCTQ_WLP2")
+        .UpdateAction("PutCTQ_WLP2")
+        .InsertAction("PostCTQ_WLP2")
+        .DeleteAction("DeleteCTQ_WLP2")
+        .Key("Id")
+    )
+)
+            </div>
+        </div>
+    </div>
+</div>

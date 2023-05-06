@@ -1,0 +1,868 @@
+﻿@using OPERATION_MNS.Data.EF.Extensions
+@model ViewControlChartDataModel
+@{
+    ViewData["Title"] = "View control chart wlp2";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+@section Styles {
+    <style>
+        #tbl-content tr td {
+            background-color: #F2F3F4;
+        }
+
+        .sorting, .sorting_asc, .sorting_desc {
+            background: none;
+        }
+
+        a:hover {
+            background-color: #ddd;
+            color: black !important;
+        }
+
+        .previous {
+            background-color: #f1f1f1;
+            color: black;
+            float: right;
+            width: 101px;
+            text-decoration: none;
+            display: inline-block;
+            padding: 8px 16px;
+            cursor: pointer;
+        }
+
+        .next {
+            background-color: #004e89;
+            color: white !important;
+            float: right;
+            width: 101px;
+            text-decoration: none;
+            display: inline-block;
+            padding: 8px 16px;
+            cursor: pointer;
+        }
+
+        .round {
+            border-radius: 50%;
+        }
+
+        .stats-box {
+            width: 110px;
+            float: left;
+            margin-left: 5px;
+            text-align: center;
+            background-color: #004e89;
+            color: white !important;
+        }
+    </style>
+}
+
+@section Scripts
+{
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            $('#show-hidden-grid-wlp-130').click(function () {
+                $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+                $('.hidden-grid-wlp-130').slideToggle("slow");
+            });
+
+            $('#show-hidden-grid-wlp-150').click(function () {
+                $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+                $('.hidden-grid-wlp-150').slideToggle("slow");
+            });
+
+            $('#show-hidden-grid-wlp-200').click(function () {
+                $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+                $('.hidden-grid-wlp-200').slideToggle("slow");
+            });
+        });
+    </script>
+
+    <!--- 130 um  -->
+    <script>
+        var chartData_130 = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.lstData.Where(x=>x.Thicknet == 130)))');
+        const tempData_130 = chartData_130;
+    </script>
+    <script src="~/app/controllers/GocPlan/WLP2_Thickness130_ChartControl.js"></script>
+    <script>
+        var _130_ChartControl = new WLP2_Thickness130_ChartControl();
+        _130_ChartControl.DrawChart();
+
+        function RowClickDataEvt_130(selectedItems) {
+            var data = selectedItems.selectedRowsData;
+
+            if (data.length > 0) {
+
+                let arrFilter = [];
+                console.log(data);
+                for (let value of data) {
+                    arrFilter.push(tempData_130.find((item) => item.LOT_ID == value.LOT_ID && item.DATE == value.DATE && item.MAIN_OPERATION == value.MAIN_OPERATION));
+                }
+
+                chartData_130 = arrFilter;
+                _130_ChartControl.DrawChart();
+            }
+        }
+
+        function onRowDbl_130(e) {
+            let dataGrid = $("#grid-container_130").dxDataGrid("instance");
+            dataGrid.deselectAll();
+            dataGrid.clearSelection();
+
+            chartData_130 = tempData_130;
+            _130_ChartControl.DrawChart();
+        }
+
+        function exporting_130(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('CTQ Lots List');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'CTQ_Lots_List130um.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        function exporting_err_130(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('CTQ Lots List Error');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'CTQ_Lots_List_Error_130um.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+    </script>
+
+
+    <!--- 150 um  -->
+    <script>
+        var chartData_150 = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.lstData.Where(x=>x.Thicknet == 150)))');
+        const tempData_150 = chartData_150;
+    </script>
+    <script src="~/app/controllers/GocPlan/WLP2_Thickness150_ChartControl.js"></script>
+    <script>
+        var _150_ChartControl = new WLP2_Thickness150_ChartControl();
+        _150_ChartControl.DrawChart();
+
+        function RowClickDataEvt_150(selectedItems) {
+            var data = selectedItems.selectedRowsData;
+
+            if (data.length > 0) {
+
+                let arrFilter = [];
+                console.log(data);
+                for (let value of data) {
+                    arrFilter.push(tempData_150.find((item) => item.LOT_ID == value.LOT_ID && item.DATE == value.DATE && item.MAIN_OPERATION == value.MAIN_OPERATION));
+                }
+
+                chartData_150 = arrFilter;
+                _150_ChartControl.DrawChart();
+            }
+        }
+
+        function onRowDbl_150(e) {
+            let dataGrid = $("#grid-container_150").dxDataGrid("instance");
+            dataGrid.deselectAll();
+            dataGrid.clearSelection();
+
+            chartData_150 = tempData_150;
+            _150_ChartControl.DrawChart();
+        }
+
+        function exporting_150(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('CTQ Lots List');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'CTQ_Lots_List150um.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        function exporting_err_150(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('CTQ Lots List Error');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'CTQ_Lots_List_Error_150um.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+    </script>
+
+    <!--- 200 um  -->
+    <script>
+        var chartData_200 = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.lstData.Where(x=>x.Thicknet == 200)))');
+        const tempData_200 = chartData_200;
+    </script>
+    <script src="~/app/controllers/GocPlan/WLP2_Thickness200_ChartControl.js"></script>
+    <script>
+        var _200_ChartControl = new WLP2_Thickness200_ChartControl();
+        _200_ChartControl.DrawChart();
+
+        function RowClickDataEvt_200(selectedItems) {
+            var data = selectedItems.selectedRowsData;
+
+            if (data.length > 0) {
+
+                let arrFilter = [];
+                console.log(data);
+                for (let value of data) {
+                    arrFilter.push(tempData_200.find((item) => item.LOT_ID == value.LOT_ID && item.DATE == value.DATE && item.MAIN_OPERATION == value.MAIN_OPERATION));
+                }
+
+                chartData_200 = arrFilter;
+                _200_ChartControl.DrawChart();
+            }
+        }
+
+        function onRowDbl_200(e) {
+            let dataGrid = $("#grid-container_200").dxDataGrid("instance");
+            dataGrid.deselectAll();
+            dataGrid.clearSelection();
+
+            chartData_200 = tempData_200;
+            _200_ChartControl.DrawChart();
+        }
+
+        function exporting_200(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('CTQ Lots List');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'CTQ_Lots_List200um.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        function exporting_err_200(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('CTQ Lots List Error');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'CTQ_Lots_List_Error_200um.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+    </script>
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">@ViewData["Title"]</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">WLP2 View control chart</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="myHeader">
+        <form action="/OpeationMns/GOCPlan/GetDataControlChartWlp2" method="post">
+            <div class="row filter-row">
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    @*<div class="form-group form-focus select-focus">
+                            <div class="cal-icon"><input id="txtYear" name="year" value="@Model.Year" class="form-control datetimepicker" type="text" required></div>
+                            <label class="focus-label">Year</label>
+                        </div>*@
+                </div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <div class="form-group form-focus select-focus">
+                        <div class="cal-icon"><input id="txtFrom" name="fromDay" value="@Model.FromDay" class="form-control datetimepicker" type="text" required></div>
+                        <label class="focus-label">From</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <div class="form-group form-focus select-focus">
+                        <div class="cal-icon"><input id="txtTo" name="toDay" value="@Model.ToDay" class="form-control datetimepicker" type="text" required></div>
+                        <label class="focus-label">To</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <div class="form-group form-focus select-focus">
+                        <select id="cboOperation" class="select floating" name="operation" required>
+                            <!option value="OP77000" @(Model.Operation == "OP77000" ? "selected" : "")>Lamination</!option>
+                            <!option value="OP78000" @(Model.Operation == "OP78000" ? "selected" : "")>Back Grinding</!option>
+                        </select>
+                        <label class="focus-label">Operation</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <div class="form-group form-focus select-focus">
+                        <select id="cboMatertial" class="select floating" name="matertial">
+                            <!option value="" @(Model.MatertialID == "" ? "selected" : "")>ALL</!option>
+                            @foreach (var item in Model.lstMaterialId)
+                            {
+                                <!option value="@item" @(Model.MatertialID == item ? "selected" : "")>@item</!option>
+                            }
+                        </select>
+                        <label class="focus-label">Material</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <button id="btnSearch" type="submit" class="btn btn-success btn-block"> Search </button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!-- 130 um -->
+
+    <div class="row contentChart">
+        <div class="col-sm-12" id="show-hidden-grid-wlp-130">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item active" style="cursor: pointer;">
+                    <i class="fa fa-caret-right"></i> <strong>WLP2 View Control Chart -  130um </strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row hidden-grid-wlp-130">
+        <div class="col-md-12 d-flex">
+            <div class="card flex-fill dash-statistics">
+                <div class="card-header">
+                    <h5 id="wlp_byYear" class="card-title mb-0">
+                        Độ dày 130um
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="chartjs-wrapper-demo">
+                        <div class="containerChart">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <canvas id="chartsColumn_control" class="h-300" style="height:275px"></canvas>
+                                </div>
+                                <div class="container-body-Chart col-md-8">
+                                    <canvas id="chartsLine_control" class="h-300" style="height:275px"></canvas>
+                                </div>
+                            </div>
+
+                            <a class="next" id="btnNext">Next &raquo;</a>
+                            <a class="previous" id="btnPre">&laquo; Previous</a>
+                            <span id="txtItems" style="float: right; margin-top: 10px; margin-right: 10px ">Items: </span>
+                            <div class="stats-box mb-4">
+                                <p>STDEV</p>
+                                <h4>@Model.STDEV</h4>
+                            </div>
+                            <div class="stats-box mb-4">
+                                <p>CPK THICKNESS</p>
+                                <h4>@Model.CPK_Thickness</h4>
+                            </div>
+                            <div class="stats-box mb-4">
+                                <p>CPK BST</p>
+                                <h4>@Model.CPK_bst</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive" style="margin-top:10px">
+                        @(Html.DevExtreme().DataGrid<ViewControlChartModel>()
+.ID("grid-container_130")
+.DataSource(Model.lstData.Where(x=>x.Thicknet == 130))
+.Height(400)
+.ShowBorders(true)
+.Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+.Paging(paging => paging.Enabled(false))
+.AllowColumnResizing(true)
+.ColumnMinWidth(50)
+.ColumnAutoWidth(true)
+.ShowColumnLines(true)
+.ShowRowLines(true)
+.RowAlternationEnabled(true)
+.FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+)
+.HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .HoverStateEnabled(true)
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+     .OnExporting("exporting_130")
+.Columns(columns =>
+{
+    columns.AddFor(m => m.DATE).Caption("Date");
+    columns.AddFor(m => m.MATERIAL_ID).Caption("Material");
+    columns.AddFor(m => m.LOT_ID).Caption("LotID");
+    columns.AddFor(m => m.CASSETTE_ID).Caption("CassetteID");
+    columns.AddFor(m => m.MAIN_OPERATION).Caption("Operation");
+    columns.AddFor(m => m.MAIN_EQUIPMENT_NAME).Caption("Equipment");
+    columns.AddFor(m => m.MAIN_TARGET_USL).Caption("USL");
+    columns.AddFor(m => m.MAIN_TARGET_UCL).Caption("UCL");
+    columns.AddFor(m => m.MAIN_TARGET_LSL).Caption("LSL");
+    columns.AddFor(m => m.MAIN_TARGET_LCL).Caption("LCL");
+    columns.AddFor(m => m.MAIN_VALUE_COUNT).Caption("Point");
+    columns.AddFor(m => m.MAIN_VALUE1).Caption("Value 1");
+    columns.AddFor(m => m.MAIN_VALUE2).Caption("Value 2");
+    columns.AddFor(m => m.MAIN_VALUE3).Caption("Value 3");
+    columns.AddFor(m => m.MAIN_VALUE4).Caption("Value 4");
+    columns.AddFor(m => m.MAIN_VALUE5).Caption("Value 5");
+    columns.AddFor(m => m.MAIN_MAX_VALUE).Caption("Max Value");
+    columns.AddFor(m => m.MAIN_MIN_VALUE).Caption("Min Value");
+    columns.AddFor(m => m.MAIN_AVG_VALUE).Caption("Avg Value");
+    columns.AddFor(m => m.MAIN_RANGE).Caption("Range");
+}).Summary(s => s.TotalItems(items =>
+{
+    items.AddFor(m => m.LOT_ID)
+    .SummaryType(SummaryType.Count);
+})
+)
+.OnSelectionChanged("RowClickDataEvt_130").OnRowDblClick("onRowDbl_130"))
+                    </div>
+                    <div class="col-sm-12" style="margin-top:10px">
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item active">
+                                <i class="fa fa-caret-right"></i> <strong>Danh sách Lot lỗi 130um</strong>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="table-responsive" style="margin-top:10px">
+                        @(Html.DevExtreme().DataGrid<ViewControlChartModel>
+    ()
+    .ID("grid-container_loi_130")
+    .DataSource(Model.lstDataErr.Where(x=>x.Thicknet == 130))
+    .Height(400)
+    .ShowBorders(true)
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnMinWidth(50)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+     .SearchPanel(searchPanel => searchPanel
+        .Visible(true)
+        .Width(240)
+        .Placeholder("Search...")
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .HoverStateEnabled(true)
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+     .OnExporting("exporting_err_130")
+    .Columns(columns =>
+    {
+        columns.AddFor(m => m.DATE).Caption("Date");
+        columns.AddFor(m => m.MATERIAL_ID).Caption("Material");
+        columns.AddFor(m => m.LOT_ID).Caption("LotID");
+        columns.AddFor(m => m.CASSETTE_ID).Caption("CassetteID");
+        columns.AddFor(m => m.MAIN_OPERATION).Caption("Operation");
+        columns.AddFor(m => m.MAIN_EQUIPMENT_NAME).Caption("Equipment");
+        columns.AddFor(m => m.MAIN_TARGET_LSL).Caption("LSL");
+        columns.AddFor(m => m.LWL).Caption("LWL");
+        columns.AddFor(m => m.MAIN_TARGET).Caption("MAIN_TARGET").Caption("Target");
+        columns.AddFor(m => m.UWL).Caption("UWL");
+        columns.AddFor(m => m.MAIN_TARGET_USL).Caption("USL");
+        columns.AddFor(m => m.MAIN_VALUE_COUNT).Caption("Point");
+        columns.AddFor(m => m.MAIN_VALUE1).Caption("Value 1");
+        columns.AddFor(m => m.MAIN_VALUE2).Caption("Value 2");
+        columns.AddFor(m => m.MAIN_VALUE3).Caption("Value 3");
+        columns.AddFor(m => m.MAIN_VALUE4).Caption("Value 4");
+        columns.AddFor(m => m.MAIN_VALUE5).Caption("Value 5");
+        columns.AddFor(m => m.MAIN_MAX_VALUE).Caption("Max Value");
+        columns.AddFor(m => m.MAIN_MIN_VALUE).Caption("Min Value");
+        columns.AddFor(m => m.MAIN_AVG_VALUE).Caption("Avg Value");
+        columns.AddFor(m => m.MAIN_RANGE).Caption("Range");
+    }).Summary(s => s.TotalItems(items => {
+        items.AddFor(m => m.LOT_ID)
+        .SummaryType(SummaryType.Count);})
+    )
+    )
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- 150 um -->
+    <div class="row contentChart">
+        <div class="col-sm-12" id="show-hidden-grid-wlp-150">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item active" style="cursor: pointer;">
+                    <i class="fa fa-caret-right"></i> <strong>WLP2 View Control Chart -  150um </strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row hidden-grid-wlp-150">
+        <div class="col-md-12 d-flex">
+            <div class="card flex-fill dash-statistics">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        Độ dày 150um
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="chartjs-wrapper-demo">
+                        <div class="containerChart">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <canvas id="chartsColumn_control_150" class="h-300" style="height:275px"></canvas>
+                                </div>
+                                <div class="container-body-Chart col-md-8">
+                                    <canvas id="chartsLine_control_150" class="h-300" style="height:275px"></canvas>
+                                </div>
+                            </div>
+
+                            <a class="next" id="btnNext_150">Next &raquo;</a>
+                            <a class="previous" id="btnPre_150">&laquo; Previous</a>
+                            <span id="txtItems_150" style="float: right; margin-top: 10px; margin-right: 10px ">Items: </span>
+                            <div class="stats-box mb-4">
+                                <p>STDEV</p>
+                                <h4>@Model.STDEV150</h4>
+                            </div>
+                            <div class="stats-box mb-4">
+                                <p>CPK THICKNESS</p>
+                                <h4>@Model.CPK_Thickness150</h4>
+                            </div>
+                            <div class="stats-box mb-4">
+                                <p>CPK BST</p>
+                                <h4>@Model.CPK_bst150</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive" style="margin-top:10px">
+                        @(Html.DevExtreme().DataGrid<ViewControlChartModel>()
+.ID("grid-container_150")
+.DataSource(Model.lstData.Where(x=>x.Thicknet == 150))
+.Height(400)
+.ShowBorders(true)
+.Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+.Paging(paging => paging.Enabled(false))
+.AllowColumnResizing(true)
+.ColumnMinWidth(50)
+.ColumnAutoWidth(true)
+.ShowColumnLines(true)
+.ShowRowLines(true)
+.RowAlternationEnabled(true)
+.FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+)
+.HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .HoverStateEnabled(true)
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+     .OnExporting("exporting_150")
+.Columns(columns =>
+{
+    columns.AddFor(m => m.DATE).Caption("Date");
+    columns.AddFor(m => m.MATERIAL_ID).Caption("Material");
+    columns.AddFor(m => m.LOT_ID).Caption("LotID");
+    columns.AddFor(m => m.CASSETTE_ID).Caption("CassetteID");
+    columns.AddFor(m => m.MAIN_OPERATION).Caption("Operation");
+    columns.AddFor(m => m.MAIN_EQUIPMENT_NAME).Caption("Equipment");
+    columns.AddFor(m => m.MAIN_TARGET_USL).Caption("USL");
+    columns.AddFor(m => m.MAIN_TARGET_UCL).Caption("UCL");
+    columns.AddFor(m => m.MAIN_TARGET_LSL).Caption("LSL");
+    columns.AddFor(m => m.MAIN_TARGET_LCL).Caption("LCL");
+    columns.AddFor(m => m.MAIN_VALUE_COUNT).Caption("Point");
+    columns.AddFor(m => m.MAIN_VALUE1).Caption("Value 1");
+    columns.AddFor(m => m.MAIN_VALUE2).Caption("Value 2");
+    columns.AddFor(m => m.MAIN_VALUE3).Caption("Value 3");
+    columns.AddFor(m => m.MAIN_VALUE4).Caption("Value 4");
+    columns.AddFor(m => m.MAIN_VALUE5).Caption("Value 5");
+    columns.AddFor(m => m.MAIN_MAX_VALUE).Caption("Max Value");
+    columns.AddFor(m => m.MAIN_MIN_VALUE).Caption("Min Value");
+    columns.AddFor(m => m.MAIN_AVG_VALUE).Caption("Avg Value");
+    columns.AddFor(m => m.MAIN_RANGE).Caption("Range");
+}).Summary(s => s.TotalItems(items =>
+{
+    items.AddFor(m => m.LOT_ID)
+    .SummaryType(SummaryType.Count);
+})
+)
+.OnSelectionChanged("RowClickDataEvt_150").OnRowDblClick("onRowDbl_150"))
+                    </div>
+                    <div class="col-sm-12" style="margin-top:10px">
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item active">
+                                <i class="fa fa-caret-right"></i> <strong>Danh sách Lot lỗi 150um</strong>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="table-responsive" style="margin-top:10px">
+                        @(Html.DevExtreme().DataGrid<ViewControlChartModel>
+    ()
+    .ID("grid-container_loi_150")
+    .DataSource(Model.lstDataErr.Where(x=>x.Thicknet == 150))
+    .Height(400)
+    .ShowBorders(true)
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnMinWidth(50)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+     .SearchPanel(searchPanel => searchPanel
+        .Visible(true)
+        .Width(240)
+        .Placeholder("Search...")
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .HoverStateEnabled(true)
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+     .OnExporting("exporting_err_150")
+    .Columns(columns =>
+    {
+        columns.AddFor(m => m.DATE).Caption("Date");
+        columns.AddFor(m => m.MATERIAL_ID).Caption("Material");
+        columns.AddFor(m => m.LOT_ID).Caption("LotID");
+        columns.AddFor(m => m.CASSETTE_ID).Caption("CassetteID");
+        columns.AddFor(m => m.MAIN_OPERATION).Caption("Operation");
+        columns.AddFor(m => m.MAIN_EQUIPMENT_NAME).Caption("Equipment");
+        columns.AddFor(m => m.MAIN_TARGET_LSL).Caption("LSL");
+        columns.AddFor(m => m.LWL).Caption("LWL");
+        columns.AddFor(m => m.MAIN_TARGET).Caption("MAIN_TARGET").Caption("Target");
+        columns.AddFor(m => m.UWL).Caption("UWL");
+        columns.AddFor(m => m.MAIN_TARGET_USL).Caption("USL");
+        columns.AddFor(m => m.MAIN_VALUE_COUNT).Caption("Point");
+        columns.AddFor(m => m.MAIN_VALUE1).Caption("Value 1");
+        columns.AddFor(m => m.MAIN_VALUE2).Caption("Value 2");
+        columns.AddFor(m => m.MAIN_VALUE3).Caption("Value 3");
+        columns.AddFor(m => m.MAIN_VALUE4).Caption("Value 4");
+        columns.AddFor(m => m.MAIN_VALUE5).Caption("Value 5");
+        columns.AddFor(m => m.MAIN_MAX_VALUE).Caption("Max Value");
+        columns.AddFor(m => m.MAIN_MIN_VALUE).Caption("Min Value");
+        columns.AddFor(m => m.MAIN_AVG_VALUE).Caption("Avg Value");
+        columns.AddFor(m => m.MAIN_RANGE).Caption("Range");
+    }).Summary(s => s.TotalItems(items => {
+        items.AddFor(m => m.LOT_ID)
+        .SummaryType(SummaryType.Count);})
+    )
+    )
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- 200um -->
+    <div class="row contentChart">
+        <div class="col-sm-12" id="show-hidden-grid-wlp-200">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item active" style="cursor: pointer;">
+                    <i class="fa fa-caret-right"></i> <strong>WLP2 View Control Chart -  200um </strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row hidden-grid-wlp-200">
+        <div class="col-md-12 d-flex">
+            <div class="card flex-fill dash-statistics">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        Độ dày 200um
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="chartjs-wrapper-demo">
+                        <div class="containerChart">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <canvas id="chartsColumn_control_200" class="h-300" style="height:275px"></canvas>
+                                </div>
+                                <div class="container-body-Chart col-md-8">
+                                    <canvas id="chartsLine_control_200" class="h-300" style="height:275px"></canvas>
+                                </div>
+                            </div>
+
+                            <a class="next" id="btnNext_200">Next &raquo;</a>
+                            <a class="previous" id="btnPre_200">&laquo; Previous</a>
+                            <span id="txtItems_200" style="float: right; margin-top: 10px; margin-right: 10px ">Items: </span>
+                            <div class="stats-box mb-4">
+                                <p>STDEV</p>
+                                <h4>@Model.STDEV200</h4>
+                            </div>
+                            <div class="stats-box mb-4">
+                                <p>CPK THICKNESS</p>
+                                <h4>@Model.CPK_Thickness200</h4>
+                            </div>
+                            <div class="stats-box mb-4">
+                                <p>CPK BST</p>
+                                <h4>@Model.CPK_bst200</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive" style="margin-top:10px">
+                        @(Html.DevExtreme().DataGrid<ViewControlChartModel>()
+.ID("grid-container_200")
+.DataSource(Model.lstData.Where(x=>x.Thicknet == 200))
+.Height(400)
+.ShowBorders(true)
+.Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+.Paging(paging => paging.Enabled(false))
+.AllowColumnResizing(true)
+.ColumnMinWidth(50)
+.ColumnAutoWidth(true)
+.ShowColumnLines(true)
+.ShowRowLines(true)
+.RowAlternationEnabled(true)
+.FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+)
+.HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .HoverStateEnabled(true)
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+     .OnExporting("exporting_200")
+.Columns(columns =>
+{
+    columns.AddFor(m => m.DATE).Caption("Date");
+    columns.AddFor(m => m.MATERIAL_ID).Caption("Material");
+    columns.AddFor(m => m.LOT_ID).Caption("LotID");
+    columns.AddFor(m => m.CASSETTE_ID).Caption("CassetteID");
+    columns.AddFor(m => m.MAIN_OPERATION).Caption("Operation");
+    columns.AddFor(m => m.MAIN_EQUIPMENT_NAME).Caption("Equipment");
+    columns.AddFor(m => m.MAIN_TARGET_USL).Caption("USL");
+    columns.AddFor(m => m.MAIN_TARGET_UCL).Caption("UCL");
+    columns.AddFor(m => m.MAIN_TARGET_LSL).Caption("LSL");
+    columns.AddFor(m => m.MAIN_TARGET_LCL).Caption("LCL");
+    columns.AddFor(m => m.MAIN_VALUE_COUNT).Caption("Point");
+    columns.AddFor(m => m.MAIN_VALUE1).Caption("Value 1");
+    columns.AddFor(m => m.MAIN_VALUE2).Caption("Value 2");
+    columns.AddFor(m => m.MAIN_VALUE3).Caption("Value 3");
+    columns.AddFor(m => m.MAIN_VALUE4).Caption("Value 4");
+    columns.AddFor(m => m.MAIN_VALUE5).Caption("Value 5");
+    columns.AddFor(m => m.MAIN_MAX_VALUE).Caption("Max Value");
+    columns.AddFor(m => m.MAIN_MIN_VALUE).Caption("Min Value");
+    columns.AddFor(m => m.MAIN_AVG_VALUE).Caption("Avg Value");
+    columns.AddFor(m => m.MAIN_RANGE).Caption("Range");
+}).Summary(s => s.TotalItems(items =>
+{
+    items.AddFor(m => m.LOT_ID)
+    .SummaryType(SummaryType.Count);
+})
+)
+.OnSelectionChanged("RowClickDataEvt_200").OnRowDblClick("onRowDbl_200"))
+                    </div>
+                    <div class="col-sm-12" style="margin-top:10px">
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item active">
+                                <i class="fa fa-caret-right"></i> <strong>Danh sách Lot lỗi 200um</strong>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="table-responsive" style="margin-top:10px">
+                        @(Html.DevExtreme().DataGrid<ViewControlChartModel>
+    ()
+    .ID("grid-container_loi_200")
+    .DataSource(Model.lstDataErr.Where(x=>x.Thicknet == 200))
+    .Height(400)
+    .ShowBorders(true)
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnMinWidth(50)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+     .SearchPanel(searchPanel => searchPanel
+        .Visible(true)
+        .Width(240)
+        .Placeholder("Search...")
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .HoverStateEnabled(true)
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+     .OnExporting("exporting_err_200")
+    .Columns(columns =>
+    {
+        columns.AddFor(m => m.DATE).Caption("Date");
+        columns.AddFor(m => m.MATERIAL_ID).Caption("Material");
+        columns.AddFor(m => m.LOT_ID).Caption("LotID");
+        columns.AddFor(m => m.CASSETTE_ID).Caption("CassetteID");
+        columns.AddFor(m => m.MAIN_OPERATION).Caption("Operation");
+        columns.AddFor(m => m.MAIN_EQUIPMENT_NAME).Caption("Equipment");
+        columns.AddFor(m => m.MAIN_TARGET_LSL).Caption("LSL");
+        columns.AddFor(m => m.LWL).Caption("LWL");
+        columns.AddFor(m => m.MAIN_TARGET).Caption("MAIN_TARGET").Caption("Target");
+        columns.AddFor(m => m.UWL).Caption("UWL");
+        columns.AddFor(m => m.MAIN_TARGET_USL).Caption("USL");
+        columns.AddFor(m => m.MAIN_VALUE_COUNT).Caption("Point");
+        columns.AddFor(m => m.MAIN_VALUE1).Caption("Value 1");
+        columns.AddFor(m => m.MAIN_VALUE2).Caption("Value 2");
+        columns.AddFor(m => m.MAIN_VALUE3).Caption("Value 3");
+        columns.AddFor(m => m.MAIN_VALUE4).Caption("Value 4");
+        columns.AddFor(m => m.MAIN_VALUE5).Caption("Value 5");
+        columns.AddFor(m => m.MAIN_MAX_VALUE).Caption("Max Value");
+        columns.AddFor(m => m.MAIN_MIN_VALUE).Caption("Min Value");
+        columns.AddFor(m => m.MAIN_AVG_VALUE).Caption("Avg Value");
+        columns.AddFor(m => m.MAIN_RANGE).Caption("Range");
+    }).Summary(s => s.TotalItems(items => {
+        items.AddFor(m => m.LOT_ID)
+        .SummaryType(SummaryType.Count);})
+    )
+    )
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+

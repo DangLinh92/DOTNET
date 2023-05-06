@@ -63,6 +63,8 @@ namespace OPERATION_MNS.Application.ViewModels
         public float QtyGap_Ytd { get; set; }
 
         public double Qty_Percen_Ytd { get; set; }
+
+        public string SapCode { get; set; }
     }
 
     public class ProcActualPlanModel

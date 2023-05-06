@@ -179,7 +179,7 @@
                         @foreach (var item in Model.Functions)
                         {
                             <tr>
-                                <td>@item.Name</td>
+                                <td>@(item.Name + " ("+ item.ParentId + ") ") </td>
                                 @if (Model.PermisstionForRoleModels.Count > 0)
                                 {
                                     bool exist = false;

@@ -61,6 +61,23 @@
             background-color: #004e89 !important;
             color: #ffff !important;
         }
+
+        /*.ribbon-right {
+            left: auto;
+            right: auto;
+        }
+
+        .ribbon {
+            padding: 0 20px;*/
+            /* height: 30px; */
+            /*line-height: -2px;
+            clear: left;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            color: #fff;
+            z-index: 1;
+        }*/
     </style>
 
 }
@@ -207,7 +224,6 @@
             },
             success: function (response) {
                 hrms.hide_waitMe($('#gridContainer'));
-                console.log(response);
                 /*$("#gridContainer").dxDataGrid("getDataSource").reload();*/
                 location.reload();
             },
@@ -249,7 +265,6 @@
             },
             success: function (response) {
                 hrms.hide_waitMe($('#gridContainer'));
-                console.log(response);
                 location.reload();
             },
             error: function (status) {
@@ -264,40 +279,41 @@
             //e.cellElement.style.backgroundColor = "lightgreen";
             // e.cellElement.css("background-color", "red")
 
-            let operationNameIndex = arrOperationData.indexOf(e.column.dataField);
+            if (e.column.dataField.includes(".plan")) {
+                let operationNameIndex = arrOperationData.indexOf(e.column.dataField.split('.')[0]);
 
-            if (operationNameIndex < 0) {
-                return;
-            }
-
-            let operationID = arrOperation_ID[operationNameIndex];
-
-            $.ajax({
-                url: '/OpeationMns/DailyPlan/GetstayLotInfo',
-                type: 'POST',
-                data: {
-                    model: e.key,
-                    operation: operationID
-                },
-                beforeSend: function () {
-                    hrms.run_waitMe($('#grid-container-detail'));
-                },
-                success: function (response) {
-                    hrms.hide_waitMe($('#grid-container-detail'));
-                    console.log(response);
-
-                    $("#grid-container-detail").dxDataGrid({
-                        dataSource: response
-                    });
-                },
-                error: function (status) {
-                    hrms.notify(status.responseText, 'error', 'alert', function () { });
-                    hrms.hide_waitMe($('#grid-container-detail'));
-                    $("#grid-container-detail").dxDataGrid({
-                        dataSource: []
-                    });
+                if (operationNameIndex < 0) {
+                    return;
                 }
-            });
+
+                let operationID = arrOperation_ID[operationNameIndex];
+
+                $.ajax({
+                    url: '/OpeationMns/DailyPlan/GetstayLotInfo',
+                    type: 'POST',
+                    data: {
+                        model: e.key,
+                        operation: operationID
+                    },
+                    beforeSend: function () {
+                        hrms.run_waitMe($('#grid-container-detail'));
+                    },
+                    success: function (response) {
+                        hrms.hide_waitMe($('#grid-container-detail'));
+
+                        $("#grid-container-detail").dxDataGrid({
+                            dataSource: response
+                        });
+                    },
+                    error: function (status) {
+                        hrms.notify(status.responseText, 'error', 'alert', function () { });
+                        hrms.hide_waitMe($('#grid-container-detail'));
+                        $("#grid-container-detail").dxDataGrid({
+                            dataSource: []
+                        });
+                    }
+                });
+            }
         }
 
         $('#show-hidden-grid-wlp').click(function () {
@@ -305,6 +321,64 @@
             $('.hidden-grid-wlp').slideToggle("slow");
 
         });
+
+        function formatNumber(number) {
+
+            if (number === undefined) {
+                return '';
+            }
+
+            let str = number.toString();
+
+            if (str.indexOf('.') > 0) {
+                let n1 = str.split('.')[1];
+                let n2 = str.split('.')[0];
+                if (Number('0.' + n1) >= 0.4) {
+
+                    if (Number(n2) >= 0)
+                        number = Number(n2) + 1;
+                    else
+                        number = Number(n2) - 1;
+                }
+                else {
+                    number = Number(n2);
+                }
+            }
+
+            return number.toLocaleString("en-US");
+        }
+
+        function onCellPrepared(e) {
+            if (e.rowType === "data" && e.column.dataField.includes(".plan")) {
+
+                var tooltipInstance = $("#tooltip").dxTooltip("instance");
+                e.cellElement.mouseover(function (arg) {
+                    tooltipInstance.option("contentTemplate", function (contentElement) {
+                        contentElement.html(`<div class='tooltipContent'>` + `<div><b>Stock:</b> ${GetValueFromName(e.data, e.column.dataField)}</div>` + `</div>`);
+                    });
+                    tooltipInstance.show(arg.target);
+                });
+                e.cellElement.mouseout(function (arg) {
+                    tooltipInstance.hide();
+                });
+            }
+        }
+
+        function GetValueFromName(data, dataField) {
+           
+            for (let key in data) {
+
+                if (data[key] && data[key].hasOwnProperty('plan') && dataField.split('.')[0] == key) {
+
+                    if (data.chipWafer == 'CHIP') {
+                        return formatNumber(data[key].stockChip);
+                    }
+                    else {
+                        return formatNumber(data[key].stockWafer);
+                    }
+                }
+            }
+        }
     </script>
 
 }
@@ -436,85 +510,85 @@
         }).Fixed(true).FixedPosition(HorizontalEdge.Left);
 
         columns.Add().Caption("Day " + today5).Columns(c => {
-            c.AddFor(m => m.Wall_PR).DataField("wall_PR").Format("#,##0").CellTemplate(@<text>
-                <span class="<%- data.wall_PR >= 0 ? 'inc' : 'dec' %>">
-                  <%- text %>
-                </span>
+            c.AddFor(m => m.Wall_PR).DataField("wall_PR.plan").Caption("wall_PR").Format("#,##0").CellTemplate(@<text>
+             <span class="<%- data.wall_PR.plan >= 0 ? 'inc' : 'dec' %>">
+                        <%- formatNumber(value) %>
+                    </span>
             </text>);
         });
 
         columns.Add().Caption("Day "+today4).Columns(c => {
-                    c.AddFor(m => m.Wall_Inspection).DataField("wall_Inspection").Format("#,##0").CellTemplate(@<text>
-                                    <span class="<%- data.wall_Inspection >= 0 ? 'inc' : 'dec' %>">
-                                        <%- text %>
+                    c.AddFor(m => m.Wall_Inspection).DataField("wall_Inspection.plan").Caption("wall_Inspection").Format("#,##0").CellTemplate(@<text>
+                                    <span class="<%- data.wall_Inspection.plan >= 0 ? 'inc' : 'dec' %>">
+                                        <%- formatNumber(value) %>
                                     </span>
                                 </text>);
-                    c.AddFor(m => m.Roof_Laminating).DataField("roof_Laminating").Format("#,##0").CellTemplate(@<text>
-                                    <span class="<%- data.roof_Laminating >= 0 ? 'inc' : 'dec' %>">
-                                        <%- text %>
+                    c.AddFor(m => m.Roof_Laminating).DataField("roof_Laminating.plan").Caption("roof_Laminating").Format("#,##0").CellTemplate(@<text>
+                                    <span class="<%- data.roof_Laminating.plan >= 0 ? 'inc' : 'dec' %>">
+                                        <%- formatNumber(value) %>
                                     </span>
                                 </text>);
-                                    c.AddFor(m => m.Roof_Photo).DataField("roof_Photo").Format("#,##0").CellTemplate(@<text>
-                                        <span class="<%- data.roof_Photo >= 0 ? 'inc' : 'dec' %>">
-                                            <%- text %>
+                                    c.AddFor(m => m.Roof_Photo).DataField("roof_Photo.plan").Caption("roof_Photo").Format("#,##0").CellTemplate(@<text>
+                                        <span class="<%- data.roof_Photo.plan >= 0 ? 'inc' : 'dec' %>">
+                                            <%- formatNumber(value) %>
                                         </span>
                                     </text>);
                             });
 
                         columns.Add().Caption("Day " + today3).Columns(c => {
 
-                    c.AddFor(m => m.Roof_Measure).DataField("roof_Measure").Format("#,##0").CellTemplate(@<text>
-                                        <span class="<%- data.roof_Measure >= 0 ? 'inc' : 'dec' %>">
-                                            <%- text %>
+                    c.AddFor(m => m.Roof_Measure).DataField("roof_Measure.plan").Caption("roof_Measure").Format("#,##0").CellTemplate(@<text>
+                                        <span class="<%- data.roof_Measure.plan >= 0 ? 'inc' : 'dec' %>">
+                                            <%- formatNumber(value) %>
                                         </span>
                                     </text>);
         });
 
     columns.Add().Caption("Day " + today2).Columns(c =>
     {
-    c.AddFor(m => m.Roof_Inspection).DataField("roof_Inspection").Format("#,##0").CellTemplate(@<text>
-                <span class="<%- data.roof_Inspection >= 0 ? 'inc' : 'dec' %>">
-                    <%- text %>
+    c.AddFor(m => m.Roof_Inspection).DataField("roof_Inspection.plan").Caption("roof_Inspection").Format("#,##0").CellTemplate(@<text>
+                <span class="<%- data.roof_Inspection.plan >= 0 ? 'inc' : 'dec' %>">
+                    <%- formatNumber(value) %>
                 </span>
             </text>);
-c.AddFor(m => m.Seed_Deposition).DataField("seed_Deposition").Format("#,##0").CellTemplate(@<text>
-                <span class="<%- data.seed_Deposition >= 0 ? 'inc' : 'dec' %>">
-                    <%- text %>
+c.AddFor(m => m.Seed_Deposition).DataField("seed_Deposition.plan").Caption("seed_Deposition").Format("#,##0").CellTemplate(@<text>
+                <span class="<%- data.seed_Deposition.plan >= 0 ? 'inc' : 'dec' %>">
+                    <%- formatNumber(value) %>
                 </span>
             </text>);
-c.AddFor(m => m.Plate_Patterning_PR).DataField("plate_Patterning_PR").Format("#,##0").CellTemplate(@<text>
-                <span class="<%- data.plate_Patterning_PR >= 0 ? 'inc' : 'dec' %>">
-                    <%- text %>
+c.AddFor(m => m.Plate_Patterning_PR).DataField("plate_Patterning_PR.plan").Caption("plate_Patterning_PR").Format("#,##0").CellTemplate(@<text>
+                <span class="<%- data.plate_Patterning_PR.plan >= 0 ? 'inc' : 'dec' %>">
+                    <%- formatNumber(value) %>
                 </span>
             </text>);
-c.AddFor(m => m.Plate_Patterning_Inspection).DataField("plate_Patterning_Inspection").Format("#,##0").CellTemplate(@<text>
-                <span class="<%- data.plate_Patterning_Inspection >= 0 ? 'inc' : 'dec' %>">
-                    <%- text %>
+c.AddFor(m => m.Plate_Patterning_Inspection).DataField("plate_Patterning_Inspection.plan").Caption("Plate_Patterning_Inspection").Format("#,##0").CellTemplate(@<text>
+                <span class="<%- data.plate_Patterning_Inspection.plan >= 0 ? 'inc' : 'dec' %>">
+                    <%- formatNumber(value) %>
                 </span>
             </text>);
     });
 
     columns.Add().Caption("Day " + today1).Columns(c => {
-    c.AddFor(m => m.Cu_Sn_Plating).DataField("cu_Sn_Plating").Format("#,##0").CellTemplate(@<text>
-                <span class="<%- data.cu_Sn_Plating >= 0 ? 'inc' : 'dec' %>">
-                    <%- text %>
+    c.AddFor(m => m.Cu_Sn_Plating).DataField("cu_Sn_Plating.plan").Caption("cu_Sn_Plating").Format("#,##0").CellTemplate(@<text>
+                <span class="<%- data.cu_Sn_Plating.plan >= 0 ? 'inc' : 'dec' %>">
+                    <%- formatNumber(value) %>
                 </span>
             </text>);
-        c.AddFor(m => m.Plate_BST).DataField("plate_BST").Format("#,##0").CellTemplate(@<text>
-                <span class="<%- data.plate_BST >= 0 ? 'inc' : 'dec' %>">
-                    <%- text %>
+        c.AddFor(m => m.Plate_BST).DataField("plate_BST.plan").Caption("plate_BST").Format("#,##0").CellTemplate(@<text>
+                <span class="<%- data.plate_BST.plan >= 0 ? 'inc' : 'dec' %>">
+                    <%- formatNumber(value) %>
                 </span>
             </text>);
     });
     columns.Add().Caption("Day " + today).Columns(c => {
-    c.AddFor(m => m.Plate_Inspection).DataField("plate_Inspection").Format("#,##0").CellTemplate(@<text>
-                <span class="<%- data.plate_Inspection >= 0 ? 'inc' : 'dec' %>">
-                    <%- text %>
+    c.AddFor(m => m.Plate_Inspection).DataField("plate_Inspection.plan").Caption("plate_Inspection").Format("#,##0").CellTemplate(@<text>
+                <span class="<%- data.plate_Inspection.plan >= 0 ? 'inc' : 'dec' %>">
+                    <%- formatNumber(value) %>
                 </span>
             </text>);
-        c.AddFor(m => m.Shipping_Wait).DataField("shipping_Wait").Format("#,##0").CellTemplate(@<text>
-                <span class="<%- data.shipping_Wait >= 0 ? 'inc' : 'dec' %>">
-                     <span class="current-value"><%- text %></span>
+        c.AddFor(m => m.Shipping_Wait).DataField("shipping_Wait.plan").Caption("shipping_Wait").Format("#,##0").CellTemplate(@<text>
+                <span class="<%- data.shipping_Wait.plan >= 0 ? 'inc' : 'dec' %>">
+                     <span class="current-value"><%- formatNumber(value) %></span>
                     <span class="arrow"></span>
                 </span>
             </text>);
@@ -531,25 +605,25 @@ c.AddFor(m => m.Plate_Patterning_Inspection).DataField("plate_Patterning_Inspect
     });
     })
     .Summary(s=>s.TotalItems(totalItems => {
-        totalItems.Add().SummaryType(SummaryType.Sum).Column("wall_PR").Name("Sum_wall_PR").CssClass("Sum_wall_PR").DisplayFormat("Total: {0}").ValueFormat(Format.FixedPoint);
-        totalItems.Add().SummaryType(SummaryType.Sum).Column("wall_Inspection").Name("Sum_wall_Inspection").CssClass("Sum_wall_Inspection").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
-        totalItems.Add().SummaryType(SummaryType.Sum).Column("roof_Laminating").Name("Sum_roof_Laminating").CssClass("Sum_roof_Laminating").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
-        totalItems.Add().SummaryType(SummaryType.Sum).Column("roof_Photo").Name("Sum_roof_Photo").CssClass("Sum_roof_Photo").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("wall_PR.plan").Name("Sum_wall_PR").CssClass("Sum_wall_PR").DisplayFormat("Total: {0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("wall_Inspection.plan").Name("Sum_wall_Inspection").CssClass("Sum_wall_Inspection").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("roof_Laminating.plan").Name("Sum_roof_Laminating").CssClass("Sum_roof_Laminating").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("roof_Photo.plan").Name("Sum_roof_Photo").CssClass("Sum_roof_Photo").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
 
-        totalItems.Add().SummaryType(SummaryType.Sum).Column("roof_Measure").Name("roof_Measure").CssClass("roof_Measure").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
-        totalItems.Add().SummaryType(SummaryType.Sum).Column("roof_Inspection").Name("roof_Inspection").CssClass("roof_Inspection").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
-        totalItems.Add().SummaryType(SummaryType.Sum).Column("seed_Deposition").Name("seed_Deposition").CssClass("seed_Deposition").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
-        totalItems.Add().SummaryType(SummaryType.Sum).Column("plate_Patterning_PR").Name("plate_Patterning_PR").CssClass("plate_Patterning_PR").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
-        totalItems.Add().SummaryType(SummaryType.Sum).Column("plate_Patterning_Inspection").Name("plate_Patterning_Inspection").CssClass("plate_Patterning_Inspection").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
-        totalItems.Add().SummaryType(SummaryType.Sum).Column("cu_Sn_Plating").Name("cu_Sn_Plating").CssClass("cu_Sn_Plating").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("roof_Measure.plan").Name("roof_Measure").CssClass("roof_Measure").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("roof_Inspection.plan").Name("roof_Inspection").CssClass("roof_Inspection").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("seed_Deposition.plan").Name("seed_Deposition").CssClass("seed_Deposition").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("plate_Patterning_PR.plan").Name("plate_Patterning_PR").CssClass("plate_Patterning_PR").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("plate_Patterning_Inspection.plan").Name("plate_Patterning_Inspection").CssClass("plate_Patterning_Inspection").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("cu_Sn_Plating.plan").Name("cu_Sn_Plating").CssClass("cu_Sn_Plating").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
 
-        totalItems.Add().SummaryType(SummaryType.Sum).Column("plate_BST").Name("plate_BST").CssClass("plate_BST").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
-        totalItems.Add().SummaryType(SummaryType.Sum).Column("plate_Inspection").Name("plate_Inspection").CssClass("plate_Inspection").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
-        totalItems.Add().SummaryType(SummaryType.Sum).Column("shipping_Wait").Name("shipping_Wait").CssClass("shipping_Wait").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("plate_BST.plan").Name("plate_BST").CssClass("plate_BST").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("plate_Inspection.plan").Name("plate_Inspection").CssClass("plate_Inspection").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+        totalItems.Add().SummaryType(SummaryType.Sum).Column("shipping_Wait.plan").Name("shipping_Wait").CssClass("shipping_Wait").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
         totalItems.Add().SummaryType(SummaryType.Sum).Column("gapActualPlan_SH").Name("gapActualPlan_SH").CssClass("gapActualPlan_SH").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
         totalItems.Add().SummaryType(SummaryType.Sum).Column("gapActualPlan_EA").Name("gapActualPlan_EA").CssClass("gapActualPlan_EA").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
     })
-    ).OnCellClick("OnCellClick")
+    ).OnCellClick("OnCellClick").OnCellPrepared("onCellPrepared")
     )
             <div id="holdLotInfo" style="margin-top:20px">
                 <div class="col-sm-12" id="show-hidden-grid-wlp">
@@ -600,6 +674,11 @@ c.AddFor(m => m.Plate_Patterning_Inspection).DataField("plate_Patterning_Inspect
                 </div>
 
             </div>
+
+            @(Html.DevExtreme().Tooltip()
+    .ID("tooltip")
+    .Position(Position.Right)
+)
         </div>
     </div>
 </div>

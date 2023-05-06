@@ -48,7 +48,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
         [HttpPut]
         public IActionResult Put(string key, string values,string userName)
         {
-            OUTGOING_RECEIPT_WLP2 model = new OUTGOING_RECEIPT_WLP2();
+            OUTGOING_RECEIPT_WLP2 model = _IOutGoingReceiptService.GetByKey(key);
 
             JsonConvert.PopulateObject(values, model);
 

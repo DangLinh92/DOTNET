@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using OPERATION_MNS.Application.Interfaces;
 using OPERATION_MNS.Application.ViewModels;
+using OPERATION_MNS.Application.ViewModels.Wlp2;
 using OPERATION_MNS.Areas.OpeationMns.Models.SignalR;
 using OPERATION_MNS.Data.EF.Extensions;
+using OPERATION_MNS.Data.Entities;
 using OPERATION_MNS.Utilities.Constants;
 using System;
 using System.Collections.Generic;
@@ -89,6 +91,38 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
 
 
         #region WLP2 Daily plan
+
+        [HttpPost]
+        public object UpdateDailyPlanWlp2([FromBody] List<DataChange> changes)
+        {
+            string sapcode = "";
+            foreach (var change in changes)
+            {
+                sapcode = change.Key.NullString();
+                string datePlan = InventoryTicker.GetBeginDate().ToString("yyyy-MM-dd");
+
+                DailyPlanWlp2ViewModel model = new DailyPlanWlp2ViewModel();
+                JsonConvert.PopulateObject(change.Data.ToString(), model);
+
+                var data = _stayLotListService.GetDailyPlanWlp2Update(sapcode, datePlan);
+
+                if (data != null)
+                {
+                    data.BackGrinding = model.BackGrinding;
+                    _stayLotListService.UpdateDailyPlanWlp2Update(data,true);
+                }
+                else
+                {
+                    data = new DAILY_PLAN_WLP2();
+                    data.BackGrinding = model.BackGrinding;
+                    data.Model = sapcode;
+                    data.DatePlan = datePlan;
+                    _stayLotListService.UpdateDailyPlanWlp2Update(data, false);
+                }
+            }
+
+            return Ok(changes);
+        }
 
         [HttpPost]
         public object UpdatePrioryWlp2([FromBody] List<DataChange> changes)

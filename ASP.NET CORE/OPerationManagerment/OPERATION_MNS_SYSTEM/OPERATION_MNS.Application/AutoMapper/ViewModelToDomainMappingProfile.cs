@@ -40,8 +40,15 @@ namespace OPERATION_MNS.Application.AutoMapper
             CreateMap<CTQSettingViewModel, CTQ_SETTING>()
             .ConstructUsing(c => new CTQ_SETTING(c.OperationID, c.OperationName, c.LWL, c.UWL));
 
+            CreateMap<CTQSettingWLP2ViewModel, CTQ_SETTING_WLP2>()
+           .ConstructUsing(c => new CTQ_SETTING_WLP2(c.SpeacialModel,c.OperationID,c.OperationName,c.ThickNet,c.MinV,c.MaxV));
+
+
             CreateMap<CTQEmailReceivViewModel, CTQ_EMAIL_RECEIV>()
             .ConstructUsing(c => new CTQ_EMAIL_RECEIV(c.Id, c.Active, c.Department));
+
+            CreateMap<CTQEmailReceivViewModel, CTQ_EMAIL_RECEIV_WLP2>()
+            .ConstructUsing(c => new CTQ_EMAIL_RECEIV_WLP2(c.Id, c.Active, c.Department));
 
             CreateMap<PostOpeationShippingViewModel, POST_OPERATION_SHIPPING>()
             .ConstructUsing(c => new POST_OPERATION_SHIPPING(c.MoveOutTime, c.LotID, c.Model, c.CassetteID, c.Module, c.WaferId, c.DefaultChipQty,
@@ -61,6 +68,9 @@ namespace OPERATION_MNS.Application.AutoMapper
 
             CreateMap<Stay_lot_list_priory_wlp2ViewModel, STAY_LOT_LIST_PRIORY_WLP2>()
        .ConstructUsing(c => new STAY_LOT_LIST_PRIORY_WLP2(c.Id,c.SapCode,c.Priory,c.Number_Priory,c.Material,c.CassetteID,c.LotID,c.OperationName,c.OperationId,c.ERPProductionOrder,c.ChipQty,c.StayDay));
+
+            CreateMap<ThickNetModelWlp2ViewModel, THICKNET_MODEL_WLP2>()
+       .ConstructUsing(c => new THICKNET_MODEL_WLP2(c.Id,c.Material,c.ThickNet));
         }
     }
 }

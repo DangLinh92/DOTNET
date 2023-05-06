@@ -25,6 +25,7 @@ namespace OPERATION_MNS.Application.Implementation
         private IRespository<GOC_STANDAR_QTY, int> _GocStandarQtyRepository;
 
         private IRespository<CTQ_SETTING, int> _CTQ_SettingRepository;
+        private IRespository<CTQ_SETTING_WLP2, int> _CTQ_WLP2_SettingRepository;
         private IRespository<DATE_OFF_LINE, int> _DateOffLineRepository;
         private IRespository<LEAD_TIME_WLP, int> _LeadTimeRepository;
         private IUnitOfWork _unitOfWork;
@@ -37,6 +38,7 @@ namespace OPERATION_MNS.Application.Implementation
                               IRespository<FAB_PLAN, int> FABPlanRepository,
                               IRespository<LEAD_TIME_WLP, int> LeadTimeRepository,
                               IRespository<GOC_PLAN_WLP2, int> GocPlanWLP2Repository,
+                              IRespository<CTQ_SETTING_WLP2, int> CTQ_WLP2_SettingRepository,
                               IUnitOfWork unitOfWork, IMapper mapper,
                               IHttpContextAccessor httpContextAccessor)
         {
@@ -50,6 +52,7 @@ namespace OPERATION_MNS.Application.Implementation
             _httpContextAccessor = httpContextAccessor;
             _DateOffLineRepository = DateOffLineRepository;
             _GocPlanWLP2Repository = GocPlanWLP2Repository;
+            _CTQ_WLP2_SettingRepository = CTQ_WLP2_SettingRepository;
         }
 
         public void Dispose()
@@ -687,7 +690,7 @@ namespace OPERATION_MNS.Application.Implementation
                 }
             }
 
-            return lstResult;
+            return lstResult.OrderBy(x=>x.Model).ToList();
         }
 
         public List<GocPlanViewModelEx> GetByTime_fab(string unit, string fromDate, string toDate)
@@ -1458,5 +1461,278 @@ namespace OPERATION_MNS.Application.Implementation
 
             return result;
         }
+
+        public List<GocPlanViewModel> GetDataByDay(string dayFrom, string dayTo, string danhmuc)
+        {
+            return _mapper.Map<List<GocPlanViewModel>>(_GocPlanWLP2Repository.FindAll(x => x.DanhMuc == danhmuc && x.Unit == CommonConstants.CHIP && x.DatePlan.CompareTo(dayFrom) >= 0 && x.DatePlan.CompareTo(dayTo) <= 0));
+        }
+
+        public ViewControlChartDataModel GetDataControlChartWLP2(string date, string toDate, string operation, string mattertial)
+        {
+            ViewControlChartDataModel result = new ViewControlChartDataModel();
+            List<ViewControlChartModel> chartModels = new List<ViewControlChartModel>();
+            List<ViewControlChartModel> chartModelsErr = new List<ViewControlChartModel>();
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic.Add("A_OPERATION", operation);
+            dic.Add("A_FROM_DATE", date);
+            dic.Add("A_TO_DATE", toDate);
+            dic.Add("A_MATERTIAL", mattertial);
+
+            List<double> AvgItem = new List<double>();
+            List<double> UslItem = new List<double>();
+            List<double> LslItem = new List<double>();
+
+            List<double> AvgItem_150 = new List<double>();
+            List<double> UslItem_150 = new List<double>();
+            List<double> LslItem_150 = new List<double>();
+
+            List<double> AvgItem_200 = new List<double>();
+            List<double> UslItem_200 = new List<double>();
+            List<double> LslItem_200 = new List<double>();
+
+            ResultDB rs = _GocPlanRepository.ExecProceduce2("PKG_BUSINESS@VIEW_CONTROL_CHART_DATA_WLP2", dic);
+            if (rs.ReturnInt == 0)
+            {
+                DataTable tbl = rs.ReturnDataSet.Tables[0];
+                DataTable tbl_Err = rs.ReturnDataSet.Tables[1];
+                DataTable tbl_MatertialId = rs.ReturnDataSet.Tables[2];
+
+                foreach (DataRow row in tbl.Rows)
+                {
+                    ViewControlChartModel model = new ViewControlChartModel();
+                    model.CHART_X = row["CHART_X"].NullString();
+                    model.DATE = row["DATE"].NullString();
+                    model.MATERIAL_ID = row["MATERIAL_ID"].NullString();
+
+                    model.LOT_ID = row["LOT_ID"].NullString();
+                    model.CASSETTE_ID = row["CASSETTE_ID"].NullString();
+                    model.MAIN_OPERATION = row["MAIN_OPERATION"].NullString();
+                    model.MAIN_OPERATION_ID = row["OPERATION_ID"].NullString();
+
+                    model.MAIN_EQUIPMENT_ID = row["MAIN_EQUIPMENT_ID"].NullString();
+                    model.MAIN_EQUIPMENT_NAME = row["MAIN_EQUIPMENT_NAME"].NullString();
+                    model.MAIN_CHARACTER = row["MAIN_CHARACTER"].NullString();
+                    model.MAIN_UNIT = row["MAIN_UNIT"].NullString();
+                    model.MAIN_TARGET_USL = double.Parse(row["MAIN_TARGET_USL"].IfNullIsZero());
+                    model.MAIN_FIXED_UCL = double.Parse(row["MAIN_FIXED_UCL"].IfNullIsZero());
+                    model.MAIN_TARGET = double.Parse(row["MAIN_TARGET"].IfNullIsZero());
+                    model.MAIN_FIXED_LCL = double.Parse(row["MAIN_FIXED_LCL"].IfNullIsZero());
+                    model.MAIN_TARGET_LSL = double.Parse(row["MAIN_TARGET_LSL"].IfNullIsZero());
+                    model.MAIN_TARGET_UCL = double.Parse(row["MAIN_TARGET_UCL"].IfNullIsZero());
+                    model.MAIN_TARGET_LCL = double.Parse(row["MAIN_TARGET_LCL"].IfNullIsZero());
+                    model.MAIN_VALUE_COUNT = double.Parse(row["MAIN_VALUE_COUNT"].IfNullIsZero());
+                    model.MAIN_VALUE1 = double.Parse(row["MAIN_VALUE1"].IfNullIsZero());
+                    model.MAIN_VALUE2 = double.Parse(row["MAIN_VALUE2"].IfNullIsZero());
+                    model.MAIN_VALUE3 = double.Parse(row["MAIN_VALUE3"].IfNullIsZero());
+                    model.MAIN_VALUE4 = double.Parse(row["MAIN_VALUE4"].IfNullIsZero());
+                    model.MAIN_VALUE5 = double.Parse(row["MAIN_VALUE5"].IfNullIsZero());
+                    model.MAIN_VALUE6 = double.Parse(row["MAIN_VALUE6"].IfNullIsZero());
+                    model.MAIN_VALUE7 = double.Parse(row["MAIN_VALUE7"].IfNullIsZero());
+                    model.MAIN_VALUE8 = double.Parse(row["MAIN_VALUE8"].IfNullIsZero());
+                    model.MAIN_VALUE9 = double.Parse(row["MAIN_VALUE9"].IfNullIsZero());
+                    model.MAIN_VALUE10 = double.Parse(row["MAIN_VALUE10"].IfNullIsZero());
+                    model.MAIN_VALUE11 = double.Parse(row["MAIN_VALUE11"].IfNullIsZero());
+                    model.MAIN_VALUE12 = double.Parse(row["MAIN_VALUE12"].IfNullIsZero());
+                    model.MAIN_VALUE13 = double.Parse(row["MAIN_VALUE13"].IfNullIsZero());
+                    model.MAIN_VALUE14 = double.Parse(row["MAIN_VALUE14"].IfNullIsZero());
+                    model.MAIN_VALUE15 = double.Parse(row["MAIN_VALUE15"].IfNullIsZero());
+                    model.MAIN_VALUE16 = double.Parse(row["MAIN_VALUE16"].IfNullIsZero());
+                    model.MAIN_VALUE17 = double.Parse(row["MAIN_VALUE17"].IfNullIsZero());
+                    model.MAIN_VALUE18 = double.Parse(row["MAIN_VALUE18"].IfNullIsZero());
+                    model.MAIN_VALUE19 = double.Parse(row["MAIN_VALUE19"].IfNullIsZero());
+                    model.MAIN_VALUE20 = double.Parse(row["MAIN_VALUE20"].IfNullIsZero());
+                    model.MAIN_VALUE21 = double.Parse(row["MAIN_VALUE21"].IfNullIsZero());
+                    model.MAIN_VALUE22 = double.Parse(row["MAIN_VALUE22"].IfNullIsZero());
+                    model.MAIN_VALUE23 = double.Parse(row["MAIN_VALUE23"].IfNullIsZero());
+                    model.MAIN_VALUE24 = double.Parse(row["MAIN_VALUE24"].IfNullIsZero());
+                    model.MAIN_VALUE25 = double.Parse(row["MAIN_VALUE25"].IfNullIsZero());
+                    model.MAIN_VALUE26 = double.Parse(row["MAIN_VALUE26"].IfNullIsZero());
+                    model.MAIN_VALUE27 = double.Parse(row["MAIN_VALUE27"].IfNullIsZero());
+                    model.MAIN_VALUE28 = double.Parse(row["MAIN_VALUE28"].IfNullIsZero());
+                    model.MAIN_VALUE29 = double.Parse(row["MAIN_VALUE29"].IfNullIsZero());
+                    model.MAIN_VALUE30 = double.Parse(row["MAIN_VALUE30"].IfNullIsZero());
+                    model.MAIN_MAX_VALUE = double.Parse(row["MAIN_MAX_VALUE"].IfNullIsZero());
+                    model.MAIN_MIN_VALUE = double.Parse(row["MAIN_MIN_VALUE"].IfNullIsZero());
+                    model.MAIN_AVG_VALUE = double.Parse(row["MAIN_AVG_VALUE"].IfNullIsZero());
+                    model.MAIN_RANGE = double.Parse(row["MAIN_RANGE"].IfNullIsZero());
+                    model.MAIN_JUDGE_FLAG = row["MAIN_JUDGE_FLAG"].NullString();
+                    model.Thicknet = double.Parse(row["ThickNet"].IfNullIsZero());
+
+                    chartModels.Add(model);
+
+                    if(model.Thicknet == 130)
+                    {
+                        AvgItem.Add(model.MAIN_AVG_VALUE);
+                        UslItem.Add(model.MAIN_TARGET_USL);
+                        LslItem.Add(model.MAIN_TARGET_LSL);
+                    }
+                    else if(model.Thicknet == 150)
+                    {
+                        AvgItem_150.Add(model.MAIN_AVG_VALUE);
+                        UslItem_150.Add(model.MAIN_TARGET_USL);
+                        LslItem_150.Add(model.MAIN_TARGET_LSL);
+                    }
+                    else if (model.Thicknet == 200)
+                    {
+                        AvgItem_200.Add(model.MAIN_AVG_VALUE);
+                        UslItem_200.Add(model.MAIN_TARGET_USL);
+                        LslItem_200.Add(model.MAIN_TARGET_LSL);
+                    }
+                }
+
+                foreach (DataRow row in tbl_Err.Rows)
+                {
+                    ViewControlChartModel model = new ViewControlChartModel();
+                    model.CHART_X = row["CHART_X"].NullString();
+                    model.DATE = row["DATE"].NullString();
+                    model.MATERIAL_ID = row["MATERIAL_ID"].NullString();
+
+                    model.LOT_ID = row["LOT_ID"].NullString();
+                    model.CASSETTE_ID = row["CASSETTE_ID"].NullString();
+                    model.MAIN_OPERATION = row["OperationName"].NullString();
+                    model.MAIN_OPERATION_ID = row["MAIN_OPERATION"].NullString();
+
+                    model.MAIN_EQUIPMENT_ID = row["MAIN_EQUIPMENT_ID"].NullString();
+                    model.MAIN_EQUIPMENT_NAME = row["MAIN_EQUIPMENT_NAME"].NullString();
+                    model.MAIN_CHARACTER = row["MAIN_CHARACTER"].NullString();
+                    model.MAIN_UNIT = row["MAIN_UNIT"].NullString();
+                    model.MAIN_TARGET_USL = double.Parse(row["MAIN_TARGET_USL"].IfNullIsZero());
+                    model.MAIN_FIXED_UCL = double.Parse(row["MAIN_FIXED_UCL"].IfNullIsZero());
+                    model.MAIN_TARGET = double.Parse(row["MAIN_TARGET"].IfNullIsZero());
+                    model.MAIN_FIXED_LCL = double.Parse(row["MAIN_FIXED_LCL"].IfNullIsZero());
+                    model.MAIN_TARGET_LSL = double.Parse(row["MAIN_TARGET_LSL"].IfNullIsZero());
+                    model.MAIN_TARGET_UCL = double.Parse(row["MAIN_TARGET_UCL"].IfNullIsZero());
+                    model.MAIN_TARGET_LCL = double.Parse(row["MAIN_TARGET_LCL"].IfNullIsZero());
+                    model.MAIN_VALUE_COUNT = double.Parse(row["MAIN_VALUE_COUNT"].IfNullIsZero());
+                    model.MAIN_VALUE1 = double.Parse(row["MAIN_VALUE1"].IfNullIsZero());
+                    model.MAIN_VALUE2 = double.Parse(row["MAIN_VALUE2"].IfNullIsZero());
+                    model.MAIN_VALUE3 = double.Parse(row["MAIN_VALUE3"].IfNullIsZero());
+                    model.MAIN_VALUE4 = double.Parse(row["MAIN_VALUE4"].IfNullIsZero());
+                    model.MAIN_VALUE5 = double.Parse(row["MAIN_VALUE5"].IfNullIsZero());
+                    model.MAIN_VALUE6 = double.Parse(row["MAIN_VALUE6"].IfNullIsZero());
+                    model.MAIN_VALUE7 = double.Parse(row["MAIN_VALUE7"].IfNullIsZero());
+                    model.MAIN_VALUE8 = double.Parse(row["MAIN_VALUE8"].IfNullIsZero());
+                    model.MAIN_VALUE9 = double.Parse(row["MAIN_VALUE9"].IfNullIsZero());
+                    model.MAIN_VALUE10 = double.Parse(row["MAIN_VALUE10"].IfNullIsZero());
+                    model.MAIN_VALUE11 = double.Parse(row["MAIN_VALUE11"].IfNullIsZero());
+                    model.MAIN_VALUE12 = double.Parse(row["MAIN_VALUE12"].IfNullIsZero());
+                    model.MAIN_VALUE13 = double.Parse(row["MAIN_VALUE13"].IfNullIsZero());
+                    model.MAIN_VALUE14 = double.Parse(row["MAIN_VALUE14"].IfNullIsZero());
+                    model.MAIN_VALUE15 = double.Parse(row["MAIN_VALUE15"].IfNullIsZero());
+                    model.MAIN_VALUE16 = double.Parse(row["MAIN_VALUE16"].IfNullIsZero());
+                    model.MAIN_VALUE17 = double.Parse(row["MAIN_VALUE17"].IfNullIsZero());
+                    model.MAIN_VALUE18 = double.Parse(row["MAIN_VALUE18"].IfNullIsZero());
+                    model.MAIN_VALUE19 = double.Parse(row["MAIN_VALUE19"].IfNullIsZero());
+                    model.MAIN_VALUE20 = double.Parse(row["MAIN_VALUE20"].IfNullIsZero());
+                    model.MAIN_VALUE21 = double.Parse(row["MAIN_VALUE21"].IfNullIsZero());
+                    model.MAIN_VALUE22 = double.Parse(row["MAIN_VALUE22"].IfNullIsZero());
+                    model.MAIN_VALUE23 = double.Parse(row["MAIN_VALUE23"].IfNullIsZero());
+                    model.MAIN_VALUE24 = double.Parse(row["MAIN_VALUE24"].IfNullIsZero());
+                    model.MAIN_VALUE25 = double.Parse(row["MAIN_VALUE25"].IfNullIsZero());
+                    model.MAIN_VALUE26 = double.Parse(row["MAIN_VALUE26"].IfNullIsZero());
+                    model.MAIN_VALUE27 = double.Parse(row["MAIN_VALUE27"].IfNullIsZero());
+                    model.MAIN_VALUE28 = double.Parse(row["MAIN_VALUE28"].IfNullIsZero());
+                    model.MAIN_VALUE29 = double.Parse(row["MAIN_VALUE29"].IfNullIsZero());
+                    model.MAIN_VALUE30 = double.Parse(row["MAIN_VALUE30"].IfNullIsZero());
+                    model.MAIN_MAX_VALUE = double.Parse(row["MAIN_MAX_VALUE"].IfNullIsZero());
+                    model.MAIN_MIN_VALUE = double.Parse(row["MAIN_MIN_VALUE"].IfNullIsZero());
+                    model.MAIN_AVG_VALUE = double.Parse(row["MAIN_AVG_VALUE"].IfNullIsZero());
+                    model.MAIN_RANGE = double.Parse(row["MAIN_RANGE"].IfNullIsZero());
+                    model.MAIN_JUDGE_FLAG = row["MAIN_JUDGE_FLAG"].NullString();
+                    model.LWL = double.Parse(row["LWL"].IfNullIsZero());
+                    model.UWL = double.Parse(row["UWL"].IfNullIsZero());
+                    model.Thicknet = double.Parse(row["ThickNet"].IfNullIsZero());
+                    chartModelsErr.Add(model);
+                }
+
+                foreach (DataRow row in tbl_MatertialId.Rows)
+                {
+                    result.lstMaterialId.Add(row["MATERIAL_ID"].NullString());
+                }
+            }
+
+            result.lstData = chartModels;
+            result.lstDataErr = chartModelsErr;
+
+            // 130um
+            double stdev = AvgItem.Count > 0 ? AvgItem.StdDev(false) : 0;
+
+            result.STDEV = Math.Round(stdev, 1);
+
+            if (AvgItem.Count > 0 && LslItem.Count > 0 && stdev != 0)
+            {
+                result.CPK_bst = Math.Round((AvgItem.Average() - LslItem.Average()) / (3 * stdev), 1);
+            }
+
+            if (UslItem.Count > 0 && AvgItem.Count > 0 && LslItem.Count > 0 && stdev != 0)
+            {
+                result.CPK_Thickness = Math.Round(Math.MinMagnitude((UslItem.Average() - AvgItem.Average()) / (3 * stdev), (AvgItem.Average() - LslItem.Average()) / (3 * stdev)), 1);
+            }
+
+            // 150um
+            double stdev150 = AvgItem_150.Count > 0 ? AvgItem_150.StdDev(false) : 0;
+
+            result.STDEV150 = Math.Round(stdev150, 1);
+
+            if (AvgItem_150.Count > 0 && LslItem_150.Count > 0 && stdev150 != 0)
+            {
+                result.CPK_bst150 = Math.Round((AvgItem_150.Average() - LslItem_150.Average()) / (3 * stdev150), 1);
+            }
+
+            if (UslItem_150.Count > 0 && AvgItem_150.Count > 0 && LslItem_150.Count > 0 && stdev150 != 0)
+            {
+                result.CPK_Thickness150 = Math.Round(Math.MinMagnitude((UslItem_150.Average() - AvgItem_150.Average()) / (3 * stdev150), (AvgItem_150.Average() - LslItem_150.Average()) / (3 * stdev150)), 1);
+            }
+
+            // 200um
+            double stdev200 = AvgItem_200.Count > 0 ? AvgItem_200.StdDev(false) : 0;
+
+            result.STDEV200 = Math.Round(stdev200, 1);
+
+            if (AvgItem_200.Count > 0 && LslItem_200.Count > 0 && stdev200 != 0)
+            {
+                result.CPK_bst200 = Math.Round((AvgItem_200.Average() - LslItem_200.Average()) / (3 * stdev200), 1);
+            }
+
+            if (UslItem_200.Count > 0 && AvgItem_200.Count > 0 && LslItem_200.Count > 0 && stdev200 != 0)
+            {
+                result.CPK_Thickness200 = Math.Round(Math.MinMagnitude((UslItem_200.Average() - AvgItem_200.Average()) / (3 * stdev200), (AvgItem_200.Average() - LslItem_200.Average()) / (3 * stdev200)), 1);
+            }
+
+            return result;
+        }
+
+        #region CTQ WLP2
+        public CTQSettingWLP2ViewModel PutCTQ_Wlp2(CTQSettingWLP2ViewModel ctq)
+        {
+            CTQ_SETTING_WLP2 en = _mapper.Map<CTQ_SETTING_WLP2>(ctq);
+            _CTQ_WLP2_SettingRepository.Update(en);
+            return ctq;
+        }
+
+        public CTQSettingWLP2ViewModel PostCTQ_Wlp2(CTQSettingWLP2ViewModel ctq)
+        {
+            CTQ_SETTING_WLP2 en = _mapper.Map<CTQ_SETTING_WLP2>(ctq);
+            _CTQ_WLP2_SettingRepository.Add(en);
+            return ctq;
+        }
+
+        public CTQSettingWLP2ViewModel DeleteCTQ_Wlp2(CTQSettingWLP2ViewModel ctq)
+        {
+            CTQ_SETTING_WLP2 en = _mapper.Map<CTQ_SETTING_WLP2>(ctq);
+            _CTQ_WLP2_SettingRepository.Remove(en);
+            return ctq;
+        }
+
+        public CTQSettingWLP2ViewModel GetCTQ_Wlp2_Id(int Id)
+        {
+            return _mapper.Map<CTQSettingWLP2ViewModel>(_CTQ_WLP2_SettingRepository.FindById(Id));
+        }
+
+        public List<CTQSettingWLP2ViewModel> GetCTQ_Wlp2()
+        {
+            return _mapper.Map<List<CTQSettingWLP2ViewModel>>(_CTQ_WLP2_SettingRepository.FindAll());
+        }
+        #endregion
     }
 }

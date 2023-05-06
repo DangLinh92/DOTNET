@@ -1,0 +1,10 @@
+﻿{
+  "profiles": {
+    "WorkerService_Yield_WHC": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

@@ -63,6 +63,8 @@ namespace OPERATION_MNS.Application.ViewModels
 
         public double LWL { get; set; }
         public double UWL { get; set; }
+
+        public double Thicknet { get; set; }
     }
 
     public class ViewControlChartDataModel
@@ -87,6 +89,14 @@ namespace OPERATION_MNS.Application.ViewModels
         public double STDEV { get; set; }
         public double CPK_Thickness { get; set; }
         public double CPK_bst { get; set; }
+
+        public double STDEV150 { get; set; }
+        public double CPK_Thickness150 { get; set; }
+        public double CPK_bst150 { get; set; }
+
+        public double STDEV200 { get; set; }
+        public double CPK_Thickness200 { get; set; }
+        public double CPK_bst200 { get; set; }
 
         public List<ViewControlChartModel> lstData { get; set; }
         public List<ViewControlChartModel> lstDataErr { get; set; }

@@ -44,11 +44,39 @@ namespace OPERATION_MNS.Data.EF.Configurations
         }
     }
 
+    public class CTQSettingWlp2Configuration : DbEntityConfiguration<CTQ_SETTING_WLP2>
+    {
+        public override void Configure(EntityTypeBuilder<CTQ_SETTING_WLP2> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
+
     public class CtqEmailConfiguration : DbEntityConfiguration<CTQ_EMAIL_RECEIV>
     {
         public override void Configure(EntityTypeBuilder<CTQ_EMAIL_RECEIV> entity)
         {
             entity.HasKey(x => x.Id);
+
+        }
+    }
+
+    public class CtqEmailwlp2Configuration : DbEntityConfiguration<CTQ_EMAIL_RECEIV_WLP2>
+    {
+        public override void Configure(EntityTypeBuilder<CTQ_EMAIL_RECEIV_WLP2> entity)
+        {
+            entity.HasKey(x => x.Id);
+
+        }
+    }
+
+    public class ThickNetModelWlp2Configuration : DbEntityConfiguration<THICKNET_MODEL_WLP2>
+    {
+        public override void Configure(EntityTypeBuilder<THICKNET_MODEL_WLP2> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
         }
     }
 }

@@ -56,17 +56,19 @@ namespace OPERATION_MNS.Application.Implementation
                 OUTGOING_RECEIPT_WLP2 _outGoig;
                 foreach (DataRow row in data.Rows)
                 {
-                    if (_lstOutGoing.Any(x => x.SapCode == row["SapCode"].NullString() && x.NgayXuat == row["_Day"].NullString() && x.ThoiGianDuKien_1 == row["_Day_Time"].NullString()))
+                    if (_lstOutGoing.Any(x => x.SapCode == row["SapCode"].NullString() && x.NgayXuat == row["_Day"].NullString()))
                     {
                         _outGoig = _lstOutGoing.FirstOrDefault(x => x.SapCode == row["SapCode"].NullString() &&
-                                                                x.NgayXuat == row["_Day"].NullString() &&
-                                                                x.ThoiGianDuKien_1 == row["_Day_Time"].NullString());
+                                                                x.NgayXuat == row["_Day"].NullString());
+
                         _outGoig.LuongDuKien_1 = float.Parse(row["Shipping_Asum"].IfNullIsZero());
-                        lstUpdate.Add(_outGoig);
+
+                        if (!lstUpdate.Exists(x => x.SapCode == _outGoig.SapCode && x.NgayXuat == _outGoig.NgayXuat))
+                            lstUpdate.Add(_outGoig);
                     }
                     else
                     {
-                        if (!lstAdd.Any(x => x.SapCode == row["SapCode"].NullString() && x.NgayXuat == row["_Day"].NullString()) && row["_Day_Time"].NullString() == "A0812")
+                        if (!lstAdd.Any(x => x.SapCode == row["SapCode"].NullString() && x.NgayXuat == row["_Day"].NullString()))
                         {
                             _outGoig = new OUTGOING_RECEIPT_WLP2()
                             {
@@ -119,69 +121,46 @@ namespace OPERATION_MNS.Application.Implementation
                     }
 
                     outGoing = lstOutGoing.FirstOrDefault(x => x.SapCode == item.SapCode && x.NgayXuat.Replace("-", "") == item.NgayXuat);
-                    item.NguoiGiao = outGoing.NguoiGiao;
+                    item.NguoiGiao = outGoing?.NguoiGiao;
+
+                    if (outGoing != null)
+                    {
+                        item.LuongDuKien_1 = outGoing.LuongDuKien_1 > 0 ? outGoing.LuongDuKien_1 : float.Parse(row["Shipping_Asum"].IfNullIsZero());
+                        item.LuongDuKien_2 = outGoing.LuongDuKien_2 > 0 ? outGoing.LuongDuKien_2 : 0;
+                        item.LuongDuKien_3 = outGoing.LuongDuKien_3 > 0 ? outGoing.LuongDuKien_3 : 0;
+                        item.LuongDuKien_4 = outGoing.LuongDuKien_4 > 0 ? outGoing.LuongDuKien_4 : 0;
+                    }
+                    else
+                    {
+                        item.LuongDuKien_1 = float.Parse(row["Shipping_Asum"].IfNullIsZero());
+                        item.LuongDuKien_2 = 0;
+                        item.LuongDuKien_3 = 0;
+                        item.LuongDuKien_4 = 0;
+                    }
+
+                    item.ThoiGianDuKien_1 = "A0812";
+                    item.ThoiGianDuKien_2 = "A1220";
+                    item.ThoiGianDuKien_3 = "B2024";
+                    item.ThoiGianDuKien_4 = "B0008";
 
                     if (row["_Day_Time"].NullString() == "A0812")
                     {
-                        if (outGoing != null)
-                        {
-                            item.LuongDuKien_1 = outGoing.LuongDuKien_1 > 0 ? outGoing.LuongDuKien_1 : float.Parse(row["Shipping_Asum"].IfNullIsZero());
-                        }
-                        else
-                        {
-                            item.LuongDuKien_1 = float.Parse(row["Shipping_Asum"].IfNullIsZero());
-                        }
-
                         item.LuongThucTe_1 = float.Parse(row["Shipping_Real"].IfNullIsZero());
-
-                        item.ThoiGianDuKien_1 = "A0812";
                         item.ThoiGianThucTe_1 = "A0812";
                     }
                     else if (row["_Day_Time"].NullString() == "A1220")
                     {
-                        if (outGoing != null)
-                        {
-                            item.LuongDuKien_2 = outGoing.LuongDuKien_2 > 0 ? outGoing.LuongDuKien_2 : 0;
-                        }
-                        else
-                        {
-                            item.LuongDuKien_2 = 0;
-                        }
-
                         item.LuongThucTe_2 = float.Parse(row["Shipping_Real"].IfNullIsZero());
-                        item.ThoiGianDuKien_2 = "A1220";
                         item.ThoiGianThucTe_2 = "A1220";
                     }
                     else if (row["_Day_Time"].NullString() == "B2024")
                     {
-                        if (outGoing != null)
-                        {
-                            item.LuongDuKien_3 = outGoing.LuongDuKien_3 > 0 ? outGoing.LuongDuKien_3 : 0;
-                        }
-                        else
-                        {
-                            item.LuongDuKien_3 = 0;
-                        }
-
                         item.LuongThucTe_3 = float.Parse(row["Shipping_Real"].IfNullIsZero());
-
-                        item.ThoiGianDuKien_3 = "B2024";
                         item.ThoiGianThucTe_3 = "B2024";
                     }
                     else if (row["_Day_Time"].NullString() == "B0008")
                     {
-                        if (outGoing != null)
-                        {
-                            item.LuongDuKien_4 = outGoing.LuongDuKien_4 > 0 ? outGoing.LuongDuKien_4 : 0;
-                        }
-                        else
-                        {
-                            item.LuongDuKien_4 = 0;
-                        }
-
                         item.LuongThucTe_4 = float.Parse(row["Shipping_Real"].IfNullIsZero());
-
-                        item.ThoiGianDuKien_4 = "B0008";
                         item.ThoiGianThucTe_4 = "B0008";
                     }
 
@@ -211,17 +190,9 @@ namespace OPERATION_MNS.Application.Implementation
 
         public OUTGOING_RECEIPT_WLP2 Update(OUTGOING_RECEIPT_WLP2 model, string key)
         {
-            OUTGOING_RECEIPT_WLP2 en = _OutGoingReceiptResponsitory.FindAll(x => x.SapCode + "." + x.NgayXuat.Replace("-", "") == key).FirstOrDefault();
-
-            if (en != null)
-            {
-                en.CopyPropertiesFrom(model, new List<string>() { "Id", "Module", "LotId", "SapCode", "NgayXuat", "ChenhLechDuKien", "ChenhLechThucTe", "Key", "DateCreated", "DateModified", "UserCreated", "UserModified" });
-
-                _OutGoingReceiptResponsitory.Update(en);
-            }
-
+            _OutGoingReceiptResponsitory.Update(model);
             Save();
-            return en;
+            return model;
         }
 
         public OUTGOING_RECEIPT_WLP2 GetByKey(string key)

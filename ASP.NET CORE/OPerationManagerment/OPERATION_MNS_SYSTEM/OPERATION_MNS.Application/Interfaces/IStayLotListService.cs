@@ -29,6 +29,9 @@ namespace OPERATION_MNS.Application.Interfaces
 
         Stay_lot_list_priory_wlp2ViewModel UpdatePrioryLotIdWlp2(Stay_lot_list_priory_wlp2ViewModel model,int index);
 
+        DAILY_PLAN_WLP2 GetDailyPlanWlp2Update(string sapcode,string datePlan);
+        DAILY_PLAN_WLP2 UpdateDailyPlanWlp2Update(DAILY_PLAN_WLP2 dailyPlan,bool isUpdate);
+
         void Save();
 
     }

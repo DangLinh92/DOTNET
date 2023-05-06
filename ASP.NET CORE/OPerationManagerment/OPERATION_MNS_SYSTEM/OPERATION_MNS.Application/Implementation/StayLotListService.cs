@@ -23,11 +23,13 @@ namespace OPERATION_MNS.Application.Implementation
         private IRespository<SETTING_ITEMS, string> _SettingItemRepository;
         private IRespository<STAY_LOT_LIST_WLP2, int> _StayLotListWLP2Repository;
         private IRespository<STAY_LOT_LIST_PRIORY_WLP2, int> _StayLotListPrioryWLP2Repository;
+        private IRespository<DAILY_PLAN_WLP2, int> _DailyPlanRepository;
         private IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
         public StayLotListService(IRespository<SETTING_ITEMS, string> SettingItemRepository, IRespository<STAY_LOT_LIST, int> StayLotListRepository, IRespository<STAY_LOT_LIST_WLP2, int> stayLotListWLP2Repository,
             IRespository<STAY_LOT_LIST_PRIORY_WLP2, int> stayLotListPrioryWLP2Repository,
+            IRespository<DAILY_PLAN_WLP2, int> dailyPlanRepository,
             IUnitOfWork unitOfWork, IMapper mapper,
                               IHttpContextAccessor httpContextAccessor)
         {
@@ -35,6 +37,7 @@ namespace OPERATION_MNS.Application.Implementation
             _StayLotListPrioryWLP2Repository = stayLotListPrioryWLP2Repository;
             _StayLotListRepository = StayLotListRepository;
             _StayLotListWLP2Repository = stayLotListWLP2Repository;
+            _DailyPlanRepository = dailyPlanRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
@@ -238,14 +241,16 @@ namespace OPERATION_MNS.Application.Implementation
                             STT = ++i
                         };
 
-                        if (stayDayOld == stayVm.StayDay)
-                        {
-                            stayVm.Priority = priority;
-                        }
-                        else if (stayDayOld > stayVm.StayDay)
-                        {
-                            stayVm.Priority = ++priority;
-                        }
+                        //if (stayDayOld == stayVm.StayDay)
+                        //{
+                        //    stayVm.Priority = priority;
+                        //}
+                        //else if (stayDayOld >= stayVm.StayDay)
+                        //{
+                        //    stayVm.Priority = ++priority;
+                        //}
+
+                        stayVm.Priority = priority++;
 
                         rs.Add(stayVm);
 
@@ -453,8 +458,29 @@ namespace OPERATION_MNS.Application.Implementation
 
             List<Stay_lot_list_priory_wlp2ViewModel> result = new List<Stay_lot_list_priory_wlp2ViewModel>();
             result.AddRange(rs.FindAll(x => x.Priory == true && x.Number_Priory > 0).OrderBy(x => x.Number_Priory).ToList());
-            result.AddRange(rs.FindAll(x => !(x.Priory == true && x.Number_Priory > 0)).OrderBy(x => x.Number_Priory).ToList());
 
+            var lstNoPriory = rs.FindAll(x => !(x.Priory == true && x.Number_Priory > 0)).OrderByDescending(x => x.StayDay).ToList();
+            if(lstNoPriory.Count > 0)
+            {
+                int priority = result.Count > 0 ? result[0].Number_Priory + 1 : 1;
+                float stayDayOld = lstNoPriory[0].StayDay;
+                foreach (var item in lstNoPriory)
+                {
+                    if(stayDayOld == item.StayDay)
+                    {
+                        item.Number_Priory = priority;
+                    }
+                    else if(stayDayOld > item.StayDay)
+                    {
+                        item.Number_Priory = ++priority;
+                    }
+
+                    stayDayOld = item.StayDay;
+                }
+
+                result.AddRange(lstNoPriory);
+            }
+           
             for (int i = 0; i < result.Count; i++)
             {
                 result[i].STT = i + 1;
@@ -498,6 +524,27 @@ namespace OPERATION_MNS.Application.Implementation
         public void Save()
         {
             _unitOfWork.Commit();
+        }
+
+        public DAILY_PLAN_WLP2 GetDailyPlanWlp2Update(string sapcode, string datePlan)
+        {
+           return _DailyPlanRepository.FindAll(x => x.Model == sapcode && x.DatePlan == datePlan).FirstOrDefault();
+        }
+
+        public DAILY_PLAN_WLP2 UpdateDailyPlanWlp2Update(DAILY_PLAN_WLP2 dailyPlan, bool isUpdate)
+        {
+            if(isUpdate)
+            {
+                dailyPlan.UserModified = GetUserId();
+                _DailyPlanRepository.Update(dailyPlan);
+            }
+            else
+            {
+                dailyPlan.UserCreated = GetUserId();
+                _DailyPlanRepository.Add(dailyPlan);
+            }
+            Save();
+            return dailyPlan;
         }
         #endregion
     }

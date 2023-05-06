@@ -45,7 +45,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
         }
 
         [HttpPut]
-        public IActionResult PutMail(string key,string values)
+        public IActionResult PutMail(string key, string values)
         {
             var mail = _UserMailService.GetMail(key);
             JsonConvert.PopulateObject(values, mail);
@@ -60,5 +60,42 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
             _UserMailService.DeleteMail(key);
         }
 
+        #region WLP2
+        public IActionResult MailWlp2()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public object GetMailsWlp2(DataSourceLoadOptions loadOptions)
+        {
+            return DataSourceLoader.Load(_UserMailService.GetListMailWlp2(), loadOptions);
+        }
+
+        [HttpPost]
+        public IActionResult PostMailWlp2(string values)
+        {
+            var ctq = new CTQEmailReceivViewModel();
+            JsonConvert.PopulateObject(values, ctq);
+            _UserMailService.PostMailWlp2(ctq);
+            return Ok();
+        }
+
+        [HttpPut]
+        public IActionResult PutMailWlp2(string key, string values)
+        {
+            var mail = _UserMailService.GetMailWlp2(key);
+            JsonConvert.PopulateObject(values, mail);
+            _UserMailService.DeleteMailWlp2(key);
+            _UserMailService.PostMailWlp2(mail);
+            return Ok();
+        }
+
+        [HttpDelete]
+        public void DeleteMailWlp2(string key)
+        {
+            _UserMailService.DeleteMailWlp2(key);
+        }
+        #endregion
     }
 }

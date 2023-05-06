@@ -75,7 +75,7 @@
 
         .stylePriory1 {
             background-color: #FF5D5D !important;
-            color:black !important;
+            color: black !important;
         }
 
         .stylePriory2 {
@@ -293,32 +293,32 @@
 
         });
 
-            function onSaving(e) {
-        var change = e.changes[0];
+    //        function onSaving(e) {
+    //    var change = e.changes[0];
 
-        if (change) {
-            e.cancel = true;
+    //    if (change) {
+    //        e.cancel = true;
 
-            e.promise = saveChange(change)
-                .always(() => { })
-                .done((data) => {
-                    var orders = e.component.option("dataSource");
+    //        e.promise = saveChange(change)
+    //            .always(() => { })
+    //            .done((data) => {
+    //                var orders = e.component.option("dataSource");
 
-                    if (change.type === "insert") {
-                        change.data = data;
-                    }
-                    orders = DevExpress.data.applyChanges(orders, [change], { keyExpr: "OrderID" });
+    //                if (change.type === "insert") {
+    //                    change.data = data;
+    //                }
+    //                orders = DevExpress.data.applyChanges(orders, [change], { keyExpr: "OrderID" });
 
-                    e.component.option({
-                        dataSource: orders,
-                        editing: {
-                            editRowKey: null,
-                            changes: []
-                        }
-                    });
-                });
-        }
-    };
+    //                e.component.option({
+    //                    dataSource: orders,
+    //                    editing: {
+    //                        editRowKey: null,
+    //                        changes: []
+    //                    }
+    //                });
+    //            });
+    //    }
+    //};
 
     @*function saveChange(change) {
         switch (change.type) {
@@ -348,9 +348,9 @@
         });
 
         return d.promise();
-        };
+        };*@
 
-*@
+
  function onSaving(e) {
         e.cancel = true;
 
@@ -389,7 +389,20 @@
                 });
             });
         }
-     }
+        }
+
+function onSavingDailyPlan(e) {
+
+    e.cancel = true;
+
+        if (e.changes.length) {
+            e.promise = sendBatchRequest('@Url.RouteUrl(new { area="OpeationMns",controller = "DailyPlan", action = "UpdateDailyPlanWlp2" })', e.changes).done(() => {
+                e.component.refresh(true).done(() => {
+                    e.component.cancelEditData();
+                });
+            });
+        }
+}
 
     function sendBatchRequest(url, changes) {
         var d = $.Deferred();
@@ -443,7 +456,7 @@
         }
 
         function SetBackgroundCellColorPriory(e) {
-          
+
             if (e.rowType === "data" && e.data.prioryInOperation != null) {
 
                 if (e.column.dataField === "sapCode" || e.column.dataField === "module" || e.column.dataField === "type"
@@ -478,6 +491,8 @@
 
 @{
     string daysPlan = ViewBag.DayPlanWLP2;
+    bool isView = User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+                 User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] != "WLP2_VIEW";
 }
 
 <div class="content container-fluid">
@@ -553,46 +568,52 @@
     .Export(e => e.Enabled(true).AllowExportSelectedData(true))
      .OnExporting("exporting")
     .Height(700)
+    .Editing(editing =>
+    {
+        editing.Mode(GridEditMode.Batch);
+        editing.AllowUpdating(isView);
+    })
     .ColumnFixing(x=>x.Enabled(true))
     .Columns(columns => {
 
-        columns.AddFor(m => m.LastUpdate).DataField("lastUpdate").Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.Module).DataField("module").Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.Type).DataField("type").Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.CumYield).DataField("cumYield").Fixed(true).FixedPosition(HorizontalEdge.Left).DataType(GridColumnDataType.Number).Format("#,##0.##%");
-        columns.AddFor(m => m.QtyChipBase).DataField("qtyChipBase").Caption("Chip Cơ Bản").Fixed(true).FixedPosition(HorizontalEdge.Left).DataType(GridColumnDataType.Number).Format("#,##0");
-        columns.AddFor(m => m.SapCode).DataField("sapCode").Caption("Model").Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.LastUpdate).DataField("lastUpdate").Fixed(true).FixedPosition(HorizontalEdge.Left).AllowEditing(false);
+        columns.AddFor(m => m.Module).DataField("module").Fixed(true).FixedPosition(HorizontalEdge.Left).AllowEditing(false);
+        columns.AddFor(m => m.Type).DataField("type").Fixed(true).FixedPosition(HorizontalEdge.Left).AllowEditing(false);
+        columns.AddFor(m => m.CumYield).DataField("cumYield").Fixed(true).FixedPosition(HorizontalEdge.Left).DataType(GridColumnDataType.Number).Format("#,##0.##%").AllowEditing(false);
+        columns.AddFor(m => m.QtyChipBase).DataField("qtyChipBase").Caption("Chip Cơ Bản").Fixed(true).FixedPosition(HorizontalEdge.Left).DataType(GridColumnDataType.Number).Format("#,##0").AllowEditing(false);
+        columns.AddFor(m => m.SapCode).DataField("sapCode").Caption("Model").Fixed(true).FixedPosition(HorizontalEdge.Left).AllowEditing(false);
 
         columns.Add().Caption("Tồn Kho Công Đoạn").Columns(c => {
 
-            c.AddFor(m => m.ToTalWip).DataField("toTalWip").Caption("Tổng WIP").DataType(GridColumnDataType.Number).Format("#,##0");
+            c.AddFor(m => m.ToTalWip).DataField("toTalWip").Caption("Tổng WIP").DataType(GridColumnDataType.Number).Format("#,##0").AllowEditing(false);
             c.AddFor(m => m.ChoXuatHang).DataField("choXuatHang").Caption("Chờ xuất hàng").DataType(GridColumnDataType.Number).Format("#,##0").CellTemplate(@<text>
                 <span class="<%- data.choXuatHang > 0 ? 'inc' : (data.choXuatHang < 0) ? 'dec' : 'zeroHide' %>">
                   <%- text %>
                 </span>
-            </text>);
+            </text>).AllowEditing(false);
             c.AddFor(m => m.HoldNVL).DataField("holdNVL").Caption("Hold NVL").DataType(GridColumnDataType.Number).Format("#,##0").CellTemplate(@<text>
                 <span class="<%- data.holdNVL > 0 ? 'inc' : (data.holdNVL < 0) ? 'dec' : 'zeroHide' %>">
                   <%- text %>
                 </span>
-            </text>);
+            </text>).AllowEditing(false);
             c.AddFor(m => m.NguyenLieuOKSX).DataField("nguyenLieuOKSX").Caption("Nguyên Liệu OK Sản Xuất").DataType(GridColumnDataType.Number).Format("#,##0").CellTemplate(@<text>
                 <span class="<%- data.nguyenLieuOKSX > 0 ? 'inc' : (data.nguyenLieuOKSX < 0) ? 'dec' : 'zeroHide' %>">
                   <%- text %>
                 </span>
-            </text>);
+            </text>).AllowEditing(false);
 
             c.AddFor(m => m.KHSXTheoNgay).DataField("khsxTheoNgay").Caption("KHSX Theo Ngày").DataType(GridColumnDataType.Number).Format("#,##0").CellTemplate(@<text>
                 <span class="<%- data.khsxTheoNgay > 0 ? 'inc' : (data.khsxTheoNgay < 0) ? 'dec' : 'zeroHide' %>">
                   <%- text %>
                 </span>
-            </text>);
+            </text>).AllowEditing(false);
             c.AddFor(m => m.SoLuongConLaiSauKHSX).DataField("soLuongConLaiSauKHSX").Caption("Số Lượng Còn Lại Sau KHSX").DataType(GridColumnDataType.Number).Format("#,##0").CellTemplate(@<text>
                 <span class="<%- data.soLuongConLaiSauKHSX > 0 ? 'inc' : (data.soLuongConLaiSauKHSX < 0) ? 'dec' : 'zeroHide' %>">
                     <span class="current-value"><%- text %></span>
                     <span class="arrow"></span>
                 </span>
-            </text>);
+            </text>).AllowEditing(false);
+
         }).CssClass("styleHeader");
 
     columns.Add().Caption("Kế Hoạch Sản Xuất").Columns(c => {
@@ -601,38 +622,39 @@
                 <span class="<%- data.backGrinding > 0 ? 'inc' : (data.backGrinding < 0) ? 'dec' : 'zeroHide' %>">
                   <%- text %>
                 </span>
-            </text>);
-             c.AddFor(m => m.WaferOven).DataField("waferOven").Caption("Wafer Oven").DataType(GridColumnDataType.Number).Format("#,##0").CellTemplate(@<text>
+            </text>).AllowEditing(true);
+
+    c.AddFor(m => m.WaferOven).DataField("waferOven").Caption("Wafer Oven").DataType(GridColumnDataType.Number).Format("#,##0").CellTemplate(@<text>
                 <span class="<%- data.waferOven > 0 ? 'inc' : (data.waferOven < 0) ? 'dec' : 'zeroHide'  %>">
                   <%- text %>
                 </span>
-            </text>);
-             c.AddFor(m => m.Dicing).DataField("dicing").Caption("Dicing").DataType(GridColumnDataType.Number).Format("#,##0").CellTemplate(@<text>
+            </text>).AllowEditing(false);
+    c.AddFor(m => m.Dicing).DataField("dicing").Caption("Dicing").DataType(GridColumnDataType.Number).Format("#,##0").CellTemplate(@<text>
                 <span class="<%- data.dicing > 0 ? 'inc' : (data.dicing < 0) ? 'dec' : 'zeroHide' %>">
                   <%- text %>
                 </span>
-            </text>);
-            c.AddFor(m => m.ChipInspection).DataField("chipInspection").Caption("Chip Inspection").DataType(GridColumnDataType.Number).Format("#,##0").CellTemplate(@<text>
+            </text>).AllowEditing(false);
+    c.AddFor(m => m.ChipInspection).DataField("chipInspection").Caption("Chip Inspection").DataType(GridColumnDataType.Number).Format("#,##0").CellTemplate(@<text>
                 <span class="<%- data.chipInspection > 0 ? 'inc' : (data.chipInspection < 0) ? 'dec' : 'zeroHide' %>">
                   <%- text %>
                 </span>
-            </text>);
-             c.AddFor(m => m.Packing).DataField("packing").Caption("Packing").DataType(GridColumnDataType.Number).Format("#,##0").CellTemplate(@<text>
+            </text>).AllowEditing(false);
+    c.AddFor(m => m.Packing).DataField("packing").Caption("Packing").DataType(GridColumnDataType.Number).Format("#,##0").CellTemplate(@<text>
                 <span class="<%- data.packing > 0 ? 'inc' : (data.packing < 0) ? 'dec' : 'zeroHide' %>">
                   <%- text %>
                 </span>
-            </text>);
-             c.AddFor(m => m.ReelInspection).DataField("reelInspection").Caption("Reel Inspection").DataType(GridColumnDataType.Number).Format("#,##0").CellTemplate(@<text>
+            </text>).AllowEditing(false);
+    c.AddFor(m => m.ReelInspection).DataField("reelInspection").Caption("Reel Inspection").DataType(GridColumnDataType.Number).Format("#,##0").CellTemplate(@<text>
                 <span class="<%- data.reelInspection > 0 ? 'inc' : (data.reelInspection < 0) ? 'dec' : 'zeroHide'  %>">
                   <%- text %>
                 </span>
-            </text>);
-            c.AddFor(m => m.QC_Pass).DataField("qC_Pass").Caption("QC Pass").DataType(GridColumnDataType.Number).Format("#,##0").CellTemplate(@<text>
+            </text>).AllowEditing(false);
+    c.AddFor(m => m.QC_Pass).DataField("qC_Pass").Caption("QC Pass").DataType(GridColumnDataType.Number).Format("#,##0").CellTemplate(@<text>
                 <span class="<%- data.qC_Pass > 0 ? 'inc' : (data.qC_Pass < 0) ? 'dec' : 'zeroHide' %>">
                   <%- text %>
                 </span>
-            </text>);
-        }).CssClass("styleHeader");
+            </text>).AllowEditing(false);
+    }).CssClass("styleHeader");
     })
     .Summary(s=>s.TotalItems(totalItems => {
 
@@ -652,7 +674,7 @@
         totalItems.Add().SummaryType(SummaryType.Sum).Column("reelInspection").Name("reelInspection").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
         totalItems.Add().SummaryType(SummaryType.Sum).Column("qC_Pass").Name("qC_Pass").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
     })
-    ).OnCellClick("OnCellClick").OnCellPrepared("SetBackgroundCellColorPriory"))
+    ).OnSaving("onSavingDailyPlan").OnCellClick("OnCellClick").OnCellPrepared("SetBackgroundCellColorPriory"))
 
             <div id="holdLotInfo" style="margin-top:20px">
                 <div class="col-sm-12" id="show-hidden-grid-wlp">
@@ -685,7 +707,7 @@
 .Editing(editing =>
     {
         editing.Mode(GridEditMode.Batch);
-        editing.AllowUpdating(true);
+        editing.AllowUpdating(isView);
     })
 .HoverStateEnabled(true)
 .Selection(s => s.Mode(SelectionMode.Single))
@@ -694,13 +716,14 @@
     columns.AddFor(m => m.STT).Caption("No").Width(60).AllowEditing(false);
     columns.AddFor(m => m.Priory).Width(150).Caption("Hàng Ưu Tiên").AllowEditing(true);
     columns.AddFor(m => m.Number_Priory).Caption("STT Ưu Tiên").Width(120).AllowEditing(true);
+    columns.AddFor(m => m.StayDay).AllowEditing(false);
     columns.AddFor(m => m.CassetteID).AllowEditing(false);
     columns.AddFor(m => m.Material).AllowEditing(false);
     columns.AddFor(m => m.LotID).AllowEditing(false);
     columns.AddFor(m => m.OperationName).AllowEditing(false);
     columns.AddFor(m => m.ERPProductionOrder).AllowEditing(false);
     columns.AddFor(m => m.ChipQty).Format(Format.FixedPoint).AllowEditing(false);
-    columns.AddFor(m => m.StayDay).Format(Format.FixedPoint).AllowEditing(false);
+   
 
 }).Summary(s => s.TotalItems(items =>
 {

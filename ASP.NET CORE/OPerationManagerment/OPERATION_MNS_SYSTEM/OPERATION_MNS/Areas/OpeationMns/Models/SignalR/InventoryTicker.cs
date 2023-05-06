@@ -149,9 +149,12 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models.SignalR
             decimal qtyEndOfMonthTemp = 0;
             DailyPlanViewModel daily;
             int row = 0;
+            string allModels = "";
 
             foreach (var item in gocPlan.GocPlanViewModels)
             {
+                allModels += item.Model + ",";
+
                 if (!gocPlan.InventoryActualModels.Exists(x => x.Material_SAP_CODE == item.Model))
                 {
                     gocPlan.InventoryActualModels.Add(new InventoryActualModel()
@@ -162,6 +165,8 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models.SignalR
                     });
                 }
             }
+
+            List<StayLotListByModel> QtyStayLot = GetQtyStayLot(allModels);
 
             foreach (var iv in gocPlan.InventoryActualModels.OrderBy(x => x.Material_SAP_CODE))
             {
@@ -178,6 +183,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models.SignalR
                     Model_Short = iv.Material_SAP_CODE.Length >= 8 ? iv.Material_SAP_CODE.Substring(1, 7) : iv.Material_SAP_CODE,
                     Category = iv.Category,
                     LastUpdate = DateTime.Now.ToString("HH:mm:ss"),
+                   
                     STT = row
                 };
 
@@ -185,6 +191,15 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models.SignalR
                 {
                     if (pl.Model == daily.Model)
                     {
+                        if(ViewOption.NullString() == "")
+                        {
+                            daily.ChipWafer = CommonConstants.WAFER;
+                        }
+                        else
+                        {
+                            daily.ChipWafer = ViewOption;
+                        }
+                        
                         daily.StandardQty = (decimal)pl.StandardQtyForMonth;
 
                         // lưu lại lượng GAP cuôi tháng nếu daily plan nằm trên 2 tháng 
@@ -209,8 +224,13 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models.SignalR
                         // Kế hoạch công đoạn Plate inspection cho ngày 1
                         if (pl.DatePlan == GetBeginDate().ToString("yyyy-MM-dd"))
                         {
-                            daily.Shipping_Wait = (decimal)(pl.QuantityGap);
-                            daily.Plate_Inspection = daily.Shipping_Wait + iv.Probe_Waite + iv.Wafer_Probe_RF + iv.Wafer_Probe_IR + iv.Shipping_Wait;
+                            daily.Shipping_Wait.Plan = (decimal)(pl.QuantityGap);
+                            daily.Plate_Inspection.Plan = daily.Shipping_Wait.Plan + iv.Probe_Waite + iv.Wafer_Probe_RF + iv.Wafer_Probe_IR + iv.Shipping_Wait;
+
+                            daily.Shipping_Wait.StockChip = QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP72500") != null ? QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP72500").QtyChip : 0;
+                            daily.Plate_Inspection.StockChip = QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP70000") != null ? QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP70000").QtyChip : 0;
+                            daily.Shipping_Wait.StockWafer = QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP72500") != null ? QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP72500").QtyWF : 0;
+                            daily.Plate_Inspection.StockWafer = QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP70000") != null ? QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP70000").QtyWF : 0;
 
                             daily.GapActualPlan_EA = (decimal)pl.QuantityGap;
                             daily.GapActualPlan_SH = (decimal)gocPlan.GocPlanWaferViewModels.FirstOrDefault(x => x.DatePlan == GetBeginDate().ToString("yyyy-MM-dd") && x.Model == pl.Model).QuantityGap;
@@ -220,29 +240,44 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models.SignalR
                         // kế hoach ngày thứ 2,...
                         if (pl.DatePlan == daysPlan[0])
                         {
-                            daily.Plate_BST = (decimal)(pl.QuantityGap) + qtyEndOfMonthTemp + iv.Plate_Inspection_Wait + iv.Plate_Inspection + iv.Probe_Waite + iv.Wafer_Probe_RF + iv.Wafer_Probe_IR + iv.Shipping_Wait;
-                            daily.Cu_Sn_Plating = iv.St_Plate_Visual_Inspection + iv.SN_Plate_Measure + iv.PR_Strip_Cu_Etching + iv.Nd_Plate_Visual_Inspection + iv.Ti_ething + iv.Plate_Measure + iv.Plate_BST + daily.Plate_BST;
+                            daily.Plate_BST.Plan = (decimal)(pl.QuantityGap) + qtyEndOfMonthTemp + iv.Plate_Inspection_Wait + iv.Plate_Inspection + iv.Probe_Waite + iv.Wafer_Probe_RF + iv.Wafer_Probe_IR + iv.Shipping_Wait;
+                            daily.Cu_Sn_Plating.Plan = iv.St_Plate_Visual_Inspection + iv.SN_Plate_Measure + iv.PR_Strip_Cu_Etching + iv.Nd_Plate_Visual_Inspection + iv.Ti_ething + iv.Plate_Measure + iv.Plate_BST + daily.Plate_BST.Plan;
+
+                            daily.Plate_BST.StockChip = QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP69000") != null ? QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP69000").QtyChip : 0;
+                            daily.Cu_Sn_Plating.StockChip = QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP60000") != null ? QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP60000").QtyChip : 0;
+                            daily.Plate_BST.StockWafer = QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP69000") != null ? QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP69000").QtyWF : 0;
+                            daily.Cu_Sn_Plating.StockWafer = QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP60000") != null ? QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP60000").QtyWF : 0;
                         }
 
                         // kế hoach ngày thứ 3,...
                         if (pl.DatePlan == daysPlan[1])
                         {
-                            daily.Plate_Patterning_Inspection = (decimal)pl.QuantityGap + qtyEndOfMonthTemp +
+                            daily.Plate_Patterning_Inspection.Plan = (decimal)pl.QuantityGap + qtyEndOfMonthTemp +
                                 iv.Plating_Input_Waiting + iv.Cu_Sn_Plating + iv.St_Plate_Visual_Inspection + iv.SN_Plate_Measure + iv.PR_Strip_Cu_Etching + iv.Nd_Plate_Visual_Inspection + iv.Ti_ething + iv.Plate_Measure + iv.Plate_BST
                                + iv.Plate_Inspection_Wait + iv.Plate_Inspection + iv.Probe_Waite + iv.Wafer_Probe_RF + iv.Wafer_Probe_IR + iv.Shipping_Wait;
 
-                            daily.Plate_Patterning_PR =
+                            daily.Plate_Patterning_PR.Plan =
                                 iv.Plate_Patterning_Photo + iv.Plate_Patterning_Develop + iv.After_Plate_Develop_Visual_Inspection + iv.Plate_Patterning_Measure + iv.Plate_Patterning_PR_Ashing + iv.Plate_Patterning_Inspection +
-                                daily.Plate_Patterning_Inspection;
+                                daily.Plate_Patterning_Inspection.Plan;
 
-                            daily.Seed_Deposition = daily.Plate_Patterning_PR + iv.Before_Plate_PR_Wafer_Inspection + iv.Plate_Patterning_PR;
-                            daily.Roof_Inspection = daily.Seed_Deposition + iv.Seed_Deposition;
+                            daily.Seed_Deposition.Plan = daily.Plate_Patterning_PR.Plan + iv.Before_Plate_PR_Wafer_Inspection + iv.Plate_Patterning_PR;
+                            daily.Roof_Inspection.Plan = daily.Seed_Deposition.Plan + iv.Seed_Deposition;
+
+                            daily.Plate_Patterning_Inspection.StockChip = QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP59000") != null ? QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP59000").QtyChip : 0;
+                            daily.Plate_Patterning_PR.StockChip = QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP53000") != null ? QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP53000").QtyChip : 0;
+                            daily.Seed_Deposition.StockChip = QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP52000") != null ? QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP52000").QtyChip : 0;
+                            daily.Roof_Inspection.StockChip = QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP51000") != null ? QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP51000").QtyChip : 0;
+
+                            daily.Plate_Patterning_Inspection.StockWafer = QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP59000") != null ? QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP59000").QtyWF : 0;
+                            daily.Plate_Patterning_PR.StockWafer = QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP53000") != null ? QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP53000").QtyWF : 0;
+                            daily.Seed_Deposition.StockWafer = QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP52000") != null ? QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP52000").QtyWF : 0;
+                            daily.Roof_Inspection.StockWafer = QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP51000") != null ? QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP51000").QtyWF : 0;
                         }
 
                         // kế hoach ngày thứ 4,...
                         if (pl.DatePlan == daysPlan[2])
                         {
-                            daily.Roof_Measure = (decimal)pl.QuantityGap + qtyEndOfMonthTemp +
+                            daily.Roof_Measure.Plan = (decimal)pl.QuantityGap + qtyEndOfMonthTemp +
                                 iv.Roof_BST +
                                 iv.Roof_Inspection +
                                 iv.Seed_Deposition +
@@ -250,6 +285,9 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models.SignalR
                                 iv.Plate_Patterning_Photo + iv.Plate_Patterning_Develop + iv.After_Plate_Develop_Visual_Inspection + iv.Plate_Patterning_Measure + iv.Plate_Patterning_PR_Ashing + iv.Plate_Patterning_Inspection +
                                 iv.Plating_Input_Waiting + iv.Cu_Sn_Plating + iv.St_Plate_Visual_Inspection + iv.SN_Plate_Measure + iv.PR_Strip_Cu_Etching + iv.Nd_Plate_Visual_Inspection + iv.Ti_ething + iv.Plate_Measure + iv.Plate_BST +
                                 iv.Plate_Inspection_Wait + iv.Plate_Inspection + iv.Probe_Waite + iv.Wafer_Probe_RF + iv.Wafer_Probe_IR + iv.Shipping_Wait;
+
+                            daily.Roof_Measure.StockChip = QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP49000") != null ? QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP49000").QtyChip : 0;
+                            daily.Roof_Measure.StockWafer = QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP49000") != null ? QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP49000").QtyWF : 0;
 
                             //daily.Roof_Photo = iv.Roof_Remover + iv.Roof_Oven_PEB +
                             //                    iv.Roof_Develop + iv.After_Roof_Develop_Visual_Inspection +
@@ -260,7 +298,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models.SignalR
                         // kế hoach ngày thứ 5,...
                         if (pl.DatePlan == daysPlan[3])
                         {
-                            daily.Roof_Photo = (decimal)pl.QuantityGap + qtyEndOfMonthTemp +
+                            daily.Roof_Photo.Plan = (decimal)pl.QuantityGap + qtyEndOfMonthTemp +
                                                 iv.Roof_Remover + iv.Roof_Oven_PEB +
                                                 iv.Roof_Develop + iv.After_Roof_Develop_Visual_Inspection +
                                                 iv.Roof_Ashing + iv.Roof_QDR + iv.Roof_Oven + iv.Wafer_Sorting +
@@ -272,7 +310,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models.SignalR
                                                 iv.Plating_Input_Waiting + iv.Cu_Sn_Plating + iv.St_Plate_Visual_Inspection + iv.SN_Plate_Measure + iv.PR_Strip_Cu_Etching + iv.Nd_Plate_Visual_Inspection + iv.Ti_ething + iv.Plate_Measure + iv.Plate_BST +
                                                 iv.Plate_Inspection_Wait + iv.Plate_Inspection + iv.Probe_Waite + iv.Wafer_Probe_RF + iv.Wafer_Probe_IR + iv.Shipping_Wait; ;
 
-                            daily.Roof_Laminating = (decimal)pl.QuantityGap + qtyEndOfMonthTemp +
+                            daily.Roof_Laminating.Plan = (decimal)pl.QuantityGap + qtyEndOfMonthTemp +
                                                 iv.After_Roof_Lami_Visual_Inspection + iv.Roof_Hardening + iv.Roof_Mask_Cleaning + iv.Roof_Photo +
                                                 iv.Roof_Remover + iv.Roof_Oven_PEB +
                                                 iv.Roof_Develop + iv.After_Roof_Develop_Visual_Inspection +
@@ -286,13 +324,21 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models.SignalR
                                                 iv.Plating_Input_Waiting + iv.Cu_Sn_Plating + iv.St_Plate_Visual_Inspection + iv.SN_Plate_Measure + iv.PR_Strip_Cu_Etching + iv.Nd_Plate_Visual_Inspection + iv.Ti_ething + iv.Plate_Measure + iv.Plate_BST +
                                                 iv.Plate_Inspection_Wait + iv.Plate_Inspection + iv.Probe_Waite + iv.Wafer_Probe_RF + iv.Wafer_Probe_IR + iv.Shipping_Wait;
 
-                            daily.Wall_Inspection = daily.Roof_Laminating + iv.Before_Roof_Lami_Wafer_Inspection + iv.Roof_Laminating;
+                            daily.Wall_Inspection.Plan = daily.Roof_Laminating.Plan + iv.Before_Roof_Lami_Wafer_Inspection + iv.Roof_Laminating;
+
+                            daily.Roof_Photo.StockChip = QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP43000") != null ? QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP43000").QtyChip : 0;
+                            daily.Roof_Laminating.StockChip = QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP40000") != null ? QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP40000").QtyChip : 0;
+                            daily.Wall_Inspection.StockChip = QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP38000") != null ? QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP38000").QtyChip : 0;
+
+                            daily.Roof_Photo.StockWafer = QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP43000") != null ? QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP43000").QtyWF : 0;
+                            daily.Roof_Laminating.StockWafer = QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP40000") != null ? QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP40000").QtyWF : 0;
+                            daily.Wall_Inspection.StockWafer = QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP38000") != null ? QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP38000").QtyWF : 0;
                         }
 
                         // kế hoach ngày thứ 6,...
                         if (pl.DatePlan == daysPlan[4])
                         {
-                            daily.Wall_PR = (decimal)pl.QuantityGap + qtyEndOfMonthTemp +
+                            daily.Wall_PR.Plan = (decimal)pl.QuantityGap + qtyEndOfMonthTemp +
                                                 iv.Wall_Ashing + iv.Wall_Inspection + iv.Wall_Ashing_Waiting + iv.Wall_PR_Measure + iv.Wall_Oven + iv.Wall_Develop + iv.Wall_Photo +
                                                 iv.Before_Roof_Lami_Wafer_Inspection + iv.Roof_Laminating +
                                                 iv.After_Roof_Lami_Visual_Inspection + iv.Roof_Hardening + iv.Roof_Mask_Cleaning + iv.Roof_Photo +
@@ -307,6 +353,9 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models.SignalR
                                                 iv.Plate_Patterning_Photo + iv.Plate_Patterning_Develop + iv.After_Plate_Develop_Visual_Inspection + iv.Plate_Patterning_Measure + iv.Plate_Patterning_PR_Ashing + iv.Plate_Patterning_Inspection +
                                                 iv.Plating_Input_Waiting + iv.Cu_Sn_Plating + iv.St_Plate_Visual_Inspection + iv.SN_Plate_Measure + iv.PR_Strip_Cu_Etching + iv.Nd_Plate_Visual_Inspection + iv.Ti_ething + iv.Plate_Measure + iv.Plate_BST +
                                                 iv.Plate_Inspection_Wait + iv.Plate_Inspection + iv.Probe_Waite + iv.Wafer_Probe_RF + iv.Wafer_Probe_IR + iv.Shipping_Wait;
+
+                            daily.Wall_PR.StockChip = QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP31000") != null ? QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP31000").QtyChip : 0;
+                            daily.Wall_PR.StockWafer = QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP31000") != null ? QtyStayLot.FirstOrDefault(x => x.Model == pl.Model && x.OperationId == "OP31000").QtyWF : 0;
                         }
                     }
                 }
@@ -395,41 +444,41 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models.SignalR
                             if (item.YieldPlan > 0 && item.StandardQty > 0)
                             {
                                 // chuyển đổi từ chip -> wafer :số tấm = số chip/ (hieu suat * chip co ban)
-                                item.Wall_PR = Math.Floor((100 * item.Wall_PR) / (item.YieldPlan * item.StandardQty));
-                                item.Wall_Oven = Math.Floor((100 * item.Wall_Oven) / (item.YieldPlan * item.StandardQty));
-                                item.Wall_Inspection = Math.Floor((100 * item.Wall_Inspection) / (item.YieldPlan * item.StandardQty));
-                                item.Roof_Laminating = Math.Floor((100 * item.Roof_Laminating) / (item.YieldPlan * item.StandardQty));
-                                item.Roof_Ashing = Math.Floor((100 * item.Roof_Ashing) / (item.YieldPlan * item.StandardQty));
-                                item.Roof_Measure = Math.Floor((100 * item.Roof_Measure) / (item.YieldPlan * item.StandardQty));
-                                item.Roof_Photo = Math.Floor((100 * item.Roof_Photo) / (item.YieldPlan * item.StandardQty));
-                                item.Roof_Inspection = Math.Floor((100 * item.Roof_Inspection) / (item.YieldPlan * item.StandardQty));
-                                item.Seed_Deposition = Math.Floor((100 * item.Seed_Deposition) / (item.YieldPlan * item.StandardQty));
-                                item.Plate_Patterning_PR = Math.Floor((100 * item.Plate_Patterning_PR) / (item.YieldPlan * item.StandardQty));
-                                item.Plate_Patterning_Inspection = Math.Floor((100 * item.Plate_Patterning_Inspection) / (item.YieldPlan * item.StandardQty));
-                                item.Cu_Sn_Plating = Math.Floor((100 * item.Cu_Sn_Plating) / (item.YieldPlan * item.StandardQty));
-                                item.PR_Strip_Cu_Etching = Math.Floor((100 * item.PR_Strip_Cu_Etching) / (item.YieldPlan * item.StandardQty));
-                                item.Plate_BST = Math.Floor((100 * item.Plate_BST) / (item.YieldPlan * item.StandardQty));
-                                item.Plate_Inspection = Math.Floor((100 * item.Plate_Inspection) / (item.YieldPlan * item.StandardQty));
-                                item.Shipping_Wait = Math.Floor((100 * item.Shipping_Wait) / (item.YieldPlan * item.StandardQty));
+                                item.Wall_PR.Plan = Math.Floor((100 * item.Wall_PR.Plan) / (item.YieldPlan * item.StandardQty));
+                                item.Wall_Oven.Plan = Math.Floor((100 * item.Wall_Oven.Plan) / (item.YieldPlan * item.StandardQty));
+                                item.Wall_Inspection.Plan = Math.Floor((100 * item.Wall_Inspection.Plan) / (item.YieldPlan * item.StandardQty));
+                                item.Roof_Laminating.Plan = Math.Floor((100 * item.Roof_Laminating.Plan) / (item.YieldPlan * item.StandardQty));
+                                item.Roof_Ashing.Plan = Math.Floor((100 * item.Roof_Ashing.Plan) / (item.YieldPlan * item.StandardQty));
+                                item.Roof_Measure.Plan = Math.Floor((100 * item.Roof_Measure.Plan) / (item.YieldPlan * item.StandardQty));
+                                item.Roof_Photo.Plan = Math.Floor((100 * item.Roof_Photo.Plan) / (item.YieldPlan * item.StandardQty));
+                                item.Roof_Inspection.Plan = Math.Floor((100 * item.Roof_Inspection.Plan) / (item.YieldPlan * item.StandardQty));
+                                item.Seed_Deposition.Plan = Math.Floor((100 * item.Seed_Deposition.Plan) / (item.YieldPlan * item.StandardQty));
+                                item.Plate_Patterning_PR.Plan = Math.Floor((100 * item.Plate_Patterning_PR.Plan) / (item.YieldPlan * item.StandardQty));
+                                item.Plate_Patterning_Inspection.Plan = Math.Floor((100 * item.Plate_Patterning_Inspection.Plan) / (item.YieldPlan * item.StandardQty));
+                                item.Cu_Sn_Plating.Plan = Math.Floor((100 * item.Cu_Sn_Plating.Plan) / (item.YieldPlan * item.StandardQty));
+                                item.PR_Strip_Cu_Etching.Plan = Math.Floor((100 * item.PR_Strip_Cu_Etching.Plan) / (item.YieldPlan * item.StandardQty));
+                                item.Plate_BST.Plan = Math.Floor((100 * item.Plate_BST.Plan) / (item.YieldPlan * item.StandardQty));
+                                item.Plate_Inspection.Plan = Math.Floor((100 * item.Plate_Inspection.Plan) / (item.YieldPlan * item.StandardQty));
+                                item.Shipping_Wait.Plan = Math.Floor((100 * item.Shipping_Wait.Plan) / (item.YieldPlan * item.StandardQty));
                             }
                             else
                             {
-                                item.Wall_PR = 0;
-                                item.Wall_Oven = 0;
-                                item.Wall_Inspection = 0;
-                                item.Roof_Laminating = 0;
-                                item.Roof_Ashing = 0;
-                                item.Roof_Measure = 0;
-                                item.Roof_Photo = 0;
-                                item.Roof_Inspection = 0;
-                                item.Seed_Deposition = 0;
-                                item.Plate_Patterning_PR = 0;
-                                item.Plate_Patterning_Inspection = 0;
-                                item.Cu_Sn_Plating = 0;
-                                item.PR_Strip_Cu_Etching = 0;
-                                item.Plate_BST = 0;
-                                item.Plate_Inspection = 0;
-                                item.Shipping_Wait = 0;
+                                item.Wall_PR.Plan = 0;
+                                item.Wall_Oven.Plan = 0;
+                                item.Wall_Inspection.Plan = 0;
+                                item.Roof_Laminating.Plan = 0;
+                                item.Roof_Ashing.Plan = 0;
+                                item.Roof_Measure.Plan = 0;
+                                item.Roof_Photo.Plan = 0;
+                                item.Roof_Inspection.Plan = 0;
+                                item.Seed_Deposition.Plan = 0;
+                                item.Plate_Patterning_PR.Plan = 0;
+                                item.Plate_Patterning_Inspection.Plan = 0;
+                                item.Cu_Sn_Plating.Plan = 0;
+                                item.PR_Strip_Cu_Etching.Plan = 0;
+                                item.Plate_BST.Plan = 0;
+                                item.Plate_Inspection.Plan = 0;
+                                item.Shipping_Wait.Plan = 0;
                             }
                         }
                     }
@@ -461,6 +510,19 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models.SignalR
             }
 
             return result;
+        }
+
+        static List<StayLotListByModel> GetQtyStayLot(string models)
+        {
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic.Add("A_MODEL", models);
+            ResultDB resultDB = ExecProceduce2("GET_STAY_LOT_BY_MODEL_WLP1_QTY", dic);
+            List<StayLotListByModel> data = new List<StayLotListByModel>();
+            if (resultDB.ReturnInt == 0)
+            {
+                data = DataTableToJson.ConvertDataTable<StayLotListByModel>(resultDB.ReturnDataSet.Tables[0]);
+            }
+            return data;
         }
         #endregion
 
@@ -702,18 +764,23 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models.SignalR
             IEnumerable<VIEW_WIP_POST_WLP> wip = GetDailyStockWlp2Chip();
 
             IEnumerable<GOC_PLAN_WLP2> gocPlans = GetDailyPlanWlp2ByDay();
-
-
+            IEnumerable<DAILY_PLAN_WLP2> dailyPlansUpdated = GetDailyPlanByModelUpdated(GetBeginDate().ToString("yyyy-MM-dd"));
 
             DailyPlanWlp2ViewModel stModel;
             float standarQty = 0;
             GOC_PLAN_WLP2 goc;
             string sapcodes = "";
+            float backGrindingUpdated = 0;
 
             List<GOC_STANDAR_QTY> lstStandarQty = GetStandarQty(CommonConstants.WLP2).ToList();
             GOC_STANDAR_QTY stQty;
             foreach (var item in wip)
             {
+                if (dailyPlansUpdated.FirstOrDefault(x => x.Model == item.Material_SAP_CODE) != null)
+                {
+                    backGrindingUpdated = dailyPlansUpdated.FirstOrDefault(x => x.Model == item.Material_SAP_CODE).BackGrinding;
+                }
+
                 if (rs.Exists(x => x.SapCode == item.Material_SAP_CODE))
                 {
                     stModel = rs.Find(x => x.SapCode == item.Material_SAP_CODE);
@@ -772,7 +839,8 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models.SignalR
                         stModel.WaferOven = 0;
                     }
 
-                    stModel.BackGrinding = (-1) * stModel.WaferOven / standarQty;
+                    stModel.BackGrinding = backGrindingUpdated > 0 ? backGrindingUpdated : (-1) * stModel.WaferOven / standarQty;
+
                     stModel.Dicing += item.DeTaping + item.ChipVisualInspection + item.UVInspection +
                         item.ReelPacking +
                         item.ReelOperationInput + item.ReelVisualInspection +
@@ -908,7 +976,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models.SignalR
             Dictionary<string, string> result = new Dictionary<string, string>();
 
             Dictionary<string, string> param = new Dictionary<string, string>();
-           
+
             ResultDB resultDB = ExecProceduce2("GET_STAY_LOT_BY_MODEL_CHECK_WLP2", param);
 
             if (resultDB.ReturnInt == 0)
@@ -1038,6 +1106,22 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models.SignalR
             if (resultDB.ReturnInt == 0)
             {
                 result = DataTableToJson.ConvertDataTable<GOC_STANDAR_QTY>(resultDB.ReturnDataSet.Tables[0]);
+            }
+            return result;
+        }
+
+        private IEnumerable<DAILY_PLAN_WLP2> GetDailyPlanByModelUpdated(string datePlan)
+        {
+            List<DAILY_PLAN_WLP2> result = new List<DAILY_PLAN_WLP2>();
+
+            Dictionary<string, string> param = new Dictionary<string, string>();
+            param.Add("A_DATE_PLAN", datePlan);
+
+            ResultDB resultDB = ExecProceduce2("GET_DAILY_PLAN_WLP2_UPDATED", param);
+
+            if (resultDB.ReturnInt == 0)
+            {
+                result = DataTableToJson.ConvertDataTable<DAILY_PLAN_WLP2>(resultDB.ReturnDataSet.Tables[0]);
             }
             return result;
         }

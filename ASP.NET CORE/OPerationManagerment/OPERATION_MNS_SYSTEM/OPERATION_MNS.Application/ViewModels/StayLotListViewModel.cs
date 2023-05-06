@@ -144,4 +144,13 @@ namespace OPERATION_MNS.Application.ViewModels
         public string FromTime { get; set; }
         public string ToTime { get; set; }
     }
+
+    public class StayLotListByModel
+    {
+        public string Model { get; set; }
+        public decimal QtyWF { get; set; }
+        public decimal QtyChip { get; set; }
+        public string OperationName { get; set; }
+        public string OperationId { get; set; }
+    }
 }

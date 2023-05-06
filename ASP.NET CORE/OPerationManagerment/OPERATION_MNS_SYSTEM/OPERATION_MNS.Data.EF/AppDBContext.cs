@@ -41,6 +41,7 @@ namespace OPERATION_MNS.Data.EF
         public virtual DbSet<VIEW_CONTROL_CHART_MODEL> VIEW_CONTROL_CHART_MODEL { get; set; }
         public virtual DbSet<CTQ_SETTING> CTQ_SETTING { get; set; }
         public virtual DbSet<CTQ_EMAIL_RECEIV> CTQ_EMAIL_RECEIV { get; set; }
+        public virtual DbSet<CTQ_EMAIL_RECEIV_WLP2> CTQ_EMAIL_RECEIV_WLP2 { get; set; }
         public virtual DbSet<POST_OPERATION_SHIPPING> POST_OPERATION_SHIPPING { get; set; }
         public virtual DbSet<VIEW_WIP_POST_WLP> VIEW_WIP_POST_WLP { get; set; }
         public virtual DbSet<SMT_RETURN_WLP2> SMT_RETURN_WLP2 { get; set; }
@@ -50,6 +51,10 @@ namespace OPERATION_MNS.Data.EF
         public virtual DbSet<OUTGOING_RECEIPT_WLP2> OUTGOING_RECEIPT_WLP2 { get; set; }
         public virtual DbSet<KHUNG_THOI_GIAN_XUAT_HANG_WLP2> KHUNG_THOI_GIAN_XUAT_HANG_WLP2 { get; set; }
         public virtual DbSet<STAY_LOT_LIST_PRIORY_WLP2> STAY_LOT_LIST_PRIORY_WLP2 { get; set; }
+        public virtual DbSet<DAILY_PLAN_WLP2> DAILY_PLAN_WLP2 { get; set; }
+        public virtual DbSet<VIEW_CONTROL_CHART_MODEL_WLP2> VIEW_CONTROL_CHART_MODEL_WLP2 { get; set; }
+        public virtual DbSet<CTQ_SETTING_WLP2> CTQ_SETTING_WLP2 { get; set; }
+        public virtual DbSet<THICKNET_MODEL_WLP2> THICKNET_MODEL_WLP2 { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -88,6 +93,11 @@ namespace OPERATION_MNS.Data.EF
             builder.AddConfiguration(new OutGoingReceipConfiguration());
             builder.AddConfiguration(new KhungThoiGianXuatConfiguration());
             builder.AddConfiguration(new StayLotListPrioryConfiguration());
+            builder.AddConfiguration(new DailyPlanWlp2Configuration());
+            builder.AddConfiguration(new CTQWLP2Configuration());
+            builder.AddConfiguration(new CTQSettingWlp2Configuration());
+            builder.AddConfiguration(new ThickNetModelWlp2Configuration());
+            builder.AddConfiguration(new CtqEmailwlp2Configuration());
         }
 
         public override int SaveChanges()

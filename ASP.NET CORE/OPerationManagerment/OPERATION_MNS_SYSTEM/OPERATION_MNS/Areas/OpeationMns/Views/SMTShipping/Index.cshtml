@@ -219,6 +219,16 @@
                 ajaxSettings.data.userName = $("#txtUserOutGoing").dxTextBox("option", "text");
             }
         }
+
+
+        function checkBox_valueChanged(data) {
+            if (data.value) {
+                $("#gridContainer_outGoingReceipt").dxDataGrid("instance").option("height", 'auto');
+            }
+            else {
+                $("#gridContainer_outGoingReceipt").dxDataGrid("instance").option("height", 500);
+            }
+        }
     </script>
 
     <!-- Shipping SMT History -->
@@ -282,7 +292,27 @@
 }
 
 @{
-  var today = ViewBag.DateWip;
+    var today = ViewBag.DateWip;
+
+    bool isUpdate = true;
+    bool isUpdateOfSMT1 = false;
+
+    bool isViewSMT = User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "SMT_SHIPPING";
+
+    if (isViewSMT == true)
+    {
+        isUpdate = false;
+        isUpdateOfSMT1 = true;
+    }
+    else
+    {
+
+        bool isView = User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+       User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] != "WLP2_VIEW";
+
+        isUpdateOfSMT1 = isView;
+        isUpdate = isView;
+    }
 }
 
 <div class="content container-fluid">
@@ -332,11 +362,14 @@
                     </div>
                 </div>
                 <div class="btn-group" style="float: right; margin-top: 40px;">
-                    <button type="button" class="btn btn-info dropdown-toggle" id="btnImport" style="margin-right:100px;width:100px" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Excel</button>
-                    <div class="dropdown-menu" style="">
-                        <a class="dropdown-item" href="~/templates/SAW_WLP_De_Nghi_Xuat_Nguyen_Lieu.xlsx">File mẫu đề nghị xuất NVL</a>
-                        <a class="dropdown-item" href="#" id="btn-import-GocPlan">Import Đề Nghị Xuất NVL</a>
-                    </div>
+                    @if (isUpdateOfSMT1)
+                    {
+                        <button type="button" class="btn btn-info dropdown-toggle" id="btnImport" style="margin-right:100px;width:100px" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Excel</button>
+                        <div class="dropdown-menu" style="">
+                            <a class="dropdown-item" href="~/templates/SAW_WLP_De_Nghi_Xuat_Nguyen_Lieu.xlsx">File mẫu đề nghị xuất NVL</a>
+                            <a class="dropdown-item" href="#" id="btn-import-GocPlan">Import Đề Nghị Xuất NVL</a>
+                        </div>
+                    }
                 </div>
 
             </div>
@@ -365,10 +398,10 @@
     .Selection(s => s.Mode(SelectionMode.Single))
     .HoverStateEnabled(true)
         .Editing(editing => {
-            editing.Mode(GridEditMode.Form);
-            editing.AllowUpdating(true);
-            editing.AllowAdding(true);
-            editing.AllowDeleting(true);
+            editing.Mode(GridEditMode.Popup);
+            editing.AllowUpdating(isUpdateOfSMT1);
+            editing.AllowAdding(isUpdateOfSMT1);
+            editing.AllowDeleting(isUpdateOfSMT1);
         })
         .Columns(columns =>
         {
@@ -427,12 +460,18 @@
 
                             </div>
                             <div style="float: right; display: inline-block; margin-right: 88px;">
-                                @(Html.DevExtreme().TextBox()
+                                <div style="display:inline-block">
+                                    @(Html.DevExtreme().TextBox()
                                   .ID("txtUserOutGoing")
                                   .Width(200)
                                   .Placeholder("Enter user name...")
                                   .Label("Người Giao Hàng")
                                 )
+                                </div>
+                                <div style="display: inline-block; float: right; margin: 10px 10px;">
+                                    @(Html.DevExtreme().CheckBox().ID("txtExpandCollapse").Text("Open/Close").Value(false).OnValueChanged("checkBox_valueChanged"))
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -469,7 +508,7 @@
     .Editing(editing =>
     {
         editing.Mode(GridEditMode.Row);
-        editing.AllowUpdating(true);
+        editing.AllowUpdating(isUpdate);
     })
     .Export(e => e.Enabled(true).AllowExportSelectedData(true))
     .OnExporting("exportingOutGoingReceipt")

@@ -23,13 +23,16 @@ namespace OPERATION_MNS.Application.AutoMapper
             CreateMap<YIELD_OF_MODEL, YieldOfModelViewModel>();
             CreateMap<MATERIAL_TO_SAP, MaterialToSapViewModel>();
             CreateMap<CTQ_SETTING, CTQSettingViewModel>();
+            CreateMap<CTQ_SETTING_WLP2, CTQSettingWLP2ViewModel>();
             CreateMap<CTQ_EMAIL_RECEIV, CTQEmailReceivViewModel>();
+            CreateMap<CTQ_EMAIL_RECEIV_WLP2, CTQEmailReceivViewModel>();
             CreateMap<POST_OPERATION_SHIPPING, PostOpeationShippingViewModel>();
 
             CreateMap<GOC_PLAN_WLP2, GocPlanViewModel>();
             CreateMap<SMT_RETURN_WLP2, SmtReturnWlp2ViewModel>();
             CreateMap<BOPHAN_DE_NGHI_XUAT_NLIEU, BoPhanDeNghiXuatNVLViewModel>();
             CreateMap<STAY_LOT_LIST_PRIORY_WLP2, Stay_lot_list_priory_wlp2ViewModel>();
+            CreateMap<THICKNET_MODEL_WLP2, ThickNetModelWlp2ViewModel>();
         }
     }
 }

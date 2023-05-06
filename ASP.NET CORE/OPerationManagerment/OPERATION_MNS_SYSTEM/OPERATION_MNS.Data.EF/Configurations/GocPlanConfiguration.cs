@@ -34,6 +34,15 @@ namespace OPERATION_MNS.Data.EF.Configurations
         }
     }
 
+    public class CTQWLP2Configuration : DbEntityConfiguration<VIEW_CONTROL_CHART_MODEL_WLP2>
+    {
+        public override void Configure(EntityTypeBuilder<VIEW_CONTROL_CHART_MODEL_WLP2> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
+
     public class GocPlanWLP2Configuration : DbEntityConfiguration<GOC_PLAN_WLP2>
     {
         public override void Configure(EntityTypeBuilder<GOC_PLAN_WLP2> entity)
@@ -91,6 +100,15 @@ namespace OPERATION_MNS.Data.EF.Configurations
     public class StayLotListPrioryConfiguration : DbEntityConfiguration<STAY_LOT_LIST_PRIORY_WLP2>
     {
         public override void Configure(EntityTypeBuilder<STAY_LOT_LIST_PRIORY_WLP2> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
+
+    public class DailyPlanWlp2Configuration : DbEntityConfiguration<DAILY_PLAN_WLP2>
+    {
+        public override void Configure(EntityTypeBuilder<DAILY_PLAN_WLP2> entity)
         {
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Id).ValueGeneratedOnAdd();
