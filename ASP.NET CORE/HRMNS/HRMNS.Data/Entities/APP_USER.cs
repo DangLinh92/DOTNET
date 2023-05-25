@@ -12,6 +12,10 @@ namespace HRMNS.Data.Entities
     [Table("APP_USER")]
     public class APP_USER : IdentityUser<Guid>, IDateTracking,ISwitchable
     {
+        public APP_USER()
+        {
+            APP_USER_TOKEN = new HashSet<APP_USER_TOKEN>();
+        }
         [StringLength(250)]
         public string FullName { get; set; }
         public DateTime? BirthDay { get; set; }
@@ -35,5 +39,14 @@ namespace HRMNS.Data.Entities
 
         [StringLength(50)]
         public string Department { get; set; }
+
+        public ICollection<APP_USER_TOKEN> APP_USER_TOKEN { get; set; }
+
+    }
+
+    [Table("APP_USER_TOKEN")]
+    public class APP_USER_TOKEN : IdentityUserToken<Guid>
+    {
+        public APP_USER APP_USER { get; set; }
     }
 }

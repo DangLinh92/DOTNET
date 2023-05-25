@@ -1,0 +1,191 @@
+﻿@model RegisterViewModel
+@inject UserManager<APP_USER> UserManager
+@{ Layout = "_Layout";
+    ViewData["Title"] = "Register"; }
+
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="page-title">Users</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-6 d-flex">
+            <div class="card flex-fill">
+                <div class="card-header">
+                    <h4 class="card-title mb-0">Đăng ký User</h4>
+                </div>
+                <div class="card-body">
+                    <form action="/admin/account/register" method="post">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="FullName"></label>
+                            <input asp-for="FullName" class="form-control" />
+                            <span asp-validation-for="FullName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Email"></label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Username"></label>
+                            <input asp-for="Username" class="form-control" />
+                            <span asp-validation-for="Username" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Password"></label>
+                            <input asp-for="Password" class="form-control" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="ConfirmPassword"></label>
+                            <input asp-for="ConfirmPassword" class="form-control" />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Department" class="col-form-label">Department </label>
+                            <select class="select" asp-for="Department" id="txtDepartment" required>
+                                <option value="SP" selected>Support</option>
+                            </select>
+                            <span asp-validation-for="Role" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Role" class="col-form-label">Role </label>
+                            <select class="select" asp-for="Role" id="txtRole" required>
+                                <option value="HR_Payroll">Payroll</option>
+
+                                @if (User.IsInRole("Admin"))
+                                {
+                                     <option value="Admin">Admin(Full Role)</option>
+                                }
+                            </select>
+                            <span asp-validation-for="Role" class="text-danger"></span>
+                        </div>
+                        <button type="submit" id="btnRegisterUser" class="btn btn-primary submit-btn">Register</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-6 d-flex">
+            <div class="card flex-fill">
+                <div class="card-header">
+                    <h4 class="card-title mb-0">List User</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive" id="gridUser">
+                        <table class="table table-striped custom-table datatable" id="userDataTable">
+                            <thead>
+                                <tr>
+                                    <th>Full Name</th>
+                                    <th>User Name</th>
+                                    <th>Department</th>
+                                    <th>Role</th>
+                                    <th class="text-right no-sort">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbl-content">
+                                @foreach (var user in ViewBag.UserList)
+                                {
+                                    <tr>
+                                        <td>@user.FullName</td>
+                                        <td>@user.Username</td>
+                                        <td>@user.Department</td>
+                                        <td>@user.Role</td>
+                                        <td class="text-right">
+                                            <div class="dropdown dropdown-action">
+                                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item delete-user" href="#" data-target="#delete_user" data-id="@user.Username"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                 }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal custom-modal fade" id="delete_user" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header">
+                    <h3>Delete User</h3>
+                    <p id="_idHeaderDel">Are you sure want to delete user</p>
+                    <input type="hidden" id="txtId" />
+                </div>
+                <div class="modal-btn delete-action">
+                    <div class="row">
+                        <div class="col-6">
+                            <a href="javascript:void(0);" class="btn btn-primary continue-btn" id="btnDelete">Delete</a>
+                        </div>
+                        <div class="col-6">
+                            <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+    <script>
+
+        onSuccess = function () {
+        }
+
+        $(document).ready(function () {
+            $('#userDataTable').DataTable({
+                "order": [0, 'asc']
+            });
+            $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search.');
+            $('select[name="userDataTable_length"]').removeClass('form-control-sm');
+
+            // delete user
+            $('#btnDelete').on('click', function (e) {
+                e.preventDefault();
+                var that = $('#txtId').val();
+                $.ajax({
+                    type: "POST",
+                    url: "/Admin/Account/DeleteUser",
+                    dataType: "json",
+                    data: {
+                        userName: that
+                    },
+                    success: function (response) {
+                        $('#delete_user').modal('hide');
+                        hrms.notify("Delete success!", 'Success', 'alert', function () {
+                            window.location.reload();
+                        });
+                    },
+                    error: function (status) {
+                        hrms.notify('error: ' + status.responseText, 'error', 'alert', function () { });
+                    }
+                });
+            });
+
+            $('body').on('click', '.delete-user', function (e) {
+                e.preventDefault();
+                $('#delete_user').modal('show');
+                $('#txtId').val($(this).data('id'));
+                $('#_idHeaderDel').text('Are you sure want to delete user : ' + $(this).data('id') + '?');
+            });
+        });
+    </script>
+}

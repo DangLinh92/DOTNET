@@ -47,6 +47,12 @@ namespace HRMNS.Application.Implementation
                 nhanvien.Status = Status.Active.ToString();
             }
 
+            nhanVienVm.MaBoPhan2 = nhanVienVm.MaBoPhan;
+            if (nhanVienVm.MaBoPhan == CommonConstants.CSP1 || nhanVienVm.MaBoPhan == CommonConstants.CSP2)
+            {
+                nhanVienVm.MaBoPhan = CommonConstants.CSP;
+            }
+          
             nhanvien.DateCreated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             nhanvien.DateModified = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             nhanvien.UserCreated = GetUserId();
@@ -128,7 +134,7 @@ namespace HRMNS.Application.Implementation
             else
             if (!string.IsNullOrEmpty(dept) && !string.IsNullOrEmpty(name))
             {
-                lstNV = _mapper.Map<List<NhanVienViewModel>>(_nhanvienRepository.FindAll(x => x.TenNV.Contains(name) && x.MaBoPhan.Contains(dept)));
+                lstNV = _mapper.Map<List<NhanVienViewModel>>(_nhanvienRepository.FindAll(x => x.TenNV.Contains(name) && x.MaBoPhan == dept));
             }
 
             return lstNV;
@@ -223,7 +229,18 @@ namespace HRMNS.Application.Implementation
                 }
 
                 nhanvien.MaChucDanh = worksheet.Cells[i, 3].Text.NullString();
-                nhanvien.MaBoPhan = worksheet.Cells[i, 4].Text.NullString();
+
+                if(worksheet.Cells[i, 4].Text.NullString() == CommonConstants.CSP1 || worksheet.Cells[i, 4].Text.NullString() == CommonConstants.CSP2)
+                {
+                    nhanvien.MaBoPhan = CommonConstants.CSP;
+                    nhanvien.MaBoPhan2 = worksheet.Cells[i, 4].Text.NullString();
+                }
+                else
+                {
+                    nhanvien.MaBoPhan = worksheet.Cells[i, 4].Text.NullString();
+                    nhanvien.MaBoPhan2 = worksheet.Cells[i, 4].Text.NullString();
+                }
+               
                 nhanvien.TenNV = worksheet.Cells[i, 5].Text.NullString();
                 nhanvien.GioiTinh = worksheet.Cells[i, 6].Text.NullString();
 
@@ -529,9 +546,9 @@ namespace HRMNS.Application.Implementation
             }
         }
 
-        private int? GetBoPhanChiTiet(string tenbp)
+        private int? GetBoPhanChiTiet(string maBophan)
         {
-            return _bophanDetailRepository.FindAll(x => x.TenBoPhanChiTiet == tenbp).FirstOrDefault()?.Id;
+            return _bophanDetailRepository.FindAll(x => x.MaBoPhan == maBophan).FirstOrDefault()?.Id;
         }
     }
 }

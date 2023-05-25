@@ -1,0 +1,136 @@
+﻿
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <meta name="description" content="Smarthr - Bootstrap Admin Template">
+    <meta name="keywords" content="admin, estimates, bootstrap, business, corporate, creative, management, minimal, modern, accounts, invoice, html5, responsive, CRM, Projects">
+    <meta name="author" content="Dreamguys - Bootstrap Admin Template">
+    <meta name="robots" content="noindex, nofollow">
+    <title>OTP</title>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="~/img/faviconWisol.png">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
+
+    <!-- Fontawesome CSS -->
+    <link rel="stylesheet" href="~/css/font-awesome.min.css">
+
+    <!-- Main CSS -->
+    <link href="~/bundled/site-admin.min.css" rel="stylesheet" />
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="assets/js/html5shiv.min.js"></script>
+        <script src="assets/js/respond.min.js"></script>
+    <![endif]-->
+
+    <style>
+        .error 
+        {
+            color: red !important;
+        }
+    </style>
+</head>
+<body class="account-page">
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <div class="account-content">
+            <div class="container">
+
+                <!-- Account Logo -->
+                <div class="account-logo">
+                    <img src="~/img/logoWisol.png" width="80" height="80" alt="" style="opacity:80%">
+                </div>
+                <!-- /Account Logo -->
+
+                <div class="account-box">
+                    <div class="account-wrapper">
+                        <h3 class="account-title">OTP</h3>
+                        <p class="account-subtitle">Verification your account</p>
+
+                        <!-- Account Form -->
+                        <form>
+                            <div class="otp-wrap">
+                                <input type="text" placeholder="enter code" name="code" id="otpCode" style="width:300px!important" class="otp-input" required><br />
+                                <span class="error" id="txtError"></span>
+                            </div>
+                            <div class="form-group text-center">
+                                <button class="btn btn-primary account-btn" id="btnSendOtp">Enter</button>
+                            </div>
+                            <div class="account-footer">
+                                <p>Not yet received? <a href="#" onclick="ResendOTP()">Resend OTP</a></p>
+                            </div>
+                        </form>
+                        <!-- /Account Form -->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Main Wrapper -->
+    <!-- jQuery -->
+    <script src="~/js/jquery-3.6.0.min.js"></script>
+
+    <!-- Bootstrap Core JS -->
+    <script src="~/js/popper.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+
+    <script src="~/plugins/alertify/alertify.min.js"></script>
+
+    <!-- Custom JS -->
+    <script src="~/js/app.js"></script>
+    <script src="~/app/shared/hrms.js"></script>
+    <script>
+
+       ResendOTP = function()
+       {
+            console.log('a');
+            $.ajax({
+                type: 'POST',
+                dataType: 'json',
+                url: '/payroll/login/resendotp',
+                success: function (res) {
+                    if (res.Success) {
+                        console.log('resend ok');
+                    }
+                    else {
+                        console.log('resend error');
+                    }
+                }
+            });
+       }
+
+        $('#btnSendOtp').on('click', function (e) {
+            e.preventDefault();
+            let _code = $('#otpCode').val();
+            console.log(_code);
+            $.ajax({
+                type: 'POST',
+                data: {
+                    code: _code
+                },
+                dataType: 'json',
+                url: '/payroll/login/otp',
+                success: function (res) {
+                    if (res.Success) {
+                        window.location.href = "/payroll/home/index";
+                    }
+                    else {
+                        $('#txtError').text('OTP Invalid');
+                    }
+                }
+            })
+        });
+    </script>
+
+</body>
+</html>

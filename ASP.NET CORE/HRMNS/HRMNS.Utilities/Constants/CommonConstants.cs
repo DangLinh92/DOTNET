@@ -149,5 +149,11 @@ namespace HRMNS.Utilities.Constants
         public static string INPROGRESS = "Inprogress";
         public static string TODO = "TODO";
         public static string PENDING = "Pending";
+
+        public static string CSP = "CSP";
+        public static string CSP1 = "CSP1";
+        public static string CSP2 = "CSP2";
+
+        public static string X = "x";
     }
 }

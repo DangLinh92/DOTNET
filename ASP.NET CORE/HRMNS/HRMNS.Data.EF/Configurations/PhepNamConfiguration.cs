@@ -15,4 +15,23 @@ namespace HRMNS.Data.EF.Configurations
             entity.Property(c => c.Id).ValueGeneratedOnAdd();
         }
     }
+
+    public class CongDoanNotJoinConfiguration : DbEntityConfiguration<CONGDOAN_NOT_JOIN>
+    {
+        public override void Configure(EntityTypeBuilder<CONGDOAN_NOT_JOIN> entity)
+        {
+            entity.HasKey(c => c.Id);
+            entity.Property(c => c.Id).ValueGeneratedOnAdd();
+        }
+    }
+
+    public class PhuCapDocHaiConfiguration : DbEntityConfiguration<PHUCAP_DOC_HAI>
+    {
+        public override void Configure(EntityTypeBuilder<PHUCAP_DOC_HAI> entity)
+        {
+            entity.HasKey(c => c.Id);
+            entity.Property(c => c.Id).ValueGeneratedOnAdd();
+        }
+    }
+
 }

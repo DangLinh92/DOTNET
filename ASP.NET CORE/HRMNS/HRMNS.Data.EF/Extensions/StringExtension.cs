@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HRMNS.Utilities.Constants;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -100,5 +101,15 @@ namespace HRMNS.Data.EF.Extensions
 
             return false;
         }
+
+        //public static bool IsCSP (this string csp,string csp2)
+        //{
+        //    if(csp == CommonConstants.CSP && (csp2 == CommonConstants.CSP1 || csp2== CommonConstants.CSP2))
+        //    {
+        //        return true;
+        //    }
+
+        //    return csp == csp2;
+        //}
     }
 }

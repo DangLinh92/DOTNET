@@ -59,7 +59,7 @@ namespace HRMS.Areas.Admin.Components
             model.RoleActive = roles.FirstOrDefault(x => x.Id + "" == roleId).Name;
             model.PermisstionForRoleModels = _roleAndPermisstionService.GetAllPermisstion(roleId);
 
-            var functions = _functionService.GetAll("").ToList();
+            var functions = _functionService.GetAll("").Where(x=>x.Area.ToLower().Contains("admin")).ToList();
             model.Functions = new List<FunctionViewModel>();
 
             foreach (var item in model.PermisstionForRoleModels)

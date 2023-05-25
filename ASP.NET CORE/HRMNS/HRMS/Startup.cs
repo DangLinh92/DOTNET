@@ -11,7 +11,9 @@ using HRMS.Extensions;
 using HRMS.Helpers;
 using HRMS.HostedService;
 using HRMS.Infrastructure.Interfaces;
+using HRMS.ScheduledTasks;
 using HRMS.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -30,13 +32,16 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Quartz;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace HRMS
@@ -58,6 +63,7 @@ namespace HRMS
                     Configuration.GetConnectionString("DefaultConnection"), o => o.MigrationsAssembly("HRMNS.Data.EF")));
 
             services.AddDbContext<BioStarDBContext>(option => option.UseSqlServer(@"Data Source = 10.70.22.240;Initial Catalog = BioStar;User Id = sa;Password = qwe123!@#;Connect Timeout=3"));
+            services.AddDbContext<PayrollDBContext>(option => option.UseSqlite(Configuration.GetConnectionString("PayrollConnection"), o => o.MigrationsAssembly("HRMNS.Data.EF")));
 
             services.AddIdentity<APP_USER, APP_ROLE>().AddEntityFrameworkStores<AppDBContext>().AddDefaultTokenProviders();
 
@@ -79,6 +85,30 @@ namespace HRMS
                 options.User.RequireUniqueEmail = true;
             });
 
+            services.AddQuartz(q => {
+
+                q.SchedulerId = "Scheduler-Core-PhepNam";
+                q.UseMicrosoftDependencyInjectionJobFactory();
+
+                var jobKey = new JobKey("UpdatePhepNamDaiLyJob");
+                q.AddJob<UpdatePhepNamDaiLyJob>(opts => opts.WithIdentity(jobKey));
+
+                q.AddTrigger(opts => opts
+                    .ForJob(jobKey)
+                    .WithIdentity("UpdatePhepNamDaiLyJob-trigger")
+                     .WithSchedule(CronScheduleBuilder.DailyAtHourAndMinute(10, 00))
+                //.WithCronSchedule("0 0-0 8/24 ? * 1/1 *")
+                // .StartAt(DateBuilder.EvenSecondDate(DateTimeOffset.UtcNow.AddSeconds(7)))
+                // .WithDailyTimeIntervalSchedule(x => x.WithInterval(1, IntervalUnit.Minute))
+                // .WithDescription("my awesome trigger configured for a job with single call")
+                );
+            });
+
+            services.AddTransient<UpdatePhepNamDaiLyJob>();
+
+            // ASP.NET Core hosting
+            services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
+
             services.AddSingleton(AutoMapperConfig.RegisterMappings().CreateMapper());
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
@@ -87,6 +117,9 @@ namespace HRMS
 
             //services.AddSingleton(Mapper.Configuration);
             //services.AddScoped<IMapper>(sp => new Mapper(sp.GetRequiredService<AutoMapper.IConfigurationProvider>(), sp.GetService));
+
+            var emailConfig = Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
+            services.AddSingleton(emailConfig);
             services.AddTransient<Services.IEmailSender, EmailSender>();
 
             services.AddTransient<DBInitializer>();
@@ -95,7 +128,9 @@ namespace HRMS
 
             // Unit of work and repository
             services.AddTransient(typeof(IUnitOfWork), typeof(EFUnitOfWork));
+            services.AddTransient(typeof(IPayrollUnitOfWork), typeof(EFPayrollUnitOfWork));
             services.AddTransient(typeof(IRespository<,>), typeof(EFRepository<,>));
+            services.AddTransient(typeof(IPayrollRespository<,>), typeof(PayrollEFRepository<,>));
 
             // Service
             services.AddTransient<INhanVienService, NhanVienService>();
@@ -144,6 +179,13 @@ namespace HRMS
             services.AddTransient<IHangMucNGService, HangMucNGService>();
             services.AddTransient<IEhsQuanLyGiayPhepService, EhsQuanLyGiayPhepService>();
             services.AddTransient<IEhsCoQuanKiemtraService, EhsCoQuanKiemtraService>();
+            services.AddTransient<INgayChotCongService, NgayChotCongService>();
+            services.AddTransient<ISalaryService, SalaryService>();
+            services.AddTransient<ICongDoanNotJoinService, CongDoanNotJoinService>();
+            services.AddTransient<ICapBacNhanVienService, CapBacNhanVienService>();
+            services.AddTransient<IDetailSalaryService, DetailSalaryService>();
+            services.AddTransient<IKyLuatKhenThuongService, KyLuatKhenThuongService>();
+            services.AddTransient<IPhuCapLuongService, PhuCapLuongService>();
 
             services.AddMvc().AddJsonOptions(options => {
                 options.JsonSerializerOptions.PropertyNamingPolicy = null;

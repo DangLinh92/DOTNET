@@ -35,7 +35,8 @@ namespace HRMNS.Data.Entities
        , float? hT390
        , float? eLLC
        ,string ngayDieuChinh2
-       ,float? dc100)
+       ,float? dc100
+            ,string chitraluongthang2)
         {
             Id = id;
             MaNV = maNV;
@@ -63,6 +64,7 @@ namespace HRMNS.Data.Entities
             ELLC = eLLC;
             NgayDieuChinh2 = ngayDieuChinh2;
             DC100 = dc100;
+            ChiTraVaoLuongThang2 = chitraluongthang2;
         }
 
         [StringLength(50)]
@@ -83,9 +85,12 @@ namespace HRMNS.Data.Entities
 
         public DateTime? ChiTraVaoLuongThang { get; set; }
 
+        [StringLength(50)]
+        public string ChiTraVaoLuongThang2 { get; set; }
+
         public float? NgayCong { get; set; }
         public float? DSNS { get; set; } // 30%
-        public float? NSBH { get; set; } // 30%
+        public float? NSBH { get; set; } // 260% (NS-NH)
 
         public float? DC85 { get; set; }
         public float? DC100 { get; set; }

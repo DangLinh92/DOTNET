@@ -1,0 +1,320 @@
+﻿@{
+    ViewData["Title"] = "Dữ Liệu Lương";
+    Layout = "~/Areas/Payroll/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts
+{
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+    <script>
+
+        var dataGrid, loadPanel, dataGridTmp;
+
+        $(function ()
+        {
+            LoadData();
+        });
+
+        function LoadData() {
+                    dataGrid = $("#gridContainer1").dxDataGrid("instance");
+                    loadPanel = $("#loadPanel").dxLoadPanel("instance");
+
+            loadPanel.show();
+            sendRequest('@Url.RouteUrl(new { area = "Payroll", controller = "Salary", action = "Get" })', "GET")
+                    .always(() => { loadPanel.hide(); })
+                    .done((data) => {
+                        dataGrid.option("dataSource", data);
+                    });
+        }
+
+        function SaveLuong(e) {
+
+       var change = e.changes[0];
+
+      if (change) {
+          e.cancel = true;
+          loadPanel.show();
+          e.promise = saveChange(change)
+              .always(() => {
+                  loadPanel.hide();
+              })
+              .done((data) => {
+                  var datas = e.component.option("dataSource");
+
+                  if (change.type === "insert") {
+                      change.data = data;
+                  }
+
+                  datas = DevExpress.data.applyChanges(datas, [change], { keyExpr: "Id" });
+
+                  e.component.option({
+                      dataSource: datas,
+                      editing: {
+                          editRowKey: null,
+                          changes: []
+                      }
+                  });
+
+                  // close popup
+                  $("#gridContainer1").dxDataGrid("cancelEditData");
+              });
+      }
+    };
+
+        function saveChange(change)
+        {
+            console.log(change);
+            switch (change.type)
+            {
+                    case "insert":
+                        return sendRequest('@Url.RouteUrl(new { area = "Payroll", controller = "Salary", action = "Post" })', "POST", { values: JSON.stringify(change.data) });
+                    case "update":
+                        return sendRequest('@Url.RouteUrl(new { area = "Payroll", controller = "Salary", action = "Put" })', "PUT", { key: change.key, values: JSON.stringify(change.data) });
+                    case "remove":
+                        return sendRequest('@Url.RouteUrl(new { area = "Payroll", controller = "Salary", action = "Delete" })', "DELETE", { key: change.key });
+            }
+        };
+
+            function sendRequest(url, method, data) {
+                var d = $.Deferred();
+
+                method = method || "GET";
+
+                $.ajax(url, {
+                    method: method,
+                    data: data,
+                    cache: false,
+                    xhrFields: { withCredentials: true }
+                }).done(function (result) {
+                    d.resolve(method === "GET" ? result.data : result);
+                }).fail(function (xhr) {
+                    d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
+                });
+
+                return d.promise();
+        };
+
+        // Xuất excel luong
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('Salary');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'Salary.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        /* Import, export, insert,update,delete danh sách nhân viên khám sk */
+        function ImportExcel()
+        {
+            $("#fileInputExcel").val(null);
+            $('#hd-ImportData').val('salary');
+            $('#import_File').modal('show');
+        }
+
+        function ImportTaiKhoanExcel() {
+            $("#fileInputExcel").val(null);
+            $('#hd-ImportData').val('sotknh');
+            $('#import_File').modal('show');
+        }
+
+        $('#btnCloseImportExcel').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+            if (files.length > 0) {
+                $("#fileInputExcel").val(null);
+                $('#hd-ImportData').val('');
+                $('#import_File').modal('hide');
+                location.reload();
+            }
+        });
+
+        $('#btnCloseImport').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+            if (files.length > 0) {
+                $("#fileInputExcel").val(null);
+                $('#hd-ImportData').val('');
+                $('#import_File').modal('hide');
+                location.reload();
+            }
+        });
+
+        $('#btnImportExcel').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+
+            // Create FormData object
+            var fileData = new FormData();
+
+            // Looping over all files and add it to FormData object
+            for (var i = 0; i < files.length; i++) {
+                fileData.append("files", files[i]);
+            }
+
+            var type = $('#hd-ImportData').val();
+            var _url = '/Payroll/Salary/ImportExcel';
+
+            if (type == 'salary') {
+                _url = '/Payroll/Salary/ImportExcel';
+            }
+            else if (type == 'sotknh') {
+                _url = '/Payroll/Salary/ImportSoTaiKhoan';
+            }
+
+            $.ajax({
+                url: _url,
+                type: 'POST',
+                data: fileData,
+                processData: false,  // tell jQuery not to process the data
+                contentType: false,  // tell jQuery not to set contentType
+                success: function (data) {
+                    $('#import_File').modal('hide');
+                    hrms.notify("Import success!", 'Success', 'alert', function () {
+                        location.reload();
+                    });
+                },
+                error: function (status) {
+                    hrms.notify('error: Import error!', 'error', 'alert', function () { });
+                }
+            });
+            return false;
+        });
+    </script>
+}
+
+
+<div class="content container-fluid">
+    <div class="page-header" style="margin-bottom:-1rem">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="page-title">Thông Tin Lương</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/Payroll/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Thông Tin Lương</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row align-items-center">
+        <div class="col">
+
+        </div>
+        <div class="col-auto float-right ml-auto" style="margin-right:100px;">
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" id="btnImport" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Excel</button>
+                <div class="dropdown-menu" style="">
+                    <a class="dropdown-item" href="~/templates/SalaryInformation.xlsx">File mẫu import thông tin Lương</a>
+                    <a class="dropdown-item" href="~/templates/ThongTinTaiKhoanNH_Tmp.xlsx">File mẫu import thông tin tài khoản NH</a>
+                    <a class="dropdown-item" id="btnImport" onclick="ImportExcel()">Import Thông Tin Lương</a>
+                    <a class="dropdown-item" id="btnImportTK" onclick="ImportTaiKhoanExcel()">Import Tài Khoản NH</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            @(Html.DevExtreme().LoadPanel()
+                      .ID("loadPanel")
+                      .Position(p => p.Of("#gridContainer1"))
+                      .Visible(false)
+                )
+            @(Html.DevExtreme().DataGrid<HR_SALARY>
+    ()
+    .ID("gridContainer1")
+    .KeyExpr("Id")
+    .Height(700)
+    .ShowBorders(true)
+    .ColumnAutoWidth(true)
+    .ColumnMinWidth(150)
+    .RepaintChangesOnly(true)
+    .LoadPanel(loadPanel => loadPanel.Enabled(false))
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .FilterRow(filterRow => filterRow.Visible(true).ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+    .OnExporting("exporting")
+    .Editing(editing =>
+    {
+        editing.Mode(GridEditMode.Popup);
+        editing.AllowUpdating(true);
+        editing.AllowDeleting(true);
+        //editing.AllowAdding(true);
+    })
+    .Columns(columns =>
+    {
+        columns.AddFor(m => m.Id).Visible(false).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.MaNV).Caption("Mã Nhân Viên").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.HR_NHANVIEN.TenNV).Caption("Tên Nhân Viên").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.HR_NHANVIEN.HR_BO_PHAN_DETAIL.MaBoPhan_TOP1).Caption("Bộ Phận").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.HR_NHANVIEN.HR_BO_PHAN_DETAIL.MaBoPhan_TOP2).Caption("Phòng Ban").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.HR_NHANVIEN.HR_CHUCDANH.TenChucDanh).Caption("Chức Vụ").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.HR_NHANVIEN.NgayVao).Caption("Ngày Vào").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+
+        columns.Add().Caption("Thông Tin Lương").Columns(c =>
+        {
+            c.AddFor(m => m.BasicSalary).Caption(" Basic Salary").Format(Format.FixedPoint).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+            c.AddFor(m => m.LivingAllowance).Caption("Living Allowance").Format(Format.FixedPoint).AllowEditing(true);
+            //c.AddFor(m => m.PositionAllowance).Caption("Position Allowance").Format(Format.FixedPoint).AllowEditing(true);
+            c.AddFor(m => m.AbilityAllowance).Caption("Ability Allowance").Format(Format.FixedPoint).AllowEditing(true);
+            c.AddFor(m => m.HarmfulAllowance).Caption("Harmful Allowance").Format(Format.FixedPoint).AllowEditing(true);
+        });
+
+        columns.Add().Caption("Incentive").Columns(c =>
+        {
+            c.AddFor(m => m.IncentiveStandard).Caption("Cơ bản").Format(Format.FixedPoint).AllowEditing(true);
+            c.AddFor(m => m.IncentiveLanguage).Caption("PC ngoại ngữ").Format(Format.FixedPoint).AllowEditing(true);
+            c.AddFor(m => m.IncentiveTechnical).Caption("PC kỹ thuật").Format(Format.FixedPoint).AllowEditing(true);
+            c.AddFor(m => m.IncentiveOther).Caption("PC Khác").Format(Format.FixedPoint).AllowEditing(true);
+        });
+
+        columns.Add().Caption("Đánh giá").Columns(c =>
+        {
+            c.AddFor(m => m.IncentiveSixMonth1).Caption("Incentive 6 tháng đầu năm").AllowEditing(true);
+            c.AddFor(m => m.IncentiveSixMonth2).Caption("Incentive 6 tháng cuối năm").AllowEditing(true);
+        });
+
+        columns.Add().Caption("Hạng Mục Khác").Columns(c =>
+        {
+            c.AddFor(m => m.DoiTuongPhuCapDocHai).Caption("Đối tượng phụ cấp độc hại(x)").AllowEditing(true);
+            c.AddFor(m => m.HoTroCongDoan).Caption("Hỗ trợ công đoạn").Format(Format.FixedPoint).AllowEditing(true);
+            c.AddFor(m => m.PCCC_CoSo).Caption("Hỗ trợ đội PCCC cơ sở").Format(Format.FixedPoint).AllowEditing(true);
+            c.AddFor(m => m.HoTroATVS_SinhVien).Caption("Hỗ trợ đội an toàn vệ sinh viên").Format(Format.FixedPoint).AllowEditing(true);
+            c.AddFor(m => m.ThuocDoiTuongBaoHiemXH).Caption("Thuộc đối tượng tham gia BHXH (x)").AllowEditing(true);
+            c.AddFor(m => m.DoiTuongTruyThuBHYT).Caption("Đối tượng truy thu BHYT").AllowEditing(true);
+            c.AddFor(m => m.SoNguoiPhuThuoc).Caption("Số người phụ thuộc").Format(Format.FixedPoint).AllowEditing(true);
+            c.AddFor(m => m.SoConNho).Caption("Số Con nhỏ").AllowEditing(true);
+            c.AddFor(m => m.Note).Caption("Note").AllowEditing(true);
+            c.AddFor(m => m.HR_NHANVIEN.SoTaiKhoanNH).Caption("Số Tài Khoản NH").AllowEditing(false);
+        });
+    }).SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true).OnSaving("SaveLuong")
+    .Summary(s => s.TotalItems(items =>
+        {
+            items.AddFor(m => m.MaNV)
+                .SummaryType(SummaryType.Count);
+        })
+    )
+    )
+        </div>
+    </div>
+</div>
+<partial name="_ImportExcelModel" />
+

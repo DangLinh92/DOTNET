@@ -265,23 +265,23 @@
     {
         editing.Mode(GridEditMode.Row);
         editing.AllowUpdating(true);
-        editing.AllowDeleting(true);
-        editing.AllowAdding(true);
+        //editing.AllowDeleting(true);
+        //editing.AllowAdding(true);
     })
     .Columns(columns =>
     {
         columns.AddFor(m => m.Id).Visible(false).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
         columns.AddFor(m => m.MaNhanVien).Caption("Mã Nhân Viên").AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
         columns.AddFor(m => m.HR_NHANVIEN.TenNV).Caption("Tên Nhân Viên").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.HR_NHANVIEN.MaBoPhan).Caption("Bộ Phận").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+        columns.AddFor(m => m.HR_NHANVIEN.HR_BO_PHAN_DETAIL.MaBoPhan_TOP2).Caption("Bộ Phận").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
         columns.AddFor(m => m.HR_NHANVIEN.NgayVao).Caption("Ngày Vào").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
         columns.AddFor(m => m.SoPhepNam).Caption("Số Phép Quy Định").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
 
-        columns.AddFor(m => m.ThangBatDauDocHai).Caption("Tháng bắt đầu độc hại").AllowEditing(true);
-        columns.AddFor(m => m.ThangKetThucDocHai).Caption("Tháng kết thúc độc hại").AllowEditing(true);
+        columns.AddFor(m => m.ThangBatDauDocHai).Format("yyyy-MM-dd").Caption("Tháng bắt đầu độc hại").AllowEditing(true);
+        columns.AddFor(m => m.ThangKetThucDocHai).Format("yyyy-MM-dd").Caption("Tháng kết thúc độc hại").AllowEditing(true);
         columns.AddFor(m => m.SoPhepDocHai).Caption("Số phép độc hại").AllowEditing(false);
         columns.AddFor(m => m.SoPhepCongThem).Caption("Số Phép Cộng Thêm").AllowEditing(false);
-        columns.AddFor(m => m.SoPhepDaUng).Caption("Số phép đã ứng").AllowEditing(true);
+        columns.AddFor(m => m.SoPhepDaUng).Caption("Số phép đã ứng").AllowEditing(false);
         columns.AddFor(m => m.SoPhepDuocHuong).Caption("Tổng phép đc hưởng");
 
         columns.Add().Caption("Ngày Nghỉ Trong Tháng").Columns(c =>
@@ -299,7 +299,6 @@
             c.AddFor(m => m.NghiThang_11).Caption("Tháng 11").AllowEditing(false);
             c.AddFor(m => m.NghiThang_12).Caption("Tháng 12").AllowEditing(false);
         });
-        
 
         columns.AddFor(m => m.TongNgayNghi).Caption("Tổng Ngày Nghỉ").AllowEditing(false);
         columns.AddFor(m => m.SoPhepTonNam).Caption("Số phép tồn/năm").AllowEditing(false);
@@ -307,9 +306,6 @@
         columns.AddFor(m => m.SoPhepTonThang).Caption("Số phép tồn/tháng").AllowEditing(false);
         columns.AddFor(m => m.HR_NHANVIEN.NgayNghiViec).Caption("Ngày Nghỉ Việc").AllowEditing(false);
         columns.AddFor(m => m.SoPhepThanhToanNghiViec).Caption("Số Phép Thanh Toán Nghỉ Việc").AllowEditing(false);
-        columns.AddFor(m => m.MucThanhToan).Caption("Mức lương thanh toán").AllowEditing(false);
-
-        columns.AddFor(m => m.SoTienChiTra).Caption("Số Tiền").AllowEditing(true).Format("#,##0");
     }).SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true).OnSaving("SavePhepNam")
     )
 </div>

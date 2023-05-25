@@ -12,6 +12,8 @@ namespace HRMNS.Application.ViewModels.HR
         [StringLength(50)]
         public string TenChucDanh { get; set; }
 
+        public double PhuCap { get; set; }
+
         [StringLength(50)]
         public string DateCreated { get; set; }
 

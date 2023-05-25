@@ -40,6 +40,7 @@
                 },
                 success: function (object) {
                     if (object) {
+                        console.log(object);
                         $('#_txtMaNV').val(object.MaNV);
                         $('#_txtMaNV').trigger('change');
 

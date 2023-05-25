@@ -102,7 +102,8 @@ namespace HRMNS.Application.Implementation
 
         public DangKyChamCongDacBietViewModel GetById(int id)
         {
-            return _mapper.Map<DangKyChamCongDacBietViewModel>(_chamCongDbRepository.FindById(id));
+            DANGKY_CHAMCONG_DACBIET en = _chamCongDbRepository.FindById(id);
+            return _mapper.Map<DangKyChamCongDacBietViewModel>(en);
         }
 
         public void Save()

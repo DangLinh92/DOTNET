@@ -66,7 +66,7 @@ namespace HRMNS.Application.Implementation
             }
             else
             {
-                var lst = _overtimeRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan.Contains(keyword), includeProperties).OrderByDescending(x => x.DateModified);
+                var lst = _overtimeRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == keyword, includeProperties).OrderByDescending(x => x.DateModified);
                 return _mapper.Map<List<DangKyOTNhanVienViewModel>>(lst);
             }
         }
@@ -225,7 +225,7 @@ namespace HRMNS.Application.Implementation
             _overtimeRepository.Update(entity);
         }
 
-        public DangKyOTNhanVienViewModel CheckExist(int id, string maNV, string date,string hso)
+        public DangKyOTNhanVienViewModel CheckExist(int id, string maNV, string date, string hso)
         {
             if (id > 0)
             {

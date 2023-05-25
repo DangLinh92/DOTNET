@@ -16,7 +16,7 @@ namespace HRMNS.Data.Entities
         {
 
         }
-        public FUNCTION(string name, string url, string parentId, string iconCss, int sortOrder)
+        public FUNCTION(string name, string url, string parentId, string iconCss, int sortOrder,string area)
         {
             this.Name = name;
             this.URL = url;
@@ -24,6 +24,7 @@ namespace HRMNS.Data.Entities
             this.IconCss = iconCss;
             this.SortOrder = sortOrder;
             this.Status = Status.Active;
+            Area = area;
         }
         [Required]
         [StringLength(128)]
@@ -39,6 +40,9 @@ namespace HRMNS.Data.Entities
         public string IconCss { get; set; }
         public int SortOrder { set; get; }
         public Status Status { set; get; }
+
+        [StringLength(150)]
+        public string Area { get; set; }
 
         [StringLength(50)]
         public string DateCreated { get; set; }

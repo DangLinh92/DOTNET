@@ -1,15 +1,25 @@
 ﻿using DevExtreme.AspNet.Data;
 using DevExtreme.AspNet.Mvc;
+using HRMNS.Application.Implementation;
 using HRMNS.Application.Interfaces;
 using HRMNS.Application.ViewModels.HR;
+using HRMNS.Data.EF;
+using HRMNS.Data.Entities;
 using HRMNS.Utilities.Common;
 using HRMNS.Utilities.Constants;
 using HRMS.Areas.Admin.Models;
+using HRMS.Infrastructure.Interfaces;
+using HRMS.ScheduledTasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using Quartz;
+using Quartz.Impl;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,12 +41,65 @@ namespace HRMS.Areas.Admin.Controllers
 
         public IActionResult Index()
         {
+            _ = ChotCongFinal();
             return View();
+        }
+
+        public async Task ChotCongFinal()
+        {
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddDbContext<AppDBContext>(options =>
+               options.UseSqlServer(
+                   @"Persist Security Info=True;Data Source = 10.70.10.97;Initial Catalog = HRMSDB2;User Id = sa;Password = Wisol@123;Connect Timeout=3", o => o.MigrationsAssembly("HRMNS.Data.EF")));
+
+            serviceCollection.AddSingleton(HRMNS.Application.AutoMapper.AutoMapperConfig.RegisterMappings().CreateMapper());
+            serviceCollection.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            serviceCollection.AddScoped<UserManager<APP_USER>, UserManager<APP_USER>>();
+            serviceCollection.AddScoped<RoleManager<APP_ROLE>, RoleManager<APP_ROLE>>();
+
+            serviceCollection.AddScoped(typeof(IUnitOfWork), typeof(EFUnitOfWork));
+            serviceCollection.AddScoped(typeof(IRespository<,>), typeof(EFRepository<,>));
+            serviceCollection.AddScoped<UpdatePhepNamDaiLyJob>();
+            serviceCollection.AddScoped<INgayChotCongService, NgayChotCongService>();
+            serviceCollection.AddScoped<INhanVienService, NhanVienService>();
+            serviceCollection.AddScoped<IPhepNamService, PhepNamService>();
+            serviceCollection.AddScoped<IDangKyChamCongChiTietService, DangKyChamCongChiTietService>();
+            serviceCollection.AddScoped<IDangKyChamCongDacBietService, DangKyChamCongDacBietService>();
+            serviceCollection.AddScoped<IDangKyChamCongDacBietService, DangKyChamCongDacBietService>();
+
+            serviceCollection.AddLogging();
+
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+
+            // construct a scheduler factory
+            ISchedulerFactory schedFact = new StdSchedulerFactory();
+
+            // get a scheduler
+            IScheduler sched = await schedFact.GetScheduler();
+            sched.JobFactory = new PhepNamHanldeJobFactory(serviceProvider);
+
+            await sched.Start();
+
+            var job = JobBuilder.Create<UpdatePhepNamDaiLyJob>()
+                                .WithIdentity("PhepNamDaiLyJob", "group1")
+                                .Build();
+
+            var trigger = TriggerBuilder.Create()
+                .WithIdentity("PhepNamDaiLyJob-trigger", "group1")
+                .StartNow()
+                //.WithSimpleSchedule(x => x
+                //.WithIntervalInSeconds(40)
+                //.RepeatForever())
+                .Build();
+
+            await sched.ScheduleJob(job, trigger);
         }
 
         [HttpGet]
         public object PhepNams(DataSourceLoadOptions loadOptions, string year)
         {
+            _ = ChotCongFinal();
             var lstModel = _phepNamService.GetList(year);
             return DataSourceLoader.Load(lstModel, loadOptions);
         }

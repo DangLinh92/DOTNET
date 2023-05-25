@@ -30,4 +30,33 @@ namespace HRMNS.Data.EF.Configurations
             entity.HasMany(x => x.ATTENDANCE_RECORD).WithOne(x => x.HR_NHANVIEN).OnDelete(DeleteBehavior.SetNull);
         }
     }
+
+    public class NhanVienExConfiguration : DbEntityConfiguration<NHANVIEN_INFOR_EX>
+    {
+        public override void Configure(EntityTypeBuilder<NHANVIEN_INFOR_EX> entity)
+        {
+            entity.HasKey(c => c.Id);
+            entity.Property(c => c.Id).ValueGeneratedOnAdd();
+        }
+    }
+
+    public class KhenThuongKyLuatConfiguration : DbEntityConfiguration<HR_KY_LUAT_KHENTHUONG>
+    {
+        public override void Configure(EntityTypeBuilder<HR_KY_LUAT_KHENTHUONG> entity)
+        {
+            entity.HasKey(c => c.Id);
+            entity.Property(c => c.Id).ValueGeneratedOnAdd();
+        }
+    }
+
+    public class UserConfiguration : DbEntityConfiguration<APP_USER>
+    {
+        public override void Configure(EntityTypeBuilder<APP_USER> entity)
+        {
+            entity.HasMany(e => e.APP_USER_TOKEN)
+            .WithOne(e => e.APP_USER)
+            .HasForeignKey(ut => ut.UserId)
+            .IsRequired();
+        }
+    }
 }

@@ -15,7 +15,7 @@ namespace HRMNS.Data.EF.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.16")
+                .HasAnnotation("ProductVersion", "3.1.32")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -224,6 +224,497 @@ namespace HRMNS.Data.EF.Migrations
                     b.ToTable("ATTENDANCE_RECORD");
                 });
 
+            modelBuilder.Entity("HRMNS.Data.Entities.BANGLUONGCHITIET_HISTORY", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<double>("AbilityAllowance")
+                        .HasColumnType("float");
+
+                    b.Property<double>("BasicSalary")
+                        .HasColumnType("float");
+
+                    b.Property<string>("BoPhan")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("ChucVu")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DanhGia")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<double>("DieuChinhCong_Total")
+                        .HasColumnType("float");
+
+                    b.Property<string>("DoiTuongPhuCapDocHai")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DoiTuongThamGiaCD")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DoiTuongTruyThuBHYT")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<double>("GioLamThemTrongCT_150")
+                        .HasColumnType("float");
+
+                    b.Property<double>("GioLamThemTrongCT_200")
+                        .HasColumnType("float");
+
+                    b.Property<double>("GioLamThemTrongCT_210")
+                        .HasColumnType("float");
+
+                    b.Property<double>("GioLamThemTrongCT_270")
+                        .HasColumnType("float");
+
+                    b.Property<double>("GioLamThemTrongCT_300")
+                        .HasColumnType("float");
+
+                    b.Property<double>("GioLamThemTrongCT_390")
+                        .HasColumnType("float");
+
+                    b.Property<double>("GioLamThemTrongTV_150")
+                        .HasColumnType("float");
+
+                    b.Property<double>("GioLamThemTrongTV_200")
+                        .HasColumnType("float");
+
+                    b.Property<double>("GioLamThemTrongTV_210")
+                        .HasColumnType("float");
+
+                    b.Property<double>("GioLamThemTrongTV_270")
+                        .HasColumnType("float");
+
+                    b.Property<double>("GioLamThemTrongTV_300")
+                        .HasColumnType("float");
+
+                    b.Property<double>("GioLamThemTrongTV_390")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Grade")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<double>("HarmfulAllowance")
+                        .HasColumnType("float");
+
+                    b.Property<string>("HieuLucCapBac")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<double>("HoTroAT_SinhVien")
+                        .HasColumnType("float");
+
+                    b.Property<decimal>("HoTroCongDoan")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<double>("HoTroNgayThanhLapCty_CaDemCT_TruocLe")
+                        .HasColumnType("float");
+
+                    b.Property<double>("HoTroNgayThanhLapCty_CaDemTV_TruocLe")
+                        .HasColumnType("float");
+
+                    b.Property<double>("HoTroNgayThanhLapCty_CaNgayCT")
+                        .HasColumnType("float");
+
+                    b.Property<double>("HoTroNgayThanhLapCty_CaNgayTV")
+                        .HasColumnType("float");
+
+                    b.Property<double>("HoTroPCCC_CoSo")
+                        .HasColumnType("float");
+
+                    b.Property<double>("HoTroThoiGianLamViecCT_150")
+                        .HasColumnType("float");
+
+                    b.Property<double>("HoTroThoiGianLamViecCT_200_CN")
+                        .HasColumnType("float");
+
+                    b.Property<double>("HoTroThoiGianLamViecCT_200_NT")
+                        .HasColumnType("float");
+
+                    b.Property<double>("HoTroThoiGianLamViecCT_270")
+                        .HasColumnType("float");
+
+                    b.Property<double>("HoTroThoiGianLamViecCT_300")
+                        .HasColumnType("float");
+
+                    b.Property<double>("HoTroThoiGianLamViecCT_390")
+                        .HasColumnType("float");
+
+                    b.Property<double>("HoTroThoiGianLamViecTV_150")
+                        .HasColumnType("float");
+
+                    b.Property<double>("HoTroThoiGianLamViecTV_200_CN")
+                        .HasColumnType("float");
+
+                    b.Property<double>("HoTroThoiGianLamViecTV_200_NT")
+                        .HasColumnType("float");
+
+                    b.Property<double>("HoTroThoiGianLamViecTV_270")
+                        .HasColumnType("float");
+
+                    b.Property<double>("HoTroThoiGianLamViecTV_300")
+                        .HasColumnType("float");
+
+                    b.Property<double>("HoTroThoiGianLamViecTV_390")
+                        .HasColumnType("float");
+
+                    b.Property<decimal>("InsentiveStandard")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<double>("LivingAllowance")
+                        .HasColumnType("float");
+
+                    b.Property<string>("MaBoPhan")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("MaNV")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<double>("NgayCongChinhThucBanDem")
+                        .HasColumnType("float");
+
+                    b.Property<double>("NgayCongChinhThucBanNgay")
+                        .HasColumnType("float");
+
+                    b.Property<double>("NgayCongThuViecBanDem")
+                        .HasColumnType("float");
+
+                    b.Property<double>("NgayCongThuViecBanNgay")
+                        .HasColumnType("float");
+
+                    b.Property<string>("NgayNghiViec")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("NgayVao")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<double>("NghiKhamThai")
+                        .HasColumnType("float");
+
+                    b.Property<double>("NghiKhongLuong")
+                        .HasColumnType("float");
+
+                    b.Property<double>("NghiViecCoLuong")
+                        .HasColumnType("float");
+
+                    b.Property<double>("NghiViecKhongThongBao")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<double>("Official_Late_Come_Early_Leave_Time")
+                        .HasColumnType("float");
+
+                    b.Property<double>("PositionAllowance")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Probation_Late_Come_Early_Leave_Time")
+                        .HasColumnType("float");
+
+                    b.Property<double>("SeniorityAllowance")
+                        .HasColumnType("float");
+
+                    b.Property<int>("SoConNho")
+                        .HasColumnType("int");
+
+                    b.Property<double>("SoNgayLamCaDemTruocLe_CT")
+                        .HasColumnType("float");
+
+                    b.Property<double>("SoNgayLamCaDemTruocLe_TV")
+                        .HasColumnType("float");
+
+                    b.Property<double>("SoNgayLamCaDem_CT")
+                        .HasColumnType("float");
+
+                    b.Property<double>("SoNgayLamCaDem_TV")
+                        .HasColumnType("float");
+
+                    b.Property<double>("SoNgayNghi70")
+                        .HasColumnType("float");
+
+                    b.Property<double>("SoNgayNghiBu_AL30")
+                        .HasColumnType("float");
+
+                    b.Property<double>("SoNgayNghiBu_NB")
+                        .HasColumnType("float");
+
+                    b.Property<decimal>("SoNguoiPhuThuoc")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("SoTK")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<double>("TT_Tien_GioiThieu")
+                        .HasColumnType("float");
+
+                    b.Property<double>("TV_NghiKhongLuong")
+                        .HasColumnType("float");
+
+                    b.Property<string>("TenNV")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("ThangNam")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("ThuocDoiTuong_BHXH")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<double>("Thuong")
+                        .HasColumnType("float");
+
+                    b.Property<double>("TongNgayCongThucTe")
+                        .HasColumnType("float");
+
+                    b.Property<double>("TraTienPhepNam_Total")
+                        .HasColumnType("float");
+
+                    b.Property<double>("TruQuyPhongChongThienTai")
+                        .HasColumnType("float");
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BANGLUONGCHITIET_HISTORY");
+                });
+
+            modelBuilder.Entity("HRMNS.Data.Entities.BANG_CONG_EXTENTION", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<double>("AM_38_PH")
+                        .HasColumnType("float");
+
+                    b.Property<double>("AN_39_PD")
+                        .HasColumnType("float");
+
+                    b.Property<double>("AO_40_PN")
+                        .HasColumnType("float");
+
+                    b.Property<double>("AP_41_BH")
+                        .HasColumnType("float");
+
+                    b.Property<double>("AQ_42_DS")
+                        .HasColumnType("float");
+
+                    b.Property<double>("AR_43_NS")
+                        .HasColumnType("float");
+
+                    b.Property<double>("AS_44_AL")
+                        .HasColumnType("float");
+
+                    b.Property<double>("AT_45_TotalALPaid")
+                        .HasColumnType("float");
+
+                    b.Property<double>("AU_46_TotalUnPaid")
+                        .HasColumnType("float");
+
+                    b.Property<double>("AV_47_LamCD_TV")
+                        .HasColumnType("float");
+
+                    b.Property<double>("AW_48_LamCD_CT")
+                        .HasColumnType("float");
+
+                    b.Property<double>("AX_49_AL")
+                        .HasColumnType("float");
+
+                    b.Property<double>("AY_50_AL30")
+                        .HasColumnType("float");
+
+                    b.Property<double>("AZ_51_SL")
+                        .HasColumnType("float");
+
+                    b.Property<double>("BA_52_NH")
+                        .HasColumnType("float");
+
+                    b.Property<double>("BB_53_HL")
+                        .HasColumnType("float");
+
+                    b.Property<double>("BC_54_UL")
+                        .HasColumnType("float");
+
+                    b.Property<double>("BD_55_NB")
+                        .HasColumnType("float");
+
+                    b.Property<double>("BE_56_NL")
+                        .HasColumnType("float");
+
+                    b.Property<double>("BF_57_IL")
+                        .HasColumnType("float");
+
+                    b.Property<double>("BG_58_KT")
+                        .HasColumnType("float");
+
+                    b.Property<double>("BH_59_L70")
+                        .HasColumnType("float");
+
+                    b.Property<double>("BI_60_MD")
+                        .HasColumnType("float");
+
+                    b.Property<double>("BJ_61_PMD")
+                        .HasColumnType("float");
+
+                    b.Property<double>("BK_62_PM")
+                        .HasColumnType("float");
+
+                    b.Property<double>("BL_63_BM")
+                        .HasColumnType("float");
+
+                    b.Property<double>("BM_64_15")
+                        .HasColumnType("float");
+
+                    b.Property<double>("BN_65_20")
+                        .HasColumnType("float");
+
+                    b.Property<double>("BO_66_21")
+                        .HasColumnType("float");
+
+                    b.Property<double>("BP_67_27")
+                        .HasColumnType("float");
+
+                    b.Property<double>("BQ_68_30")
+                        .HasColumnType("float");
+
+                    b.Property<double>("BR_69_39")
+                        .HasColumnType("float");
+
+                    b.Property<double>("BS_70_15")
+                        .HasColumnType("float");
+
+                    b.Property<double>("BT_71_20")
+                        .HasColumnType("float");
+
+                    b.Property<double>("BU_72_21")
+                        .HasColumnType("float");
+
+                    b.Property<double>("BV_73_27")
+                        .HasColumnType("float");
+
+                    b.Property<double>("BW_74_30")
+                        .HasColumnType("float");
+
+                    b.Property<double>("BX_75_39")
+                        .HasColumnType("float");
+
+                    b.Property<double>("BY_76_ELLC")
+                        .HasColumnType("float");
+
+                    b.Property<double>("BZ_77_OCT")
+                        .HasColumnType("float");
+
+                    b.Property<double>("CA_78_OT")
+                        .HasColumnType("float");
+
+                    b.Property<double>("CB_79_150")
+                        .HasColumnType("float");
+
+                    b.Property<double>("CC_80_200")
+                        .HasColumnType("float");
+
+                    b.Property<double>("CD_81_200")
+                        .HasColumnType("float");
+
+                    b.Property<double>("CE_82_270")
+                        .HasColumnType("float");
+
+                    b.Property<double>("CF_83_300")
+                        .HasColumnType("float");
+
+                    b.Property<double>("CG_84_390")
+                        .HasColumnType("float");
+
+                    b.Property<double>("CH_85_150")
+                        .HasColumnType("float");
+
+                    b.Property<double>("CI_86_200")
+                        .HasColumnType("float");
+
+                    b.Property<double>("CJ_87_200")
+                        .HasColumnType("float");
+
+                    b.Property<double>("CK_88_270")
+                        .HasColumnType("float");
+
+                    b.Property<double>("CL_89_300")
+                        .HasColumnType("float");
+
+                    b.Property<double>("CM_90_390")
+                        .HasColumnType("float");
+
+                    b.Property<string>("CO_92_VPSX")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("CP_93")
+                        .HasColumnType("float");
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("MaNV")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("ThangNam")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MaNV");
+
+                    b.ToTable("BANG_CONG_EXTENTION");
+                });
+
             modelBuilder.Entity("HRMNS.Data.Entities.BOPHAN", b =>
                 {
                     b.Property<string>("Id")
@@ -409,6 +900,47 @@ namespace HRMNS.Data.EF.Migrations
                     b.HasIndex("LoaiChungChi");
 
                     b.ToTable("CHUNG_CHI");
+                });
+
+            modelBuilder.Entity("HRMNS.Data.Entities.CONGDOAN_NOT_JOIN", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("MaNV")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime?>("NgayBatDau")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NguyenNhan")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MaNV");
+
+                    b.ToTable("CONGDOAN_NOT_JOIN");
                 });
 
             modelBuilder.Entity("HRMNS.Data.Entities.DANGKY_CHAMCONG_CHITIET", b =>
@@ -650,6 +1182,10 @@ namespace HRMNS.Data.EF.Migrations
 
                     b.Property<DateTime?>("ChiTraVaoLuongThang")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("ChiTraVaoLuongThang2")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<float?>("DC100")
                         .HasColumnType("real");
@@ -2697,6 +3233,10 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
+                    b.Property<string>("Area")
+                        .HasColumnType("nvarchar(150)")
+                        .HasMaxLength(150);
+
                     b.Property<string>("DateCreated")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
@@ -2800,6 +3340,14 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
+                    b.Property<string>("MaBoPhan_TOP1")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("MaBoPhan_TOP2")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<string>("TenBoPhanChiTiet")
                         .HasColumnType("nvarchar(500)")
                         .HasMaxLength(500);
@@ -2845,6 +3393,9 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("DateModified")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
+
+                    b.Property<double>("PhuCap")
+                        .HasColumnType("float");
 
                     b.Property<string>("TenChucDanh")
                         .HasColumnType("nvarchar(50)")
@@ -3053,6 +3604,59 @@ namespace HRMNS.Data.EF.Migrations
                     b.ToTable("HR_KEKHAIBAOHIEM");
                 });
 
+            modelBuilder.Entity("HRMNS.Data.Entities.HR_KY_LUAT_KHENTHUONG", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("HinhThucKyLuat")
+                        .HasColumnType("nvarchar(500)")
+                        .HasMaxLength(500);
+
+                    b.Property<string>("LoiViPham")
+                        .HasColumnType("nvarchar(500)")
+                        .HasMaxLength(500);
+
+                    b.Property<string>("MaNV")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("PhanLoai")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("PhuongThucXuLy")
+                        .HasColumnType("nvarchar(500)")
+                        .HasMaxLength(500);
+
+                    b.Property<DateTime>("ThoiGianViPham")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MaNV");
+
+                    b.ToTable("HR_KY_LUAT_KHENTHUONG");
+                });
+
             modelBuilder.Entity("HRMNS.Data.Entities.HR_LOAIHOPDONG", b =>
                 {
                     b.Property<int>("Id")
@@ -3071,6 +3675,42 @@ namespace HRMNS.Data.EF.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("HR_LOAIHOPDONG");
+                });
+
+            modelBuilder.Entity("HRMNS.Data.Entities.HR_NGAY_CHOT_CONG", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ChotCongChoThang")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("NgayChotCong")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("HR_NGAY_CHOT_CONG");
                 });
 
             modelBuilder.Entity("HRMNS.Data.Entities.HR_NHANVIEN", b =>
@@ -3132,6 +3772,10 @@ namespace HRMNS.Data.EF.Migrations
                         .HasMaxLength(50);
 
                     b.Property<string>("MaBoPhan")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("MaBoPhan2")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
@@ -3469,10 +4113,7 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<decimal>("AbilityAllowance")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal>("CI_SixMonth1")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("CI_SixMonth2")
+                    b.Property<decimal>("BasicSalary")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("DateCreated")
@@ -3483,13 +4124,24 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
+                    b.Property<string>("DoiTuongPhuCapDocHai")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DoiTuongTruyThuBHYT")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<decimal>("FullAttendanceSupport")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("HarmfulAllowance")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal>("IncentiveBase")
+                    b.Property<decimal>("HoTroATVS_SinhVien")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("HoTroCongDoan")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("IncentiveLanguage")
@@ -3498,10 +4150,15 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<decimal>("IncentiveOther")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal>("IncentiveSixMonth1")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("IncentiveSixMonth1")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
-                    b.Property<decimal>("IncentiveSixMonth2")
+                    b.Property<string>("IncentiveSixMonth2")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<decimal>("IncentiveStandard")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("IncentiveTechnical")
@@ -3514,11 +4171,32 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<decimal>("PCCC_CoSo")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal>("PositionAllowance")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("SeniorityAllowance")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("SoConNho")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("SoNguoiPhuThuoc")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ThamGiaCongDoan")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("ThuocDoiTuongBaoHiemXH")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("UserCreated")
                         .HasColumnType("nvarchar(50)")
@@ -3528,15 +4206,220 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
-                    b.Property<string>("Year")
-                        .HasColumnType("nvarchar(4)")
-                        .HasMaxLength(4);
-
                     b.HasKey("Id");
 
                     b.HasIndex("MaNV");
 
                     b.ToTable("HR_SALARY");
+                });
+
+            modelBuilder.Entity("HRMNS.Data.Entities.HR_SALARY_DANHMUC_PHATSINH", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("DanhMuc")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("KeyDanhMuc")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("HR_SALARY_DANHMUC_PHATSINH");
+                });
+
+            modelBuilder.Entity("HRMNS.Data.Entities.HR_SALARY_HISTORY", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<decimal>("AbilityAllowance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("BasicSalary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DoiTuongPhuCapDocHai")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DoiTuongTruyThuBHYT")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<decimal>("FullAttendanceSupport")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("HarmfulAllowance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("HoTroATVS_SinhVien")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("HoTroCongDoan")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("IncentiveLanguage")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("IncentiveOther")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("IncentiveSixMonth1")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("IncentiveSixMonth2")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<decimal>("IncentiveStandard")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("IncentiveTechnical")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("LivingAllowance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("MaNV")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<decimal>("PCCC_CoSo")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("PositionAllowance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("SeniorityAllowance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("SoConNho")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("SoNguoiPhuThuoc")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ThamGiaCongDoan")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("ThoiGian")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("ThuocDoiTuongBaoHiemXH")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MaNV");
+
+                    b.ToTable("HR_SALARY_HISTORY");
+                });
+
+            modelBuilder.Entity("HRMNS.Data.Entities.HR_SALARY_PHATSINH", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("DanhMucPhatSinh")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("FromTime")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<Guid>("Key")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("MaNV")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<double>("SoTien")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime?>("ThoiGianApDung_From")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ThoiGianApDung_To")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ToTime")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DanhMucPhatSinh");
+
+                    b.HasIndex("MaNV");
+
+                    b.ToTable("HR_SALARY_PHATSINH");
                 });
 
             modelBuilder.Entity("HRMNS.Data.Entities.HR_THAISAN_CONNHO", b =>
@@ -3950,6 +4833,51 @@ namespace HRMNS.Data.EF.Migrations
                     b.ToTable("NHANVIEN_CALAMVIEC");
                 });
 
+            modelBuilder.Entity("HRMNS.Data.Entities.NHANVIEN_INFOR_EX", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Grade")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("MaBoPhanEx")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("MaNV")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MaNV");
+
+                    b.ToTable("NHANVIEN_INFOR_EX");
+                });
+
             modelBuilder.Entity("HRMNS.Data.Entities.PERMISSION", b =>
                 {
                     b.Property<int>("Id")
@@ -3993,6 +4921,45 @@ namespace HRMNS.Data.EF.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("PERMISSION");
+                });
+
+            modelBuilder.Entity("HRMNS.Data.Entities.PHUCAP_DOC_HAI", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("BoPhan")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(150)")
+                        .HasMaxLength(150);
+
+                    b.Property<double>("PhuCap")
+                        .HasColumnType("float");
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PHUCAP_DOC_HAI");
                 });
 
             modelBuilder.Entity("HRMNS.Data.Entities.SAMSUNG_TRAINING", b =>
@@ -4341,21 +5308,35 @@ namespace HRMNS.Data.EF.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
                     b.Property<Guid>("UserId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("UserId");
+                    b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("APP_USER_TOKEN");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserToken<Guid>");
+                });
+
+            modelBuilder.Entity("HRMNS.Data.Entities.APP_USER_TOKEN", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>");
+
+                    b.ToTable("APP_USER_TOKEN");
+
+                    b.HasDiscriminator().HasValue("APP_USER_TOKEN");
                 });
 
             modelBuilder.Entity("HRMNS.Data.Entities.ATTENDANCE_OVERTIME", b =>
@@ -4386,6 +5367,13 @@ namespace HRMNS.Data.EF.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
                 });
 
+            modelBuilder.Entity("HRMNS.Data.Entities.BANG_CONG_EXTENTION", b =>
+                {
+                    b.HasOne("HRMNS.Data.Entities.HR_NHANVIEN", "HR_NHANVIEN")
+                        .WithMany("BANG_CONG_EXTENTION")
+                        .HasForeignKey("MaNV");
+                });
+
             modelBuilder.Entity("HRMNS.Data.Entities.CA_LVIEC", b =>
                 {
                     b.HasOne("HRMNS.Data.Entities.DM_NGAY_LAMVIEC", "DM_NGAY_LAMVIEC")
@@ -4405,6 +5393,13 @@ namespace HRMNS.Data.EF.Migrations
                         .WithMany("CHUNG_CHI")
                         .HasForeignKey("LoaiChungChi")
                         .OnDelete(DeleteBehavior.SetNull);
+                });
+
+            modelBuilder.Entity("HRMNS.Data.Entities.CONGDOAN_NOT_JOIN", b =>
+                {
+                    b.HasOne("HRMNS.Data.Entities.HR_NHANVIEN", "HR_NHANVIEN")
+                        .WithMany("CONGDOAN_NOT_JOIN")
+                        .HasForeignKey("MaNV");
                 });
 
             modelBuilder.Entity("HRMNS.Data.Entities.DANGKY_CHAMCONG_CHITIET", b =>
@@ -4687,6 +5682,13 @@ namespace HRMNS.Data.EF.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("HRMNS.Data.Entities.HR_KY_LUAT_KHENTHUONG", b =>
+                {
+                    b.HasOne("HRMNS.Data.Entities.HR_NHANVIEN", "HR_NHANVIEN")
+                        .WithMany("HR_KY_LUAT_KHENTHUONG")
+                        .HasForeignKey("MaNV");
+                });
+
             modelBuilder.Entity("HRMNS.Data.Entities.HR_NHANVIEN", b =>
                 {
                     b.HasOne("HRMNS.Data.Entities.BOPHAN", "BOPHAN")
@@ -4726,6 +5728,26 @@ namespace HRMNS.Data.EF.Migrations
                 {
                     b.HasOne("HRMNS.Data.Entities.HR_NHANVIEN", "HR_NHANVIEN")
                         .WithMany("HR_SALARY")
+                        .HasForeignKey("MaNV");
+                });
+
+            modelBuilder.Entity("HRMNS.Data.Entities.HR_SALARY_HISTORY", b =>
+                {
+                    b.HasOne("HRMNS.Data.Entities.HR_NHANVIEN", "HR_NHANVIEN")
+                        .WithMany("HR_SALARY_HISTORY")
+                        .HasForeignKey("MaNV");
+                });
+
+            modelBuilder.Entity("HRMNS.Data.Entities.HR_SALARY_PHATSINH", b =>
+                {
+                    b.HasOne("HRMNS.Data.Entities.HR_SALARY_DANHMUC_PHATSINH", "HR_SALARY_DANHMUC_PHATSINH")
+                        .WithMany("HR_SALARY_PHATSINH")
+                        .HasForeignKey("DanhMucPhatSinh")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HRMNS.Data.Entities.HR_NHANVIEN", "HR_NHANVIEN")
+                        .WithMany("HR_SALARY_PHATSINH")
                         .HasForeignKey("MaNV");
                 });
 
@@ -4789,6 +5811,13 @@ namespace HRMNS.Data.EF.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("HRMNS.Data.Entities.NHANVIEN_INFOR_EX", b =>
+                {
+                    b.HasOne("HRMNS.Data.Entities.HR_NHANVIEN", "HR_NHANVIEN")
+                        .WithMany("NHANVIEN_INFOR_EX")
+                        .HasForeignKey("MaNV");
+                });
+
             modelBuilder.Entity("HRMNS.Data.Entities.PERMISSION", b =>
                 {
                     b.HasOne("HRMNS.Data.Entities.FUNCTION", "Function")
@@ -4821,6 +5850,15 @@ namespace HRMNS.Data.EF.Migrations
                     b.HasOne("HRMNS.Data.Entities.HR_TRAINING", "HR_TRAINING")
                         .WithMany("TRAINING_NHANVIEN")
                         .HasForeignKey("TrainnigId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HRMNS.Data.Entities.APP_USER_TOKEN", b =>
+                {
+                    b.HasOne("HRMNS.Data.Entities.APP_USER", "APP_USER")
+                        .WithMany("APP_USER_TOKEN")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

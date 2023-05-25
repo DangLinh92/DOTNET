@@ -16,25 +16,68 @@ namespace HRMNS.Data.Entities
 
         }
 
+        public decimal BasicSalary { get; set; }
+
         public decimal LivingAllowance { get; set; } // phu cap đời sống
         public decimal PositionAllowance { get; set; }
         public decimal AbilityAllowance { get; set; }
         public decimal FullAttendanceSupport { get; set; }
         public decimal SeniorityAllowance { get; set; }
         public decimal HarmfulAllowance { get; set; }
-        public decimal IncentiveBase { get; set; }
+
+        public decimal IncentiveStandard { get; set; }
         public decimal IncentiveLanguage { get; set; }
         public decimal IncentiveTechnical { get; set; }
         public decimal IncentiveOther { get; set; }
 
-        [StringLength(4)]
-        public string Year { get; set; }
+        [StringLength(250)]
+        public string Note { get; set; }
 
-        public decimal IncentiveSixMonth1 { get; set; }
-        public decimal IncentiveSixMonth2 { get; set; }
+        /// <summary>
+        /// Hỗ trợ công đoạn
+        /// </summary>
+        public decimal HoTroCongDoan { get; set; }
 
-        public decimal CI_SixMonth1 { get; set; }
-        public decimal CI_SixMonth2 { get; set; }
+        public decimal PCCC_CoSo { get; set; }
+        public decimal HoTroATVS_SinhVien { get; set; }
+
+        public decimal SoNguoiPhuThuoc { get; set; }
+
+        /// <summary>
+        /// Thuộc đối tượng tham gia BHXH (x)
+        /// Insuarance Member
+        /// </summary>
+        /// 
+        [StringLength(50)]
+        public string ThuocDoiTuongBaoHiemXH { get; set; } // x
+
+
+        [StringLength(50)]
+        public string DoiTuongTruyThuBHYT { get; set; } // x
+
+        [StringLength(50)]
+        public string DoiTuongPhuCapDocHai { get; set; } // x
+
+        /// <summary>
+        /// Tham gia công đoàn
+        /// Nhũng TH ko tham gia công đoàn:
+        /// 1. Vào làm việc sau ngày 15 của tháng đó(dựa vào cột ngày vào làm)
+        /// 2. Nghỉ thải sản(dựa vào cột note trong bảng lương)
+        /// 3. Nghỉ không lương > 14 ngày(ở bảng công cột số ngày nghỉ không hưởng lương)
+        /// 4. Rút khỏi công đoàn
+        /// </summary>
+        /// 
+
+        [StringLength(50)]
+        public string ThamGiaCongDoan { get; set; } // x
+
+        [StringLength(50)]
+        public string IncentiveSixMonth1 { get; set; }// đánh giá 6 tháng đầu
+
+        [StringLength(50)]
+        public string IncentiveSixMonth2 { get; set; }
+
+        public int SoConNho { get; set; }
 
         [StringLength(50)]
         public string MaNV { get; set; }

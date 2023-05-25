@@ -26,6 +26,7 @@ namespace HRMNS.Application.ViewModels.Time_Attendance
         public DateTime? ChiTraVaoLuongThang { get; set; }
 
         public string NgayDieuChinh2 { get; set; }
+        public string ChiTraVaoLuongThang2 { get; set; }
 
         public float? NgayCong { get; set; }
         public float? DSNS { get; set; } // 30%

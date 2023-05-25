@@ -19,7 +19,7 @@ namespace HRMNS.Application.AutoMapper
                 (c.Id, c.TenNV, c.MaChucDanh, c.MaBoPhan, c.GioiTinh, c.NgaySinh, c.NoiSinh, c.TinhTrangHonNhan, c.DanToc, c.TonGiao,
                 c.DiaChiThuongTru, c.SoDienThoai, c.SoDienThoaiNguoiThan, c.QuanHeNguoiThan, c.CMTND, c.NgayCapCMTND, c.NoiCapCMTND,
                 c.SoTaiKhoanNH, c.TenNganHang, c.TruongDaoTao, c.NgayVao, c.NguyenQuan, c.DChiHienTai, c.KyLuatLD,
-                c.MaBHXH, c.MaSoThue, c.SoNguoiGiamTru, c.Email, c.Note, c.NgayNghiViec, c.Status, c.Image, c.IsDelete, c.MaBoPhanChiTiet, c.NoiTuyenDung));
+                c.MaBHXH, c.MaSoThue, c.SoNguoiGiamTru, c.Email, c.Note, c.NgayNghiViec, c.Status, c.Image, c.IsDelete, c.MaBoPhanChiTiet, c.NoiTuyenDung,c.MaBoPhan2));
 
             CreateMap<BHXHViewModel, HR_BHXH>()
                 .ConstructUsing(c => new HR_BHXH(c.Id, c.MaNV, c.NgayThamGia, c.NgayKetThuc));
@@ -68,7 +68,7 @@ namespace HRMNS.Application.AutoMapper
 
             CreateMap<DCChamCongViewModel, DC_CHAM_CONG>()
            .ConstructUsing(c => new DC_CHAM_CONG(c.Id,c.MaNV,c.NgayDieuChinh,c.NoiDungDC,c.TongSoTien,c.TrangThaiChiTra,c.ChiTraVaoLuongThang,c.NgayCong,
-           c.DSNS,c.NSBH,c.DC85,c.DC150,c.DC190,c.DC200,c.DC210,c.DC270,c.DC300,c.DC390,c.HT50,c.HT100,c.HT150,c.HT200,c.HT390,c.ELLC,c.NgayDieuChinh2,c.DC100));
+           c.DSNS,c.NSBH,c.DC85,c.DC150,c.DC190,c.DC200,c.DC210,c.DC270,c.DC300,c.DC390,c.HT50,c.HT100,c.HT150,c.HT200,c.HT390,c.ELLC,c.NgayDieuChinh2,c.DC100,c.ChiTraVaoLuongThang2));
 
             CreateMap<RoleViewModel, APP_ROLE>()
           .ConstructUsing(c => new APP_ROLE(c.Name, c.Description));
@@ -186,6 +186,9 @@ namespace HRMNS.Application.AutoMapper
 
             CreateMap<EhsCoQuanKiemTraViewModel, EHS_COQUAN_KIEMTRA>()
  .ConstructUsing(c => new EHS_COQUAN_KIEMTRA(c.Id, c.Demuc, c.CoQuanKiemTra, c.NgayKiemTra, c.NoiDungKiemTra, c.KetQua, c.NoiDungNG, c.NguyenNhan, c.DoiSachCaiTien, c.TienDoCaiTien));
+
+            CreateMap<HR_NgayChotCongViewModel, HR_NGAY_CHOT_CONG>().ConstructUsing(c => new HR_NGAY_CHOT_CONG(c.Id,c.NgayChotCong,c.ChotCongChoThang));
+            CreateMap<ChucDanhViewModel, HR_CHUCDANH>().ConstructUsing(c => new HR_CHUCDANH(c.Id,c.TenChucDanh,c.PhuCap));
         }
     }
 }

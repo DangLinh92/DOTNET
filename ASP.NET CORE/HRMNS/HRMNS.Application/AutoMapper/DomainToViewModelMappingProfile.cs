@@ -84,6 +84,7 @@ namespace HRMNS.Application.AutoMapper
             CreateMap<EHS_HANGMUC_NG, EhsHangMucNGViewModel>();
             CreateMap<EHS_QUANLY_GIAY_PHEP, EhsQuanLyGiayPhepViewModel>();
             CreateMap<EHS_COQUAN_KIEMTRA, EhsCoQuanKiemTraViewModel>();
+            CreateMap<HR_NGAY_CHOT_CONG, HR_NgayChotCongViewModel>();
         }
     }
 }

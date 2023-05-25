@@ -105,7 +105,7 @@ namespace HRMS.Areas.Admin.Controllers
             //{
             //    maxDate = DateTime.Now.ToString("yyyy-MM") + "-01";
             //}
-            string fromTime = DateTime.Now.ToString("yyyy-MM") + "-01"; // DateTime.Parse(maxDate).AddDays(-60).ToString("yyyy-MM-dd");
+            string fromTime = DateTime.Now.AddMonths(-1).ToString("yyyy-MM") + "-01"; // DateTime.Parse(maxDate).AddDays(-60).ToString("yyyy-MM-dd");
             string toTime = DateTime.Now.AddDays(1).ToString("yyyy-MM-dd");
             ResultDB result = _bioStarDB.GetChamCongLogData(fromTime, toTime);
             _logger.LogInformation("GetChamCongLogBiostar: " + result.ReturnString);

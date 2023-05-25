@@ -163,6 +163,38 @@
         });
     }
 
+    $("#btnChotCong").on('click', function () {
+
+        let _time = $('#searchToTime').val();
+        let _timeEndUser = $('#searchOutToTime').val();
+
+        if (!_time || !_timeEndUser) {
+            hrms.notify('Hãy nhập ngày tháng!', 'error', 'alert', function () { });
+            return;
+        }
+
+        hrms.run_waitMe($('#bangCongDataTable'));
+
+        $.ajax({
+            type: "POST",
+            url: "/Admin/BangCong/ChotBangCong",
+            data:
+            {
+                timeEndUser: _timeEndUser,
+                thang: _time
+            },
+            success: function (response) {
+                hrms.hide_waitMe($('#bangCongDataTable'));
+                hrms.notify("Chốt Công OK", 'Success', 'alert', function () {
+                });
+            },
+            error: function (status) {
+                hrms.notify(status.responseText, 'error', 'alert', function () { });
+                hrms.hide_waitMe($('#bangCongDataTable'));
+            }
+        });
+    });
+
 
     function initSelectOptionBoPhan() {
         $.ajax({

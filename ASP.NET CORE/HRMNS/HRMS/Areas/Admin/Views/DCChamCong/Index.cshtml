@@ -15,70 +15,64 @@
 
     <script>
 
-        //$('#btn-import-GocPlan').on('click', function () {
-        //    $("#fileInputExcel").val(null);
-        //    $('#import_gocPlan').modal('show');
-        //});
+        /* Import, export, insert,update,delete danh sách nhân viên khám sk */
+        function ImportExcel() {
+            $("#fileInputExcel").val(null);
+            $('#import_File').modal('show');
+        }
 
-        //$('#btnCloseImportExcel').on('click', function () {
-        //    var fileUpload = $("#fileInputExcel").get(0);
-        //    var files = fileUpload.files;
-        //    if (files.length > 0) {
-        //        $("#fileInputExcel").val(null);
-        //        $('#hd-ImportType').val('');
-        //        $('#import_gocPlan').modal('hide');
-        //        location.reload();
-        //    }
-        //});
+        $('#btnCloseImportExcel').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+            if (files.length > 0) {
+                $("#fileInputExcel").val(null);
+                $('#hd-ImportData').val('');
+                $('#import_File').modal('hide');
+                location.reload();
+            }
+        });
 
-        //$('#btnCloseImport').on('click', function () {
-        //    var fileUpload = $("#fileInputExcel").get(0);
-        //    var files = fileUpload.files;
-        //    if (files.length > 0) {
-        //        $("#fileInputExcel").val(null);
-        //        $('#hd-ImportType').val('');
-        //        $('#import_gocPlan').modal('hide');
-        //        location.reload();
-        //    }
-        //});
+        $('#btnCloseImport').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+            if (files.length > 0) {
+                $("#fileInputExcel").val(null);
+                $('#hd-ImportData').val('');
+                $('#import_File').modal('hide');
+                location.reload();
+            }
+        });
 
-        //$('#btnImportExcel').on('click', function () {
-        //    var fileUpload = $("#fileInputExcel").get(0);
-        //    var files = fileUpload.files;
+        $('#btnImportExcel').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
 
-        //    // Create FormData object
-        //    var fileData = new FormData();
-        //    // Looping over all files and add it to FormData object
-        //    for (var i = 0; i < files.length; i++) {
-        //        fileData.append("files", files[i]);
-        //    }
-        //    // Adding one more key to FormData object
-        //    // fileData.append('categoryId', $('#ddlCategoryIdImportExcel').combotree('getValue'));
+            // Create FormData object
+            var fileData = new FormData();
 
-        //    $.ajax({
-        //        url: '/OpeationMns/MaterialToSapCode/ImportExcel',
-        //        type: 'POST',
-        //        data: fileData,
-        //        processData: false,  // tell jQuery not to process the data
-        //        contentType: false,  // tell jQuery not to set contentType
-        //        beforeSend: function () {
-        //            hrms.run_waitMe($('#import_gocPlan'));
-        //        },
-        //        success: function (data) {
-        //            $('#import_gocPlan').modal('hide');
-        //            hrms.hide_waitMe($('#import_gocPlan'));
-        //            hrms.notify("Import success!", 'Success', 'alert', function () {
+            // Looping over all files and add it to FormData object
+            for (var i = 0; i < files.length; i++) {
+                fileData.append("files", files[i]);
+            }
 
-        //                location.reload();
-        //            });
-        //        },
-        //        error: function (status) {
-        //            hrms.notify('error: Import error!' + status.responseText, 'error', 'alert', function () { });
-        //            hrms.hide_waitMe($('#import_gocPlan'));
-        //        }
-        //    });
-        //    return false;
-        //});
+            $.ajax({
+                url: '/Admin/DCChamCong/ImportExcel',
+                type: 'POST',
+                data: fileData,
+                processData: false,  // tell jQuery not to process the data
+                contentType: false,  // tell jQuery not to set contentType
+                success: function (data) {
+                    $('#import_File').modal('hide');
+                    hrms.notify("Import success!", 'Success', 'alert', function () {
+                        location.reload();
+                    });
+                },
+                error: function (status) {
+                    hrms.notify('error: Import error!', 'error', 'alert', function () { });
+                }
+            });
+            return false;
+        });
 
 
         function exporting(e) {
@@ -161,6 +155,15 @@
                 </div>
             </div>
         </div>
+        <div class="col-auto float-right ml-auto" style="margin-right:100px;">
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" id="btnImport" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Excel</button>
+                <div class="dropdown-menu" style="">
+                    <a class="dropdown-item" href="~/templates/DieuChinhLuong.xlsx">File mẫu import điều chỉnh công</a>
+                    <a class="dropdown-item" id="btnImport" onclick="ImportExcel()">Import Điều Chỉnh Công</a>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="row">
@@ -194,7 +197,6 @@
         editing.AllowDeleting(true);
     })
     .Columns(columns => {
-        columns.AddFor(m => m.STT).Caption("STT").AllowEditing(false);
         columns.AddFor(m => m.HR_NHANVIEN.TenNV).Caption("Họ Tên").AllowEditing(false);
 
         columns.AddFor(m => m.MaNV)
@@ -207,8 +209,8 @@
         .CalculateFilterExpression("calculateFilterExpression")
         .Width(200);
 
-        columns.AddFor(m => m.HR_NHANVIEN.MaBoPhan).Caption("Bộ Phận").AllowEditing(false);
-        columns.AddFor(m => m.NgayDieuChinh).Caption("Ngày Điều Chỉnh").AllowEditing(true);
+        columns.AddFor(m => m.HR_NHANVIEN.HR_BO_PHAN_DETAIL.MaBoPhan_TOP2).Caption("Bộ Phận").AllowEditing(false);
+        columns.AddFor(m => m.NgayDieuChinh).Format("yyyy-MM-dd").Caption("Ngày Điều Chỉnh").AllowEditing(true);
 
         columns.Add().Caption("Kết quả điều chỉnh").Columns(c =>
         {
@@ -230,8 +232,6 @@
 
 
         columns.AddFor(m => m.NoiDungDC).Caption("Nội Dung").AllowEditing(true);
-        columns.AddFor(m => m.TongSoTien).Caption("Số Tiền").AllowEditing(true);
-        columns.AddFor(m => m.ChiTraVaoLuongThang).Caption("Trả Vào Lương Tháng").AllowEditing(true);
     })
     .DataSource(d => d.Mvc()
     .Area("Admin")
@@ -273,3 +273,4 @@
         </div>
     </div>
 </div>
+<partial name="_ImportExcelModel" />

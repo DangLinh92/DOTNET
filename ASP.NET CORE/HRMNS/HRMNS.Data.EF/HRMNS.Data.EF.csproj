@@ -13,6 +13,10 @@
     <Compile Remove="Migrations\20221006063657_deleteTrainingtype.Designer.cs" />
     <Compile Remove="Migrations\20221006064139_upTrainingtype.cs" />
     <Compile Remove="Migrations\20221006064139_upTrainingtype.Designer.cs" />
+    <Compile Remove="Migrations\20230517083247_updateTypeIdSalaryPhatsinh.cs" />
+    <Compile Remove="Migrations\20230517083247_updateTypeIdSalaryPhatsinh.Designer.cs" />
+    <Compile Remove="Migrations\20230520061415_updateUserIdentity.cs" />
+    <Compile Remove="Migrations\20230520061415_updateUserIdentity.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

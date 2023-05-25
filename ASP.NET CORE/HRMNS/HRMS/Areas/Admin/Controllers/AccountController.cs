@@ -274,11 +274,26 @@ namespace HRMS.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new APP_USER { UserName = model.Username, FullName = model.FullName, Email = model.Email, ShowPass = model.Password, Avatar = "/img/user.jpg", DateCreated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),Department = model.Department };
+                var user = new APP_USER 
+                { 
+                    UserName = model.Username, 
+                    FullName = model.FullName,
+                    Email = model.Email,
+                    ShowPass = model.Password,
+                    Avatar = "/img/user.jpg",
+                    DateCreated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                    Department = model.Department 
+                };
 
                 if(user.Department == "SP")
                 {
                     user.Department = string.Empty;
+                }
+
+                if(model.Role == "HR_Payroll")
+                {
+                    user.TwoFactorEnabled = true;
+                    user.EmailConfirmed = true;
                 }
 
                 var result = await _userManager.CreateAsync(user, model.Password);

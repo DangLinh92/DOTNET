@@ -25,6 +25,8 @@ namespace HRMNS.Application.ViewModels.System
         public int SortOrder { set; get; }
         public Status Status { set; get; }
 
+        public string Area { get; set; }
+
         [StringLength(50)]
         public string DateCreated { get; set; }
 

@@ -1,5 +1,7 @@
 ﻿using HRMNS.Application.Interfaces;
+using HRMNS.Application.ViewModels.HR;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;

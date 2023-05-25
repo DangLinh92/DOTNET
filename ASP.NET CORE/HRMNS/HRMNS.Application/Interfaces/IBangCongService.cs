@@ -13,5 +13,7 @@ namespace HRMNS.Application.Interfaces
     {
         List<ChamCongDataViewModel> GetDataReport(string timeEnd,string status,string time,string dept,ref List<DeNghiLamThemGioModel> deNghiLamThemGios);
         List<TongHopNhanSuDailyViewModel> TongHopNhanSuReport(string time, string dept);
+
+        void AddBangCongEx(List<BANG_CONG_EXTENTION> data);
     }
 }

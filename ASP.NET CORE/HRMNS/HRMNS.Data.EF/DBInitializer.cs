@@ -165,8 +165,13 @@ namespace HRMNS.Data.EF
                     ,
                     new BOPHAN()
                     {
-                        Id = "CSP",
-                        TenBoPhan = "CSP"
+                        Id = "CSP1",
+                        TenBoPhan = "CSP1"
+                    },
+                     new BOPHAN()
+                    {
+                        Id = "CSP2",
+                        TenBoPhan = "CSP2"
                     },
                      new BOPHAN()
                     {

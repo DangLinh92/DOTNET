@@ -38,6 +38,7 @@ namespace HRMNS.Application.Implementation
         private IRespository<DANGKY_OT_NHANVIEN, int> _overtimeResponsitory;
         private IRespository<HR_NHANVIEN_CHEDO_DB, int> _nhanvienCheDoDBResponsitory;
         private IRespository<DANGKY_DIMUON_VSOM_NHANVIEN, int> _dimuonVeSomResponsitory;
+        private IRespository<BANG_CONG_EXTENTION, int> _bangCongExResponsitory;
 
         private EFUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -55,9 +56,11 @@ namespace HRMNS.Application.Implementation
             IRespository<DANGKY_OT_NHANVIEN, int> overtimeResponsitory,
             IRespository<HR_NHANVIEN_CHEDO_DB, int> nhanvienCheDoDBResponsitory,
             IRespository<DANGKY_DIMUON_VSOM_NHANVIEN, int> dimuonVeSomResponsitory,
+            IRespository<BANG_CONG_EXTENTION, int> bangCongExResponsitory,
             IUnitOfWork unitOfWork, IMapper mapper,
             IHttpContextAccessor httpContextAccessor)
         {
+            _bangCongExResponsitory = bangCongExResponsitory;
             _attendanceRecordRespository = attendance_record;
             _chamCongRespository = chamCongRespository;
             _ngaylenamRespository = ngayleRespository;
@@ -440,6 +443,7 @@ namespace HRMNS.Application.Implementation
                                         NgayDangKy = dateCheck
                                     };
 
+
                                     // check hop dong
                                     hopDong_NV = item.lstHopDong.FirstOrDefault(x => string.Compare(dateCheck, x.NgayHieuLucHD) >= 0 && string.Compare(dateCheck, x.NgayHetHLHD) <= 0);
 
@@ -502,7 +506,7 @@ namespace HRMNS.Application.Implementation
                                                         item.WorkingStatuses.Add(new WorkingStatus()
                                                         {
                                                             DayCheck = dateCheck,
-                                                            Value = kyhieuChamCongDB.NullString() == "" ? "NH" : kyhieuChamCongDB.NullString()
+                                                            Value = kyhieuChamCongDB.NullString() == "" ? "PD" : kyhieuChamCongDB.NullString()
                                                         });
                                                     }
                                                     continue;
@@ -514,8 +518,6 @@ namespace HRMNS.Application.Implementation
                                                 // get first time and last time
                                                 firstTime = _chamCongLog.FirstIn_Time.NullString();
                                                 lastTime = _chamCongLog.Last_Out_Time.NullString();
-
-
 
                                                 if (_caLamViec.MaCaLaviec == CommonConstants.CA_DEM)
                                                 {
@@ -1805,9 +1807,6 @@ namespace HRMNS.Application.Implementation
 
                                                                 double timeOT = (DateTime.ParseExact(dateCheck + " " + lastTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + newBeginOT, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
 
-                                                                if (timeOT > 1)
-                                                                    timeOT -= 0.5;
-
                                                                 var clviec = item.lstNhanVienCaLamViec.FirstOrDefault(x =>
                                                                              string.Compare(dateCheck, x.BatDau_TheoCa) >= 0 &&
                                                                              string.Compare(dateCheck, x.KetThuc_TheoCa) <= 0 &&
@@ -2651,7 +2650,7 @@ namespace HRMNS.Application.Implementation
                 item.EL_LC_Statuses.Sort((x, y) => x.DayCheck_EL.CompareTo(y.DayCheck_EL));
             }
 
-            return lstResult.OrderBy(x => x.BoPhan).ToList();
+            return lstResult.OrderBy(x => x.BoPhan).ThenBy(x => x.MaNV).ToList();
         }
 
         /// <summary>
@@ -2703,7 +2702,433 @@ namespace HRMNS.Application.Implementation
             return SimpleValueOT(rs);
         }
 
+        /// <summary>
+        /// OT ca đêm 
+        /// </summary>
+        /// <param name="firstTime"></param>
+        /// <param name="lastTime"></param>
+        /// <param name="dateCheck"></param>
+        /// <param name="ngayLviec"></param>
+        /// <param name="isRegistedOT"></param>
+        /// <param name="maNV"></param>
+        /// <param name="themGioModel"></param>
+        /// <returns></returns>
         private List<OvertimeValue> GetOvertimeInNight(string firstTime, string lastTime, string dateCheck, string ngayLviec, bool isRegistedOT, string maNV, ref DeNghiLamThemGioModel themGioModel)
+        {
+            List<OvertimeValue> lstResult = new List<OvertimeValue>();
+
+            if (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) >= DateTime.ParseExact("20:00:00", "HH:mm:ss", CultureInfo.InvariantCulture) ||
+                DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) <= DateTime.ParseExact("05:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
+            {
+                if (ngayLviec == "NT")
+                {
+                    var clviecs = CA_LVIECs.FindAll(x => x.DM_NgayLViec == ngayLviec && x.Danhmuc_CaLviec == CommonConstants.CA_DEM && x.HeSo_OT != 100);
+
+                    // 05 -> 06
+                    double timeOT = GetOverTimeInRange("05:00:00", "06:00:00", firstTime, lastTime, dateCheck, false) - 0.5;
+                    if (timeOT > 0)
+                    {
+                        string hsOT = clviecs.FirstOrDefault(x => x.Time_KetThuc == "06:00:00")?.HeSo_OT.IfNullIsZero();
+                        lstResult.Add(new OvertimeValue()
+                        {
+                            DayCheckOT = dateCheck,
+                            DMOvertime = hsOT,
+                            ValueOT = timeOT,
+                            Registered = isRegistedOT,
+                            fromTime = "05:00:00",
+                            toTime = "06:00:00",
+                            orderTime = 1
+                        });
+                    }
+
+                    // 06 -> 08
+                    double timeOT2 = GetOverTimeInRange("06:00:00", "08:00:00", firstTime, lastTime, dateCheck, true);
+                    if (timeOT2 > 0)
+                    {
+                        string hsOT = clviecs.FirstOrDefault(x => x.Time_KetThuc == "08:00:00")?.HeSo_OT.IfNullIsZero();
+                        lstResult.Add(new OvertimeValue()
+                        {
+                            DayCheckOT = dateCheck,
+                            DMOvertime = hsOT,
+                            ValueOT = timeOT2,
+                            Registered = isRegistedOT,
+                            fromTime = "06:00:00",
+                            toTime = lastTime,
+                            orderTime = 2
+                        });
+                    }
+                }
+                else if (ngayLviec == "TNL")
+                {
+                    var clviecs = CA_LVIECs.FindAll(x => x.DM_NgayLViec == ngayLviec && x.Danhmuc_CaLviec == CommonConstants.CA_DEM && x.HeSo_OT != 100);
+
+                    // 05 -> 06
+                    double timeOT = GetOverTimeInRange("05:00:00", "06:00:00", firstTime, lastTime, dateCheck, false) - 0.5;
+                    if (timeOT > 0)
+                    {
+                        string hsOT = clviecs.FirstOrDefault(x => x.Time_KetThuc == "06:00:00")?.HeSo_OT.IfNullIsZero();
+                        lstResult.Add(new OvertimeValue()
+                        {
+                            DayCheckOT = dateCheck,
+                            DMOvertime = hsOT,
+                            ValueOT = timeOT,
+                            Registered = isRegistedOT,
+                            fromTime = "05:00:00",
+                            toTime = "06:00:00",
+                            orderTime = 1
+                        });
+                    }
+
+                    // 06 -> 08
+                    double timeOT2 = GetOverTimeInRange("06:00:00", "08:00:00", firstTime, lastTime, dateCheck, true);
+                    if (timeOT2 > 0)
+                    {
+                        string hsOT = clviecs.FirstOrDefault(x => x.Time_KetThuc == "08:00:00")?.HeSo_OT.IfNullIsZero();
+                        lstResult.Add(new OvertimeValue()
+                        {
+                            DayCheckOT = dateCheck,
+                            DMOvertime = hsOT,
+                            ValueOT = timeOT2,
+                            Registered = isRegistedOT,
+                            fromTime = "06:00:00",
+                            toTime = lastTime,
+                            orderTime = 2
+                        });
+                    }
+                }
+                else if (ngayLviec == "NL")
+                {
+                    var clviecs = CA_LVIECs.FindAll(x => x.DM_NgayLViec == ngayLviec && x.Danhmuc_CaLviec == CommonConstants.CA_DEM && x.HeSo_OT != 100);
+
+                    // 20 -> 22h
+                    double timeOT = GetOverTimeInRange("20:00:00", "22:00:00", firstTime, lastTime, dateCheck, false);
+                    if (timeOT > 0)
+                    {
+                        string hsOT = clviecs.FirstOrDefault(x => x.Time_KetThuc == "22:00:00")?.HeSo_OT.IfNullIsZero();
+                        lstResult.Add(new OvertimeValue()
+                        {
+                            DayCheckOT = dateCheck,
+                            DMOvertime = hsOT,
+                            ValueOT = timeOT,
+                            Registered = isRegistedOT,
+                            fromTime = "20:00:00",
+                            toTime = "22:00:00",
+                            orderTime = 1
+                        });
+                    }
+
+                    // 22 -> 23:59
+                    double timeOT2 = GetOverTimeInRange("22:00:00", "23:59:59", firstTime, lastTime, dateCheck, false);
+                    if (timeOT2 > 0)
+                    {
+                        string hsOT = clviecs.FirstOrDefault(x => x.Time_BatDau == "22:00:00")?.HeSo_OT.IfNullIsZero();
+                        lstResult.Add(new OvertimeValue()
+                        {
+                            DayCheckOT = dateCheck,
+                            DMOvertime = hsOT,
+                            ValueOT = timeOT2,
+                            Registered = isRegistedOT,
+                            fromTime = "22:00:00",
+                            toTime = "23:59:59",
+                            orderTime = 2
+                        });
+                    }
+                    // 00 -> 06h
+                    double timeOT3 = GetOverTimeInRange("00:00:00", "06:00:00", firstTime, lastTime, dateCheck, false) - 0.5;
+                    if (timeOT3 > 1) timeOT3 = timeOT3 - 1;
+                    if (timeOT3 > 0)
+                    {
+                        string hsOT = clviecs.FirstOrDefault(x => x.Time_BatDau == "22:00:00")?.HeSo_OT.IfNullIsZero();
+                        lstResult.Add(new OvertimeValue()
+                        {
+                            DayCheckOT = dateCheck,
+                            DMOvertime = hsOT,
+                            ValueOT = timeOT3,
+                            Registered = isRegistedOT,
+                            fromTime = "00:00:00",
+                            toTime = "06:00:00",
+                            orderTime = 3
+                        });
+                    }
+
+                    // 06 -> 08 
+                    double timeOT4 = GetOverTimeInRange("06:00:00", "08:00:00", firstTime, lastTime, dateCheck, true);
+                    if (timeOT4 > 0)
+                    {
+                        string hsOT = clviecs.FirstOrDefault(x => x.Time_BatDau == "06:00:00")?.HeSo_OT.IfNullIsZero();
+                        lstResult.Add(new OvertimeValue()
+                        {
+                            DayCheckOT = dateCheck,
+                            DMOvertime = hsOT,
+                            ValueOT = timeOT4,
+                            Registered = isRegistedOT,
+                            fromTime = "06:00:00",
+                            toTime = lastTime,
+                            orderTime = 4
+                        });
+                    }
+                }
+                else if (ngayLviec == "NLCC")
+                {
+                    var clviecs = CA_LVIECs.FindAll(x => x.DM_NgayLViec == ngayLviec && x.Danhmuc_CaLviec == CommonConstants.CA_DEM && x.HeSo_OT != 100);
+
+                    // 20 -> 22h
+                    double timeOT = GetOverTimeInRange("20:00:00", "22:00:00", firstTime, lastTime, dateCheck, false);
+                    if (timeOT > 0)
+                    {
+                        string hsOT = clviecs.FirstOrDefault(x => x.Time_KetThuc == "22:00:00")?.HeSo_OT.IfNullIsZero();
+                        lstResult.Add(new OvertimeValue()
+                        {
+                            DayCheckOT = dateCheck,
+                            DMOvertime = hsOT,
+                            ValueOT = timeOT,
+                            Registered = isRegistedOT,
+                            fromTime = "20:00:00",
+                            toTime = "22:00:00",
+                            orderTime = 1
+                        });
+                    }
+
+                    // 22 -> 23:59
+                    double timeOT2 = GetOverTimeInRange("22:00:00", "23:59:59", firstTime, lastTime, dateCheck, false);
+                    if (timeOT2 > 0)
+                    {
+                        string hsOT = clviecs.FirstOrDefault(x => x.Time_BatDau == "22:00:00")?.HeSo_OT.IfNullIsZero();
+                        lstResult.Add(new OvertimeValue()
+                        {
+                            DayCheckOT = dateCheck,
+                            DMOvertime = hsOT,
+                            ValueOT = timeOT2,
+                            Registered = isRegistedOT,
+                            fromTime = "22:00:00",
+                            toTime = "23:59:59",
+                            orderTime = 2
+                        });
+                    }
+
+                    // 00 -> 06h
+                    double timeOT3 = GetOverTimeInRange("00:00:00", "06:00:00", firstTime, lastTime, dateCheck, false) - 0.5;
+
+                    if (timeOT3 > 1) timeOT3 = timeOT3 - 1;
+
+                    if (timeOT3 > 0)
+                    {
+                        string hsOT = clviecs.FirstOrDefault(x => x.Time_BatDau == "00:00:00")?.HeSo_OT.IfNullIsZero();
+                        lstResult.Add(new OvertimeValue()
+                        {
+                            DayCheckOT = dateCheck,
+                            DMOvertime = hsOT,
+                            ValueOT = timeOT3,
+                            Registered = isRegistedOT,
+                            fromTime = "00:00:00",
+                            toTime = "06:00:00",
+                            orderTime = 3
+                        });
+                    }
+
+                    // 06 -> 08 
+                    double timeOT4 = GetOverTimeInRange("06:00:00", "08:00:00", firstTime, lastTime, dateCheck, true);
+                    if (timeOT4 > 0)
+                    {
+                        string hsOT = clviecs.FirstOrDefault(x => x.Time_BatDau == "06:00:00")?.HeSo_OT.IfNullIsZero();
+                        lstResult.Add(new OvertimeValue()
+                        {
+                            DayCheckOT = dateCheck,
+                            DMOvertime = hsOT,
+                            ValueOT = timeOT4,
+                            Registered = isRegistedOT,
+                            fromTime = "06:00:00",
+                            toTime = lastTime,
+                            orderTime = 4
+                        });
+                    }
+                }
+                else if (ngayLviec == "CN")
+                {
+                    var clviecs = CA_LVIECs.FindAll(x => x.DM_NgayLViec == ngayLviec && x.Danhmuc_CaLviec == CommonConstants.CA_DEM && x.HeSo_OT != 100);
+
+                    // 20 -> 22h
+                    double timeOT = GetOverTimeInRange("20:00:00", "22:00:00", firstTime, lastTime, dateCheck, false);
+                    if (timeOT > 0)
+                    {
+                        string hsOT = clviecs.FirstOrDefault(x => x.Time_KetThuc == "22:00:00")?.HeSo_OT.IfNullIsZero();
+                        lstResult.Add(new OvertimeValue()
+                        {
+                            DayCheckOT = dateCheck,
+                            DMOvertime = hsOT,
+                            ValueOT = timeOT,
+                            Registered = isRegistedOT,
+                            fromTime = "20:00:00",
+                            toTime = "22:00:00",
+                            orderTime = 1
+                        });
+                    }
+
+                    // 22 -> 23:59
+                    double timeOT2 = GetOverTimeInRange("22:00:00", "23:59:59", firstTime, lastTime, dateCheck, false);
+                    if (timeOT2 > 0)
+                    {
+                        string hsOT = clviecs.FirstOrDefault(x => x.Time_BatDau == "22:00:00")?.HeSo_OT.IfNullIsZero();
+                        lstResult.Add(new OvertimeValue()
+                        {
+                            DayCheckOT = dateCheck,
+                            DMOvertime = hsOT,
+                            ValueOT = timeOT2,
+                            Registered = isRegistedOT,
+                            fromTime = "22:00:00",
+                            toTime = "23:59:59",
+                            orderTime = 2
+                        });
+                    }
+
+                    // 00 -> 06h
+                    double timeOT3 = GetOverTimeInRange("00:00:00", "06:00:00", firstTime, lastTime, dateCheck, false) - 0.5;
+
+                    if (timeOT3 > 1) timeOT3 = timeOT3 - 1;
+
+                    if (timeOT3 > 0)
+                    {
+                        string hsOT = clviecs.FirstOrDefault(x => x.Time_BatDau == "22:00:00")?.HeSo_OT.IfNullIsZero();
+                        lstResult.Add(new OvertimeValue()
+                        {
+                            DayCheckOT = dateCheck,
+                            DMOvertime = hsOT,
+                            ValueOT = timeOT3,
+                            Registered = isRegistedOT,
+                            fromTime = "00:00:00",
+                            toTime = "06:00:00",
+                            orderTime = 3
+                        });
+                    }
+
+
+
+                    // 06 -> 08 
+                    double timeOT4 = GetOverTimeInRange("06:00:00", "08:00:00", firstTime, lastTime, dateCheck, true);
+                    if (timeOT4 > 0)
+                    {
+                        string hsOT = clviecs.FirstOrDefault(x => x.Time_BatDau == "06:00:00")?.HeSo_OT.IfNullIsZero();
+                        lstResult.Add(new OvertimeValue()
+                        {
+                            DayCheckOT = dateCheck,
+                            DMOvertime = hsOT,
+                            ValueOT = timeOT4,
+                            Registered = isRegistedOT,
+                            fromTime = "06:00:00",
+                            toTime = lastTime,
+                            orderTime = 4
+                        });
+                    }
+                }
+            }
+
+            List<OvertimeValue> overtimes = new List<OvertimeValue>();
+            OvertimeValue oval;
+            foreach (var item in lstResult)
+            {
+                if (overtimes.Any(x => x.DMOvertime == item.DMOvertime))
+                {
+                    oval = overtimes.Find(x => x.DMOvertime == item.DMOvertime);
+                    oval.ValueOT += item.ValueOT;
+                }
+                else
+                {
+                    overtimes.Add(item);
+                }
+            }
+
+            foreach (var item in overtimes)
+            {
+                item.ValueOT = HR_NHANVIEN_CHEDO_DBs.Exists(x => x.MaNhanVien == maNV && x.CheDoDB.Contains("Block_10p")) ? SimpleValueOT(item.ValueOT) : Block30mValueOT(item.ValueOT);
+                //if ((new List<int> { 1, 5, 3, 4 }).Contains(CheckNgayDB(item.DayCheckOT))) // chu nhat ngay le tinh block 30p. ngay khac 10p
+                //{
+                //    item.ValueOT = Block30mValueOT(item.ValueOT);
+                //}
+                //else
+                //{
+                //    item.ValueOT = Block30mValueOT(item.ValueOT);
+                //}
+            }
+
+            double totalDuration = 0;
+            foreach (var item in overtimes.OrderBy(x => x.orderTime))
+            {
+                totalDuration += item.ValueOT;
+            }
+
+            themGioModel.Duration = totalDuration.IfNullIsZero();
+            themGioModel.From = overtimes.OrderBy(x => x.orderTime).FirstOrDefault()?.fromTime;
+            themGioModel.To = overtimes.OrderBy(x => x.orderTime).LastOrDefault()?.toTime;
+
+            return overtimes;
+        }
+
+        private double GetOverTimeInRange(string beginTime, string endTime, string inTime, string outTime, string dateCheck, bool isLast)
+        {
+            if (DateTime.ParseExact(inTime, "HH:mm:ss", CultureInfo.InvariantCulture) >= DateTime.ParseExact("20:00:00", "HH:mm:ss", CultureInfo.InvariantCulture) &&
+                DateTime.ParseExact(inTime, "HH:mm:ss", CultureInfo.InvariantCulture) <= DateTime.ParseExact("23:59:59", "HH:mm:ss", CultureInfo.InvariantCulture) &&
+                DateTime.ParseExact(outTime, "HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.ParseExact("00:00:00", "HH:mm:ss", CultureInfo.InvariantCulture) &&
+                DateTime.ParseExact(outTime, "HH:mm:ss", CultureInfo.InvariantCulture) < DateTime.ParseExact("12:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
+            {
+                double ot1 = GetOverTimeInRange(beginTime, endTime, inTime, "23:59:59", dateCheck, false);
+                double ot2 = GetOverTimeInRange(beginTime, endTime, "00:00:00", outTime, dateCheck, isLast);
+
+                return ot1 + ot2;
+            }
+
+            if (DateTime.ParseExact(inTime, "HH:mm:ss", CultureInfo.InvariantCulture) <= DateTime.ParseExact(beginTime, "HH:mm:ss", CultureInfo.InvariantCulture))
+            {
+                inTime = beginTime;
+            }
+
+            // isLast: khung thoi gian cuối cùng 06-> 08
+            if (!isLast && DateTime.ParseExact(outTime, "HH:mm:ss", CultureInfo.InvariantCulture) >= DateTime.ParseExact(endTime, "HH:mm:ss", CultureInfo.InvariantCulture))
+            {
+                outTime = endTime;
+            }
+
+            if (DateTime.ParseExact(outTime, "HH:mm:ss", CultureInfo.InvariantCulture) <= DateTime.ParseExact(beginTime, "HH:mm:ss", CultureInfo.InvariantCulture) ||
+                DateTime.ParseExact(inTime, "HH:mm:ss", CultureInfo.InvariantCulture) >= DateTime.ParseExact(endTime, "HH:mm:ss", CultureInfo.InvariantCulture))
+            {
+                return 0;
+            }
+            else
+            if (DateTime.ParseExact(outTime, "HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.ParseExact(beginTime, "HH:mm:ss", CultureInfo.InvariantCulture) &&
+            DateTime.ParseExact(outTime, "HH:mm:ss", CultureInfo.InvariantCulture) <= DateTime.ParseExact(endTime, "HH:mm:ss", CultureInfo.InvariantCulture))
+            {
+                if (DateTime.ParseExact(inTime, "HH:mm:ss", CultureInfo.InvariantCulture) <= DateTime.ParseExact(beginTime, "HH:mm:ss", CultureInfo.InvariantCulture))
+                {
+                    return (DateTime.ParseExact(dateCheck + " " + outTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + beginTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+                }
+
+                if (DateTime.ParseExact(inTime, "HH:mm:ss", CultureInfo.InvariantCulture) >= DateTime.ParseExact(beginTime, "HH:mm:ss", CultureInfo.InvariantCulture))
+                {
+                    return (DateTime.ParseExact(dateCheck + " " + outTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + inTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+                }
+            }
+            else if (DateTime.ParseExact(outTime, "HH:mm:ss", CultureInfo.InvariantCulture) >= DateTime.ParseExact(endTime, "HH:mm:ss", CultureInfo.InvariantCulture))
+            {
+                if (DateTime.ParseExact(inTime, "HH:mm:ss", CultureInfo.InvariantCulture) <= DateTime.ParseExact(beginTime, "HH:mm:ss", CultureInfo.InvariantCulture))
+                {
+                    return (DateTime.ParseExact(dateCheck + " " + outTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + beginTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+                }
+
+                if (DateTime.ParseExact(inTime, "HH:mm:ss", CultureInfo.InvariantCulture) >= DateTime.ParseExact(beginTime, "HH:mm:ss", CultureInfo.InvariantCulture) &&
+                    DateTime.ParseExact(inTime, "HH:mm:ss", CultureInfo.InvariantCulture) <= DateTime.ParseExact(endTime, "HH:mm:ss", CultureInfo.InvariantCulture))
+                {
+                    return (DateTime.ParseExact(dateCheck + " " + outTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(dateCheck + " " + inTime, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+                }
+
+                if (DateTime.ParseExact(inTime, "HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.ParseExact(endTime, "HH:mm:ss", CultureInfo.InvariantCulture))
+                {
+                    return 0;
+                }
+            }
+
+            return 0;
+        }
+
+        private List<OvertimeValue> GetOvertimeInNight1(string firstTime, string lastTime, string dateCheck, string ngayLviec, bool isRegistedOT, string maNV, ref DeNghiLamThemGioModel themGioModel)
         {
             // 20:00 -> 22:00
             // 22:00 -> 23:59
@@ -3905,6 +4330,7 @@ namespace HRMNS.Application.Implementation
                 }
 
                 var lstNV = _nhanvienResponsitory.FindAll(x => x.MaBoPhan == dept && (x.Status == Status.Active.NullString() || string.Compare(x.NgayNghiViec, _time) > 0));
+
                 var lstGr = lstNV.GroupBy(x => x.MaBoPhan).Select(gr => new { BoPhan = gr.Key, Count = gr.Count() });
 
                 TongHopNhanSuDailyViewModel model;
@@ -3918,6 +4344,7 @@ namespace HRMNS.Application.Implementation
                     };
                     dailyViewModels.Add(model);
                 }
+
             }
 
             CaLamViecSL caLamViec;
@@ -4310,6 +4737,18 @@ namespace HRMNS.Application.Implementation
             }
 
             return pnguyen + newVal;
+        }
+
+        public void AddBangCongEx(List<BANG_CONG_EXTENTION> data)
+        {
+            List<BANG_CONG_EXTENTION> lst = new List<BANG_CONG_EXTENTION>();
+
+            string thangNam = data[0].ThangNam;
+
+            lst = _bangCongExResponsitory.FindAll(x => x.HR_NHANVIEN).Where(x => x.ThangNam == thangNam).ToList();
+            _bangCongExResponsitory.RemoveMultiple(lst);
+            _bangCongExResponsitory.AddRange(data);
+            _unitOfWork.Commit();
         }
     }
 

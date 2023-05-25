@@ -1,0 +1,151 @@
+﻿
+@{
+    ViewData["Title"] = "Danh Sách Hợp Đồng Đến Hạn";
+    Layout = "~/Areas/Payroll/Views/Shared/_Layout.cshtml";
+}
+@section Styles {
+
+}
+
+@section Scripts
+{
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+
+    <script>
+
+
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('HopDongHetHan');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'HopDongHetHan.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        function calculateFilterExpression(filterValue, selectedFilterOperation, target) {
+            if (target === "search" && typeof (filterValue) === "string") {
+                return [this.dataField, "contains", filterValue]
+            }
+
+            return function (data) {
+                return (data.AssignedEmployee || []).indexOf(filterValue) !== -1
+            }
+        }
+
+        // chon thang
+        function selectedDate_changed(data) {
+            console.log(data.value);
+            const dataGridDataSource = $("#gridContainer").dxDataGrid("getDataSource");
+            dataGridDataSource.reload();
+        };
+
+        function getMonth() {
+
+            var dateBox = $("#txt_month").dxDateBox("instance");
+
+            let sDate = dateBox.option('value');
+
+            return sDate;
+        }
+    </script>
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Danh Sách Hợp Đồng Đến Hạn</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/Payroll/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Danh Sách Hợp Đồng Đến Hạn</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="row align-items-center">
+        <div class="col">
+            @*<div class="form">
+                    <div class="dx-fieldset">
+                        <div class="dx-field">
+                            <div>
+                                @(Html.DevExtreme().DateBox()
+                                      .ID("txt_month")
+                                      .Value(DateTime.Now.ToString("yyyy-MM-dd"))
+                                      .CalendarOptions(x=>x.MaxZoomLevel(CalendarZoomLevel.Year))
+                                      .DisplayFormat("yyyy-MM")
+                                      .Width(200)
+                                      .Placeholder("Select...")
+                                      .Label("Year")
+                                      .OnValueChanged("selectedDate_changed")
+                                )
+
+                            </div>
+                        </div>
+                    </div>
+                </div>*@
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            @(Html.DevExtreme().DataGrid<HopDongViewModel>
+    ()
+    .ID("gridContainer")
+    .Height(720)
+    .ShowBorders(true)
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(true))
+    .AllowColumnResizing(true)
+    .ColumnMinWidth(50)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+    .OnExporting("exporting")
+    .FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+    .Columns(columns => {
+        columns.AddFor(m => m.HR_NHANVIEN.Id).Caption("Mã Nhân Viên");
+        columns.AddFor(m => m.HR_NHANVIEN.TenNV).Caption("Họ Tên");
+        columns.AddFor(m => m.HR_NHANVIEN.HR_BO_PHAN_DETAIL.MaBoPhan_TOP2).Caption("Bộ Phận");
+        columns.AddFor(m => m.TenHD).Caption("Hợp Đồng");
+        columns.AddFor(m => m.HR_LOAIHOPDONG.TenLoaiHD).Caption("Loại Hợp Đồng");
+        columns.AddFor(m => m.NgayKy).Caption("Ngày Ký");
+        columns.AddFor(m => m.NgayHieuLuc).Caption("Ngày Hiệu Lực");
+        columns.AddFor(m => m.NgayHetHieuLuc).Caption("Ngày Hết Hạn");
+    })
+     .Summary(s => s.TotalItems(items =>
+        {
+            items.AddFor(m => m.HR_NHANVIEN.Id)
+                .SummaryType(SummaryType.Count);
+        })
+    )
+    .DataSource(d => d.Mvc()
+    .Area("Payroll")
+    .Controller("HopDongLD")
+    .LoadAction("Get")
+    ).SearchPanel(searchPanel => searchPanel.Visible(true))
+
+    )
+        </div>
+    </div>
+</div>
+

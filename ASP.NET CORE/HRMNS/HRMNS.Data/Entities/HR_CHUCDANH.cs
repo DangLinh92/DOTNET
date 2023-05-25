@@ -16,8 +16,18 @@ namespace HRMNS.Data.Entities
             HR_NHANVIEN = new HashSet<HR_NHANVIEN>();
         }
 
+
+        public HR_CHUCDANH(string id,string tenchucdanh,double phucap)
+        {
+            Id = id;
+            TenChucDanh = tenchucdanh;
+            PhuCap = phucap;
+        }
+
         [StringLength(50)]
         public string TenChucDanh { get; set; }
+
+        public double PhuCap { get; set; }
 
         [StringLength(50)]
         public string DateCreated { get; set; }

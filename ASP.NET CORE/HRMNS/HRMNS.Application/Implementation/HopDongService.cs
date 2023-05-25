@@ -58,7 +58,7 @@ namespace HRMNS.Application.Implementation
 
         public HopDongViewModel GetByMaHD(string maHd)
         {
-            return _mapper.Map<HR_HOPDONG, HopDongViewModel>(((Data.EF.EFUnitOfWork)_unitOfWork).DBContext().HrHopDong.FirstOrDefault(x=>x.MaHD == maHd));
+            return _mapper.Map<HR_HOPDONG, HopDongViewModel>(((Data.EF.EFUnitOfWork)_unitOfWork).DBContext().HrHopDong.FirstOrDefault(x => x.MaHD == maHd));
         }
 
         public void Save()
@@ -76,6 +76,16 @@ namespace HRMNS.Application.Implementation
         public void UpdateSingle(HopDongViewModel hopDongVm)
         {
             throw new NotImplementedException();
+        }
+
+        public List<HopDongViewModel> GetNVHetHanHD()
+        {
+            string d1 = DateTime.Now.AddMonths(1).ToString("yyyy-MM-dd");
+            string d2 = DateTime.Now.ToString("yyyy-MM-dd");
+            var lstHD = _hopDongRepository.FindAll(x =>
+                                           x.NgayHetHieuLuc.CompareTo(d1) <= 0 && x.NgayHetHieuLuc.CompareTo(d2) >= 0,
+                                           x => x.HR_LOAIHOPDONG, x => x.HR_NHANVIEN,x => x.HR_NHANVIEN.HR_BO_PHAN_DETAIL).OrderBy(x => x.NgayHetHieuLuc).ToList();
+            return _mapper.Map<List<HR_HOPDONG>, List<HopDongViewModel>>(lstHD);
         }
     }
 }

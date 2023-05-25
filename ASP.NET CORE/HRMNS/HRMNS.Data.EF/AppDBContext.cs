@@ -23,6 +23,7 @@ namespace HRMNS.Data.EF
             _httpContextAccessor = httpContextAccessor;
         }
 
+        public virtual DbSet<APP_USER_TOKEN> AppUserTokens { get; set; }
         public virtual DbSet<APP_USER> AppUsers { get; set; }
         public virtual DbSet<APP_ROLE> AppRoles { get; set; }
         public virtual DbSet<BOPHAN> BoPhans { get; set; }
@@ -107,6 +108,15 @@ namespace HRMNS.Data.EF
         public virtual DbSet<EHS_QUANLY_GIAY_PHEP> EHS_QUANLY_GIAY_PHEP { get; set; }
         public virtual DbSet<EHS_COQUAN_KIEMTRA> EHS_COQUAN_KIEMTRA { get; set; }
         public virtual DbSet<HR_SALARY> HR_SALARY { get; set; }
+        public virtual DbSet<HR_SALARY_PHATSINH> HR_SALARY_PHATSINH { get; set; }
+        public virtual DbSet<HR_SALARY_HISTORY> HR_SALARY_HISTORY { get; set; }
+        public virtual DbSet<HR_NGAY_CHOT_CONG> HR_NGAY_CHOT_CONG { get; set; }
+        public virtual DbSet<CONGDOAN_NOT_JOIN> CONGDOAN_NOT_JOIN { get; set; }
+        public virtual DbSet<HR_SALARY_DANHMUC_PHATSINH> HR_SALARY_DANHMUC_PHATSINH { get; set; }
+        public virtual DbSet<BANG_CONG_EXTENTION> BANG_CONG_EXTENTION { get; set; }
+        public virtual DbSet<BANGLUONGCHITIET_HISTORY> BANGLUONGCHITIET_HISTORY { get; set; }
+        public virtual DbSet<HR_KY_LUAT_KHENTHUONG> HR_KY_LUAT_KHENTHUONG { get; set; }
+        public virtual DbSet<PHUCAP_DOC_HAI> PHUCAP_DOC_HAI { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -115,9 +125,10 @@ namespace HRMNS.Data.EF
             builder.Entity<IdentityRoleClaim<Guid>>().ToTable("APP_ROLE_CLAIM").HasKey(x => x.Id);
             builder.Entity<IdentityUserLogin<Guid>>().ToTable("APP_USER_LOGIN").HasKey(x => x.UserId);
             builder.Entity<IdentityUserRole<Guid>>().ToTable("APP_USER_ROLE").HasKey(x => new { x.RoleId, x.UserId });
-            builder.Entity<IdentityUserToken<Guid>>().ToTable("APP_USER_TOKEN").HasKey(x => x.UserId);
+            builder.Entity<IdentityUserToken<Guid>>().ToTable("APP_USER_TOKEN").HasKey(x => new { x.UserId, x.LoginProvider, x.Name });
             #endregion
 
+            builder.AddConfiguration(new UserConfiguration());
             builder.AddConfiguration(new CheDoBHConfiguration());
             builder.AddConfiguration(new BaoHiemXHConfiguration());
             builder.AddConfiguration(new LoaiChungChiConfiguration());
@@ -199,6 +210,16 @@ namespace HRMNS.Data.EF
             builder.AddConfiguration(new EHSQuanLyGiayPhepConfiguration());
             builder.AddConfiguration(new EHSCoquanKtraConfiguration());
             builder.AddConfiguration(new HrSalaryConfiguration());
+            builder.AddConfiguration(new HrNgayChotCongConfiguration());
+            builder.AddConfiguration(new HrSalaryPhatSinhConfiguration());
+            builder.AddConfiguration(new HrSalaryHistoryConfiguration());
+            builder.AddConfiguration(new CongDoanNotJoinConfiguration());
+            builder.AddConfiguration(new HrSalaryDanhMucPhatSinhConfiguration());
+            builder.AddConfiguration(new HrBangLuongExConfiguration());
+            builder.AddConfiguration(new NhanVienExConfiguration());
+            builder.AddConfiguration(new HrBangCongHistoryConfiguration());
+            builder.AddConfiguration(new KhenThuongKyLuatConfiguration());
+            builder.AddConfiguration(new PhuCapDocHaiConfiguration());
 
             //base.OnModelCreating(builder);
         }
@@ -215,7 +236,7 @@ namespace HRMNS.Data.EF
                     {
                         changeOrAddedItem.DateCreated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
-                        if(_httpContextAccessor.HttpContext != null && changeOrAddedItem.UserCreated.NullString() == "")
+                        if (_httpContextAccessor.HttpContext != null && changeOrAddedItem.UserCreated.NullString() == "")
                             changeOrAddedItem.UserCreated = _httpContextAccessor.HttpContext.User?.Identity?.Name;
                     }
 

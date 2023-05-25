@@ -3,12 +3,18 @@ using DevExtreme.AspNet.Mvc;
 using HRMNS.Application.Interfaces;
 using HRMNS.Application.ViewModels.Time_Attendance;
 using HRMNS.Data.EF.Extensions;
+using HRMNS.Utilities.Common;
+using HRMNS.Utilities.Constants;
+using HRMNS.Utilities.Dtos;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace HRMS.Areas.Admin.Controllers
@@ -106,8 +112,8 @@ namespace HRMS.Areas.Admin.Controllers
         [HttpGet]
         public object Get(DataSourceLoadOptions loadOptions, string month)
         {
-            string _month = DateTime.Parse(month).ToString("yyyy-MM") + "-01";
-            return DataSourceLoader.Load(_dcChamCongService.GetAll("", y => y.HR_NHANVIEN).Where(x => string.Compare(x.NgayDieuChinh?.ToString("yyyy-MM-dd"), _month) >= 0), loadOptions);
+            string _month = DateTime.Parse(month).ToString("yyyy-MM");
+            return DataSourceLoader.Load(_dcChamCongService.GetAll("", y => y.HR_NHANVIEN,x =>x.HR_NHANVIEN.HR_BO_PHAN_DETAIL).Where(x => x.NgayDieuChinh2.Contains(_month)), loadOptions);
         }
 
         [HttpPost]
@@ -135,6 +141,48 @@ namespace HRMS.Areas.Admin.Controllers
         public void Delete(int key)
         {
             _dcChamCongService.Delete(key);
+        }
+
+
+        [HttpPost]
+        [RequestFormLimits(MultipartBodyLengthLimit = 209715200)]
+        [RequestSizeLimit(209715200)]
+        public IActionResult ImportExcel(IList<IFormFile> files)
+        {
+            if (files != null && files.Count > 0)
+            {
+                var file = files[0];
+                var filename = ContentDispositionHeaderValue
+                                   .Parse(file.ContentDisposition)
+                                   .FileName
+                                   .Trim('"');
+
+                string folder = _hostingEnvironment.WebRootPath + $@"\uploaded\excels";
+                if (!Directory.Exists(folder))
+                {
+                    Directory.CreateDirectory(folder);
+                }
+
+                string filePath = Path.Combine(folder, CorrelationIdGenerator.GetNextId() + filename);
+                using (FileStream fs = System.IO.File.Create(filePath))
+                {
+                    file.CopyTo(fs);
+                    fs.Flush();
+                }
+
+                ResultDB rs = _dcChamCongService.ImportExcel(filePath);
+                if (rs.ReturnInt != 0)
+                    return new NotFoundObjectResult(rs.ReturnString);
+
+                if (System.IO.File.Exists(filePath))
+                {
+                    // If file found, delete it    
+                    System.IO.File.Delete(filePath);
+                }
+                _dcChamCongService.Save();
+                return new OkObjectResult(filePath);
+            }
+            return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
         }
         #endregion
     }

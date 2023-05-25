@@ -28,13 +28,19 @@ namespace HRMNS.Data.Entities
             TRAINING_NHANVIEN = new HashSet<TRAINING_NHANVIEN>();
             HR_THAISAN_CONNHO = new HashSet<HR_THAISAN_CONNHO>();
             HR_SALARY = new HashSet<HR_SALARY>();
+            HR_SALARY_PHATSINH = new HashSet<HR_SALARY_PHATSINH>();
+            HR_SALARY_HISTORY = new HashSet<HR_SALARY_HISTORY>();
+            CONGDOAN_NOT_JOIN = new HashSet<CONGDOAN_NOT_JOIN>();
+            BANG_CONG_EXTENTION = new HashSet<BANG_CONG_EXTENTION>();
+            NHANVIEN_INFOR_EX = new HashSet<NHANVIEN_INFOR_EX>();
+            HR_KY_LUAT_KHENTHUONG = new HashSet<HR_KY_LUAT_KHENTHUONG>();
         }
 
         public HR_NHANVIEN
             (string id, string tenNV, string maChucDanh, string maBoPhan, string gioiTinh, string ngaySinh, string noiSinh, string tinhTrangHonNhan, string danToc, string tonGiao, string diaChiThuongTru,
             string soDienThoai, string soDienThoaiNguoiThan, string quanHeNguoiThan, string cMTND, string ngayCapCMTND, string noiCapCMTND, string soTaiKhoanNH,
             string tenNganHang, string truongDaoTao, string ngayVao, string nguyenQuan, string dChiHienTai, string kyLuatLD, string maBHXH, string maSoThue, int soNguoiGiamTru,
-            string email, string note, string ngayNghiViec, string status, string image, string isDelete, int? maBoPhanChiTiet, string noiTuyenDung)
+            string email, string note, string ngayNghiViec, string status, string image, string isDelete, int? maBoPhanChiTiet, string noiTuyenDung,string mabophan2)
         {
             Id = id;
             TenNV = tenNV;
@@ -71,6 +77,7 @@ namespace HRMNS.Data.Entities
             IsDelete = isDelete;
             MaBoPhanChiTiet = maBoPhanChiTiet;
             NoiTuyenDung = noiTuyenDung;
+            MaBoPhan2 = mabophan2;
         }
 
         [StringLength(250)]
@@ -191,6 +198,9 @@ namespace HRMNS.Data.Entities
         [StringLength(100)]
         public string TrucTiepSX { get; set; }
 
+        [StringLength(50)]
+        public string MaBoPhan2 { get; set; }
+
         [ForeignKey("MaBoPhan")]
         public virtual BOPHAN BOPHAN { get; set; }
 
@@ -218,5 +228,12 @@ namespace HRMNS.Data.Entities
         public virtual ICollection<TRAINING_NHANVIEN> TRAINING_NHANVIEN { get; set; }
         public virtual ICollection<DANGKY_DIMUON_VSOM_NHANVIEN> DANGKY_DIMUON_VSOM_NHANVIEN { get; set; }
         public virtual ICollection<HR_SALARY> HR_SALARY { get; set; }
+
+        public virtual ICollection<HR_SALARY_PHATSINH> HR_SALARY_PHATSINH { get; set; }
+        public virtual ICollection<HR_SALARY_HISTORY> HR_SALARY_HISTORY { get; set; }
+        public virtual ICollection<CONGDOAN_NOT_JOIN> CONGDOAN_NOT_JOIN { get; set; }
+        public virtual ICollection<BANG_CONG_EXTENTION> BANG_CONG_EXTENTION { get; set; }
+        public virtual ICollection<NHANVIEN_INFOR_EX> NHANVIEN_INFOR_EX { get; set; }
+        public virtual ICollection<HR_KY_LUAT_KHENTHUONG> HR_KY_LUAT_KHENTHUONG { get; set; }
     }
 }

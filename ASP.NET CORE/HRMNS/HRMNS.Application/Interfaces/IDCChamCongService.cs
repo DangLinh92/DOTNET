@@ -23,7 +23,7 @@ namespace HRMNS.Application.Interfaces
         List<DCChamCongViewModel> GetAll(string keyword, params Expression<Func<DC_CHAM_CONG, object>>[] includeProperties);
 
         DCChamCongViewModel GetById(int id, params Expression<Func<DC_CHAM_CONG, object>>[] includeProperties);
-
+        ResultDB ImportExcel(string path);
         void Save();
     }
 }

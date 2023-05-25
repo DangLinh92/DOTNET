@@ -1,0 +1,229 @@
+﻿
+@{
+    ViewData["Title"] = "Thông Tin Phụ Cấp";
+    Layout = "~/Areas/Payroll/Views/Shared/_Layout.cshtml";
+}
+@section Styles {
+
+}
+
+@section Scripts
+{
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+
+    <script>
+
+        function exportingDH(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('PhuCapDocHai');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'PhuCapDocHai.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('PhuCapChucVu');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'PhuCapChucVu.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        function calculateFilterExpression(filterValue, selectedFilterOperation, target) {
+            if (target === "search" && typeof (filterValue) === "string") {
+                return [this.dataField, "contains", filterValue]
+            }
+
+            return function (data) {
+                return (data.AssignedEmployee || []).indexOf(filterValue) !== -1
+            }
+        }
+
+        // chon thang
+        function selectedDate_changed(data) {
+            console.log(data.value);
+            const dataGridDataSource = $("#gridContainer").dxDataGrid("getDataSource");
+            dataGridDataSource.reload();
+        };
+
+        function getMonth() {
+
+            var dateBox = $("#txt_month").dxDateBox("instance");
+
+            let sDate = dateBox.option('value');
+
+            return sDate;
+        }
+    </script>
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Thông Tin Phụ Cấp</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/Payroll/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Thông Tin Phụ Cấp</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!--<div class="row align-items-center">
+        <div class="col">
+            <div class="form">
+                <div class="dx-fieldset">
+                    <div class="dx-field">
+                        <div>-->
+                            @*@(Html.DevExtreme().DateBox()
+                                      .ID("txt_month")
+                                      .Value(DateTime.Now.ToString("yyyy-MM-dd"))
+                                      .CalendarOptions(x=>x.MaxZoomLevel(CalendarZoomLevel.Year))
+                                      .DisplayFormat("yyyy-MM")
+                                      .Width(200)
+                                      .Placeholder("Select...")
+                                      .Label("Year")
+                                      .OnValueChanged("selectedDate_changed")
+                                )*@
+
+                        <!--</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>-->
+
+    <div class="row">
+        <div class="col-md-7">
+            @(Html.DevExtreme().DataGrid<ChucDanhViewModel>
+    ()
+    .ID("gridContainer")
+    .Height(720)
+    .ShowBorders(true)
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnMinWidth(50)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+    .OnExporting("exporting")
+    .FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+    .Editing(editing => {
+        editing.Mode(GridEditMode.Popup);
+        editing.AllowUpdating(true);
+        editing.AllowAdding(true);
+        editing.AllowDeleting(true);
+    })
+    .Columns(columns => {
+        columns.AddFor(m => m.Id).Caption("Mã Chức Vụ(Tiếng Anh)").AllowEditing(true);
+        columns.AddFor(m => m.TenChucDanh).Caption("Tên Chức Vụ").AllowEditing(true);
+       @* columns.AddFor(m => m.PhuCap).Format(Format.FixedPoint).Caption("Phụ Cấp").AllowEditing(true);*@
+    })
+    .DataSource(d => d.Mvc()
+    .Area("Payroll")
+    .Controller("ChucDanh")
+    .LoadAction("GetAll")
+    .UpdateAction("Put")
+    .InsertAction("Post")
+    .DeleteAction("Delete")
+    .Key("Id")
+    ).Summary(s => s.TotalItems(items =>
+    {
+        items.AddFor(m => m.Id)
+            .SummaryType(SummaryType.Count);
+    })
+    )
+    )
+        </div>
+        <div class="col-md-5">
+            @(Html.DevExtreme().DataGrid<PHUCAP_DOC_HAI>
+    ()
+    .ID("gridContainerdh")
+    .Height(720)
+    .ShowBorders(true)
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnMinWidth(50)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(true)
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+    .OnExporting("exportingDH")
+    .FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+    .Editing(editing => {
+        editing.Mode(GridEditMode.Popup);
+        editing.AllowUpdating(true);
+        editing.AllowAdding(true);
+        editing.AllowDeleting(true);
+    })
+    .Columns(columns => {
+        columns.AddFor(m => m.Id).Visible(false).AllowEditing(false);
+        columns.AddFor(m => m.BoPhan)
+               .Caption("Bộ Phận").AllowEditing(true)
+               .Lookup(lookup => lookup
+               .DataSource(d => d.Mvc().Controller("PhuCapLuong").LoadAction("GetBoPhanAll").Key("Id"))
+               .ValueExpr("Id")
+               .DisplayExpr("TenBoPhan")
+           )
+       .CalculateFilterExpression("calculateFilterExpression")
+       .Width(200);
+      @*  columns.AddFor(m => m.PhuCap).Caption("Phụ Cấp Độc Hại").AllowEditing(true);*@
+        columns.AddFor(m => m.Note).Caption("Note").AllowEditing(true);
+    })
+    .DataSource(d => d.Mvc()
+    .Area("Payroll")
+    .Controller("PhuCapLuong")
+    .LoadAction("GetPCDH")
+    .UpdateAction("UpdatePCDH")
+    .InsertAction("InsertPCDH")
+    .DeleteAction("DeleteDH")
+    .Key("Id")
+    ).Summary(s => s.TotalItems(items =>
+    {
+        items.AddFor(m => m.Id)
+            .SummaryType(SummaryType.Count);
+    })
+    )
+    )
+        </div>
+    </div>
+</div>
+
+

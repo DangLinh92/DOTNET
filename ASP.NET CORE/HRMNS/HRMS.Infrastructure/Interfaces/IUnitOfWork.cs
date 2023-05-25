@@ -13,4 +13,12 @@ namespace HRMS.Infrastructure.Interfaces
         /// </summary>
         void Commit();
     }
+
+    public interface IPayrollUnitOfWork : IDisposable
+    {
+        /// <summary>
+        /// Call save change from db context
+        /// </summary>
+        void Commit();
+    }
 }

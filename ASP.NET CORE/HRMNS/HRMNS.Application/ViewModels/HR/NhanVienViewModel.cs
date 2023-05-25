@@ -107,7 +107,8 @@ namespace HRMNS.Application.ViewModels.HR
         public string UserModified { get; set; }
 
         public string IsDelete { get; set; }
-
+        public string MaBoPhan2 { get; set; }
+        
         public BoPhanViewModel BOPHAN { get; set; }
         public ICollection<BHXHViewModel> HR_BHXH { get; set; }
         public ChucDanhViewModel HR_CHUCDANH { get; set; }

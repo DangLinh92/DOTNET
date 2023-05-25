@@ -37,9 +37,36 @@ namespace HRMNS.Application.Implementation
             {
                 chucDanh = chucDanh.Where(x => x.TenChucDanh.Contains(filter));
             }
+            return _mapper.Map<List<ChucDanhViewModel>>(chucDanh.OrderByDescending(x=>x.PhuCap));
+        }
 
-            return _mapper.Map<List<ChucDanhViewModel>>(chucDanh);
+        public ChucDanhViewModel Add(ChucDanhViewModel model)
+        {
+            var en = _mapper.Map<HR_CHUCDANH>(model);
+            _chucDanhRepository.Add(en);
+            return model;
+        }
 
+        public ChucDanhViewModel Update(HR_CHUCDANH model)
+        {
+            _chucDanhRepository.Update(model);
+            return _mapper.Map<ChucDanhViewModel>(model);
+        }
+
+        public ChucDanhViewModel GetById(string id)
+        {
+            var chucDanh = _chucDanhRepository.FindById(id);
+            return _mapper.Map<ChucDanhViewModel>(chucDanh);
+        }
+
+        public void Delete(string id)
+        {
+            _chucDanhRepository.Remove(id);
+        }
+
+        public void Save()
+        {
+            _unitOfWork.Commit();
         }
     }
 }

@@ -89,6 +89,10 @@
         }
     </style>
 }
+
+@{
+    string ngayChotNextMonth = ViewBag.NgayChotCongNextMonth;
+}
 <!-- Page Content -->
 <div class="content container-fluid">
     <!-- Page Header -->
@@ -103,7 +107,15 @@
             </div>
 
             <div class="col-auto float-right ml-auto">
-                <a href="#" id="btnExportData" class="btn add-btn"><i class="fa fa-arrow-circle-down"></i>Xuất bảng công</a>
+                @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 && (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin" || User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR"))
+                {
+                    if (ngayChotNextMonth.CompareTo(DateTime.Now.ToString("yyyy-MM-dd")) <= 0 || User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin")
+                    {
+                        <a href="#" id="btnChotCong" class="btn add-btn"><i class="fa fa-arrow-circle-down"></i>Chốt Bảng Công Tháng</a>
+                    }
+                }
+
+                <a href="#" id="btnExportData" class="btn add-btn"><i class="fa fa-arrow-circle-down"></i>Xuất Bảng Công</a>
                 <div class="btn-group" style="margin-right:5px">
                     <button type="button" class="btn btn-info dropdown-toggle" id="btnmanagement" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Management</button>
                     <div class="dropdown-menu" style="">

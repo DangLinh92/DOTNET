@@ -208,7 +208,7 @@ namespace HRMNS.Application.Implementation
                 if (!string.IsNullOrEmpty(timeFrom) && !string.IsNullOrEmpty(timeTo))
                 {
                     var lstCC = _chamCongLogRepository.FindAll(x => string.Compare(x.Ngay_ChamCong, timeFrom) >= 0 && string.Compare(x.Ngay_ChamCong, timeTo) <= 0).OrderByDescending(x => x.Ngay_ChamCong).ToList();
-                    var lst = lstCC.Where(x => x.Department.Contains(dept)).OrderByDescending(x => x.Ngay_ChamCong).ToList();
+                    var lst = lstCC.Where(x => x.Department == dept).OrderByDescending(x => x.Ngay_ChamCong).ToList();
 
                     var lstNV = _nhanvienRepository.FindAll(x => x.MaBoPhan == Department);
                     if (lstNV.Count() > 0)
@@ -235,7 +235,7 @@ namespace HRMNS.Application.Implementation
                 else if (string.IsNullOrEmpty(timeFrom) && string.IsNullOrEmpty(timeTo))
                 {
                     var lst = GetAll("");
-                    var vm = lst.FindAll(x => x.Department.Contains(dept));
+                    var vm = lst.FindAll(x => x.Department == dept);
 
                     var lstNV = _nhanvienRepository.FindAll(x => x.MaBoPhan == Department);
                     if (lstNV.Count() > 0)

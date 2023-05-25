@@ -21,6 +21,8 @@ namespace HRMNS.Application.Interfaces
 
         HopDongViewModel GetByMaHD(string maHd);
 
+        List<HopDongViewModel> GetNVHetHanHD();
+
         void Save();
     }
 }

@@ -240,7 +240,8 @@ namespace HRMS.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetById(int id)
         {
-            return new OkObjectResult(_chamCongDacBietService.GetById(id));
+            var en = _chamCongDacBietService.GetById(id);
+            return new OkObjectResult(en);
         }
 
         [HttpPost]

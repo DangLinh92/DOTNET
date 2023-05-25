@@ -1,0 +1,273 @@
+﻿
+@{
+    ViewData["Title"] = "Bảng công chi tiết";
+    Layout = "~/Areas/Payroll/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts{
+    <script>
+
+        function selectedDate_changed(data) {
+            let sDate = data.value;
+            if (sDate == '') {
+                var date = new Date();
+            }
+            else {
+                var date = new Date(sDate);
+            }
+
+            // Get year, month, and day part from the date
+            var year = date.toLocaleString("default", { year: "numeric" });
+            var month = date.toLocaleString("default", { month: "numeric" });
+
+            if (Number(month) < 10) {
+                month = '0' + month;
+            }
+            let _time = year + '-' + month + '-01';
+            hrms.run_waitMe($('#contentLuong'));
+            $.ajax({
+                type: "POST",
+                url: "/Payroll/BangLuongChiTiet/ViewBangCongByMonth",
+                data:
+                {
+                    time: _time
+                },
+                success: function (response) {
+                    location.reload();
+                    hrms.hide_waitMe($('#contentLuong'));
+                },
+                error: function (status) {
+                    hrms.notify(status.responseText, 'error', 'alert', function () { });
+                    hrms.hide_waitMe($('#contentLuong'));
+                }
+            });
+        };
+
+        $("#btnViewData").on('click', function () {
+
+            var dateBox = $("#txt_year").dxDateBox("instance");
+            let _time = dateBox.option('text') + '-01';
+
+            hrms.run_waitMe($('#contentLuong'));
+            $.ajax({
+                type: "POST",
+                url: "/Payroll/BangLuongChiTiet/ViewBangCongByMonth",
+                data:
+                {
+                    time: _time
+                },
+                success: function (response) {
+                    hrms.hide_waitMe($('#contentLuong'));
+                    location.reload();
+                },
+                error: function (status) {
+                    hrms.notify(status.responseText, 'error', 'alert', function () { });
+                    hrms.hide_waitMe($('#contentLuong'));
+                }
+            });
+        });
+
+        $("#btnChotLuong").on('click', function () {
+
+            var dateBox = $("#txt_year").dxDateBox("instance");
+            let _time = dateBox.option('text');
+
+            if (!_time) {
+                hrms.notify('Hãy nhập tháng chốt công!', 'error', 'alert', function () { });
+                return;
+            }
+
+            hrms.run_waitMe($('#contentLuong'));
+
+            $.ajax({
+                type: "POST",
+                url: "/Payroll/BangLuongChiTiet/ChotBangLuong",
+                data:
+                {
+                    thang: _time
+                },
+                success: function (response) {
+                    hrms.hide_waitMe($('#contentLuong'));
+                    hrms.notify("Chốt Lương OK", 'Success', 'alert', function () {
+                    });
+                },
+                error: function (status) {
+                    hrms.notify(status.responseText, 'error', 'alert', function () { });
+                    hrms.hide_waitMe($('#contentLuong'));
+                }
+            });
+        });
+
+        /* Import, export*/
+        function ImportExcel() {
+            $("#fileInputExcel").val(null);
+            $('#import_File').modal('show');
+        }
+
+        $('#btnCloseImportExcel').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+            if (files.length > 0) {
+                $("#fileInputExcel").val(null);
+                $('#hd-ImportData').val('');
+                $('#import_File').modal('hide');
+                location.reload();
+            }
+        });
+
+        $('#btnCloseImport').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+            if (files.length > 0) {
+                $("#fileInputExcel").val(null);
+                $('#hd-ImportData').val('');
+                $('#import_File').modal('hide');
+                location.reload();
+            }
+        });
+
+        $('#btnImportExcel').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+
+            // Create FormData object
+            var fileData = new FormData();
+
+            // Looping over all files and add it to FormData object
+            for (var i = 0; i < files.length; i++) {
+                fileData.append("files", files[i]);
+            }
+
+            var type = $('#hd-ImportData').val();
+            var _url = '/Payroll/BangLuongChiTiet/ImportExcel';
+            hrms.run_waitMe($('#contentLuong'));
+            $.ajax({
+                url: _url,
+                type: 'POST',
+                data: fileData,
+                processData: false,  // tell jQuery not to process the data
+                contentType: false,  // tell jQuery not to set contentType
+                success: function (data) {
+                    hrms.hide_waitMe($('#contentLuong'));
+                    $('#import_File').modal('hide');
+                    hrms.notify("Import success!", 'Success', 'alert', function () {
+                        location.reload();
+                    });
+                },
+                error: function (status) {
+                    hrms.hide_waitMe($('#contentLuong'));
+                    hrms.notify('error: Import error!', 'error', 'alert', function () { });
+                }
+            });
+            return false;
+        });
+    </script>
+
+}
+
+@section Styles{
+    <style>
+        .button-container {
+            padding-bottom: 16px;
+        }
+    </style>
+}
+
+@{
+    string thangView = ViewBag.ThangChotCong;
+}
+
+<div class="content container-fluid" id="contentLuong">
+
+    <div class="row align-items-center">
+        <div class="col">
+            <div class="form">
+                <div class="dx-fieldset">
+                    <div class="dx-field" style="float: left; display: inline-block; ">
+                        <div>
+                            @(Html.DevExtreme().DateBox()
+                                  .ID("txt_year")
+                                  .Value(DateTime.Parse(thangView).ToString("yyyy-MM"))
+                                  .CalendarOptions(x=>x.MaxZoomLevel(CalendarZoomLevel.Year))
+                                  .DisplayFormat("yyyy-MM")
+                                  .Width(200)
+                                  .Placeholder("Select...")
+                                  .Label("Month")
+                            )
+
+                        </div>
+                    </div>
+                    <div style="float: left; margin: 5px;">
+                        <a href="#" id="btnViewData" class="btn btn-info">View Data</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-auto float-right ml-auto" style="margin-right:100px;">
+            <a href="#" id="btnChotLuong" class="btn add-btn"><i class="fa fa-arrow-circle-down"></i>Chốt Bảng Lương Tháng</a>
+            @*<div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" id="btnImport" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width:100px">Excel</button>
+                <div class="dropdown-menu" style="">
+                    <a class="dropdown-item" href="~/templates/SalaryBaseInformation.xlsx">File mẫu import thông tin Lương Cơ Bản</a>
+                    <a class="dropdown-item" id="btnImport" onclick="ImportExcel()">Import Lương CB</a>
+                </div>
+            </div>*@
+        </div>
+    </div>
+
+    <div class="button-container">
+        <form id="formExport" method="post">
+            <input name="SpreadsheetWorkSessionId" type="hidden" value="" />
+            <div id="button-download-xlsx"></div>
+            <div id="button-download-html"></div>
+            <div id="button-print"></div>
+        </form>
+    </div>
+
+    <script type="text/javascript">
+    $(function () {
+        $("#button-download-xlsx").dxButton({
+            icon: "download",
+            type: "normal",
+            text: "Download as Xlsx",
+            onClick: function (e) {
+                var spreadsheetState = spreadsheet.getSpreadsheetState();
+                $("#formExport").attr('action', '@Url.Action("DownloadXlsx")');
+                $("input[name='SpreadsheetWorkSessionId']").val(spreadsheetState.SpreadsheetWorkSessionId);
+
+            },
+            useSubmitBehavior: true
+        });
+        @*$("#button-download-html").dxButton({
+            icon: "download",
+            type: "normal",
+            text: "Download as Html",
+            onClick: function (e) {
+                var spreadsheetState = spreadsheet.getSpreadsheetState();
+                $("#formExport").attr('action', '@Url.Action("DownloadHtml")');
+                $("input[name='SpreadsheetWorkSessionId']").val(spreadsheetState.SpreadsheetWorkSessionId);
+            },
+            useSubmitBehavior: true
+        });
+        $("#button-print").dxButton({
+            icon: "print",
+            type: "normal",
+            text: "Print document",
+            onClick: function(e) {
+                spreadsheet.print("_blank");
+            }
+        });*@
+    });
+    </script>
+    @(Html.DevExpress()
+    .Spreadsheet("spreadsheet")
+    .Height("800px")
+    .Width("100%")
+    .ConfirmOnLosingChanges(confirm => confirm.Enabled(false))
+    .DocumentRequestHandlerUrl(Url.Action("DxDocumentRequest"))
+    .Open((string)ViewData["DocumentPath"])
+    )
+</div>
+<partial name="_ImportExcelModel" />
+
+
