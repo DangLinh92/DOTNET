@@ -15,7 +15,7 @@ namespace OMNS_Weebhook_Service
             StreamWriter sw = null;
             try
             {
-                string path = AppDomain.CurrentDomain.BaseDirectory + "\\LogFile_OMNS.txt";
+                string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LogFile_OMNS_" + DateTime.Now.ToString("yyyyMM") + ".txt");
                 if (File.Exists(path))
                 {
                     File.Delete(path);
@@ -33,7 +33,7 @@ namespace OMNS_Weebhook_Service
 
         public static string ReadDBNameLog()
         {
-            string path = AppDomain.CurrentDomain.BaseDirectory + "\\LogFile_OMNS.txt";
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LogFile_OMNS_" + DateTime.Now.ToString("yyyyMM") + ".txt");
             string time = "";
             if (File.Exists(path))
             {
@@ -45,7 +45,7 @@ namespace OMNS_Weebhook_Service
 
         public static string ReadTimeLog()
         {
-            string path = AppDomain.CurrentDomain.BaseDirectory + "\\LogFile_OMNS.txt";
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LogFile_OMNS_" + DateTime.Now.ToString("yyyyMM") + ".txt");
             string time = "";
             if (File.Exists(path))
             {
@@ -60,7 +60,8 @@ namespace OMNS_Weebhook_Service
             StreamWriter sw = null;
             try
             {
-                sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + "\\LogFile_OMNS.txt", true);
+                string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LogFile_OMNS_" + DateTime.Now.ToString("yyyyMM") + ".txt");
+                sw = new StreamWriter(path, true);
                 sw.WriteLine(DateTime.Now.ToString() + ": " + ex.Source.ToString().Trim() + "; " + ex.Message.ToString().Trim());
                 sw.Flush();
                 sw.Close();
@@ -75,7 +76,8 @@ namespace OMNS_Weebhook_Service
             StreamWriter sw = null;
             try
             {
-                sw = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + "\\LogFile_OMNS.txt", true);
+                string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LogFile_OMNS_" + DateTime.Now.ToString("yyyyMM")+".txt");
+                sw = new StreamWriter(path, true);
                 sw.WriteLine(DateTime.Now.ToString() + ": " + Message);
                 sw.Flush();
                 sw.Close();
