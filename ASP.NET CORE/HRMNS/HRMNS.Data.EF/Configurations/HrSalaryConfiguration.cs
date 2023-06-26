@@ -80,21 +80,21 @@ namespace HRMNS.Data.EF.Configurations
         }
     }
 
-    class HrBangCongHistoryPrConfiguration : DbEntityConfiguration<BANGLUONGCHITIET_HISTORY_PR>
-    {
-        public override void Configure(EntityTypeBuilder<BANGLUONGCHITIET_HISTORY_PR> entity)
-        {
-            entity.HasKey(c => c.Id);
-            entity.Property(c => c.Id).ValueGeneratedOnAdd();
-        }
-    }
+    //class HrBangCongHistoryPrConfiguration : DbEntityConfiguration<BANGLUONGCHITIET_HISTORY_PR>
+    //{
+    //    public override void Configure(EntityTypeBuilder<BANGLUONGCHITIET_HISTORY_PR> entity)
+    //    {
+    //        entity.HasKey(c => c.Id);
+    //        entity.Property(c => c.Id).ValueGeneratedOnAdd();
+    //    }
+    //}
 
-    class HrSalaryPhatSinhPRConfiguration : DbEntityConfiguration<HR_SALARY_PHATSINH_PR>
-    {
-        public override void Configure(EntityTypeBuilder<HR_SALARY_PHATSINH_PR> entity)
-        {
-            entity.HasKey(c => c.Id);
-            entity.Property(c => c.Id).ValueGeneratedOnAdd();
-        }
-    }
+    //class HrSalaryPhatSinhPRConfiguration : DbEntityConfiguration<HR_SALARY_PHATSINH_PR>
+    //{
+    //    public override void Configure(EntityTypeBuilder<HR_SALARY_PHATSINH_PR> entity)
+    //    {
+    //        entity.HasKey(c => c.Id);
+    //        entity.Property(c => c.Id).ValueGeneratedOnAdd();
+    //    }
+    //}
 }

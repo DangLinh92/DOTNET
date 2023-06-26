@@ -40,5 +40,6 @@ namespace HRMNS.Application.ViewModels.HR
     {
         [StringLength(50)]
         public string NameNV { get; set; }
+        public string BoPhan { get; set; }
     }
 }

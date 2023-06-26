@@ -67,7 +67,7 @@ namespace OPERATION_MNS.Application.Implementation
         public async Task DeleteRole(string id)
         {
             var roleEn = await _roleManager.FindByIdAsync(id);
-            await _roleManager.DeleteAsync(roleEn);
+             await _roleManager.DeleteAsync(roleEn);
         }
 
         public void SaveRole()

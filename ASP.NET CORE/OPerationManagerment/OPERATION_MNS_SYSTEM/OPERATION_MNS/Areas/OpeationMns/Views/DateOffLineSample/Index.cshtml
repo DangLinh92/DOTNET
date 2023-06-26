@@ -1,0 +1,104 @@
+﻿@{
+    ViewData["Title"] = "Date Offline";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+@section Styles {
+
+}
+
+@section Scripts
+    {
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+
+    <script>
+
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('Date Offline');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'Date_Offline.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+    </script>
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Danh Sách Ngày Nghỉ(Trừ chủ nhật)</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Date_Offline</li>
+                </ul>
+            </div>
+            <div class="col-auto float-right ml-auto">
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            @(Html.DevExtreme().DataGrid<DATE_OFF_LINE_SAMPLE>()
+                .ID("gridContainer")
+                .Height(720)
+                .ShowBorders(true)
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .AllowColumnResizing(true)
+                .ColumnMinWidth(50)
+                .ColumnAutoWidth(true)
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+                .OnExporting("exporting")
+                .FilterRow(filterRow => filterRow
+                .Visible(true)
+                .ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .HoverStateEnabled(true)
+                .SearchPanel(searchPanel => searchPanel
+                .Visible(true)
+                .Width(240)
+                .Placeholder("Search...")
+                )
+                .Editing(editing =>
+                {
+                    editing.Mode(GridEditMode.Form);
+                    editing.AllowUpdating(true);
+                    editing.AllowAdding(true);
+                    editing.AllowDeleting(true);
+                })
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.Id).Visible(false).AllowEditing(false);
+                    columns.AddFor(m => m.ItemValue).Width(200).Caption("Ngày Nghỉ(Trừ Chủ Nhật)(yyyy-MM-dd)").AllowEditing(true);
+                    columns.AddFor(m => m.NoiDung).Caption("Nội Dung").AllowEditing(true);
+                }).WordWrapEnabled(true)
+                .DataSource(d => d.Mvc()
+                .Area("OpeationMns")
+                .Controller("DateOffLineSample")
+                .LoadAction("Get")
+                .UpdateAction("Put")
+                .InsertAction("Post")
+                .DeleteAction("Delete")
+                .Key("Id")
+                )
+                )
+        </div>
+    </div>
+</div>

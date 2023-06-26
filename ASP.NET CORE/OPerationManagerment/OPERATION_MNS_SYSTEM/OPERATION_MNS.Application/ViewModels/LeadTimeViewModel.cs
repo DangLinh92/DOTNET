@@ -115,5 +115,6 @@ namespace OPERATION_MNS.Application.ViewModels
         public double Value_runtime { get; set; }
         public double Value_waittime { get; set; }
         public double Value_target { get; set; }
+
     }
 }

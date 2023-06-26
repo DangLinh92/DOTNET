@@ -5,7 +5,7 @@
 }
 
 @section Scripts
-{
+    {
     <script>
         var permisstionLst = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.PermisstionForRoleModels))');
         var roleLst = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.RoleModels))');
@@ -22,7 +22,7 @@
 
             if (!permisstionLst.find(e => e.FunctionId == functionId)) {
                 let newObj = {
-                    Id : null,
+                    Id: null,
                     RoleId: roleId,
                     FunctionId: functionId,
                     CanCreate: false,
@@ -63,8 +63,6 @@
                     }
                 }
             }
-
-            console.log(permisstionLst);
         }
 
         $(document).ready(function () {
@@ -78,8 +76,7 @@
                 $('#frmRoleChange').submit();
             };
 
-            ulClick = function (roleName, roleId, e)
-            {
+            ulClick = function (roleName, roleId, e) {
                 e.stopImmediatePropagation();
                 e.stopPropagation();
                 $('#txtRoleId').val(roleId);
@@ -102,20 +99,35 @@
             });
 
             $('#btnSave').on('click', function (e) {
+                console.log(permisstionLst);
                 $.ajax({
-                    type: "POST",
+                    type: 'POST',
                     url: "/OpeationMns/RoleAndPermisstion/SavePermission",
-                    data:
-                    {
-                        model: permisstionLst
-                    },
-                    success: function (response) {
+                    data: JSON.stringify(permisstionLst),
+                    datatype: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    async: false,
+                    success: function (result) {
                         hrms.notify("Update date success!", 'Success', 'alert', function () { });
                     },
-                    error: function (status) {
+                    error: function (result) {
                         hrms.notify(status.responseText, 'error', 'alert', function () { });
                     }
                 });
+
+                //$.ajax({
+                //    dataType: "json",
+                //    contentType: "application/json; charset=utf-8",
+                //    type: "POST",
+                //    url: "/OpeationMns/RoleAndPermisstion/SavePermission",
+                //    data: JSON.stringify({ model: permisstionLst }),
+                //    success: function (response) {
+                //        hrms.notify("Update date success!", 'Success', 'alert', function () { });
+                //    },
+                //    error: function (status) {
+                //        hrms.notify(status.responseText, 'error', 'alert', function () { });
+                //    }
+                //});
             });
         });
 
@@ -179,7 +191,7 @@
                         @foreach (var item in Model.Functions)
                         {
                             <tr>
-                                <td>@(item.Name + " ("+ item.ParentId + ") ") </td>
+                                <td>@(item.Name + " (" + item.ParentId + ") ") </td>
                                 @if (Model.PermisstionForRoleModels.Count > 0)
                                 {
                                     bool exist = false;

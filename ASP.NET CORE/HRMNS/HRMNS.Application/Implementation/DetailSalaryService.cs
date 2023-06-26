@@ -25,10 +25,10 @@ namespace HRMNS.Application.Implementation
         IRespository<HR_PHEP_NAM, int> _phepNamRepository;
         IRespository<HR_SALARY_PHATSINH, int> _luongPhatSinhRepository;
         IRespository<HR_SALARY, int> _salaryRepository;
-        IPayrollRespository<HR_SALARY_PR, int> _salarySqliteRepository;
+        //IPayrollRespository<HR_SALARY_PR, int> _salarySqliteRepository;
         IRespository<DC_CHAM_CONG, int> _dieuchinhCongRepository;
         IRespository<HR_NHANVIEN, string> _nhanVienRepository;
-        IPayrollRespository<BANGLUONGCHITIET_HISTORY_PR, int> _bangluongChiTietHistoryRepository;
+        IRespository<BANGLUONGCHITIET_HISTORY, int> _bangluongChiTietHistoryRepository;
         IRespository<HR_CHUCDANH, string> _chucDanhRepository;
         IRespository<PHUCAP_DOC_HAI, int> _phucapdochaiRepository;
         private IPayrollUnitOfWork _payrollUnitOfWork;
@@ -44,13 +44,11 @@ namespace HRMNS.Application.Implementation
             IRespository<HR_SALARY, int> salaryRepository,
             IRespository<DC_CHAM_CONG, int> dieuchinhCongRepository,
             IRespository<HR_NHANVIEN, string> nhanVienRepository,
-            IPayrollRespository<BANGLUONGCHITIET_HISTORY_PR, int> bangluongChiTietRepository,
+            IRespository<BANGLUONGCHITIET_HISTORY, int> bangluongChiTietRepository,
             IRespository<HR_CHUCDANH, string> chucDanhRepository,
             IRespository<PHUCAP_DOC_HAI, int> phucapdochaiRepository,
             IMapper mapper,
-            IUnitOfWork unitOfWork,
-            IPayrollUnitOfWork payrollUnitOfWork,
-            IPayrollRespository<HR_SALARY_PR, int> salarySqliteRepository)
+            IUnitOfWork unitOfWork)
         {
             _ngayChotCongRepository = ngayChotCongRepository;
             _nhanvienInfoExRepository = nhanvienInfoExRepository;
@@ -66,8 +64,8 @@ namespace HRMNS.Application.Implementation
             _phucapdochaiRepository = phucapdochaiRepository;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
-            _payrollUnitOfWork = payrollUnitOfWork;
-            _salarySqliteRepository = salarySqliteRepository;
+           // _payrollUnitOfWork = payrollUnitOfWork;
+            //_salarySqliteRepository = salarySqliteRepository;
         }
 
         public void Dispose()
@@ -83,7 +81,6 @@ namespace HRMNS.Application.Implementation
                 var lstBangCong = _bangCongExRepository.FindAll(x => x.ThangNam == thangNam, x => x.HR_NHANVIEN, x => x.HR_NHANVIEN.HR_CHUCDANH).ToList();
                 BangLuongChiTietViewModel luong;
                 HR_SALARY salary;
-                HR_SALARY_PR salaryPR;
                 List<HR_SALARY_PHATSINH> phatsinhs;
                 DC_CHAM_CONG dieuChinhCong;
                 HR_PHEP_NAM phepnam;
@@ -131,21 +128,10 @@ namespace HRMNS.Application.Implementation
 
                     if (salary != null)
                     {
-                        salaryPR = _salarySqliteRepository.FindSingle(x => x.MaNV == salary.MaNV);
                         luong.DoiTuongPhuCapDocHai = salary.DoiTuongPhuCapDocHai.NullString().ToLower();
-
-                        if(salaryPR == null)
-                        {
-                            luong.BasicSalary = (double)salary.BasicSalary;
-                            luong.LivingAllowance = (double)salary.LivingAllowance;
-                            luong.AbilityAllowance = (double)salary.AbilityAllowance;
-                        }
-                        else
-                        {
-                            luong.BasicSalary = (double)salaryPR.BasicSalary;
-                            luong.LivingAllowance = (double)salaryPR.LivingAllowance;
-                            luong.AbilityAllowance = (double)salaryPR.AbilityAllowance;
-                        }
+                        luong.BasicSalary = (double)salary.BasicSalary;
+                        luong.LivingAllowance = (double)salary.LivingAllowance;
+                        luong.AbilityAllowance = (double)salary.AbilityAllowance;
 
                         if (salary.DoiTuongPhuCapDocHai.NullString().ToLower() == CommonConstants.X)
                         {
@@ -157,60 +143,60 @@ namespace HRMNS.Application.Implementation
                         }
                     }
 
-                    luong.TongNgayCongThucTe = item.AT_45_TotalALPaid;
-                    luong.NgayCongThuViecBanNgay = item.AN_39_PD;
-                    luong.NgayCongThuViecBanDem = item.AO_40_PN;
-                    luong.NgayCongChinhThucBanNgay = item.AQ_42_DS;
-                    luong.NgayCongChinhThucBanDem = item.AR_43_NS;
-                    luong.NghiViecCoLuong = item.AS_44_AL;
+                    luong.TongNgayCongThucTe = item.TP;
+                    luong.NgayCongThuViecBanNgay = item.PD;
+                    luong.NgayCongThuViecBanDem = item.PN;
+                    luong.NgayCongChinhThucBanNgay = item.DS;
+                    luong.NgayCongChinhThucBanDem = item.NS;
+                    luong.NghiViecCoLuong = item.NCL;
 
-                    luong.GioLamThemTrongTV_150 = item.BM_64_15;
-                    luong.GioLamThemTrongTV_200 = item.BN_65_20;
-                    luong.GioLamThemTrongTV_210 = item.BO_66_21;
-                    luong.GioLamThemTrongTV_270 = item.BP_67_27;
-                    luong.GioLamThemTrongTV_300 = item.BQ_68_30;
-                    luong.GioLamThemTrongTV_390 = item.BR_69_39;
+                    luong.GioLamThemTrongTV_150 = item.OT_TV_15;
+                    luong.GioLamThemTrongTV_200 = item.OT_TV_20;
+                    luong.GioLamThemTrongTV_210 = item.OT_TV_21;
+                    luong.GioLamThemTrongTV_270 = item.OT_TV_27;
+                    luong.GioLamThemTrongTV_300 = item.OT_TV_30;
+                    luong.GioLamThemTrongTV_390 = item.OT_TV_39;
 
-                    luong.GioLamThemTrongCT_150 = item.BS_70_15;
-                    luong.GioLamThemTrongCT_200 = item.BT_71_20;
-                    luong.GioLamThemTrongCT_210 = item.BU_72_21;
-                    luong.GioLamThemTrongCT_270 = item.BV_73_27;
-                    luong.GioLamThemTrongCT_300 = item.BW_74_30;
-                    luong.GioLamThemTrongCT_390 = item.BX_75_39;
+                    luong.GioLamThemTrongCT_150 = item.OT_CT_15;
+                    luong.GioLamThemTrongCT_200 = item.OT_CT_20;
+                    luong.GioLamThemTrongCT_210 = item.OT_CT_21;
+                    luong.GioLamThemTrongCT_270 = item.OT_CT_27;
+                    luong.GioLamThemTrongCT_300 = item.OT_CT_30;
+                    luong.GioLamThemTrongCT_390 = item.OT_CT_39;
 
-                    luong.SoNgayLamCaDemTruocLe_TV = item.AM_38_PH;
-                    luong.SoNgayLamCaDemTruocLe_CT = item.AP_41_BH;
+                    luong.SoNgayLamCaDemTruocLe_TV = item.PH;
+                    luong.SoNgayLamCaDemTruocLe_CT = item.BH;
 
-                    luong.SoNgayLamCaDem_TV = item.AV_47_LamCD_TV;
-                    luong.SoNgayLamCaDem_CT = item.AW_48_LamCD_CT;
+                    luong.SoNgayLamCaDem_TV = item.CD_TV;
+                    luong.SoNgayLamCaDem_CT = item.CD_CT;
 
-                    luong.HoTroThoiGianLamViecTV_150 = item.CB_79_150;
-                    luong.HoTroThoiGianLamViecTV_200_NT = item.CC_80_200;
-                    luong.HoTroThoiGianLamViecTV_200_CN = item.CD_81_200;
-                    luong.HoTroThoiGianLamViecTV_270 = item.CE_82_270;
-                    luong.HoTroThoiGianLamViecTV_300 = item.CF_83_300;
-                    luong.HoTroThoiGianLamViecTV_390 = item.CG_84_390;
+                    luong.HoTroThoiGianLamViecTV_150 = item.TV_150;
+                    luong.HoTroThoiGianLamViecTV_200_NT = item.TV_D_NT_200;
+                    luong.HoTroThoiGianLamViecTV_200_CN = item.TV_CN_200;
+                    luong.HoTroThoiGianLamViecTV_270 = item.TV_D_CN_270;
+                    luong.HoTroThoiGianLamViecTV_300 = item.TV_NL_300;
+                    luong.HoTroThoiGianLamViecTV_390 = item.TV_D_NL_390;
 
-                    luong.HoTroThoiGianLamViecCT_150 = item.CH_85_150;
-                    luong.HoTroThoiGianLamViecCT_200_NT = item.CI_86_200;
-                    luong.HoTroThoiGianLamViecCT_200_CN = item.CJ_87_200;
-                    luong.HoTroThoiGianLamViecCT_270 = item.CK_88_270;
-                    luong.HoTroThoiGianLamViecCT_300 = item.CL_89_300;
-                    luong.HoTroThoiGianLamViecCT_390 = item.CM_90_390;
+                    luong.HoTroThoiGianLamViecCT_150 = item.CT_150;
+                    luong.HoTroThoiGianLamViecCT_200_NT = item.CT_D_NT_200;
+                    luong.HoTroThoiGianLamViecCT_200_CN = item.CT_CN_200;
+                    luong.HoTroThoiGianLamViecCT_270 = item.CT_D_CN_270;
+                    luong.HoTroThoiGianLamViecCT_300 = item.CT_NL_300;
+                    luong.HoTroThoiGianLamViecCT_390 = item.CT_D_NL_390;
 
-                    luong.HoTroNgayThanhLapCty_CaNgayTV = item.BI_60_MD;
-                    luong.HoTroNgayThanhLapCty_CaNgayCT = item.BJ_61_PMD;
-                    luong.HoTroNgayThanhLapCty_CaDemTV_TruocLe = item.BK_62_PM;
-                    luong.HoTroNgayThanhLapCty_CaDemCT_TruocLe = item.BL_63_BM;
+                    luong.HoTroNgayThanhLapCty_CaNgayTV = item.MD;
+                    luong.HoTroNgayThanhLapCty_CaNgayCT = item.PMD;
+                    luong.HoTroNgayThanhLapCty_CaDemTV_TruocLe = item.PM;
+                    luong.HoTroNgayThanhLapCty_CaDemCT_TruocLe = item.BM;
 
-                    luong.NghiKhamThai = item.BG_58_KT;
-                    luong.NghiViecKhongThongBao = item.BE_56_NL;
-                    luong.SoNgayNghiBu_AL30 = item.AY_50_AL30;
-                    luong.SoNgayNghiBu_NB = item.BD_55_NB;
+                    luong.NghiKhamThai = item.KT;
+                    luong.NghiViecKhongThongBao = item.NL;
+                    luong.SoNgayNghiBu_AL30 = item.AL30;
+                    luong.SoNgayNghiBu_NB = item.NB;
 
-                    luong.NghiKhongLuong = item.AU_46_TotalUnPaid;
-                    luong.Probation_Late_Come_Early_Leave_Time = item.BY_76_ELLC;
-                    luong.Official_Late_Come_Early_Leave_Time = item.BZ_77_OCT;
+                    luong.NghiKhongLuong = item.TUP;
+                    luong.Probation_Late_Come_Early_Leave_Time = item.P_TV;
+                    luong.Official_Late_Come_Early_Leave_Time = item.O_CT;
 
                     luong.ThuocDoiTuong_BHXH = salary.ThuocDoiTuongBaoHiemXH;
 
@@ -269,7 +255,7 @@ namespace HRMNS.Application.Implementation
                         }
                         // 2. Số ngày nghỉ không hưởng lương > 14 ngày
                         // 3.Nghỉ thai sản > 14 ngày
-                        else if (item.AU_46_TotalUnPaid > 14)
+                        else if (item.TUP > 14)
                         {
                             luong.DoiTuongThamGiaCD = "o";
                         }
@@ -281,7 +267,7 @@ namespace HRMNS.Application.Implementation
 
                     luong.DoiTuongTruyThuBHYT = salary.DoiTuongTruyThuBHYT;
                     luong.SoConNho = salary.SoConNho;
-                    luong.SoNgayNghi70 = item.BD_55_NB;
+                    luong.SoNgayNghi70 = item.NB;
                     luong.DieuChinhCong_Total = dieuChinhCong != null ? (double)dieuChinhCong?.TongSoTien : 0;
                     luong.TraTienPhepNam_Total = phepnam != null ? (double)phepnam.SoTienChiTra : 0;
 
@@ -304,13 +290,12 @@ namespace HRMNS.Application.Implementation
 
             return bangLuongChiTiets;
         }
-
         public void ChotBangLuong(string time, List<BangLuongChiTietViewModel> data)
         {
-            List<BANGLUONGCHITIET_HISTORY_PR> lstData = _bangluongChiTietHistoryRepository.FindAll(x => x.ThangNam == time).ToList();
-            BANGLUONGCHITIET_HISTORY_PR en;
-            List<BANGLUONGCHITIET_HISTORY_PR> lstUpdate = new List<BANGLUONGCHITIET_HISTORY_PR>();
-            List<BANGLUONGCHITIET_HISTORY_PR> lstAdd = new List<BANGLUONGCHITIET_HISTORY_PR>();
+            List<BANGLUONGCHITIET_HISTORY> lstData = _bangluongChiTietHistoryRepository.FindAll(x => x.ThangNam == time).ToList();
+            BANGLUONGCHITIET_HISTORY en;
+            List<BANGLUONGCHITIET_HISTORY> lstUpdate = new List<BANGLUONGCHITIET_HISTORY>();
+            List<BANGLUONGCHITIET_HISTORY> lstAdd = new List<BANGLUONGCHITIET_HISTORY>();
 
             foreach (BangLuongChiTietViewModel item in data)
             {
@@ -323,7 +308,7 @@ namespace HRMNS.Application.Implementation
                 }
                 else
                 {
-                    en = new BANGLUONGCHITIET_HISTORY_PR();
+                    en = new BANGLUONGCHITIET_HISTORY();
                     en.CopyPropertiesFrom(item, new List<string>() { });
                     lstAdd.Add(en);
                 }
@@ -331,7 +316,7 @@ namespace HRMNS.Application.Implementation
 
             _bangluongChiTietHistoryRepository.AddRange(lstAdd);
             _bangluongChiTietHistoryRepository.UpdateRange(lstUpdate);
-            _payrollUnitOfWork.Commit();
+            _unitOfWork.Commit();
         }
 
         public List<BangLuongChiTietViewModel> GetHistoryBangLuongChiTiet(string thangNam)

@@ -116,7 +116,7 @@
                 <a href="#" id="btnGetLog" class="btn add-btn"><i class="fa fa-arrow-circle-down"></i>Update Log Time</a>
 
                 @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
-(User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin"))
+(User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin" || User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR"))
                 {
                     <a href="#" id="btnGetLogBiostar" class="btn add-btn"><i class="fa fa-arrow-circle-down"></i>Sync Biostar</a>
                 }

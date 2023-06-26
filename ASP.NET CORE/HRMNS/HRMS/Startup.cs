@@ -63,7 +63,7 @@ namespace HRMS
                     Configuration.GetConnectionString("DefaultConnection"), o => o.MigrationsAssembly("HRMNS.Data.EF")));
 
             services.AddDbContext<BioStarDBContext>(option => option.UseSqlServer(@"Data Source = 10.70.22.240;Initial Catalog = BioStar;User Id = sa;Password = qwe123!@#;Connect Timeout=3"));
-            services.AddDbContext<PayrollDBContext>(option => option.UseSqlite(Configuration.GetConnectionString("PayrollConnection"), o => o.MigrationsAssembly("HRMNS.Data.EF")));
+            //services.AddDbContext<PayrollDBContext>(option => option.UseSqlite(Configuration.GetConnectionString("PayrollConnection"), o => o.MigrationsAssembly("HRMNS.Data.EF")));
 
             services.AddIdentity<APP_USER, APP_ROLE>().AddEntityFrameworkStores<AppDBContext>().AddDefaultTokenProviders();
 
@@ -128,9 +128,9 @@ namespace HRMS
 
             // Unit of work and repository
             services.AddTransient(typeof(IUnitOfWork), typeof(EFUnitOfWork));
-            services.AddTransient(typeof(IPayrollUnitOfWork), typeof(EFPayrollUnitOfWork));
+            //services.AddTransient(typeof(IPayrollUnitOfWork), typeof(EFPayrollUnitOfWork));
             services.AddTransient(typeof(IRespository<,>), typeof(EFRepository<,>));
-            services.AddTransient(typeof(IPayrollRespository<,>), typeof(PayrollEFRepository<,>));
+            //services.AddTransient(typeof(IPayrollRespository<,>), typeof(PayrollEFRepository<,>));
 
             // Service
             services.AddTransient<INhanVienService, NhanVienService>();

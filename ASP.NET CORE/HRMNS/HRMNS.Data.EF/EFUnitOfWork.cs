@@ -30,26 +30,26 @@ namespace HRMNS.Data.EF
         }
     }
 
-    public class EFPayrollUnitOfWork : IPayrollUnitOfWork
-    {
-        private readonly PayrollDBContext _context;
-        public EFPayrollUnitOfWork(PayrollDBContext context)
-        {
-            _context = context;
-        }
-        public void Commit()
-        {
-            _context.SaveChanges();
-        }
+    //public class EFPayrollUnitOfWork : IPayrollUnitOfWork
+    //{
+    //    private readonly PayrollDBContext _context;
+    //    public EFPayrollUnitOfWork(PayrollDBContext context)
+    //    {
+    //        _context = context;
+    //    }
+    //    public void Commit()
+    //    {
+    //        _context.SaveChanges();
+    //    }
 
-        public void Dispose()
-        {
-            _context.Dispose();
-        }
+    //    public void Dispose()
+    //    {
+    //        _context.Dispose();
+    //    }
 
-        public PayrollDBContext DBContext()
-        {
-            return _context;
-        }
-    }
+    //    public PayrollDBContext DBContext()
+    //    {
+    //        return _context;
+    //    }
+    //}
 }

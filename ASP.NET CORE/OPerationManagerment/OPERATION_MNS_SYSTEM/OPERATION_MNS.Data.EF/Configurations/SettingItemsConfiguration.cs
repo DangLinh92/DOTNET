@@ -23,4 +23,24 @@ namespace OPERATION_MNS.Data.EF.Configurations
             entity.Property(x => x.Id).ValueGeneratedOnAdd();
         }
     }
+
+    public class DateOffLineSampleConfiguration : DbEntityConfiguration<DATE_OFF_LINE_SAMPLE>
+    {
+        public override void Configure(EntityTypeBuilder<DATE_OFF_LINE_SAMPLE> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
+
+    public class DelayCommentSampleConfiguration : DbEntityConfiguration<DELAY_COMMENT_SAMPLE>
+    {
+        public override void Configure(EntityTypeBuilder<DELAY_COMMENT_SAMPLE> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
+
+    
 }

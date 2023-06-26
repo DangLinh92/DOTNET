@@ -34,5 +34,15 @@ namespace OPERATION_MNS.Application.Interfaces
 
         void Save();
 
+        // Sample
+        StayLotListDisPlayViewModel GetStayLotListSample();
+
+        StayLotList_Ex_ViewModel UpdateLotInfoSample(StayLotList_Ex_ViewModel model, StayLotListDisPlayViewModel stayLotList);
+
+        List<STAY_LOT_LIST_HISTORY_SAMPLE> GetStayLotListHistorySample(string cassetteId, string lotId, string timeFrom, string timeTo);
+
+        List<Stay_lot_list_priory_wlp2ViewModel> GetStayLotListByModelSample(string model, string operation);
+
+        Stay_lot_list_priory_wlp2ViewModel UpdatePrioryLotIdSample(Stay_lot_list_priory_wlp2ViewModel model, int index);
     }
 }

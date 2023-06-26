@@ -24,7 +24,7 @@ namespace HRMNS.Data.EF.Extensions
         }
         public static string IfNullIsZero(this object result)
         {
-            if (result == null)
+            if (result == null || result.NullString() == "-")
                 return "0";
             else
                 return result.ToString().Trim() == "" ? "0" : result.ToString().Trim();

@@ -1,0 +1,155 @@
+﻿@using OPERATION_MNS.Utilities.Common
+@model ViewHistoryHoldLotModel
+@{
+    ViewData["Title"] = "View Hold Lot History";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts
+    {
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+    <script>
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('HoldLotHistory');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'HoldLotHistory.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+    </script>
+}
+
+@section Styles {
+    <style>
+    </style>
+
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">@ViewData["Title"]</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">View Hold Lot History</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <form id="frmSearch" method="post" action="/OpeationMns/HoldLotList/GetLotHoldHistorySample">
+        <div class="row filter-row">
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus select-focus">
+                    <input class="form-control floating" type="text" name="cassetteId" value="@Model.CasseteId">
+                    <label class="focus-label">Cassette ID</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus select-focus">
+                    <input class="form-control floating" type="text" id="txtlotId" name="lotId" value="@Model.LotId">
+                    <label class="focus-label">Lot ID</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus">
+                    <div class="cal-icon">
+                        <input class="form-control floating datetimepicker" type="text" id="searchFromTime" name="timeFrom" value="@Model.FromTime">
+                    </div>
+                    <label class="focus-label">From</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus">
+                    <div class="cal-icon">
+                        <input class="form-control floating datetimepicker" type="text" id="searchToTime" name="timeTo" value="@Model.ToTime">
+                    </div>
+                    <label class="focus-label">To</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <button href="#" class="btn btn-success btn-block" id="btnSearch" type="submit"> Search </button>
+            </div>
+        </div>
+    </form>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive" id="gridHoldHistory">
+                @(Html.DevExtreme().LoadPanel()
+                    .ID("loadPanel")
+                    .Position(p => p.Of("#grid-container-detail"))
+                    .Visible(false)
+                    )
+                @(Html.DevExtreme().DataGrid<STAY_LOT_LIST_HISTORY_SAMPLE>()
+                    .ID("grid-container-detail")
+                    .DataSource(Model.STAY_LOT_LIST_HISTORY_SAMPLE_DATA)
+                    .Height(700)
+                    .ShowBorders(true)
+                    .RepaintChangesOnly(true)
+                    .LoadPanel(loadPanel => loadPanel.Enabled(false))
+                    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                    .Paging(paging => paging.Enabled(false))
+                    .AllowColumnResizing(true)
+                    .ColumnMinWidth(50)
+                    .ColumnAutoWidth(true)
+                    .ShowColumnLines(true)
+                    .ShowRowLines(true)
+                    .RowAlternationEnabled(true)
+                    .FilterRow(filterRow => filterRow
+                    .Visible(true)
+                    .ApplyFilter(GridApplyFilterMode.Auto)
+                    )
+                    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                    .HoverStateEnabled(true)
+                    .Selection(s => s.Mode(SelectionMode.Single))
+                    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+                    .OnExporting("exporting")
+                    .ColumnFixing(x => x.Enabled(true))
+                    .Columns(columns =>
+                    {
+                        columns.AddFor(m => m.CassetteId).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                        columns.AddFor(m => m.LotId).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                        columns.AddFor(m => m.Material).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                        columns.AddFor(m => m.OperationID).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                        columns.AddFor(m => m.OperationName).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                        columns.AddFor(m => m.StayDay).AllowEditing(false);
+                        columns.AddFor(m => m.ChipQty).AllowEditing(false).Format(Format.FixedPoint);
+
+                        columns.AddFor(m => m.HoldTime).AllowEditing(false).Format(Format.LongDateLongTime);
+                        columns.AddFor(m => m.LotCategory).AllowEditing(false);
+                        columns.AddFor(m => m.HoldUserCode).AllowEditing(false);
+                        columns.AddFor(m => m.HoldUserName).AllowEditing(false);
+                        columns.AddFor(m => m.HoldComment).AllowEditing(false);
+
+                        columns.AddFor(m => m.ReleaseTime).AllowEditing(false);
+                        columns.AddFor(m => m.ReleaseCode).AllowEditing(false);
+                        columns.AddFor(m => m.ReleaseUser).AllowEditing(false);
+                        columns.AddFor(m => m.ReleaseName).AllowEditing(false);
+                        columns.AddFor(m => m.ReleaseComment).AllowEditing(false);
+
+                        columns.AddFor(m => m.TenLoi).Caption("Tên Lỗi").AllowEditing(false);
+                    }).
+                    Summary(s => s.TotalItems(items =>
+                    {
+                        items.AddFor(m => m.LotId).SummaryType(SummaryType.Count).DisplayFormat("Count: {0}");
+                    }))
+                    )
+            </div>
+        </div>
+    </div>
+</div>

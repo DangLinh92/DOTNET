@@ -605,6 +605,131 @@ namespace OPERATION_MNS.Data.EF.Migrations
                     b.ToTable("DATE_OFF_LINE");
                 });
 
+            modelBuilder.Entity("OPERATION_MNS.Data.Entities.DATE_OFF_LINE_SAMPLE", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("ItemValue")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("NoiDung")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DATE_OFF_LINE_SAMPLE");
+                });
+
+            modelBuilder.Entity("OPERATION_MNS.Data.Entities.DELAY_COMMENT_SAMPLE", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AllProbe")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("BG")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("ChipIns")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Dicing")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<int>("MaTinhHinhSX")
+                        .HasColumnType("int");
+
+                    b.Property<string>("OQC")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("Packing")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("Plate")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("PlatePR")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("PreDicing")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("PreProbe")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("Roof")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("Seed")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("Shipping")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Wall")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MaTinhHinhSX");
+
+                    b.ToTable("DELAY_COMMENT_SAMPLE");
+                });
+
             modelBuilder.Entity("OPERATION_MNS.Data.Entities.FAB_PLAN", b =>
                 {
                     b.Property<int>("Id")
@@ -1490,6 +1615,70 @@ namespace OPERATION_MNS.Data.EF.Migrations
                     b.ToTable("PERMISSION");
                 });
 
+            modelBuilder.Entity("OPERATION_MNS.Data.Entities.PHAN_LOAI_HANG_SAMPLE", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PHAN_LOAI_HANG_SAMPLE");
+                });
+
+            modelBuilder.Entity("OPERATION_MNS.Data.Entities.PHAN_LOAI_MODEL_SAMPLE", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("PhanLoai")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PhanLoai");
+
+                    b.ToTable("PHAN_LOAI_MODEL_SAMPLE");
+                });
+
             modelBuilder.Entity("OPERATION_MNS.Data.Entities.POST_OPERATION_SHIPPING", b =>
                 {
                     b.Property<int>("Id")
@@ -1849,6 +2038,134 @@ namespace OPERATION_MNS.Data.EF.Migrations
                     b.ToTable("STAY_LOT_LIST_HISTORY");
                 });
 
+            modelBuilder.Entity("OPERATION_MNS.Data.Entities.STAY_LOT_LIST_HISTORY_SAMPLE", b =>
+                {
+                    b.Property<string>("LotId")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<double>("History_seq")
+                        .HasColumnType("float");
+
+                    b.Property<string>("CassetteId")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<decimal>("ChipQty")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("ERPProductOrder")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("FABLotID")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("History_delete_flag")
+                        .HasColumnType("nvarchar(1)")
+                        .HasMaxLength(1);
+
+                    b.Property<string>("HoldCode")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("HoldComment")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("HoldTime")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("HoldUserCode")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("HoldUserName")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("LotCategory")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Material")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("NguoiXuLy")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("OperationID")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("OperationName")
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.Property<string>("PhanLoaiLoi")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("PhuongAnXuLy")
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.Property<string>("ReleaseCode")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("ReleaseComment")
+                        .HasColumnType("nvarchar(2000)")
+                        .HasMaxLength(2000);
+
+                    b.Property<string>("ReleaseFlag")
+                        .HasColumnType("nvarchar(1)")
+                        .HasMaxLength(1);
+
+                    b.Property<string>("ReleaseName")
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.Property<string>("ReleaseTime")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("ReleaseUser")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<decimal>("StayDay")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("TenLoi")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("LotId", "History_seq");
+
+                    b.ToTable("STAY_LOT_LIST_HISTORY_SAMPLE");
+                });
+
             modelBuilder.Entity("OPERATION_MNS.Data.Entities.STAY_LOT_LIST_HISTORY_WLP2", b =>
                 {
                     b.Property<string>("LotId")
@@ -2045,6 +2362,67 @@ namespace OPERATION_MNS.Data.EF.Migrations
                     b.ToTable("STAY_LOT_LIST_PRIORY_WLP2");
                 });
 
+            modelBuilder.Entity("OPERATION_MNS.Data.Entities.STAY_LOT_LIST_SAMPLE", b =>
+                {
+                    b.Property<string>("LotId")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<double>("History_seq")
+                        .HasColumnType("float");
+
+                    b.Property<string>("CassetteId")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("History_delete_flag")
+                        .HasColumnType("nvarchar(1)")
+                        .HasMaxLength(1);
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NguoiXuLy")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("PhanLoaiLoi")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("PhuongAnXuLy")
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.Property<string>("ReleaseFlag")
+                        .HasColumnType("nvarchar(1)")
+                        .HasMaxLength(1);
+
+                    b.Property<string>("TenLoi")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("LotId", "History_seq");
+
+                    b.ToTable("STAY_LOT_LIST_SAMPLE");
+                });
+
             modelBuilder.Entity("OPERATION_MNS.Data.Entities.STAY_LOT_LIST_WLP2", b =>
                 {
                     b.Property<int>("Id")
@@ -2108,6 +2486,72 @@ namespace OPERATION_MNS.Data.EF.Migrations
                     b.ToTable("STAY_LOT_LIST_WLP2");
                 });
 
+            modelBuilder.Entity("OPERATION_MNS.Data.Entities.TCARD_SAMPLE", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("InputDatePlan")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime>("InputDatePlan2")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LotNo")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Model")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("MucDichInput")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("NguoiChiuTrachNhiem")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("OutPutDatePlan")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime>("OutPutDatePlan2")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("WaferID")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TCARD_SAMPLE");
+                });
+
             modelBuilder.Entity("OPERATION_MNS.Data.Entities.THICKNET_MODEL_WLP2", b =>
                 {
                     b.Property<int>("Id")
@@ -2141,6 +2585,230 @@ namespace OPERATION_MNS.Data.EF.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("THICKNET_MODEL_WLP2");
+                });
+
+            modelBuilder.Entity("OPERATION_MNS.Data.Entities.TINH_HINH_SAN_XUAT_SAMPLE", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AllProbe_Actual_Date")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("AllProbe_Plan_Date")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("BG_Actual_Date")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("BG_Plan_Date")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("ChipIns_Actual_Date")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("ChipIns_Plan_Date")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DeleteFlg")
+                        .HasColumnType("nvarchar(5)")
+                        .HasMaxLength(5);
+
+                    b.Property<string>("Dicing_Actual_Date")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Dicing_Plan_Date")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("GhiChu")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("InputDate")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<int>("LeadTime")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LeadTimePlan")
+                        .HasColumnType("int");
+
+                    b.Property<string>("LotNo")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Model")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("ModelDonLinhKien")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<int>("Month")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MucDichNhap")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<int>("MucDoKhanCap")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NguoiChiuTrachNhiem")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("OQC_Actual_Date")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("OQC_Plan_Date")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("OperationNow")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<int>("OutPutWafer")
+                        .HasColumnType("int");
+
+                    b.Property<string>("OutputDate")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Packing_Actual_Date")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Packing_Plan_Date")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("PhanLoai")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("PlanInputDate")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("PlanInputDateTcard")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("PlanOutputDate")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("PlatePR_Actual_Date")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("PlatePR_Plan_Date")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Plate_Actual_Date")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Plate_Plan_Date")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("PreDicing_Actual_Date")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("PreDicing_Plan_Date")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("PreProbe_Actual_Date")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("PreProbe_Plan_Date")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<int>("QtyInput")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QtyNG")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Roof_Actual_Date")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Roof_Plan_Date")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Seed_Actual_Date")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Seed_Plan_Date")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Shipping_Actual_Date")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Shipping_Plan_Date")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Wall_Actual_Date")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Wall_Plan_Date")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TINH_HINH_SAN_XUAT_SAMPLE");
                 });
 
             modelBuilder.Entity("OPERATION_MNS.Data.Entities.VIEW_CONTROL_CHART_MODEL", b =>
@@ -2714,6 +3382,15 @@ namespace OPERATION_MNS.Data.EF.Migrations
                     b.ToTable("YIELD_OF_MODEL");
                 });
 
+            modelBuilder.Entity("OPERATION_MNS.Data.Entities.DELAY_COMMENT_SAMPLE", b =>
+                {
+                    b.HasOne("OPERATION_MNS.Data.Entities.TINH_HINH_SAN_XUAT_SAMPLE", "TINH_HINH_SAN_XUAT_SAMPLE")
+                        .WithMany("DELAY_COMMENT_SAMPLES")
+                        .HasForeignKey("MaTinhHinhSX")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("OPERATION_MNS.Data.Entities.PERMISSION", b =>
                 {
                     b.HasOne("OPERATION_MNS.Data.Entities.FUNCTION", "Function")
@@ -2727,6 +3404,13 @@ namespace OPERATION_MNS.Data.EF.Migrations
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("OPERATION_MNS.Data.Entities.PHAN_LOAI_MODEL_SAMPLE", b =>
+                {
+                    b.HasOne("OPERATION_MNS.Data.Entities.PHAN_LOAI_HANG_SAMPLE", "PHAN_LOAI_HANG_SAMPLE")
+                        .WithMany("PHAN_LOAI_MODEL_SAMPLE")
+                        .HasForeignKey("PhanLoai");
                 });
 #pragma warning restore 612, 618
         }

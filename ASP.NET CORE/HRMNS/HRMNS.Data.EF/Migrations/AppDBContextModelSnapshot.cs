@@ -519,169 +519,43 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<double>("AM_38_PH")
+                    b.Property<double>("AL")
                         .HasColumnType("float");
 
-                    b.Property<double>("AN_39_PD")
+                    b.Property<double>("AL30")
                         .HasColumnType("float");
 
-                    b.Property<double>("AO_40_PN")
+                    b.Property<double>("BH")
                         .HasColumnType("float");
 
-                    b.Property<double>("AP_41_BH")
+                    b.Property<double>("BM")
                         .HasColumnType("float");
 
-                    b.Property<double>("AQ_42_DS")
+                    b.Property<double>("CD_CT")
                         .HasColumnType("float");
 
-                    b.Property<double>("AR_43_NS")
+                    b.Property<double>("CD_TV")
                         .HasColumnType("float");
 
-                    b.Property<double>("AS_44_AL")
+                    b.Property<double>("CT_150")
                         .HasColumnType("float");
 
-                    b.Property<double>("AT_45_TotalALPaid")
+                    b.Property<double>("CT_CN_200")
                         .HasColumnType("float");
 
-                    b.Property<double>("AU_46_TotalUnPaid")
+                    b.Property<double>("CT_D_CN_270")
                         .HasColumnType("float");
 
-                    b.Property<double>("AV_47_LamCD_TV")
+                    b.Property<double>("CT_D_NL_390")
                         .HasColumnType("float");
 
-                    b.Property<double>("AW_48_LamCD_CT")
+                    b.Property<double>("CT_D_NT_200")
                         .HasColumnType("float");
 
-                    b.Property<double>("AX_49_AL")
+                    b.Property<double>("CT_NL_300")
                         .HasColumnType("float");
 
-                    b.Property<double>("AY_50_AL30")
-                        .HasColumnType("float");
-
-                    b.Property<double>("AZ_51_SL")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BA_52_NH")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BB_53_HL")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BC_54_UL")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BD_55_NB")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BE_56_NL")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BF_57_IL")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BG_58_KT")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BH_59_L70")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BI_60_MD")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BJ_61_PMD")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BK_62_PM")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BL_63_BM")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BM_64_15")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BN_65_20")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BO_66_21")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BP_67_27")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BQ_68_30")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BR_69_39")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BS_70_15")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BT_71_20")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BU_72_21")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BV_73_27")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BW_74_30")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BX_75_39")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BY_76_ELLC")
-                        .HasColumnType("float");
-
-                    b.Property<double>("BZ_77_OCT")
-                        .HasColumnType("float");
-
-                    b.Property<double>("CA_78_OT")
-                        .HasColumnType("float");
-
-                    b.Property<double>("CB_79_150")
-                        .HasColumnType("float");
-
-                    b.Property<double>("CC_80_200")
-                        .HasColumnType("float");
-
-                    b.Property<double>("CD_81_200")
-                        .HasColumnType("float");
-
-                    b.Property<double>("CE_82_270")
-                        .HasColumnType("float");
-
-                    b.Property<double>("CF_83_300")
-                        .HasColumnType("float");
-
-                    b.Property<double>("CG_84_390")
-                        .HasColumnType("float");
-
-                    b.Property<double>("CH_85_150")
-                        .HasColumnType("float");
-
-                    b.Property<double>("CI_86_200")
-                        .HasColumnType("float");
-
-                    b.Property<double>("CJ_87_200")
-                        .HasColumnType("float");
-
-                    b.Property<double>("CK_88_270")
-                        .HasColumnType("float");
-
-                    b.Property<double>("CL_89_300")
-                        .HasColumnType("float");
-
-                    b.Property<double>("CM_90_390")
-                        .HasColumnType("float");
-
-                    b.Property<string>("CO_92_VPSX")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("CP_93")
+                    b.Property<double>("DS")
                         .HasColumnType("float");
 
                     b.Property<string>("DateCreated")
@@ -692,13 +566,139 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
+                    b.Property<double>("HL")
+                        .HasColumnType("float");
+
+                    b.Property<double>("IL")
+                        .HasColumnType("float");
+
+                    b.Property<double>("KT")
+                        .HasColumnType("float");
+
+                    b.Property<double>("L160")
+                        .HasColumnType("float");
+
+                    b.Property<double>("L70")
+                        .HasColumnType("float");
+
+                    b.Property<double>("MD")
+                        .HasColumnType("float");
+
                     b.Property<string>("MaNV")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
+                    b.Property<double>("NB")
+                        .HasColumnType("float");
+
+                    b.Property<double>("NCL")
+                        .HasColumnType("float");
+
+                    b.Property<double>("NH")
+                        .HasColumnType("float");
+
+                    b.Property<double>("NL")
+                        .HasColumnType("float");
+
+                    b.Property<double>("NS")
+                        .HasColumnType("float");
+
+                    b.Property<double>("OT")
+                        .HasColumnType("float");
+
+                    b.Property<double>("OT_CT_15")
+                        .HasColumnType("float");
+
+                    b.Property<double>("OT_CT_20")
+                        .HasColumnType("float");
+
+                    b.Property<double>("OT_CT_21")
+                        .HasColumnType("float");
+
+                    b.Property<double>("OT_CT_27")
+                        .HasColumnType("float");
+
+                    b.Property<double>("OT_CT_30")
+                        .HasColumnType("float");
+
+                    b.Property<double>("OT_CT_39")
+                        .HasColumnType("float");
+
+                    b.Property<double>("OT_TV_15")
+                        .HasColumnType("float");
+
+                    b.Property<double>("OT_TV_20")
+                        .HasColumnType("float");
+
+                    b.Property<double>("OT_TV_21")
+                        .HasColumnType("float");
+
+                    b.Property<double>("OT_TV_27")
+                        .HasColumnType("float");
+
+                    b.Property<double>("OT_TV_30")
+                        .HasColumnType("float");
+
+                    b.Property<double>("OT_TV_39")
+                        .HasColumnType("float");
+
+                    b.Property<double>("O_CT")
+                        .HasColumnType("float");
+
+                    b.Property<double>("PD")
+                        .HasColumnType("float");
+
+                    b.Property<double>("PH")
+                        .HasColumnType("float");
+
+                    b.Property<double>("PM")
+                        .HasColumnType("float");
+
+                    b.Property<double>("PMD")
+                        .HasColumnType("float");
+
+                    b.Property<double>("PN")
+                        .HasColumnType("float");
+
+                    b.Property<double>("P_TV")
+                        .HasColumnType("float");
+
+                    b.Property<double>("SL")
+                        .HasColumnType("float");
+
+                    b.Property<double>("SUM_OTHER")
+                        .HasColumnType("float");
+
+                    b.Property<double>("TP")
+                        .HasColumnType("float");
+
+                    b.Property<double>("TUP")
+                        .HasColumnType("float");
+
+                    b.Property<double>("TV_150")
+                        .HasColumnType("float");
+
+                    b.Property<double>("TV_CN_200")
+                        .HasColumnType("float");
+
+                    b.Property<double>("TV_D_CN_270")
+                        .HasColumnType("float");
+
+                    b.Property<double>("TV_D_NL_390")
+                        .HasColumnType("float");
+
+                    b.Property<double>("TV_D_NT_200")
+                        .HasColumnType("float");
+
+                    b.Property<double>("TV_NL_300")
+                        .HasColumnType("float");
+
                     b.Property<string>("ThangNam")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
+
+                    b.Property<double>("UL")
+                        .HasColumnType("float");
 
                     b.Property<string>("UserCreated")
                         .HasColumnType("nvarchar(50)")
@@ -707,6 +707,9 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("UserModified")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
+
+                    b.Property<string>("VP_SX")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -5074,6 +5077,64 @@ namespace HRMNS.Data.EF.Migrations
                     b.ToTable("SAMSUNG_TRAINING");
                 });
 
+            modelBuilder.Entity("HRMNS.Data.Entities.SETTING_TIME_CA_LVIEC", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("BeginTimeOT")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("BoPhan")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("CaLamViec")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("EndWorking")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("NgayBatDau")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("NgayKetThuc")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("StartWorking")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CaLamViec");
+
+                    b.ToTable("SETTING_TIME_CA_LVIEC");
+                });
+
             modelBuilder.Entity("HRMNS.Data.Entities.SETTING_TIME_DIMUON_VESOM", b =>
                 {
                     b.Property<int>("Id")
@@ -5831,6 +5892,13 @@ namespace HRMNS.Data.EF.Migrations
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("HRMNS.Data.Entities.SETTING_TIME_CA_LVIEC", b =>
+                {
+                    b.HasOne("HRMNS.Data.Entities.DM_CA_LVIEC", "DM_CA_LVIEC")
+                        .WithMany()
+                        .HasForeignKey("CaLamViec");
                 });
 
             modelBuilder.Entity("HRMNS.Data.Entities.SETTING_TIME_DIMUON_VESOM", b =>

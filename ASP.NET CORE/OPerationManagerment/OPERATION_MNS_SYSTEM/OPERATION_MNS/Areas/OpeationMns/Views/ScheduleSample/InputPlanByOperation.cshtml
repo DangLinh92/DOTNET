@@ -1,0 +1,286 @@
+﻿@{
+    ViewData["Title"] = "Thực tế ouput PreProbe/PreDicing";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+
+}
+
+@section Scripts
+    {
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+
+    <script>
+
+        $('#btn-import-Plan').on('click', function () {
+            $("#fileInputExcel").val(null);
+            $('#hd-ImportType').val('Plan');
+            $('#import_gocPlan').modal('show');
+        });
+
+        $('#btn-import-actual').on('click', function () {
+            $("#fileInputExcel").val(null);
+            $('#hd-ImportType').val('Actual');
+            $('#import_gocPlan').modal('show');
+        });
+
+        $('#btnCloseImportExcel').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+            if (files.length > 0) {
+                $("#fileInputExcel").val(null);
+                $('#hd-ImportType').val('');
+                $('#import_gocPlan').modal('hide');
+                location.reload();
+            }
+        });
+
+        $('#btnCloseImport').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+            if (files.length > 0) {
+                $("#fileInputExcel").val(null);
+                $('#hd-ImportType').val('');
+                $('#import_gocPlan').modal('hide');
+                location.reload();
+            }
+        });
+
+        $('#btnImportExcel').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+
+            // Create FormData object
+            var fileData = new FormData();
+            // Looping over all files and add it to FormData object
+            for (var i = 0; i < files.length; i++) {
+                fileData.append("files", files[i]);
+            }
+            // Adding one more key to FormData object
+            // fileData.append('categoryId', $('#ddlCategoryIdImportExcel').combotree('getValue'));
+
+            let param = $('#hd-ImportType').val();
+
+            $.ajax({
+                url: '/OpeationMns/ScheduleSample/ImportExcel?param=' + param,
+                type: 'POST',
+                data: fileData,
+                processData: false,  // tell jQuery not to process the data
+                contentType: false,  // tell jQuery not to set contentType
+                beforeSend: function () {
+                    hrms.run_waitMe($('#import_gocPlan'));
+                },
+                success: function (data) {
+                    $('#import_gocPlan').modal('hide');
+                    hrms.hide_waitMe($('#import_gocPlan'));
+                    hrms.notify("Import success!", 'Success', 'alert', function () {
+                        location.reload();
+                    });
+                },
+                error: function (status) {
+                    hrms.notify('error: Import error!' + status.responseText, 'error', 'alert', function () { });
+                    hrms.hide_waitMe($('#import_gocPlan'));
+                }
+            });
+            return false;
+        });
+
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('InputPlanByOperation');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'InputPlanByOperation.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        function getDateBoxValueFrom() {
+            return $("#begindate-date").dxDateBox("option", "text");
+        }
+
+        function getDateBoxValueTo() {
+            return $("#todate-date").dxDateBox("option", "text");
+        }
+
+        function getCheckBoxValue() {
+            return $("#cheOpenLot").dxCheckBox("option", "value");//.dxCheckBox("instance").option("value", data.value);
+        }
+
+        function checkBox_valueChanged(data) {
+            $("#gridContainer").dxDataGrid("refresh");
+        }
+
+        function refreshGrid() {
+
+            let fromDate = new Date($("#begindate-date").dxDateBox("option", "text"));
+            let toDate = new Date($("#todate-date").dxDateBox("option", "text"));
+            $("#cheOpenLot").dxCheckBox("option", "value", false);
+            if (fromDate <= toDate) {
+                $("#gridContainer").dxDataGrid("refresh");
+            }
+        }
+
+
+    </script>
+}
+@{
+    DateTime beginMonth = DateTime.Parse(DateTime.Now.ToString("yyyy-MM") + "-01");
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center" style="margin-bottom:-2rem">
+            <div class="col">
+                <h3 class="page-title">
+                    Thực tế ouput PreProbe/PreDicing
+                </h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Thực Tế Ouput PreProbe/PreDicing</li>
+                </ul>
+            </div>
+            <div class="col-auto float-right ml-auto">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info dropdown-toggle" id="btnImport" style="margin-right:100px;width:100px" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Excel</button>
+                    <div class="dropdown-menu" style="">
+                        @*   <a class="dropdown-item" href="~/templates/KeHoachTheoCongDoan_Sample.xlsx">File mẫu kế hoạch công đoạn</a>*@
+                        <a class="dropdown-item" href="~/templates/ImportPreprobe-predicing.xlsx">File mẫu thực tế : pre probe - pre dicing</a>
+                        @*   <a class="dropdown-item" href="#" id="btn-import-Plan">Import kế hoạch công đoạn</a>*@
+                        <a class="dropdown-item" href="#" id="btn-import-actual">Import thực tế : pre probe - pre dicing</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form">
+                <div class="dx-fieldset">
+                    <div class="dx-field">
+                        <div style="float:left;display:inline-block;margin-right:10px">
+
+                            @(Html.DevExtreme().DateBox()
+                                .ID("begindate-date")
+                                .Type(DateBoxType.Date)
+                                .Value(beginMonth)
+                                .DisplayFormat("yyyy-MM-dd")
+                                .Width(200)
+                                .Placeholder("Select...")
+                                .Label("Input Date From")
+                                .OnValueChanged("refreshGrid")
+                                )
+
+                        </div>
+                        <div style="display:inline-block;margin-right:10px">
+                            @(Html.DevExtreme().DateBox()
+                                .ID("todate-date")
+                                .Type(DateBoxType.Date)
+                                .Value(DateTime.Now.AddDays(1))
+                                .DisplayFormat("yyyy-MM-dd")
+                                .Width(200)
+                                .Placeholder("Select...")
+                                .Label("Input Date To")
+                                .OnValueChanged("refreshGrid")
+                                )
+                        </div>
+                        <div style="display:inline-block">
+                            @(Html.DevExtreme().CheckBox()
+                                .ID("cheOpenLot")
+                                .Value(false)
+                                .Text("Only Lot Running")
+                                .OnValueChanged("checkBox_valueChanged")
+                                )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            @(Html.DevExtreme().DataGrid<TinhHinhSanXuatSampleViewModel>()
+                .ID("gridContainer")
+                .Height(700)
+                .ShowBorders(true)
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .AllowColumnResizing(true)
+                .ColumnMinWidth(50)
+                .ColumnAutoWidth(true)
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+                .OnExporting("exporting")
+                .FilterRow(filterRow => filterRow
+                .Visible(true)
+                .ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .SearchPanel(searchPanel => searchPanel
+                .Visible(true)
+                .Width(240)
+                .Placeholder("Search...")
+                ).ColumnFixing(x => x.Enabled(true))
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .HoverStateEnabled(true)
+                .Editing(editing =>
+                {
+                    editing.Mode(GridEditMode.Row);
+                    editing.AllowUpdating(true);
+                })
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.Id).Fixed(true).FixedPosition(HorizontalEdge.Left).Visible(false).AllowEditing(false);
+                    columns.AddFor(m => m.LotNo).Fixed(true).FixedPosition(HorizontalEdge.Left).AllowEditing(false);
+                    columns.AddFor(m => m.PlanInputDate_1).Format("yyyy-MM-dd").Caption("Input date plan").Fixed(true).FixedPosition(HorizontalEdge.Left).AllowEditing(false);
+                    columns.AddFor(m => m.PreProbe_Actual_Date_1).Caption("PreProbe Actual").Format("yyyy-MM-dd").AllowEditing(true);
+                    columns.AddFor(m => m.PreDicing_Actual_Date_1).Caption("PreDicing Actual").Format("yyyy-MM-dd").AllowEditing(true);
+
+                    @* columns.AddFor(m => m.Wall_Plan_Date_1).Caption("Wall").Format("yyyy-MM-dd").AllowEditing(true);
+            columns.AddFor(m => m.Roof_Plan_Date_1).Caption("Roof").Format("yyyy-MM-dd").AllowEditing(true);
+            columns.AddFor(m => m.Seed_Plan_Date_1).Caption("Seed").Format("yyyy-MM-dd").AllowEditing(true);
+            columns.AddFor(m => m.PlatePR_Plan_Date_1).Caption("PlatePR").Format("yyyy-MM-dd").AllowEditing(true);
+            columns.AddFor(m => m.Plate_Plan_Date_1).Caption("Plate_Plan").Format("yyyy-MM-dd").AllowEditing(true);
+            columns.AddFor(m => m.PreProbe_Plan_Date_1).Caption("PreProbe Plan").Format("yyyy-MM-dd").AllowEditing(true);
+            columns.AddFor(m => m.PreDicing_Plan_Date_1).Caption("PreDicing Plan").Format("yyyy-MM-dd").AllowEditing(true);
+            columns.AddFor(m => m.AllProbe_Plan_Date_1).Caption("AllProbe").Format("yyyy-MM-dd").AllowEditing(true);
+            columns.AddFor(m => m.BG_Plan_Date_1).Caption("B/G").Format("yyyy-MM-dd").AllowEditing(true);
+            columns.AddFor(m => m.Dicing_Plan_Date_1).Caption("Dicing").Format("yyyy-MM-dd").AllowEditing(true);
+            columns.AddFor(m => m.ChipIns_Plan_Date_1).Caption("ChipIns").Format("yyyy-MM-dd").AllowEditing(true);
+            columns.AddFor(m => m.Packing_Plan_Date_1).Caption("Packing").Format("yyyy-MM-dd").AllowEditing(true);
+            columns.AddFor(m => m.OQC_Plan_Date_1).Caption("OQC").Format("yyyy-MM-dd").AllowEditing(true);
+            columns.AddFor(m => m.Shipping_Plan_Date_1).Caption("Shipping").Format("yyyy-MM-dd").AllowEditing(true);*@
+                })
+                .DataSource(d => d.Mvc()
+                .Area("OpeationMns")
+                .Controller("ScheduleSample")
+                .LoadAction("Get")
+                .LoadParams(new { fromTime = new JS("getDateBoxValueFrom"), toTime = new JS("getDateBoxValueTo"), isOpen = new JS("getCheckBoxValue") })
+                .UpdateAction("PutPlan")
+                .Key("Id")
+                ).Summary(s => s
+                .TotalItems(totalItems =>
+                {
+                    totalItems.AddFor(m => m.LotNo).SummaryType(SummaryType.Count).DisplayFormat("Count: {0}").ValueFormat(Format.FixedPoint);
+                }))
+                )
+        </div>
+    </div>
+</div>
+
+<partial name="_ImportExcelModel" />
+
+

@@ -56,6 +56,15 @@ namespace OPERATION_MNS.Data.EF
         public virtual DbSet<CTQ_SETTING_WLP2> CTQ_SETTING_WLP2 { get; set; }
         public virtual DbSet<THICKNET_MODEL_WLP2> THICKNET_MODEL_WLP2 { get; set; }
 
+        // sample
+        public virtual DbSet<TINH_HINH_SAN_XUAT_SAMPLE> TINH_HINH_SAN_XUAT_SAMPLE { get; set; }
+        public virtual DbSet<PHAN_LOAI_HANG_SAMPLE> PHAN_LOAI_HANG_SAMPLE { get; set; }
+        public virtual DbSet<PHAN_LOAI_MODEL_SAMPLE> PHAN_LOAI_MODEL_SAMPLE { get; set; }
+        public virtual DbSet<TCARD_SAMPLE> TCARD_SAMPLE { get; set; }
+        public virtual DbSet<STAY_LOT_LIST_SAMPLE> STAY_LOT_LIST_SAMPLE { get; set; }
+        public virtual DbSet<STAY_LOT_LIST_HISTORY_SAMPLE> STAY_LOT_LIST_HISTORY_SAMPLE { get; set; }
+        public virtual DbSet<DATE_OFF_LINE_SAMPLE> DATE_OFF_LINE_SAMPLE { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             #region
@@ -98,6 +107,16 @@ namespace OPERATION_MNS.Data.EF
             builder.AddConfiguration(new CTQSettingWlp2Configuration());
             builder.AddConfiguration(new ThickNetModelWlp2Configuration());
             builder.AddConfiguration(new CtqEmailwlp2Configuration());
+
+            // sample
+            builder.AddConfiguration(new TinhHinhSanXuatSampleConfiguration());
+            builder.AddConfiguration(new PhanLoaiHangSampleConfiguration());
+            builder.AddConfiguration(new PhanLoaiModelSampleConfiguration());
+            builder.AddConfiguration(new TCardSampleConfiguration());
+            builder.AddConfiguration(new StayLotListSampleConfiguration());
+            builder.AddConfiguration(new StayLotListHistorySample2Configuration());
+            builder.AddConfiguration(new DateOffLineSampleConfiguration());
+            builder.AddConfiguration(new DelayCommentSampleConfiguration());
         }
 
         public override int SaveChanges()

@@ -142,8 +142,6 @@ namespace HRMS.Areas.Payroll.Controllers
 
             if (DateTime.Parse(DateTime.Now.ToString("yyyy-MM") + "-01").AddMonths(-1).ToString("yyyy-MM-dd") == time)
             {
-                //List<HR_SALARY> lstluongcoban = new List<HR_SALARY>();
-                //_memoryCache.TryGetValue("BasicSalaryData", out lstluongcoban);
                 List<BangLuongChiTietViewModel> data = _detailSalaryService.GetBangLuongChiTiet(time);
 
                 if (data.Count > 0)

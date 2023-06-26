@@ -58,11 +58,11 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models
         }
 
         [HttpPost]
-        public IActionResult SavePermission(List<PermisstionViewModel> model)
+        public IActionResult SavePermission([FromBody]  List<PermisstionViewModel> model)//List<PermisstionViewModel> model
         {
             foreach (PermisstionViewModel item in model)
             {
-                if(item.Id == 0)
+                if (item.Id == 0)
                 {
                     _roleAndPermisstionService.AddPermisstion(item);
                 }

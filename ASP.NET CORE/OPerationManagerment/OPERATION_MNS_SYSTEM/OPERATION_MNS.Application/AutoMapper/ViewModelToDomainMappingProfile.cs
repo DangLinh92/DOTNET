@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using OPERATION_MNS.Application.ViewModels;
+using OPERATION_MNS.Application.ViewModels.Sameple;
 using OPERATION_MNS.Application.ViewModels.System;
 using OPERATION_MNS.Application.ViewModels.Wlp2;
 using OPERATION_MNS.Data.Entities;
@@ -41,7 +42,7 @@ namespace OPERATION_MNS.Application.AutoMapper
             .ConstructUsing(c => new CTQ_SETTING(c.OperationID, c.OperationName, c.LWL, c.UWL));
 
             CreateMap<CTQSettingWLP2ViewModel, CTQ_SETTING_WLP2>()
-           .ConstructUsing(c => new CTQ_SETTING_WLP2(c.SpeacialModel,c.OperationID,c.OperationName,c.ThickNet,c.MinV,c.MaxV));
+           .ConstructUsing(c => new CTQ_SETTING_WLP2(c.SpeacialModel, c.OperationID, c.OperationName, c.ThickNet, c.MinV, c.MaxV));
 
 
             CreateMap<CTQEmailReceivViewModel, CTQ_EMAIL_RECEIV>()
@@ -67,10 +68,18 @@ namespace OPERATION_MNS.Application.AutoMapper
 
 
             CreateMap<Stay_lot_list_priory_wlp2ViewModel, STAY_LOT_LIST_PRIORY_WLP2>()
-       .ConstructUsing(c => new STAY_LOT_LIST_PRIORY_WLP2(c.Id,c.SapCode,c.Priory,c.Number_Priory,c.Material,c.CassetteID,c.LotID,c.OperationName,c.OperationId,c.ERPProductionOrder,c.ChipQty,c.StayDay));
+       .ConstructUsing(c => new STAY_LOT_LIST_PRIORY_WLP2(c.Id, c.SapCode, c.Priory, c.Number_Priory, c.Material, c.CassetteID, c.LotID, c.OperationName, c.OperationId, c.ERPProductionOrder, c.ChipQty, c.StayDay));
 
             CreateMap<ThickNetModelWlp2ViewModel, THICKNET_MODEL_WLP2>()
-       .ConstructUsing(c => new THICKNET_MODEL_WLP2(c.Id,c.Material,c.ThickNet));
+       .ConstructUsing(c => new THICKNET_MODEL_WLP2(c.Id, c.Material, c.ThickNet));
+
+            // sample
+            CreateMap<TinhHinhSanXuatSampleViewModel, TINH_HINH_SAN_XUAT_SAMPLE>()
+            .ConstructUsing(c => new TINH_HINH_SAN_XUAT_SAMPLE(c.Id,c.Year,c.Month,c.MucDoKhanCap,c.Model,c.Code,c.PhanLoai,c.ModelDonLinhKien,c.LotNo,c.QtyInput,c.QtyNG,c.OperationNow,c.MucDichNhap,
+            c.GhiChu,c.NguoiChiuTrachNhiem,c.InputDate,c.OutputDate,c.PlanInputDate,c.PlanOutputDate,c.Wall_Plan_Date,c.Wall_Actual_Date,c.Roof_Plan_Date,c.Roof_Actual_Date,c.Seed_Plan_Date,c.Seed_Actual_Date,
+            c.PlatePR_Plan_Date,c.PlatePR_Actual_Date,c.Plate_Plan_Date,c.Plate_Actual_Date,c.PreProbe_Plan_Date,c.PreProbe_Actual_Date,c.PreDicing_Plan_Date,c.PreDicing_Actual_Date,c.AllProbe_Plan_Date,c.AllProbe_Actual_Date,
+            c.BG_Plan_Date,c.BG_Actual_Date,c.Dicing_Plan_Date,c.Dicing_Actual_Date,c.ChipIns_Plan_Date,c.ChipIns_Actual_Date,c.Packing_Plan_Date,c.Packing_Actual_Date,c.OQC_Plan_Date,c.OQC_Actual_Date,c.Shipping_Plan_Date,
+            c.Shipping_Actual_Date,c.LeadTime,c.DeleteFlg,c.PlanInputDateTcard,c.OutPutWafer,c.LeadTime));
         }
     }
 }

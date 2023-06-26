@@ -1,0 +1,336 @@
+﻿@{
+    ViewData["Title"] = "Sample schedule";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <style>
+        #gridContainer td {
+            vertical-align: middle;
+        }
+
+        #gridContainer .chart-cell {
+            overflow: visible;
+        }
+
+        #gridContainer .plan-value {
+            display: inline-block;
+            display: block;
+        }
+
+        #gridContainer .actual-value {
+            position: relative;
+            display: block;
+            border-top: 1px solid #004E89;
+        }
+
+        #gridContainer .yeallow {
+            color: #333;
+            background-color: #FFD3A3;
+        }
+
+        #gridContainer .overRed {
+            color: white;
+            background-color: #E74646;
+        }
+    </style>
+}
+
+@section Scripts
+    {
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+
+    <script>
+
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('sample schedule');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'Sampleschedule.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        function getDateBoxValueFrom() {
+            return $("#begindate-date").dxDateBox("option", "text");
+        }
+
+        function getDateBoxValueTo() {
+            return $("#todate-date").dxDateBox("option", "text");
+        }
+
+        function getCheckBoxValue() {
+            return $("#cheOpenLot").dxCheckBox("option", "value");//.dxCheckBox("instance").option("value", data.value);
+        }
+
+        function checkBox_valueChanged(data) {
+            $("#gridContainer").dxDataGrid("refresh");
+        }
+
+        function refreshGrid() {
+
+            let fromDate = new Date($("#begindate-date").dxDateBox("option", "text"));
+            let toDate = new Date($("#todate-date").dxDateBox("option", "text"));
+            $("#cheOpenLot").dxCheckBox("option", "value", false);
+            if (fromDate <= toDate) {
+                $("#gridContainer").dxDataGrid("refresh");
+            }
+        }
+
+        const itemUpdates = ['QtyNG', 'MucDichNhap', 'GhiChu', 'PlanInputDateTcardDate'];
+        function cell_prepared(options) {
+
+            if (options.rowType == 'data' && !(options.column.command == 'edit' || options.column.type == 'buttons') && !itemUpdates.includes(options.column.dataField)) {
+
+                var fieldData = options.value,
+                    fieldHtml = "";
+                console.log(options);
+                if (fieldData && options.column.dataType == 'object') {
+
+                    // bôi đỏ nếu bị delay
+                    options.cellElement.addClass((fieldData.Diff == 0) ? "yeallow" : (fieldData.Diff == 1 ? "eqc" : "overRed"));
+                    fieldHtml += "<div class='plan-value'>" +
+                        formatValueObj(fieldData.Plan) +
+                        "</div> <div class='actual-value'>" +
+                        formatValueObj(fieldData.Actual) +
+                        "  </div>";
+
+                    if (fieldData.Diff < 0)
+                    {
+                        // show lý do delay
+                        var tooltipInstance = $("#tooltip").dxTooltip("instance");
+                        options.cellElement.mouseover(function (arg) {
+                            tooltipInstance.option("contentTemplate", function (contentElement) {
+                                contentElement.html(`<div class='tooltipContent'>` + `<div><b>비고:</b> ${formatValueObj(fieldData.Comment)}</div>` + `</div>`);
+                            });
+                            tooltipInstance.show(arg.target);
+                        });
+                        options.cellElement.mouseout(function (arg) {
+                            tooltipInstance.hide();
+                        });
+                    }
+                }
+                else {
+
+                    if (options.column.dataField == 'LeadTime') {
+                        if (fieldData == -1) {
+                            fieldHtml = '';
+                        }
+                        else {
+                            fieldHtml = fieldData;
+                        }
+                    }
+                    else {
+                        fieldHtml = fieldData;
+
+                        // higlight cell when leadtime max min
+                        if (options.data.IsHightLight) {
+
+                            if (options.data.LevelHightLight == 1) {
+                                options.cellElement.css({ "color": "white", "background-color": "#ED8C8C" });
+                            }
+                            else
+                                if (options.data.LevelHightLight == 2) {
+                                    options.cellElement.css({ "color": "white", "background-color": "#FA9884" });
+                                }
+                                else
+                                    if (options.data.LevelHightLight == 3) {
+                                        options.cellElement.css({ "color": "black", "background-color": "#FFE5CA" });
+                                    }
+                                    else
+                                        if (options.data.LevelHightLight == 4) {
+                                            options.cellElement.css({ "color": "black", "background-color": "#FFF3E2" });
+                                        }
+                                        else
+                                            if (options.data.LevelHightLight == 5) {
+                                                options.cellElement.css({ "color": "black", "background-color": "#B3C890" });
+                                            }
+                        }
+                    }
+
+                }
+                console.log(fieldHtml);
+                options.cellElement.html(fieldHtml);
+            }
+        }
+
+        function formatValueObj(obj) {
+            if (!obj)
+                return '-';
+            else
+                return obj;
+        }
+    </script>
+}
+
+@{
+    DateTime beginMonth = DateTime.Parse(DateTime.Now.ToString("yyyy-MM") + "-01");
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center" style="margin-bottom:-2rem">
+            <div class="col">
+                <h3 class="page-title">Sample schedule </h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Sample schedule</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form">
+                <div class="dx-fieldset">
+                    <div class="dx-field">
+                        <div style="float:left;display:inline-block;margin-right:10px">
+
+                            @(Html.DevExtreme().DateBox()
+                                .ID("begindate-date")
+                                .Type(DateBoxType.Date)
+                                .Value(beginMonth)
+                                .DisplayFormat("yyyy-MM-dd")
+                                .Width(200)
+                                .Placeholder("Select...")
+                                .Label("Input Date From")
+                                .OnValueChanged("refreshGrid")
+                                )
+
+                        </div>
+                        <div style="display:inline-block;margin-right:10px">
+                            @(Html.DevExtreme().DateBox()
+                                .ID("todate-date")
+                                .Type(DateBoxType.Date)
+                                .Value(DateTime.Now.AddDays(1))
+                                .DisplayFormat("yyyy-MM-dd")
+                                .Width(200)
+                                .Placeholder("Select...")
+                                .Label("Input Date To")
+                                .OnValueChanged("refreshGrid")
+                                )
+                        </div>
+                        <div style="display:inline-block">
+                            @(Html.DevExtreme().CheckBox()
+                                .ID("cheOpenLot")
+                                .Value(false)
+                                .Text("Only Lot Running")
+                                .OnValueChanged("checkBox_valueChanged")
+                                )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            @(Html.DevExtreme().DataGrid<TinhHinhSanXuatSampleViewModel>
+                ()
+                .ID("gridContainer")
+                .Height(700)
+                .ShowBorders(true)
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .AllowColumnResizing(true)
+                .ColumnMinWidth(50)
+                .ColumnAutoWidth(true)
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+                .OnExporting("exporting")
+                .FilterRow(filterRow => filterRow
+                .Visible(true)
+                .ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .HoverStateEnabled(true)
+                .ColumnFixing(x => x.Enabled(true))
+                .SearchPanel(searchPanel => searchPanel
+                .Visible(true)
+                .Width(240)
+                .Placeholder("Search...")
+                )
+                .Editing(editing =>
+                {
+                    editing.Mode(GridEditMode.Row);
+                    editing.AllowUpdating(true);
+                })
+                .OnCellPrepared("cell_prepared")
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.Id).Caption("Id").Visible(false).Fixed(true).FixedPosition(HorizontalEdge.Left).AllowEditing(false); ;
+                    columns.AddFor(m => m.LeadTimeMax).Caption("LeadTimeMax").Visible(false).Fixed(true).FixedPosition(HorizontalEdge.Left).AllowEditing(false);
+                    columns.AddFor(m => m.DeleteFlg).Caption("DeleteFlg").Visible(false).Fixed(true).FixedPosition(HorizontalEdge.Left).AllowEditing(false);
+                    columns.AddFor(m => m.Year).Caption("Year").Fixed(true).FixedPosition(HorizontalEdge.Left).AllowEditing(false);
+                    columns.AddFor(m => m.Month).Caption("Month").Fixed(true).FixedPosition(HorizontalEdge.Left).AllowEditing(false);
+                    columns.AddFor(m => m.MucDoKhanCap).Caption("Priority").Fixed(true).FixedPosition(HorizontalEdge.Left).AllowEditing(false);
+                    columns.AddFor(m => m.Model).Caption("Model Module").Fixed(true).FixedPosition(HorizontalEdge.Left).AllowEditing(false);
+                    columns.AddFor(m => m.Code).Caption("Code").Fixed(true).FixedPosition(HorizontalEdge.Left).AllowEditing(false);
+                    columns.AddFor(m => m.PhanLoai).Caption("Type").Fixed(true).FixedPosition(HorizontalEdge.Left).AllowEditing(false);
+                    columns.AddFor(m => m.ModelDonLinhKien).Caption("Model đơn linh kiện").Fixed(true).FixedPosition(HorizontalEdge.Left).AllowEditing(false);
+                    columns.AddFor(m => m.LotNo).Caption("Lot No").Width(120).Fixed(true).FixedPosition(HorizontalEdge.Left).AllowEditing(false);
+                    columns.AddFor(m => m.QtyInput).Caption("Nhập(Wafer)").AllowEditing(false);
+                    columns.AddFor(m => m.QtyNG).Caption("NG(Wafer)").AllowEditing(true);
+                    columns.AddFor(m => m.OperationNow).Caption("Current Operation").AllowEditing(false);
+                    columns.AddFor(m => m.MucDichNhap).Caption("Mục đích nhập").AllowEditing(true);
+                    columns.AddFor(m => m.GhiChu).Caption("Note").AllowEditing(true);
+                    columns.AddFor(m => m.NguoiChiuTrachNhiem).Caption("Người chịu trách nhiệm").AllowEditing(false);
+                    columns.AddFor(m => m.PlanInputDateTcardDate).Caption("Input Date(Tcard Plan)").Format("MM-dd").AllowEditing(false);
+                    columns.AddFor(m => m.OutPutDay.Plan).Caption("Output Date(Tcard Plan)").AllowEditing(false);
+
+                    columns.Add().Caption("Process Flow Plane").Columns(c =>
+                    {
+                        c.AddFor(m => m.InPutDay).Caption("Input").AllowEditing(false);
+                        c.AddFor(m => m.WallDate).Caption("Wall").AllowEditing(false);
+                        c.AddFor(m => m.RoofDate).Caption("Roof").AllowEditing(false);
+                        c.AddFor(m => m.SeedDate).Caption("Seed").AllowEditing(false);
+                        c.AddFor(m => m.PlatePrDate).Caption("Plate PR").AllowEditing(false);
+                        c.AddFor(m => m.PlateDate).Caption("Plate").AllowEditing(false);
+                        c.AddFor(m => m.PreProbeDate).Caption("Pre Probe").AllowEditing(false);
+                        c.AddFor(m => m.PreDicingDate).Caption("Pre Dicing").AllowEditing(false);
+                        c.AddFor(m => m.AllProbeDate).Caption("All Probe").AllowEditing(false);
+                        c.AddFor(m => m.BGDate).Caption("B/G").AllowEditing(false);
+                        c.AddFor(m => m.DicingDate).Caption("Dicing").AllowEditing(false);
+                        c.AddFor(m => m.ChipInsDate).Caption("Chip Ins").AllowEditing(false);
+                        c.AddFor(m => m.PackingDate).Caption("Packing").AllowEditing(false);
+                        c.AddFor(m => m.OQCDate).Caption("OQC").AllowEditing(false);
+                        c.AddFor(m => m.ShippingDate).Caption("OUT").AllowEditing(false);
+                        c.AddFor(m => m.LeadTime).Caption("LeadTime").AllowEditing(false);
+                    });
+                })
+                .DataSource(d => d.Mvc()
+                .Area("OpeationMns")
+                .Controller("ScheduleSample")
+                .LoadAction("Get")
+                .LoadParams(new { fromTime = new JS("getDateBoxValueFrom"), toTime = new JS("getDateBoxValueTo"), isOpen = new JS("getCheckBoxValue") })
+                .UpdateAction("Put")
+                .Key("Id")
+                ).Summary(s => s
+                .TotalItems(totalItems =>
+                {
+                    totalItems.AddFor(m => m.LotNo).SummaryType(SummaryType.Count).DisplayFormat("Count: {0}").ValueFormat(Format.FixedPoint);
+                })
+                )
+                )
+        </div>
+    </div>
+    @(Html.DevExtreme().Tooltip()
+        .ID("tooltip")
+        .Position(Position.Right)
+        )
+</div>
+

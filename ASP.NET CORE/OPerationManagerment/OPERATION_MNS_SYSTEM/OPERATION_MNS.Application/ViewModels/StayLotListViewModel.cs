@@ -136,9 +136,11 @@ namespace OPERATION_MNS.Application.ViewModels
         {
             STAY_LOT_LIST_HISTORY_DATA = new List<STAY_LOT_LIST_HISTORY>();
             STAY_LOT_LIST_HISTORY_WLP2_DATA = new List<STAY_LOT_LIST_HISTORY_WLP2>();
+            STAY_LOT_LIST_HISTORY_SAMPLE_DATA = new List<STAY_LOT_LIST_HISTORY_SAMPLE>();
         }
        public  List<STAY_LOT_LIST_HISTORY> STAY_LOT_LIST_HISTORY_DATA;
        public  List<STAY_LOT_LIST_HISTORY_WLP2> STAY_LOT_LIST_HISTORY_WLP2_DATA;
+       public  List<STAY_LOT_LIST_HISTORY_SAMPLE> STAY_LOT_LIST_HISTORY_SAMPLE_DATA;
         public string LotId { get; set; }
         public string CasseteId { get; set; }
         public string FromTime { get; set; }

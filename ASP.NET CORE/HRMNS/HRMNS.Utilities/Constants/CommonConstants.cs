@@ -81,7 +81,7 @@ namespace HRMNS.Utilities.Constants
         public const string DM_OT = "5";
         public const string DM_ELLC = "6";
         public const string OT_BAT_MAY = "DSBM_OT_150";
-        public static string[] arrNghiPhep = { "AL", "UL", "NL", "L70", "SL", "CT", "HL", "NH", "EL", "LC", "T","IL","NB","B" };
+        public static string[] arrNghiPhep = { "AL", "UL", "NL", "L70", "SL", "CT", "HL", "NH", "EL", "LC", "T", "IL", "NB", "B" };
         public static string[] arrNVBlock10p =
         {
             "H2202060",
@@ -137,12 +137,20 @@ namespace HRMNS.Utilities.Constants
             "H2104032"
         };
 
+        // Nghỉ T7 được nghỉ
         public static string[] arrSatudayAbNormal =
         {
             "2022-10-01",
             "2022-10-08",
             "2022-10-15",
             "2022-10-22"
+        };
+
+        // VP thứ 7 tính như SX
+        public static string[] arrSatuday_VP_AbNormal =
+        {
+            "2023-06-17",
+            "2023-06-10"
         };
 
         public static string COMPLETED = "Completed";

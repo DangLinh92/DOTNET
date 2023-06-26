@@ -45,7 +45,7 @@ namespace OPERATION_MNS
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection"), o => o.MigrationsAssembly("OPERATION_MNS.Data.EF")));
 
-            services.AddDbContext<BioStarDBContext>(option => option.UseSqlServer(@"Data Source = 10.70.22.240;Initial Catalog = BioStar;User Id = sa;Password = qwe123!@#;Connect Timeout=3"));
+            //services.AddDbContext<BioStarDBContext>(option => option.UseSqlServer(@"Data Source = 10.70.22.240;Initial Catalog = BioStar;User Id = sa;Password = qwe123!@#;Connect Timeout=3"));
 
             services.AddIdentity<APP_USER, APP_ROLE>().AddEntityFrameworkStores<AppDBContext>().AddDefaultTokenProviders();
 
@@ -103,6 +103,9 @@ namespace OPERATION_MNS
             services.AddTransient<IOutGoingReceiptService, OutGoingReceiptService>();
             services.AddTransient<IShippingSMTHistoryService, ShippingSMTHistoryService>();
             services.AddTransient<IThicknessWlp2Service, ThicknessWlp2Service>();
+            services.AddTransient<IScheduleSampleService, ScheduleSampleService>();
+            services.AddTransient<ITCardSampleService, TCardSampleService>();
+            services.AddTransient<IDateOffLineSampleService, DateOffLineSampleService>();
 
             services.AddSignalR(cfg =>cfg.EnableDetailedErrors = true);
 

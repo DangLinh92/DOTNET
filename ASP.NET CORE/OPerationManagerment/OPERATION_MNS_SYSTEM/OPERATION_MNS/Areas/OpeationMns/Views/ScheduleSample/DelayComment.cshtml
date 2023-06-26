@@ -1,0 +1,272 @@
+﻿@{
+    ViewData["Title"] = "Delay comment";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+
+}
+
+@section Scripts
+    {
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+
+    <script>
+
+        $('#btn-import-Plan').on('click', function () {
+            $("#fileInputExcel").val(null);
+            $('#hd-ImportType').val('delay');
+            $('#import_gocPlan').modal('show');
+        });
+
+        $('#btnCloseImportExcel').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+            if (files.length > 0) {
+                $("#fileInputExcel").val(null);
+                $('#hd-ImportType').val('');
+                $('#import_gocPlan').modal('hide');
+                location.reload();
+            }
+        });
+
+        $('#btnCloseImport').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+            if (files.length > 0) {
+                $("#fileInputExcel").val(null);
+                $('#hd-ImportType').val('');
+                $('#import_gocPlan').modal('hide');
+                location.reload();
+            }
+        });
+
+        $('#btnImportExcel').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+
+            // Create FormData object
+            var fileData = new FormData();
+            // Looping over all files and add it to FormData object
+            for (var i = 0; i < files.length; i++) {
+                fileData.append("files", files[i]);
+            }
+            // Adding one more key to FormData object
+            // fileData.append('categoryId', $('#ddlCategoryIdImportExcel').combotree('getValue'));
+
+            let param = $('#hd-ImportType').val();
+
+            $.ajax({
+                url: '/OpeationMns/ScheduleSample/ImportCommentExcel?param=' + param,
+                type: 'POST',
+                data: fileData,
+                processData: false,  // tell jQuery not to process the data
+                contentType: false,  // tell jQuery not to set contentType
+                beforeSend: function () {
+                    hrms.run_waitMe($('#import_gocPlan'));
+                },
+                success: function (data) {
+                    $('#import_gocPlan').modal('hide');
+                    hrms.hide_waitMe($('#import_gocPlan'));
+                    hrms.notify("Import success!", 'Success', 'alert', function () {
+                        location.reload();
+                    });
+                },
+                error: function (status) {
+                    hrms.notify('error: Import error!' + status.responseText, 'error', 'alert', function () { });
+                    hrms.hide_waitMe($('#import_gocPlan'));
+                }
+            });
+            return false;
+        });
+
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('Delaycomment');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'Delaycomment.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        function getDateBoxValueFrom() {
+            return $("#begindate-date").dxDateBox("option", "text");
+        }
+
+        function getDateBoxValueTo() {
+            return $("#todate-date").dxDateBox("option", "text");
+        }
+
+        function getCheckBoxValue() {
+            return $("#cheOpenLot").dxCheckBox("option", "value");//.dxCheckBox("instance").option("value", data.value);
+        }
+
+        function checkBox_valueChanged(data) {
+            $("#gridContainer").dxDataGrid("refresh");
+        }
+
+        function refreshGrid() {
+
+            let fromDate = new Date($("#begindate-date").dxDateBox("option", "text"));
+            let toDate = new Date($("#todate-date").dxDateBox("option", "text"));
+            $("#cheOpenLot").dxCheckBox("option", "value", false);
+            if (fromDate <= toDate) {
+                $("#gridContainer").dxDataGrid("refresh");
+            }
+        }
+
+
+    </script>
+}
+@{
+    DateTime beginMonth = DateTime.Parse(DateTime.Now.ToString("yyyy-MM") + "-01");
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center" style="margin-bottom:-2rem">
+            <div class="col">
+                <h3 class="page-title">Nguyên Nhân Delay Theo Công Đoạn</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Nguyên Nhân Delay Theo Công Đoạn</li>
+                </ul>
+            </div>
+            <div class="col-auto float-right ml-auto">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info dropdown-toggle" id="btnImport" style="margin-right:100px;width:100px" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Excel</button>
+                    <div class="dropdown-menu" style="">
+                        <a class="dropdown-item" href="~/templates/Delaycomment_Template.xlsx">File import nguyên nhân delay</a>
+                        <a class="dropdown-item" href="#" id="btn-import-Plan">Import nguyên nhân delay</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form">
+                <div class="dx-fieldset">
+                    <div class="dx-field">
+                        <div style="float:left;display:inline-block;margin-right:10px">
+
+                            @(Html.DevExtreme().DateBox()
+                                .ID("begindate-date")
+                                .Type(DateBoxType.Date)
+                                .Value(beginMonth)
+                                .DisplayFormat("yyyy-MM-dd")
+                                .Width(200)
+                                .Placeholder("Select...")
+                                .Label("Input Date From")
+                                .OnValueChanged("refreshGrid")
+                                )
+
+                        </div>
+                        <div style="display:inline-block;margin-right:10px">
+                            @(Html.DevExtreme().DateBox()
+                                .ID("todate-date")
+                                .Type(DateBoxType.Date)
+                                .Value(DateTime.Now.AddDays(1))
+                                .DisplayFormat("yyyy-MM-dd")
+                                .Width(200)
+                                .Placeholder("Select...")
+                                .Label("Input Date To")
+                                .OnValueChanged("refreshGrid")
+                                )
+                        </div>
+                        <div style="display:inline-block">
+                            @(Html.DevExtreme().CheckBox()
+                                .ID("cheOpenLot")
+                                .Value(false)
+                                .Text("Only Lot Running")
+                                .OnValueChanged("checkBox_valueChanged")
+                                )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            @(Html.DevExtreme().DataGrid<DELAY_COMMENT_SAMPLE>()
+                .ID("gridContainer")
+                .Height(700)
+                .ShowBorders(true)
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .AllowColumnResizing(true)
+                .ColumnMinWidth(50)
+                .ColumnAutoWidth(true)
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+                .OnExporting("exporting")
+                .FilterRow(filterRow => filterRow
+                .Visible(true)
+                .ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .SearchPanel(searchPanel => searchPanel
+                .Visible(true)
+                .Width(240)
+                .Placeholder("Search...")
+                ).ColumnFixing(x => x.Enabled(true))
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .HoverStateEnabled(true)
+                .Editing(editing =>
+                {
+                    editing.Mode(GridEditMode.Row);
+                    editing.AllowUpdating(true);
+                })
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.Id).Fixed(true).FixedPosition(HorizontalEdge.Left).Visible(false).AllowEditing(false);
+                    columns.AddFor(m => m.TINH_HINH_SAN_XUAT_SAMPLE.LotNo).Caption("LotNo").Fixed(true).FixedPosition(HorizontalEdge.Left).AllowEditing(false);
+                    columns.AddFor(m => m.Wall).Caption("Wall").AllowEditing(true);
+                    columns.AddFor(m => m.Roof).Caption("Roof").AllowEditing(true);
+                    columns.AddFor(m => m.Seed).Caption("Seed").AllowEditing(true);
+                    columns.AddFor(m => m.PlatePR).Caption("PlatePR").AllowEditing(true);
+                    columns.AddFor(m => m.Plate).Caption("Plate").AllowEditing(true);
+                    columns.AddFor(m => m.PreProbe).Caption("PreProbe").AllowEditing(true);
+                    columns.AddFor(m => m.PreDicing).Caption("PreDicing").AllowEditing(true);
+                    columns.AddFor(m => m.AllProbe).Caption("AllProbe").AllowEditing(true);
+                    columns.AddFor(m => m.BG).Caption("B/G").AllowEditing(true);
+                    columns.AddFor(m => m.Dicing).Caption("Dicing").AllowEditing(true);
+                    columns.AddFor(m => m.ChipIns).Caption("ChipIns").AllowEditing(true);
+                    columns.AddFor(m => m.Packing).Caption("Packing").AllowEditing(true);
+                    columns.AddFor(m => m.OQC).Caption("OQC").AllowEditing(true);
+                    columns.AddFor(m => m.Shipping).Caption("Shipping").AllowEditing(true);
+                })
+                .DataSource(d => d.Mvc()
+                .Area("OpeationMns")
+                .Controller("ScheduleSample")
+                .LoadAction("GetDelayComment")
+                .LoadParams(new { fromTime = new JS("getDateBoxValueFrom"), toTime = new JS("getDateBoxValueTo"), isOpen = new JS("getCheckBoxValue") })
+                .UpdateAction("PutComment")
+                .Key("Id")
+                ).Summary(s => s
+                .TotalItems(totalItems =>
+                {
+                    totalItems.AddFor(m => m.TINH_HINH_SAN_XUAT_SAMPLE.LotNo).SummaryType(SummaryType.Count).DisplayFormat("Count: {0}").ValueFormat(Format.FixedPoint);
+                }))
+                )
+        </div>
+    </div>
+</div>
+
+<partial name="_ImportExcelModel" />
+
+

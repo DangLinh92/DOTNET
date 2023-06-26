@@ -23,4 +23,20 @@ namespace OPERATION_MNS.Data.EF.Configurations
             entity.HasKey(x => new { x.LotId, x.History_seq });
         }
     }
+
+    public class StayLotListSampleConfiguration : DbEntityConfiguration<STAY_LOT_LIST_SAMPLE>
+    {
+        public override void Configure(EntityTypeBuilder<STAY_LOT_LIST_SAMPLE> entity)
+        {
+            entity.HasKey(x => new { x.LotId, x.History_seq });
+        }
+    }
+
+    public class StayLotListHistorySample2Configuration : DbEntityConfiguration<STAY_LOT_LIST_HISTORY_SAMPLE>
+    {
+        public override void Configure(EntityTypeBuilder<STAY_LOT_LIST_HISTORY_SAMPLE> entity)
+        {
+            entity.HasKey(x => new { x.LotId, x.History_seq });
+        }
+    }
 }

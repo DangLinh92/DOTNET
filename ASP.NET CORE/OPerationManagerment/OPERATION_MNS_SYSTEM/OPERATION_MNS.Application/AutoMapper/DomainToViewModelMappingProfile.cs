@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using OPERATION_MNS.Application.ViewModels;
+using OPERATION_MNS.Application.ViewModels.Sameple;
 using OPERATION_MNS.Application.ViewModels.System;
 using OPERATION_MNS.Application.ViewModels.Wlp2;
 using OPERATION_MNS.Data.Entities;
@@ -33,6 +34,7 @@ namespace OPERATION_MNS.Application.AutoMapper
             CreateMap<BOPHAN_DE_NGHI_XUAT_NLIEU, BoPhanDeNghiXuatNVLViewModel>();
             CreateMap<STAY_LOT_LIST_PRIORY_WLP2, Stay_lot_list_priory_wlp2ViewModel>();
             CreateMap<THICKNET_MODEL_WLP2, ThickNetModelWlp2ViewModel>();
+            CreateMap<TINH_HINH_SAN_XUAT_SAMPLE, TinhHinhSanXuatSampleViewModel>();
         }
     }
 }

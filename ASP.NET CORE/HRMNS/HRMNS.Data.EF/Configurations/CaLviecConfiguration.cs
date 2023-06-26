@@ -17,4 +17,13 @@ namespace HRMNS.Data.EF.Configurations
             entity.HasMany(x => x.ATTENDANCE_OVERTIME).WithOne(x => x.CA_LVIEC).OnDelete(DeleteBehavior.Cascade);
         }
     }
+
+    public class SettingTimeCaLamViecConfiguration : DbEntityConfiguration<SETTING_TIME_CA_LVIEC>
+    {
+        public override void Configure(EntityTypeBuilder<SETTING_TIME_CA_LVIEC> entity)
+        {
+            entity.HasKey(c => c.Id);
+            entity.Property(c => c.Id).ValueGeneratedOnAdd();
+        }
+    }
 }

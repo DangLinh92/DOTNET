@@ -1,0 +1,341 @@
+﻿@model StayLotListDisPlayViewModel
+@{
+    ViewData["Title"] = "Hold Lot List";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <style>
+    </style>
+}
+
+@section Scripts{
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+    <script>
+
+        function getDataGridInstance() {
+            return $("#grid-container-detail").dxDataGrid("instance");
+        }
+
+        // loc theo model
+        function selection_changed(selectedItems) {
+            var dataGrid = getDataGridInstance();
+            var data = selectedItems.selectedRowsData;
+
+            if (data.length > 0) {
+
+                var arrModels = [];
+                for (let value of data) {
+                    arrModels.push(value.Model);
+                }
+
+                dataGrid.filter(["Material", "=", arrModels[data.length - 1]]);
+            } else {
+                dataGrid.clearFilter();
+            }
+
+        }
+
+        // loc theo ten loi
+        function selection_changed_loi(selectedItems) {
+            var dataGrid = getDataGridInstance();
+            var data = selectedItems.selectedRowsData;
+
+            if (data.length > 0) {
+
+                var arrTenLoi = [];
+                for (let value of data) {
+
+                    arrTenLoi.push(value.TenLoi);
+                }
+
+                dataGrid.filter(["TenLoi", "=", arrTenLoi[data.length - 1]]);
+            }
+            else {
+                dataGrid.clearFilter();
+            }
+        }
+
+        function onRowDblClick(e) {
+            let dataGrid = $("#grid-container").dxDataGrid("instance");
+            dataGrid.deselectAll();
+            dataGrid.clearSelection();
+        }
+
+        function onRowDbl_loi_Click(e) {
+            let dataGrid = $("#grid-container_loi").dxDataGrid("instance");
+            dataGrid.deselectAll();
+            dataGrid.clearSelection();
+        }
+
+        var dataGrid, loadPanel;
+        $(function () {
+
+            dataGrid = $("#grid-container-detail").dxDataGrid("instance");
+            loadPanel = $("#loadPanel").dxLoadPanel("instance");
+
+            loadPanel.show();
+            sendRequest('@Url.RouteUrl(new { area = "OpeationMns", controller = "HoldLotList", action = "GetLotStaySample" })')
+                .always(() => { loadPanel.hide(); })
+                .done((data) => {
+                    dataGrid.option("dataSource", data);
+                });
+        });
+
+        function onSaving(e) {
+            var change = e.changes[0];
+            console.log(change);
+            if (change) {
+                e.cancel = true;
+                loadPanel.show();
+                e.promise = saveChange(change)
+                    .always(() => { loadPanel.hide(); })
+                    .done((data) => {
+                        var orders = e.component.option("dataSource");
+
+                        console.log(change);
+                        console.log(orders);
+                        console.log(data);
+
+                        if (change.type === "insert") {
+                            change.data = data;
+                        }
+
+                        orders = DevExpress.data.applyChanges(orders, [change], { keyExpr: "Key" });
+
+                        e.component.option({
+                            dataSource: orders,
+                            editing: {
+                                editRowKey: null,
+                                changes: []
+                            }
+                        });
+
+                        e.component.refresh(true).done(() => {
+                            location.reload();
+                        });
+
+                    });
+            }
+        };
+
+        function saveChange(change) {
+            switch (change.type) {
+                case "update":
+                    return sendRequest('@Url.RouteUrl(new { area= "OpeationMns", controller = "HoldLotList", action = "UpdateLotStaySample" })', "PUT", { key: change.key, values: JSON.stringify(change.data) });
+            }
+        };
+
+        function sendRequest(url, method, data) {
+            var d = $.Deferred();
+
+            method = method || "GET";
+
+            $.ajax(url, {
+                method: method,
+                data: data,
+                cache: false,
+                xhrFields: { withCredentials: true }
+            }).done(function (result) {
+                d.resolve(method === "GET" ? result.data : result);
+            }).fail(function (xhr) {
+                d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
+            });
+
+            return d.promise();
+        };
+
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('HoldLotList-Sample');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'HoldLotList-Sample.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+    </script>
+}
+
+@{
+    bool isView = User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+                 User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] != "WLP2_VIEW";
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Hold Lot List</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Hold Lot List</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-5">
+            @(Html.DevExtreme().DataGrid<StayLotListSumViewModel>()
+                .ID("grid-container")
+                .DataSource(Model.StayLotListSumViews)
+                .Height(280)
+                .ShowBorders(true)
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .AllowColumnResizing(true)
+                .ColumnMinWidth(50)
+                .ColumnAutoWidth(true)
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .FilterRow(filterRow => filterRow
+                .Visible(true)
+                .ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .HoverStateEnabled(true)
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.Model).Width(150);
+                    columns.AddFor(m => m.CassetteId).Width(150);
+                    columns.AddFor(m => m.QtyWF).Width(120).Format(Format.FixedPoint).Caption("Wafer Q'ty");
+                    columns.AddFor(m => m.QtyChip).Width(140).Format(Format.FixedPoint).Caption("Chip Q'ty");
+                }).Summary(s => s.TotalItems(items =>
+                {
+
+                    items.AddFor(m => m.Model).SummaryType(SummaryType.Count).DisplayFormat("Count: {0}");
+
+                    items.AddFor(m => m.QtyWF)
+                    .SummaryType(SummaryType.Sum)
+                    .ValueFormat(Format.FixedPoint)
+                    .DisplayFormat("Total: {0}");
+
+                    items.AddFor(m => m.QtyChip)
+                    .SummaryType(SummaryType.Sum)
+                    .ValueFormat(Format.FixedPoint)
+                    .DisplayFormat("Total: {0}");
+
+                })).OnSelectionChanged("selection_changed").OnRowDblClick("onRowDblClick"))
+        </div>
+
+        <div class="col-md-5">
+            @(Html.DevExtreme().DataGrid<StayLotListSumViewModel>()
+                .ID("grid-container_loi")
+                .DataSource(Model.StayLotListTenLoiViews)
+                .Height(280)
+                .ShowBorders(true)
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .AllowColumnResizing(true)
+                .ColumnMinWidth(50)
+                .ColumnAutoWidth(true)
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .FilterRow(filterRow => filterRow
+                .Visible(true)
+                .ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .HoverStateEnabled(true)
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.Model).Visible(false);
+                    columns.AddFor(m => m.TenLoi).Caption("Tên Lỗi");
+                    columns.AddFor(m => m.OperationName).Caption("Công Đoạn Hold");
+                    columns.AddFor(m => m.QtyWF).Caption("Wafer Q'ty").Format(Format.FixedPoint);
+                    columns.AddFor(m => m.QtyChip).Caption("Chip Q'ty").Format(Format.FixedPoint);
+                }).Summary(s => s.TotalItems(items =>
+                {
+                    items.AddFor(m => m.TenLoi).SummaryType(SummaryType.Count).DisplayFormat("Count: {0}");
+
+                    items.AddFor(m => m.QtyWF)
+                    .SummaryType(SummaryType.Sum)
+                    .ValueFormat(Format.FixedPoint)
+                    .DisplayFormat("Total: {0}");
+
+                    items.AddFor(m => m.QtyChip)
+                    .SummaryType(SummaryType.Sum)
+                    .ValueFormat(Format.FixedPoint)
+                    .DisplayFormat("Total: {0}");
+
+                })).OnSelectionChanged("selection_changed_loi").OnRowDblClick("onRowDbl_loi_Click"))
+        </div>
+    </div>
+
+    <div class="row" style="margin-top:10px">
+        <div class="col-md-12">
+            @(Html.DevExtreme().LoadPanel()
+                .ID("loadPanel")
+                .Position(p => p.Of("#grid-container-detail"))
+                .Visible(false)
+                )
+            @(Html.DevExtreme().DataGrid<StayLotList_Ex_ViewModel>()
+                .ID("grid-container-detail")
+                .KeyExpr("Key")
+                .Height(480)
+                .ShowBorders(true)
+                .RepaintChangesOnly(true)
+                .LoadPanel(loadPanel => loadPanel.Enabled(false))
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .AllowColumnResizing(true)
+                .ColumnMinWidth(50)
+                .ColumnAutoWidth(true)
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .FilterRow(filterRow => filterRow
+                .Visible(true)
+                .ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .HoverStateEnabled(true)
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+                .OnExporting("exporting")
+                .ColumnFixing(x => x.Enabled(true))
+                .Editing(editing =>
+                {
+                    editing.Mode(GridEditMode.Row);
+                    editing.AllowUpdating(isView);
+                })
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.Key).AllowEditing(false).Fixed(true).Visible(false).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.CassetteId).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.LotId).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.Material).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.OperationID).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.OperationName).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.StayDay).AllowEditing(false);
+                    columns.AddFor(m => m.ChipQty).AllowEditing(false).Format(Format.FixedPoint);
+                    columns.AddFor(m => m.HoldTime).AllowEditing(false);
+                    columns.AddFor(m => m.LotCategory).AllowEditing(false);
+                    columns.AddFor(m => m.HoldUser).AllowEditing(false);
+                    columns.AddFor(m => m.HoldUserName).AllowEditing(false);
+                    columns.AddFor(m => m.HoldComment).AllowEditing(false);
+                    columns.AddFor(m => m.TenLoi).Caption("Tên Lỗi").Width(200);
+                    columns.AddFor(m => m.UpdateByCassetteId).Caption("Update theo Cassette ID");
+                }).OnSaving("onSaving").
+                Summary(s => s.TotalItems(items =>
+                {
+                    items.AddFor(m => m.LotId).SummaryType(SummaryType.Count).DisplayFormat("Count: {0}");
+                }))
+                )
+        </div>
+    </div>
+</div>
+

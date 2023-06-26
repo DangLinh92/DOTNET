@@ -62,6 +62,7 @@ namespace HRMS.Areas.Admin.Controllers
                 model = new NhanVienThaiSan_ExportViewModel()
                 {
                     MaNV = item.MaNV,
+                    BoPhan = item.HR_NHANVIEN.MaBoPhan,
                     NameNV = item.HR_NHANVIEN.TenNV,
                     CheDoThaiSan = item.CheDoThaiSan == "ConNho1H" ? "Con nhỏ - Về sớm 1H(Không trừ về sớm,Tính OT)" : (item.CheDoThaiSan == "ConNho" ? "Con nhỏ - Về đúng giờ(Không tính OT)" : "Thai sản"),
                     FromDate = item.FromDate,

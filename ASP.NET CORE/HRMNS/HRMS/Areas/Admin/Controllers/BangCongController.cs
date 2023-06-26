@@ -711,7 +711,7 @@ namespace HRMS.Areas.Admin.Controllers
                         worksheet.Cells["C" + beginIndex].Value = data[i].TenNV;
                         worksheet.Cells["D" + beginIndex].Value = data[i].NgayVao;
                         worksheet.Cells["E" + beginIndex].Value = data[i].BoPhanDetail;
-                        worksheet.Cells["CN" + beginIndex].Value = data[i].VP_SX;
+                        worksheet.Cells["CP" + beginIndex].Value = data[i].VP_SX;
 
                         for (int j = 1; j <= 31; j++)
                         {
@@ -797,8 +797,8 @@ namespace HRMS.Areas.Admin.Controllers
                         if (i < data.Count - 2)
                         {
                             // copy range cell
-                            cellfrom = "A" + (beginIndex + 8) + ":CP" + (beginIndex + 16);
-                            cellTo = "A" + (beginIndex + 16) + ":CP" + (beginIndex + 24);
+                            cellfrom = "A" + (beginIndex + 8) + ":CQ" + (beginIndex + 16);
+                            cellTo = "A" + (beginIndex + 16) + ":CQ" + (beginIndex + 24);
                             worksheet.Cells[cellfrom].Copy(worksheet.Cells[cellTo]);
 
                             // format sum total
@@ -891,7 +891,9 @@ namespace HRMS.Areas.Admin.Controllers
 
                     BANG_CONG_EXTENTION bangcongEx;
                     List<BANG_CONG_EXTENTION> lstBangCongEx = new List<BANG_CONG_EXTENTION>();
-
+                    int startColumn = 39;
+                    string kytu = "";
+                    double valueEx = 0;
                     for (int i = 0; i < data.Count; i++)
                     {
                         worksheet.Cells["A" + beginIndex].Value = (i + 1);
@@ -899,7 +901,7 @@ namespace HRMS.Areas.Admin.Controllers
                         worksheet.Cells["C" + beginIndex].Value = data[i].TenNV;
                         worksheet.Cells["D" + beginIndex].Value = data[i].NgayVao;
                         worksheet.Cells["E" + beginIndex].Value = data[i].BoPhanDetail;
-                        worksheet.Cells["CN" + beginIndex].Value = data[i].VP_SX;
+                        worksheet.Cells["CP" + beginIndex].Value = data[i].VP_SX;
 
                         for (int j = 1; j <= 31; j++)
                         {
@@ -1043,71 +1045,198 @@ namespace HRMS.Areas.Admin.Controllers
                         worksheet.Cells["CM" + beginIndex].Calculate();
                         worksheet.Cells["CO" + beginIndex].Calculate();
                         worksheet.Cells["CP" + beginIndex].Calculate();
+                        worksheet.Cells["CQ" + beginIndex].Calculate();
 
-                        // column AM
-                        bangcongEx.AM_38_PH = double.Parse(worksheet.Cells["AM" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.AN_39_PD = double.Parse(worksheet.Cells["AN" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.AO_40_PN = double.Parse(worksheet.Cells["AO" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.AP_41_BH = double.Parse(worksheet.Cells["AP" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.AQ_42_DS = double.Parse(worksheet.Cells["AQ" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.AR_43_NS = double.Parse(worksheet.Cells["AR" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.AS_44_AL = double.Parse(worksheet.Cells["AS" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.AT_45_TotalALPaid = double.Parse(worksheet.Cells["AT" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.AU_46_TotalUnPaid = double.Parse(worksheet.Cells["AU" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.AV_47_LamCD_TV = double.Parse(worksheet.Cells["AV" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.AW_48_LamCD_CT = double.Parse(worksheet.Cells["AW" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.AX_49_AL = double.Parse(worksheet.Cells["AX" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.AY_50_AL30 = double.Parse(worksheet.Cells["AY" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.AZ_51_SL = double.Parse(worksheet.Cells["AZ" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.BA_52_NH = double.Parse(worksheet.Cells["BA" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.BB_53_HL = double.Parse(worksheet.Cells["BB" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.BC_54_UL = double.Parse(worksheet.Cells["BC" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.BD_55_NB = double.Parse(worksheet.Cells["BD" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.BE_56_NL = double.Parse(worksheet.Cells["BE" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.BF_57_IL = double.Parse(worksheet.Cells["BF" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.BG_58_KT = double.Parse(worksheet.Cells["BG" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.BH_59_L70 = double.Parse(worksheet.Cells["BH" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.BI_60_MD = double.Parse(worksheet.Cells["BI" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.BJ_61_PMD = double.Parse(worksheet.Cells["BJ" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.BK_62_PM = double.Parse(worksheet.Cells["BK" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.BL_63_BM = double.Parse(worksheet.Cells["BL" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.BM_64_15 = double.Parse(worksheet.Cells["BM" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.BN_65_20 = double.Parse(worksheet.Cells["BN" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.BO_66_21 = double.Parse(worksheet.Cells["BO" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.BP_67_27 = double.Parse(worksheet.Cells["BP" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.BQ_68_30 = double.Parse(worksheet.Cells["BQ" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.BR_69_39 = double.Parse(worksheet.Cells["BR" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.BS_70_15 = double.Parse(worksheet.Cells["BS" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.BT_71_20 = double.Parse(worksheet.Cells["BT" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.BU_72_21 = double.Parse(worksheet.Cells["BU" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.BV_73_27 = double.Parse(worksheet.Cells["BV" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.BW_74_30 = double.Parse(worksheet.Cells["BW" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.BX_75_39 = double.Parse(worksheet.Cells["BX" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.BY_76_ELLC = double.Parse(worksheet.Cells["BY" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.BZ_77_OCT = double.Parse(worksheet.Cells["BZ" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.CA_78_OT = double.Parse(worksheet.Cells["CA" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.CB_79_150 = double.Parse(worksheet.Cells["CB" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.CC_80_200 = double.Parse(worksheet.Cells["CC" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.CD_81_200 = double.Parse(worksheet.Cells["CD" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.CE_82_270 = double.Parse(worksheet.Cells["CE" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.CF_83_300 = double.Parse(worksheet.Cells["CF" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.CG_84_390 = double.Parse(worksheet.Cells["CG" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.CH_85_150 = double.Parse(worksheet.Cells["CH" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.CI_86_200 = double.Parse(worksheet.Cells["CI" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.CJ_87_200 = double.Parse(worksheet.Cells["CJ" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.CK_88_270 = double.Parse(worksheet.Cells["CK" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.CL_89_300 = double.Parse(worksheet.Cells["CL" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.CM_90_390 = double.Parse(worksheet.Cells["CM" + beginIndex].Value.IfNullIsZero());
-                        bangcongEx.CO_92_VPSX = worksheet.Cells["CO" + beginIndex].Value.NullString();
-                        bangcongEx.CP_93 = double.Parse(worksheet.Cells["CP" + beginIndex].Value.IfNullIsZero());
+                        // duyệt từ cột AM
+                        startColumn = 39;
+                        newColName = GetExcelColumnName(startColumn);
+                        kytu = worksheet.Cells[newColName + 14].Value.NullString();
+                        while (kytu != "")
+                        {
+                            valueEx = double.Parse(worksheet.Cells[newColName + beginIndex].Value.IfNullIsZero());
+                            switch (kytu)
+                            {
+                                case "PH":
+                                    bangcongEx.PH = valueEx;
+                                    break;
+                                case "PD":
+                                    bangcongEx.PD = valueEx;
+                                    break;
+                                case "PN":
+                                    bangcongEx.PN = valueEx;
+                                    break;
+                                case "BH":
+                                    bangcongEx.BH = valueEx;
+                                    break;
+                                case "DS":
+                                    bangcongEx.DS = valueEx;
+                                    break;
+                                case "NS":
+                                    bangcongEx.NS = valueEx;
+                                    break;
+                                case "NCL":
+                                    bangcongEx.NCL = valueEx;
+                                    break;
+                                case "TP":
+                                    bangcongEx.TP = valueEx;
+                                    break;
+                                case "TUP":
+                                    bangcongEx.TUP = valueEx;
+                                    break;
+                                case "CD_TV":
+                                    bangcongEx.CD_TV = valueEx;
+                                    break;
+                                case "CD_CT":
+                                    bangcongEx.CD_CT = valueEx;
+                                    break;
+                                case "AL":
+                                    bangcongEx.AL = valueEx;
+                                    break;
+                                case "AL30":
+                                    bangcongEx.AL30 = valueEx;
+                                    break;
+                                case "L160":
+                                    bangcongEx.L160 = valueEx;
+                                    break;
+                                case "SL":
+                                    bangcongEx.SL = valueEx;
+                                    break;
+                                case "NH":
+                                    bangcongEx.NH = valueEx;
+                                    break;
+                                case "HL":
+                                    bangcongEx.HL = valueEx;
+                                    break;
+                                case "UL":
+                                    bangcongEx.UL = valueEx;
+                                    break;
+                                case "NB":
+                                    bangcongEx.NB = valueEx;
+                                    break;
+                                case "NL":
+                                    bangcongEx.NL = valueEx;
+                                    break;
+                                case "IL":
+                                    bangcongEx.IL = valueEx;
+                                    break;
+                                case "KT":
+                                    bangcongEx.KT = valueEx;
+                                    break;
+                                case "L70":
+                                    bangcongEx.L70 = valueEx;
+                                    break;
+                                case "MD":
+                                    bangcongEx.MD = valueEx;
+                                    break;
+                                case "PMD":
+                                    bangcongEx.PMD = valueEx;
+                                    break;
+                                case "PM":
+                                    bangcongEx.PM = valueEx;
+                                    break;
+                                case "BM":
+                                    bangcongEx.BM = valueEx;
+                                    break;
+                                case "OT_TV_15":
+                                    bangcongEx.OT_TV_15 = valueEx;
+                                    break;
+                                case "OT_TV_20":
+                                    bangcongEx.OT_TV_20 = valueEx;
+                                    break;
+                                case "OT_TV_21":
+                                    bangcongEx.OT_TV_21 = valueEx;
+                                    break;
+                                case "OT_TV_27":
+                                    bangcongEx.OT_TV_27 = valueEx;
+                                    break;
+                                case "OT_TV_30":
+                                    bangcongEx.OT_TV_30 = valueEx;
+                                    break;
+                                case "OT_TV_39":
+                                    bangcongEx.OT_TV_39 = valueEx;
+                                    break;
+                                case "OT_CT_15":
+                                    bangcongEx.OT_CT_15 = valueEx;
+                                    break;
+                                case "OT_CT_20":
+                                    bangcongEx.OT_CT_20 = valueEx;
+                                    break;
+                                case "OT_CT_21":
+                                    bangcongEx.OT_CT_21 = valueEx;
+                                    break;
+                                case "OT_CT_27":
+                                    bangcongEx.OT_CT_27 = valueEx;
+                                    break;
+                                case "OT_CT_30":
+                                    bangcongEx.OT_CT_30 = valueEx;
+                                    break;
+                                case "OT_CT_39":
+                                    bangcongEx.OT_CT_39 = valueEx;
+                                    break;
+                                case "P_TV":
+                                    bangcongEx.P_TV = valueEx;
+                                    break;
+                                case "O_CT":
+                                    bangcongEx.O_CT = valueEx;
+                                    break;
+                                case "OT":
+                                    bangcongEx.OT = valueEx;
+                                    break;
+                                case "TV_150":
+                                    bangcongEx.TV_150 = valueEx;
+                                    break;
+                                case "TV_D_NT_200":
+                                    bangcongEx.TV_D_NT_200 = valueEx;
+                                    break;
+                                case "TV_CN_200":
+                                    bangcongEx.TV_CN_200 = valueEx;
+                                    break;
+                                case "TV_D_CN_270":
+                                    bangcongEx.TV_D_CN_270 = valueEx;
+                                    break;
+                                case "TV_NL_300":
+                                    bangcongEx.TV_NL_300 = valueEx;
+                                    break;
+                                case "TV_D_NL_390":
+                                    bangcongEx.TV_D_NL_390 = valueEx;
+                                    break;
+                                case "CT_150":
+                                    bangcongEx.CT_150 = valueEx;
+                                    break;
+                                case "CT_D_NT_200":
+                                    bangcongEx.CT_D_NT_200 = valueEx;
+                                    break;
+                                case "CT_CN_200":
+                                    bangcongEx.CT_CN_200 = valueEx;
+                                    break;
+                                case "CT_D_CN_270":
+                                    bangcongEx.CT_D_CN_270 = valueEx;
+                                    break;
+                                case "CT_NL_300":
+                                    bangcongEx.CT_NL_300 = valueEx;
+                                    break;
+                                case "CT_D_NL_390":
+                                    bangcongEx.CT_D_NL_390 = valueEx;
+                                    break;
+                                case "VP_SX":
+                                    bangcongEx.VP_SX = worksheet.Cells[newColName + beginIndex].Value.NullString();
+                                    break;
+                                case "SUM_OTHER":
+                                    bangcongEx.SUM_OTHER = valueEx;
+                                    break;
+                            }
+
+                            newColName = GetExcelColumnName(++startColumn);
+                            kytu = worksheet.Cells[newColName + 14].Value.NullString();
+                        }
 
                         lstBangCongEx.Add(bangcongEx);
 
                         if (i < data.Count - 2)
                         {
                             // copy range cell
-                            cellfrom = "A" + (beginIndex + 8) + ":CO" + (beginIndex + 16);
-                            cellTo = "A" + (beginIndex + 16) + ":CO" + (beginIndex + 24);
+                            cellfrom = "A" + (beginIndex + 8) + ":CQ" + (beginIndex + 16);
+                            cellTo = "A" + (beginIndex + 16) + ":CQ" + (beginIndex + 24);
                             worksheet.Cells[cellfrom].Copy(worksheet.Cells[cellTo]);
 
                             // format sum total

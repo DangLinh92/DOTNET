@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Thông Tin Phụ Cấp";
     Layout = "~/Areas/Payroll/Views/Shared/_Layout.cshtml";
 }
@@ -8,7 +7,7 @@
 }
 
 @section Scripts
-{
+    {
     <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
     <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
     <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
@@ -95,18 +94,18 @@
                 <div class="dx-fieldset">
                     <div class="dx-field">
                         <div>-->
-                            @*@(Html.DevExtreme().DateBox()
-                                      .ID("txt_month")
-                                      .Value(DateTime.Now.ToString("yyyy-MM-dd"))
-                                      .CalendarOptions(x=>x.MaxZoomLevel(CalendarZoomLevel.Year))
-                                      .DisplayFormat("yyyy-MM")
-                                      .Width(200)
-                                      .Placeholder("Select...")
-                                      .Label("Year")
-                                      .OnValueChanged("selectedDate_changed")
-                                )*@
+    @*@(Html.DevExtreme().DateBox()
+    .ID("txt_month")
+    .Value(DateTime.Now.ToString("yyyy-MM-dd"))
+    .CalendarOptions(x=>x.MaxZoomLevel(CalendarZoomLevel.Year))
+    .DisplayFormat("yyyy-MM")
+    .Width(200)
+    .Placeholder("Select...")
+    .Label("Year")
+    .OnValueChanged("selectedDate_changed")
+    )*@
 
-                        <!--</div>
+    <!--</div>
                     </div>
                 </div>
             </div>
@@ -116,112 +115,116 @@
     <div class="row">
         <div class="col-md-7">
             @(Html.DevExtreme().DataGrid<ChucDanhViewModel>
-    ()
-    .ID("gridContainer")
-    .Height(720)
-    .ShowBorders(true)
-    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
-    .Paging(paging => paging.Enabled(false))
-    .AllowColumnResizing(true)
-    .ColumnMinWidth(50)
-    .ColumnAutoWidth(true)
-    .ShowColumnLines(true)
-    .ShowRowLines(true)
-    .RowAlternationEnabled(true)
-    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
-    .OnExporting("exporting")
-    .FilterRow(filterRow => filterRow
-    .Visible(true)
-    .ApplyFilter(GridApplyFilterMode.Auto)
-    )
-    .HeaderFilter(headerFilter => headerFilter.Visible(true))
-    .Selection(s => s.Mode(SelectionMode.Single))
-    .HoverStateEnabled(true)
-    .Editing(editing => {
-        editing.Mode(GridEditMode.Popup);
-        editing.AllowUpdating(true);
-        editing.AllowAdding(true);
-        editing.AllowDeleting(true);
-    })
-    .Columns(columns => {
-        columns.AddFor(m => m.Id).Caption("Mã Chức Vụ(Tiếng Anh)").AllowEditing(true);
-        columns.AddFor(m => m.TenChucDanh).Caption("Tên Chức Vụ").AllowEditing(true);
-       @* columns.AddFor(m => m.PhuCap).Format(Format.FixedPoint).Caption("Phụ Cấp").AllowEditing(true);*@
-    })
-    .DataSource(d => d.Mvc()
-    .Area("Payroll")
-    .Controller("ChucDanh")
-    .LoadAction("GetAll")
-    .UpdateAction("Put")
-    .InsertAction("Post")
-    .DeleteAction("Delete")
-    .Key("Id")
-    ).Summary(s => s.TotalItems(items =>
-    {
-        items.AddFor(m => m.Id)
-            .SummaryType(SummaryType.Count);
-    })
-    )
-    )
+                ()
+                .ID("gridContainer")
+                .Height(720)
+                .ShowBorders(true)
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .AllowColumnResizing(true)
+                .ColumnMinWidth(50)
+                .ColumnAutoWidth(true)
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+                .OnExporting("exporting")
+                .FilterRow(filterRow => filterRow
+                .Visible(true)
+                .ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .HoverStateEnabled(true)
+                .Editing(editing =>
+                {
+                    editing.Mode(GridEditMode.Popup);
+                    editing.AllowUpdating(true);
+                    editing.AllowAdding(true);
+                    editing.AllowDeleting(true);
+                })
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.Id).Caption("Mã Chức Vụ(Tiếng Anh)").AllowEditing(true);
+                    columns.AddFor(m => m.TenChucDanh).Caption("Tên Chức Vụ").AllowEditing(true);
+                    columns.AddFor(m => m.PhuCap).Format(Format.FixedPoint).Caption("Phụ Cấp").AllowEditing(true);
+                })
+                .DataSource(d => d.Mvc()
+                .Area("Payroll")
+                .Controller("ChucDanh")
+                .LoadAction("GetAll")
+                .UpdateAction("Put")
+                .InsertAction("Post")
+                .DeleteAction("Delete")
+                .Key("Id")
+                ).Summary(s => s.TotalItems(items =>
+                {
+                    items.AddFor(m => m.Id)
+                    .SummaryType(SummaryType.Count);
+                })
+                )
+                )
         </div>
         <div class="col-md-5">
             @(Html.DevExtreme().DataGrid<PHUCAP_DOC_HAI>
-    ()
-    .ID("gridContainerdh")
-    .Height(720)
-    .ShowBorders(true)
-    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
-    .Paging(paging => paging.Enabled(false))
-    .AllowColumnResizing(true)
-    .ColumnMinWidth(50)
-    .ColumnAutoWidth(true)
-    .ShowColumnLines(true)
-    .ShowRowLines(true)
-    .RowAlternationEnabled(true)
-    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
-    .OnExporting("exportingDH")
-    .FilterRow(filterRow => filterRow
-    .Visible(true)
-    .ApplyFilter(GridApplyFilterMode.Auto)
-    )
-    .HeaderFilter(headerFilter => headerFilter.Visible(true))
-    .Selection(s => s.Mode(SelectionMode.Single))
-    .HoverStateEnabled(true)
-    .Editing(editing => {
-        editing.Mode(GridEditMode.Popup);
-        editing.AllowUpdating(true);
-        editing.AllowAdding(true);
-        editing.AllowDeleting(true);
-    })
-    .Columns(columns => {
-        columns.AddFor(m => m.Id).Visible(false).AllowEditing(false);
-        columns.AddFor(m => m.BoPhan)
-               .Caption("Bộ Phận").AllowEditing(true)
-               .Lookup(lookup => lookup
-               .DataSource(d => d.Mvc().Controller("PhuCapLuong").LoadAction("GetBoPhanAll").Key("Id"))
-               .ValueExpr("Id")
-               .DisplayExpr("TenBoPhan")
-           )
-       .CalculateFilterExpression("calculateFilterExpression")
-       .Width(200);
-      @*  columns.AddFor(m => m.PhuCap).Caption("Phụ Cấp Độc Hại").AllowEditing(true);*@
-        columns.AddFor(m => m.Note).Caption("Note").AllowEditing(true);
-    })
-    .DataSource(d => d.Mvc()
-    .Area("Payroll")
-    .Controller("PhuCapLuong")
-    .LoadAction("GetPCDH")
-    .UpdateAction("UpdatePCDH")
-    .InsertAction("InsertPCDH")
-    .DeleteAction("DeleteDH")
-    .Key("Id")
-    ).Summary(s => s.TotalItems(items =>
-    {
-        items.AddFor(m => m.Id)
-            .SummaryType(SummaryType.Count);
-    })
-    )
-    )
+                ()
+                .ID("gridContainerdh")
+                .Height(720)
+                .ShowBorders(true)
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .AllowColumnResizing(true)
+                .ColumnMinWidth(50)
+                .ColumnAutoWidth(true)
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+                .OnExporting("exportingDH")
+                .FilterRow(filterRow => filterRow
+                .Visible(true)
+                .ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .HoverStateEnabled(true)
+                .Editing(editing =>
+                {
+                    editing.Mode(GridEditMode.Popup);
+                    editing.AllowUpdating(true);
+                    editing.AllowAdding(true);
+                    editing.AllowDeleting(true);
+                })
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.Id).Visible(false).AllowEditing(false);
+                    columns.AddFor(m => m.BoPhan)
+                    .Caption("Bộ Phận").AllowEditing(true)
+                    .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("PhuCapLuong").LoadAction("GetBoPhanAll").Key("Id"))
+                    .ValueExpr("Id")
+                    .DisplayExpr("TenBoPhan")
+                    )
+                    .CalculateFilterExpression("calculateFilterExpression")
+                    .Width(200);
+                    columns.AddFor(m => m.PhuCap).Caption("Phụ Cấp Độc Hại").AllowEditing(true);
+                    columns.AddFor(m => m.Note).Caption("Note").AllowEditing(true);
+                })
+                .DataSource(d => d.Mvc()
+                .Area("Payroll")
+                .Controller("PhuCapLuong")
+                .LoadAction("GetPCDH")
+                .UpdateAction("UpdatePCDH")
+                .InsertAction("InsertPCDH")
+                .DeleteAction("DeleteDH")
+                .Key("Id")
+                ).Summary(s => s.TotalItems(items =>
+                {
+                    items.AddFor(m => m.Id)
+                    .SummaryType(SummaryType.Count);
+                })
+                )
+                )
         </div>
     </div>
 </div>

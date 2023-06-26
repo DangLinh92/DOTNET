@@ -101,7 +101,7 @@ namespace HRMNS.Application.Implementation
                     table.Columns.Add("ApproveLV3");
                     table.Columns.Add("HeSoOT");
                     table.Columns.Add("NoiDung");
-                    table.Columns.Add("SoGioOT");
+                    table.Columns.Add("SoGioOT",typeof(float));
 
                     DataRow row = null;
                     for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)

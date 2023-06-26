@@ -9,6 +9,11 @@
         "dist/browser/signalr.js",
         "dist/browser/signalr.min.js"
       ]
+    },
+    {
+      "provider": "cdnjs",
+      "library": "chartjs-plugin-doughnutlabel@2.0.3",
+      "destination": "wwwroot/plugins/chartjs-plugin-doughnutlabel/"
     }
   ]
 }
