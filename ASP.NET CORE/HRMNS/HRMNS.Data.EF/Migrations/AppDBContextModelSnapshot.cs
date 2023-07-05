@@ -4965,6 +4965,50 @@ namespace HRMNS.Data.EF.Migrations
                     b.ToTable("PHUCAP_DOC_HAI");
                 });
 
+            modelBuilder.Entity("HRMNS.Data.Entities.Payroll.HR_SALARY_GRADE", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<double>("AttendanceAllowance")
+                        .HasColumnType("float");
+
+                    b.Property<double>("BasicSalary")
+                        .HasColumnType("float");
+
+                    b.Property<double>("BasicSalaryStandard")
+                        .HasColumnType("float");
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<double>("IncentiveLanguage")
+                        .HasColumnType("float");
+
+                    b.Property<double>("IncentiveStandard")
+                        .HasColumnType("float");
+
+                    b.Property<double>("LivingAllowance")
+                        .HasColumnType("float");
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("HR_SALARY_GRADE");
+                });
+
             modelBuilder.Entity("HRMNS.Data.Entities.SAMSUNG_TRAINING", b =>
                 {
                     b.Property<int>("Id")

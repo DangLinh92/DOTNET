@@ -344,57 +344,57 @@ namespace HRMS.Areas.Payroll.Controllers
             return sFileName;
         }
 
-        [HttpPost]
-        [RequestFormLimits(MultipartBodyLengthLimit = 209715200)]
-        [RequestSizeLimit(209715200)]
-        public IActionResult ImportExcel(IList<IFormFile> files)
-        {
-            if (files != null && files.Count > 0)
-            {
-                var file = files[0];
-                var filename = ContentDispositionHeaderValue
-                                   .Parse(file.ContentDisposition)
-                                   .FileName
-                                   .Trim('"');
+        //[HttpPost]
+        //[RequestFormLimits(MultipartBodyLengthLimit = 209715200)]
+        //[RequestSizeLimit(209715200)]
+        //public IActionResult ImportExcel(IList<IFormFile> files)
+        //{
+        //    if (files != null && files.Count > 0)
+        //    {
+        //        var file = files[0];
+        //        var filename = ContentDispositionHeaderValue
+        //                           .Parse(file.ContentDisposition)
+        //                           .FileName
+        //                           .Trim('"');
 
-                string folder = _hostingEnvironment.WebRootPath + $@"\uploaded\excels";
-                if (!Directory.Exists(folder))
-                {
-                    Directory.CreateDirectory(folder);
-                }
+        //        string folder = _hostingEnvironment.WebRootPath + $@"\uploaded\excels";
+        //        if (!Directory.Exists(folder))
+        //        {
+        //            Directory.CreateDirectory(folder);
+        //        }
 
-                string filePath = Path.Combine(folder, CorrelationIdGenerator.GetNextId() + filename);
-                using (FileStream fs = System.IO.File.Create(filePath))
-                {
-                    file.CopyTo(fs);
-                    fs.Flush();
-                }
+        //        string filePath = Path.Combine(folder, CorrelationIdGenerator.GetNextId() + filename);
+        //        using (FileStream fs = System.IO.File.Create(filePath))
+        //        {
+        //            file.CopyTo(fs);
+        //            fs.Flush();
+        //        }
 
-                List<HR_SALARY> lstUpdate = new List<HR_SALARY>();
-                ResultDB rs = _detailSalaryService.ImportExcel(filePath, out lstUpdate);
+        //        List<HR_SALARY> lstUpdate = new List<HR_SALARY>();
+        //        ResultDB rs = _detailSalaryService.ImportExcel(filePath, out lstUpdate);
 
-                if (rs.ReturnInt != 0)
-                {
-                    if (System.IO.File.Exists(filePath))
-                    {
-                        // If file found, delete it    
-                        System.IO.File.Delete(filePath);
-                    }
-                    return new NotFoundObjectResult(rs.ReturnString);
-                }
+        //        if (rs.ReturnInt != 0)
+        //        {
+        //            if (System.IO.File.Exists(filePath))
+        //            {
+        //                // If file found, delete it    
+        //                System.IO.File.Delete(filePath);
+        //            }
+        //            return new NotFoundObjectResult(rs.ReturnString);
+        //        }
 
-                if (System.IO.File.Exists(filePath))
-                {
-                    // If file found, delete it    
-                    System.IO.File.Delete(filePath);
-                }
+        //        if (System.IO.File.Exists(filePath))
+        //        {
+        //            // If file found, delete it    
+        //            System.IO.File.Delete(filePath);
+        //        }
 
-                _memoryCache.Remove("BasicSalaryData");
-                _memoryCache.Set("BasicSalaryData", lstUpdate);
+        //        _memoryCache.Remove("BasicSalaryData");
+        //        _memoryCache.Set("BasicSalaryData", lstUpdate);
 
-                return new OkObjectResult(filePath);
-            }
-            return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
-        }
+        //        return new OkObjectResult(filePath);
+        //    }
+        //    return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
+        //}
     }
 }

@@ -31,6 +31,7 @@ namespace HRMNS.Application.Implementation
         IRespository<BANGLUONGCHITIET_HISTORY, int> _bangluongChiTietHistoryRepository;
         IRespository<HR_CHUCDANH, string> _chucDanhRepository;
         IRespository<PHUCAP_DOC_HAI, int> _phucapdochaiRepository;
+        IRespository<HR_SALARY_GRADE, int> _gradeRepository;
         private IPayrollUnitOfWork _payrollUnitOfWork;
         private readonly IMapper _mapper;
 
@@ -64,7 +65,7 @@ namespace HRMNS.Application.Implementation
             _phucapdochaiRepository = phucapdochaiRepository;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
-           // _payrollUnitOfWork = payrollUnitOfWork;
+            // _payrollUnitOfWork = payrollUnitOfWork;
             //_salarySqliteRepository = salarySqliteRepository;
         }
 
@@ -126,11 +127,12 @@ namespace HRMNS.Application.Implementation
                         }
                     }
 
+                    HR_SALARY_GRADE grade = _gradeRepository.FindAll(x => x.Id == nhanvienEx.Grade).FirstOrDefault();
                     if (salary != null)
                     {
                         luong.DoiTuongPhuCapDocHai = salary.DoiTuongPhuCapDocHai.NullString().ToLower();
-                        luong.BasicSalary = (double)salary.BasicSalary;
-                        luong.LivingAllowance = (double)salary.LivingAllowance;
+                        luong.BasicSalary = grade != null ? grade.BasicSalary : 0; //(double)salary.BasicSalary;
+                        luong.LivingAllowance = grade.LivingAllowance;//(double)salary.LivingAllowance;
                         luong.AbilityAllowance = (double)salary.AbilityAllowance;
 
                         if (salary.DoiTuongPhuCapDocHai.NullString().ToLower() == CommonConstants.X)
@@ -220,7 +222,7 @@ namespace HRMNS.Application.Implementation
 
                     luong.SoNguoiPhuThuoc = salary.SoNguoiPhuThuoc;
                     luong.Note = salary.Note;
-                    luong.InsentiveStandard = salary.IncentiveStandard + salary.IncentiveLanguage + salary.IncentiveTechnical + salary.IncentiveOther;
+                    luong.InsentiveStandard = (decimal)grade.IncentiveStandard + salary.IncentiveLanguage + salary.IncentiveTechnical + salary.IncentiveOther;
 
                     if (DateTime.Parse(thangNam).ToString("yyyyMM").CompareTo(DateTime.Parse(thangNam).Year + "06") <= 0)
                     {
@@ -338,55 +340,58 @@ namespace HRMNS.Application.Implementation
         {
             lstUpdate = new List<HR_SALARY>();
             ResultDB resultDB = new ResultDB();
-            try
-            {
-                using (var packet = new ExcelPackage(new System.IO.FileInfo(filePath)))
-                {
-                    ExcelWorksheet worksheet = packet.Workbook.Worksheets[1];
-                    HR_SALARY salary;
-                    HR_NHANVIEN nv;
-                    string manv;
-                    for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
-                    {
-                        manv = worksheet.Cells[i, 1].Text.NullString();
-                        nv = _nhanVienRepository.FindById(manv);
-
-                        if (nv == null)
-                        {
-                            break;
-                        }
-
-                        salary = new HR_SALARY()
-                        {
-                            MaNV = manv
-                        };
-
-                        if (worksheet.Cells[i, 3].Text.NullString() != "")
-                        {
-                            salary.BasicSalary = decimal.Parse(worksheet.Cells[i, 3].Text.IfNullIsZero());
-                        }
-
-                        if (worksheet.Cells[i, 4].Text.NullString() != "")
-                        {
-                            salary.LivingAllowance = decimal.Parse(worksheet.Cells[i, 4].Text.IfNullIsZero());
-                        }
-
-                        if (worksheet.Cells[i, 5].Text.NullString() != "")
-                        {
-                            salary.AbilityAllowance = decimal.Parse(worksheet.Cells[i, 5].Text.IfNullIsZero());
-                        }
-                        lstUpdate.Add(salary);
-                    }
-
-                    resultDB.ReturnInt = 0;
-                }
-            }
-            catch (Exception ex)
-            {
-                resultDB.ReturnInt = -1;
-                resultDB.ReturnString = ex.Message;
-            }
             return resultDB;
+            //lstUpdate = new List<HR_SALARY>();
+            //ResultDB resultDB = new ResultDB();
+            //try
+            //{
+            //    using (var packet = new ExcelPackage(new System.IO.FileInfo(filePath)))
+            //    {
+            //        ExcelWorksheet worksheet = packet.Workbook.Worksheets[1];
+            //        HR_SALARY salary;
+            //        HR_NHANVIEN nv;
+            //        string manv;
+            //        for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
+            //        {
+            //            manv = worksheet.Cells[i, 1].Text.NullString();
+            //            nv = _nhanVienRepository.FindById(manv);
+
+            //            if (nv == null)
+            //            {
+            //                break;
+            //            }
+
+            //            salary = new HR_SALARY()
+            //            {
+            //                MaNV = manv
+            //            };
+
+            //            if (worksheet.Cells[i, 3].Text.NullString() != "")
+            //            {
+            //                salary.BasicSalary = decimal.Parse(worksheet.Cells[i, 3].Text.IfNullIsZero());
+            //            }
+
+            //            if (worksheet.Cells[i, 4].Text.NullString() != "")
+            //            {
+            //                salary.LivingAllowance = decimal.Parse(worksheet.Cells[i, 4].Text.IfNullIsZero());
+            //            }
+
+            //            if (worksheet.Cells[i, 5].Text.NullString() != "")
+            //            {
+            //                salary.AbilityAllowance = decimal.Parse(worksheet.Cells[i, 5].Text.IfNullIsZero());
+            //            }
+            //            lstUpdate.Add(salary);
+            //        }
+
+            //        resultDB.ReturnInt = 0;
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    resultDB.ReturnInt = -1;
+            //    resultDB.ReturnString = ex.Message;
+            //}
+            //return resultDB;
         }
     }
 }

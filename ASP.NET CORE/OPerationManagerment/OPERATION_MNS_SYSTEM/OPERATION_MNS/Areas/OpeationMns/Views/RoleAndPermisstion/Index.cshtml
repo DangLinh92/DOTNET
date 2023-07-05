@@ -22,7 +22,7 @@
 
             if (!permisstionLst.find(e => e.FunctionId == functionId)) {
                 let newObj = {
-                    Id: null,
+                    Id: 0,
                     RoleId: roleId,
                     FunctionId: functionId,
                     CanCreate: false,
@@ -31,7 +31,9 @@
                     CanDelete: false,
                     ApproveL1: false,
                     ApproveL2: false,
-                    ApproveL3: false
+                    ApproveL3: false,
+                    AppRole: null,
+                    Function:null
                 };
 
                 permisstionLst.push(newObj);
@@ -99,14 +101,13 @@
             });
 
             $('#btnSave').on('click', function (e) {
-                console.log(permisstionLst);
+               console.log(permisstionLst);
                 $.ajax({
                     type: 'POST',
                     url: "/OpeationMns/RoleAndPermisstion/SavePermission",
                     data: JSON.stringify(permisstionLst),
-                    datatype: 'json',
+                    dataType: "json",
                     contentType: "application/json; charset=utf-8",
-                    async: false,
                     success: function (result) {
                         hrms.notify("Update date success!", 'Success', 'alert', function () { });
                     },

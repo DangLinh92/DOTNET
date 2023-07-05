@@ -1,6 +1,7 @@
 ﻿using HRMNS.Data.EF.Configurations;
 using HRMNS.Data.EF.Extensions;
 using HRMNS.Data.Entities;
+using HRMNS.Data.Entities.Payroll;
 using HRMNS.Data.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -117,6 +118,7 @@ namespace HRMNS.Data.EF
         public virtual DbSet<BANGLUONGCHITIET_HISTORY> BANGLUONGCHITIET_HISTORY { get; set; }
         public virtual DbSet<HR_KY_LUAT_KHENTHUONG> HR_KY_LUAT_KHENTHUONG { get; set; }
         public virtual DbSet<PHUCAP_DOC_HAI> PHUCAP_DOC_HAI { get; set; }
+        public virtual DbSet<HR_SALARY_GRADE> HR_SALARY_GRADE { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -220,6 +222,7 @@ namespace HRMNS.Data.EF
             builder.AddConfiguration(new HrBangCongHistoryConfiguration());
             builder.AddConfiguration(new KhenThuongKyLuatConfiguration());
             builder.AddConfiguration(new PhuCapDocHaiConfiguration());
+            builder.AddConfiguration(new HrGradeConfiguration());
 
             //base.OnModelCreating(builder);
         }

@@ -16,7 +16,7 @@
 
         a:hover {
             background-color: #ddd;
-            color: black!important;
+            color: black !important;
         }
 
         .previous {
@@ -27,7 +27,7 @@
             text-decoration: none;
             display: inline-block;
             padding: 8px 16px;
-            cursor:pointer;
+            cursor: pointer;
         }
 
         .next {
@@ -57,7 +57,10 @@
 }
 
 @section Scripts
-{
+    {
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
     <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
 
     <script>
@@ -180,9 +183,9 @@
             <div class="row filter-row">
                 <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
                     @*<div class="form-group form-focus select-focus">
-                            <div class="cal-icon"><input id="txtYear" name="year" value="@Model.Year" class="form-control datetimepicker" type="text" required></div>
-                            <label class="focus-label">Year</label>
-                        </div>*@
+                    <div class="cal-icon"><input id="txtYear" name="year" value="@Model.Year" class="form-control datetimepicker" type="text" required></div>
+                    <label class="focus-label">Year</label>
+                    </div>*@
                 </div>
                 <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
                     <div class="form-group form-focus select-focus">
@@ -277,54 +280,54 @@
                     </div>
                     <div class="table-responsive" style="margin-top:10px">
                         @(Html.DevExtreme().DataGrid<ViewControlChartModel>()
-.ID("grid-container_loi")
-.DataSource(Model.lstData)
-.Height(400)
-.ShowBorders(true)
-.Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
-.Paging(paging => paging.Enabled(false))
-.AllowColumnResizing(true)
-.ColumnMinWidth(50)
-.ColumnAutoWidth(true)
-.ShowColumnLines(true)
-.ShowRowLines(true)
-.RowAlternationEnabled(true)
-.FilterRow(filterRow => filterRow
-    .Visible(true)
-    .ApplyFilter(GridApplyFilterMode.Auto)
-)
-.HeaderFilter(headerFilter => headerFilter.Visible(true))
-    .HoverStateEnabled(true)
-    .Selection(s => s.Mode(SelectionMode.Single))
-    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
-     .OnExporting("exporting")
-.Columns(columns =>
-{
-    columns.AddFor(m => m.DATE).Caption("Date");
-    columns.AddFor(m => m.MATERIAL_ID).Caption("Material");
-    columns.AddFor(m => m.LOT_ID).Caption("LotID");
-    columns.AddFor(m => m.CASSETTE_ID).Caption("CassetteID");
-    columns.AddFor(m => m.MAIN_OPERATION).Caption("Operation");
-    columns.AddFor(m => m.MAIN_EQUIPMENT_NAME).Caption("Equipment");
-    columns.AddFor(m => m.MAIN_TARGET_USL).Caption("USL");
-    columns.AddFor(m => m.MAIN_TARGET_UCL).Caption("UCL");
-    columns.AddFor(m => m.MAIN_TARGET_LSL).Caption("LSL");
-    columns.AddFor(m => m.MAIN_TARGET_LCL).Caption("LCL");
-    columns.AddFor(m => m.MAIN_VALUE_COUNT).Caption("Point");
-    columns.AddFor(m => m.MAIN_VALUE1).Caption("Value 1");
-    columns.AddFor(m => m.MAIN_VALUE2).Caption("Value 2");
-    columns.AddFor(m => m.MAIN_VALUE3).Caption("Value 3");
-    columns.AddFor(m => m.MAIN_MAX_VALUE).Caption("Max Value");
-    columns.AddFor(m => m.MAIN_MIN_VALUE).Caption("Min Value");
-    columns.AddFor(m => m.MAIN_AVG_VALUE).Caption("Avg Value");
-    columns.AddFor(m => m.MAIN_RANGE).Caption("Range");
-}).Summary(s => s.TotalItems(items =>
-{
-    items.AddFor(m => m.LOT_ID)
-    .SummaryType(SummaryType.Count);
-})
-)
-.OnSelectionChanged("RowClickDataEvt").OnRowDblClick("onRowDbl"))
+                            .ID("grid-container_loi")
+                            .DataSource(Model.lstData)
+                            .Height(400)
+                            .ShowBorders(true)
+                            .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                            .Paging(paging => paging.Enabled(false))
+                            .AllowColumnResizing(true)
+                            .ColumnMinWidth(50)
+                            .ColumnAutoWidth(true)
+                            .ShowColumnLines(true)
+                            .ShowRowLines(true)
+                            .RowAlternationEnabled(true)
+                            .FilterRow(filterRow => filterRow
+                            .Visible(true)
+                            .ApplyFilter(GridApplyFilterMode.Auto)
+                            )
+                            .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                            .HoverStateEnabled(true)
+                            .Selection(s => s.Mode(SelectionMode.Single))
+                            .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+                            .OnExporting("exporting")
+                            .Columns(columns =>
+                            {
+                                columns.AddFor(m => m.DATE).Caption("Date");
+                                columns.AddFor(m => m.MATERIAL_ID).Caption("Material");
+                                columns.AddFor(m => m.LOT_ID).Caption("LotID");
+                                columns.AddFor(m => m.CASSETTE_ID).Caption("CassetteID");
+                                columns.AddFor(m => m.MAIN_OPERATION).Caption("Operation");
+                                columns.AddFor(m => m.MAIN_EQUIPMENT_NAME).Caption("Equipment");
+                                columns.AddFor(m => m.MAIN_TARGET_USL).Caption("USL");
+                                columns.AddFor(m => m.MAIN_TARGET_UCL).Caption("UCL");
+                                columns.AddFor(m => m.MAIN_TARGET_LSL).Caption("LSL");
+                                columns.AddFor(m => m.MAIN_TARGET_LCL).Caption("LCL");
+                                columns.AddFor(m => m.MAIN_VALUE_COUNT).Caption("Point");
+                                columns.AddFor(m => m.MAIN_VALUE1).Caption("Value 1");
+                                columns.AddFor(m => m.MAIN_VALUE2).Caption("Value 2");
+                                columns.AddFor(m => m.MAIN_VALUE3).Caption("Value 3");
+                                columns.AddFor(m => m.MAIN_MAX_VALUE).Caption("Max Value");
+                                columns.AddFor(m => m.MAIN_MIN_VALUE).Caption("Min Value");
+                                columns.AddFor(m => m.MAIN_AVG_VALUE).Caption("Avg Value");
+                                columns.AddFor(m => m.MAIN_RANGE).Caption("Range");
+                            }).Summary(s => s.TotalItems(items =>
+                            {
+                                items.AddFor(m => m.LOT_ID)
+                                .SummaryType(SummaryType.Count);
+                            })
+                            )
+                            .OnSelectionChanged("RowClickDataEvt").OnRowDblClick("onRowDbl"))
                     </div>
                     <div class="col-sm-12" style="margin-top:10px">
                         <ul class="breadcrumb">
@@ -335,59 +338,61 @@
                     </div>
                     <div class="table-responsive" style="margin-top:10px">
                         @(Html.DevExtreme().DataGrid<ViewControlChartModel>
-    ()
-    .ID("grid-container_loi_2")
-    .DataSource(Model.lstDataErr)
-    .Height(400)
-    .ShowBorders(true)
-    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
-    .Paging(paging => paging.Enabled(false))
-    .AllowColumnResizing(true)
-    .ColumnMinWidth(50)
-    .ColumnAutoWidth(true)
-    .ShowColumnLines(true)
-    .ShowRowLines(true)
-    .RowAlternationEnabled(true)
-    .FilterRow(filterRow => filterRow
-    .Visible(true)
-    .ApplyFilter(GridApplyFilterMode.Auto)
-    )
-     .SearchPanel(searchPanel => searchPanel
-        .Visible(true)
-        .Width(240)
-        .Placeholder("Search...")
-    )
-    .HeaderFilter(headerFilter => headerFilter.Visible(true))
-    .HoverStateEnabled(true)
-    .Selection(s => s.Mode(SelectionMode.Single))
-    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
-     .OnExporting("exporting_err")
-    .Columns(columns =>
-    {
-    columns.AddFor(m => m.DATE).Caption("Date");
-    columns.AddFor(m => m.MATERIAL_ID).Caption("Material");
-    columns.AddFor(m => m.LOT_ID).Caption("LotID");
-    columns.AddFor(m => m.CASSETTE_ID).Caption("CassetteID");
-    columns.AddFor(m => m.MAIN_OPERATION).Caption("Operation");
-    columns.AddFor(m => m.MAIN_EQUIPMENT_NAME).Caption("Equipment");
-    columns.AddFor(m => m.MAIN_TARGET_LSL).Caption("LSL");
-    columns.AddFor(m => m.LWL).Caption("LWL");
-    columns.AddFor(m => m.MAIN_TARGET).Caption("MAIN_TARGET").Caption("Target");
-    columns.AddFor(m => m.UWL).Caption("UWL");
-    columns.AddFor(m => m.MAIN_TARGET_USL).Caption("USL");
-    columns.AddFor(m => m.MAIN_VALUE_COUNT).Caption("Point");
-    columns.AddFor(m => m.MAIN_VALUE1).Caption("Value 1");
-    columns.AddFor(m => m.MAIN_VALUE2).Caption("Value 2");
-    columns.AddFor(m => m.MAIN_VALUE3).Caption("Value 3");
-    columns.AddFor(m => m.MAIN_MAX_VALUE).Caption("Max Value");
-    columns.AddFor(m => m.MAIN_MIN_VALUE).Caption("Min Value");
-    columns.AddFor(m => m.MAIN_AVG_VALUE).Caption("Avg Value");
-    columns.AddFor(m => m.MAIN_RANGE).Caption("Range");
-    }).Summary(s => s.TotalItems(items => {
-    items.AddFor(m => m.LOT_ID)
-    .SummaryType(SummaryType.Count);})
-    )
-    )
+                            ()
+                            .ID("grid-container_loi_2")
+                            .DataSource(Model.lstDataErr)
+                            .Height(400)
+                            .ShowBorders(true)
+                            .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                            .Paging(paging => paging.Enabled(false))
+                            .AllowColumnResizing(true)
+                            .ColumnMinWidth(50)
+                            .ColumnAutoWidth(true)
+                            .ShowColumnLines(true)
+                            .ShowRowLines(true)
+                            .RowAlternationEnabled(true)
+                            .FilterRow(filterRow => filterRow
+                            .Visible(true)
+                            .ApplyFilter(GridApplyFilterMode.Auto)
+                            )
+                            .SearchPanel(searchPanel => searchPanel
+                            .Visible(true)
+                            .Width(240)
+                            .Placeholder("Search...")
+                            )
+                            .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                            .HoverStateEnabled(true)
+                            .Selection(s => s.Mode(SelectionMode.Single))
+                            .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+                            .OnExporting("exporting_err")
+                            .Columns(columns =>
+                            {
+                                columns.AddFor(m => m.DATE).Caption("Date");
+                                columns.AddFor(m => m.MATERIAL_ID).Caption("Material");
+                                columns.AddFor(m => m.LOT_ID).Caption("LotID");
+                                columns.AddFor(m => m.CASSETTE_ID).Caption("CassetteID");
+                                columns.AddFor(m => m.MAIN_OPERATION).Caption("Operation");
+                                columns.AddFor(m => m.MAIN_EQUIPMENT_NAME).Caption("Equipment");
+                                columns.AddFor(m => m.MAIN_TARGET_LSL).Caption("LSL");
+                                columns.AddFor(m => m.LWL).Caption("LWL");
+                                columns.AddFor(m => m.MAIN_TARGET).Caption("MAIN_TARGET").Caption("Target");
+                                columns.AddFor(m => m.UWL).Caption("UWL");
+                                columns.AddFor(m => m.MAIN_TARGET_USL).Caption("USL");
+                                columns.AddFor(m => m.MAIN_VALUE_COUNT).Caption("Point");
+                                columns.AddFor(m => m.MAIN_VALUE1).Caption("Value 1");
+                                columns.AddFor(m => m.MAIN_VALUE2).Caption("Value 2");
+                                columns.AddFor(m => m.MAIN_VALUE3).Caption("Value 3");
+                                columns.AddFor(m => m.MAIN_MAX_VALUE).Caption("Max Value");
+                                columns.AddFor(m => m.MAIN_MIN_VALUE).Caption("Min Value");
+                                columns.AddFor(m => m.MAIN_AVG_VALUE).Caption("Avg Value");
+                                columns.AddFor(m => m.MAIN_RANGE).Caption("Range");
+                            }).Summary(s => s.TotalItems(items =>
+                            {
+                                items.AddFor(m => m.LOT_ID)
+                                .SummaryType(SummaryType.Count);
+                            })
+                            )
+                            )
                     </div>
                 </div>
             </div>

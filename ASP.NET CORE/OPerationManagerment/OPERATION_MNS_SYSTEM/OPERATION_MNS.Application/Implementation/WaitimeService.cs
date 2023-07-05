@@ -74,7 +74,8 @@ namespace OPERATION_MNS.Application.Implementation
                         OperationID = row["Operation ID"].NullString(),
                         Status = row["Status"].NullString(),
                         StayDay = decimal.Parse(row["Stay Day"].IfNullIsZero()),
-                        Id = row["Cassette ID"].NullString() + row["Material"].NullString() + row["Operation Name"].NullString() + row["Status"].NullString()
+                        Id = row["Cassette ID"].NullString() + row["Material"].NullString() + row["Operation Name"].NullString() + row["Status"].NullString(),
+                        SoTam = int.Parse(row["Number_Cassete"].NullString())
                     };
 
                     if (arrWall.Contains(row["Operation ID"].NullString()))
@@ -117,34 +118,34 @@ namespace OPERATION_MNS.Application.Implementation
                         grid_Inspection.lstWaittimeViewModel.Add(waittime);
                     }
 
-                    //if (arrReel.Contains(row["Operation ID"].NullString()))
-                    //{
-                    //    grid_ReelPacking.lstWaittimeViewModel.Add(waittime);
-                    //}
-                }
-
-                if(resultDB.ReturnDataSet.Tables.Count > 1)
-                {
-                    DataTable tableReel = resultDB.ReturnDataSet.Tables[1];
-                    foreach (DataRow row in tableReel.Rows)
+                    if (arrReel.Contains(row["Operation ID"].NullString()))
                     {
-                        waittime = new WaittimeViewModel()
-                        {
-                            LotId = row["Lot ID"].NullString(),
-                            Material = row["Material"].NullString(),
-                            OperationName = row["Operation Name"].NullString(),
-                            OperationID = row["Operation ID"].NullString(),
-                            Status = row["Status"].NullString(),
-                            StayDay = decimal.Parse(row["Stay Day"].IfNullIsZero()),
-                            Id = row["Lot ID"].NullString() + row["Material"].NullString() + row["Operation Name"].NullString() + row["Status"].NullString()
-                        };
-
-                        if (arrReel.Contains(row["Operation ID"].NullString()))
-                        {
-                            grid_ReelPacking.lstWaittimeViewModel.Add(waittime);
-                        }
+                        grid_ReelPacking.lstWaittimeViewModel.Add(waittime);
                     }
                 }
+
+                //if(resultDB.ReturnDataSet.Tables.Count > 1)
+                //{
+                //    DataTable tableReel = resultDB.ReturnDataSet.Tables[1];
+                //    foreach (DataRow row in tableReel.Rows)
+                //    {
+                //        waittime = new WaittimeViewModel()
+                //        {
+                //            LotId = row["Lot ID"].NullString(),
+                //            Material = row["Material"].NullString(),
+                //            OperationName = row["Operation Name"].NullString(),
+                //            OperationID = row["Operation ID"].NullString(),
+                //            Status = row["Status"].NullString(),
+                //            StayDay = decimal.Parse(row["Stay Day"].IfNullIsZero()),
+                //            Id = row["Lot ID"].NullString() + row["Material"].NullString() + row["Operation Name"].NullString() + row["Status"].NullString()
+                //        };
+
+                //        if (arrReel.Contains(row["Operation ID"].NullString()))
+                //        {
+                //            grid_ReelPacking.lstWaittimeViewModel.Add(waittime);
+                //        }
+                //    }
+                //}
 
             }
 

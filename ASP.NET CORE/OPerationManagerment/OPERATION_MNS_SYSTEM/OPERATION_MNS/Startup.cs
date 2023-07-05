@@ -106,6 +106,7 @@ namespace OPERATION_MNS
             services.AddTransient<IScheduleSampleService, ScheduleSampleService>();
             services.AddTransient<ITCardSampleService, TCardSampleService>();
             services.AddTransient<IDateOffLineSampleService, DateOffLineSampleService>();
+            services.AddTransient<ILotTrackingService, LotTrackingService>();
 
             services.AddSignalR(cfg =>cfg.EnableDetailedErrors = true);
 

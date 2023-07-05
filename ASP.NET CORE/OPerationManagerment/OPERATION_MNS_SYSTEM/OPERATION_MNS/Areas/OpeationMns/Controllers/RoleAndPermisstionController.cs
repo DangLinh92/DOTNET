@@ -58,7 +58,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models
         }
 
         [HttpPost]
-        public IActionResult SavePermission([FromBody]  List<PermisstionViewModel> model)//List<PermisstionViewModel> model
+        public IActionResult SavePermission([FromBody] IEnumerable<PermisstionViewModel> model)//List<PermisstionViewModel> model
         {
             foreach (PermisstionViewModel item in model)
             {
@@ -99,5 +99,10 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models
             _roleAndPermisstionService.SaveRole();
             return RedirectToAction("Index");
         }
+    }
+
+    public class Permissionlst
+    {
+        public IEnumerable<PermisstionViewModel> permissionlst { get; set; }
     }
 }

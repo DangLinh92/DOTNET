@@ -1053,7 +1053,9 @@ namespace HRMS.Areas.Admin.Controllers
                         kytu = worksheet.Cells[newColName + 14].Value.NullString();
                         while (kytu != "")
                         {
-                            valueEx = double.Parse(worksheet.Cells[newColName + beginIndex].Value.IfNullIsZero());
+                            if (kytu != "VP_SX" && kytu != "Signature")
+                                valueEx = double.Parse(worksheet.Cells[newColName + beginIndex].Value.IfNullIsZero());
+
                             switch (kytu)
                             {
                                 case "PH":

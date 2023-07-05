@@ -1,5 +1,6 @@
 ﻿using HRMNS.Data.EF.Extensions;
 using HRMNS.Data.Entities;
+using HRMNS.Data.Entities.Payroll;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
@@ -33,5 +34,11 @@ namespace HRMNS.Data.EF.Configurations
             entity.Property(c => c.Id).ValueGeneratedOnAdd();
         }
     }
-
+    public class HrGradeConfiguration : DbEntityConfiguration<HR_SALARY_GRADE>
+    {
+        public override void Configure(EntityTypeBuilder<HR_SALARY_GRADE> entity)
+        {
+            entity.HasKey(c => c.Id);
+        }
+    }
 }

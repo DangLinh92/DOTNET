@@ -14,6 +14,7 @@ namespace OPERATION_MNS.Application.ViewModels
         public string Status { get; set; }
         public decimal StayDay { get; set; }
         public string LotId { get; set; }
+        public int SoTam { get; set; }
     }
 
     public class OperationWaitimeSheet

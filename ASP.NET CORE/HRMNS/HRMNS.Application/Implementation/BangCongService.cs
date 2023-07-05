@@ -2022,7 +2022,7 @@ namespace HRMNS.Application.Implementation
                                                             if (BreakHaftDay(kyhieuChamCongDB.NullString()))
                                                             {
                                                                 if (DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture) >= DateTime.ParseExact("13:30:00", "HH:mm:ss", CultureInfo.InvariantCulture) ||
-                                                                GetTimeCaLamViec(item.BoPhan, CommonConstants.CA_NGAY, dateCheck).EndWorking == "17:00:00")
+                                                                GetTimeCaLamViec(item.BoPhan, CommonConstants.CA_NGAY, dateCheck).EndWorking == "17:00:00" || dateCheck == "2023-06-03")
                                                                 {
                                                                     ELLC += 0;
                                                                 }
@@ -2455,7 +2455,7 @@ namespace HRMNS.Application.Implementation
                                                     {
                                                         if (BreakHaftDay(kyhieuChamCongDB.NullString()))
                                                         {
-                                                            if (GetTimeCaLamViec(item.BoPhan, CommonConstants.CA_NGAY, dateCheck).EndWorking == "17:00:00")
+                                                            if (GetTimeCaLamViec(item.BoPhan, CommonConstants.CA_NGAY, dateCheck).EndWorking == "17:00:00" || dateCheck == "2023-06-03")
                                                             {
                                                                 el += 0;
                                                             }
@@ -4305,9 +4305,13 @@ namespace HRMNS.Application.Implementation
 
         private string ResetULIL(string kyhieuChamCongDB, string dateCheck)
         {
-
+            if (kyhieuChamCongDB.NullString() == "IL" && DateTime.Parse(dateCheck).DayOfWeek == DayOfWeek.Sunday)
+            {
+                kyhieuChamCongDB = "-";
+            }
+            else
             // CHU NHẬT THÌ IL,UL k chấm
-            if (IsChuNhat(dateCheck) && (kyhieuChamCongDB.NullString() == "IL" || kyhieuChamCongDB.NullString() == "UL" || kyhieuChamCongDB.NullString() == "T"))
+            if (IsChuNhat(dateCheck) && (kyhieuChamCongDB.NullString() == "UL" || kyhieuChamCongDB.NullString() == "T"))
             {
                 kyhieuChamCongDB = "-";
             }
@@ -4316,6 +4320,14 @@ namespace HRMNS.Application.Implementation
 
         private bool IsChuNhat(string time)
         {
+            if (lstSpecialDay.ContainsKey(time))
+            {
+                if (lstSpecialDay[time] == 3)
+                    return true;
+                else
+                    return false;
+            }
+
             return DateTime.Parse(time).DayOfWeek == DayOfWeek.Sunday;
         }
 
@@ -4362,7 +4374,7 @@ namespace HRMNS.Application.Implementation
         }
 
         // ngày đặc biệt mà công ty quy định 
-        private Dictionary<string, int> lstSpecialDay = new Dictionary<string, int>() 
+        private Dictionary<string, int> lstSpecialDay = new Dictionary<string, int>()
         {
             { "2023-06-16", 3 }, { "2023-06-18", 0 },// đổi ngày 16 thành OT như chủ nhật, 18 chủ nhật như ngày thường.
             { "2023-06-22", 3 }, { "2023-06-25", 0 }

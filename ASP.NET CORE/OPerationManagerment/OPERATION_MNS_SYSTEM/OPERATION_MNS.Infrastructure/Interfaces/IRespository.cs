@@ -34,6 +34,7 @@ namespace OPERATION_MNS.Infrastructure.Interfaces
 
         ResultDB ExecProceduce(string ProcName, Dictionary<string, string> Dictionary, string tableParam, DataTable table);
         ResultDB ExecProceduce2(string ProcName, Dictionary<string, string> Dictionary);
+        ResultDB ExecProceduce3(string ProcName, Dictionary<string, string> Dictionary,string connectionString);
 
         string GetMaxDate(Expression<Func<T, string>> selector);
     }

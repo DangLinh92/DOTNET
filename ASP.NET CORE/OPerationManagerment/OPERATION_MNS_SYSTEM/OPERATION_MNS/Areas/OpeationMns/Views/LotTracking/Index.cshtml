@@ -1,0 +1,402 @@
+﻿@using OPERATION_MNS.Utilities.Common
+@{
+    ViewData["Title"] = "Lot Tracking";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts
+    {
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    @*<script src="~/js/exportFile_devextreme/exceljs.min.js"></script>*@
+    <script src="~/js/exportfile_devextreme/4.3/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+    <script src="~/plugins/bootstrap-tagsinput/bootstrap-tagsinput.js"></script>
+    <script>
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('Lot Tracking');
+
+            //DevExpress.excelExporter.exportDataGrid({
+            //    component: e.component,
+            //    worksheet: worksheet,
+            //    autoFilterEnabled: true
+            //}).then(function () {
+            //    workbook.xlsx.writeBuffer().then(function (buffer) {
+            //        saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'Lot Tracking.xlsx');
+            //    });
+            //});
+            //e.cancel = true;
+
+            let masterRows = [];
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                topLeftCell: { row: 2, column: 2 },
+                customizeCell: function ({ gridCell, excelCell }) {
+                    if (gridCell.column.dataField === 'LotModule' && gridCell.rowType === 'data') {
+                        masterRows.push({ rowIndex: excelCell.fullAddress.row + 1, data: gridCell.data });
+                    }
+                }
+            }).then((cellRange) => {
+                const borderStyle = { style: "thin", color: { argb: "FF7E7E7E" } };
+                let offset = 0;
+
+                const insertRow = (index, offset, outlineLevel) => {
+                    const currentIndex = index + offset;
+
+                    const row = worksheet.insertRow(currentIndex, [], 'n');
+
+                    for (var j = worksheet.rowCount + 1; j > currentIndex; j--) {
+                        worksheet.getRow(j).outlineLevel = worksheet.getRow(j - 1).outlineLevel;
+                    }
+
+                    row.outlineLevel = outlineLevel;
+
+                    return row;
+                }
+
+                for (var i = 0; i < masterRows.length; i++) {
+
+                    let row = insertRow(masterRows[i].rowIndex + i, offset++, 2);
+                    let columnIndex = cellRange.from.column + 1;
+                    row.height = 40;
+
+                    Object.assign(row.getCell(columnIndex), {
+                        value: 'Lot History : ' + masterRows[i].data.LotID,
+                        fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'E6D0BE' } }
+                    });
+                    worksheet.mergeCells(row.number, columnIndex, row.number, 7);
+
+                    const columns = ["LotID", "TranTime", "Operation", "EquiptmentName", "OnlineOffLine"];
+
+                    row = insertRow(masterRows[i].rowIndex + i, offset++, 2);
+                    columns.forEach((columnName, currentColumnIndex) => {
+                        Object.assign(row.getCell(columnIndex + currentColumnIndex), {
+                            value: columnName,
+                            fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'BEDFE6' } },
+                            font: { bold: true },
+                            border: { bottom: borderStyle, left: borderStyle, right: borderStyle, top: borderStyle }
+                        });
+                    });
+
+                    masterRows[i].data.LotHistories.forEach((task, index) => {
+                        row = insertRow(masterRows[i].rowIndex + i, offset++, 2);
+
+                        columns.forEach((columnName, currentColumnIndex) => {
+                            Object.assign(row.getCell(columnIndex + currentColumnIndex), {
+                                value: task[columnName],
+                                fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'BEDFE6' } },
+                                border: { bottom: borderStyle, left: borderStyle, right: borderStyle, top: borderStyle }
+                            });
+                        });
+                    });
+                    offset--;
+                }
+            }).then(function () {
+                // https://github.com/exceljs/exceljs#writing-xlsx
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'Lot Tracking.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        function exporting_AffectLot(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('AffectLot');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'AffectLot.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        function getLotModule() {
+            return $("#txtLotModule").val();
+        }
+
+        function getAffectLot() {
+            return $("#txtAffectLot").val();
+        }
+
+        function SearchData() {
+            $("#grid-container-detail").dxDataGrid("refresh");
+            $("#grid-container-detail-AffectLot").dxDataGrid("refresh");
+        }
+
+        function cell_prepared(options) {
+
+            if (options.column.dataField == 'LotIDView') {
+                var fieldData = options.value,
+                    fieldHtml = "";
+
+                if (fieldData && fieldData.LotID) {
+
+                    if (fieldData.IsRelationLot == '1') {
+                        console.log(fieldData.LotID);
+                        console.log(fieldData.IsRelationLot);
+
+                        options.cellElement.addClass("css_IsRelationLot");
+                        fieldHtml += "<div>" + fieldData.LotID + "</div>";
+                    } else {
+                        fieldHtml = fieldData.LotID;
+                    }
+                    options.cellElement.html(fieldHtml);
+                }
+            }
+        }
+
+        $('#show-hidden-grid-lotmodule').click(function () {
+            $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+            $('.hidden-grid-lotmodule').slideToggle("slow");
+
+        });
+
+        $('#show-hidden-grid-affectlot').click(function () {
+            $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+            $('.hidden-grid-affectlot').slideToggle("slow");
+
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+    </style>
+
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">@ViewData["Title"]</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Lot Tracking</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    @*  <form id="frmSearch" method="post" action="/OpeationMns/HoldLotList/GetLotHoldHistorySample">*@
+    <div class="row filter-row">
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            @*  <div class="form-group form-focus select-focus">
+            <input class="form-control floating" type="text" name="cassetteId" value="@Model.CasseteId">
+            <label class="focus-label">Cassette ID</label>
+            </div>*@
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            @* <div class="form-group form-focus select-focus">
+            <input class="form-control floating" type="text" id="txtlotId" name="lotId" value="@Model.LotId">
+            <label class="focus-label">Lot ID</label>
+            </div>*@
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            <div class="form-group form-focus select-focus">
+                <input class="form-control floating" type="text" name="affectLot" id="txtAffectLot">
+                <label class="focus-label">Affect lot</label>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            <div class="form-group form-focus select-focus">
+                <input class="form-control floating" type="text" name="lotModule" id="txtLotModule">
+                <label class="focus-label">Lot module</label>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            <button href="#" class="btn btn-success btn-block" id="btnSearch" onclick="SearchData()"> Search </button>
+        </div>
+    </div>
+    @* </form>*@
+
+    <div class="row">
+        <div class="col-sm-12" id="show-hidden-grid-lotmodule">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item active" style="cursor: pointer;">
+                    <i class="fa fa-caret-right"></i> <strong>Lot module</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row hidden-grid-lotmodule">
+        <div class="table-responsive" id="gridHoldHistory">
+            @(Html.DevExtreme().LoadPanel()
+                .ID("loadPanel")
+                .Position(p => p.Of("#grid-container-detail"))
+                .Visible(false)
+                )
+            @(Html.DevExtreme().DataGrid<WaferInfo>()
+                .ID("grid-container-detail")
+                .Height(685)
+                .ShowBorders(true)
+                .RepaintChangesOnly(true)
+                .LoadPanel(loadPanel => loadPanel.Enabled(true))
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .AllowColumnResizing(true)
+                .ColumnMinWidth(50)
+                .ColumnAutoWidth(true)
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .FilterRow(filterRow => filterRow
+                .Visible(true)
+                .ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .HoverStateEnabled(true)
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+                .OnExporting("exporting")
+                .SearchPanel(searchPanel => searchPanel
+                .Visible(true)
+                .Width(240)
+                .Placeholder("Search..."))
+                @*.OnCellPrepared("cell_prepared")*@
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.LotModule).Caption("Lot module");
+                    columns.AddFor(m => m.Wlp2_Reel_Number).Caption("WLP2 Reel Number");
+                    columns.AddFor(m => m.Model);
+                    columns.AddFor(m => m.CassetId).Caption("WLP1 Wafer Number");
+                    columns.AddFor(m => m.LotID).Caption("WLP1 Lot Number");
+                    columns.AddFor(m => m.WaferID);
+                    columns.AddFor(m => m.LotFAB);
+                }).MasterDetail(md =>
+                {
+                    md.Enabled(true);
+                    md.Template(@<text>
+                        <div class="master-detail-caption">Lot History: <%- data.LotID %></div>
+                        @(Html.DevExtreme().DataGrid<LotHistory>()
+                            .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                            .Paging(paging => paging.Enabled(true))
+                            .AllowColumnResizing(true)
+                            .ColumnAutoWidth(true)
+                            .ShowBorders(true)
+                            .ColumnMinWidth(50)
+                            .ShowColumnLines(true)
+                            .ShowRowLines(true)
+                            .RowAlternationEnabled(true)
+                            .FilterRow(filterRow => filterRow
+                            .Visible(true)
+                            .ApplyFilter(GridApplyFilterMode.Auto)
+                            )
+                            .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                            .HoverStateEnabled(false)
+                            .Selection(s => s.Mode(SelectionMode.Single))
+                            .Columns(columns =>
+                            {
+                            columns.AddFor(m => m.LotID);
+
+                            columns.AddFor(m => m.TranTime);
+
+                            columns.AddFor(m => m.Operation);
+
+                            columns.AddFor(m => m.EquiptmentName);
+
+                            columns.AddFor(m => m.OnlineOffLine);
+                        })
+                            .DataSource(d => d.Mvc()
+                            .Area("OpeationMns")
+                            .Controller("LotTracking")
+                            .LoadAction("GetLotHistory")
+                            .LoadParams(new { lotId = new JS("data.LotID") })
+                            )
+                            )
+                        </text>);
+                })
+                .DataSource(d => d.Mvc()
+                .Area("OpeationMns")
+                .Controller("LotTracking")
+                .LoadAction("GetLotTraking")
+                .LoadParams(new { lotModule = new JS("getLotModule") })
+                .Key("LotID")
+                ).
+                Summary(s => s.TotalItems(items =>
+                {
+                    items.AddFor(m => m.LotID).SummaryType(SummaryType.Count).DisplayFormat("Count: {0}");
+                }))
+                )
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12" id="show-hidden-grid-affectlot">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item active" style="cursor: pointer;">
+                    <i class="fa fa-caret-right"></i> <strong>Affect lot</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row hidden-grid-affectlot">
+        <div class="table-responsive" id="gridHoldHistory_AffectLot">
+            @(Html.DevExtreme().LoadPanel()
+                .ID("loadPanelAffect")
+                .Position(p => p.Of("#grid-container-detail-AffectLot"))
+                .Visible(false)
+                )
+            @(Html.DevExtreme().DataGrid<WaferInfo>()
+                .ID("grid-container-detail-AffectLot")
+                .Height(685)
+                .ShowBorders(true)
+                .RepaintChangesOnly(true)
+                .LoadPanel(loadPanel => loadPanel.Enabled(true))
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .AllowColumnResizing(true)
+                .ColumnMinWidth(50)
+                .ColumnAutoWidth(true)
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .FilterRow(filterRow => filterRow
+                .Visible(true)
+                .ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .HoverStateEnabled(true)
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+                .OnExporting("exporting_AffectLot")
+                .SearchPanel(searchPanel => searchPanel
+                .Visible(true)
+                .Width(240)
+                .Placeholder("Search..."))
+                @*.OnCellPrepared("cell_prepared")*@
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.CassetId).Visible(true).Caption("WLP1 Wafer Number");
+                    columns.AddFor(m => m.Model);
+                    columns.AddFor(m => m.LotID).Caption("WLP1 Lot Number");
+                    columns.AddFor(m => m.WaferID);
+                    columns.AddFor(m => m.Wlp2_Reel_Number).Caption("WLP2 Reel Number");
+                    columns.AddFor(m => m.LotFAB);
+                    columns.AddFor(m => m.LotModule).Caption("Lot Module");
+                })
+                .DataSource(d => d.Mvc()
+                .Area("OpeationMns")
+                .Controller("LotTracking")
+                .LoadAction("GetLotTraking")
+                .LoadParams(new { affectLot = new JS("getAffectLot") })
+                .Key("LotID")
+                ).
+                Summary(s => s.TotalItems(items =>
+                {
+                    items.AddFor(m => m.LotID).SummaryType(SummaryType.Count).DisplayFormat("Count: {0}");
+                }))
+                )
+        </div>
+    </div>
+</div>

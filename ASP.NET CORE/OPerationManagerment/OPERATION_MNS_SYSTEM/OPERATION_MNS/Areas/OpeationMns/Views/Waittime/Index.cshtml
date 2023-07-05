@@ -210,7 +210,8 @@
                         .HoverStateEnabled(true)
                         .Columns(columns =>
                         {
-                            columns.Add().DataField("LotId").Width(110);
+                            columns.Add().DataField("CassetteID").Width(110);
+                            @*columns.Add().DataField("SoTam").Caption("Qty").Width(65);*@
                             columns.Add().DataField("Material").Width(120);
                             columns.Add().DataField("OperationName").Width(150);
                             columns.Add().DataField("Status").Width(65);

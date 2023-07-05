@@ -183,7 +183,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models.SignalR
                     Model_Short = iv.Material_SAP_CODE.Length >= 8 ? iv.Material_SAP_CODE.Substring(1, 7) : iv.Material_SAP_CODE,
                     Category = iv.Category,
                     LastUpdate = DateTime.Now.ToString("HH:mm:ss"),
-                   
+
                     STT = row
                 };
 
@@ -191,7 +191,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models.SignalR
                 {
                     if (pl.Model == daily.Model)
                     {
-                        if(ViewOption.NullString() == "")
+                        if (ViewOption.NullString() == "")
                         {
                             daily.ChipWafer = CommonConstants.WAFER;
                         }
@@ -199,7 +199,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models.SignalR
                         {
                             daily.ChipWafer = ViewOption;
                         }
-                        
+
                         daily.StandardQty = (decimal)pl.StandardQtyForMonth;
 
                         // lưu lại lượng GAP cuôi tháng nếu daily plan nằm trên 2 tháng 
@@ -764,6 +764,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models.SignalR
             IEnumerable<VIEW_WIP_POST_WLP> wip = GetDailyStockWlp2Chip();
 
             IEnumerable<GOC_PLAN_WLP2> gocPlans = GetDailyPlanWlp2ByDay();
+            //IEnumerable<GOC_PLAN_WLP2> gocBeforePlans = GetBeforePlanWlp2ByDayAndModel();
             IEnumerable<DAILY_PLAN_WLP2> dailyPlansUpdated = GetDailyPlanByModelUpdated(GetBeginDate().ToString("yyyy-MM-dd"));
 
             DailyPlanWlp2ViewModel stModel;
@@ -774,6 +775,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models.SignalR
 
             List<GOC_STANDAR_QTY> lstStandarQty = GetStandarQty(CommonConstants.WLP2).ToList();
             GOC_STANDAR_QTY stQty;
+            float beforeGap = 0;
             foreach (var item in wip)
             {
                 if (dailyPlansUpdated.FirstOrDefault(x => x.Model == item.Material_SAP_CODE) != null)
@@ -801,6 +803,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models.SignalR
                         Type = goc?.Type
                     };
 
+                    //beforeGap = gocBeforePlans.Count() > 0 ? gocBeforePlans.FirstOrDefault(x => x.Model == item.Material_SAP_CODE).QuantityGap : 0;
                     stModel.KHSXTheoNgay = goc != null ? goc.QuantityGap : 0;
                     stModel.WaferOven = stModel.KHSXTheoNgay;
                     stModel.Dicing = stModel.KHSXTheoNgay;
@@ -944,6 +947,24 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models.SignalR
             ResultDB resultDB = ExecProceduce2("GET_GOC_PLAN_WLP2_BY_DAY", param);
 
             if (resultDB.ReturnInt == 0)
+            {
+                result = DataTableToJson.ConvertDataTable<GOC_PLAN_WLP2>(resultDB.ReturnDataSet.Tables[0]);
+            }
+            return result;
+        }
+
+        private IEnumerable<GOC_PLAN_WLP2> GetBeforePlanWlp2ByDayAndModel()
+        {
+            string date = GetBeginDateOfWlp2().AddDays(-1).ToString("yyyy-MM-dd");
+            IEnumerable<GOC_PLAN_WLP2> result = new List<GOC_PLAN_WLP2>();
+
+            Dictionary<string, string> param = new Dictionary<string, string>();
+            param.Add("A_DATE", date);
+            param.Add("A_DANHMUC", "SAN_XUAT");
+
+            ResultDB resultDB = ExecProceduce2("GET_GOC_PLAN_WLP2_BY_MODEL_DAY", param);
+
+            if (resultDB.ReturnInt == 0 && resultDB.ReturnDataSet.Tables[0].Rows.Count > 0)
             {
                 result = DataTableToJson.ConvertDataTable<GOC_PLAN_WLP2>(resultDB.ReturnDataSet.Tables[0]);
             }

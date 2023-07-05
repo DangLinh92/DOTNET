@@ -30,6 +30,22 @@
             e.cancel = true;
         }
 
+        function exportingGrade(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('PhuCapCapBac');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'PhuCapCapBac.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
         function exporting(e) {
             var workbook = new ExcelJS.Workbook();
             var worksheet = workbook.addWorksheet('PhuCapChucVu');
@@ -113,7 +129,7 @@
     </div>-->
 
     <div class="row">
-        <div class="col-md-7">
+        <div class="col-md-6">
             @(Html.DevExtreme().DataGrid<ChucDanhViewModel>
                 ()
                 .ID("gridContainer")
@@ -165,7 +181,7 @@
                 )
                 )
         </div>
-        <div class="col-md-5">
+        <div class="col-md-6">
             @(Html.DevExtreme().DataGrid<PHUCAP_DOC_HAI>
                 ()
                 .ID("gridContainerdh")
@@ -217,6 +233,64 @@
                 .UpdateAction("UpdatePCDH")
                 .InsertAction("InsertPCDH")
                 .DeleteAction("DeleteDH")
+                .Key("Id")
+                ).Summary(s => s.TotalItems(items =>
+                {
+                    items.AddFor(m => m.Id)
+                    .SummaryType(SummaryType.Count);
+                })
+                )
+                )
+        </div>
+    </div>
+    <div class="row" style="margin-top:20px">
+        <div class="col-md-12">
+            @(Html.DevExtreme().DataGrid<HR_SALARY_GRADE>
+                ()
+                .ID("gridContainergrade")
+                .Height(720)
+                .ShowBorders(true)
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .AllowColumnResizing(true)
+                .ColumnMinWidth(50)
+                .ColumnAutoWidth(true)
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+                .OnExporting("exportingGrade")
+                .FilterRow(filterRow => filterRow
+                .Visible(true)
+                .ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .HoverStateEnabled(true)
+                .Editing(editing =>
+                {
+                    editing.Mode(GridEditMode.Popup);
+                    editing.AllowUpdating(true);
+                    editing.AllowAdding(true);
+                    editing.AllowDeleting(true);
+                })
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.Id).Caption("Cấp Bậc").AllowEditing(true);
+                    columns.AddFor(m => m.BasicSalaryStandard).Caption("Basic Salary Standard").AllowEditing(true);
+                    columns.AddFor(m => m.IncentiveLanguage).Caption("Hỗ Trợ Ngoại Ngữ").AllowEditing(true);
+                    columns.AddFor(m => m.BasicSalary).AllowEditing(true);
+                    columns.AddFor(m => m.AttendanceAllowance).AllowEditing(true);
+                    columns.AddFor(m => m.LivingAllowance).AllowEditing(true);
+                    columns.AddFor(m => m.IncentiveStandard).AllowEditing(true);
+                })
+                .DataSource(d => d.Mvc()
+                .Area("Payroll")
+                .Controller("PhuCapLuong")
+                .LoadAction("GetPCGrade")
+                .UpdateAction("UpdateGrade")
+                .InsertAction("InsertGrade")
+                .DeleteAction("DeleteGrade")
                 .Key("Id")
                 ).Summary(s => s.TotalItems(items =>
                 {
