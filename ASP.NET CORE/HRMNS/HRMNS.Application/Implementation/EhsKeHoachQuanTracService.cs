@@ -176,7 +176,7 @@ namespace HRMNS.Application.Implementation
                 {
                     ((Data.EF.EFUnitOfWork)_unitOfWork).DBContext().Database.BeginTransaction();
 
-                    ExcelWorksheet worksheet = packet.Workbook.Worksheets[1];
+                    ExcelWorksheet worksheet = packet.Workbook.Worksheets[0];
                     EHS_KEHOACH_QUANTRAC kehoachQuanTrac;
                     int j = 0;
                     for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)

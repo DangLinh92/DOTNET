@@ -195,7 +195,7 @@ namespace HRMNS.Application.Implementation
                 {
                     ((Data.EF.EFUnitOfWork)_unitOfWork).DBContext().Database.BeginTransaction();
 
-                    ExcelWorksheet worksheet = packet.Workbook.Worksheets[1];
+                    ExcelWorksheet worksheet = packet.Workbook.Worksheets[0];
                     EHS_KEHOACH_DAOTAO_ANTOAN_VSLD kehoach;
                     Guid kehoachId;
                     int j = 0;

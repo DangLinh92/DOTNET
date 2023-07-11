@@ -3,11 +3,11 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 @section Styles{
-<style>
-    .button-container {
-        padding-bottom: 16px;
-    }
-</style>
+    <style>
+        .button-container {
+            padding-bottom: 16px;
+        }
+    </style>
 }
 <div class="content container-fluid">
     <div class="button-container">
@@ -20,48 +20,49 @@
     </div>
 
     <script type="text/javascript">
-    $(function () {
-        $("#button-download-xlsx").dxButton({
-            icon: "download",
-            type: "normal",
-            text: "Download as Xlsx",
-            onClick: function (e) {
-                var spreadsheetState = spreadsheet.getSpreadsheetState();
-                $("#formExport").attr('action', '@Url.Action("DownloadXlsx")');
-                $("input[name='SpreadsheetWorkSessionId']").val(spreadsheetState.SpreadsheetWorkSessionId);
+        $(function () {
+            $("#button-download-xlsx").dxButton({
+                icon: "download",
+                type: "normal",
+                text: "Download as Xlsx",
+                onClick: function (e) {
+                    var spreadsheetState = spreadsheet.getSpreadsheetState();
+                    $("#formExport").attr('action', '@Url.Action("DownloadXlsx")');
+                    $("input[name='SpreadsheetWorkSessionId']").val(spreadsheetState.SpreadsheetWorkSessionId);
 
-            },
-            useSubmitBehavior: true
+                },
+                useSubmitBehavior: true
+            });
+            $("#button-download-html").dxButton({
+                icon: "download",
+                type: "normal",
+                text: "Download as Html",
+                onClick: function (e) {
+                    var spreadsheetState = spreadsheet.getSpreadsheetState();
+                    $("#formExport").attr('action', '@Url.Action("DownloadHtml")');
+                    $("input[name='SpreadsheetWorkSessionId']").val(spreadsheetState.SpreadsheetWorkSessionId);
+                },
+                useSubmitBehavior: true
+            });
+            $("#button-print").dxButton({
+                icon: "print",
+                type: "normal",
+                text: "Print document",
+                onClick: function (e) {
+                    spreadsheet.print("_blank");
+                }
+            });
         });
-        $("#button-download-html").dxButton({
-            icon: "download",
-            type: "normal",
-            text: "Download as Html",
-            onClick: function (e) {
-                var spreadsheetState = spreadsheet.getSpreadsheetState();
-                $("#formExport").attr('action', '@Url.Action("DownloadHtml")');
-                $("input[name='SpreadsheetWorkSessionId']").val(spreadsheetState.SpreadsheetWorkSessionId);
-            },
-            useSubmitBehavior: true
-        });
-        $("#button-print").dxButton({
-            icon: "print",
-            type: "normal",
-            text: "Print document",
-            onClick: function(e) {
-                spreadsheet.print("_blank");
-            }
-        });
-    });
     </script>
     @(Html.DevExpress()
-    .Spreadsheet("spreadsheet")
-    .Height("800px")
-    .Width("100%")
-    .ConfirmOnLosingChanges(confirm => confirm.Enabled(false))
-    .DocumentRequestHandlerUrl(Url.Action("DxDocumentRequest"))
-    .Open((string)ViewData["DocumentPath"])
-    )
+        .Spreadsheet("spreadsheet")
+        .Height("800px")
+        .Width("100%")
+        .ConfirmOnLosingChanges(confirm => confirm.Enabled(false))
+        .DocumentRequestHandlerUrl(Url.Action("DxDocumentRequest"))
+        //.Open(@"E:\WorkSpace\Source\NET CORE\ASP.NET CORE\HRMNS\HRMS\wwwroot\export-files\Tonghopnhansu_CSP_20230711085359.xlsx")
+        .Open((string)ViewData["DocumentPath"])
+        )
 </div>
 
 

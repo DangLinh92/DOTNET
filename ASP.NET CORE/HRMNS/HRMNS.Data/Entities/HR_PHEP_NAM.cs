@@ -20,7 +20,7 @@ namespace HRMNS.Data.Entities
             int id, string maNV, 
             float soPhepNam, float soPhepConLai,
             int year, decimal sotientra,
-            DateTime? thoigiantra,
+            string thoigiantra,
             DateTime? thangBatDauDocHai,
             DateTime? thangKetThucDocHai,
             float soPhepDocHai, 
@@ -125,7 +125,8 @@ namespace HRMNS.Data.Entities
 
         public decimal SoTienChiTra { get; set; }
 
-        public DateTime? ThoiGianChiTra { get; set; }
+        [StringLength(50)]
+        public string ThoiGianChiTra { get; set; }
 
         [StringLength(50)]
         public string DateCreated { get; set; }

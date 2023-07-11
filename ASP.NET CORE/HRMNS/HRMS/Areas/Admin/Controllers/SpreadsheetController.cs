@@ -43,7 +43,6 @@ namespace HRMS.Areas.Admin.Controllers
             var sWebRootFolder = _hostingEnvironment.WebRootPath;
             string directory = Path.Combine(sWebRootFolder, "export-files");
             ViewData["DocumentPath"] = Path.Combine(directory, fileName);
-
             return View();
         }
 
@@ -57,6 +56,7 @@ namespace HRMS.Areas.Admin.Controllers
             DocumentName = HttpContext.Session.Get<string>("DocumentName");
             return File(stream, XlsxContentType, DocumentName);
         }
+
         public IActionResult DownloadHtml(SpreadsheetClientState spreadsheetState)
         {
             var spreadsheet = SpreadsheetRequestProcessor.GetSpreadsheetFromState(spreadsheetState);

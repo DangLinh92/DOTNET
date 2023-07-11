@@ -57,7 +57,7 @@ namespace HRMNS.Application.ViewModels.HR
 
         public decimal SoTienChiTra { get; set; }
 
-        public DateTime? ThoiGianChiTra { get; set; }
+        public string ThoiGianChiTra { get; set; }
 
         [StringLength(50)]
         public string DateCreated { get; set; }

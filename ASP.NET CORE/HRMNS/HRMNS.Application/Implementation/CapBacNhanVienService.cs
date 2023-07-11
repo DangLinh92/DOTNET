@@ -62,7 +62,7 @@ namespace HRMNS.Application.Implementation
             {
                 using (var packet = new ExcelPackage(new System.IO.FileInfo(filePath)))
                 {
-                    ExcelWorksheet worksheet = packet.Workbook.Worksheets[1];
+                    ExcelWorksheet worksheet = packet.Workbook.Worksheets[0];
                     NHANVIEN_INFOR_EX nhanvienEx;
                     List<NHANVIEN_INFOR_EX> lstAdd = new List<NHANVIEN_INFOR_EX>();
                     string manv;

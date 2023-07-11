@@ -1,4 +1,5 @@
-﻿using HRMNS.Application.Implementation;
+﻿using DevExpress.Office.Utils;
+using HRMNS.Application.Implementation;
 using HRMNS.Application.Interfaces;
 using HRMNS.Application.ViewModels.HR;
 using HRMNS.Application.ViewModels.System;
@@ -23,6 +24,7 @@ using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using Quartz;
 using Quartz.Impl;
+using Quartz.Util;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -30,6 +32,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using static OfficeOpenXml.ExcelErrorValue;
 
 namespace HRMS.Areas.Admin.Controllers
 {
@@ -245,12 +248,35 @@ namespace HRMS.Areas.Admin.Controllers
 
             using (ExcelPackage package = new ExcelPackage(file))
             {
-                foreach (var item in bophans)
+                bool isExist = false;
+                List<string> lstDelete = new List<string>();
+                foreach (var sh in package.Workbook.Worksheets )
                 {
-                    package.Workbook.Worksheets.Copy("Data", item);
+                    isExist = false;
+                    foreach (var item in bophans)
+                    {
+                        if(item == sh.Name)
+                        {
+                            isExist = true;
+                            break;
+                        }
+                    }
+
+                    if (!isExist)
+                    {
+                        lstDelete.Add(sh.Name);
+                       
+                    }
+                    // package.Workbook.Worksheets.Copy("Data", item);
+                    // package.Workbook.Worksheets.Delete(package.Workbook.Worksheets["Data"]);
                 }
 
-                package.Workbook.Worksheets.Delete(package.Workbook.Worksheets["Data"]);
+                foreach (var item in lstDelete)
+                {
+                    package.Workbook.Worksheets.Delete(package.Workbook.Worksheets[item]);
+                }
+
+                //package.Workbook.Worksheets.Delete(package.Workbook.Worksheets["Data"]);
 
                 string sheetName = "";
                 foreach (var data in lstNhansutonghop)
@@ -563,7 +589,6 @@ namespace HRMS.Areas.Admin.Controllers
                 List<DeNghiLamThemGioModel> lstLamthemgio = new List<DeNghiLamThemGioModel>();
                 var lst = _bangCongService.GetDataReport(timeEndUser, status, timeTo, department, ref lstLamthemgio);
 
-
                 if (lst.Count == 0)
                 {
                     return new BadRequestObjectResult("Not found data!");
@@ -690,7 +715,7 @@ namespace HRMS.Areas.Admin.Controllers
                 else
                 {
                     // add a new worksheet to the empty workbook
-                    ExcelWorksheet worksheet = package.Workbook.Worksheets[1];
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
 
                     // TIEU ĐỀ
                     worksheet.Cells["R1"].Value = "MONTHLY ATTENDANCE RECORD OF " + GetMonthYearEng(ChamCongData.TimeChamCong);
@@ -704,21 +729,31 @@ namespace HRMS.Areas.Admin.Controllers
                     string colName = "";
                     string newColName = "";
 
-                    for (int i = 0; i < data.Count; i++)
+                    List<ChamCongDataViewModel> orderData = new List<ChamCongDataViewModel>();
+                    if (department.NullString() == "")
+                    {
+                        orderData = data.OrderBy(x => x.BoPhan).ThenBy(x => x.BoPhanDetail).ToList();
+                    }
+                    else
+                    {
+                        orderData = data.OrderBy(x => x.BoPhanDetail).ToList();
+                    }
+
+                    for (int i = 0; i < orderData.Count; i++)
                     {
                         worksheet.Cells["A" + beginIndex].Value = (i + 1);
-                        worksheet.Cells["B" + beginIndex].Value = data[i].MaNV;
-                        worksheet.Cells["C" + beginIndex].Value = data[i].TenNV;
-                        worksheet.Cells["D" + beginIndex].Value = data[i].NgayVao;
-                        worksheet.Cells["E" + beginIndex].Value = data[i].BoPhanDetail;
-                        worksheet.Cells["CP" + beginIndex].Value = data[i].VP_SX;
+                        worksheet.Cells["B" + beginIndex].Value = orderData[i].MaNV;
+                        worksheet.Cells["C" + beginIndex].Value = orderData[i].TenNV;
+                        worksheet.Cells["D" + beginIndex].Value = orderData[i].NgayVao;
+                        worksheet.Cells["E" + beginIndex].Value = orderData[i].BoPhanDetail;
+                        worksheet.Cells["CP" + beginIndex].Value = orderData[i].VP_SX;
 
                         for (int j = 1; j <= 31; j++)
                         {
                             colName = GetExcelColumnName(j + 7);
                             // fill working status
                             newColName = colName + beginIndex;
-                            foreach (var ws in data[i].WorkingStatuses)
+                            foreach (var ws in orderData[i].WorkingStatuses)
                             {
                                 if (int.Parse(ws.DayCheck.Substring(8, 2)) == j)  // 2022-12-03
                                 {
@@ -741,7 +776,7 @@ namespace HRMS.Areas.Admin.Controllers
                             {
                                 newColName = colName + (beginIndex + k);
 
-                                foreach (var ot in data[i].OvertimeValues)
+                                foreach (var ot in orderData[i].OvertimeValues)
                                 {
                                     if (int.Parse(ot.DayCheckOT.Substring(8, 2)) == j)  // 2022-12-03
                                     {
@@ -780,7 +815,7 @@ namespace HRMS.Areas.Admin.Controllers
 
                             // fill EL/LC
                             newColName = colName + (beginIndex + 7);
-                            foreach (var st in data[i].EL_LC_Statuses)
+                            foreach (var st in orderData[i].EL_LC_Statuses)
                             {
                                 if (int.Parse(st.DayCheck_EL.Substring(8, 2)) == j)  // 2022-12-03
                                 {
@@ -794,7 +829,7 @@ namespace HRMS.Areas.Admin.Controllers
                             }
                         }
 
-                        if (i < data.Count - 2)
+                        if (i < orderData.Count - 2)
                         {
                             // copy range cell
                             cellfrom = "A" + (beginIndex + 8) + ":CQ" + (beginIndex + 16);
@@ -810,7 +845,7 @@ namespace HRMS.Areas.Admin.Controllers
                             }
                         }
 
-                        if (i < data.Count - 1)
+                        if (i < orderData.Count - 1)
                         {
                             // format ngay chu nhat mau xanh
                             for (int d = 1; d <= 31; d++)
@@ -828,7 +863,7 @@ namespace HRMS.Areas.Admin.Controllers
                         }
 
                         beginIndex += 8;
-                        if (data.Count == 1)
+                        if (orderData.Count == 1)
                         {
                             worksheet.DeleteRow(25, 8);
                         }
@@ -840,12 +875,12 @@ namespace HRMS.Areas.Admin.Controllers
             return new OkObjectResult(fileUrl);
         }
 
-        private void UpdateBangCongExtention(string timeEndUser, string timeTo)
+        private string UpdateBangCongExtention(string timeEndUser, string timeTo)
         {
             try
             {
                 List<DeNghiLamThemGioModel> lstLamthemgio = new List<DeNghiLamThemGioModel>();
-                var data = _bangCongService.GetDataReport(timeEndUser, Status.Active.NullString(), timeTo, "", ref lstLamthemgio).Where(x => x.BoPhan != "KOREA").ToList();
+                var data = _bangCongService.GetDataReport(timeEndUser, "", timeTo, "", ref lstLamthemgio).Where(x => x.BoPhan != "KOREA").ToList();
 
                 string sWebRootFolder = _hostingEnvironment.WebRootPath;
                 string directory = Path.Combine(sWebRootFolder, "export-files");
@@ -871,29 +906,33 @@ namespace HRMS.Areas.Admin.Controllers
                     fileSrc.CopyTo(file.FullName, true);
                 }
 
+                string timeChamCong = timeTo + "-01";
+                BANG_CONG_EXTENTION bangcongEx;
+                List<BANG_CONG_EXTENTION> lstBangCongEx = new List<BANG_CONG_EXTENTION>();
+                int startColumn = 39;
+                string kytu = "";
+                double valueEx = 0;
+                string newColName = "";
+                int beginIndex = 17;
+
                 using (ExcelPackage package = new ExcelPackage(file))
                 {
-
                     // add a new worksheet to the empty workbook
-                    ExcelWorksheet worksheet = package.Workbook.Worksheets[1];
-                    string timeChamCong = timeTo + "-01";
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                    package.Workbook.FullCalcOnLoad = true;
+                    worksheet.Workbook.CalcMode = ExcelCalcMode.Automatic;
+                    package.Workbook.Calculate();
+
                     // TIEU ĐỀ
                     worksheet.Cells["R1"].Value = "MONTHLY ATTENDANCE RECORD OF " + GetMonthYearEng(timeChamCong);
                     worksheet.Cells["R2"].Value = "BẢNG CHẤM CÔNG THÁNG " + timeChamCong.Split("-")[1] + " NĂM " + timeChamCong.Split("-")[0];
 
                     worksheet.Cells["A1"].Value = timeChamCong.Replace("-", "");
 
-                    int beginIndex = 17;
                     string cellfrom = "";
                     string cellTo = "";
                     string colName = "";
-                    string newColName = "";
 
-                    BANG_CONG_EXTENTION bangcongEx;
-                    List<BANG_CONG_EXTENTION> lstBangCongEx = new List<BANG_CONG_EXTENTION>();
-                    int startColumn = 39;
-                    string kytu = "";
-                    double valueEx = 0;
                     for (int i = 0; i < data.Count; i++)
                     {
                         worksheet.Cells["A" + beginIndex].Value = (i + 1);
@@ -1054,7 +1093,9 @@ namespace HRMS.Areas.Admin.Controllers
                         while (kytu != "")
                         {
                             if (kytu != "VP_SX" && kytu != "Signature")
+                            {
                                 valueEx = double.Parse(worksheet.Cells[newColName + beginIndex].Value.IfNullIsZero());
+                            }
 
                             switch (kytu)
                             {
@@ -1284,6 +1325,7 @@ namespace HRMS.Areas.Admin.Controllers
                 {
                     file.Delete();
                 }
+                return fileUrl;
             }
             catch (Exception ex)
             {
@@ -1617,7 +1659,7 @@ namespace HRMS.Areas.Admin.Controllers
                 DateTime from = DateTime.Parse(fromTime);
                 DateTime to = DateTime.Parse(endTime);
 
-                ExcelWorksheet worksheet = package.Workbook.Worksheets[1];
+                ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
 
                 string month = from.ToString("yyyy-MM");
 

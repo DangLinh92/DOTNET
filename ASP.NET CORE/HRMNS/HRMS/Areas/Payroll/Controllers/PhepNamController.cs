@@ -39,10 +39,10 @@ namespace HRMS.Areas.Payroll.Controllers
             _hostingEnvironment = hostingEnvironment;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             DeleteFileSr(_hostingEnvironment);
-            _ = ChotCongFinal();
+            await ChotCongFinal();
             return View();
         }
 

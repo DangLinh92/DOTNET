@@ -1,8 +1,10 @@
 ﻿using DevExpress.AspNetCore.Spreadsheet;
 using DevExpress.Spreadsheet;
 using DevExpress.XtraSpreadsheet.Export;
+using HRMNS.Application.Implementation;
 using HRMNS.Application.Interfaces;
 using HRMNS.Application.ViewModels.HR;
+using HRMNS.Data.EF.Extensions;
 using HRMNS.Data.Entities;
 using HRMNS.Utilities.Common;
 using HRMNS.Utilities.Constants;
@@ -31,13 +33,15 @@ namespace HRMS.Areas.Payroll.Controllers
         private readonly IWebHostEnvironment _hostingEnvironment;
         private IDetailSalaryService _detailSalaryService;
         private INgayChotCongService _ngayChotCongService;
+        private ISalaryService _salaryService;
         private readonly IMemoryCache _memoryCache;
-        public BangLuongChiTietController(IWebHostEnvironment hostEnvironment, IDetailSalaryService detailSalaryService, INgayChotCongService ngayChotCongService, IMemoryCache memoryCache)
+        public BangLuongChiTietController(IWebHostEnvironment hostEnvironment, IDetailSalaryService detailSalaryService, INgayChotCongService ngayChotCongService, ISalaryService salaryService, IMemoryCache memoryCache)
         {
             _hostingEnvironment = hostEnvironment;
             _detailSalaryService = detailSalaryService;
             _ngayChotCongService = ngayChotCongService;
             _memoryCache = memoryCache;
+            _salaryService = salaryService;
         }
 
         public IActionResult Index()
@@ -206,9 +210,9 @@ namespace HRMS.Areas.Payroll.Controllers
 
             using (ExcelPackage package = new ExcelPackage(file))
             {
-                ExcelWorksheet worksheet = package.Workbook.Worksheets[1];
-                ExcelWorksheet worksheetTH = package.Workbook.Worksheets[2];
-                ExcelWorksheet worksheetPivot = package.Workbook.Worksheets[3];
+                ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                ExcelWorksheet worksheetTH = package.Workbook.Worksheets[1];
+                ExcelWorksheet worksheetPivot = package.Workbook.Worksheets[2];
 
                 if (time.Contains("-"))
                 {
@@ -220,6 +224,9 @@ namespace HRMS.Areas.Payroll.Controllers
                 int beginIndex = 3;
                 string cellFrom = "";
                 string cellTo = "";
+                worksheet.Cells["P1"].Value = DateTime.Parse(time + "-01").ToString("yyyy-MM-dd");
+                worksheet.Cells["DG1"].Value = DateTime.Parse(time + "-01").ToString("yyyy-MM-dd");
+                worksheet.Cells["Q1"].Value = DateTime.Parse(time + "-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd");
 
                 for (int i = 0; i < data.Count; i++)
                 {
@@ -238,6 +245,7 @@ namespace HRMS.Areas.Payroll.Controllers
                     worksheet.Cells["L" + beginIndex].Value = data[i].PositionAllowance;
                     worksheet.Cells["M" + beginIndex].Value = data[i].AbilityAllowance;
                     worksheet.Cells["O" + beginIndex].Value = data[i].HarmfulAllowance;
+
                     worksheet.Cells["R" + beginIndex].Value = data[i].TongNgayCongThucTe;
                     worksheet.Cells["S" + beginIndex].Value = data[i].NgayCongThuViecBanNgay;
                     worksheet.Cells["T" + beginIndex].Value = data[i].NgayCongThuViecBanDem;
@@ -309,7 +317,7 @@ namespace HRMS.Areas.Payroll.Controllers
                     worksheet.Cells["DF" + beginIndex].Value = data[i].DoiTuongThamGiaCD;
                     worksheet.Cells["DR" + beginIndex].Value = data[i].DoiTuongTruyThuBHYT;
                     worksheet.Cells["DT" + beginIndex].Value = data[i].SoConNho;
-                    worksheet.Cells["DU" + beginIndex].Value = data[i].SoNgayNghi70;
+                    worksheet.Cells["DU" + beginIndex].Value = data[i].SoNgayNghi70;// L160
                     worksheet.Cells["DW" + beginIndex].Value = data[i].NgayNghiViec;
                     worksheet.Cells["DX" + beginIndex].Value = data[i].DieuChinhCong_Total;
 

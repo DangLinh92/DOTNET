@@ -11,6 +11,10 @@ namespace HRMNS.Data.Entities.Payroll
     [Table("HR_SALARY_GRADE")]
     public class HR_SALARY_GRADE : DomainEntity<string>, IDateTracking
     {
+        public HR_SALARY_GRADE()
+        {
+
+        }
         public double BasicSalaryStandard { get; set; }
         public double IncentiveLanguage { get; set; }
 

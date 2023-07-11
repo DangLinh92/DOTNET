@@ -210,27 +210,7 @@
         .Width(200);
 
         columns.AddFor(m => m.HR_NHANVIEN.HR_BO_PHAN_DETAIL.MaBoPhan_TOP2).Caption("Bộ Phận").AllowEditing(false);
-        columns.AddFor(m => m.NgayDieuChinh).Format("yyyy-MM-dd").Caption("Ngày Điều Chỉnh").AllowEditing(true);
-
-        columns.Add().Caption("Kết quả điều chỉnh").Columns(c =>
-        {
-            c.AddFor(m => m.NgayCong).Caption("Ngày Công").AllowEditing(true);
-            c.AddFor(m => m.DSNS).Caption("30% (DS-NS)").AllowEditing(true);
-            c.AddFor(m => m.NSBH).Caption("260% (NS-NH)").AllowEditing(true);
-            c.AddFor(m => m.DC85).Caption("85%").AllowEditing(true);
-            c.AddFor(m => m.DC100).Caption("100%").AllowEditing(true);
-            c.AddFor(m => m.DC150).Caption("150%").AllowEditing(true);
-            c.AddFor(m => m.DC190).Caption("190%").AllowEditing(true);
-            c.AddFor(m => m.DC200).Caption("200%").AllowEditing(true);
-            c.AddFor(m => m.DC210).Caption("210%").AllowEditing(true);
-            c.AddFor(m => m.DC270).Caption("270%").AllowEditing(true);
-            c.AddFor(m => m.DC300).Caption("300%").AllowEditing(true);
-            c.AddFor(m => m.DC390).Caption("390%").AllowEditing(true);
-            c.AddFor(m => m.ELLC).Caption("EL/LC").AllowEditing(true);
-            c.AddFor(m => m.Other).Caption("Chi Trả Khác").AllowEditing(true);
-        });
-
-
+        columns.AddFor(m => m.NgayDieuChinh).Caption("Ngày Điều Chỉnh").AllowEditing(true);
         columns.AddFor(m => m.NoiDungDC).Caption("Nội Dung").AllowEditing(true);
     })
     .DataSource(d => d.Mvc()

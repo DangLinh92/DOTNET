@@ -32,8 +32,7 @@ namespace HRMNS.Application.Implementation
         public DCChamCongViewModel Add(DCChamCongViewModel dmDcChamCongVm)
         {
             dmDcChamCongVm.UserCreated = GetUserId();
-            dmDcChamCongVm.NgayDieuChinh2 = dmDcChamCongVm.NgayDieuChinh.Value.ToString("yyyy-MM-dd");
-            if(dmDcChamCongVm.ChiTraVaoLuongThang != null)
+            if (dmDcChamCongVm.ChiTraVaoLuongThang != null)
             {
                 dmDcChamCongVm.ChiTraVaoLuongThang2 = dmDcChamCongVm.ChiTraVaoLuongThang.Value.ToString("yyyy-MM") + "-01";
             }
@@ -86,7 +85,7 @@ namespace HRMNS.Application.Implementation
                     {
                         return GetAll("", includeProperties);
                     }
-                    return _mapper.Map<List<DCChamCongViewModel>>(_dcChamCongRepository.FindAll(x => string.Compare(x.NgayDieuChinh2, timeFrom) >= 0 && string.Compare(x.NgayDieuChinh2, timeTo) <= 0, includeProperties));
+                    return _mapper.Map<List<DCChamCongViewModel>>(_dcChamCongRepository.FindAll(x => string.Compare(x.ChiTraVaoLuongThang2, timeFrom) >= 0 && string.Compare(x.ChiTraVaoLuongThang2, timeTo) <= 0, includeProperties));
                 }
                 else
                 {
@@ -95,7 +94,7 @@ namespace HRMNS.Application.Implementation
                         return _mapper.Map<List<DCChamCongViewModel>>(_dcChamCongRepository.FindAll(x => x.TrangThaiChiTra == status, includeProperties));
                     }
 
-                    return _mapper.Map<List<DCChamCongViewModel>>(_dcChamCongRepository.FindAll(x => x.TrangThaiChiTra == status && string.Compare(x.NgayDieuChinh2, timeFrom) >= 0 && string.Compare(x.NgayDieuChinh2, timeTo) <= 0, includeProperties));
+                    return _mapper.Map<List<DCChamCongViewModel>>(_dcChamCongRepository.FindAll(x => x.TrangThaiChiTra == status && string.Compare(x.ChiTraVaoLuongThang2, timeFrom) >= 0 && string.Compare(x.ChiTraVaoLuongThang2, timeTo) <= 0, includeProperties));
                 }
             }
             else
@@ -107,7 +106,7 @@ namespace HRMNS.Application.Implementation
                         return _mapper.Map<List<DCChamCongViewModel>>(_dcChamCongRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept, includeProperties));
                     }
 
-                    return _mapper.Map<List<DCChamCongViewModel>>(_dcChamCongRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && string.Compare(x.NgayDieuChinh2, timeFrom) >= 0 && string.Compare(x.NgayDieuChinh2, timeTo) <= 0, includeProperties));
+                    return _mapper.Map<List<DCChamCongViewModel>>(_dcChamCongRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && string.Compare(x.ChiTraVaoLuongThang2, timeFrom) >= 0 && string.Compare(x.ChiTraVaoLuongThang2, timeTo) <= 0, includeProperties));
                 }
                 else
                 {
@@ -116,7 +115,7 @@ namespace HRMNS.Application.Implementation
                         return _mapper.Map<List<DCChamCongViewModel>>(_dcChamCongRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && x.TrangThaiChiTra == status, includeProperties));
                     }
 
-                    return _mapper.Map<List<DCChamCongViewModel>>(_dcChamCongRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && x.TrangThaiChiTra == status && string.Compare(x.NgayDieuChinh2, timeFrom) >= 0 && string.Compare(x.NgayDieuChinh2, timeTo) <= 0, includeProperties));
+                    return _mapper.Map<List<DCChamCongViewModel>>(_dcChamCongRepository.FindAll(x => x.HR_NHANVIEN.MaBoPhan == dept && x.TrangThaiChiTra == status && string.Compare(x.ChiTraVaoLuongThang2, timeFrom) >= 0 && string.Compare(x.ChiTraVaoLuongThang2, timeTo) <= 0, includeProperties));
                 }
             }
         }
@@ -124,7 +123,6 @@ namespace HRMNS.Application.Implementation
         public void Update(DCChamCongViewModel dmDCChamCongVm)
         {
             dmDCChamCongVm.UserModified = GetUserId();
-            dmDCChamCongVm.NgayDieuChinh2 = dmDCChamCongVm.NgayDieuChinh.Value.ToString("yyyy-MM-dd");
             if (dmDCChamCongVm.ChiTraVaoLuongThang != null)
             {
                 dmDCChamCongVm.ChiTraVaoLuongThang2 = dmDCChamCongVm.ChiTraVaoLuongThang.Value.ToString("yyyy-MM") + "-01";
@@ -141,23 +139,23 @@ namespace HRMNS.Application.Implementation
             {
                 using (var packet = new ExcelPackage(new System.IO.FileInfo(filePath)))
                 {
-                    ExcelWorksheet worksheet = packet.Workbook.Worksheets[1];
+                    ExcelWorksheet worksheet = packet.Workbook.Worksheets[0];
                     DC_CHAM_CONG dccong;
                     List<DC_CHAM_CONG> lstUpdate = new List<DC_CHAM_CONG>();
                     List<DC_CHAM_CONG> lstAdd = new List<DC_CHAM_CONG>();
-                    string manv, ngaydieuchinh;
+                    string manv, thangchitra;
 
                     for (int i = worksheet.Dimension.Start.Row + 2; i <= worksheet.Dimension.End.Row; i++)
                     {
                         manv = worksheet.Cells[i, 1].Text.NullString();
-                        ngaydieuchinh = worksheet.Cells[i, 3].Text.NullString();
+                        thangchitra = worksheet.Cells[i, 6].Text.NullString();
 
-                        if (manv.NullString() == "")
+                        if (manv.NullString() == "" || !DateTime.TryParse(thangchitra + "-01", out _))
                         {
                             break;
                         }
 
-                        dccong = _dcChamCongRepository.FindSingle(x => x.MaNV == manv && x.NgayDieuChinh2 == ngaydieuchinh);
+                        dccong = _dcChamCongRepository.FindAll(x => x.MaNV == manv && x.ChiTraVaoLuongThang2.Contains(thangchitra)).FirstOrDefault();
 
                         if (dccong == null)
                         {
@@ -170,97 +168,18 @@ namespace HRMNS.Application.Implementation
                         }
 
                         dccong.MaNV = manv;
-
-                        if (worksheet.Cells[i, 3].Text.NullString() != "")
-                        {
-                            dccong.NgayDieuChinh2 = DateTime.Parse(worksheet.Cells[i, 3].Text.NullString()).ToString("yyyy-MM-dd");
-                            dccong.NgayDieuChinh = DateTime.Parse(worksheet.Cells[i, 3].Text.NullString());
-                        }
-
-                        if (worksheet.Cells[i, 4].Text.NullString() != "")
-                        {
-                            dccong.NgayCong = float.Parse(worksheet.Cells[i, 4].Text.IfNullIsZero());
-                        }
+                        dccong.NgayDieuChinh = worksheet.Cells[i, 3].Text.NullString();
+                        dccong.NoiDungDC = worksheet.Cells[i, 4].Text.NullString();
 
                         if (worksheet.Cells[i, 5].Text.NullString() != "")
                         {
-                            dccong.DSNS = float.Parse(worksheet.Cells[i, 5].Text.IfNullIsZero());
+                            dccong.TongSoTien = double.Parse(worksheet.Cells[i, 5].Text.IfNullIsZero());
                         }
 
                         if (worksheet.Cells[i, 6].Text.NullString() != "")
                         {
-                            dccong.NSBH = float.Parse(worksheet.Cells[i, 6].Text.IfNullIsZero());
-                        }
-
-                        if (worksheet.Cells[i, 7].Text.NullString() != "")
-                        {
-                            dccong.DC85 = float.Parse(worksheet.Cells[i, 7].Text.IfNullIsZero());
-                        }
-
-                        if (worksheet.Cells[i, 8].Text.NullString() != "")
-                        {
-                            dccong.DC100 = float.Parse(worksheet.Cells[i, 8].Text.IfNullIsZero());
-                        }
-
-                        if (worksheet.Cells[i, 9].Text.NullString() != "")
-                        {
-                            dccong.DC150 = float.Parse(worksheet.Cells[i, 9].Text.IfNullIsZero());
-                        }
-
-                        if (worksheet.Cells[i, 10].Text.NullString() != "")
-                        {
-                            dccong.DC190 = float.Parse(worksheet.Cells[i, 10].Text.IfNullIsZero());
-                        }
-
-                        if (worksheet.Cells[i, 11].Text.NullString() != "")
-                        {
-                            dccong.DC200 = float.Parse(worksheet.Cells[i, 11].Text.IfNullIsZero());
-                        }
-
-                        if (worksheet.Cells[i, 12].Text.NullString() != "")
-                        {
-                            dccong.DC210 = float.Parse(worksheet.Cells[i, 12].Text.IfNullIsZero());
-                        }
-
-                        if (worksheet.Cells[i, 13].Text.NullString() != "")
-                        {
-                            dccong.DC270 = float.Parse(worksheet.Cells[i, 13].Text.IfNullIsZero());
-                        }
-
-                        if (worksheet.Cells[i, 14].Text.NullString() != "")
-                        {
-                            dccong.DC300 = float.Parse(worksheet.Cells[i, 14].Text.IfNullIsZero());
-                        }
-
-                        if (worksheet.Cells[i, 15].Text.NullString() != "")
-                        {
-                            dccong.DC390 = float.Parse(worksheet.Cells[i, 15].Text.IfNullIsZero());
-                        }
-
-                        if (worksheet.Cells[i, 16].Text.NullString() != "")
-                        {
-                            dccong.ELLC = float.Parse(worksheet.Cells[i, 16].Text.IfNullIsZero());
-                        }
-
-                        if (worksheet.Cells[i, 17].Text.NullString() != "")
-                        {
-                            dccong.Other = float.Parse(worksheet.Cells[i, 17].Text.IfNullIsZero());
-                        }
-
-                        if (worksheet.Cells[i, 18].Text.NullString() != "")
-                        {
-                            dccong.NoiDungDC = worksheet.Cells[i, 18].Text.NullString();
-                        }
-
-                        if (worksheet.Cells[i, 19].Text.NullString() != "")
-                        {
-                            dccong.TongSoTien = double.Parse(worksheet.Cells[i, 19].Text.NullString());
-                        }
-
-                        if (worksheet.Cells[i, 20].Text.NullString() != "")
-                        {
-                            dccong.ChiTraVaoLuongThang = DateTime.Parse(worksheet.Cells[i, 20].Text.NullString());
-                            dccong.ChiTraVaoLuongThang2 = DateTime.Parse(worksheet.Cells[i, 20].Text.NullString()).ToString("yyyy-MM") + "-01";
+                            dccong.ChiTraVaoLuongThang = DateTime.Parse(worksheet.Cells[i, 6].Text.NullString() + "-01");
+                            dccong.ChiTraVaoLuongThang2 = DateTime.Parse(worksheet.Cells[i, 6].Text.NullString() + "-01").ToString("yyyy-MM") + "-01";
                         }
                     }
 

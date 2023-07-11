@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace HRMS.Areas.Admin.Components
 {
-    public class SideBarViewComponent: ViewComponent
+    public class SideBarViewComponent : ViewComponent
     {
         private IFunctionService _functionService;
         private IRoleAndPermisstionService _roleAndPermisstionService;
@@ -28,14 +28,14 @@ namespace HRMS.Areas.Admin.Components
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            string key = CacheKeys.MenuLst.ToString()+"-"+ ((ClaimsPrincipal)User).FindFirst(x => x.Type == "Roles").Value.Split(';')[0];
+            string key = CacheKeys.MenuLst.ToString() + "-" + ((ClaimsPrincipal)User).FindFirst(x => x.Type == "Roles").Value.Split(';')[0];
             List<FunctionViewModel> functions = _memoryCache.GetOrCreate(key, entry =>
             {
                 entry.SlidingExpiration = TimeSpan.FromHours(1);
-                return GetPermistionByRole().Functions.OrderBy(x=>x.SortOrder).ToList();
+                return GetPermistionByRole().Functions.OrderBy(x => x.SortOrder).ToList();
             });
             // var roles = ((ClaimsPrincipal)User).GetSpecificClaim("Roles");
-            
+
             //if (roles.Split(";").Contains(CommonConstants.AppRole.AdminRole))
             //{
             //    functions =  _functionService.GetAll(string.Empty);
@@ -59,7 +59,13 @@ namespace HRMS.Areas.Admin.Components
             model.RoleActive = roles.FirstOrDefault(x => x.Id + "" == roleId).Name;
             model.PermisstionForRoleModels = _roleAndPermisstionService.GetAllPermisstion(roleId);
 
-            var functions = _functionService.GetAll("").Where(x=>x.Area.ToLower().Contains("admin")).ToList();
+            var functions = _functionService.GetAll("").Where(x => x.Area.ToLower().Contains("admin")).ToList();
+
+            if (roleName == "HR_Payroll")
+            {
+                functions = _functionService.GetAll("").Where(x => x.Area.ToLower().Contains("payroll")).ToList();
+            }
+
             model.Functions = new List<FunctionViewModel>();
 
             foreach (var item in model.PermisstionForRoleModels)
@@ -70,7 +76,7 @@ namespace HRMS.Areas.Admin.Components
                 }
             }
 
-            if(model.Functions.Count == 0 && roles[0].Name == "Admin")
+            if (model.Functions.Count == 0 && roles[0].Name == "Admin")
             {
                 model.Functions.AddRange(functions);
             }

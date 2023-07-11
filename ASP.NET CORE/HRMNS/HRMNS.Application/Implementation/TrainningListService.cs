@@ -89,7 +89,7 @@ namespace HRMNS.Application.Implementation
             {
                 using (var packet = new ExcelPackage(new System.IO.FileInfo(filePath)))
                 {
-                    ExcelWorksheet worksheet = packet.Workbook.Worksheets[1];
+                    ExcelWorksheet worksheet = packet.Workbook.Worksheets[0];
 
                     TRAINING_NHANVIEN nv = null;
                     List<TRAINING_NHANVIEN> lstNV = new List<TRAINING_NHANVIEN>();

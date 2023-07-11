@@ -101,7 +101,11 @@ namespace HRMNS.Application.Implementation
 
                 if (grade != null)
                 {
-                    item.HarmfulAllowance = (decimal)(_phucapdochaiRepository.FindSingle(x => x.BoPhan == item.HR_NHANVIEN.MaBoPhan).PhuCap * grade.BasicSalary);//item.BasicSalary;
+                    if(item.DoiTuongPhuCapDocHai.NullString().ToUpper() == "X")
+                    {
+                        item.HarmfulAllowance = (decimal)(_phucapdochaiRepository.FindSingle(x => x.BoPhan == item.HR_NHANVIEN.MaBoPhan).PhuCap * grade.BasicSalary);//item.BasicSalary;
+                    }
+
                     item.BasicSalary = (decimal)grade.BasicSalary;
                     item.LivingAllowance = (decimal)grade.LivingAllowance;
                     item.IncentiveStandard = (decimal)grade.IncentiveStandard;
@@ -133,7 +137,7 @@ namespace HRMNS.Application.Implementation
             {
                 using (var packet = new ExcelPackage(new System.IO.FileInfo(filePath)))
                 {
-                    ExcelWorksheet worksheet = packet.Workbook.Worksheets[1];
+                    ExcelWorksheet worksheet = packet.Workbook.Worksheets[0];
                     HR_SALARY salary;
                     List<HR_SALARY> lstUpdate = new List<HR_SALARY>();
                     string manv;
@@ -156,6 +160,11 @@ namespace HRMNS.Application.Implementation
                         {
                             salary.AbilityAllowance = decimal.Parse(worksheet.Cells[i, 3].Text.IfNullIsZero());
                         }
+
+                        //if (worksheet.Cells[i, 4].Text.NullString() != "")
+                        //{
+                        //    salary.SeniorityAllowance = decimal.Parse(worksheet.Cells[i, 4].Text.IfNullIsZero());
+                        //}
 
                         if (worksheet.Cells[i, 4].Text.NullString() != "")
                         {
@@ -253,7 +262,7 @@ namespace HRMNS.Application.Implementation
             {
                 using (var packet = new ExcelPackage(new System.IO.FileInfo(filePath)))
                 {
-                    ExcelWorksheet worksheet = packet.Workbook.Worksheets[1];
+                    ExcelWorksheet worksheet = packet.Workbook.Worksheets[0];
                     List<HR_NHANVIEN> lstUpdate = new List<HR_NHANVIEN>();
                     HR_NHANVIEN nhanvien;
                     string manv;
@@ -421,7 +430,7 @@ namespace HRMNS.Application.Implementation
             {
                 using (var packet = new ExcelPackage(new System.IO.FileInfo(filePath)))
                 {
-                    ExcelWorksheet worksheet = packet.Workbook.Worksheets[1];
+                    ExcelWorksheet worksheet = packet.Workbook.Worksheets[0];
                     HR_SALARY_PHATSINH salary;
                     List<HR_SALARY_PHATSINH> lstUpdate = new List<HR_SALARY_PHATSINH>();
                     string manv;
@@ -506,6 +515,12 @@ namespace HRMNS.Application.Implementation
                 resultDB.ReturnString = ex.Message;
             }
             return resultDB;
+        }
+
+        public void UpdateRangeSalary(List<HR_SALARY> salary)
+        {
+            _salaryRepository.AddRange(salary);
+            Save();
         }
         #endregion
     }

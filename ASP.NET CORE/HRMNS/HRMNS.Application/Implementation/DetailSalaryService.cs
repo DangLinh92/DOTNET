@@ -4,10 +4,13 @@ using HRMNS.Application.ViewModels.HR;
 using HRMNS.Data.EF.Extensions;
 using HRMNS.Data.Entities;
 using HRMNS.Data.Entities.Payroll;
+using HRMNS.Utilities.Common;
 using HRMNS.Utilities.Constants;
 using HRMNS.Utilities.Dtos;
 using HRMS.Infrastructure.Interfaces;
 using OfficeOpenXml;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +34,7 @@ namespace HRMNS.Application.Implementation
         IRespository<BANGLUONGCHITIET_HISTORY, int> _bangluongChiTietHistoryRepository;
         IRespository<HR_CHUCDANH, string> _chucDanhRepository;
         IRespository<PHUCAP_DOC_HAI, int> _phucapdochaiRepository;
-        IRespository<HR_SALARY_GRADE, int> _gradeRepository;
+        IRespository<HR_SALARY_GRADE, string> _gradeRepository;
         private IPayrollUnitOfWork _payrollUnitOfWork;
         private readonly IMapper _mapper;
 
@@ -48,6 +51,7 @@ namespace HRMNS.Application.Implementation
             IRespository<BANGLUONGCHITIET_HISTORY, int> bangluongChiTietRepository,
             IRespository<HR_CHUCDANH, string> chucDanhRepository,
             IRespository<PHUCAP_DOC_HAI, int> phucapdochaiRepository,
+            IRespository<HR_SALARY_GRADE, string> gradeRepository,
             IMapper mapper,
             IUnitOfWork unitOfWork)
         {
@@ -65,6 +69,7 @@ namespace HRMNS.Application.Implementation
             _phucapdochaiRepository = phucapdochaiRepository;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _gradeRepository = gradeRepository;
             // _payrollUnitOfWork = payrollUnitOfWork;
             //_salarySqliteRepository = salarySqliteRepository;
         }
@@ -87,8 +92,24 @@ namespace HRMNS.Application.Implementation
                 HR_PHEP_NAM phepnam;
                 CONGDOAN_NOT_JOIN condoan;
                 NHANVIEN_INFOR_EX nhanvienEx;
+                int songaylamviec = 0;
+                int lastDay = DateTime.DaysInMonth(DateTime.Parse(thangNam).Year, DateTime.Parse(thangNam).Month);//DateTime.Parse(thangNam).Day;
+
+                for (int i = 1; i <= lastDay; i++)
+                {
+                    DateTime d = new DateTime(DateTime.Parse(thangNam).Year, DateTime.Parse(thangNam).Month, i);
+                    //Compare date with sunday
+                    if (d.DayOfWeek != DayOfWeek.Sunday)
+                    {
+                        songaylamviec += 1;
+                    }
+                }
+
+                int thamnien = 0;
+
                 foreach (var item in lstBangCong)
                 {
+                    thamnien = 0;
                     luong = new BangLuongChiTietViewModel()
                     {
                         MaNV = item.MaNV,
@@ -120,6 +141,72 @@ namespace HRMNS.Application.Implementation
                         if (_nhanVienRepository.FindById(item.MaNV, x => x.HR_BO_PHAN_DETAIL) != null)
                         {
                             luong.BoPhan = _nhanVienRepository.FindById(item.MaNV, x => x.HR_BO_PHAN_DETAIL).HR_BO_PHAN_DETAIL.MaBoPhan;
+
+                            if (luong.Grade == "M1-1" || luong.Grade == "P2-1")
+                            {
+                                thamnien = EachDay.GetMonthDifference(DateTime.Parse(thangNam), DateTime.Parse(_nhanVienRepository.FindById(item.MaNV).NgayVao));
+
+                                // IF(DG3>=120,1250000
+                                if (thamnien >= 120)
+                                {
+                                    luong.SeniorityAllowance = 1250000;
+                                }
+                                // IF(AND(DG3<=119,DG3>=108),1150000,
+                                else if (thamnien >= 108 && thamnien <= 119)
+                                {
+                                    luong.SeniorityAllowance = 1150000;
+                                }
+                                // IF(AND(DG3<=107,DG3>=96),1050000,
+                                else if (thamnien >= 96 && thamnien <= 107)
+                                {
+                                    luong.SeniorityAllowance = 1050000;
+                                }
+                                // IF(AND(DG3<=95,DG3>=84),950000,
+                                else if (thamnien >= 84 && thamnien <= 95)
+                                {
+                                    luong.SeniorityAllowance = 950000;
+                                }
+                                // IF(AND(DG3<=83,DG3>=72),850000,
+                                else if (thamnien >= 72 && thamnien <= 83)
+                                {
+                                    luong.SeniorityAllowance = 850000;
+                                }
+                                // IF(AND(DG3<=71,DG3>=60),750000,
+                                else if (thamnien >= 60 && thamnien <= 71)
+                                {
+                                    luong.SeniorityAllowance = 750000;
+                                }
+                                // IF(AND(DG3<=59,DG3>=48),650000
+                                else if (thamnien >= 48 && thamnien <= 59)
+                                {
+                                    luong.SeniorityAllowance = 650000;
+                                }
+                                // IF(AND(DG3<=47,DG3>=36),550000,
+                                else if (thamnien >= 36 && thamnien <= 47)
+                                {
+                                    luong.SeniorityAllowance = 550000;
+                                }
+                                // IF(AND(DG3<=35,DG3>=24),450000,
+                                else if (thamnien >= 24 && thamnien <= 35)
+                                {
+                                    luong.SeniorityAllowance = 450000;
+                                }
+                                // IF(AND(DG3<=23,DG3>=18),350000,
+                                else if (thamnien >= 18 && thamnien <= 23)
+                                {
+                                    luong.SeniorityAllowance = 350000;
+                                }
+                                // IF(AND(DG3<=17,DG3>=12),250000,
+                                else if (thamnien >= 12 && thamnien <= 17)
+                                {
+                                    luong.SeniorityAllowance = 250000;
+                                }
+                                // IF(AND(DG3<=11,DG3>=2),150000,
+                                else if (thamnien >= 2 && thamnien <= 11)
+                                {
+                                    luong.SeniorityAllowance = 150000;
+                                }
+                            }
                         }
                         else
                         {
@@ -144,6 +231,8 @@ namespace HRMNS.Application.Implementation
                             luong.HarmfulAllowance = 0;
                         }
                     }
+
+                    luong.DailySalary = Math.Round((luong.BasicSalary + luong.LivingAllowance + luong.PositionAllowance + luong.AbilityAllowance + luong.SeniorityAllowance + luong.HarmfulAllowance) / songaylamviec, 0);
 
                     luong.TongNgayCongThucTe = item.TP;
                     luong.NgayCongThuViecBanNgay = item.PD;
@@ -199,6 +288,8 @@ namespace HRMNS.Application.Implementation
                     luong.NghiKhongLuong = item.TUP;
                     luong.Probation_Late_Come_Early_Leave_Time = item.P_TV;
                     luong.Official_Late_Come_Early_Leave_Time = item.O_CT;
+                    luong.HoTroPCCC_CoSo = (double)salary.PCCC_CoSo;
+                    luong.HoTroAT_SinhVien = (double)salary.HoTroATVS_SinhVien;
 
                     luong.ThuocDoiTuong_BHXH = salary.ThuocDoiTuongBaoHiemXH;
 
@@ -238,7 +329,7 @@ namespace HRMNS.Application.Implementation
                     condoan = _congDoanRepository.FindSingle(x => x.MaNV == item.MaNV);
                     if (condoan != null)
                     {
-                        if (condoan.NgayBatDau.Value.ToString("yyyyMM").CompareTo(DateTime.Parse(thangNam).ToString("yyyyMM")) >= 0)
+                        if (condoan.NgayBatDau.Value.ToString("yyyyMM").CompareTo(DateTime.Parse(thangNam).ToString("yyyyMM")) <= 0)
                         {
                             luong.DoiTuongThamGiaCD = "o";
                         }
@@ -255,6 +346,7 @@ namespace HRMNS.Application.Implementation
                         {
                             luong.DoiTuongThamGiaCD = "o";
                         }
+
                         // 2. Số ngày nghỉ không hưởng lương > 14 ngày
                         // 3.Nghỉ thai sản > 14 ngày
                         else if (item.TUP > 14)
@@ -265,13 +357,23 @@ namespace HRMNS.Application.Implementation
                         {
                             luong.DoiTuongThamGiaCD = "x";
                         }
+
+                        // TH đặc biệt có ngoại lệ
+                        if (CommonConstants.THAM_GIA_CD_EX.Contains(item.MaNV))
+                        {
+                            luong.DoiTuongThamGiaCD = "x";
+                        }
                     }
 
                     luong.DoiTuongTruyThuBHYT = salary.DoiTuongTruyThuBHYT;
                     luong.SoConNho = salary.SoConNho;
-                    luong.SoNgayNghi70 = item.NB;
+                    luong.SoNgayNghi70 = item.L160; // L160
                     luong.DieuChinhCong_Total = dieuChinhCong != null ? (double)dieuChinhCong?.TongSoTien : 0;
-                    luong.TraTienPhepNam_Total = phepnam != null ? (double)phepnam.SoTienChiTra : 0;
+
+                    if (item.HR_NHANVIEN.NgayNghiViec.NullString() != "" && item.HR_NHANVIEN.NgayNghiViec.NullString().Substring(0, 7) == thangNam.Substring(0, 7))
+                    {
+                        luong.TraTienPhepNam_Total = phepnam != null ? (double)phepnam.SoTienChiTra : 0;
+                    }
 
                     if (phatsinhs.FirstOrDefault(x => x.HR_SALARY_DANHMUC_PHATSINH.KeyDanhMuc == "TIEN_GIOI_THIEU") != null)
                     {
@@ -298,7 +400,7 @@ namespace HRMNS.Application.Implementation
             BANGLUONGCHITIET_HISTORY en;
             List<BANGLUONGCHITIET_HISTORY> lstUpdate = new List<BANGLUONGCHITIET_HISTORY>();
             List<BANGLUONGCHITIET_HISTORY> lstAdd = new List<BANGLUONGCHITIET_HISTORY>();
-
+            List<HR_SALARY> lstSalary = new List<HR_SALARY>();
             foreach (BangLuongChiTietViewModel item in data)
             {
                 if (lstData.Any(x => x.MaNV == item.MaNV))
@@ -314,10 +416,18 @@ namespace HRMNS.Application.Implementation
                     en.CopyPropertiesFrom(item, new List<string>() { });
                     lstAdd.Add(en);
                 }
+
+                HR_SALARY salary = _salaryRepository.FindAll(x => x.MaNV == item.MaNV).FirstOrDefault();
+                if(salary != null)
+                {
+                    salary.SeniorityAllowance =(decimal)item.SeniorityAllowance;
+                    lstSalary.Add(salary);
+                }
             }
 
             _bangluongChiTietHistoryRepository.AddRange(lstAdd);
             _bangluongChiTietHistoryRepository.UpdateRange(lstUpdate);
+            _salaryRepository.UpdateRange(lstSalary);
             _unitOfWork.Commit();
         }
 

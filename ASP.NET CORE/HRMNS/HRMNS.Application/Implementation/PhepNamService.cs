@@ -74,15 +74,24 @@ namespace HRMNS.Application.Implementation
         public List<PhepNamViewModel> GetList(string year)
         {
             int _year = int.Parse(year);
-            var lst = _phepNamRepository.FindAll(x => x.Year == _year, x => x.HR_NHANVIEN,z => z.HR_NHANVIEN.HR_BO_PHAN_DETAIL).ToList();
-            return _mapper.Map<List<PhepNamViewModel>>(lst);
+            var lst = _phepNamRepository.FindAll(x => x.Year == _year, x => x.HR_NHANVIEN, z => z.HR_NHANVIEN.HR_BO_PHAN_DETAIL).ToList();
+            List<HR_PHEP_NAM> phepnam = new List<HR_PHEP_NAM>();
+            foreach (var item in lst.ToList())
+            {
+                if(item.HR_NHANVIEN.NgayNghiViec.NullString() == "" || DateTime.Parse(item.HR_NHANVIEN.NgayNghiViec.NullString()).AddMonths(2).ToString("yyyyMM").CompareTo(DateTime.Now.ToString("yyyyMM")) >= 0)
+                {
+                    phepnam.Add(item);
+                }
+            }
+
+            return _mapper.Map<List<PhepNamViewModel>>(phepnam);
         }
 
         public void ImportExcel(string filePath)
         {
             using (var packet = new ExcelPackage(new System.IO.FileInfo(filePath)))
             {
-                ExcelWorksheet worksheet = packet.Workbook.Worksheets[1];
+                ExcelWorksheet worksheet = packet.Workbook.Worksheets[0];
                 HR_PHEP_NAM phepNam; ;
                 string maNV = "";
                 int year;
@@ -112,14 +121,6 @@ namespace HRMNS.Application.Implementation
                         {
                             phepNam.ThangKetThucDocHai = DateTime.Parse(worksheet.Cells[i, 5].Text.NullString());
                         }
-
-                        if (worksheet.Cells[i, 6].Text.NullString() != "")
-                            phepNam.MucThanhToan = float.Parse(worksheet.Cells[i, 6].Text.IfNullIsZero());
-
-                        if (worksheet.Cells[i, 7].Text.NullString() != "")
-                            phepNam.SoTienChiTra = decimal.Parse(worksheet.Cells[i, 7].Text.IfNullIsZero());
-
-                        // phepNam.SoPhepDaUng = float.Parse(worksheet.Cells[i, 8].Text.IfNullIsZero());
                         _phepNamRepository.Add(phepNam);
                     }
                     else
@@ -133,16 +134,6 @@ namespace HRMNS.Application.Implementation
                         {
                             phepNam.ThangKetThucDocHai = DateTime.Parse(worksheet.Cells[i, 5].Text.NullString());
                         }
-
-                        if (worksheet.Cells[i, 6].Text.NullString() != "")
-                            phepNam.MucThanhToan = float.Parse(worksheet.Cells[i, 6].Text.IfNullIsZero());
-
-                        if (worksheet.Cells[i, 7].Text.NullString() != "")
-                        {
-                            phepNam.SoTienChiTra = decimal.Parse(worksheet.Cells[i, 7].Text.IfNullIsZero());
-                        }
-
-                        // phepNam.SoPhepDaUng = float.Parse(worksheet.Cells[i, 8].Text.IfNullIsZero());
 
                         _phepNamRepository.Update(phepNam);
                     }

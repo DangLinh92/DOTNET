@@ -10,6 +10,7 @@ namespace HRMNS.Application.Interfaces
     {
         List<HR_SALARY> GetAllSalary();
         HR_SALARY UpdateSalary(HR_SALARY salary);
+        void UpdateRangeSalary(List<HR_SALARY> salary);
         HR_SALARY AddSalary(HR_SALARY salary);
         void DeleteSalary(int id);
         HR_SALARY GetByMaNV(string manv);

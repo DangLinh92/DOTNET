@@ -41,6 +41,7 @@ namespace HRMNS.Data.Entities
         public double AbilityAllowance { get; set; }
         public double SeniorityAllowance { get; set; }
         public double HarmfulAllowance { get; set; }
+        public double DailySalary { get; set; }
         public double TongNgayCongThucTe { get; set; }
         public double NgayCongThuViecBanNgay { get; set; }
         public double NgayCongThuViecBanDem { get; set; }

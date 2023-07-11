@@ -123,7 +123,7 @@ namespace HRMNS.Application.Implementation
 
                 using (var packet = new ExcelPackage(new System.IO.FileInfo(filePath)))
                 {
-                    ExcelWorksheet worksheet = packet.Workbook.Worksheets[1];
+                    ExcelWorksheet worksheet = packet.Workbook.Worksheets[0];
 
                     DataTable table = new DataTable();
                     table.Columns.Add("MaNV");

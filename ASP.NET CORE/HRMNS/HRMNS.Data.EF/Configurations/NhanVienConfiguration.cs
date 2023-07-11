@@ -40,6 +40,14 @@ namespace HRMNS.Data.EF.Configurations
         }
     }
 
+    public class NhanVien2Configuration : DbEntityConfiguration<HR_NHANVIEN_2>
+    {
+        public override void Configure(EntityTypeBuilder<HR_NHANVIEN_2> entity)
+        {
+            entity.HasKey(c => c.Id);
+        }
+    }
+
     public class KhenThuongKyLuatConfiguration : DbEntityConfiguration<HR_KY_LUAT_KHENTHUONG>
     {
         public override void Configure(EntityTypeBuilder<HR_KY_LUAT_KHENTHUONG> entity)

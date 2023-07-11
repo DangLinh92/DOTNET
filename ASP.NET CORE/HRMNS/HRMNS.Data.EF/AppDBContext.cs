@@ -119,6 +119,7 @@ namespace HRMNS.Data.EF
         public virtual DbSet<HR_KY_LUAT_KHENTHUONG> HR_KY_LUAT_KHENTHUONG { get; set; }
         public virtual DbSet<PHUCAP_DOC_HAI> PHUCAP_DOC_HAI { get; set; }
         public virtual DbSet<HR_SALARY_GRADE> HR_SALARY_GRADE { get; set; }
+        public virtual DbSet<HR_NHANVIEN_2> HR_NHANVIEN_2 { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -223,6 +224,7 @@ namespace HRMNS.Data.EF
             builder.AddConfiguration(new KhenThuongKyLuatConfiguration());
             builder.AddConfiguration(new PhuCapDocHaiConfiguration());
             builder.AddConfiguration(new HrGradeConfiguration());
+            builder.AddConfiguration(new NhanVien2Configuration());
 
             //base.OnModelCreating(builder);
         }

@@ -163,5 +163,8 @@ namespace HRMNS.Utilities.Constants
         public static string CSP2 = "CSP2";
 
         public static string X = "x";
+
+        public static string[] VP_SX_NV = { "" };
+        public static string[] THAM_GIA_CD_EX = { "H1602018", "H2008015", "H2103011" };
     }
 }

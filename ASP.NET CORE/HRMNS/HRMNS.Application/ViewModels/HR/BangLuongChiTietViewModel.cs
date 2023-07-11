@@ -21,6 +21,7 @@ namespace HRMNS.Application.ViewModels.HR
         public double SeniorityAllowance { get; set; }
         public double HarmfulAllowance { get; set; }
         public double TongNgayCongThucTe { get; set; }
+        public double DailySalary { get; set; }
         public double NgayCongThuViecBanNgay { get; set; }
         public double NgayCongThuViecBanDem { get; set; }
         public double NgayCongChinhThucBanNgay { get; set; }

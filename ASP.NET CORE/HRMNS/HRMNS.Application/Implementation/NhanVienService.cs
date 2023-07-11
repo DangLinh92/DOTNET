@@ -23,16 +23,18 @@ namespace HRMNS.Application.Implementation
     public class NhanVienService : BaseService, INhanVienService
     {
         private IRespository<HR_NHANVIEN, string> _nhanvienRepository;
+        private IRespository<HR_NHANVIEN_2, string> _nhanvien2Repository;
         private IRespository<HR_BO_PHAN_DETAIL, int> _bophanDetailRepository;
         private IRespository<HR_LOAIHOPDONG, int> _loaiHDRepository;
         private IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public NhanVienService(IRespository<HR_NHANVIEN, string> nhanVienRepository, IRespository<HR_LOAIHOPDONG, int> loaiHDRepository, IRespository<HR_BO_PHAN_DETAIL, int> bophanDetailRepository, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public NhanVienService(IRespository<HR_NHANVIEN, string> nhanVienRepository, IRespository<HR_NHANVIEN_2, string> nhanvien2Repository, IRespository<HR_LOAIHOPDONG, int> loaiHDRepository, IRespository<HR_BO_PHAN_DETAIL, int> bophanDetailRepository, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _nhanvienRepository = nhanVienRepository;
             _bophanDetailRepository = bophanDetailRepository;
             _loaiHDRepository = loaiHDRepository;
+            _nhanvien2Repository = nhanvien2Repository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
@@ -52,7 +54,7 @@ namespace HRMNS.Application.Implementation
             {
                 nhanVienVm.MaBoPhan = CommonConstants.CSP;
             }
-          
+
             nhanvien.DateCreated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             nhanvien.DateModified = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             nhanvien.UserCreated = GetUserId();
@@ -178,7 +180,7 @@ namespace HRMNS.Application.Implementation
                 table.Columns.Add("TrucTiepSX");
                 DataRow row = null;
 
-                ExcelWorksheet worksheet = packet.Workbook.Worksheets[1];
+                ExcelWorksheet worksheet = packet.Workbook.Worksheets[0];
                 for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
                 {
                     row = table.NewRow();
@@ -208,8 +210,9 @@ namespace HRMNS.Application.Implementation
         // Import basic info of employee
         private void ImportBasicInfo(ExcelPackage packet)
         {
-            ExcelWorksheet worksheet = packet.Workbook.Worksheets[1];
+            ExcelWorksheet worksheet = packet.Workbook.Worksheets[0];
             HR_NHANVIEN nhanvien;
+            HR_NHANVIEN_2 nhanvien2;
             bool isUpdate = false;
             for (int i = worksheet.Dimension.Start.Row + 2; i <= worksheet.Dimension.End.Row; i++)
             {
@@ -221,16 +224,18 @@ namespace HRMNS.Application.Implementation
                 {
                     continue;
                 }
-              
+
                 if (_nhanvienRepository.FindById(nhanvien.Id) != null)
                 {
                     nhanvien = _nhanvienRepository.FindById(nhanvien.Id);
                     isUpdate = true;
                 }
 
+                nhanvien2 = _nhanvien2Repository.FindById(nhanvien.Id);
+
                 nhanvien.MaChucDanh = worksheet.Cells[i, 3].Text.NullString();
 
-                if(worksheet.Cells[i, 4].Text.NullString() == CommonConstants.CSP1 || worksheet.Cells[i, 4].Text.NullString() == CommonConstants.CSP2)
+                if (worksheet.Cells[i, 4].Text.NullString() == CommonConstants.CSP1 || worksheet.Cells[i, 4].Text.NullString() == CommonConstants.CSP2)
                 {
                     nhanvien.MaBoPhan = CommonConstants.CSP;
                     nhanvien.MaBoPhan2 = worksheet.Cells[i, 4].Text.NullString();
@@ -240,7 +245,7 @@ namespace HRMNS.Application.Implementation
                     nhanvien.MaBoPhan = worksheet.Cells[i, 4].Text.NullString();
                     nhanvien.MaBoPhan2 = worksheet.Cells[i, 4].Text.NullString();
                 }
-               
+
                 nhanvien.TenNV = worksheet.Cells[i, 5].Text.NullString();
                 nhanvien.GioiTinh = worksheet.Cells[i, 6].Text.NullString();
 
@@ -357,6 +362,18 @@ namespace HRMNS.Application.Implementation
                 nhanvien.UserCreated = GetUserId();
                 nhanvien.UserModified = GetUserId();
 
+                if (nhanvien2 == null)
+                {
+                    nhanvien2.Id = nhanvien.Id;
+                    nhanvien2.VP_SX = worksheet.Cells[i, 38].Text.NullString();
+                    _nhanvien2Repository.Add(nhanvien2);
+                }
+                else
+                {
+                    nhanvien2.VP_SX = worksheet.Cells[i, 38].Text.NullString();
+                    _nhanvien2Repository.Update(nhanvien2);
+                }
+
                 if (!isUpdate)
                 {
                     _nhanvienRepository.Add(nhanvien);
@@ -372,7 +389,7 @@ namespace HRMNS.Application.Implementation
         private void ImportDetailInfo(ExcelPackage packet)
         {
             // Update hop dong info of employee
-            ExcelWorksheet worksheet = packet.Workbook.Worksheets[1];
+            ExcelWorksheet worksheet = packet.Workbook.Worksheets[0];
             List<HR_NHANVIEN> lstNhanVien = new List<HR_NHANVIEN>();
             HR_NHANVIEN nhanvien;
             string maNV = "";
@@ -446,7 +463,7 @@ namespace HRMNS.Application.Implementation
             }
 
             // update qua trinh cong tac
-            ExcelWorksheet worksheet2 = packet.Workbook.Worksheets[2];
+            ExcelWorksheet worksheet2 = packet.Workbook.Worksheets[1];
             for (int i = worksheet2.Dimension.Start.Row + 1; i <= worksheet2.Dimension.End.Row; i++)
             {
                 maNV = worksheet2.Cells[i, 1].Text.NullString();
@@ -484,7 +501,7 @@ namespace HRMNS.Application.Implementation
             }
 
             // update tinh trang hso
-            ExcelWorksheet worksheet3 = packet.Workbook.Worksheets[3];
+            ExcelWorksheet worksheet3 = packet.Workbook.Worksheets[2];
             for (int i = worksheet3.Dimension.Start.Row + 1; i <= worksheet3.Dimension.End.Row; i++)
             {
                 maNV = worksheet3.Cells[i, 1].Text.NullString();

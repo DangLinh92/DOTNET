@@ -40,6 +40,7 @@ namespace HRMNS.Application.Implementation
         private IRespository<DANGKY_DIMUON_VSOM_NHANVIEN, int> _dimuonVeSomResponsitory;
         private IRespository<BANG_CONG_EXTENTION, int> _bangCongExResponsitory;
         private IRespository<SETTING_TIME_CA_LVIEC, int> _settingTimeCaLamviecResponsitory;
+        private IRespository<HR_NHANVIEN_2, string> _nhanvien2Responsitory;
 
         private EFUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -59,6 +60,7 @@ namespace HRMNS.Application.Implementation
             IRespository<DANGKY_DIMUON_VSOM_NHANVIEN, int> dimuonVeSomResponsitory,
             IRespository<BANG_CONG_EXTENTION, int> bangCongExResponsitory,
             IRespository<SETTING_TIME_CA_LVIEC, int> settingTimeCaLamviecResponsitory,
+            IRespository<HR_NHANVIEN_2, string> nhanvien2Responsitory,
             IUnitOfWork unitOfWork, IMapper mapper,
             IHttpContextAccessor httpContextAccessor)
         {
@@ -81,6 +83,7 @@ namespace HRMNS.Application.Implementation
             _dimuonVeSomResponsitory = dimuonVeSomResponsitory;
             _nhanvienCheDoDBResponsitory = nhanvienCheDoDBResponsitory;
             _settingTimeCaLamviecResponsitory = settingTimeCaLamviecResponsitory;
+            _nhanvien2Responsitory = nhanvien2Responsitory;
         }
 
         List<CHAM_CONG_LOG> CHAM_CONG_LOGs;
@@ -93,6 +96,7 @@ namespace HRMNS.Application.Implementation
         List<HR_NHANVIEN_CHEDO_DB> HR_NHANVIEN_CHEDO_DBs;
         List<DANGKY_DIMUON_VSOM_NHANVIEN> DANGKY_DIMUON_VSOM_NHANVIENs;
         List<SETTING_TIME_CA_LVIEC> SETTING_TIME_CA_LVIECs;
+        List<HR_NHANVIEN_2> HR_NHANVIEN_2s;
 
         private void DataInit(string startTime, string endTime)
         {
@@ -106,6 +110,7 @@ namespace HRMNS.Application.Implementation
             HR_NHANVIEN_CHEDO_DBs = _nhanvienCheDoDBResponsitory.FindAll().ToList();
             DANGKY_DIMUON_VSOM_NHANVIENs = _dimuonVeSomResponsitory.FindAll().ToList();
             SETTING_TIME_CA_LVIECs = _settingTimeCaLamviecResponsitory.FindAll().ToList();
+            HR_NHANVIEN_2s = _nhanvien2Responsitory.FindAll().ToList();
         }
 
         public void Dispose()
@@ -516,7 +521,15 @@ namespace HRMNS.Application.Implementation
                                                     continue;
                                                 }
 
-                                                item.VP_SX = _chamCongLog.Department.Contains("Support") && !_chamCongLog.Department.Contains("Utility") ? CommonConstants.VP : CommonConstants.SX;
+                                                HR_NHANVIEN_2 nv2 = HR_NHANVIEN_2s.FirstOrDefault(x=>x.Id == item.MaNV);
+                                                if(nv2 != null)
+                                                {
+                                                    item.VP_SX = nv2.VP_SX;
+                                                }
+                                                else
+                                                {
+                                                    item.VP_SX = _chamCongLog.Department.Contains("Support") && !_chamCongLog.Department.Contains("Utility") ? CommonConstants.VP : CommonConstants.SX;
+                                                }
 
                                                 // get first time and last time
                                                 firstTime = _chamCongLog.FirstIn_Time.NullString();
@@ -1530,7 +1543,15 @@ namespace HRMNS.Application.Implementation
                                                     continue;
                                                 }
 
-                                                item.VP_SX = _chamCongLog.Department.Contains("Support") && !_chamCongLog.Department.Contains("Utility") ? CommonConstants.VP : CommonConstants.SX;
+                                                HR_NHANVIEN_2 nv2 = HR_NHANVIEN_2s.FirstOrDefault(x => x.Id == item.MaNV);
+                                                if (nv2 != null)
+                                                {
+                                                    item.VP_SX = nv2.VP_SX;
+                                                }
+                                                else
+                                                {
+                                                    item.VP_SX = _chamCongLog.Department.Contains("Support") && !_chamCongLog.Department.Contains("Utility") ? CommonConstants.VP : CommonConstants.SX;
+                                                }
 
                                                 // get first time and last time
                                                 firstTime = _chamCongLog.FirstIn_Time.NullString();

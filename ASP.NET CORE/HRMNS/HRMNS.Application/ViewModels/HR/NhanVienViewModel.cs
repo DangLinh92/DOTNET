@@ -1,5 +1,6 @@
 ﻿using HRMNS.Application.ViewModels;
 using HRMNS.Application.ViewModels.System;
+using HRMNS.Data.Entities;
 using HRMNS.Utilities.Constants;
 using System;
 using System.Collections.Generic;
@@ -121,5 +122,6 @@ namespace HRMNS.Application.ViewModels.HR
         public ICollection<PhepNamViewModel> HR_PHEP_NAM { get; set; }
         public ICollection<Training_NhanVienViewModel> TRAINING_NHANVIEN { get; set; }
         public ICollection<NhanVienThaiSanViewModel> HR_THAISAN_CONNHO { get; set; }
+        public ICollection<NHANVIEN_INFOR_EX> NHANVIEN_INFOR_EX { get; set; }
     }
 }

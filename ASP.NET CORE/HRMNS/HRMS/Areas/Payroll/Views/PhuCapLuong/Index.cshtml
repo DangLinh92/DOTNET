@@ -277,12 +277,12 @@
                 .Columns(columns =>
                 {
                     columns.AddFor(m => m.Id).Caption("Cấp Bậc").AllowEditing(true);
-                    columns.AddFor(m => m.BasicSalaryStandard).Caption("Basic Salary Standard").AllowEditing(true);
-                    columns.AddFor(m => m.IncentiveLanguage).Caption("Hỗ Trợ Ngoại Ngữ").AllowEditing(true);
-                    columns.AddFor(m => m.BasicSalary).AllowEditing(true);
-                    columns.AddFor(m => m.AttendanceAllowance).AllowEditing(true);
-                    columns.AddFor(m => m.LivingAllowance).AllowEditing(true);
-                    columns.AddFor(m => m.IncentiveStandard).AllowEditing(true);
+                    columns.AddFor(m => m.BasicSalaryStandard).Format("#,##0").Caption("Basic Salary Standard").AllowEditing(true);
+                    columns.AddFor(m => m.IncentiveLanguage).Format("#,##0").Caption("Hỗ Trợ Ngoại Ngữ").AllowEditing(true);
+                    columns.AddFor(m => m.BasicSalary).Format("#,##0").AllowEditing(true);
+                    columns.AddFor(m => m.AttendanceAllowance).Format("#,##0").AllowEditing(true);
+                    columns.AddFor(m => m.LivingAllowance).Format("#,##0").AllowEditing(true);
+                    columns.AddFor(m => m.IncentiveStandard).Format("#,##0").AllowEditing(true);
                 })
                 .DataSource(d => d.Mvc()
                 .Area("Payroll")

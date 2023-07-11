@@ -115,7 +115,7 @@ namespace HRMS.Areas.Payroll.Controllers
         public object Get(DataSourceLoadOptions loadOptions, string month)
         {
             string _month = DateTime.Parse(month).ToString("yyyy-MM");
-            return DataSourceLoader.Load(_dcChamCongService.GetAll("", y => y.HR_NHANVIEN,z => z.HR_NHANVIEN.HR_BO_PHAN_DETAIL).Where(x => x.NgayDieuChinh2.Contains(_month)), loadOptions);
+            return DataSourceLoader.Load(_dcChamCongService.GetAll("", y => y.HR_NHANVIEN,z => z.HR_NHANVIEN.HR_BO_PHAN_DETAIL).Where(x => x.ChiTraVaoLuongThang2.NullString().Contains(_month)), loadOptions);
         }
 
         [HttpPost]

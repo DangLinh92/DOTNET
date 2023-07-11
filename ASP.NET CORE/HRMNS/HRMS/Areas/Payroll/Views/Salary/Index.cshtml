@@ -4,7 +4,7 @@
 }
 
 @section Scripts
-{
+    {
     <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
     <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
     <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
@@ -12,88 +12,85 @@
 
         var dataGrid, loadPanel, dataGridTmp;
 
-        $(function ()
-        {
+        $(function () {
             LoadData();
         });
 
         function LoadData() {
-                    dataGrid = $("#gridContainer1").dxDataGrid("instance");
-                    loadPanel = $("#loadPanel").dxLoadPanel("instance");
+            dataGrid = $("#gridContainer1").dxDataGrid("instance");
+            loadPanel = $("#loadPanel").dxLoadPanel("instance");
 
             loadPanel.show();
             sendRequest('@Url.RouteUrl(new { area = "Payroll", controller = "Salary", action = "Get" })', "GET")
-                    .always(() => { loadPanel.hide(); })
-                    .done((data) => {
-                        dataGrid.option("dataSource", data);
-                    });
+                .always(() => { loadPanel.hide(); })
+                .done((data) => {
+                    dataGrid.option("dataSource", data);
+                });
         }
 
         function SaveLuong(e) {
 
-       var change = e.changes[0];
+            var change = e.changes[0];
 
-      if (change) {
-          e.cancel = true;
-          loadPanel.show();
-          e.promise = saveChange(change)
-              .always(() => {
-                  loadPanel.hide();
-              })
-              .done((data) => {
-                  var datas = e.component.option("dataSource");
+            if (change) {
+                e.cancel = true;
+                loadPanel.show();
+                e.promise = saveChange(change)
+                    .always(() => {
+                        loadPanel.hide();
+                    })
+                    .done((data) => {
+                        var datas = e.component.option("dataSource");
 
-                  if (change.type === "insert") {
-                      change.data = data;
-                  }
+                        if (change.type === "insert") {
+                            change.data = data;
+                        }
 
-                  datas = DevExpress.data.applyChanges(datas, [change], { keyExpr: "Id" });
+                        datas = DevExpress.data.applyChanges(datas, [change], { keyExpr: "Id" });
 
-                  e.component.option({
-                      dataSource: datas,
-                      editing: {
-                          editRowKey: null,
-                          changes: []
-                      }
-                  });
+                        e.component.option({
+                            dataSource: datas,
+                            editing: {
+                                editRowKey: null,
+                                changes: []
+                            }
+                        });
 
-                  // close popup
-                  $("#gridContainer1").dxDataGrid("cancelEditData");
-              });
-      }
-    };
-
-        function saveChange(change)
-        {
-            console.log(change);
-            switch (change.type)
-            {
-                    case "insert":
-                        return sendRequest('@Url.RouteUrl(new { area = "Payroll", controller = "Salary", action = "Post" })', "POST", { values: JSON.stringify(change.data) });
-                    case "update":
-                        return sendRequest('@Url.RouteUrl(new { area = "Payroll", controller = "Salary", action = "Put" })', "PUT", { key: change.key, values: JSON.stringify(change.data) });
-                    case "remove":
-                        return sendRequest('@Url.RouteUrl(new { area = "Payroll", controller = "Salary", action = "Delete" })', "DELETE", { key: change.key });
+                        // close popup
+                        $("#gridContainer1").dxDataGrid("cancelEditData");
+                    });
             }
         };
 
-            function sendRequest(url, method, data) {
-                var d = $.Deferred();
+        function saveChange(change) {
+            console.log(change);
+            switch (change.type) {
+                case "insert":
+                    return sendRequest('@Url.RouteUrl(new { area = "Payroll", controller = "Salary", action = "Post" })', "POST", { values: JSON.stringify(change.data) });
+                case "update":
+                    return sendRequest('@Url.RouteUrl(new { area = "Payroll", controller = "Salary", action = "Put" })', "PUT", { key: change.key, values: JSON.stringify(change.data) });
+                case "remove":
+                    return sendRequest('@Url.RouteUrl(new { area = "Payroll", controller = "Salary", action = "Delete" })', "DELETE", { key: change.key });
+            }
+        };
 
-                method = method || "GET";
+        function sendRequest(url, method, data) {
+            var d = $.Deferred();
 
-                $.ajax(url, {
-                    method: method,
-                    data: data,
-                    cache: false,
-                    xhrFields: { withCredentials: true }
-                }).done(function (result) {
-                    d.resolve(method === "GET" ? result.data : result);
-                }).fail(function (xhr) {
-                    d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
-                });
+            method = method || "GET";
 
-                return d.promise();
+            $.ajax(url, {
+                method: method,
+                data: data,
+                cache: false,
+                xhrFields: { withCredentials: true }
+            }).done(function (result) {
+                d.resolve(method === "GET" ? result.data : result);
+            }).fail(function (xhr) {
+                d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
+            });
+
+            return d.promise();
         };
 
         // Xuất excel luong
@@ -114,8 +111,7 @@
         }
 
         /* Import, export, insert,update,delete danh sách nhân viên khám sk */
-        function ImportExcel()
-        {
+        function ImportExcel() {
             $("#fileInputExcel").val(null);
             $('#hd-ImportData').val('salary');
             $('#import_File').modal('show');
@@ -209,7 +205,6 @@
 
     <div class="row align-items-center">
         <div class="col">
-
         </div>
         <div class="col-auto float-right ml-auto" style="margin-right:100px;">
             <div class="btn-group">
@@ -226,93 +221,94 @@
     <div class="row">
         <div class="col-md-12">
             @(Html.DevExtreme().LoadPanel()
-                      .ID("loadPanel")
-                      .Position(p => p.Of("#gridContainer1"))
-                      .Visible(false)
+                .ID("loadPanel")
+                .Position(p => p.Of("#gridContainer1"))
+                .Visible(false)
                 )
             @(Html.DevExtreme().DataGrid<HR_SALARY>
-    ()
-    .ID("gridContainer1")
-    .KeyExpr("Id")
-    .Height(700)
-    .ShowBorders(true)
-    .ColumnAutoWidth(true)
-    .ColumnMinWidth(150)
-    .RepaintChangesOnly(true)
-    .LoadPanel(loadPanel => loadPanel.Enabled(false))
-    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
-    .Paging(paging => paging.Enabled(false))
-    .ShowColumnLines(true)
-    .ShowRowLines(true)
-    .RowAlternationEnabled(true)
-    .FilterRow(filterRow => filterRow.Visible(true).ApplyFilter(GridApplyFilterMode.Auto)
-    )
-    .HeaderFilter(headerFilter => headerFilter.Visible(true))
-    .Selection(s => s.Mode(SelectionMode.Single))
-    .HoverStateEnabled(true)
-    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
-    .OnExporting("exporting")
-    .Editing(editing =>
-    {
-        editing.Mode(GridEditMode.Popup);
-        editing.AllowUpdating(true);
-        editing.AllowDeleting(true);
-        //editing.AllowAdding(true);
-    })
-    .Columns(columns =>
-    {
-        columns.AddFor(m => m.Id).Visible(false).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.MaNV).Caption("Mã Nhân Viên").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.HR_NHANVIEN.TenNV).Caption("Tên Nhân Viên").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.HR_NHANVIEN.HR_BO_PHAN_DETAIL.MaBoPhan_TOP1).Caption("Bộ Phận").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.HR_NHANVIEN.HR_BO_PHAN_DETAIL.MaBoPhan_TOP2).Caption("Phòng Ban").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.HR_NHANVIEN.HR_CHUCDANH.TenChucDanh).Caption("Chức Vụ").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.HR_NHANVIEN.NgayVao).Caption("Ngày Vào").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                ()
+                .ID("gridContainer1")
+                .KeyExpr("Id")
+                .Height(700)
+                .ShowBorders(true)
+                .ColumnAutoWidth(true)
+                .ColumnMinWidth(150)
+                .RepaintChangesOnly(true)
+                .LoadPanel(loadPanel => loadPanel.Enabled(false))
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .FilterRow(filterRow => filterRow.Visible(true).ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .HoverStateEnabled(true)
+                .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+                .OnExporting("exporting")
+                .Editing(editing =>
+                {
+                    editing.Mode(GridEditMode.Popup);
+                    editing.AllowUpdating(true);
+                    editing.AllowDeleting(true);
+                    //editing.AllowAdding(true);
+                })
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.Id).Visible(false).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.MaNV).Caption("Mã Nhân Viên").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.HR_NHANVIEN.TenNV).Caption("Tên Nhân Viên").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.HR_NHANVIEN.HR_BO_PHAN_DETAIL.MaBoPhan_TOP1).Caption("Bộ Phận").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.HR_NHANVIEN.HR_BO_PHAN_DETAIL.MaBoPhan_TOP2).Caption("Phòng Ban").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.HR_NHANVIEN.HR_CHUCDANH.TenChucDanh).Caption("Chức Vụ").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.HR_NHANVIEN.NgayVao).Caption("Ngày Vào").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
 
-        columns.Add().Caption("Thông Tin Lương").Columns(c =>
-        {
-            c.AddFor(m => m.BasicSalary).Caption(" Basic Salary").Format(Format.FixedPoint).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
-            c.AddFor(m => m.LivingAllowance).Caption("Living Allowance").Format(Format.FixedPoint).AllowEditing(true);
-            //c.AddFor(m => m.PositionAllowance).Caption("Position Allowance").Format(Format.FixedPoint).AllowEditing(true);
-            c.AddFor(m => m.AbilityAllowance).Caption("Ability Allowance").Format(Format.FixedPoint).AllowEditing(true);
-            c.AddFor(m => m.HarmfulAllowance).Caption("Harmful Allowance").Format(Format.FixedPoint).AllowEditing(true);
-        });
+                    columns.Add().Caption("Thông Tin Lương").Columns(c =>
+                    {
+                        c.AddFor(m => m.BasicSalary).Caption(" Basic Salary").Format(Format.FixedPoint).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                        c.AddFor(m => m.LivingAllowance).Caption("Living Allowance").Format(Format.FixedPoint).AllowEditing(true);
+                        //c.AddFor(m => m.PositionAllowance).Caption("Position Allowance").Format(Format.FixedPoint).AllowEditing(true);
+                        c.AddFor(m => m.AbilityAllowance).Caption("Ability Allowance").Format(Format.FixedPoint).AllowEditing(true);
+                        c.AddFor(m => m.HarmfulAllowance).Caption("Harmful Allowance").Format(Format.FixedPoint).AllowEditing(true);
+                        c.AddFor(m => m.HR_NHANVIEN.HR_CHUCDANH.PhuCap).Caption("Phụ Cấp Chức Vụ").Format(Format.FixedPoint).AllowEditing(false);
+                    });
 
-        columns.Add().Caption("Incentive").Columns(c =>
-        {
-            c.AddFor(m => m.IncentiveStandard).Caption("Cơ bản").Format(Format.FixedPoint).AllowEditing(true);
-            c.AddFor(m => m.IncentiveLanguage).Caption("PC ngoại ngữ").Format(Format.FixedPoint).AllowEditing(true);
-            c.AddFor(m => m.IncentiveTechnical).Caption("PC kỹ thuật").Format(Format.FixedPoint).AllowEditing(true);
-            c.AddFor(m => m.IncentiveOther).Caption("PC Khác").Format(Format.FixedPoint).AllowEditing(true);
-        });
+                    columns.Add().Caption("Incentive").Columns(c =>
+                    {
+                        c.AddFor(m => m.IncentiveStandard).Caption("Cơ bản").Format(Format.FixedPoint).AllowEditing(true);
+                        c.AddFor(m => m.IncentiveLanguage).Caption("PC ngoại ngữ").Format(Format.FixedPoint).AllowEditing(true);
+                        c.AddFor(m => m.IncentiveTechnical).Caption("PC kỹ thuật").Format(Format.FixedPoint).AllowEditing(true);
+                        c.AddFor(m => m.IncentiveOther).Caption("PC Khác").Format(Format.FixedPoint).AllowEditing(true);
+                    });
 
-        columns.Add().Caption("Đánh giá").Columns(c =>
-        {
-            c.AddFor(m => m.IncentiveSixMonth1).Caption("Incentive 6 tháng đầu năm").AllowEditing(true);
-            c.AddFor(m => m.IncentiveSixMonth2).Caption("Incentive 6 tháng cuối năm").AllowEditing(true);
-        });
+                    columns.Add().Caption("Đánh giá").Columns(c =>
+                    {
+                        c.AddFor(m => m.IncentiveSixMonth1).Caption("Incentive 6 tháng đầu năm").AllowEditing(true);
+                        c.AddFor(m => m.IncentiveSixMonth2).Caption("Incentive 6 tháng cuối năm").AllowEditing(true);
+                    });
 
-        columns.Add().Caption("Hạng Mục Khác").Columns(c =>
-        {
-            c.AddFor(m => m.DoiTuongPhuCapDocHai).Caption("Đối tượng phụ cấp độc hại(x)").AllowEditing(true);
-            c.AddFor(m => m.HoTroCongDoan).Caption("Hỗ trợ công đoạn").Format(Format.FixedPoint).AllowEditing(true);
-            c.AddFor(m => m.PCCC_CoSo).Caption("Hỗ trợ đội PCCC cơ sở").Format(Format.FixedPoint).AllowEditing(true);
-            c.AddFor(m => m.HoTroATVS_SinhVien).Caption("Hỗ trợ đội an toàn vệ sinh viên").Format(Format.FixedPoint).AllowEditing(true);
-            c.AddFor(m => m.ThuocDoiTuongBaoHiemXH).Caption("Thuộc đối tượng tham gia BHXH (x)").AllowEditing(true);
-            c.AddFor(m => m.DoiTuongTruyThuBHYT).Caption("Đối tượng truy thu BHYT").AllowEditing(true);
-            c.AddFor(m => m.SoNguoiPhuThuoc).Caption("Số người phụ thuộc").Format(Format.FixedPoint).AllowEditing(true);
-            c.AddFor(m => m.SoConNho).Caption("Số Con nhỏ").AllowEditing(true);
-            c.AddFor(m => m.Note).Caption("Note").AllowEditing(true);
-            c.AddFor(m => m.HR_NHANVIEN.SoTaiKhoanNH).Caption("Số Tài Khoản NH").AllowEditing(false);
-        });
-    }).SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true).OnSaving("SaveLuong")
-    .Summary(s => s.TotalItems(items =>
-        {
-            items.AddFor(m => m.MaNV)
-                .SummaryType(SummaryType.Count);
-        })
-    )
-    )
+                    columns.Add().Caption("Hạng Mục Khác").Columns(c =>
+                    {
+                        c.AddFor(m => m.DoiTuongPhuCapDocHai).Caption("Đối tượng phụ cấp độc hại(x)").AllowEditing(true);
+                        c.AddFor(m => m.HoTroCongDoan).Caption("Hỗ trợ công đoạn").Format(Format.FixedPoint).AllowEditing(true);
+                        c.AddFor(m => m.PCCC_CoSo).Caption("Hỗ trợ đội PCCC cơ sở").Format(Format.FixedPoint).AllowEditing(true);
+                        c.AddFor(m => m.HoTroATVS_SinhVien).Caption("Hỗ trợ đội an toàn vệ sinh viên").Format(Format.FixedPoint).AllowEditing(true);
+                        c.AddFor(m => m.ThuocDoiTuongBaoHiemXH).Caption("Thuộc đối tượng tham gia BHXH (x)").AllowEditing(true);
+                        c.AddFor(m => m.DoiTuongTruyThuBHYT).Caption("Đối tượng truy thu BHYT").AllowEditing(true);
+                        c.AddFor(m => m.SoNguoiPhuThuoc).Caption("Số người phụ thuộc").Format(Format.FixedPoint).AllowEditing(true);
+                        c.AddFor(m => m.SoConNho).Caption("Số Con nhỏ").AllowEditing(true);
+                        c.AddFor(m => m.Note).Caption("Note").AllowEditing(true);
+                        c.AddFor(m => m.HR_NHANVIEN.SoTaiKhoanNH).Caption("Số Tài Khoản NH").AllowEditing(false);
+                    });
+                }).SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true).OnSaving("SaveLuong")
+                .Summary(s => s.TotalItems(items =>
+                {
+                    items.AddFor(m => m.MaNV)
+                    .SummaryType(SummaryType.Count);
+                })
+                )
+                )
         </div>
     </div>
 </div>
