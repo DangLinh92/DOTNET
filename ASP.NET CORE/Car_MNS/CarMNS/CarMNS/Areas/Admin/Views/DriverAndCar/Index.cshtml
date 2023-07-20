@@ -1,0 +1,273 @@
+﻿@{
+    ViewData["Title"] = "Quản Lý Xe Và Thông Tin Lái Xe";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+
+}
+
+@section Scripts{
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+
+    <script>
+
+        function exportingLaixe(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('LaiXe');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'LaiXe.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        function exportingLxeXe(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('LaiXe_Xe');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'LaiXe_Xe.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('ThongTinXe');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'ThongTinXe.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        function calculateFilterExpression(filterValue, selectedFilterOperation, target) {
+            if (target === "search" && typeof (filterValue) === "string") {
+                return [this.dataField, "contains", filterValue]
+            }
+
+            return function (data) {
+                return (data.AssignedEmployee || []).indexOf(filterValue) !== -1
+            }
+        }
+
+    </script>
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Thông Tin Xe - Lái Xe</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/Admin/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Xe - Lái Xe</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            @(
+                Html.DevExtreme().DataGrid<LAI_XE>
+                ()
+                .ID("gridContainerdh")
+                .Height(720)
+                .ShowBorders(true)
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .AllowColumnResizing(true)
+                .ColumnMinWidth(50)
+                .ColumnAutoWidth(true)
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+                .OnExporting("exportingLaixe")
+                .FilterRow(filterRow => filterRow
+                .Visible(true)
+                .ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .HoverStateEnabled(true)
+                .Editing(editing =>
+                {
+                    editing.Mode(GridEditMode.Row);
+                    editing.AllowUpdating(true);
+                    editing.AllowAdding(true);
+                    editing.AllowDeleting(true);
+                })
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.Id).Visible(false).AllowEditing(false);
+                    columns.AddFor(m => m.HoTen).Caption("Họ Tên").AllowEditing(true);
+                    columns.AddFor(m => m.NgaySinh).Caption("Ngày Sinh").AllowEditing(true);
+                    columns.AddFor(m => m.SoDienThoai).Caption("Số Điện Thoại").AllowEditing(true);
+                    columns.AddFor(m => m.DiaChi).Caption("Địa Chỉ").AllowEditing(true);
+                }).WordWrapEnabled(true)
+                .DataSource(d => d.Mvc()
+                .Area("Admin")
+                .Controller("DriverAndCar")
+                .LoadAction("GetLaiXeAll")
+                .UpdateAction("PutLaixe")
+                .InsertAction("PostLaixe")
+                .DeleteAction("DeleteLaixe")
+                .Key("Id")
+                ).Summary(s => s.TotalItems(items =>
+                {
+                    items.AddFor(m => m.HoTen)
+                    .SummaryType(SummaryType.Count);
+                })
+                )
+                )
+        </div>
+        <div class="col-md-4">
+            @(Html.DevExtreme().DataGrid<CAR>()
+                .ID("gridContainer")
+                .Height(720)
+                .ShowBorders(true)
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .AllowColumnResizing(true)
+                .ColumnMinWidth(50)
+                .ColumnAutoWidth(true)
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+                .OnExporting("exporting")
+                .FilterRow(filterRow => filterRow
+                .Visible(true)
+                .ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .HoverStateEnabled(true)
+                .Editing(editing =>
+                {
+                    editing.Mode(GridEditMode.Row);
+                    editing.AllowUpdating(true);
+                    editing.AllowAdding(true);
+                    editing.AllowDeleting(true);
+                })
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.Id).Visible(false).AllowEditing(false);
+                    columns.AddFor(m => m.LoaiXe).Caption("Loại Xe").AllowEditing(true);
+                    columns.AddFor(m => m.BienSoXe).Caption("Biển Số Xe").AllowEditing(true);
+                })
+                .DataSource(d => d.Mvc()
+                .Area("Admin")
+                .Controller("DriverAndCar")
+                .LoadAction("GetXeAll")
+                .UpdateAction("PutCar")
+                .InsertAction("PostCar")
+                .DeleteAction("DeleteCar")
+                .Key("Id")
+                ).Summary(s => s.TotalItems(items =>
+                {
+                    items.AddFor(m => m.LoaiXe)
+                    .SummaryType(SummaryType.Count);
+                })
+                )
+                )
+        </div>
+        <div class="col-md-4">
+            @(Html.DevExtreme().DataGrid<LAI_XE_CAR>
+                ()
+                .ID("gridContainergrade")
+                .Height(720)
+                .ShowBorders(true)
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .AllowColumnResizing(true)
+                .ColumnMinWidth(50)
+                .ColumnAutoWidth(true)
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+                .OnExporting("exportingLxeXe")
+                .FilterRow(filterRow => filterRow
+                .Visible(true)
+                .ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .HoverStateEnabled(true)
+                .Editing(editing =>
+                {
+                    editing.Mode(GridEditMode.Row);
+                    editing.AllowUpdating(true);
+                    editing.AllowAdding(true);
+                    editing.AllowDeleting(true);
+                })
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.Id).Visible(false).AllowEditing(false);
+                    columns.AddFor(m => m.CarId)
+                    .Caption("Xe").AllowEditing(true)
+                    .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("DriverAndCar").LoadAction("GetXeAll").Key("Id"))
+                    .ValueExpr("Id")
+                    .DisplayExpr("BienSoXe")
+                    )
+                    .CalculateFilterExpression("calculateFilterExpression")
+                    .Width(200);
+
+                    columns.AddFor(m => m.LaxeId)
+                    .Caption("Lái Xe").AllowEditing(true)
+                    .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("DriverAndCar").LoadAction("GetLaiXeAll").Key("Id"))
+                    .ValueExpr("Id")
+                    .DisplayExpr("HoTen")
+                    )
+                    .CalculateFilterExpression("calculateFilterExpression")
+                    .Width(200);
+                })
+                .DataSource(d => d.Mvc()
+                .Area("Admin")
+                .Controller("DriverAndCar")
+                .LoadAction("GetAllLXeAndXe")
+                .UpdateAction("PutLxeXe")
+                .InsertAction("PostLxeXe")
+                .DeleteAction("DeleteLxeXe")
+                .Key("Id")
+                ).Summary(s => s.TotalItems(items =>
+                {
+                    items.AddFor(m => m.CarId)
+                    .SummaryType(SummaryType.Count);
+                })
+                )
+                )
+        </div>
+    </div>
+</div>
+
+
+
+

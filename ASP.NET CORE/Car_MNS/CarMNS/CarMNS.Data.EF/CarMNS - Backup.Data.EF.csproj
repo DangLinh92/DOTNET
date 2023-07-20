@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20220812082010_addTableEHS.cs" />
+    <Compile Remove="Migrations\20220812082010_addTableEHS.Designer.cs" />
+    <Compile Remove="Migrations\20221006062836_updateTrainingtype.cs" />
+    <Compile Remove="Migrations\20221006062836_updateTrainingtype.Designer.cs" />
+    <Compile Remove="Migrations\20221006063657_deleteTrainingtype.cs" />
+    <Compile Remove="Migrations\20221006063657_deleteTrainingtype.Designer.cs" />
+    <Compile Remove="Migrations\20221006064139_upTrainingtype.cs" />
+    <Compile Remove="Migrations\20221006064139_upTrainingtype.Designer.cs" />
+    <Compile Remove="Migrations\20230517083247_updateTypeIdSalaryPhatsinh.cs" />
+    <Compile Remove="Migrations\20230517083247_updateTypeIdSalaryPhatsinh.Designer.cs" />
+    <Compile Remove="Migrations\20230520061415_updateUserIdentity.cs" />
+    <Compile Remove="Migrations\20230520061415_updateUserIdentity.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.16" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.16" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.16" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.16">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.16" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="3.1.16" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.16" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CarMNS.Data\CarMNS.Data.csproj" />
+    <ProjectReference Include="..\CarMNS.Utilities\CarMNS.Utilities.csproj" />
+    <ProjectReference Include="..\HRMS.Infrastructure\CarMNS.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="SQLStoreproc\" />
+  </ItemGroup>
+
+</Project>

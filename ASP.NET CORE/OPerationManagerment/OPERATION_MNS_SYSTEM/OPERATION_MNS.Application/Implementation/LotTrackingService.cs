@@ -55,6 +55,7 @@ namespace OPERATION_MNS.Application.Implementation
                         LotID = item["Lot ID"].NullString(),// WLP1 Lot Number
                         LotFAB = item["FAB Lot ID"].NullString(),
                         WaferID = item["Wafer ID"].NullString(),
+                        Operation = item["OPERATION_SHORT_NAME"].NullString()
                     };
 
                     if (!lstLot.Contains(waferInfo.LotID))
@@ -105,55 +106,107 @@ namespace OPERATION_MNS.Application.Implementation
             WaferInfo wf;
             foreach (var item in WaferInfos)
             {
-                foreach (var his in item.LotHistories)
+                if (item.LotHistories.Count() > 0)
                 {
-                    wf = new WaferInfo()
+                    foreach (var his in item.LotHistories)
                     {
-                        CassetId = item.CassetId,
-                        Model = item.Model,
-                        LotID = item.LotID,
-                        WaferID = item.WaferID,
-                        LotFAB = item.LotFAB,
-                        Wlp2_Reel_Number = his.Wlp2_Reel_Number
-                    };
+                        wf = new WaferInfo()
+                        {
+                            CassetId = item.CassetId,
+                            Model = item.Model,
+                            LotID = item.LotID,
+                            WaferID = item.WaferID,
+                            LotFAB = item.LotFAB,
+                            Wlp2_Reel_Number = his.Wlp2_Reel_Number,
+                            Operation = item.Operation
+                        };
 
-                    result.Add(wf);
+                        result.Add(wf);
+                    }
+                }
+                else
+                {
+                    result.Add(item);
                 }
             }
 
-            // get lot module
-            ResultDB m_ResultDB;
-            var configuation = GetConfiguration();
-            string conn = configuation.GetSection("ConnectionStrings").GetSection("WHNP1Connection").Value;
-            foreach (var item in lstPackingUnitID)
+            if (lstPackingUnitID.Count() > 0)
             {
-                dic = new Dictionary<string, string> { { "A_PACKING_UNIT", item } };
-                m_ResultDB = _SettingItemRepository.ExecProceduce3("PKG_SMT018.GET_LIST", dic,conn);
-
-                if (m_ResultDB.ReturnInt == 0 && m_ResultDB.ReturnDataSet.Tables[1].Rows.Count > 0)
+                // get lot module
+                ResultDB m_ResultDB;
+                var configuation = GetConfiguration();
+                string conn = configuation.GetSection("ConnectionStrings").GetSection("WHNP1Connection").Value;
+                foreach (var item in lstPackingUnitID)
                 {
-                    foreach (var rs in result.Where(x=>x.Wlp2_Reel_Number == item))
-                    {
-                        foreach (DataRow row in m_ResultDB.ReturnDataSet.Tables[1].Rows)
-                        {
-                            wf = new WaferInfo()
-                            {
-                                CassetId = rs.CassetId,
-                                Model = rs.Model,
-                                LotID = rs.LotID,
-                                WaferID = rs.WaferID,
-                                LotFAB = rs.LotFAB,
-                                Wlp2_Reel_Number = rs.Wlp2_Reel_Number,
-                                LotModule = row["LOT_NO"].NullString()
-                            };
+                    dic = new Dictionary<string, string> { { "A_PACKING_UNIT", item } };
+                    m_ResultDB = _SettingItemRepository.ExecProceduce3("PKG_SMT018.GET_LIST", dic, conn);
 
-                            result2.Add(wf);
+                    if (m_ResultDB.ReturnInt == 0 && m_ResultDB.ReturnDataSet.Tables[1].Rows.Count > 0)
+                    {
+                        if (result.Where(x => x.Wlp2_Reel_Number == item).Count() > 0)
+                        {
+                            foreach (var rs in result.Where(x => x.Wlp2_Reel_Number == item))
+                            {
+                                foreach (DataRow row in m_ResultDB.ReturnDataSet.Tables[1].Rows)
+                                {
+                                    wf = new WaferInfo()
+                                    {
+                                        CassetId = rs.CassetId,
+                                        Model = rs.Model,
+                                        LotID = rs.LotID,
+                                        WaferID = rs.WaferID,
+                                        LotFAB = rs.LotFAB,
+                                        Wlp2_Reel_Number = rs.Wlp2_Reel_Number,
+                                        LotModule = row["LOT_NO"].NullString(),
+                                        Operation = rs.Operation
+                                    };
+
+                                    result2.Add(wf);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            result2.AddRange(result.FindAll(x => x.Wlp2_Reel_Number == item));
                         }
                     }
-                    
+                    else
+                    {
+                        result2.AddRange(result.FindAll(x => x.Wlp2_Reel_Number == item));
+                    }
+                }
+            }
+            else
+            {
+                result2.AddRange(result);
+            }
+
+            List<string> LotModules = new List<string>();
+            foreach (var item in result2)
+            {
+                if(item.LotModule.NullString() != "" && !LotModules.Contains(item.LotModule.NullString()))
+                {
+                    LotModules.Add(item.LotModule);
                 }
             }
 
+            dic = new Dictionary<string, string> { { "A_LOT_MODULE", LotModules.Join(",") } };
+            ResultDB _resultDB1 = _SettingItemRepository.ExecProceduce2("GET_CURRENT_OPERATION_LOT_TRACKING", dic);
+            if(_resultDB1.ReturnInt == 0)
+            {
+                DataTable data = _resultDB1.ReturnDataSet.Tables[0];
+
+                foreach (var item in result2)
+                {
+                    foreach (DataRow row in data.Rows)
+                    {
+                        if (row["LOT_ID"].NullString() == item.LotModule)
+                        {
+                            item.Operation = row["OperationName"].NullString();
+                        }
+                    }
+                }
+            }
             return result2;
         }
 
@@ -167,36 +220,36 @@ namespace OPERATION_MNS.Application.Implementation
             List<LotTrackingViewModel> lots = new List<LotTrackingViewModel>();
             Dictionary<string, string> dic = new Dictionary<string, string>();
             List<string> lstLABC = new List<string>() { "LA", "LB", "LC" };
-            if (lotNo.StartsWith("HNM"))
+            //if (lotNo.StartsWith("HNM"))
+            // {
+            dic.Add("A_LOT_NO", lotNo);
+            dic.Add("A_MATERIAL", "");
+            var configuation = GetConfiguration();
+            string conn = configuation.GetSection("ConnectionStrings").GetSection("WHNP1Connection").Value;
+
+            ResultDB resultDB1 = _SettingItemRepository.ExecProceduce3("PKG_SMT017.GET_LIST2", dic, conn);
+
+            if (resultDB1.ReturnInt == 0)
             {
-                dic.Add("A_LOT_NO", lotNo);
-                dic.Add("A_MATERIAL", "");
-                var configuation = GetConfiguration();
-                string conn = configuation.GetSection("ConnectionStrings").GetSection("WHNP1Connection").Value;
-
-                ResultDB resultDB1 = _SettingItemRepository.ExecProceduce3("PKG_SMT017.GET_LIST2", dic, conn);
-
-                if (resultDB1.ReturnInt == 0)
+                // get packing unit id
+                LotTrackingViewModel lot;
+                foreach (DataRow item in resultDB1.ReturnDataSet.Tables[1].Rows)
                 {
-                    // get packing unit id
-                    LotTrackingViewModel lot;
-                    foreach (DataRow item in resultDB1.ReturnDataSet.Tables[1].Rows)
+                    lot = new LotTrackingViewModel();
+                    lot.LotModule = lotNo;
+                    lot.Wlp2_Reel_Number = item["PACKING_UNIT_ID"].NullString();
+                    if (!lots.Any(x => x.Wlp2_Reel_Number == lot.Wlp2_Reel_Number) && lstLABC.Contains(lot.Wlp2_Reel_Number.Substring(0, 2)))
                     {
-                        lot = new LotTrackingViewModel();
-                        lot.LotModule = lotNo;
-                        lot.Wlp2_Reel_Number = item["PACKING_UNIT_ID"].NullString();
-                        if (!lots.Any(x => x.Wlp2_Reel_Number == lot.Wlp2_Reel_Number) && lstLABC.Contains(lot.Wlp2_Reel_Number.Substring(0, 2)))
-                        {
-                            lots.Add(lot);
-                        }
+                        lots.Add(lot);
                     }
                 }
             }
+            //}
 
             // Get casset Id : VIEW WIP LOT HISTORY
             dic = new Dictionary<string, string>();
 
-            if (lotNo.StartsWith("HNM"))
+            if (lots.Count > 0)
             {
                 dic.Add("A_LOT_IDS", lots.Select(x => x.Wlp2_Reel_Number).Join(","));
             }

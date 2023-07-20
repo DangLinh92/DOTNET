@@ -79,7 +79,7 @@ namespace OPERATION_MNS.Application.AutoMapper
             c.GhiChu,c.NguoiChiuTrachNhiem,c.InputDate,c.OutputDate,c.PlanInputDate,c.PlanOutputDate,c.Wall_Plan_Date,c.Wall_Actual_Date,c.Roof_Plan_Date,c.Roof_Actual_Date,c.Seed_Plan_Date,c.Seed_Actual_Date,
             c.PlatePR_Plan_Date,c.PlatePR_Actual_Date,c.Plate_Plan_Date,c.Plate_Actual_Date,c.PreProbe_Plan_Date,c.PreProbe_Actual_Date,c.PreDicing_Plan_Date,c.PreDicing_Actual_Date,c.AllProbe_Plan_Date,c.AllProbe_Actual_Date,
             c.BG_Plan_Date,c.BG_Actual_Date,c.Dicing_Plan_Date,c.Dicing_Actual_Date,c.ChipIns_Plan_Date,c.ChipIns_Actual_Date,c.Packing_Plan_Date,c.Packing_Actual_Date,c.OQC_Plan_Date,c.OQC_Actual_Date,c.Shipping_Plan_Date,
-            c.Shipping_Actual_Date,c.LeadTime,c.DeleteFlg,c.PlanInputDateTcard,c.OutPutWafer,c.LeadTime));
+            c.Shipping_Actual_Date,c.LeadTime,c.DeleteFlg,c.PlanInputDateTcard,c.OutPutWafer,c.LeadTimePlan));
         }
     }
 }

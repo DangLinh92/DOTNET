@@ -22,6 +22,7 @@ _UpgradeReport_Files/
 ###############
 # Directories #
 ###############
+*/Template_Project/*
 bin/
 obj/
 TestResults/

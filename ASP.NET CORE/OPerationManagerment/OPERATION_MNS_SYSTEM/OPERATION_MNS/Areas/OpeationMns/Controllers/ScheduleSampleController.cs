@@ -128,7 +128,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
             }
 
             List<TinhHinhSanXuatSampleViewModel> lst = new List<TinhHinhSanXuatSampleViewModel>();
-            lst.AddRange(data);
+            lst.AddRange(data.OrderBy(x=>x.MucDoKhanCap));
             lst.AddRange(data1.FindAll(x => x.DeleteFlg == "Y" || x.LeadTimeMax > 7 || x.Code.NullString().ToUpper() != "R"));
 
             return DataSourceLoader.Load(lst, loadOptions);

@@ -308,9 +308,9 @@ namespace OPERATION_MNS.Application.Implementation
 
                         // lưu ngày không kế hoạch 
                         DATE_OFF_LINE dateOff;
-                        DATE_OFF_LINE dateOff2;
+                        //DATE_OFF_LINE dateOff2;
                         List<DATE_OFF_LINE> lstDateOff = new List<DATE_OFF_LINE>();
-                        List<DATE_OFF_LINE> lstDateOffWlp2 = new List<DATE_OFF_LINE>();
+                        //List<DATE_OFF_LINE> lstDateOffWlp2 = new List<DATE_OFF_LINE>();
                         List<string> dayOff = new List<string>();
                         foreach (KeyValuePair<string, string> item in DayNoPlan)
                         {
@@ -326,43 +326,44 @@ namespace OPERATION_MNS.Application.Implementation
                                     DanhMuc = ""
                                 };
 
-                                dateOff2 = new DATE_OFF_LINE()
-                                {
-                                    ItemValue = item.Key,
-                                    ON_OFF = CommonConstants.OFF,
-                                    WLP = CommonConstants.WLP2,
-                                    UserCreated = GetUserId(),
-                                    OWNER = CommonConstants.WLP1,
-                                    DanhMuc = ""
-                                };
+                                //dateOff2 = new DATE_OFF_LINE()
+                                //{
+                                //    ItemValue = item.Key,
+                                //    ON_OFF = CommonConstants.OFF,
+                                //    WLP = CommonConstants.WLP2,
+                                //    UserCreated = GetUserId(),
+                                //    OWNER = CommonConstants.WLP1,
+                                //    DanhMuc = ""
+                                //};
 
                                 lstDateOff.Add(dateOff);
-                                lstDateOffWlp2.Add(dateOff2);
+                                //lstDateOffWlp2.Add(dateOff2);
                             }
                         }
 
                         var lstOff = _DateOffLineRepository.FindAll(x => x.ItemValue.CompareTo(beginDate) >= 0 && x.ItemValue.CompareTo(EndDate) <= 0 && x.OWNER.Contains("WLP1")).ToList();
                         _DateOffLineRepository.RemoveMultiple(lstOff);
                         _DateOffLineRepository.AddRange(lstDateOff);
-                        _DateOffLineRepository.AddRange(lstDateOffWlp2);
-                        dayOff = lstDateOff.Select(x => x.ItemValue.Replace("-", "")).ToList();
+                        //_DateOffLineRepository.AddRange(lstDateOffWlp2);
+
+                        //dayOff = lstDateOff.Select(x => x.ItemValue.Replace("-", "")).ToList();
 
                         //TODO: THÊM DK CHO wlp = WLP1,WLP2 nếu k cùng date off
-                        var leadTimes = _LeadTimeRepository.FindAll(x => x.WorkDate.CompareTo(beginDate.Replace("-", "")) >= 0 && x.WorkDate.CompareTo(EndDate.Replace("-", "")) <= 0 && x.WLP.Contains("WLP"));
+                        //var leadTimes = _LeadTimeRepository.FindAll(x => x.WorkDate.CompareTo(beginDate.Replace("-", "")) >= 0 && x.WorkDate.CompareTo(EndDate.Replace("-", "")) <= 0 && x.WLP.Contains("WLP"));
 
-                        foreach (var item in leadTimes)
-                        {
-                            if (dayOff.Contains(item.WorkDate))
-                            {
-                                item.Ox = "X";
-                            }
-                            else
-                            {
-                                item.Ox = "";
-                            }
+                        //foreach (var item in leadTimes)
+                        //{
+                        //    if (dayOff.Contains(item.WorkDate))
+                        //    {
+                        //        item.Ox = "X";
+                        //    }
+                        //    else
+                        //    {
+                        //        item.Ox = "";
+                        //    }
 
-                            _LeadTimeRepository.Update(item);
-                        }
+                        //    _LeadTimeRepository.Update(item);
+                        //}
 
                         Save();
 
@@ -690,7 +691,7 @@ namespace OPERATION_MNS.Application.Implementation
                 }
             }
 
-            return lstResult.OrderBy(x=>x.Model).ToList();
+            return lstResult.OrderBy(x => x.Model).ToList();
         }
 
         public List<GocPlanViewModelEx> GetByTime_fab(string unit, string fromDate, string toDate)
@@ -1338,7 +1339,9 @@ namespace OPERATION_MNS.Application.Implementation
 
                         // lưu ngày không kế hoạch 
                         DATE_OFF_LINE dateOff;
+                        DATE_OFF_LINE dateOff2;
                         List<DATE_OFF_LINE> lstDateOff = new List<DATE_OFF_LINE>();
+                        List<DATE_OFF_LINE> lstDateOffWlp2 = new List<DATE_OFF_LINE>();
                         List<string> dayOff = new List<string>();
                         foreach (KeyValuePair<string, string> item in DayNoPlan)
                         {
@@ -1354,13 +1357,29 @@ namespace OPERATION_MNS.Application.Implementation
                                     DanhMuc = danhmuc
                                 };
 
+                                dateOff2 = new DATE_OFF_LINE()
+                                {
+                                    ItemValue = item.Key,
+                                    ON_OFF = CommonConstants.OFF,
+                                    WLP = CommonConstants.WLP2,
+                                    UserCreated = GetUserId(),
+                                    OWNER = CommonConstants.WLP1,
+                                    DanhMuc = ""
+                                };
+
                                 lstDateOff.Add(dateOff);
+                                lstDateOffWlp2.Add(dateOff2);
                             }
                         }
 
                         var lstOff = _DateOffLineRepository.FindAll(x => x.ItemValue.CompareTo(beginDate) >= 0 && x.ItemValue.CompareTo(EndDate) <= 0 && x.OWNER.Contains("WLP2") && x.DanhMuc == danhmuc).ToList();
+                        var lstOffWlp12 = _DateOffLineRepository.FindAll(x => x.ItemValue.CompareTo(beginDate) >= 0 && x.ItemValue.CompareTo(EndDate) <= 0 && x.OWNER.Contains("WLP1") && x.WLP == "WLP2").ToList();
+
                         _DateOffLineRepository.RemoveMultiple(lstOff);
+                        _DateOffLineRepository.RemoveMultiple(lstOffWlp12);
+
                         _DateOffLineRepository.AddRange(lstDateOff);
+                        _DateOffLineRepository.AddRange(lstDateOffWlp2);
 
                         //dayOff = lstDateOff.Select(x => x.ItemValue.Replace("-", "")).ToList();
 
@@ -1560,13 +1579,13 @@ namespace OPERATION_MNS.Application.Implementation
 
                     chartModels.Add(model);
 
-                    if(model.Thicknet == 130)
+                    if (model.Thicknet == 130)
                     {
                         AvgItem.Add(model.MAIN_AVG_VALUE);
                         UslItem.Add(model.MAIN_TARGET_USL);
                         LslItem.Add(model.MAIN_TARGET_LSL);
                     }
-                    else if(model.Thicknet == 150)
+                    else if (model.Thicknet == 150)
                     {
                         AvgItem_150.Add(model.MAIN_AVG_VALUE);
                         UslItem_150.Add(model.MAIN_TARGET_USL);

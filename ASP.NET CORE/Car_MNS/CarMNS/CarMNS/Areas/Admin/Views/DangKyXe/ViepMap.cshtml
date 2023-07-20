@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "ViepMap";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+@section Styles{
+   <style>
+        #ifMap{
+            width:100%;
+            height:820px;
+        }
+   </style>
+}
+
+<div class="content container-fluid">
+    <iframe id="ifMap" src="http://www.google.com/custom?q=&btnG=Search" frameborder="0" allowfullscreen></iframe>
+</div>
+

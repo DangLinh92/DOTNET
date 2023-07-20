@@ -472,7 +472,7 @@ namespace OPERATION_MNS.Application.ViewModels.Sameple
         [StringLength(50)]
         public string UserModified { get; set; }
 
-        public int LeadTimeMax => PlanOutputDate.NullString() != "" ? DateTime.Parse(PlanOutputDate.Substring(0, 4) + "-" + PlanOutputDate.Substring(4, 2) + "-" + PlanOutputDate.Substring(6, 2)).Subtract(DateTime.Parse(PlanInputDate.Substring(0, 4) + "-" + PlanInputDate.Substring(4, 2) + "-" + PlanInputDate.Substring(6, 2))).Days : 0;
+        public int LeadTimeMax => LeadTimePlan > 0 ? LeadTimePlan : (PlanOutputDate.NullString() != "" ? DateTime.Parse(PlanOutputDate.Substring(0, 4) + "-" + PlanOutputDate.Substring(4, 2) + "-" + PlanOutputDate.Substring(6, 2)).Subtract(DateTime.Parse(PlanInputDate.Substring(0, 4) + "-" + PlanInputDate.Substring(4, 2) + "-" + PlanInputDate.Substring(6, 2))).Days : 0);
 
         public bool IsHightLight { get; set; }
         public int LevelHightLight { get; set; }

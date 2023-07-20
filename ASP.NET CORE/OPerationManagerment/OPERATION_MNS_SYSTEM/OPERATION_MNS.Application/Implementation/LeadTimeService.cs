@@ -45,13 +45,14 @@ namespace OPERATION_MNS.Application.Implementation
         public List<LeadTimeViewModel> GetLeadTime(string year, string month, string week, string day, string ox)
         {
             List<LeadTimeViewModel> result = new List<LeadTimeViewModel>();
-            Dictionary<string, string> dic = new Dictionary<string, string>();
-
-            dic.Add("A_YEAR", year.NullString());
-            dic.Add("A_MONTH", month.NullString());
-            dic.Add("A_WEEK", week.NullString());
-            dic.Add("A_DAY", day.NullString());
-            dic.Add("A_OX", ox.NullString());
+            Dictionary<string, string> dic = new Dictionary<string, string>
+            {
+                { "A_YEAR", year.NullString() },
+                { "A_MONTH", month.NullString() },
+                { "A_WEEK", week.NullString() },
+                { "A_DAY", day.NullString() },
+                { "A_OX", ox.NullString() }
+            };
 
             ResultDB resultDB = _InventoryActualRepository.ExecProceduce2("PKG_BUSINESS@GET_LEADTIME", dic);
 
@@ -80,20 +81,41 @@ namespace OPERATION_MNS.Application.Implementation
                         leadTime.WorkWeek = row["WorkWeek"].NullString();
                         leadTime.HoldTime = double.Parse(row["HoldTime"].IfNullIsZero());
 
-                        // khong có kế hoach thì bỏ qua
-                        if (_DateOffRespository.FindAll(x=>x.ItemValue.Replace("-","") == row["WorkDate"].NullString() && x.WLP == "WLP1").ToList().Count > 0)
+                        if(row["WLP"].NullString() == "WLP1")
                         {
-                            leadTime.WaitTime =0;
-                            leadTime.RunTime = 0;
-                            leadTime.LeadTime = 0;
-                            continue;
+                            // khong có kế hoach thì bỏ qua
+                            if (_DateOffRespository.FindAll(x => x.ItemValue.Replace("-", "") == row["WorkDate"].NullString() && x.WLP == "WLP1").ToList().Count > 0)
+                            {
+                                leadTime.WaitTime = 0;
+                                leadTime.RunTime = 0;
+                                leadTime.LeadTime = 0;
+                                continue;
+                            }
+                            else
+                            {
+                                leadTime.WaitTime = double.Parse(row["WaitTime"].IfNullIsZero());
+                                leadTime.RunTime = double.Parse(row["RunTime"].IfNullIsZero());
+                                leadTime.LeadTime = double.Parse(row["LeadTime"].IfNullIsZero());
+                            }
                         }
-                        else
+                        else if (row["WLP"].NullString() == "WLP2")
                         {
-                            leadTime.WaitTime = double.Parse(row["WaitTime"].IfNullIsZero());
-                            leadTime.RunTime = double.Parse(row["RunTime"].IfNullIsZero());
-                            leadTime.LeadTime = double.Parse(row["LeadTime"].IfNullIsZero());
+                            // khong có kế hoach thì bỏ qua
+                            if (_DateOffRespository.FindAll(x => x.ItemValue.Replace("-", "") == row["WorkDate"].NullString() && x.WLP == "WLP2" &&  x.DanhMuc == "SAN_XUAT").ToList().Count > 0)
+                            {
+                                leadTime.WaitTime = 0;
+                                leadTime.RunTime = 0;
+                                leadTime.LeadTime = 0;
+                                continue;
+                            }
+                            else
+                            {
+                                leadTime.WaitTime = double.Parse(row["WaitTime"].IfNullIsZero());
+                                leadTime.RunTime = double.Parse(row["RunTime"].IfNullIsZero());
+                                leadTime.LeadTime = double.Parse(row["LeadTime"].IfNullIsZero());
+                            }
                         }
+                        
                        
                         leadTime.LeadTimeMax = double.Parse(row["LeadTimeMax"].IfNullIsZero());
                         leadTime.WLP = row["WLP"].NullString();

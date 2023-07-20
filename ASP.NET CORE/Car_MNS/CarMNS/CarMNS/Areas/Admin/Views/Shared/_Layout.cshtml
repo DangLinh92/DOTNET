@@ -1,0 +1,217 @@
+﻿@using CarMNS.Extensions;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <meta name="description" content="Smarthr - Bootstrap Admin Template">
+    <meta name="keywords" content="admin, estimates, bootstrap, business, corporate, creative, management, minimal, modern, accounts, invoice, html5, responsive, CRM, Projects">
+    <meta name="author" content="Dreamguys - Bootstrap Admin Template">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Car Management</title>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="~/img/faviconWisol.png">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;0,900;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+
+    <!-- Fontawesome CSS -->
+    <link rel="stylesheet" href="~/css/font-awesome.min.css">
+
+    <!-- Chart CSS -->
+    <link rel="stylesheet" href="~/plugins/morris/morris.css">
+
+    <!-- alertify CSS -->
+    <link href="~/plugins/alertify/alertify.min.css" rel="stylesheet" />
+
+    <!-- Lineawesome CSS -->
+    <link rel="stylesheet" href="~/css/line-awesome.min.css">
+
+    <!-- Datatable CSS -->
+    <link rel="stylesheet" href="~/css/dataTables.bootstrap4.min.css">
+
+    <!-- Select2 CSS -->
+    @*<link rel="stylesheet" href="~/css/select2.min.css">*@
+    <link href="~/plugins/select2/css/select2.min.css" rel="stylesheet" />
+
+    <!-- Datetimepicker CSS -->
+    <link rel="stylesheet" href="~/css/bootstrap-datetimepicker.min.css">
+
+    <link href="~/plugins/user-friendly-time-picker/src/css/timepicker.css" rel="stylesheet" />
+    <!-- Tagsinput CSS -->
+    <link href="~/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css" rel="stylesheet" />
+
+    <!-- Loading indicator -->
+    <link href="~/plugins/waitMe/waitMe.min.css" rel="stylesheet" />
+
+    <link href="~/css/fullcalendar.min.css" rel="stylesheet" />
+
+    <!-- Main CSS -->
+    @*<link rel="stylesheet" href="~/css/style.css">*@
+    <link href="~/bundled/site-admin.min.css" rel="stylesheet" />
+
+    <!-- su dung cho spreadsheet devexpress -->
+    <script src="~/js/jquery-3.6.0.min.js"></script>
+    <script src="~/js/devextreme/dx.all.js"></script>
+    <link href="~/css/devextreme/dx.light.css" rel="stylesheet" />
+    @*<script src="~/bundled/site-Devextreme.min.js"></script>
+        <link href="~/bundled/site-Devextreme.min.css" rel="stylesheet" />*@
+    <script src="~/node_modules/devexpress-aspnetcore-spreadsheet/dist/dx-aspnetcore-spreadsheet.js"></script>
+    <link href="~/node_modules/devexpress-aspnetcore-spreadsheet/dist/dx-aspnetcore-spreadsheet.css" rel="stylesheet" />
+    <script src="~/js/devextreme/aspnet/dx.aspnet.data.js"></script>
+    <script src="~/js/devextreme/aspnet/dx.aspnet.mvc.js"></script>
+
+    @RenderSection("Styles", required: false)
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="assets/js/html5shiv.min.js"></script>
+        <script src="assets/js/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+
+        <!-- Header -->
+        <div class="header">
+
+            <!-- Logo -->
+            <div class="header-left">
+                <a href="index.html" class="logo">
+                    <img src="~/img/logoWisol.png" width="40" height="40" alt="" style="opacity:80%">
+                </a>
+            </div>
+            <!-- /Logo -->
+
+            <a id="toggle_btn" href="javascript:void(0);">
+                <span class="bar-icon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </span>
+            </a>
+
+            <!-- Header Title -->
+            <div class="page-title-box">
+                <h3>Wisol Our Dream</h3>
+            </div>
+            <!-- /Header Title -->
+
+            <a id="mobile_btn" class="mobile_btn" href="#sidebar"><i class="fa fa-bars"></i></a>
+
+            <!-- Header Menu -->
+            <ul class="nav user-menu">
+
+                <!-- Flag -->
+                <li class="nav-item dropdown has-arrow flag-nav">
+                    @await Html.PartialAsync("_CulturePartial")
+                </li>
+                <!-- /Flag -->
+
+                <li class="nav-item dropdown has-arrow main-drop">
+                    @await Html.PartialAsync("_LoginPartial")
+                </li>
+            </ul>
+            <!-- /Header Menu -->
+            <!-- Mobile Menu -->
+            <div class="dropdown mobile-user-menu">
+                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="/admin/profile/index">My Profile</a>
+                    <a class="dropdown-item" href="/admin/settings/index">Settings</a>
+                    <form action="/Admin/Account/Logout" method="post" id="logoutFormMobile">
+                        <button type="submit" class="dropdown-item">Logout</button>
+                    </form>
+                </div>
+            </div>
+            <!-- /Mobile Menu -->
+
+        </div>
+        <!-- /Header -->
+        <!-- Sidebar -->
+        @await Component.InvokeAsync("SideBar")
+        <!-- /Sidebar -->
+        <!-- Page Wrapper -->
+        <div class="page-wrapper">
+            <!-- Page Content -->
+            @RenderBody()
+            <!-- /Page Content -->
+
+        </div>
+        <!-- /Page Wrapper -->
+
+    </div>
+    <!-- /Main Wrapper -->
+    <!-- jQuery -->
+    @*<script src="~/js/jquery-3.6.0.min.js"></script>*@
+    <script src="~/js/jquery-ui.min.js"></script>
+    <script src="~/js/jquery.ui.touch-punch.min.js"></script>
+
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation/dist/additional-methods.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+
+    <!-- Bootstrap Core JS -->
+    <script src="~/js/popper.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+
+    <!-- Slimscroll JS -->
+    <script src="~/js/jquery.slimscroll.min.js"></script>
+
+    <!-- Logic-less templates with JavaScript-->
+    <script src="~/lib/mustache/mustache.js"></script>
+
+    <!-- Select2 JS -->
+    @*<script src="~/js/select2.min.js"></script>*@
+    <script src="~/plugins/select2/js/select2.js"></script>
+
+    <!-- Datetimepicker JS -->
+    <script src="~/js/moment.min.js"></script>
+    <script src="~/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/plugins/user-friendly-time-picker/src/js/timepicker.js"></script>
+    <!-- Tagsinput JS -->
+    <script src="~/plugins/bootstrap-tagsinput/bootstrap-tagsinput.min.js"></script>
+
+    <!-- Datatable JS -->
+    <script src="~/js/jquery.dataTables.min.js"></script>
+    <script src="~/js/dataTables.bootstrap4.min.js"></script>
+
+    <!-- Chart JS -->
+    @*<script src="~/plugins/morris/morris.min.js"></script>
+        <script src="~/plugins/raphael/raphael.min.js"></script>
+        <script src="~/js/chart.js"></script>*@
+
+    <!-- Loading -->
+    <script src="~/plugins/waitMe/waitMe.min.js"></script>
+
+    <script src="~/plugins/alertify/alertify.min.js"></script>
+    <script src="~/app/shared/hrms.js"></script>
+
+    <!-- File upload -->
+    <script src="~/plugins/fileupload/fileupload.min.js"></script>
+
+    <script src="~/js/fullcalendar.min.js"></script>
+    <script src="~/js/jquery.fullcalendar.js"></script>
+
+    <!-- Custom JS -->
+    <script src="~/js/app.js"></script>
+
+    <!-- set auto logout -->
+    @*<script src="~/app/shared/IdleTimeout.js"></script>*@
+
+
+    <script src="~/bundled/site-admin.min.js"></script>
+
+    @RenderSection("Scripts", required: false)
+
+    <!-- Syncfusion ASP.NET Core Script Manager -->
+    <ejs-scripts></ejs-scripts>
+</body>
+</html>

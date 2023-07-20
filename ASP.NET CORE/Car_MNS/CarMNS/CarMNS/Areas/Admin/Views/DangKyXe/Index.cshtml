@@ -1,0 +1,715 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@using CarMNS.Authorization
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewData["Title"] = "Đăng Ký Xe";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+@section Styles{
+    <link href="~/lib/jquery-confirm/jquery-confirm.min.css" rel="stylesheet" />
+}
+@section Scripts
+    {
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+    <script src="~/lib/jquery-confirm/jquery-confirm.min.js"></script>
+    <script>
+
+        var roleUsers = JSON.parse('@Html.Raw(JsonSerializer.Serialize(User.FindFirst(x => x.Type == "Roles").Value + ""))');
+
+        // Xuất excel dang ky xe
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('Đăng Ký Xe');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'DangKyXe.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        function calculateFilterExpression(filterValue, selectedFilterOperation, target) {
+            if (target === "search" && typeof (filterValue) === "string") {
+                return [this.dataField, "contains", filterValue]
+            }
+
+            return function (data) {
+                return (data.AssignedEmployee || []).indexOf(filterValue) !== -1
+            }
+        }
+
+        function onApproveClick(e) {
+
+            if (e.row.data.Id) {
+
+                $.confirm({
+                    title: 'Confirm!',
+                    content: 'Approve confirm!',
+                    buttons: {
+                        confirm: {
+                            text: 'Approve',
+                            btnClass: 'btn-blue',
+                            action: function () {
+                                let _id = e.row.data.Id;
+
+                                $.ajax({
+                                    url: '/Admin/DangKyXe/Approve',
+                                    type: 'POST',
+                                    data: {
+                                        key: _id
+                                    },
+                                    success: function (key) {
+                                        hrms.notify("Success!", 'Success', 'alert', function () {
+                                            let _dataGridTmp = $("#gridContainer1").dxDataGrid("instance");
+                                            _dataGridTmp.refresh();
+                                        });
+                                    },
+                                    error: function (status) {
+                                        hrms.notify('error:' + status.responseText, 'error', 'alert', function () { });
+                                    }
+                                });
+                            }
+                        },
+                        cancel: function () {
+                            $.alert('Canceled!');
+                        }
+                    }
+                });
+
+
+            }
+        }
+
+        function onUnApproveClick(e) {
+            if (e.row.data.Id) {
+
+                $.confirm({
+                    title: 'Confirm!',
+                    content: 'UnApprove confirm!',
+                    buttons: {
+                        confirm: {
+                            text: 'UnApprove',
+                            action: function () {
+                                let _id = e.row.data.Id;
+
+                                $.ajax({
+                                    url: '/Admin/DangKyXe/UnApprove',
+                                    type: 'POST',
+                                    data: {
+                                        key: _id
+                                    },
+                                    success: function (key) {
+                                        hrms.notify("Success!", 'Success', 'alert', function () {
+                                            let _dataGridTmp = $("#gridContainer1").dxDataGrid("instance");
+                                            _dataGridTmp.refresh();
+                                        });
+                                    },
+                                    error: function (status) {
+                                        hrms.notify('error:' + status.responseText, 'error', 'alert', function () { });
+                                    }
+                                });
+                            }
+                        },
+                        cancel: function () {
+                            $.alert('Canceled!');
+                        }
+                    }
+                });
+            }
+        }
+
+        function onShowCarClick(e) {
+
+            if (roleUsers == 'NHAN_SU_DUYET' || roleUsers == 'Admin') {
+                const popup = $("#chitiet_xe_popup").dxPopup("instance");
+                popup.option({
+                    contentTemplate: $("#popup-template")
+                });
+                popup.show();
+                $('#txt_MaDangKy').val(e.key);
+
+                let dataGridDataSource = $("#gridContainer-xe").dxDataGrid("instance");
+                dataGridDataSource.refresh();
+            }
+
+        }
+
+        function cell_prepared(options) {
+
+            if (options.rowType == 'data') {
+
+                var fieldData = options.value;
+                var fieldHtml = "";
+
+                if (fieldData && (options.column.dataField == 'Nguoi_XacNhanLV3' || options.column.dataField == 'Nguoi_XacNhanLV2' || options.column.dataField == 'Nguoi_XacNhanLV1')) {
+
+                    if (options.data.Nguoi_XacNhanLV3 != undefined && options.data.Nguoi_XacNhanLV3 != null && options.column.dataField == 'Nguoi_XacNhanLV3') {
+
+                        if (options.data.Nguoi_XacNhanLV3.includes(':Approve')) {
+                            fieldHtml += "<span class='badge bg-inverse-success'>Approve</span>"
+                        }
+                        else if (options.data.Nguoi_XacNhanLV3.includes(':UnApprove')) {
+                            fieldHtml += "<span class='badge bg-inverse-danger'>UnApprove</span>"
+                        }
+
+
+                        options.cellElement.html(fieldHtml);
+                    }
+                    else
+                        if (options.data.Nguoi_XacNhanLV2 != null && options.data.Nguoi_XacNhanLV2 != undefined && options.column.dataField == 'Nguoi_XacNhanLV2') {
+
+                            if (options.data.Nguoi_XacNhanLV2.includes(':Approve')) {
+                                fieldHtml += "<span class='badge bg-inverse-success'>Approve</span>"
+                            }
+                            else if (options.data.Nguoi_XacNhanLV2.includes(':UnApprove')) {
+                                fieldHtml += "<span class='badge bg-inverse-danger'>UnApprove</span>"
+                            }
+
+                            options.cellElement.html(fieldHtml);
+                        }
+                        else
+                            if (options.data.Nguoi_XacNhanLV1 != null && options.data.Nguoi_XacNhanLV1 != undefined && options.column.dataField == 'Nguoi_XacNhanLV1') {
+
+                                if (options.data.Nguoi_XacNhanLV1.includes(':Approve')) {
+                                    fieldHtml += "<span class='badge bg-inverse-success'>Approve</span>"
+                                }
+                                else if (options.data.Nguoi_XacNhanLV1.includes(':UnApprove')) {
+                                    fieldHtml += "<span class='badge bg-inverse-danger'>UnApprove</span>"
+                                }
+
+                                options.cellElement.html(fieldHtml);
+                            }
+                            else {
+                                options.cellElement.html(fieldData);
+                            }
+                }
+                else if (options.column.dataField == 'UrlDraf') {
+                    if (fieldData) {
+                        let url = '/admin/DangKyXe/DownloadFile?id=' + options.data.Id;
+                        fieldHtml = "<a href='" + url + "'>Draf File</a>";
+                        options.cellElement.html(fieldHtml);
+                    }
+                    else {
+                        options.cellElement.html('');
+                    }
+                }
+            }
+
+        }
+
+        function onUploadDrafClick(e) {
+
+            if (e.row.data.Id) {
+                const popup = $("#chitiet_file_popup").dxPopup("instance");
+                popup.option({
+                    contentTemplate: $("#popup-template-upload")
+                });
+                popup.show();
+
+                $('#_maDangKy').val(e.row.data.Id);
+            }
+        }
+
+        function submitFormAjax() {
+
+            var files = $("#fileInputExcel").dxFileUploader("option", "value");
+
+            console.log(files);
+
+            // Create FormData object
+            var fileData = new FormData();
+            fileData.append("myFile", files[0]);
+            var _maDangKy = $('#_maDangKy').val();
+
+            $.ajax({
+                url: '/Admin/DangKyXe/Upload?maDangKy=' + _maDangKy,
+                type: 'POST',
+                data: fileData,
+                processData: false,  // tell jQuery not to process the data
+                contentType: false,  // tell jQuery not to set contentType
+                success: function (data) {
+                    hrms.notify("Import success!", 'Success', 'alert', function () {
+                        var uploadControl = $("#fileInputExcel").dxFileUploader("instance");
+                        uploadControl.reset();
+                    });
+                },
+                error: function (status) {
+                    hrms.notify('error: Import error!', 'error', 'alert', function () { });
+                }
+            });
+            return false;
+        }
+
+        function fAddEditVisible(e) {
+
+            if (roleUsers == 'BO_PHAN_DUYET') {
+                if (e.row.data.XacNhanLV2 == true || e.row.data.XacNhanLV3 == true) {
+                    return false;
+                }
+                else {
+                    return true;
+                }
+            }
+            else if (roleUsers == 'BOPHAN_DANGKY') {
+                if (e.row.data.XacNhanLV1 == true || e.row.data.XacNhanLV2 == true || e.row.data.XacNhanLV3 == true) {
+                    return false;
+                }
+                else {
+                    return true;
+                }
+            }
+            else if (roleUsers == 'NHAN_SU_DUYET') {
+                if (e.row.data.XacNhanLV3 == true) {
+                    return false;
+                }
+                else {
+                    return true;
+                }
+            }
+            else if (roleUsers == 'Admin' || roleUsers == 'QUANLY_SUPPORT_DUYET') {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
+        function fApproveVisible(e) {
+            if (roleUsers == 'BOPHAN_DANGKY') {
+                return false;
+            }
+            else if (roleUsers == 'BO_PHAN_DUYET') {
+                if (e.row.data.XacNhanLV1 == true) {
+                    return false;
+                }
+                return true;
+            }
+            else if (roleUsers == 'NHAN_SU_DUYET') {
+                if (e.row.data.XacNhanLV1 == true) {
+                    if (e.row.data.XacNhanLV2 == true) {
+                        return false;
+                    }
+                    return true;
+                }
+                return false;
+            }
+            else if (roleUsers == 'QUANLY_SUPPORT_DUYET' || roleUsers == 'Admin') {
+
+                if (e.row.data.XacNhanLV2 == true) {
+                    if (e.row.data.XacNhanLV3 == true) {
+                        return false;
+                    }
+
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        function fUnApproveVisible(e) {
+
+            if (roleUsers == 'BOPHAN_DANGKY') {
+                return false;
+            }
+            else if (roleUsers == 'BO_PHAN_DUYET') {
+
+                if (e.row.data.XacNhanLV2 == true || e.row.data.XacNhanLV3 == true) {
+                    return false;
+                }
+                else {
+                    if (e.row.data.Nguoi_XacNhanLV1 != null) {
+                        if (e.row.data.XacNhanLV1 == false && e.row.data.Nguoi_XacNhanLV1.includes(":UnApprove")) {
+                            return false;
+                        }
+                        return true;
+                    }
+                    return true;
+                }
+            }
+            else if (roleUsers == 'NHAN_SU_DUYET') {
+
+                if (e.row.data.XacNhanLV3 == false) {
+                    if (e.row.data.XacNhanLV1 == true) {
+                        if (e.row.data.Nguoi_XacNhanLV2 != null) {
+                            if (e.row.data.XacNhanLV2 == false && e.row.data.Nguoi_XacNhanLV2.includes(":UnApprove")) {
+                                return false;
+                            }
+                            else {
+                                return true;
+                            }
+                        }
+                        return true;
+                    }
+                    return false;
+                }
+                else {
+                    return false;
+                }
+            }
+            else if (roleUsers == 'QUANLY_SUPPORT_DUYET' || roleUsers == 'Admin') {
+                if (e.row.data.XacNhanLV2 == true) {
+                    if (e.row.data.Nguoi_XacNhanLV3 != null) {
+                        if (e.row.data.XacNhanLV3 == false && e.row.data.Nguoi_XacNhanLV3.includes(":UnApprove")) {
+                            return false;
+                        }
+                        else {
+                            return true;
+                        }
+                    }
+                    return true;
+                }
+                return false;
+            }
+        }
+
+    </script>
+}
+
+@{
+    //string role = User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0];
+    //bool isEdit = true;
+
+    //if (role == CommonConstants.ROLE_DANGKY && )
+    //{
+
+    //}
+}
+
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="page-title">Đăng Ký Xe</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            @(Html.DevExtreme().LoadPanel()
+                .ID("loadPanel")
+                .Position(p => p.Of("#gridContainer1"))
+                .Visible(false)
+                )
+            @(
+                Html.DevExtreme().DataGrid<DANG_KY_XE>
+                ()
+                .ID("gridContainer1")
+                .Height(700)
+                .ShowBorders(true)
+                .ColumnAutoWidth(true)
+                .ColumnMinWidth(150)
+                .RepaintChangesOnly(true)
+                .LoadPanel(loadPanel => loadPanel.Enabled(false))
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .FilterRow(filterRow => filterRow.Visible(true).ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .HoverStateEnabled(true)
+                .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+                .OnExporting("exporting")
+                .Editing(editing =>
+                {
+                    editing.Mode(GridEditMode.Popup)
+                    .AllowUpdating(true)
+                    .AllowDeleting(true)
+                    .AllowAdding(true)
+                    .Popup(p => p
+                    .Title("Register Info")
+                    .ShowTitle(true)
+                    .Width(800)
+                    .Height(600)
+                    ).Form(f => f.Items(items =>
+                    {
+                        items.AddGroup()
+                    .ColCount(2)
+                    .ColSpan(2)
+                    .Items(groupItems =>
+                    {
+                        groupItems.AddSimpleFor(m => m.TenNguoiSuDung);
+                        groupItems.AddSimpleFor(m => m.DiaDiemDen_SoNha);
+                        groupItems.AddSimpleFor(m => m.NgaySuDung);
+                        groupItems.AddSimpleFor(m => m.DiaDiemDen_Xa);
+                        groupItems.AddSimpleFor(m => m.BoPhan);
+                        groupItems.AddSimpleFor(m => m.DiaDiemDen_Huyen);
+                        groupItems.AddSimpleFor(m => m.FromTimePlan);
+                        groupItems.AddSimpleFor(m => m.DiaDiemDen_Tinh);
+                        groupItems.AddSimpleFor(m => m.ToTimePlan);
+                        groupItems.AddSimpleFor(m => m.MucDichSuDung).ColSpan(2).Editor(editor => editor.TextArea().Height(100));
+                    });
+
+                        items.AddGroup()
+                    .Caption("Car Info")
+                    .ColCount(2)
+                    .ColSpan(2)
+                    .Items(groupItems =>
+                    {
+                        groupItems.AddSimpleFor(m => m.Lxe_BienSo).ColSpan(2);
+                    });
+                    }));
+                })
+                .OnCellPrepared("cell_prepared")
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.Id).Visible(false).AllowEditing(false);
+                    columns.AddFor(m => m.NgaySuDung).Caption("Ngày Sử Dụng").Format("yyyy-MM-dd").AllowEditing(true);
+                    columns.AddFor(m => m.TenNguoiSuDung).Caption("Tên Người Sử Dụng").AllowEditing(true);
+                    columns.AddFor(m => m.NguoiDangKy).Caption("Người Đăng Ký").AllowEditing(false);
+                    columns.AddFor(m => m.BoPhan)
+                    .Caption("Bộ Phận").AllowEditing(true)
+                    .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("DangKyXe").LoadAction("GetBoPhan").Key("Id"))
+                    .ValueExpr("Id")
+                    .DisplayExpr("TenBoPhan")
+                    )
+                    .CalculateFilterExpression("calculateFilterExpression")
+                    .Width(120);
+
+                    columns.Add().Caption("Thời Gian Dự Kiến").Columns(c =>
+                    {
+                        c.AddFor(m => m.FromTimePlan).EditorOptions(new
+                        {
+                            displayFormat = "shortTime",
+                            type = "time"
+                        }).DataType(GridColumnDataType.DateTime)
+                    .Format(Format.ShortTime).Caption("Dự Kiến Từ mấy giờ ?").AllowEditing(true);
+
+                        c.AddFor(m => m.ToTimePlan).EditorOptions(new
+                        {
+                            displayFormat = "shortTime",
+                            type = "time"
+                        }).DataType(GridColumnDataType.DateTime)
+                    .Format(Format.ShortTime).Caption("Dự Kiến Đến mấy giờ ?").AllowEditing(true);
+                    });
+
+                    columns.AddFor(m => m.DiaDiemDen_SoNha).Caption("Địa Điểm Đến(Số Nhà)").AllowEditing(true);
+                    columns.AddFor(m => m.DiaDiemDen_Xa).ValidationRules(x => x.AddRequired()).Caption("Địa Điểm Đến(Xã)").AllowEditing(true);
+                    columns.AddFor(m => m.DiaDiemDen_Huyen).ValidationRules(x => x.AddRequired()).Caption("Địa Điểm Đến(Huyện)").AllowEditing(true);
+                    columns.AddFor(m => m.DiaDiemDen_Tinh).ValidationRules(x => x.AddRequired()).Caption("Địa Điểm Đến(Tỉnh)").AllowEditing(true);
+                    columns.AddFor(m => m.MucDichSuDung).Caption("Mục Đích Sử Dụng").AllowEditing(true);
+                    columns.AddFor(m => m.Lxe_BienSo).Caption("Thông Tin Xe").AllowEditing(false);
+                    //columns.AddFor(m => m.UrlDraf).Caption("Draf").AllowEditing(false);
+                    columns.Add().Caption("Trạng Thái Approve").Columns(c =>
+                    {
+                        c.AddFor(m => m.Nguoi_XacNhanLV3).Caption("Quản Lý Support Approve").AllowEditing(false);
+                        c.AddFor(m => m.Nguoi_XacNhanLV2).Caption("Nhân Sự Approve").AllowEditing(false);
+                        c.AddFor(m => m.Nguoi_XacNhanLV1).Caption("Quản Lý Bộ Phận Approve").AllowEditing(false);
+                    });
+
+                    columns.Add().Type(GridCommandColumnType.Buttons).Width(110).Buttons(b =>
+                    {
+                        b.Add()
+                    .Hint("Approve")
+                    .Text("Approve")
+                    .OnClick("onApproveClick").Visible(new JS("fApproveVisible"));
+                    }).Name("btnApprove").Visible(User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] != CommonConstants.ROLE_DANGKY);
+
+                    columns.Add().Type(GridCommandColumnType.Buttons).Width(110).Buttons(b =>
+                    {
+                        b.Add()
+                    .Hint("UnApprove")
+                    .Text("UnApprove")
+                    .OnClick("onUnApproveClick").Visible(new JS("fUnApproveVisible")); ;
+                    }).Name("btnUnApprove").Visible(User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] != CommonConstants.ROLE_DANGKY);
+
+@*                    columns.Add().Type(GridCommandColumnType.Buttons).Width(110).Buttons(b =>
+                    {
+                        b.Add()
+                    .Hint("Upload Draft")
+                    .Text("Upload Draft")
+                    .OnClick("onUploadDrafClick").Visible(new JS("fAddEditVisible")); ;
+                    }).Name("btnUpload");*@
+
+                    columns.Add().Type(GridCommandColumnType.Buttons).Width(110).Buttons(b =>
+                    {
+                        b.Add().Name(GridColumnButtonName.Edit).Visible(new JS("fAddEditVisible"));
+                        b.Add().Name(GridColumnButtonName.Delete).Visible(new JS("fAddEditVisible"));
+                    }).Name("btnAddEdit");
+                })
+                .WordWrapEnabled(true)
+                .DataSource(d => d.Mvc()
+                .Area("Admin")
+                .Controller("DangKyXe")
+                .LoadAction("GetDangKyXeAll")
+                .UpdateAction("PutDangKyXe")
+                .InsertAction("PostDangKyXe")
+                .DeleteAction("DeleteDangKyXe")
+                .Key("Id")).OnCellDblClick("onShowCarClick")
+                .SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true).Summary(s => s.TotalItems(items =>
+                {
+                    items.AddFor(m => m.NgaySuDung)
+                    .SummaryType(SummaryType.Count);
+                })
+                )
+                )
+        </div>
+
+        <div>
+            @(Html.DevExtreme().Popup()
+                    .ID("chitiet_file_popup")
+                    .Width(800)
+                    .Height(500)
+                    .Container(".container-fluid")
+                    .ShowTitle(true)
+                    .Title("Thông Upload Draft")
+                    .DragEnabled(false)
+                    .HideOnParentScroll(true)
+                    .ShowCloseButton(false)
+                    .Position(positionConfig => positionConfig
+                    .At(HorizontalAlignment.Center, VerticalAlignment.Center)
+                    .My(HorizontalAlignment.Center, VerticalAlignment.Center)
+                    .Collision(PositionResolveCollision.Fit, PositionResolveCollision.Fit))
+                    .ToolbarItems(barItems =>
+                    {
+                        barItems.Add()
+                    .Toolbar(Toolbar.Bottom)
+                    .Location(ToolbarItemLocation.After)
+                    .Widget(widget => widget.Button()
+                    .Text("Close")
+                    .OnClick(@<text>
+                        function hideInfo(data) {
+
+                        let _dataGridTmp = $("#gridContainer1").dxDataGrid("instance");
+                        _dataGridTmp.refresh();
+
+                        $('#txt_MaDangKy').val(0);
+                        const popup = $("#chitiet_file_popup").dxPopup("instance");
+                        popup.hide();
+                        }
+                    </text>)
+                );
+                    }))
+
+            @(Html.DevExtreme().Popup()
+                    .ID("chitiet_xe_popup")
+                    .Width(800)
+                    .Height(500)
+                    .Container(".container-fluid")
+                    .ShowTitle(true)
+                    .Title("Thông Tin Xe")
+                    .DragEnabled(false)
+                    .HideOnParentScroll(true)
+                    .ShowCloseButton(false)
+                    .Position(positionConfig => positionConfig
+                    .At(HorizontalAlignment.Center, VerticalAlignment.Center)
+                    .My(HorizontalAlignment.Center, VerticalAlignment.Center)
+                    .Collision(PositionResolveCollision.Fit, PositionResolveCollision.Fit))
+                    .ToolbarItems(barItems =>
+                    {
+                        barItems.Add()
+                    .Toolbar(Toolbar.Bottom)
+                    .Location(ToolbarItemLocation.After)
+                    .Widget(widget => widget.Button()
+                    .Text("Close")
+                    .OnClick(@<text>
+                        function hideInfo(data) {
+
+                        let _dataGridTmp = $("#gridContainer1").dxDataGrid("instance");
+                        _dataGridTmp.refresh();
+
+                        $('#txt_MaDangKy').val(0);
+                        const popup = $("#chitiet_xe_popup").dxPopup("instance");
+                        popup.hide();
+                        }
+                    </text>)
+                );
+                    }))
+
+            @using (Html.DevExtreme().NamedTemplate("popup-template"))
+            {
+                <input hidden id="txt_MaDangKy" />
+                @(
+                    Html.DevExtreme().DataGrid<DIEUXE_DANGKY>()
+                    .ID("gridContainer-xe")
+                    .Height(300)
+                    .ShowBorders(true)
+                    .Paging(paging => paging.Enabled(false))
+                    .Editing(editing =>
+                    {
+                        editing.Mode(GridEditMode.Row);
+                        editing.AllowAdding(true);
+                        editing.AllowDeleting(true);
+                        editing.AllowUpdating(true);
+                    })
+                    .Columns(columns =>
+                    {
+                        columns.AddFor(m => m.Id).Visible(false).AllowEditing(false);
+                        columns.AddFor(m => m.MaXe)
+                        .Caption("Biển Số Xe").AllowEditing(true)
+                        .Lookup(lookup => lookup
+                        .DataSource(d => d.Mvc().Controller("DangKyXe").LoadAction("GetXeInfo").Key("Id"))
+                        .ValueExpr("Id")
+                        .DisplayExpr("BienSoXe")
+                        )
+                        .CalculateFilterExpression("calculateFilterExpression")
+                        .Width(200);
+
+                        columns.AddFor(m => m.Car.LoaiXe).Caption("Loại Xe").AllowEditing(false);
+
+                        columns.AddFor(m => m.MaLaiXe)
+                        .Caption("Lái Xe").AllowEditing(true)
+                        .Lookup(lookup => lookup
+                        .DataSource(d => d.Mvc().Controller("DangKyXe").LoadAction("GetLaiXeInfo").Key("Id"))
+                        .ValueExpr("Id")
+                        .DisplayExpr("HoTen")
+                        )
+                        .CalculateFilterExpression("calculateFilterExpression")
+                        .Width(200);
+                    }).DataSource(d => d.Mvc()
+                    .Area("Admin")
+                    .Controller("DangKyXe")
+                    .LoadAction("GetDieuXeAll")
+                    .UpdateAction("PutDieuXe")
+                    .InsertAction("PostDieuXe")
+                    .OnInserting("function (values){ values.MaDangKyXe = $('#txt_MaDangKy').val(); }")
+                    .DeleteAction("DeleteDieuXe")
+                    .LoadParams(new { maDangKy = new JS("function(){ return $('#txt_MaDangKy').val();}") })
+                    .Key("Id"))
+                    )
+            }
+        </div>
+
+        <div>
+            @using (Html.DevExtreme().NamedTemplate("popup-template-upload"))
+            {
+                <form id="form">
+                    <h3>Upload Draf file</h3>
+                    <input type="hidden" id="_maDangKy" name="maDangKy">
+                    <div id="fileuploader-container">
+                        @(Html.DevExtreme().FileUploader()
+                            .ID("fileInputExcel")
+                            .Name("myFile")
+                            .SelectButtonText("Select File")
+                            .LabelText("")
+                            .Accept("*")
+                            .MaxFileSize(209715200)
+                            .UploadMode(FileUploadMode.UseForm)
+                            )
+                    </div>
+                    @(Html.DevExtreme().Button()
+                        .ID("button")
+                        .Text("Upload File")
+                        .Type(ButtonType.Success)
+                        .UseSubmitBehavior(false)
+                        .OnClick("submitFormAjax")
+                        )
+                </form>
+            }
+        </div>
+    </div>
+</div>
+
+
+

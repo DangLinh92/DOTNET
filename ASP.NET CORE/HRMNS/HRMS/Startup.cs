@@ -217,7 +217,10 @@ namespace HRMS
             services.AddRazorPages().AddSessionStateTempDataProvider();
             services.AddControllersWithViews().AddSessionStateTempDataProvider();
             services.AddDistributedMemoryCache();
-            services.AddSession();
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(480);
+            });
             services.AddMinResponse();
 
             // If using Kestrel:

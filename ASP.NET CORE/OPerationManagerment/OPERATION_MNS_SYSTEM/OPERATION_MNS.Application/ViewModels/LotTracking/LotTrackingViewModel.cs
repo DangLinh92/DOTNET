@@ -43,6 +43,7 @@ namespace OPERATION_MNS.Application.ViewModels.LotTracking
         public string WaferID { get; set; }
         public string LotFAB { get; set; }
         public LotIDView LotIDView { get; set; }
+        public string Operation { get; set; }
         public List<LotHistory> LotHistories { get; set; }
     }
 

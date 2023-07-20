@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CarMNS.Data.EF\CarMNS.Data.EF.csproj" />
+    <ProjectReference Include="..\CarMNS.Data\CarMNS.Data.csproj" />
+    <ProjectReference Include="..\CarMNS.Utilities\CarMNS.Utilities.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="EPPlus.Core" Version="1.5.4" />
+  </ItemGroup>
+
+</Project>

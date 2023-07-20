@@ -2862,7 +2862,7 @@ namespace HRMNS.Application.Implementation
                             DMOvertime = hsOT,
                             ValueOT = timeOT,
                             Registered = isRegistedOT,
-                            fromTime = "05:00:00",
+                            fromTime = "05:30:00",
                             toTime = "06:00:00",
                             orderTime = 1
                         });
@@ -2900,7 +2900,7 @@ namespace HRMNS.Application.Implementation
                             DMOvertime = hsOT,
                             ValueOT = timeOT,
                             Registered = isRegistedOT,
-                            fromTime = "05:00:00",
+                            fromTime = "05:30:00",
                             toTime = "06:00:00",
                             orderTime = 1
                         });
@@ -3123,7 +3123,7 @@ namespace HRMNS.Application.Implementation
                             ValueOT = timeOT3,
                             Registered = isRegistedOT,
                             fromTime = "00:00:00",
-                            toTime = "06:00:00",
+                            toTime = "05:30:00",
                             orderTime = 3
                         });
                     }
