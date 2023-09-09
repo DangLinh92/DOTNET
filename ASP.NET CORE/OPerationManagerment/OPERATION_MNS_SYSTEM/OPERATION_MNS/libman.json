@@ -14,6 +14,11 @@
       "provider": "cdnjs",
       "library": "chartjs-plugin-doughnutlabel@2.0.3",
       "destination": "wwwroot/plugins/chartjs-plugin-doughnutlabel/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "modernizr@2.8.3",
+      "destination": "wwwroot/lib/modernizr/"
     }
   ]
 }

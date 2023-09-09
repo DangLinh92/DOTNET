@@ -45,6 +45,10 @@ namespace OPERATION_MNS.Application.ViewModels.LotTracking
         public LotIDView LotIDView { get; set; }
         public string Operation { get; set; }
         public List<LotHistory> LotHistories { get; set; }
+
+        public string EquiptmentName { get; set; }
+        public string OnlineOffLine { get; set; }
+        public string TranTime { get; set; }
     }
 
     public class LotHistory

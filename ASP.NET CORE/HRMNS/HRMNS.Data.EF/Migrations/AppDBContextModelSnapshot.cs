@@ -949,6 +949,56 @@ namespace HRMNS.Data.EF.Migrations
                     b.ToTable("CONGDOAN_NOT_JOIN");
                 });
 
+            modelBuilder.Entity("HRMNS.Data.Entities.DAILY_TIME_WORKING", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("FromTime")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("MaNV")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("NgayLViec")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<double>("Time_OT")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Time_Working")
+                        .HasColumnType("float");
+
+                    b.Property<string>("ToTime")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DAILY_TIME_WORKING");
+                });
+
             modelBuilder.Entity("HRMNS.Data.Entities.DANGKY_CHAMCONG_CHITIET", b =>
                 {
                     b.Property<int>("Id")
@@ -1018,6 +1068,12 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("DateModified")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
+
+                    b.Property<double>("GiaTri")
+                        .HasColumnType("float");
+
+                    b.Property<string>("GiaTri1")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("MaChamCong_ChiTiet")
                         .HasColumnType("int");
@@ -3245,11 +3301,19 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
+                    b.Property<string>("NgayBatDau")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<string>("NgayKetThuc")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
-                    b.Property<string>("NgayThamGia")
+                    b.Property<string>("PhanLoai")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("ThangThamGia")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
@@ -3841,8 +3905,7 @@ namespace HRMNS.Data.EF.Migrations
             modelBuilder.Entity("HRMNS.Data.Entities.HR_NHANVIEN_2", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("DateCreated")
                         .HasColumnType("nvarchar(50)")
@@ -3861,8 +3924,7 @@ namespace HRMNS.Data.EF.Migrations
                         .HasMaxLength(50);
 
                     b.Property<string>("VP_SX")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -4113,6 +4175,13 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<decimal>("FullAttendanceSupport")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("Grade")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<int>("GradeYear")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("HarmfulAllowance")
                         .HasColumnType("decimal(18,2)");
 
@@ -4144,6 +4213,10 @@ namespace HRMNS.Data.EF.Migrations
 
                     b.Property<decimal>("LivingAllowance")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("MaBoPhanEx")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("MaNV")
                         .HasColumnType("nvarchar(50)")

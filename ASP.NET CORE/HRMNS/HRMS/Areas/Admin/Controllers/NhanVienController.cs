@@ -146,8 +146,20 @@ namespace HRMS.Areas.Admin.Controllers
         {
             string datetime = DateTime.Now.ToString("yyyy-MM");
             datetime = datetime + "-01";
-            List<NhanVienViewModel> nhanviens = _nhanvienService.GetAll().Where(x => x.Status != Status.InActive.NullString() || string.Compare(datetime, x.NgayNghiViec) <= 0 || (x.NgayNghiViec.NullString() != "" && x.NgayNghiViec.Substring(0,4) == datetime.Substring(0,4))).ToList();
-            return new OkObjectResult(nhanviens);
+
+            if(UserRole == "HR")
+            {
+                List<NhanVienViewModel> nhanviens = _nhanvienService.GetAll().
+              Where(x => x.Status != Status.InActive.NullString() ||
+              string.Compare(datetime, x.NgayNghiViec) <= 0 ||
+              (x.NgayNghiViec.NullString() != "" && x.NgayNghiViec.Substring(0, 4) == datetime.Substring(0, 4))).ToList();
+                return new OkObjectResult(nhanviens);
+            }
+            else
+            {
+                List<NhanVienViewModel> nhanviens = _nhanvienService.GetAll().Where(x => x.Status != Status.InActive.NullString()).ToList();
+                return new OkObjectResult(nhanviens);
+            }
         }
 
         [HttpGet]

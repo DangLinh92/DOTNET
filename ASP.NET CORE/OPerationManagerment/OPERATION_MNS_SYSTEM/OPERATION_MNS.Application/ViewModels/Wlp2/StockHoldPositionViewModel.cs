@@ -43,6 +43,7 @@ namespace OPERATION_MNS.Application.ViewModels.Wlp2
         public int ReelOven { get; set; }
         public int OQC { get; set; }
         public int WaitingforShipment { get; set; }
+        public int OneStPackingLabel_OQC { get; set; }
 
         public string LastUpdate { get; set; }
     }

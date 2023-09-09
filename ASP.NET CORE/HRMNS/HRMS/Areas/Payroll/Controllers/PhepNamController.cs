@@ -158,7 +158,7 @@ namespace HRMS.Areas.Payroll.Controllers
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddDbContext<AppDBContext>(options =>
                options.UseSqlServer(
-                   @"Persist Security Info=True;Data Source = 10.70.10.97;Initial Catalog = HRMSDB2;User Id = sa;Password = Wisol@123;Connect Timeout=3", o => o.MigrationsAssembly("HRMNS.Data.EF")));
+                    @"Persist Security Info=True;Data Source = 10.70.21.208;Initial Catalog = HRMSDB2;User Id = sa;Password = sa@21208;Connect Timeout=3", o => o.MigrationsAssembly("HRMNS.Data.EF")));
 
             serviceCollection.AddSingleton(HRMNS.Application.AutoMapper.AutoMapperConfig.RegisterMappings().CreateMapper());
             serviceCollection.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

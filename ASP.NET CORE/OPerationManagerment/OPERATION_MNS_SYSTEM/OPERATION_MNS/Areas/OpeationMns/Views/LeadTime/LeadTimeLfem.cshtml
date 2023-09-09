@@ -1,0 +1,294 @@
+﻿@using OPERATION_MNS.Data.EF.Extensions
+@model LeadTimeModel
+@{
+    ViewData["Title"] = "LFEM Lead Time Trend";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <style>
+
+    </style>
+}
+
+@section Scripts
+    {
+    <script>
+
+        var LFEM_LeadTimeByMonth = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.LFEM_LeadTimeByMonth))');
+        var LFEM_LeadTimeByWeek = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.LFEM_LeadTimeByWeek))');
+      
+        var WeeksLabel = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.Weeks_Lable))');
+        var weekSelected = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.Week))');
+
+        var Operation1 = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.Operation1))');
+        var Operation2 = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.Operation2))');
+
+        var LFEM_LeadTimeByDay = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.LFEM_LeadTimeByDay))');
+
+        var LFEM_RuntimeByOperation = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.LFEM_RuntimeByOperation))');
+        var LFEM_WaitTimeByOperation = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.LFEM_WaitTimeByOperation))');
+
+        var Days1 = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.Days1))');
+        var Year = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.Year))');
+
+        $('#txtYear').datetimepicker({
+            format: 'YYYY',
+            icons:
+            {
+                up: "fa fa-angle-up",
+                down: "fa fa-angle-down",
+                next: 'fa fa-angle-right',
+                previous: 'fa fa-angle-left'
+            }
+        });
+
+        $('#txtMonth').datetimepicker({
+            format: 'MM',
+            icons:
+            {
+                up: "fa fa-angle-up",
+                down: "fa fa-angle-down",
+                next: 'fa fa-angle-right',
+                previous: 'fa fa-angle-left'
+            }
+        });
+
+        $('#txtDay').datetimepicker({
+            format: 'DD',
+            icons:
+            {
+                up: "fa fa-angle-up",
+                down: "fa fa-angle-down",
+                next: 'fa fa-angle-right',
+                previous: 'fa fa-angle-left'
+            }
+        });
+    </script>
+    <script src="~/app/controllers/LeadTime/LeadTime_Chart_LFEM.js"></script>
+    <script>
+
+        var _leadTimeChart = new LeadTimeLFEMChart();
+        _leadTimeChart.DrawChart();
+
+        $(function () {
+            $('#txtMonth').on('dp.change', function (e) {
+
+                $.ajax({
+                    url: '/OpeationMns/LeadTime/GetWeekByMonth',
+                    type: 'POST',
+                    data: {
+                        year: $('#txtYear').val(),
+                        month: $('#txtMonth').val(),
+                    },
+                    success: function (response) {
+                        var _selected_0 = weekSelected == "0" ? "selected" : "";
+                        var render = "<option value='0' " + _selected_0 + " >All</option>";
+                        $.each(response, function (i, item) {
+                            var _selected_1 = weekSelected == item ? "selected" : "";
+                            render += "<option value='" + item + " ' " + _selected_1 + ">" + item + "</option >";
+                        });
+                        $('#cboWeek').html(render);
+                    },
+                    error: function (status) {
+                        hrms.notify(status.responseText, 'error', 'alert', function () { });
+                    }
+                });
+            });
+
+            $('#show-hidden-grid-wlp').click(function () {
+                $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+                $('.hidden-grid-wlp').slideToggle("slow");
+
+            });
+
+            $('#show-hidden-grid-wlp-month').click(function () {
+                $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+                $('.hidden-grid-wlp-month').slideToggle("slow");
+
+            });
+
+            $('#show-hidden-grid-wlp-week').click(function () {
+                $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+                $('.hidden-grid-wlp-week').slideToggle("slow");
+
+            });
+
+            $('#show-hidden-grid-wlp1-week').click(function () {
+                $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+                $('.hidden-grid-wlp1-week').slideToggle("slow");
+
+            });
+
+            $('#show-hidden-grid-wlp2-week').click(function () {
+                $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+                $('.hidden-grid-wlp2-week').slideToggle("slow");
+
+            });
+
+            $('#show-hidden-grid-wlp1-day').click(function () {
+                $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+                $('.hidden-grid-wlp1-day').slideToggle("slow");
+
+            });
+            $('#show-hidden-grid-wlp2-day').click(function () {
+                $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+                $('.hidden-grid-wlp2-day').slideToggle("slow");
+
+            });
+        })
+        function ShowLoad(){
+             hrms.run_waitMe($('#ctrFluid'));
+        }
+    </script>
+}
+
+<div class="content container-fluid" id="ctrFluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">@ViewData["Title"]</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">LFEM Lead Time Trend</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="myHeader">
+        <form action="/OpeationMns/LeadTime/SearchLfem" method="post" onsubmit="ShowLoad()">
+            <div class="row filter-row">
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <div class="form-group form-focus select-focus">
+                        <div class="cal-icon"><input id="txtYear" name="year" value="@Model.Year" class="form-control datetimepicker" type="text" required></div>
+                        <label class="focus-label">Year</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <div class="form-group form-focus select-focus">
+                        <div class="cal-icon"><input id="txtMonth" name="month" value="@Model.Month" class="form-control datetimepicker" type="text"></div>
+                        <label class="focus-label">Month</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <div class="form-group form-focus select-focus">
+                        <select id="cboWeek" class="select floating" name="week">
+                            <!option value="0" @(Model.Week == 0 ? "selected" : "")>All</!option>
+                            @foreach (var w in Model.Weeks)
+                            {
+                                <!option value="@w" @(Model.Week + "" == w ? "selected" : "")>W @w</!option>
+                            }
+                        </select>
+                        <label class="focus-label">Week</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <div class="form-group form-focus select-focus">
+                        <div class="cal-icon"><input id="txtDay" name="day" value="@Model.Day" class="form-control datetimepicker" type="text"></div>
+                        <label class="focus-label">Day</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <div class="form-group form-focus select-focus">
+                        <select id="cboHodiday" class="select floating" name="holiday">
+                            <!option value="" @(Model.Ox == "ALL" ? "selected" : "")>All</!option>
+                            <!option value="X" @(Model.Ox == "X" ? "selected" : "")>O</!option>
+                        </select>
+                        <label class="focus-label">Excluding holidays</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <div class="form-group form-focus select-focus">
+                        <select id="cboCategory" class="select floating" name="model">
+                            <!option value="R8Y0" @(Model.Category == "R8Y0" ? "selected" : "")>BDMP Lead time</!option>
+                            <!option value="L2A0" @(Model.Category == "L2A0" ? "selected" : "")>EMI Lead time</!option>
+                            <!option value="EX_R8Y0_L2A0" @(Model.Category == "EX_R8Y0_L2A0" ? "selected" : "")>Excluding BDMP & EMI</!option>
+                             <!option value="" @(Model.Category == "" ? "selected" : "")>All Model</!option>
+                        </select>
+                        <label class="focus-label">Lead time category</label>
+                    </div>
+                    <button id="btnSearch" type="submit" class="btn btn-success btn-block" style="margin-bottom: 5px;"> Search </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+    <div class="row contentChart">
+        <div class="col-sm-12" id="show-hidden-grid-wlp">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item active" style="cursor: pointer;">
+                    <i class="fa fa-caret-right"></i> <strong>LFEM Lead time</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row hidden-grid-wlp">
+        <div class="col-md-6 d-flex">
+            <div class="card flex-fill dash-statistics">
+                <div class="card-header">
+                    <h5 id="wlp_byYear" class="card-title mb-0">Lead time monthly</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chartjs-wrapper-demo">
+                        <canvas id="chartstacked_LFEM_LeadTimeByMonth" style="height:250px"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 d-flex">
+            <div class="card flex-fill dash-statistics">
+                <div class="card-header">
+                    <div id="LFEM_LeadTimeByWeek" class="card-title mb-0">Lead time weekly</div>
+                </div>
+                <div class="card-body">
+                    <div class="chartjs-wrapper-demo">
+                        <canvas id="chartstacked_LFEM_LeadTimeByWeek" style="height:250px"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12 d-flex">
+            <div class="card flex-fill dash-statistics">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Lead Time Daily</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chartjs-wrapper-demo">
+                        <canvas id="chartstacked_LFEM_leadtimeby_Day" style="height:250px"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12 d-flex">
+            <div class="card flex-fill dash-statistics">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Runtime Time Process(Day)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chartjs-wrapper-demo">
+                        <canvas id="chartstacked_LFEM_Runtimeby_Day" style="height:250px"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 d-flex">
+            <div class="card flex-fill dash-statistics">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Wait Time Process(Day)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chartjs-wrapper-demo">
+                        <canvas id="chartstacked_LFEM_Waittimeby_Day" style="height:250px"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

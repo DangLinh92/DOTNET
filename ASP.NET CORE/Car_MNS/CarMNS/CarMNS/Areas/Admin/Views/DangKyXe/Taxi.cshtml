@@ -1,0 +1,626 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@using CarMNS.Authorization
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewData["Title"] = "Đăng Ký Xe Taxi";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+@section Styles{
+    <link href="~/lib/jquery-confirm/jquery-confirm.min.css" rel="stylesheet" />
+}
+@section Scripts
+    {
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+    <script src="~/lib/jquery-confirm/jquery-confirm.min.js"></script>
+    <script>
+
+        var roleUsers = JSON.parse('@Html.Raw(JsonSerializer.Serialize(User.FindFirst(x => x.Type == "Roles").Value + ""))');
+
+        // Xuất excel dang ky xe
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('Đăng Ký Xe Taxi');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'DangKyXeTaxi.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        function calculateFilterExpression(filterValue, selectedFilterOperation, target) {
+            if (target === "search" && typeof (filterValue) === "string") {
+                return [this.dataField, "contains", filterValue]
+            }
+
+            return function (data) {
+                return (data.AssignedEmployee || []).indexOf(filterValue) !== -1
+            }
+        }
+
+        function onApproveClick(e) {
+
+            if (e.row.data.Id) {
+
+                $.confirm({
+                    title: 'Confirm!',
+                    content: 'Approve confirm!',
+                    buttons: {
+                        confirm: {
+                            text: 'Approve',
+                            btnClass: 'btn-blue',
+                            action: function () {
+                                let _id = e.row.data.Id;
+
+                                $.ajax({
+                                    url: '/Admin/DangKyXe/ApproveTaxi',
+                                    type: 'POST',
+                                    data: {
+                                        key: _id
+                                    },
+                                    success: function (key) {
+                                        hrms.notify("Success!", 'Success', 'alert', function () {
+                                            let _dataGridTmp = $("#gridContainer1").dxDataGrid("instance");
+                                            _dataGridTmp.refresh();
+                                        });
+                                    },
+                                    error: function (status) {
+                                        hrms.notify('error:' + status.responseText, 'error', 'alert', function () { });
+                                    }
+                                });
+                            }
+                        },
+                        cancel: function () {
+                            $.alert('Canceled!');
+                        }
+                    }
+                });
+
+
+            }
+        }
+
+        function onUnApproveClick(e) {
+            if (e.row.data.Id) {
+
+                $.confirm({
+                    title: 'Confirm!',
+                    content: 'Reject confirm!',
+                    buttons: {
+                        confirm: {
+                            text: 'Reject',
+                            action: function () {
+                                let _id = e.row.data.Id;
+
+                                $.ajax({
+                                    url: '/Admin/DangKyXe/UnApproveTaxi',
+                                    type: 'POST',
+                                    data: {
+                                        key: _id
+                                    },
+                                    success: function (key) {
+                                        hrms.notify("Success!", 'Success', 'alert', function () {
+                                            let _dataGridTmp = $("#gridContainer1").dxDataGrid("instance");
+                                            _dataGridTmp.refresh();
+                                        });
+                                    },
+                                    error: function (status) {
+                                        hrms.notify('error:' + status.responseText, 'error', 'alert', function () { });
+                                    }
+                                });
+                            }
+                        },
+                        cancel: function () {
+                            $.alert('Canceled!');
+                        }
+                    }
+                });
+            }
+        }
+
+        function cell_prepared(options) {
+
+            if (options.rowType == 'data') {
+
+                var fieldData = options.value;
+                var fieldHtml = "";
+
+                if (fieldData && (options.column.dataField == 'Nguoi_XacNhanLV3' || options.column.dataField == 'Nguoi_XacNhanLV2' || options.column.dataField == 'Nguoi_XacNhanLV1')) {
+
+                    if (options.data.Nguoi_XacNhanLV3 != undefined && options.data.Nguoi_XacNhanLV3 != null && options.column.dataField == 'Nguoi_XacNhanLV3') {
+
+                        if (options.data.Nguoi_XacNhanLV3.includes(':Approve')) {
+                            fieldHtml += "<span class='badge bg-inverse-success'>Approve</span>"
+                        }
+                        else if (options.data.Nguoi_XacNhanLV3.includes(':UnApprove')) {
+                            fieldHtml += "<span class='badge bg-inverse-danger'>Reject</span>"
+                        }
+
+
+                        options.cellElement.html(fieldHtml);
+                    }
+                    else
+                        if (options.data.Nguoi_XacNhanLV2 != null && options.data.Nguoi_XacNhanLV2 != undefined && options.column.dataField == 'Nguoi_XacNhanLV2') {
+
+                            if (options.data.Nguoi_XacNhanLV2.includes(':Approve')) {
+                                fieldHtml += "<span class='badge bg-inverse-success'>Approve</span>"
+                            }
+                            else if (options.data.Nguoi_XacNhanLV2.includes(':UnApprove')) {
+                                fieldHtml += "<span class='badge bg-inverse-danger'>Reject</span>"
+                            }
+
+                            options.cellElement.html(fieldHtml);
+                        }
+                        else
+                            if (options.data.Nguoi_XacNhanLV1 != null && options.data.Nguoi_XacNhanLV1 != undefined && options.column.dataField == 'Nguoi_XacNhanLV1') {
+
+                                let nameLV1 = options.data.Nguoi_XacNhanLV1.split(":").length > 2 ? options.data.Nguoi_XacNhanLV1.split(":")[2] : options.data.Nguoi_XacNhanLV1.split(":")[0];
+
+                                if (options.data.Nguoi_XacNhanLV1.includes(':Approve')) {
+                                    fieldHtml += "<span class='badge bg-inverse-success'>" + nameLV1 + "</span>"
+                                }
+                                else if (options.data.Nguoi_XacNhanLV1.includes(':UnApprove')) {
+                                    fieldHtml += "<span class='badge bg-inverse-danger'>" + nameLV1 + "</span>"
+                                }
+
+                                options.cellElement.html(fieldHtml);
+                            }
+                            else {
+                                options.cellElement.html(fieldData);
+                            }
+                }
+                else if (options.column.dataField == 'UrlDraf') {
+                    if (fieldData) {
+                        let url = '/admin/DangKyXe/DownloadFile?id=' + options.data.Id;
+                        fieldHtml = "<a href='" + url + "'>Draf File</a>";
+                        options.cellElement.html(fieldHtml);
+                    }
+                    else {
+                        options.cellElement.html('');
+                    }
+                }
+            }
+
+        }
+
+        function fAddEditVisible(e) {
+
+            if (e.row.data.Nguoi_XacNhanLV2 != undefined && e.row.data.Nguoi_XacNhanLV2.includes(':UnApprove')) {
+                return false;
+            }
+
+            if (roleUsers == 'BO_PHAN_DUYET') {
+                if (e.row.data.XacNhanLV2 == true || e.row.data.XacNhanLV3 == true) {
+                    return false;
+                }
+                else {
+                    return true;
+                }
+            }
+            else if (roleUsers == 'BOPHAN_DANGKY') {
+                if (e.row.data.XacNhanLV1 == true || e.row.data.XacNhanLV2 == true || e.row.data.XacNhanLV3 == true) {
+                    return false;
+                }
+                else {
+                    return true;
+                }
+            }
+            else if (roleUsers == 'NHAN_SU_DUYET') {
+                //if (e.row.data.XacNhanLV3 == true) {
+                //    return false;
+                //}
+                //else {
+                //    return true;
+                //}
+
+                return true;
+            }
+            else if (roleUsers == 'Admin' || roleUsers == 'QUANLY_SUPPORT_DUYET') {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
+        function fApproveVisible(e) {
+
+            if (e.row.data.Nguoi_XacNhanLV2 != undefined && e.row.data.Nguoi_XacNhanLV2.includes(':UnApprove')) {
+                return false;
+            }
+
+            if (roleUsers == 'BOPHAN_DANGKY') {
+                return false;
+            }
+            else if (roleUsers == 'BO_PHAN_DUYET') {
+                if (e.row.data.XacNhanLV1 == true) {
+                    return false;
+                }
+                return true;
+            }
+            else if (roleUsers == 'NHAN_SU_DUYET') {
+                if (e.row.data.XacNhanLV1 == true) {
+                    if (e.row.data.XacNhanLV2 == true) {
+                        return false;
+                    }
+                    return true;
+                }
+                return false;
+            }
+            else if (roleUsers == 'QUANLY_SUPPORT_DUYET' || roleUsers == 'Admin') {
+
+                if (e.row.data.XacNhanLV2 == true) {
+                    if (e.row.data.XacNhanLV3 == true) {
+                        return false;
+                    }
+
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        function fUnApproveVisible(e) {
+
+            if (roleUsers == 'BOPHAN_DANGKY') {
+                return false;
+            }
+            else if (roleUsers == 'BO_PHAN_DUYET') {
+
+                if (e.row.data.XacNhanLV2 == true || e.row.data.XacNhanLV3 == true) {
+                    return false;
+                }
+                else {
+                    if (e.row.data.Nguoi_XacNhanLV1 != null) {
+                        if (e.row.data.XacNhanLV1 == false && e.row.data.Nguoi_XacNhanLV1.includes(":UnApprove")) {
+                            return false;
+                        }
+                        return true;
+                    }
+                    return true;
+                }
+            }
+            else if (roleUsers == 'NHAN_SU_DUYET') {
+
+                if (e.row.data.XacNhanLV3 == false) {
+                    if (e.row.data.XacNhanLV1 == true) {
+                        if (e.row.data.Nguoi_XacNhanLV2 != null) {
+                            if (e.row.data.XacNhanLV2 == false && e.row.data.Nguoi_XacNhanLV2.includes(":UnApprove")) {
+                                return false;
+                            }
+                            else {
+                                return true;
+                            }
+                        }
+                        return true;
+                    }
+                    return false;
+                }
+                else {
+                    return false;
+                }
+            }
+            else if (roleUsers == 'QUANLY_SUPPORT_DUYET' || roleUsers == 'Admin') {
+                if (e.row.data.XacNhanLV2 == true) {
+                    if (e.row.data.Nguoi_XacNhanLV3 != null) {
+                        if (e.row.data.XacNhanLV3 == false && e.row.data.Nguoi_XacNhanLV3.includes(":UnApprove")) {
+                            return false;
+                        }
+                        else {
+                            return true;
+                        }
+                    }
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        //
+        var dataGrid, loadPanel;
+        function view_history_click(options) {
+            console.log(options);
+
+            let _maNV = options.data.MaNV;
+
+            dataGrid = $("#gridContainerHistory").dxDataGrid("instance");
+            loadPanel = $("#loadPanel1").dxLoadPanel("instance");
+
+            loadPanel.show();
+            sendRequest('@Url.RouteUrl(new { controller = "DangKyXe", action = "GetHistoryByUser"})', "GET", { manv: _maNV })
+                .always(() => { loadPanel.hide(); })
+                .done((data) => {
+                    dataGrid.option("dataSource", data);
+                });
+        }
+
+        function sendRequest(url, method, data) {
+            var d = $.Deferred();
+
+            method = method || "GET";
+
+            $.ajax(url, {
+                method: method,
+                data: data,
+                cache: false,
+                xhrFields: { withCredentials: true }
+            }).done(function (result) {
+                d.resolve(method === "GET" ? result.data : result);
+            }).fail(function (xhr) {
+                d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
+            });
+
+            return d.promise();
+        };
+
+    </script>
+}
+
+@{
+    string role = User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0];
+    bool isEdit = true;
+    if (role == CommonConstants.ROLE_DANGKY)
+    {
+        isEdit = false;
+    }
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">@ViewData["Title"]</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/Admin/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">@localizer["DANGKY_TAXI"].Value</li>
+                </ul>
+            </div>
+            @*            <div class="col-auto float-right ml-auto">
+            <div class="btn-group">
+            <button type="button" class="btn btn-info dropdown-toggle" id="btnImport" style="margin-right:100px;width:100px" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Excel</button>
+            <div class="dropdown-menu" style="">
+            <a class="dropdown-item" href="~/templates/GocPlan_Template_LFEM.xlsx">File mẫu import GOC Plan</a>
+            <a class="dropdown-item" href="#" id="btn-import-GocPlan">Import KHSX Plan</a>
+            <a class="dropdown-item" href="#" id="btn-import-GocPlan-Demand">Import DEMAND Plan</a>
+            </div>
+            </div>
+            </div>*@
+        </div>
+    </div>
+    <!-- /Page Header -->
+
+    <div class="row">
+        <div class="col-md-12">
+            @(Html.DevExtreme().LoadPanel()
+                .ID("loadPanel")
+                .Position(p => p.Of("#gridContainer1"))
+                .Visible(false)
+                )
+            @(
+                Html.DevExtreme().DataGrid<DANG_KY_XE_TAXI>
+                ()
+                .ID("gridContainer1")
+                .Height(700)
+                .ShowBorders(true)
+                .ColumnAutoWidth(true)
+                .ColumnMinWidth(150)
+                .RepaintChangesOnly(true)
+                .LoadPanel(loadPanel => loadPanel.Enabled(false))
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .FilterRow(filterRow => filterRow.Visible(true).ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .HoverStateEnabled(true)
+                .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+                .OnExporting("exporting")
+                .Editing(editing =>
+                {
+                    editing.Mode(GridEditMode.Popup)
+                    .AllowUpdating(true)
+                    .AllowDeleting(true)
+                    .AllowAdding(true)
+                    .Popup(p => p
+                    .Title("Thông Tin Đăng Ký")
+                    .ShowTitle(true)
+                    .Width(800)
+                    .Height(740)
+                    ).Form(f => f.Items(items =>
+                    {
+                        items.AddGroup()
+                    .ColCount(2)
+                    .ColSpan(2)
+                    .Items(groupItems =>
+                    {
+                        groupItems.AddSimpleFor(m => m.MaNV);
+                        groupItems.AddSimpleFor(m => m.TenNguoiSuDung);
+                        groupItems.AddSimpleFor(m => m.ĐiaDiemXuatPhat);
+                        groupItems.AddSimpleFor(m => m.DiaDiemDen_SoNha);
+                        groupItems.AddSimpleFor(m => m.NgaySuDung);
+                        groupItems.AddSimpleFor(m => m.DiaDiemDen_Xa);
+                        groupItems.AddSimpleFor(m => m.BoPhan);
+                        groupItems.AddSimpleFor(m => m.DiaDiemDen_Huyen);
+                        groupItems.AddSimpleFor(m => m.FromTimePlan);
+                        groupItems.AddSimpleFor(m => m.DiaDiemDen_Tinh);
+                        groupItems.AddSimpleFor(m => m.ToTimePlan);
+                        groupItems.AddSimpleFor(m => m.MucDichSuDung).ColSpan(2).Editor(editor => editor.TextArea().Height(80));
+                    });
+
+                        items.AddGroup()
+                    .Caption("Thông Tin Xe Cần Đặt (Loại Xe 4 ghế/ 7 ghế)")
+                    .ColCount(2)
+                    .ColSpan(2)
+                    .Items(groupItems =>
+                    {
+                        groupItems.AddSimpleFor(m => m.Lxe_BienSo).ColSpan(2);
+
+                        if (isEdit)
+                        {
+                            groupItems.AddSimpleFor(m => m.SoTien).Editor(e => e.NumberBox().Format("#,##0.00")).ColSpan(2);
+                            groupItems.AddSimpleFor(m => m.SoNguoiSuDung).ColSpan(2);
+                            groupItems.AddSimpleFor(m => m.MaBill).ColSpan(2);
+                        }
+                    });
+                    }));
+                })
+                .OnCellPrepared("cell_prepared")
+                .OnCellClick("view_history_click")
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.Id).Visible(false).AllowEditing(false);
+                    columns.AddFor(m => m.NgaySuDung).Caption(localizer["NGAY_SU_DUNG"].Value).ValidationRules(x => x.AddRequired()).Format("yyyy-MM-dd").AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.TenNguoiSuDung).Caption(localizer["TEN_NGUOI_SU_DUNG"].Value).ValidationRules(x => x.AddRequired()).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.MaNV).Caption(localizer["MA_NHANVIEN"].Value).ValidationRules(x => x.AddRequired()).AllowEditing(true);
+                    columns.AddFor(m => m.NguoiDangKy).Caption(localizer["NGUOI_DANG_KY"].Value).AllowEditing(false);
+                    columns.AddFor(m => m.BoPhan)
+                    .Caption(localizer["BO_PHAN"].Value).AllowEditing(true)
+                    .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("DangKyXe").LoadAction("GetBoPhan").Key("Id"))
+                    .ValueExpr("Id")
+                    .DisplayExpr("TenBoPhan")
+                    )
+                    .CalculateFilterExpression("calculateFilterExpression")
+                    .Width(120).ValidationRules(x => x.AddRequired());
+
+                    columns.Add().Caption(localizer["THOI_GIAN_DU_KIEN"].Value).Columns(c =>
+                    {
+                        c.AddFor(m => m.FromTimePlan).EditorOptions(new
+                        {
+                            displayFormat = "shortTime",
+                            type = "time"
+                        }).DataType(GridColumnDataType.DateTime)
+                    .Format(Format.ShortTime).Caption(localizer["THOI_GIAN_DU_KIEN_FROM"].Value).AllowEditing(true).ValidationRules(x => x.AddRequired());
+
+                        c.AddFor(m => m.ToTimePlan).EditorOptions(new
+                        {
+                            displayFormat = "shortTime",
+                            type = "time"
+                        }).DataType(GridColumnDataType.DateTime)
+                    .Format(Format.ShortTime).Caption(localizer["THOI_GIAN_DU_KIEN_TO"].Value).AllowEditing(true).ValidationRules(x => x.AddRequired());
+                    });
+
+                    columns.AddFor(m => m.ĐiaDiemXuatPhat).Caption(localizer["XUAT_PHAT"].Value).AllowEditing(true);
+                    columns.AddFor(m => m.DiaDiemDen_SoNha).Caption(localizer["SO_NHA"].Value).AllowEditing(true);
+                    columns.AddFor(m => m.DiaDiemDen_Xa).ValidationRules(x => x.AddRequired()).Caption(localizer["XA"].Value).AllowEditing(true);
+                    columns.AddFor(m => m.DiaDiemDen_Huyen).ValidationRules(x => x.AddRequired()).Caption(localizer["HUYEN"].Value).AllowEditing(true);
+                    columns.AddFor(m => m.DiaDiemDen_Tinh).ValidationRules(x => x.AddRequired()).Caption(localizer["TINH"].Value).AllowEditing(true);
+                    columns.AddFor(m => m.MucDichSuDung).Caption(localizer["MUC_DICH_SU_DUNG"].Value).AllowEditing(true);
+                    columns.AddFor(m => m.Lxe_BienSo).Caption(localizer["THONG_TIN_XE"].Value).AllowEditing(true);
+                    columns.AddFor(m => m.SoTien).Format(Format.FixedPoint).Caption(localizer["TONG_TIEN"].Value).AllowEditing(true);
+                    columns.AddFor(m => m.SoNguoiSuDung).Caption(localizer["SO_NGUOI_DUNG"].Value).AllowEditing(true);
+                    columns.AddFor(m => m.MaBill).Caption("Bill Number").AllowEditing(true);
+
+                    columns.Add().Caption(localizer["TRANG_THAI_APPROVE"].Value).Columns(c =>
+                    {
+                        c.AddFor(m => m.Nguoi_XacNhanLV1).Caption(localizer["QUAN_LY_BOPHAN_APPROVE"].Value).AllowEditing(false);
+                        c.AddFor(m => m.Nguoi_XacNhanLV2).Caption(localizer["HR_APPROVE"].Value).AllowEditing(false);
+                        c.AddFor(m => m.Nguoi_XacNhanLV3).Caption(localizer["QUAN_LY_SP_APPROVE"].Value).AllowEditing(false);
+                    });
+
+                    columns.Add().Caption("Approve/Reject(Action)").Type(GridCommandColumnType.Buttons).Width(110).Buttons(b =>
+                    {
+                        b.Add()
+                    .Hint("Approve")
+                    .Text("Approve")
+                    .CssClass("badge bg-inverse-success")
+                    .OnClick("onApproveClick").Visible(new JS("fApproveVisible"));
+
+                        b.Add()
+                    .Hint("Reject")
+                    .Text("Reject")
+                    .CssClass("badge bg-inverse-danger")
+                    .OnClick("onUnApproveClick").Visible(new JS("fUnApproveVisible"));
+
+                    }).Visible(User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] != CommonConstants.ROLE_DANGKY);
+
+                    columns.Add().Type(GridCommandColumnType.Buttons).Width(110).Buttons(b =>
+                    {
+                        b.Add().Name(GridColumnButtonName.Edit).Visible(new JS("fAddEditVisible"));
+                        b.Add().Name(GridColumnButtonName.Delete).Visible(new JS("fAddEditVisible"));
+                    }).Name("btnAddEdit").Caption("Update Data");
+                })
+                .WordWrapEnabled(true)
+                .DataSource(d => d.Mvc()
+                .Area("Admin")
+                .Controller("DangKyXe")
+                .LoadAction("GetDangKyXeAll_Taxi")
+                .UpdateAction("PutDangKyXe_Taxi")
+                .InsertAction("PostDangKyXe_Taxi")
+                .DeleteAction("DeleteDangKyXe_Taxi")
+                .Key("Id"))
+                .SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true).Summary(s => s.TotalItems(items =>
+                {
+                    items.AddFor(m => m.NgaySuDung)
+                    .SummaryType(SummaryType.Count);
+                })
+                )
+                )
+        </div>
+
+        <div class="col-md-12">
+            <h3>History use taxi</h3>
+            @(Html.DevExtreme().LoadPanel()
+                .ID("loadPanel1")
+                .Position(p => p.Of("#gridContainerHistory"))
+                .Visible(false)
+                )
+            @(Html.DevExtreme().DataGrid<DANG_KY_XE_TAXI>
+                ()
+                .ID("gridContainerHistory")
+                .KeyExpr("Id")
+                .Height(350)
+                .ShowBorders(true)
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .AllowColumnResizing(true)
+                .ColumnMinWidth(50)
+                .ColumnAutoWidth(true)
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+                .FilterRow(filterRow => filterRow
+                .Visible(true)
+                .ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .HoverStateEnabled(true)
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.NgaySuDung).Format("yyyy-MM-dd").Caption(localizer["NGAY_SU_DUNG"].Value);
+                    columns.AddFor(m => m.TenNguoiSuDung).Caption(localizer["TEN_NGUOI_SU_DUNG"].Value);
+                    columns.AddFor(m => m.MaNV).Caption(localizer["MA_NHANVIEN"].Value);
+                    columns.AddFor(m => m.DiaDiemDen_SoNha).Caption(localizer["SO_NHA"].Value);
+                    columns.AddFor(m => m.DiaDiemDen_Xa).Caption(localizer["XA"].Value);
+                    columns.AddFor(m => m.DiaDiemDen_Huyen).Caption(localizer["HUYEN"].Value);
+                    columns.AddFor(m => m.DiaDiemDen_Tinh).Caption(localizer["TINH"].Value);
+                    columns.AddFor(m => m.Lxe_BienSo).Caption(localizer["THONG_TIN_XE"].Value);
+                    columns.AddFor(m => m.SoTien).Format(Format.FixedPoint).Caption(localizer["TONG_TIEN"].Value);
+                    columns.AddFor(m => m.SoNguoiSuDung).Caption(localizer["SO_NGUOI_DUNG"].Value);
+                }).Summary(s => s.TotalItems(items =>
+                {
+                    items.AddFor(m => m.NgaySuDung).SummaryType(SummaryType.Count);
+                    items.AddFor(m => m.SoTien).SummaryType(SummaryType.Sum).ValueFormat(Format.FixedPoint);
+                }))
+                )
+        </div>
+    </div>
+</div>
+
+
+
+

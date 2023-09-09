@@ -275,7 +275,7 @@
     </div>
 
     <div class="row hidden-grid-wlp">
-        <div class="col-md-12 d-flex">
+        <div class="col-md-6 d-flex">
             <div class="card flex-fill dash-statistics">
                 <div class="card-header">
                     <h5 id="wlp_byYear" class="card-title mb-0">월별 평균 LeadTime(MONTH)</h5>
@@ -288,7 +288,7 @@
             </div>
         </div>
 
-        <div class="col-md-12 d-flex">
+        <div class="col-md-6 d-flex">
             <div class="card flex-fill dash-statistics">
                 <div class="card-header">
                     <div class="card-title mb-0">주별 평균 Leadtime(WEEK)</div>
@@ -312,7 +312,7 @@
         </div>
     </div>
     <div class="row hidden-grid-wlp-month">
-        <div class="col-md-12 d-flex">
+        <div class="col-md-6 d-flex">
             <div class="card flex-fill dash-statistics">
                 <div class="card-header">
                     <h5 class="card-title mb-0">월별 매수(MONTH)</h5>
@@ -325,7 +325,7 @@
             </div>
         </div>
 
-        <div class="col-md-12 d-flex">
+        <div class="col-md-6 d-flex">
             <div class="card flex-fill dash-statistics">
                 <div class="card-header">
                     <h5 class="card-title mb-0">주별 매수(WEEK)</h5>
@@ -356,8 +356,8 @@
                 </div>
                 <div class="card-body">
                     <div class="chartjs-wrapper-demo">
-                        @*<canvas id="chart_rate_nguoichiuTN" style="height:250px"></canvas>*@
-                        @(Html.DevExtreme().PieChart()
+                        <canvas id="chart_rate_nguoichiuTN" style="height:400px"></canvas>
+                        @*@(Html.DevExtreme().PieChart()
                             .ID("pie")
                             .Palette(VizPalette.SoftPastel)
                             .Type(PieChartType.Doughnut)
@@ -390,7 +390,7 @@
                             )
                             )
                             .DataSource(Model.SampleChiuTN)
-                            )
+                            )*@
                     </div>
                 </div>
             </div>

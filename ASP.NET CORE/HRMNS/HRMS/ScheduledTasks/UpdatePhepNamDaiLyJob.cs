@@ -517,7 +517,7 @@ namespace HRMS.ScheduledTasks
 
                     if (item.NgayNghiViec.NullString() != "")
                     {
-                        if (DateTime.Parse(item.NgayNghiViec.NullString()).Day <= 15)
+                        if (DateTime.Parse(item.NgayNghiViec.NullString()).Day <= 15 && item.NgayNghiViec.CompareTo(endTime) <= 0)
                         {
                             phepNam.SoPhepThanhToanNghiViec = phepNam.SoPhepTonThang - 1;
                         }
@@ -526,9 +526,23 @@ namespace HRMS.ScheduledTasks
                             phepNam.SoPhepThanhToanNghiViec = phepNam.SoPhepTonThang;
                         }
 
-                        phepNam.ThoiGianChiTra = item.NgayNghiViec.Substring(0, 7);
+                        if (DateTime.Parse(endTime).AddDays(1).ToString("yyyy-MM-dd").CompareTo(item.NgayNghiViec) < 0)
+                        {
+                            phepNam.ThoiGianChiTra = DateTime.Parse(endTime).AddDays(1).ToString("yyyy-MM");
+                        }
+                        else
+                        {
+                            phepNam.ThoiGianChiTra = endTime.Substring(0, 7);
+                        }
 
                         string beforNgaynghiviec = DateTime.Parse(item.NgayNghiViec).AddMonths(-1).ToString("yyyy-MM");
+
+                        // nghỉ đầu tháng
+                        if(DateTime.Parse(endTime).AddDays(1).ToString("yyyy-MM-dd") == item.NgayNghiViec)
+                        {
+                            beforNgaynghiviec = DateTime.Parse(item.NgayNghiViec).AddMonths(-2).ToString("yyyy-MM");
+                        }
+
                         BANGLUONGCHITIET_HISTORY his = _bangluongChiTietHistoryRepository.FindAll(x => x.MaNV == item.Id && (x.ThangNam + "").Substring(0, 7) == beforNgaynghiviec).FirstOrDefault();
 
                         if (his != null)

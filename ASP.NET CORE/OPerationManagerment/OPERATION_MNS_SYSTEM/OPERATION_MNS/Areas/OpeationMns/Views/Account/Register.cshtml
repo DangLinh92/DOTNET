@@ -1,7 +1,11 @@
 ﻿@model RegisterViewModel
 @inject UserManager<APP_USER> UserManager
-@{ Layout = "_Layout";
-    ViewData["Title"] = "Register"; }
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Register";
+
+    List<string> Roles = ViewBag.Roles;
+}
 
 <div class="content container-fluid">
     <div class="page-header">
@@ -61,16 +65,26 @@
                         <div class="form-group">
                             <label asp-for="Role" class="col-form-label">Role </label>
                             <select class="select" asp-for="Role" id="txtRole" required>
-                                <option value="WLP1" selected>WLP1</option>
+
+                                @foreach (var item in Roles)
+                                {
+                                    if(item != "Admin")
+                                    {
+                                        <option value="@item">@item</option>
+                                    }
+                                   
+                                }
+                               @* <option value="WLP1" selected>WLP1</option>
                                 <option value="WLP2">WLP2 Update</option>
                                 <option value="WLP2_VIEW">WLP2 Only View</option>
                                 <option value="SMT_SHIPPING">SMT Shipping</option>
                                 <option value="LEADER_MNS">Leader</option>
                                 <option value="SAMPLE">Sample</option>
-
+*@
                                 @if (User.IsInRole("Admin"))
                                 {
-                    <option value="Admin">Admin(Full Role)</option>}
+                                     <option value="Admin">Admin(Full Role)</option>
+                                }
                             </select>
                             <span asp-validation-for="Role" class="text-danger"></span>
                         </div>

@@ -15,7 +15,7 @@ namespace HRMNS.Data.Entities
         {
 
         }
-        public DANGKY_CHAMCONG_DACBIET(string maNV,int? maChamCong,string noiDung,string ngaybatdau,string ngaykethuc,string approve,string approve2,string approve3)
+        public DANGKY_CHAMCONG_DACBIET(string maNV,int? maChamCong,string noiDung,string ngaybatdau,string ngaykethuc,string approve,string approve2,string approve3,double giatri,string giatri1)
         {
             MaNV = maNV;
             MaChamCong_ChiTiet = maChamCong;
@@ -25,6 +25,8 @@ namespace HRMNS.Data.Entities
             Approve = approve;
             ApproveLV2 = approve2;
             ApproveLV3 = approve3;
+            GiaTri = giatri;
+            GiaTri1 = giatri1;
         }
 
         [StringLength(50)]
@@ -40,6 +42,9 @@ namespace HRMNS.Data.Entities
 
         [StringLength(300)]
         public string NoiDung { get; set; }
+
+        public double GiaTri { get; set; }
+        public string GiaTri1 { get; set; }
 
         [StringLength(50)]
         public string Approve { get; set; }

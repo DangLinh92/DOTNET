@@ -1,11 +1,10 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Thông Tin Cấp Bậc";
     Layout = "~/Areas/Payroll/Views/Shared/_Layout.cshtml";
 }
 
 @section Scripts
-{
+    {
     <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
     <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
     <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
@@ -13,89 +12,86 @@
 
         var dataGrid, loadPanel, dataGridTmp;
 
-        $(function ()
-        {
+        $(function () {
             let currentYear = new Date().getFullYear();
             LoadData(currentYear);
         });
 
         function LoadData(txtYear) {
-                    dataGrid = $("#gridContainer1").dxDataGrid("instance");
-                    loadPanel = $("#loadPanel").dxLoadPanel("instance");
+            dataGrid = $("#gridContainer1").dxDataGrid("instance");
+            loadPanel = $("#loadPanel").dxLoadPanel("instance");
 
             loadPanel.show();
             sendRequest('@Url.RouteUrl(new { area = "Payroll", controller = "CapBacNhanVien", action = "Get" })', "GET", { year: txtYear })
-                    .always(() => { loadPanel.hide(); })
-                    .done((data) => {
-                        dataGrid.option("dataSource", data);
-                    });
+                .always(() => { loadPanel.hide(); })
+                .done((data) => {
+                    dataGrid.option("dataSource", data);
+                });
         }
 
-    function SaveLuong(e) {
+        function SaveLuong(e) {
 
-       var change = e.changes[0];
+            var change = e.changes[0];
 
-      if (change) {
-          e.cancel = true;
-          loadPanel.show();
-          e.promise = saveChange(change)
-              .always(() => { loadPanel.hide(); })
-              .done((data) => {
-                  var datas = e.component.option("dataSource");
+            if (change) {
+                e.cancel = true;
+                loadPanel.show();
+                e.promise = saveChange(change)
+                    .always(() => { loadPanel.hide(); })
+                    .done((data) => {
+                        var datas = e.component.option("dataSource");
 
-                  if (change.type === "insert") {
-                      change.data = data;
-                  }
+                        if (change.type === "insert") {
+                            change.data = data;
+                        }
 
-                  datas = DevExpress.data.applyChanges(datas, [change], { keyExpr: "Id" });
+                        datas = DevExpress.data.applyChanges(datas, [change], { keyExpr: "Id" });
 
-                  e.component.option({
-                      dataSource: datas,
-                      editing: {
-                          editRowKey: null,
-                          changes: []
-                      }
-                  });
+                        e.component.option({
+                            dataSource: datas,
+                            editing: {
+                                editRowKey: null,
+                                changes: []
+                            }
+                        });
 
-                  let currentYear = new Date().getFullYear();
-                  LoadData(currentYear);
-              });
-      }
-    };
+                        let currentYear = new Date().getFullYear();
+                        LoadData(currentYear);
+                    });
+            }
+        };
 
-    function saveChange(change)
-    {
-        console.log('saveChange');
-        console.log(change);
-        switch (change.type)
-        {
-            case "insert":
-                change.data.Id = 0;
+        function saveChange(change) {
+            console.log('saveChange');
+            console.log(change);
+            switch (change.type) {
+                case "insert":
+                    change.data.Id = 0;
                     return sendRequest('@Url.RouteUrl(new { area = "Payroll", controller = "CapBacNhanVien", action = "PostCB" })', "POST", { values: JSON.stringify(change.data) });
                 case "update":
                     return sendRequest('@Url.RouteUrl(new { area = "Payroll", controller = "CapBacNhanVien", action = "PutCB" })', "PUT", { key: change.key, values: JSON.stringify(change.data) });
                 case "remove":
                     return sendRequest('@Url.RouteUrl(new { area = "Payroll", controller = "CapBacNhanVien", action = "DeleteCB" })', "DELETE", { key: change.key });
-        }
-    };
+            }
+        };
 
-    function sendRequest(url, method, data) {
-                var d = $.Deferred();
+        function sendRequest(url, method, data) {
+            var d = $.Deferred();
 
-                method = method || "GET";
+            method = method || "GET";
 
-                $.ajax(url, {
-                    method: method,
-                    data: data,
-                    cache: false,
-                    xhrFields: { withCredentials: true }
-                }).done(function (result) {
-                    d.resolve(method === "GET" ? result.data : result);
-                }).fail(function (xhr) {
-                    d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
-                });
+            $.ajax(url, {
+                method: method,
+                data: data,
+                cache: false,
+                xhrFields: { withCredentials: true }
+            }).done(function (result) {
+                d.resolve(method === "GET" ? result.data : result);
+            }).fail(function (xhr) {
+                d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
+            });
 
-                return d.promise();
+            return d.promise();
         };
 
         // Xuất excel luong
@@ -116,8 +112,7 @@
         }
 
         /* Import, export, insert,update,delete danh sách nhân viên khám sk */
-        function ImportExcel()
-        {
+        function ImportExcel() {
             $("#fileInputExcel").val(null);
             $('#import_File').modal('show');
         }
@@ -225,14 +220,14 @@
                     <div class="dx-field">
                         <div>
                             @(Html.DevExtreme().DateBox()
-                                      .ID("txt_year")
-                                      .Value(DateTime.Now.Year.ToString())
-                                      .CalendarOptions(x=>x.MaxZoomLevel(CalendarZoomLevel.Decade))
-                                      .DisplayFormat("yyyy")
-                                      .Width(200)
-                                      .Placeholder("Select...")
-                                      .Label("Year")
-                                      .OnValueChanged("selectedDate_changed")
+                                .ID("txt_year")
+                                .Value(DateTime.Now.Year.ToString())
+                                .CalendarOptions(x => x.MaxZoomLevel(CalendarZoomLevel.Decade))
+                                .DisplayFormat("yyyy")
+                                .Width(200)
+                                .Placeholder("Select...")
+                                .Label("Year")
+                                .OnValueChanged("selectedDate_changed")
                                 )
 
                         </div>
@@ -253,61 +248,67 @@
     <div class="row">
         <div class="col-md-12">
             @(Html.DevExtreme().LoadPanel()
-                      .ID("loadPanel")
-                      .Position(p => p.Of("#gridContainer1"))
-                      .Visible(false)
+                .ID("loadPanel")
+                .Position(p => p.Of("#gridContainer1"))
+                .Visible(false)
                 )
             @(Html.DevExtreme().DataGrid<NHANVIEN_INFOR_EX>
-    ()
-    .ID("gridContainer1")
-    .KeyExpr("Id")
-    .Height(700)
-    .ShowBorders(true)
-    .ColumnAutoWidth(true)
-    .RepaintChangesOnly(true)
-    .LoadPanel(loadPanel => loadPanel.Enabled(false))
-    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
-    .Paging(paging => paging.Enabled(true))
-    .ShowColumnLines(true)
-    .ShowRowLines(true)
-    .RowAlternationEnabled(true)
-    .FilterRow(filterRow => filterRow.Visible(true).ApplyFilter(GridApplyFilterMode.Auto)
-    )
-    .HeaderFilter(headerFilter => headerFilter.Visible(true))
-    .Selection(s => s.Mode(SelectionMode.Single))
-    .HoverStateEnabled(true)
-    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
-    .OnExporting("exporting")
-    .Editing(editing =>
-    {
-        editing.Mode(GridEditMode.Form);
-        editing.AllowUpdating(true);
-        editing.AllowDeleting(true);
-        editing.AllowAdding(true);
-    })
-    .Columns(columns =>
-    {
-        columns.AddFor(m => m.Id).Visible(false).AllowEditing(false);
-        columns.AddFor(m => m.MaNV).Caption("Mã NV").AllowEditing(true)
-            .Lookup(lookup => lookup
-            .DataSource(d => d.Mvc().Controller("DCChamCong").LoadAction("Employees").Key("Id"))
-            .ValueExpr("Id")
-            .DisplayExpr("Id")
-        )
-        .CalculateFilterExpression("calculateFilterExpression");
+                ()
+                .ID("gridContainer1")
+                .KeyExpr("Id")
+                .Height(700)
+                .ShowBorders(true)
+                .ColumnAutoWidth(true)
+                .RepaintChangesOnly(true)
+                .LoadPanel(loadPanel => loadPanel.Enabled(false))
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(true))
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .FilterRow(filterRow => filterRow.Visible(true).ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .SearchPanel(searchPanel => searchPanel
+                .Visible(true)
+                .Width(240)
+                .Placeholder("Search...")
+                )
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .HoverStateEnabled(true)
+                .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+                .OnExporting("exporting")
+                .Editing(editing =>
+                {
+                    editing.Mode(GridEditMode.Form);
+                    editing.AllowUpdating(true);
+                    editing.AllowDeleting(true);
+                    editing.AllowAdding(true);
+                })
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.Id).Visible(false).AllowEditing(false);
+                    columns.AddFor(m => m.MaNV).Caption("Mã NV").AllowEditing(true)
+                    .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("DCChamCong").LoadAction("Employees").Key("Id"))
+                    .ValueExpr("Id")
+                    .DisplayExpr("Id")
+                    )
+                    .CalculateFilterExpression("calculateFilterExpression");
 
-        columns.AddFor(m => m.HR_NHANVIEN.TenNV).Caption("Tên Nhân Viên").AllowEditing(false);
-        columns.AddFor(m => m.HR_NHANVIEN.HR_BO_PHAN_DETAIL.MaBoPhan_TOP2).Caption("Bộ Phận").AllowEditing(false);
-        columns.AddFor(m => m.MaBoPhanEx).Caption("Mã Bộ phận").AllowEditing(true);
-        columns.AddFor(m => m.Grade).Caption("Grade").AllowEditing(true);
-        columns.AddFor(m => m.Year).Caption("Year").AllowEditing(true);
-    }).SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true).OnSaved("SaveLuong")
-    .Summary(s => s.TotalItems(items => {
-        items.AddFor(m => m.MaNV)
-            .SummaryType(SummaryType.Count);
-    })
-    )
-    )
+                    columns.AddFor(m => m.HR_NHANVIEN.TenNV).Caption("Tên Nhân Viên").AllowEditing(false);
+                    columns.AddFor(m => m.HR_NHANVIEN.HR_BO_PHAN_DETAIL.MaBoPhan_TOP2).Caption("Bộ Phận").AllowEditing(false);
+                    columns.AddFor(m => m.MaBoPhanEx).Caption("Mã Bộ phận").AllowEditing(true);
+                    columns.AddFor(m => m.Grade).Caption("Grade").AllowEditing(true);
+                    columns.AddFor(m => m.Year).Caption("Year").AllowEditing(true);
+                }).SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true).OnSaved("SaveLuong")
+                .Summary(s => s.TotalItems(items =>
+                {
+                    items.AddFor(m => m.MaNV)
+                    .SummaryType(SummaryType.Count);
+                })
+                )
+                )
         </div>
     </div>
 </div>

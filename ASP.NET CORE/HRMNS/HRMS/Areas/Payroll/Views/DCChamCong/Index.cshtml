@@ -184,7 +184,11 @@
     .FilterRow(filterRow => filterRow
     .Visible(true)
     .ApplyFilter(GridApplyFilterMode.Auto)
-    )
+                ).SearchPanel(searchPanel => searchPanel
+                .Visible(true)
+                .Width(240)
+                .Placeholder("Search...")
+                )
     .HeaderFilter(headerFilter => headerFilter.Visible(true))
     .Selection(s => s.Mode(SelectionMode.Single))
     .HoverStateEnabled(true)

@@ -180,6 +180,40 @@ namespace CarMNS.Data.EF.Migrations
                     b.ToTable("BOPHAN");
                 });
 
+            modelBuilder.Entity("CarMNS.Data.Entities.BOPHAN_DUYET", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("BoPhan")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BOPHAN_DUYET");
+                });
+
             modelBuilder.Entity("CarMNS.Data.Entities.CAR", b =>
                 {
                     b.Property<int>("Id")
@@ -285,6 +319,10 @@ namespace CarMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
+                    b.Property<string>("SoXe")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<string>("TenNguoiSuDung")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
@@ -317,9 +355,126 @@ namespace CarMNS.Data.EF.Migrations
                     b.Property<bool>("XacNhanLV3")
                         .HasColumnType("bit");
 
+                    b.Property<string>("ĐiaDiemXuatPhat")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
                     b.HasKey("Id");
 
                     b.ToTable("DANG_KY_XE");
+                });
+
+            modelBuilder.Entity("CarMNS.Data.Entities.DANG_KY_XE_TAXI", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("BoPhan")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DiaDiemDen_Huyen")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("DiaDiemDen_SoNha")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("DiaDiemDen_Tinh")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("DiaDiemDen_Xa")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<DateTime?>("FromTimePlan")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Lxe_BienSo")
+                        .HasColumnType("nvarchar(500)")
+                        .HasMaxLength(500);
+
+                    b.Property<string>("MaBill")
+                        .HasColumnType("nvarchar(150)")
+                        .HasMaxLength(150);
+
+                    b.Property<string>("MaNV")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("MucDichSuDung")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<DateTime?>("NgaySuDung")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NguoiDangKy")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Nguoi_XacNhanLV1")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Nguoi_XacNhanLV2")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Nguoi_XacNhanLV3")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<double?>("SoNguoiSuDung")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("SoTien")
+                        .HasColumnType("float");
+
+                    b.Property<string>("TenNguoiSuDung")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime?>("ToTimePlan")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<bool>("XacNhanLV1")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("XacNhanLV2")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("XacNhanLV3")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ĐiaDiemXuatPhat")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DANG_KY_XE_TAXI");
                 });
 
             modelBuilder.Entity("CarMNS.Data.Entities.DIEUXE_DANGKY", b =>

@@ -27,6 +27,8 @@ namespace OPERATION_MNS.Application.Implementation
 
         public MaterialToSapViewModel Add(MaterialToSapViewModel model)
         {
+            model.Material = model.Material.NullString();
+            model.SAP_Code = model.SAP_Code.NullString();
             var en = _mapper.Map<MATERIAL_TO_SAP>(model);
             _MaterialToSapResponsitory.Add(en);
             return model;
@@ -61,6 +63,8 @@ namespace OPERATION_MNS.Application.Implementation
 
         public MaterialToSapViewModel Update(MaterialToSapViewModel model)
         {
+            model.Material = model.Material.NullString();
+            model.SAP_Code = model.SAP_Code.NullString();
             var en = _mapper.Map<MATERIAL_TO_SAP>(model);
             _MaterialToSapResponsitory.Update(en);
             return model;

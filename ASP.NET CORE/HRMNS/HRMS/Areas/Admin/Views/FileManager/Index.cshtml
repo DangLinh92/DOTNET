@@ -130,20 +130,7 @@
             <!-- File Manager full functionalities sample -->
             @*<ejs-filemanager id="filemanager" allowMultiSelection="true" allowDragAndDrop="true" view="@Syncfusion.EJ2.FileManager.ViewType.Details" menuOpen="menuOpen" menuClick="menuClick" uploadListCreate="uploadListCreate" beforeSend="beforeSend">*@
             <ejs-filemanager id="filemanager" allowMultiSelection="true" allowDragAndDrop="true" view="@Syncfusion.EJ2.FileManager.ViewType.Details">
-                @*<e-filemanager-detailsviewsettings>
-            <e-detailsviewsettings-columns>
-                <e-detailsviewsettings-column Field="name" HeaderText="Name" template="${name}"></e-detailsviewsettings-column>
-                <e-detailsviewsettings-column Field="dateModified" HeaderText="Date Modified" type="dateTime" format="MMMM dd, yyyy HH:mm"></e-detailsviewsettings-column>
-                <e-detailsviewsettings-column Field="uSize" HeaderText="Size" template="${uSize}"></e-detailsviewsettings-column>
-                <e-detailsviewsettings-column Field="dateEx" HeaderText="Expiration date"></e-detailsviewsettings-column>
-                <e-detailsviewsettings-column Field="storageLocation" HeaderText="Storage Location"></e-detailsviewsettings-column>
-            </e-detailsviewsettings-columns>
-        </e-filemanager-detailsviewsettings>
-        <e-filemanager-ajaxsettings url="http://10.70.10.97:8089/admin/FileManager/SQLFileOperations"
-                            downloadUrl="http://10.70.10.97:8089/admin/FileManager/SQLDownload"
-                            uploadUrl="http://10.70.10.97:8089/admin/FileManager/SQLUpload"
-                            getImageUrl="http://10.70.10.97:8089/admin/FileManager/SQLGetImage">
-        </e-filemanager-ajaxsettings>*@
+
 
                 <e-filemanager-ajaxsettings url="/admin/FileManager/FileOperations"
                                             downloadUrl="/admin/FileManager/Download"

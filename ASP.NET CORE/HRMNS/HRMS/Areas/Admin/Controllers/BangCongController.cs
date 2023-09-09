@@ -140,7 +140,7 @@ namespace HRMS.Areas.Admin.Controllers
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddDbContext<AppDBContext>(options =>
                options.UseSqlServer(
-                   @"Persist Security Info=True;Data Source = 10.70.10.97;Initial Catalog = HRMSDB2;User Id = sa;Password = Wisol@123;Connect Timeout=3", o => o.MigrationsAssembly("HRMNS.Data.EF")));
+                   @"Persist Security Info=True;Data Source = 10.70.21.208;Initial Catalog = HRMSDB2;User Id = sa;Password = sa@21208;Connect Timeout=3", o => o.MigrationsAssembly("HRMNS.Data.EF")));
 
             serviceCollection.AddSingleton(HRMNS.Application.AutoMapper.AutoMapperConfig.RegisterMappings().CreateMapper());
             serviceCollection.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -665,13 +665,14 @@ namespace HRMS.Areas.Admin.Controllers
                         headerColName = GetExcelColumnName(beginColIndex);
                         worksheet.Cells[headerColName + "2"].Value = day.ToString("yyyy-MM-dd");
                         // worksheet.Cells[headerColName + "1"].Value = day.DayOfWeek.ToString();
-                        beginColIndex += 3;
+                        beginColIndex += 4;
                     }
 
                     int beginRowIndex = 4;
                     string colName = "";
                     string colName1 = "";
                     string colName2 = "";
+                    string colName3 = "";
                     int k = 0;
                     for (int i = 0; i < data.Count; i++)
                     {
@@ -683,6 +684,7 @@ namespace HRMS.Areas.Admin.Controllers
                             colName = GetExcelColumnName(k);
                             colName1 = GetExcelColumnName(k + 1);
                             colName2 = GetExcelColumnName(k + 2);
+                            colName3 = GetExcelColumnName(k + 3);
 
                             foreach (var inout in data[i].TimeInOutModels.OrderBy(x => x.DayCheck))
                             {
@@ -691,15 +693,16 @@ namespace HRMS.Areas.Admin.Controllers
                                     worksheet.Cells[colName + beginRowIndex].Value = inout.InTime.TimeHHMM();
                                     worksheet.Cells[colName1 + beginRowIndex].Value = inout.OutTime.TimeHHMM();
                                     worksheet.Cells[colName2 + beginRowIndex].Value = inout.HangMuc.NullString();
+                                    worksheet.Cells[colName3 + beginRowIndex].Value = inout.Draf.NullString();
                                 }
                             }
 
-                            k += 3;
+                            k += 4;
                         }
 
                         if (i < data.Count - 2)
                         {
-                            worksheet.Cells["A" + (beginRowIndex + 1) + ":CW" + (beginRowIndex + 1)].Copy(worksheet.Cells["A" + (beginRowIndex + 2) + ":CW" + (beginRowIndex + 2)]);
+                            worksheet.Cells["A" + (beginRowIndex + 1) + ":EB" + (beginRowIndex + 1)].Copy(worksheet.Cells["A" + (beginRowIndex + 2) + ":EB" + (beginRowIndex + 2)]);
                         }
 
                         beginRowIndex += 1;

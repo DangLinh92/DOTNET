@@ -27,7 +27,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
 
         public IActionResult Index()
         {
-            InventoryTicker.SetStatus(true, false, false, false);
+            InventoryTicker.SetStatus(true, false);
             ViewBag.ViewOption_Actual = string.IsNullOrEmpty(InventoryTicker.ViewOption_Actual) ? CommonConstants.CHIP : InventoryTicker.ViewOption_Actual;
             return View();
         }
@@ -46,7 +46,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
 
         public IActionResult Wlp2Stock()
         {
-            InventoryTicker.SetStatus(false, true, false, false);
+            WLP2Ticker.SetStatus(true, false);
             return View();
         }
 

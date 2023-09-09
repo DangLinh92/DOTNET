@@ -1,0 +1,287 @@
+﻿@using Microsoft.AspNetCore.Http
+@using OPERATION_MNS.Application.ViewModels
+@{
+    ViewData["Title"] = "Run Time";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <style>
+        #gridContainer span.current-value {
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        #gridContainer span.diff {
+            width: 50px;
+            display: inline-block;
+        }
+
+        #gridContainer .inc {
+            color: #2ab71b;
+        }
+
+        #gridContainer .dec {
+            color: #f00;
+        }
+
+            #gridContainer .inc .arrow,
+            #gridContainer .dec .arrow {
+                display: inline-block;
+                height: 10px;
+                width: 10px;
+                background-repeat: no-repeat;
+                background-size: 10px 10px;
+            }
+
+        #gridContainer .inc .arrow {
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAADKSURBVHjaYtTaLs1ABEiG0nPRJa56PEHhsxBhmCUQT4OyrwHxcXyKmQgYJgHE64CYDYrXQcXIMhCbAcgWkGzgNKh38QUB0QamIUUErkhKI9ZAGyCeTERkTYaqxWsgKA2txhdG6GGsvUNGGpeBRMUiGhCFGsqGzUBQQJsxkA5AemaiG5hDIBIIgQSgK0FmMDACs549kN5FZLjhA7+A2A2U9YSAOBeLAk4gnoBDczoOcSFGPIUDPxB/wCHHiKtwYGKgMhg1cBAaCBBgAJTUIL3ToPZfAAAAAElFTkSuQmCC');
+        }
+
+        #gridContainer .dec .arrow {
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAADJSURBVHjaYvzPgBfgkhYA4o8QFahKmBioDEYNHIQGsgBxIBCLkqgvAYi/g1mMjMjir0EJzR6If/6HpChKMMgMe3DKBeIcKhiY8x/MYoDj+RQYNgdkGLqBbEB8kgzDToL1YjEQhKWB+BUJhj0H64Eahs1AELYhMpJ+gtUiGYbLQBBOI8LANLBaIg1kAAc0vkiAqSPBQFAkHcNi2DGoHMkGgrAENOCRI0ECRQ2JBoKwJTQCfkLZDPgMZPxPXN5NhtJzMSsJVBMAAgwAyWSY2svfmrwAAAAASUVORK5CYII=');
+        }
+
+        #Yield_Id {
+            margin-top: 15px;
+        }
+
+        #begindate-date {
+            float: left;
+            margin-right: 10px;
+        }
+
+        #slChipWafer {
+            float: left;
+            margin-right: 10px;
+            margin-top: 6px;
+        }
+
+        .dx-cell-focus-disabled[role="gridcell"] {
+            background-color: #004e89 !important;
+            color: #ffff !important;
+        }
+
+        .stylePriory1 {
+            background-color: #FF5D5D !important;
+            color: black !important;
+        }
+
+        .stylePriory2 {
+            background-color: #FFE3A9 !important;
+        }
+
+        .stylePriory3 {
+            background-color: #ffff !important;
+        }
+    </style>
+
+}
+
+@section Scripts
+    {
+
+    <script src="~/js/dataTables.fixedColumns.min.js"></script>
+    <script src="~/js/dataTables.fixedHeader.min.js"></script>
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+    <script>
+
+        var connection = new signalR.HubConnectionBuilder()
+            .withUrl("@Url.Content("~/liveUpdateSignalR_LFEM_Hub")")
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+
+        $(function () {
+
+            connection.start()
+                .then(function () {
+
+                    var store = new DevExpress.data.CustomStore({
+                        load: function () {
+                            return connection.invoke("runTimeLfem");
+                        },
+                        key: "lotID"
+                    });
+
+                    $("#gridContainer").dxDataGrid({
+                        dataSource: store,
+                        visible: true
+                    });
+
+                    connection.on("getLotRuntimeLFEM", function (dataObj) {
+                        store.push([{ type: "update", key: dataObj.lotID, data: dataObj }]);
+                    });
+                });
+        });
+
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('Runtime');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'Runtime.xlsx');
+                });
+            });
+            e.cancel = true;
+        };
+
+        function onCellPrepared(e) {
+
+            if (e.rowType === "data" && e.column.dataField == "runTime_m" && !isNaN(e.data.runTime_m)) {
+
+                if (Number(e.data.runTime_m) >= Number(e.data.stbMin)) {
+                    e.cellElement.addClass("stylePriory1");
+                }
+                else if (Number(e.data.runTime_m) >= Number(e.data.stbMin) * 0.8) {
+                    e.cellElement.addClass("stylePriory2");
+                }
+                else {
+                    e.cellElement.addClass("stylePriory3");
+                }
+            }
+        }
+
+        function contextMenu_itemClick(e) {
+            console.log(e);
+            if (!e.itemData.Items) {
+                DevExpress.ui.notify("The \"" + e.itemData.Text + "\" item was clicked", "success", 1500);
+            }
+        }
+
+        function BeforContextMenuPre(e){
+            if (!e.items) e.items = [];
+
+            // Add a custom menu item
+            e.items.push({
+                text: "Copy",
+                onItemClick: function (arg) {
+                    if (window.isSecureContext) {
+                        // console.log(e.targetElement[0].innerText);
+                        navigator.clipboard.writeText(e.targetElement[0].innerText);
+                    }
+                }
+            });
+        }
+    </script>
+
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">@ViewData["Title"]</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Run Time</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+
+    <div class="row">
+        <div class="col-md-12">
+            @(Html.DevExtreme().DataGrid<WARNING_LOT_RUNTIME_LFEM>()
+                .ID("gridContainer")
+                .Visible(false)
+                .DataSourceOptions(o => o.ReshapeOnPush(true))
+                .ShowBorders(true)
+                .RepaintChangesOnly(true)
+                .HighlightChanges(true)
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .AllowColumnResizing(true)
+                .ColumnMinWidth(20)
+                .ColumnAutoWidth(true)
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .FilterRow(filterRow => filterRow
+                .Visible(true)
+                .ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .SearchPanel(searchPanel => searchPanel
+                .Visible(true)
+                .Width(240)
+                .Placeholder("Search...")
+                )
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .HoverStateEnabled(true)
+                .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+                .OnExporting("exporting")
+                .Height(750)
+                .ColumnFixing(x => x.Enabled(true))
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.MaterialCategory).DataField("materialCategory");
+                    columns.AddFor(m => m.Size).DataField("size").Width(120);
+                    columns.AddFor(m => m.Material).DataField("material");
+                    columns.AddFor(m => m.LotID).DataField("lotID");
+                    columns.AddFor(m => m.FA_ID).DataField("fA_ID");
+                    columns.AddFor(m => m.Date).DataField("date").Width(150);
+                    columns.AddFor(m => m.OperationName).DataField("operationName");
+                    columns.AddFor(m => m.RunTime_m).DataField("runTime_m").Caption("Runtime(m)");
+                    columns.AddFor(m => m.ChipQTy).DataField("chipQTy").Format(Format.FixedPoint);
+                    columns.AddFor(m => m.Unit).DataField("unit");
+                    columns.AddFor(m => m.StartFlg).DataField("startFlg");
+                    columns.AddFor(m => m.Comment).DataField("comment").Width(200);
+                    columns.AddFor(m => m.STBMin).DataField("stbMin").Caption("Time Tiêu Chuẩn");
+                    columns.AddFor(m => m.TimeStart).DataField("timeStart");
+                    columns.AddFor(m => m.DateNow).DataField("dateNow").Caption("Ngày Hiện Tại").Width(120);
+                    columns.AddFor(m => m.TimeNow).DataField("timeNow").Caption("Thời Gian Hiện Tại").Width(120);
+                    columns.AddFor(m => m.RunTime_hmm).DataField("runTime_hmm").Caption("Runtime(H:mm)").Width(120);
+
+                }).WordWrapEnabled(true)
+                .Summary(s => s.TotalItems(totalItems =>
+                {
+                    totalItems.Add().SummaryType(SummaryType.Count).Column("lotID").Name("LotID").DisplayFormat("Count: {0}").ValueFormat(Format.FixedPoint);
+                    totalItems.Add().SummaryType(SummaryType.Sum).Column("chipQTy").Name("ChipQTy").DisplayFormat("Total: {0}").ValueFormat(Format.FixedPoint);
+                })
+                ).OnCellPrepared("onCellPrepared").OnContextMenuPreparing("BeforContextMenuPre")
+                )
+
+@*            @(Html.DevExtreme().ContextMenu()
+                .Width(200)
+                .Target("#gridContainer")
+                .ItemTemplate(@<text>
+                    <div>
+                        <% if(typeof Icon !== "undefined") { %>
+                        <span class="<%- Icon %>"></span>
+                        <% } %>
+
+                        <% if(typeof Items !== "undefined") { %>
+                        <span class="dx-icon-spinright"></span>
+                        <% } %>
+
+                        <%- Text %>
+                    </div>
+                </text>)
+                .OnItemClick("contextMenu_itemClick")
+                .DisplayExpr("Text")
+                .ItemsExpr("Items")
+                .DataSource(new object[] {
+
+                    new {Text = "Copy",Icon = "dx-icon-copy"}
+                })
+                )*@
+        </div>
+    </div>
+</div>
+
+
+
+
+

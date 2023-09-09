@@ -24,10 +24,13 @@ namespace OPERATION_MNS.Data.Entities
 
         [StringLength(50)]
         public string Category { get; set; }
+
         [StringLength(50)]
         public string Series { get; set; }
+
         [StringLength(50)]
         public string Model { get; set; }
+
         [StringLength(50)]
         public string Material { get; set; }
         public float Total { get; set; }

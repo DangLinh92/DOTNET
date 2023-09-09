@@ -30,6 +30,12 @@ namespace OPERATION_MNS.Application.ViewModels
         public string TenLoi { get; set; }
         public string PhanLoaiLoi { get; set; }
         public string OperationName { get; set; }
+
+        // LFEM
+        public string MaterialCategory { get; set; }
+        public string MaterialGroup { get; set; }
+        public string Size { get; set; }
+        public string Material { get; set; }
     }
 
     public class StayLotListViewModel
@@ -128,23 +134,42 @@ namespace OPERATION_MNS.Application.ViewModels
         public string LotStatus { get; set; }
 
         public string PhanLoaiLoi { get; set; }
+
+        // LFEM
+        public string MaterialCategory { get; set; }
+        public string MaterialGroup { get; set; }
+        public string Size { get; set; }
+        public string FA_ID { get; set; }
+        public string AssyLotID { get; set; }
+        public string Date { get; set; }
+        public double DATE_DIFF { get; set; }
+        public string Worker { get; set; }
+        public string Comment { get; set; }
+        public string LichTrinhXuLy { get; set; }
+        public string ChiuTrachNhiem { get; set; }
+        public string KeyLfem { get => LotId + "-" + Material + "-" + history_seq; }
+
     }
 
-    public class ViewHistoryHoldLotModel {
+    public class ViewHistoryHoldLotModel
+    {
 
         public ViewHistoryHoldLotModel()
         {
             STAY_LOT_LIST_HISTORY_DATA = new List<STAY_LOT_LIST_HISTORY>();
             STAY_LOT_LIST_HISTORY_WLP2_DATA = new List<STAY_LOT_LIST_HISTORY_WLP2>();
             STAY_LOT_LIST_HISTORY_SAMPLE_DATA = new List<STAY_LOT_LIST_HISTORY_SAMPLE>();
+            STAY_LOT_LIST_HISTORY_LFEM_DATA = new List<STAY_LOT_LIST_HISTORY_LFEM>();
         }
-       public  List<STAY_LOT_LIST_HISTORY> STAY_LOT_LIST_HISTORY_DATA;
-       public  List<STAY_LOT_LIST_HISTORY_WLP2> STAY_LOT_LIST_HISTORY_WLP2_DATA;
-       public  List<STAY_LOT_LIST_HISTORY_SAMPLE> STAY_LOT_LIST_HISTORY_SAMPLE_DATA;
+        public List<STAY_LOT_LIST_HISTORY> STAY_LOT_LIST_HISTORY_DATA;
+        public List<STAY_LOT_LIST_HISTORY_LFEM> STAY_LOT_LIST_HISTORY_LFEM_DATA;
+        public List<STAY_LOT_LIST_HISTORY_WLP2> STAY_LOT_LIST_HISTORY_WLP2_DATA;
+        public List<STAY_LOT_LIST_HISTORY_SAMPLE> STAY_LOT_LIST_HISTORY_SAMPLE_DATA;
         public string LotId { get; set; }
         public string CasseteId { get; set; }
         public string FromTime { get; set; }
         public string ToTime { get; set; }
+        public string Material { get; set; }
     }
 
     public class StayLotListByModel

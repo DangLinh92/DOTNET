@@ -39,6 +39,8 @@ namespace CarMNS.Data.EF
         public virtual DbSet<LAI_XE_CAR> LAI_XE_CAR { get; set; }
         public virtual DbSet<DIEUXE_DANGKY> DIEUXE_DANGKY { get; set; }
         public virtual DbSet<DANG_KY_XE> DANG_KY_XE { get; set; }
+        public virtual DbSet<DANG_KY_XE_TAXI> DANG_KY_XE_TAXI { get; set; }
+        public virtual DbSet<BOPHAN_DUYET> BOPHAN_DUYET { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -60,6 +62,8 @@ namespace CarMNS.Data.EF
             builder.AddConfiguration(new DangKyXeConfiguration());
             builder.AddConfiguration(new DieuXeDangKyXeConfiguration());
             builder.AddConfiguration(new BoPhanConfiguration());
+            builder.AddConfiguration(new DangKyXeTaxiConfiguration());
+            builder.AddConfiguration(new BoPhanDuyetConfiguration());
 
             //base.OnModelCreating(builder);
         }

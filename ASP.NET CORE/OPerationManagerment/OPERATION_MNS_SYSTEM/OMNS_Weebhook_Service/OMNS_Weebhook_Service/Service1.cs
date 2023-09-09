@@ -28,7 +28,7 @@ namespace OMNS_Weebhook_Service
             InitializeComponent();
         }
         private Timer timer1 = null;
-        private Timer timer2 = null;
+        //private Timer timer2 = null;
         private Timer timer3 = null;
         private Timer timer4 = null;
         protected override void OnStart(string[] args)
@@ -39,10 +39,10 @@ namespace OMNS_Weebhook_Service
             this.timer1.Elapsed += new System.Timers.ElapsedEventHandler(this.timer1_Tick);
             timer1.Enabled = true;
 
-            timer2 = new Timer();
-            this.timer2.Interval = 3600000; //every 1 h
-            this.timer2.Elapsed += new ElapsedEventHandler(this.timer2_Tick);
-            timer2.Enabled = true;
+            //timer2 = new Timer();
+            //this.timer2.Interval = 3600000; //every 1 h
+            //this.timer2.Elapsed += new ElapsedEventHandler(this.timer2_Tick);
+            //timer2.Enabled = true;
 
             timer3 = new Timer();
             this.timer3.Interval = 90000; //every 90s
@@ -89,7 +89,7 @@ namespace OMNS_Weebhook_Service
         protected override void OnStop()
         {
             timer1.Enabled = false;
-            timer2.Enabled = false;
+            //timer2.Enabled = false;
             timer3.Enabled = false;
             timer4.Enabled = false;
             count = 0;

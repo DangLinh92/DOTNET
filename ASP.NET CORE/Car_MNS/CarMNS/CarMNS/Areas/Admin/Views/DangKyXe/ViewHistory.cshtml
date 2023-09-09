@@ -1,4 +1,7 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Authorization
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
+@inject IAuthorizationService AuthorizationService
+@{
     ViewData["Title"] = "ViewHistory";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
@@ -92,10 +95,10 @@
     <div class="page-header">
         <div class="row align-items-center" style="margin-bottom:-2rem">
             <div class="col">
-                <h3 class="page-title">Lịch Sử Điều Xe</h3>
+                <h3 class="page-title">Lịch Sử Điều Xe/배차 이력</h3>
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/Admin/Home/Index">Home</a></li>
-                    <li class="breadcrumb-item active">Lịch sử điều xe</li>
+                    <li class="breadcrumb-item active">Lịch sử điều xe/배차 이력</li>
                 </ul>
             </div>
         </div>
@@ -180,18 +183,21 @@
                 .Columns(columns =>
                 {
                     columns.AddFor(m => m.Id).Visible(false).AllowEditing(false);
-                    columns.AddFor(m => m.NgaySuDung).Caption("Ngày Sử Dụng").Format("yyyy-MM-dd").AllowEditing(false);
-                    columns.AddFor(m => m.TenNguoiSuDung).Caption("Tên Người Sử Dụng").AllowEditing(false);
-                    columns.AddFor(m => m.NguoiDangKy).Caption("Tên Người Sử Dụng").AllowEditing(false);
-                    columns.AddFor(m => m.BoPhan);
-                    columns.AddFor(m => m.FromTimePlan).Caption("Dự Kiến Từ mấy giờ ?").AllowEditing(false);
-                    columns.AddFor(m => m.ToTimePlan).Caption("Dự Kiến Đến mấy giờ ?").AllowEditing(false);
-                    columns.AddFor(m => m.DiaDiemDen_Xa).Caption("Địa Điểm Đến(Xã)").AllowEditing(false);
-                    columns.AddFor(m => m.DiaDiemDen_Huyen).Caption("Địa Điểm Đến(Huyện)").AllowEditing(false);
-                    columns.AddFor(m => m.DiaDiemDen_Tinh).Caption("Địa Điểm Đến(Tỉnh)").AllowEditing(false);
-                    columns.AddFor(m => m.MucDichSuDung).Caption("Mục Đích Sử Dụng").AllowEditing(false);
-                    columns.AddFor(m => m.Lxe_BienSo).Caption("Thông Tin Xe").AllowEditing(false);
-                })
+                    columns.AddFor(m => m.NgaySuDung).Caption(localizer["NGAY_SU_DUNG"].Value).Format("yyyy-MM-dd").AllowEditing(false);
+                    columns.AddFor(m => m.TenNguoiSuDung).Caption(localizer["TEN_NGUOI_SU_DUNG"].Value).AllowEditing(false);
+                    columns.AddFor(m => m.NguoiDangKy).Caption(localizer["NGUOI_DANG_KY"].Value).AllowEditing(false);
+                    columns.AddFor(m => m.BoPhan).Caption(localizer["BO_PHAN"].Value);
+                    columns.AddFor(m => m.FromTimePlan).Caption(localizer["THOI_GIAN_DU_KIEN_FROM"].Value).Format("HH:mm:ss").AllowEditing(false);
+                    columns.AddFor(m => m.ToTimePlan).Caption(localizer["THOI_GIAN_DU_KIEN_TO"].Value).Format("HH:mm:ss").AllowEditing(false);
+                    columns.AddFor(m => m.ĐiaDiemXuatPhat).Caption(localizer["XUAT_PHAT"].Value).AllowEditing(false);
+                    columns.AddFor(m => m.DiaDiemDen_SoNha).Caption(localizer["SO_NHA"].Value).AllowEditing(false);
+                    columns.AddFor(m => m.DiaDiemDen_Xa).Caption(localizer["XA"].Value).AllowEditing(false);
+                    columns.AddFor(m => m.DiaDiemDen_Huyen).Caption(localizer["HUYEN"].Value).AllowEditing(false);
+                    columns.AddFor(m => m.DiaDiemDen_Tinh).Caption(localizer["TINH"].Value).AllowEditing(false);
+                    columns.AddFor(m => m.MucDichSuDung).Caption(localizer["MUC_DICH_SU_DUNG"].Value).AllowEditing(false);
+                    columns.AddFor(m => m.Lxe_BienSo).Caption(localizer["THONG_TIN_XE"].Value).AllowEditing(false);
+                    columns.AddFor(m => m.SoXe).Caption("Car No").AllowEditing(false);
+                }).WordWrapEnabled(true)
                 .DataSource(d => d.Mvc()
                 .Area("Admin")
                 .Controller("DangKyXe")

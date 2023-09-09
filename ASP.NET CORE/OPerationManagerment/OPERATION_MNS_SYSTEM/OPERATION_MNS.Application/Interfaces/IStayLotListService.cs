@@ -1,4 +1,5 @@
 ﻿using OPERATION_MNS.Application.ViewModels;
+using OPERATION_MNS.Application.ViewModels.Lfem;
 using OPERATION_MNS.Application.ViewModels.Wlp2;
 using OPERATION_MNS.Data.Entities;
 using System;
@@ -36,13 +37,17 @@ namespace OPERATION_MNS.Application.Interfaces
 
         // Sample
         StayLotListDisPlayViewModel GetStayLotListSample();
-
         StayLotList_Ex_ViewModel UpdateLotInfoSample(StayLotList_Ex_ViewModel model, StayLotListDisPlayViewModel stayLotList);
-
         List<STAY_LOT_LIST_HISTORY_SAMPLE> GetStayLotListHistorySample(string cassetteId, string lotId, string timeFrom, string timeTo);
-
         List<Stay_lot_list_priory_wlp2ViewModel> GetStayLotListByModelSample(string model, string operation);
-
         Stay_lot_list_priory_wlp2ViewModel UpdatePrioryLotIdSample(Stay_lot_list_priory_wlp2ViewModel model, int index);
+
+        // lfem
+        List<Stay_lot_list_priory_lfem_ViewModel> GetStayLotListByModelLFEM(string material, string operation);
+        Stay_lot_list_priory_lfem_ViewModel UpdatePrioryLotIdLFEM(Stay_lot_list_priory_lfem_ViewModel model, int index);
+
+        StayLotListDisPlayViewModel GetStayLotListLFEM();
+        StayLotList_Ex_ViewModel UpdateLotInfoLFEM(StayLotList_Ex_ViewModel model, StayLotListDisPlayViewModel stayLotList);
+        List<STAY_LOT_LIST_HISTORY_LFEM> GetStayLotListHistoryLFEM(string material, string lotId, string timeFrom, string timeTo);
     }
 }

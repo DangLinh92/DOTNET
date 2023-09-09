@@ -32,6 +32,7 @@ namespace HRMNS.Application.Implementation
         public DCChamCongViewModel Add(DCChamCongViewModel dmDcChamCongVm)
         {
             dmDcChamCongVm.UserCreated = GetUserId();
+            dmDcChamCongVm.TongSoTien = dmDcChamCongVm.TongSoTien == null ? 0 : dmDcChamCongVm.TongSoTien;
             if (dmDcChamCongVm.ChiTraVaoLuongThang != null)
             {
                 dmDcChamCongVm.ChiTraVaoLuongThang2 = dmDcChamCongVm.ChiTraVaoLuongThang.Value.ToString("yyyy-MM") + "-01";
@@ -141,7 +142,6 @@ namespace HRMNS.Application.Implementation
                 {
                     ExcelWorksheet worksheet = packet.Workbook.Worksheets[0];
                     DC_CHAM_CONG dccong;
-                    List<DC_CHAM_CONG> lstUpdate = new List<DC_CHAM_CONG>();
                     List<DC_CHAM_CONG> lstAdd = new List<DC_CHAM_CONG>();
                     string manv, thangchitra;
 
@@ -155,18 +155,7 @@ namespace HRMNS.Application.Implementation
                             break;
                         }
 
-                        dccong = _dcChamCongRepository.FindAll(x => x.MaNV == manv && x.ChiTraVaoLuongThang2.Contains(thangchitra)).FirstOrDefault();
-
-                        if (dccong == null)
-                        {
-                            dccong = new DC_CHAM_CONG();
-                            lstAdd.Add(dccong);
-                        }
-                        else
-                        {
-                            lstUpdate.Add(dccong);
-                        }
-
+                        dccong = new DC_CHAM_CONG();
                         dccong.MaNV = manv;
                         dccong.NgayDieuChinh = worksheet.Cells[i, 3].Text.NullString();
                         dccong.NoiDungDC = worksheet.Cells[i, 4].Text.NullString();
@@ -181,10 +170,10 @@ namespace HRMNS.Application.Implementation
                             dccong.ChiTraVaoLuongThang = DateTime.Parse(worksheet.Cells[i, 6].Text.NullString() + "-01");
                             dccong.ChiTraVaoLuongThang2 = DateTime.Parse(worksheet.Cells[i, 6].Text.NullString() + "-01").ToString("yyyy-MM") + "-01";
                         }
+                        lstAdd.Add(dccong);
                     }
 
                     _dcChamCongRepository.AddRange(lstAdd);
-                    _dcChamCongRepository.UpdateRange(lstUpdate);
                     resultDB.ReturnInt = 0;
                 }
             }

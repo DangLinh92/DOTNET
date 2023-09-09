@@ -50,6 +50,18 @@ namespace OPERATION_MNS.Application.ViewModels.Sameple
         public string GhiChu { get; set; }
 
         [StringLength(50)]
+        public string Note_Plan_Actual { get; set; }
+
+        [StringLength(250)]
+        public string Note_DayOff { get; set; }
+
+        public ObjView ViewLeadTime => new ObjView()
+        {
+            Plan = LeadTimePlan,
+            Actual = LeadTime
+        };
+
+        [StringLength(50)]
         public string NguoiChiuTrachNhiem { get; set; }
 
         [StringLength(50)]
@@ -651,6 +663,12 @@ namespace OPERATION_MNS.Application.ViewModels.Sameple
         public int OutPutWafer { get; set; }
 
         public List<DELAY_COMMENT_SAMPLE> DELAY_COMMENT_SAMPLES { get; set; }
+    }
+
+    public class ObjView
+    {
+        public int Plan { get; set; }
+        public int Actual { get; set; }
     }
 
     public class DayInOpeation

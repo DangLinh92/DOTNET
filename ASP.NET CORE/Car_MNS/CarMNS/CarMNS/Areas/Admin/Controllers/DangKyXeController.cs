@@ -1,5 +1,6 @@
 ﻿using CarMNS.Application.Implementation;
 using CarMNS.Application.Interfaces;
+using CarMNS.Application.ViewModels;
 using CarMNS.Data.EF.Extensions;
 using CarMNS.Data.Entities;
 using CarMNS.Extensions;
@@ -41,7 +42,209 @@ namespace CarMNS.Areas.Admin.Controllers
             return View();
         }
 
-        #region Thong Tin Dang Ky
+        public IActionResult Taxi()
+        {
+            return View();
+        }
+
+        #region Đăng Ký Xe Taxi
+        [HttpGet]
+        public object GetDangKyXeAll_Taxi(DataSourceLoadOptions loadOptions)
+        {
+            var lstXe = _DangKyXeService.GetAllDangKyXe_Taxi(UserRole, Department);
+            return DataSourceLoader.Load(lstXe, loadOptions);
+        }
+
+        [HttpGet]
+        public object GetHistoryByUser(DataSourceLoadOptions loadOptions, string maNV)
+        {
+            var lstXe = _DangKyXeService.GetHistoryByUser(maNV);
+            return DataSourceLoader.Load(lstXe, loadOptions);
+        }
+
+        [HttpPost]
+        public IActionResult PostDangKyXe_Taxi(string values)
+        {
+            var xe = new DANG_KY_XE_TAXI();
+            JsonConvert.PopulateObject(values, xe);
+
+            xe = _DangKyXeService.AddDangKyXe_Taxi(xe, UserRole);
+
+            if (xe != null)
+            {
+                var dic = _DangKyXeService.GetUserSendMailTaxi(xe.Id, true, false, false);
+                if (dic["SEND_NEXT"].Count > 0)
+                {
+                    var message = new Message(dic["SEND_NEXT"], "REGISTER TO USE TAXI", "You have a request need approve, please check : http://10.70.10.97:8083/admin");
+                    EmailSender.MailFrom = UserEmail;
+                    _emailSender.SendEmail(message);
+                }
+            }
+
+            return Ok(xe);
+        }
+
+        [HttpPut]
+        public IActionResult PutDangKyXe_Taxi(int key, string values)
+        {
+            var xe = _DangKyXeService.GetDangKyXeTaxiById(key);
+
+            if (xe != null)
+            {
+                JsonConvert.PopulateObject(values, xe);
+                xe = _DangKyXeService.UpdateDangKyXeTaxi(xe);
+
+                return Ok(xe);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpDelete]
+        public void DeleteDangKyXe_Taxi(int key)
+        {
+            _DangKyXeService.DeleteDangKyXeTaxi(key);
+        }
+
+        /// <summary>
+        /// Approve đăng ký xe
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult ApproveTaxi(int key)
+        {
+            bool rs = _DangKyXeService.ApproveTaxi(key, UserRole);
+            if (rs)
+            {
+                var dic = _DangKyXeService.GetUserSendMailTaxi(key, false, true, false);
+
+                if (dic["SEND_NEXT"].Count > 0)
+                {
+                    var message = new Message(dic["SEND_NEXT"], "REGISTER TO USE TAXI", "You have a request need approve, please check : http://10.70.10.97:8083/admin");
+                    EmailSender.MailFrom = UserEmail;
+                    _emailSender.SendEmail(message);
+                }
+                if (dic["SEND_PRE"].Count > 0)
+                {
+                    var message = new Message(dic["SEND_PRE"], "REGISTER TO USE TAXI", "You have a request approved, please check: http://10.70.10.97:8083/admin");
+                    EmailSender.MailFrom = UserEmail;
+                    _emailSender.SendEmail(message);
+                }
+            }
+            return Ok(key);
+        }
+
+        /// <summary>
+        /// UnApprove đăng ký xe
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult UnApproveTaxi(int key)
+        {
+            var rs = _DangKyXeService.UnApproveTaxi(key, UserRole);
+
+            if (rs)
+            {
+                var dic = _DangKyXeService.GetUserSendMailTaxi(key, false, false, true);
+
+                if (dic["SEND_PRE"].Count > 0)
+                {
+                    var message = new Message(dic["SEND_PRE"], "REGISTER TO USE TAXI", "You have a request unapproved, please check : http://10.70.10.97:8083/admin");
+                    EmailSender.MailFrom = UserEmail;
+                    _emailSender.SendEmail(message);
+                }
+            }
+            return Ok(key);
+        }
+
+        public IActionResult ViewHistoryTaxi()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public object Get_HistoryTaxi(DataSourceLoadOptions loadOptions, string fromTime, string toTime, string bophan)
+        {
+            var lst = _DangKyXeService.GetDangKyXeTaxiHistory();
+            if (!string.IsNullOrEmpty(fromTime))
+            {
+                lst = lst.Where(x => fromTime.NullString().CompareTo(x.NgaySuDung?.ToString("yyyy-MM-dd")) <= 0).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(toTime))
+            {
+                lst = lst.Where(x => toTime.NullString().CompareTo(x.NgaySuDung?.ToString("yyyy-MM-dd")) >= 0).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(bophan))
+            {
+                lst = lst.Where(x => x.BoPhan == bophan).ToList();
+            }
+
+            return DataSourceLoader.Load(lst.OrderByDescending(x=>x.NgaySuDung), loadOptions);
+        }
+
+        public IActionResult TaxiReport()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public object ReportTaxiByBoPhan(DataSourceLoadOptions loadOptions, string fromTime, string toTime, string bophan)
+        {
+            var lst = _DangKyXeService.GetReportTaxi(fromTime, toTime, bophan);
+            return DataSourceLoader.Load(lst, loadOptions);
+        }
+
+        [HttpGet]
+        public object ReportTaxiTotalByBoPhan(DataSourceLoadOptions loadOptions, string fromTime, string toTime, string bophan)
+        {
+            var lst = _DangKyXeService.GetReportTaxi(fromTime, toTime, bophan);
+
+            List<TongHopBoPhan> lstTotal = new List<TongHopBoPhan>();
+            TongHopBoPhan totalBP_Sotien;
+            TongHopBoPhan totalBP_SoNgay;
+            foreach (var item in lst)
+            {
+                if (lstTotal.Any(x => x.BoPhan == item.BoPhan))
+                {
+                    totalBP_Sotien = lstTotal.FirstOrDefault(x => x.RowTital == "금액");
+                    totalBP_SoNgay = lstTotal.FirstOrDefault(x => x.RowTital == "횟수");
+                }
+                else
+                {
+                    totalBP_Sotien = new TongHopBoPhan()
+                    {
+                        RowTital = "금액",
+                        BoPhan = item.BoPhan,
+                    };
+
+                    totalBP_SoNgay = new TongHopBoPhan()
+                    {
+                        RowTital = "횟수",
+                        BoPhan = item.BoPhan,
+                    };
+                }
+
+                totalBP_Sotien.SoTien_SD += item.SoTien;
+                totalBP_SoNgay.SoTien_SD += item.SoLanSuDung;
+
+                if (!lstTotal.Any(x => x.BoPhan == item.BoPhan))
+                {
+                    lstTotal.Add(totalBP_Sotien);
+                    lstTotal.Add(totalBP_SoNgay);
+                }
+            }
+
+            return DataSourceLoader.Load(lstTotal, loadOptions);
+        }
+        #endregion
+
+        #region Dang Ky Xe Oto
         [HttpGet]
         public object GetBoPhan(DataSourceLoadOptions loadOptions)
         {
@@ -77,7 +280,7 @@ namespace CarMNS.Areas.Admin.Controllers
                 var dic = _DangKyXeService.GetUserSendMail(xe.Id, true, false, false);
                 if (dic["SEND_NEXT"].Count > 0)
                 {
-                    var message = new Message(dic["SEND_NEXT"], "REGISTER TO USE CAR", "You have a request need approve, please check : http://10.70.10.97:8083/admin/");
+                    var message = new Message(dic["SEND_NEXT"], "REGISTER TO USE CAR", "You have a request need approve, please check : http://10.70.10.97:8083/admin");
                     EmailSender.MailFrom = UserEmail;
                     _emailSender.SendEmail(message);
                 }
@@ -95,6 +298,7 @@ namespace CarMNS.Areas.Admin.Controllers
             {
                 JsonConvert.PopulateObject(values, xe);
                 xe = _DangKyXeService.UpdateDangKyXe(xe);
+
                 return Ok(xe);
             }
             else
@@ -180,13 +384,13 @@ namespace CarMNS.Areas.Admin.Controllers
 
                 if (dic["SEND_NEXT"].Count > 0)
                 {
-                    var message = new Message(dic["SEND_NEXT"], "REGISTER TO USE CAR", "You have a request need approve, please check : http://10.70.10.97:8083/admin/");
+                    var message = new Message(dic["SEND_NEXT"], "REGISTER TO USE CAR", "You have a request need approve, please check : http://10.70.10.97:8083/admin");
                     EmailSender.MailFrom = UserEmail;
                     _emailSender.SendEmail(message);
                 }
                 if (dic["SEND_PRE"].Count > 0)
                 {
-                    var message = new Message(dic["SEND_PRE"], "REGISTER TO USE CAR", "You have a request approved, please check: http://10.70.10.97:8083/admin/");
+                    var message = new Message(dic["SEND_PRE"], "REGISTER TO USE CAR", "You have a request approved, please check: http://10.70.10.97:8083/admin");
                     EmailSender.MailFrom = UserEmail;
                     _emailSender.SendEmail(message);
                 }
@@ -195,7 +399,7 @@ namespace CarMNS.Areas.Admin.Controllers
         }
 
         /// <summary>
-        /// Approve đăng ký xe
+        /// UnApprove đăng ký xe
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
@@ -210,7 +414,7 @@ namespace CarMNS.Areas.Admin.Controllers
 
                 if (dic["SEND_PRE"].Count > 0)
                 {
-                    var message = new Message(dic["SEND_PRE"], "REGISTER TO USE CAR", "You have a request unapproved, please check : http://10.70.10.97:8083/admin/");
+                    var message = new Message(dic["SEND_PRE"], "REGISTER TO USE CAR", "You have a request unapproved, please check : http://10.70.10.97:8083/admin");
                     EmailSender.MailFrom = UserEmail;
                     _emailSender.SendEmail(message);
                 }
@@ -305,7 +509,7 @@ namespace CarMNS.Areas.Admin.Controllers
                 lst = lst.Where(x => x.BoPhan == bophan).ToList();
             }
 
-            return DataSourceLoader.Load(lst, loadOptions);
+            return DataSourceLoader.Load(lst.OrderByDescending(x=>x.NgaySuDung), loadOptions);
         }
 
         public IActionResult ViepMap()

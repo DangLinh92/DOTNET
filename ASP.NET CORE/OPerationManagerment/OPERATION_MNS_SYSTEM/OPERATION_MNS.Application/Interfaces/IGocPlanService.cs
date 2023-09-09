@@ -1,4 +1,6 @@
 ﻿using OPERATION_MNS.Application.ViewModels;
+using OPERATION_MNS.Application.ViewModels.Lfem;
+using OPERATION_MNS.Data.Entities;
 using OPERATION_MNS.Utilities.Dtos;
 using System;
 using System.Collections.Generic;
@@ -11,27 +13,27 @@ namespace OPERATION_MNS.Application.Interfaces
         void Add(GocPlanViewModel model);
 
         List<GocPlanViewModel> GetAll();
-        List<string> DateOffLine(string year, string owner, string wlp,string danhmuc="");
+        List<string> DateOffLine(string year, string owner, string wlp, string danhmuc = "");
 
-        List<GocPlanViewModelEx> GetByTime(string unit,string fromDate,string toDate,string wlp = "WLP1",string danhmuc="");
-        List<GocPlanViewModelEx> GetByTime_fab(string unit,string fromDate,string toDate);
+        List<GocPlanViewModelEx> GetByTime(string unit, string fromDate, string toDate, string wlp = "WLP1", string danhmuc = "");
+        List<GocPlanViewModelEx> GetByTime_fab(string unit, string fromDate, string toDate);
 
-        ViewControlChartDataModel GetDataControlChart(string date,string toDate, string operation, string mattertial);
+        ViewControlChartDataModel GetDataControlChart(string date, string toDate, string operation, string mattertial);
 
         GocPlanViewModel GetById(int id);
 
         List<ProcActualPlanModel> GetProcActualPlanModel(string month);
-        List<ProcActualPlanModel> GetProcActualPlanWlp2Model(string month,string danhmuc);
+        List<ProcActualPlanModel> GetProcActualPlanWlp2Model(string month, string danhmuc);
 
-        void DeleteGocModel(int Id, string fromDate, string toDate,string wlp);
-        void DeleteGocModelWlp2(string model, string fromDate, string toDate,string danhmuc);
+        void DeleteGocModel(int Id, string fromDate, string toDate, string wlp);
+        void DeleteGocModelWlp2(string model, string fromDate, string toDate, string danhmuc);
         ViewControlChartDataModel GetDataControlChartWLP2(string date, string toDate, string operation, string mattertial);
 
         ResultDB ImportExcel(string filePath, string param);
         ResultDB ImportExcel_Wlp2(string filePath, string param);
 
-        List<GocPlanViewModel> GetDataByDay(string dayFrom,string dayTo,string danhMuc);
-        
+        List<GocPlanViewModel> GetDataByDay(string dayFrom, string dayTo, string danhMuc);
+
         void Update(GocPlanViewModel model);
 
         void Delete(int id);
@@ -51,5 +53,18 @@ namespace OPERATION_MNS.Application.Interfaces
         CTQSettingWLP2ViewModel DeleteCTQ_Wlp2(CTQSettingWLP2ViewModel ctq);
 
         CTQSettingWLP2ViewModel GetCTQ_Wlp2_Id(int Id);
+
+        // LFEM
+        void DeleteGocModelLfem(string model, string fromDate, string toDate, string danhmuc);
+        ResultDB ImportExcel_Lfem(string filePath, string param);
+        List<GOC_PLAN_LFEM> GetDataByDayLfem(string dayFrom, string danhMuc);
+        List<ProcActualPlanModel> GetProcActualPlanLfemModel(string month, string dateTo, string danhmuc, string display);
+
+        List<SanXuat_XuatHang_ViewModel> GetSanXuatXuatHang(string month);
+
+        // SMT
+        ResultDB ImportExcel_SMT(string filePath, string param);
+        void DeleteGocModelSMT(string model, string fromDate, string toDate, string danhmuc);
+        List<ProcActualPlanModel> GetProcActualPlanSMTModel(string month, string dateTo, string danhmuc, string display);
     }
 }

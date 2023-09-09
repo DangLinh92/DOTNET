@@ -41,6 +41,7 @@ namespace HRMNS.Application.Implementation
         private IRespository<BANG_CONG_EXTENTION, int> _bangCongExResponsitory;
         private IRespository<SETTING_TIME_CA_LVIEC, int> _settingTimeCaLamviecResponsitory;
         private IRespository<HR_NHANVIEN_2, string> _nhanvien2Responsitory;
+        private IRespository<DAILY_TIME_WORKING, int> _dailytimeResponsitory;
 
         private EFUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -61,6 +62,7 @@ namespace HRMNS.Application.Implementation
             IRespository<BANG_CONG_EXTENTION, int> bangCongExResponsitory,
             IRespository<SETTING_TIME_CA_LVIEC, int> settingTimeCaLamviecResponsitory,
             IRespository<HR_NHANVIEN_2, string> nhanvien2Responsitory,
+            IRespository<DAILY_TIME_WORKING, int> dailytimeResponsitory,
             IUnitOfWork unitOfWork, IMapper mapper,
             IHttpContextAccessor httpContextAccessor)
         {
@@ -84,6 +86,7 @@ namespace HRMNS.Application.Implementation
             _nhanvienCheDoDBResponsitory = nhanvienCheDoDBResponsitory;
             _settingTimeCaLamviecResponsitory = settingTimeCaLamviecResponsitory;
             _nhanvien2Responsitory = nhanvien2Responsitory;
+            _dailytimeResponsitory = dailytimeResponsitory;
         }
 
         List<CHAM_CONG_LOG> CHAM_CONG_LOGs;
@@ -192,6 +195,7 @@ namespace HRMNS.Application.Implementation
                     // lay ds thong tin nhan vien 
                     foreach (DataRow row in nvTable.Rows)
                     {
+
                         if (!lstBoPhan.Contains(row["MaBoPhan"].NullString()))
                         {
                             lstBoPhan.Add(row["MaBoPhan"].NullString());
@@ -299,7 +303,9 @@ namespace HRMNS.Application.Implementation
                                     KyHieuChamCong = row["KyHieuChamCong"].NullString(),
                                     DateModified = row["DateModified"].NullString(),
                                     PhanLoaiDM = row["PhanLoaiDM"].NullString(),
-                                    HeSo = double.Parse(row["Heso"].IfNullIsZero())
+                                    HeSo = double.Parse(row["Heso"].IfNullIsZero()),
+                                    NoiDung = row["NoiDung"].NullString(),
+                                    GiaTri = double.Parse(row["GiaTri"].IfNullIsZero())
                                 });
                             }
                         }
@@ -411,7 +417,7 @@ namespace HRMNS.Application.Implementation
                                             if (!item.TimeInOutModels.Any(x => x.DayCheck == dateCheck && x.MaNV == item.MaNV))
                                             {
                                                 string hangmuc = item.lstChamCongDB.Where(x => string.Compare(dateCheck, x.NgayBatDau) >= 0 && string.Compare(dateCheck, x.NgayKetThuc) <= 0).FirstOrDefault()?.TenChiTiet;
-
+                                                string draf = item.lstChamCongDB.Where(x => string.Compare(dateCheck, x.NgayBatDau) >= 0 && string.Compare(dateCheck, x.NgayKetThuc) <= 0).FirstOrDefault()?.NoiDung;
                                                 item.TimeInOutModels.Add(new TimeInOutModel()
                                                 {
                                                     MaNV = item.MaNV,
@@ -419,7 +425,8 @@ namespace HRMNS.Application.Implementation
                                                     DayCheck = dateCheck,
                                                     InTime = timeInout_kr.FirstIn_Time,
                                                     OutTime = timeInout_kr.Last_Out_Time,
-                                                    HangMuc = hangmuc.NullString()
+                                                    HangMuc = hangmuc.NullString(),
+                                                    Draf = draf
                                                 });
                                             }
                                         }
@@ -510,19 +517,21 @@ namespace HRMNS.Application.Implementation
 
                                                 if (_chamCongLog == null)
                                                 {
-                                                    if (CheckNgayDB(dateCheck) == 1)
+                                                    if (CheckNgayDB(dateCheck, _caLamViec.MaCaLaviec) == 1)
                                                     {
                                                         item.WorkingStatuses.Add(new WorkingStatus()
                                                         {
                                                             DayCheck = dateCheck,
-                                                            Value = kyhieuChamCongDB.NullString() == "" ? "PD" : kyhieuChamCongDB.NullString()
+                                                            Value = kyhieuChamCongDB.NullString() == "" ? "PD" : kyhieuChamCongDB.NullString(),
+                                                            FromTime = "00:00:00",
+                                                            ToTime = "00:00:00",
                                                         });
                                                     }
                                                     continue;
                                                 }
 
-                                                HR_NHANVIEN_2 nv2 = HR_NHANVIEN_2s.FirstOrDefault(x=>x.Id == item.MaNV);
-                                                if(nv2 != null)
+                                                HR_NHANVIEN_2 nv2 = HR_NHANVIEN_2s.FirstOrDefault(x => x.Id == item.MaNV);
+                                                if (nv2 != null)
                                                 {
                                                     item.VP_SX = nv2.VP_SX;
                                                 }
@@ -630,7 +639,9 @@ namespace HRMNS.Application.Implementation
                                                                 item.WorkingStatuses.Add(new WorkingStatus()
                                                                 {
                                                                     DayCheck = dateCheck,
-                                                                    Value = kyhieuChamCongDB.NullString() == "" ? "PD" : kyhieuChamCongDB.NullString() // PD: Probation Day shift/Thử việc ca ngày
+                                                                    Value = kyhieuChamCongDB.NullString() == "" ? "PD" : kyhieuChamCongDB.NullString(), // PD: Probation Day shift/Thử việc ca ngày,
+                                                                    FromTime = firstTime,
+                                                                    ToTime = lastTime,
                                                                 });
                                                             }
                                                             else
@@ -742,7 +753,9 @@ namespace HRMNS.Application.Implementation
                                                                 item.WorkingStatuses.Add(new WorkingStatus()
                                                                 {
                                                                     DayCheck = dateCheck,
-                                                                    Value = kyhieuChamCongDB.NullString() == "" ? "PD" : kyhieuChamCongDB.NullString() // PD: Probation Day shift/Thử việc ca ngày
+                                                                    Value = kyhieuChamCongDB.NullString() == "" ? "PD" : kyhieuChamCongDB.NullString(), // PD: Probation Day shift/Thử việc ca ngày
+                                                                    FromTime = firstTime,
+                                                                    ToTime = lastTime
                                                                 });
                                                             }
 
@@ -760,7 +773,9 @@ namespace HRMNS.Application.Implementation
                                                             item.WorkingStatuses.Add(new WorkingStatus()
                                                             {
                                                                 DayCheck = dateCheck,
-                                                                Value = kyhieuChamCongDB.NullString() == "" ? "PMD" : kyhieuChamCongDB.NullString() // Làm ca ngày thử việc ngay ki niem
+                                                                Value = kyhieuChamCongDB.NullString() == "" ? "PMD" : kyhieuChamCongDB.NullString(), // Làm ca ngày thử việc ngay ki niem
+                                                                FromTime = firstTime,
+                                                                ToTime = lastTime
                                                             });
 
                                                             timeOT = HR_NHANVIEN_CHEDO_DBs.Exists(x => x.MaNhanVien == item.MaNV && x.CheDoDB.Contains("Block_10p")) ? SimpleValueOT(timeOT) : Block30mValueOT(timeOT);
@@ -792,7 +807,9 @@ namespace HRMNS.Application.Implementation
                                                             item.WorkingStatuses.Add(new WorkingStatus()
                                                             {
                                                                 DayCheck = dateCheck,
-                                                                Value = kyhieuChamCongDB.NullString() == "" ? "TV" : ResetULIL(kyhieuChamCongDB.NullString(), dateCheck) // TV: Thử việc làm thêm ngày chủ nhật/ Probation
+                                                                Value = kyhieuChamCongDB.NullString() == "" ? "TV" : ResetULIL(kyhieuChamCongDB.NullString(), dateCheck), // TV: Thử việc làm thêm ngày chủ nhật/ Probation
+                                                                FromTime = firstTime,
+                                                                ToTime = lastTime
                                                             });
 
                                                             timeOT = HR_NHANVIEN_CHEDO_DBs.Exists(x => x.MaNhanVien == item.MaNV && x.CheDoDB.Contains("Block_10p")) ? SimpleValueOT(timeOT) : Block30mValueOT(timeOT);
@@ -827,6 +844,8 @@ namespace HRMNS.Application.Implementation
                                                             {
                                                                 DayCheck = dateCheck,
                                                                 Value = kyhieuChamCongDB.NullString() == "" ? "PD" : kyhieuChamCongDB.NullString(), // PD  thu viec ca ngay
+                                                                FromTime = firstTime,
+                                                                ToTime = lastTime
                                                             });
 
                                                             timeOT = HR_NHANVIEN_CHEDO_DBs.Exists(x => x.MaNhanVien == item.MaNV && x.CheDoDB.Contains("Block_10p")) ? SimpleValueOT(timeOT) : Block30mValueOT(timeOT);
@@ -930,7 +949,9 @@ namespace HRMNS.Application.Implementation
                                                             item.WorkingStatuses.Add(new WorkingStatus()
                                                             {
                                                                 DayCheck = dateCheck,
-                                                                Value = kyhieuChamCongDB.NullString() == "" ? "PD" : kyhieuChamCongDB.NullString() // PD: Probation Day shift/Thử việc ca ngày
+                                                                Value = kyhieuChamCongDB.NullString() == "" ? "PD" : kyhieuChamCongDB.NullString(), // PD: Probation Day shift/Thử việc ca ngày
+                                                                FromTime = firstTime,
+                                                                ToTime = lastTime
                                                             });
                                                         }
 
@@ -988,6 +1009,14 @@ namespace HRMNS.Application.Implementation
 
                                                         // Di muon ve som
                                                         double ELLC = 0;
+                                                        if (CheckCheDoThaiSan("ConNho", dateCheck, item.MaNV))
+                                                        {
+                                                            if (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.ParseExact("09:05:00", "HH:mm:ss", CultureInfo.InvariantCulture))
+                                                            {
+                                                                ELLC += (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact("09:05:00", "HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+                                                            }
+                                                        }
+                                                        else
                                                         if (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.ParseExact("08:05:00", "HH:mm:ss", CultureInfo.InvariantCulture))
                                                         {
                                                             ELLC += (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact("08:05:00", "HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
@@ -1103,10 +1132,10 @@ namespace HRMNS.Application.Implementation
                                                             ELLC = 0;
                                                         }
 
-                                                        var dmvs = DANGKY_DIMUON_VSOM_NHANVIENs.FirstOrDefault(x => x.MaNV == item.MaNV && x.NgayDangKy == dateCheck);
-                                                        if (dmvs != null)
+                                                        ChamCongDB congDB = item.lstChamCongDB.OrderByDescending(x => x.DateModified).FirstOrDefault(x => string.Compare(dateCheck, x.NgayBatDau) >= 0 && string.Compare(dateCheck, x.NgayKetThuc) <= 0 && (x.KyHieuChamCong == "EL" || x.KyHieuChamCong == "LC"));
+                                                        if (congDB != null && !(new int[] { 1, 3 }).Contains(CheckNgayDB(dateCheck, CommonConstants.CA_NGAY)) && congDB.GiaTri > 0)
                                                         {
-                                                            ELLC = dmvs.SoGioDangKy;
+                                                            ELLC = congDB.GiaTri;
                                                         }
 
                                                         item.EL_LC_Statuses.Add(new EL_LC_Status()
@@ -1155,7 +1184,9 @@ namespace HRMNS.Application.Implementation
                                                                 item.WorkingStatuses.Add(new WorkingStatus()
                                                                 {
                                                                     DayCheck = dateCheck,
-                                                                    Value = kyhieuChamCongDB.NullString() == "" ? "PN" : kyhieuChamCongDB.NullString() // PN: Probation Night shift/Thử việc ca đêm
+                                                                    Value = kyhieuChamCongDB.NullString() == "" ? "PN" : kyhieuChamCongDB.NullString(), // PN: Probation Night shift/Thử việc ca đêm
+                                                                    FromTime = firstTime,
+                                                                    ToTime = lastTime
                                                                 });
                                                             }
                                                             else
@@ -1250,7 +1281,9 @@ namespace HRMNS.Application.Implementation
                                                                 item.WorkingStatuses.Add(new WorkingStatus()
                                                                 {
                                                                     DayCheck = dateCheck,
-                                                                    Value = kyhieuChamCongDB.NullString() == "" ? "PN" : kyhieuChamCongDB.NullString() // PN: Probation Night shift/Thử việc ca đêm
+                                                                    Value = kyhieuChamCongDB.NullString() == "" ? "PN" : kyhieuChamCongDB.NullString(), // PN: Probation Night shift/Thử việc ca đêm
+                                                                    FromTime = firstTime,
+                                                                    ToTime = lastTime
                                                                 });
                                                             }
 
@@ -1262,7 +1295,9 @@ namespace HRMNS.Application.Implementation
                                                             item.WorkingStatuses.Add(new WorkingStatus()
                                                             {
                                                                 DayCheck = dateCheck,
-                                                                Value = kyhieuChamCongDB.NullString() == "" ? "PM" : kyhieuChamCongDB.NullString() // PM: Làm ca đêm ngày kỷ niệm  thử việc
+                                                                Value = kyhieuChamCongDB.NullString() == "" ? "PM" : kyhieuChamCongDB.NullString(), // PM: Làm ca đêm ngày kỷ niệm  thử việc
+                                                                FromTime = firstTime,
+                                                                ToTime = lastTime
                                                             });
                                                         }
                                                         else if (CheckNgayDB(dateCheck, CommonConstants.CA_DEM) == 3 || CheckNgayDB(dateCheck, CommonConstants.CA_DEM) == 4) // ngay chu nhat + ngay nghi bu
@@ -1271,7 +1306,9 @@ namespace HRMNS.Application.Implementation
                                                             item.WorkingStatuses.Add(new WorkingStatus()
                                                             {
                                                                 DayCheck = dateCheck,
-                                                                Value = kyhieuChamCongDB.NullString() == "" ? "TVD" : ResetULIL(kyhieuChamCongDB.NullString(), dateCheck) // TVD: Thử việc làm thêm ca đêm chủ nhật
+                                                                Value = kyhieuChamCongDB.NullString() == "" ? "TVD" : ResetULIL(kyhieuChamCongDB.NullString(), dateCheck), // TVD: Thử việc làm thêm ca đêm chủ nhật
+                                                                FromTime = firstTime,
+                                                                ToTime = lastTime
                                                             });
                                                         }
                                                         else if (CheckNgayDB(dateCheck, CommonConstants.CA_DEM) == 1) // ngay le
@@ -1289,7 +1326,9 @@ namespace HRMNS.Application.Implementation
                                                             item.WorkingStatuses.Add(new WorkingStatus()
                                                             {
                                                                 DayCheck = dateCheck,
-                                                                Value = kyhieuChamCongDB.NullString() == "" ? "PDD" : kyhieuChamCongDB.NullString() // PDD: Thử việc làm đêm ngày lễ
+                                                                Value = kyhieuChamCongDB.NullString() == "" ? "PDD" : kyhieuChamCongDB.NullString(), // PDD: Thử việc làm đêm ngày lễ
+                                                                FromTime = firstTime,
+                                                                ToTime = lastTime
                                                             });
                                                         }
                                                         else if (CheckNgayDB(dateCheck, CommonConstants.CA_DEM) == 2) // ngay truoc le
@@ -1298,7 +1337,9 @@ namespace HRMNS.Application.Implementation
                                                             item.WorkingStatuses.Add(new WorkingStatus()
                                                             {
                                                                 DayCheck = dateCheck,
-                                                                Value = kyhieuChamCongDB.NullString() == "" ? "PH" : kyhieuChamCongDB.NullString() // PH: làm ca đêm trước ngày lễ( thử việc)
+                                                                Value = kyhieuChamCongDB.NullString() == "" ? "PH" : kyhieuChamCongDB.NullString(), // PH: làm ca đêm trước ngày lễ( thử việc)
+                                                                FromTime = firstTime,
+                                                                ToTime = lastTime
                                                             });
                                                         }
 
@@ -1351,6 +1392,15 @@ namespace HRMNS.Application.Implementation
 
                                                         // Di muon ve som
                                                         double ELLC = 0;
+
+                                                        if (CheckCheDoThaiSan("ConNho", dateCheck, item.MaNV))
+                                                        {
+                                                            if (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.ParseExact("21:05:00", "HH:mm:ss", CultureInfo.InvariantCulture))
+                                                            {
+                                                                ELLC += (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact("21:05:00", "HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+                                                            }
+                                                        }
+                                                        else
                                                         if (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.ParseExact("20:05:00", "HH:mm:ss", CultureInfo.InvariantCulture))
                                                         {
                                                             ELLC += (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact("20:05:00", "HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
@@ -1389,7 +1439,7 @@ namespace HRMNS.Application.Implementation
                                                             if (BreakHaftDay(kyhieuChamCongDB.NullString()))
                                                             {
                                                                 if (DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture) >= DateTime.ParseExact("13:30:00", "HH:mm:ss", CultureInfo.InvariantCulture) ||
-                                                                 GetTimeCaLamViec(item.BoPhan, CommonConstants.CA_NGAY, dateCheck).EndWorking == "17:00:00")
+                                                                 GetTimeCaLamViec(item.BoPhan, _caLamViec.MaCaLaviec, dateCheck).EndWorking == "17:00:00")
                                                                 {
                                                                     ELLC += 0;
                                                                 }
@@ -1398,14 +1448,14 @@ namespace HRMNS.Application.Implementation
                                                                     ELLC += 0.7;
                                                                 }
                                                             }
-                                                            else if ((new int[] { 1, 3, 4 }).Contains(CheckNgayDB(dateCheck, CommonConstants.CA_NGAY)))
+                                                            else if ((new int[] { 1, 3, 4 }).Contains(CheckNgayDB(dateCheck, _caLamViec.MaCaLaviec)))
                                                             {
                                                                 ELLC = 0;
                                                             }
                                                         }
                                                         else
                                                         {
-                                                            if (BreakHaftDay(kyhieuChamCongDB.NullString()) || (new int[] { 1, 3, 4 }).Contains(CheckNgayDB(dateCheck, CommonConstants.CA_DEM)))
+                                                            if (BreakHaftDay(kyhieuChamCongDB.NullString()) || (new int[] { 1, 3, 4 }).Contains(CheckNgayDB(dateCheck, _caLamViec.MaCaLaviec)))
                                                             {
                                                                 ELLC = 0;
                                                             }
@@ -1417,10 +1467,16 @@ namespace HRMNS.Application.Implementation
                                                         }
 
 
-                                                        var dmvs = DANGKY_DIMUON_VSOM_NHANVIENs.FirstOrDefault(x => x.MaNV == item.MaNV && x.NgayDangKy == dateCheck);
-                                                        if (dmvs != null)
+                                                        //var dmvs = DANGKY_DIMUON_VSOM_NHANVIENs.FirstOrDefault(x => x.MaNV == item.MaNV && x.NgayDangKy == dateCheck);
+                                                        //if (dmvs != null)
+                                                        //{
+                                                        //    ELLC = dmvs.SoGioDangKy;
+                                                        //}
+
+                                                        ChamCongDB congDB = item.lstChamCongDB.OrderByDescending(x => x.DateModified).FirstOrDefault(x => string.Compare(dateCheck, x.NgayBatDau) >= 0 && string.Compare(dateCheck, x.NgayKetThuc) <= 0 && (x.KyHieuChamCong == "EL" || x.KyHieuChamCong == "LC"));
+                                                        if (congDB != null && !(new int[] { 1, 3 }).Contains(CheckNgayDB(dateCheck, CommonConstants.CA_DEM)) && congDB.GiaTri > 0)
                                                         {
-                                                            ELLC = dmvs.SoGioDangKy;
+                                                            ELLC = congDB.GiaTri;
                                                         }
 
                                                         item.EL_LC_Statuses.Add(new EL_LC_Status()
@@ -1434,12 +1490,14 @@ namespace HRMNS.Application.Implementation
                                                 {
                                                     int checkDate = CheckNgayDB(dateCheck, _caLamViec.MaCaLaviec);
 
-                                                    if (checkDate == 1)
+                                                    if (checkDate == 1 || checkDate == 5)
                                                     {
                                                         item.WorkingStatuses.Add(new WorkingStatus()
                                                         {
                                                             DayCheck = dateCheck,
-                                                            Value = kyhieuChamCongDB.NullString() == "" ? "PD" : kyhieuChamCongDB.NullString() // NH: NationALHoliday/ Nghỉ lễ
+                                                            Value = kyhieuChamCongDB.NullString() == "" ? "PD" : kyhieuChamCongDB.NullString(), // PD: Probation Day shift/Thử việc ca ngày
+                                                            FromTime = firstTime,
+                                                            ToTime = lastTime
                                                         });
                                                     }
                                                     else
@@ -1447,16 +1505,22 @@ namespace HRMNS.Application.Implementation
                                                         item.WorkingStatuses.Add(new WorkingStatus()
                                                         {
                                                             DayCheck = dateCheck,
-                                                            Value = kyhieuChamCongDB.NullString() == "" ? "-" : kyhieuChamCongDB.NullString()
+                                                            Value = kyhieuChamCongDB.NullString() == "" ? "-" : kyhieuChamCongDB.NullString(),
+                                                            FromTime = firstTime,
+                                                            ToTime = lastTime
                                                         });
                                                     }
-
                                                     double ELLC = 0;
-                                                    var dmvs = DANGKY_DIMUON_VSOM_NHANVIENs.FirstOrDefault(x => x.MaNV == item.MaNV && x.NgayDangKy == dateCheck);
-                                                    if (dmvs != null)
+                                                    ChamCongDB congDB = item.lstChamCongDB.OrderByDescending(x => x.DateModified).FirstOrDefault(x => string.Compare(dateCheck, x.NgayBatDau) >= 0 && string.Compare(dateCheck, x.NgayKetThuc) <= 0 && (x.KyHieuChamCong == "EL" || x.KyHieuChamCong == "LC"));
+                                                    if (congDB != null && !(new int[] { 1, 3 }).Contains(CheckNgayDB(dateCheck,_caLamViec.MaCaLaviec)) && congDB.GiaTri > 0)
                                                     {
-                                                        ELLC = dmvs.SoGioDangKy;
+                                                        ELLC = congDB.GiaTri;
                                                     }
+                                                    //var dmvs = DANGKY_DIMUON_VSOM_NHANVIENs.FirstOrDefault(x => x.MaNV == item.MaNV && x.NgayDangKy == dateCheck);
+                                                    //if (dmvs != null)
+                                                    //{
+                                                    //    ELLC = dmvs.SoGioDangKy;
+                                                    //}
 
                                                     item.EL_LC_Statuses.Add(new EL_LC_Status()
                                                     {
@@ -1468,12 +1532,14 @@ namespace HRMNS.Application.Implementation
                                                 {
                                                     int checkDate = CheckNgayDB(dateCheck, _caLamViec.MaCaLaviec);
 
-                                                    if (checkDate == 1)
+                                                    if (checkDate == 1 || checkDate == 5)
                                                     {
                                                         item.WorkingStatuses.Add(new WorkingStatus()
                                                         {
                                                             DayCheck = dateCheck,
-                                                            Value = kyhieuChamCongDB.NullString() == "" ? "PD" : kyhieuChamCongDB.NullString() // NH: NationALHoliday/ Nghỉ lễ
+                                                            Value = kyhieuChamCongDB.NullString() == "" ? "PD" : kyhieuChamCongDB.NullString(), // PD: Probation Day shift/Thử việc ca ngày
+                                                            FromTime = firstTime,
+                                                            ToTime = lastTime
                                                         });
                                                     }
                                                     else
@@ -1481,15 +1547,18 @@ namespace HRMNS.Application.Implementation
                                                         item.WorkingStatuses.Add(new WorkingStatus()
                                                         {
                                                             DayCheck = dateCheck,
-                                                            Value = kyhieuChamCongDB.NullString() == "" ? "-" : kyhieuChamCongDB.NullString()
+                                                            Value = kyhieuChamCongDB.NullString() == "" ? "-" : kyhieuChamCongDB.NullString(),
+                                                            FromTime = firstTime,
+                                                            ToTime = lastTime
                                                         });
                                                     }
 
                                                     double ELLC = 0;
-                                                    var dmvs = DANGKY_DIMUON_VSOM_NHANVIENs.FirstOrDefault(x => x.MaNV == item.MaNV && x.NgayDangKy == dateCheck);
-                                                    if (dmvs != null)
+
+                                                    ChamCongDB congDB = item.lstChamCongDB.OrderByDescending(x => x.DateModified).FirstOrDefault(x => string.Compare(dateCheck, x.NgayBatDau) >= 0 && string.Compare(dateCheck, x.NgayKetThuc) <= 0 && (x.KyHieuChamCong == "EL" || x.KyHieuChamCong == "LC"));
+                                                    if (congDB != null && !(new int[] { 1, 3 }).Contains(CheckNgayDB(dateCheck, _caLamViec.MaCaLaviec)) && congDB.GiaTri > 0)
                                                     {
-                                                        ELLC = dmvs.SoGioDangKy;
+                                                        ELLC = congDB.GiaTri;
                                                     }
 
                                                     item.EL_LC_Statuses.Add(new EL_LC_Status()
@@ -1507,7 +1576,9 @@ namespace HRMNS.Application.Implementation
                                                     item.WorkingStatuses.Add(new WorkingStatus()
                                                     {
                                                         DayCheck = dateCheck,
-                                                        Value = "IL"
+                                                        Value = "IL",
+                                                        FromTime = firstTime,
+                                                        ToTime = lastTime
                                                     });
                                                 }
                                                 else if (CheckCheDoThaiSan("ThaiSan", dateCheck, item.MaNV) && IsChuNhat(dateCheck))
@@ -1515,7 +1586,9 @@ namespace HRMNS.Application.Implementation
                                                     item.WorkingStatuses.Add(new WorkingStatus()
                                                     {
                                                         DayCheck = dateCheck,
-                                                        Value = "-"
+                                                        Value = "-",
+                                                        FromTime = firstTime,
+                                                        ToTime = lastTime
                                                     });
                                                 }
                                             }
@@ -1532,12 +1605,14 @@ namespace HRMNS.Application.Implementation
 
                                                 if (_chamCongLog == null)
                                                 {
-                                                    if (CheckNgayDB(dateCheck) == 1)
+                                                    if (CheckNgayDB(dateCheck, _caLamViec.MaCaLaviec) == 1)
                                                     {
                                                         item.WorkingStatuses.Add(new WorkingStatus()
                                                         {
                                                             DayCheck = dateCheck,
-                                                            Value = kyhieuChamCongDB.NullString() == "" ? "NH" : kyhieuChamCongDB.NullString()
+                                                            Value = kyhieuChamCongDB.NullString() == "" ? "NH" : kyhieuChamCongDB.NullString(),
+                                                            FromTime = firstTime,
+                                                            ToTime = lastTime
                                                         });
                                                     }
                                                     continue;
@@ -1648,7 +1723,9 @@ namespace HRMNS.Application.Implementation
                                                                 item.WorkingStatuses.Add(new WorkingStatus()
                                                                 {
                                                                     DayCheck = dateCheck,
-                                                                    Value = kyhieuChamCongDB.NullString() == "" ? "DS" : kyhieuChamCongDB.NullString() // DS: Day Shift/ Ca ngày 
+                                                                    Value = kyhieuChamCongDB.NullString() == "" ? "DS" : kyhieuChamCongDB.NullString(), // DS: Day Shift/ Ca ngày 
+                                                                    FromTime = firstTime,
+                                                                    ToTime = lastTime
                                                                 });
                                                             }
                                                             else
@@ -1759,7 +1836,9 @@ namespace HRMNS.Application.Implementation
                                                                 item.WorkingStatuses.Add(new WorkingStatus()
                                                                 {
                                                                     DayCheck = dateCheck,
-                                                                    Value = kyhieuChamCongDB.NullString() == "" ? "DS" : kyhieuChamCongDB.NullString() // DS: Day Shift/ Ca ngày 
+                                                                    Value = kyhieuChamCongDB.NullString() == "" ? "DS" : kyhieuChamCongDB.NullString(), // DS: Day Shift/ Ca ngày 
+                                                                    FromTime = firstTime,
+                                                                    ToTime = lastTime
                                                                 });
                                                             }
                                                         }
@@ -1770,7 +1849,9 @@ namespace HRMNS.Application.Implementation
                                                             item.WorkingStatuses.Add(new WorkingStatus()
                                                             {
                                                                 DayCheck = dateCheck,
-                                                                Value = kyhieuChamCongDB.NullString() == "" ? "MD" : kyhieuChamCongDB.NullString() // làm ca ngày chính thức ngay ki niem
+                                                                Value = kyhieuChamCongDB.NullString() == "" ? "MD" : kyhieuChamCongDB.NullString(), // làm ca ngày chính thức ngay ki niem
+                                                                FromTime = firstTime,
+                                                                ToTime = lastTime
                                                             });
 
                                                             var clviec = item.lstNhanVienCaLamViec.FirstOrDefault(x =>
@@ -1804,7 +1885,9 @@ namespace HRMNS.Application.Implementation
                                                             item.WorkingStatuses.Add(new WorkingStatus()
                                                             {
                                                                 DayCheck = dateCheck,
-                                                                Value = kyhieuChamCongDB.NullString() == "" ? "-" : ResetULIL(kyhieuChamCongDB.NullString(), dateCheck) // lam chu nhat ca ngay k dung ky hieu DS
+                                                                Value = kyhieuChamCongDB.NullString() == "" ? "-" : ResetULIL(kyhieuChamCongDB.NullString(), dateCheck), // lam chu nhat ca ngay k dung ky hieu DS
+                                                                FromTime = firstTime,
+                                                                ToTime = lastTime
                                                             });
 
                                                             var clviec = item.lstNhanVienCaLamViec.FirstOrDefault(x =>
@@ -1835,7 +1918,9 @@ namespace HRMNS.Application.Implementation
                                                             item.WorkingStatuses.Add(new WorkingStatus()
                                                             {
                                                                 DayCheck = dateCheck,
-                                                                Value = kyhieuChamCongDB.NullString() == "" ? "NH" : kyhieuChamCongDB.NullString()
+                                                                Value = kyhieuChamCongDB.NullString() == "" ? "NH" : kyhieuChamCongDB.NullString(),
+                                                                FromTime = firstTime,
+                                                                ToTime = lastTime
                                                             });
 
                                                             var clviec = item.lstNhanVienCaLamViec.FirstOrDefault(x =>
@@ -1898,7 +1983,9 @@ namespace HRMNS.Application.Implementation
                                                             item.WorkingStatuses.Add(new WorkingStatus()
                                                             {
                                                                 DayCheck = dateCheck,
-                                                                Value = kyhieuChamCongDB.NullString() == "" ? "DS" : kyhieuChamCongDB.NullString() // DS: Day Shift/ Ca ngày
+                                                                Value = kyhieuChamCongDB.NullString() == "" ? "DS" : kyhieuChamCongDB.NullString(), // DS: Day Shift/ Ca ngày
+                                                                FromTime = firstTime,
+                                                                ToTime = lastTime
                                                             });
                                                         }
 
@@ -1956,6 +2043,16 @@ namespace HRMNS.Application.Implementation
 
                                                         // Di muon ve som
                                                         double ELLC = 0;
+
+                                                        // đi muộn 1h
+                                                        if (CheckCheDoThaiSan("ConNho", dateCheck, item.MaNV))
+                                                        {
+                                                            if (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.ParseExact("09:05:00", "HH:mm:ss", CultureInfo.InvariantCulture))
+                                                            {
+                                                                ELLC += (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact("09:05:00", "HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+                                                            }
+                                                        }
+                                                        else
                                                         if (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.ParseExact("08:05:00", "HH:mm:ss", CultureInfo.InvariantCulture))
                                                         {
                                                             ELLC += (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact("08:05:00", "HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
@@ -2002,6 +2099,7 @@ namespace HRMNS.Application.Implementation
                                                         }
                                                         else
                                                         {
+                                                            // về sớm 1H 
                                                             if (CheckCheDoThaiSan("ConNho1H", dateCheck, item.MaNV))
                                                             {
                                                                 if (DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture) < DateTime.ParseExact("16:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
@@ -2009,6 +2107,7 @@ namespace HRMNS.Application.Implementation
                                                                     ELLC += (DateTime.ParseExact("16:00:00", "HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
                                                                 }
                                                             }
+
                                                             else
                                                             {
                                                                 if (DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture) < DateTime.ParseExact("17:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
@@ -2070,11 +2169,17 @@ namespace HRMNS.Application.Implementation
                                                             ELLC = 0;
                                                         }
 
-                                                        var dmvs = DANGKY_DIMUON_VSOM_NHANVIENs.FirstOrDefault(x => x.MaNV == item.MaNV && x.NgayDangKy == dateCheck);
-                                                        if (dmvs != null)
+                                                        ChamCongDB congDB = item.lstChamCongDB.OrderByDescending(x => x.DateModified).FirstOrDefault(x => string.Compare(dateCheck, x.NgayBatDau) >= 0 && string.Compare(dateCheck, x.NgayKetThuc) <= 0 && (x.KyHieuChamCong == "EL" || x.KyHieuChamCong == "LC"));
+                                                        if (congDB != null && !(new int[] { 1, 3 }).Contains(CheckNgayDB(dateCheck, CommonConstants.CA_NGAY)) && congDB.GiaTri > 0)
                                                         {
-                                                            ELLC = dmvs.SoGioDangKy;
+                                                            ELLC = congDB.GiaTri;
                                                         }
+
+                                                        //var dmvs = DANGKY_DIMUON_VSOM_NHANVIENs.FirstOrDefault(x => x.MaNV == item.MaNV && x.NgayDangKy == dateCheck);
+                                                        //if (dmvs != null)
+                                                        //{
+                                                        //    ELLC = dmvs.SoGioDangKy;
+                                                        //}
 
                                                         item.EL_LC_Statuses.Add(new EL_LC_Status()
                                                         {
@@ -2122,7 +2227,9 @@ namespace HRMNS.Application.Implementation
                                                                 item.WorkingStatuses.Add(new WorkingStatus()
                                                                 {
                                                                     DayCheck = dateCheck,
-                                                                    Value = kyhieuChamCongDB.NullString() == "" ? "NS" : kyhieuChamCongDB.NullString() // NS: Night Shift/ Ca đêm
+                                                                    Value = kyhieuChamCongDB.NullString() == "" ? "NS" : kyhieuChamCongDB.NullString(), // NS: Night Shift/ Ca đêm
+                                                                    FromTime = firstTime,
+                                                                    ToTime = lastTime
                                                                 });
                                                             }
                                                             else
@@ -2243,7 +2350,9 @@ namespace HRMNS.Application.Implementation
                                                                 item.WorkingStatuses.Add(new WorkingStatus()
                                                                 {
                                                                     DayCheck = dateCheck,
-                                                                    Value = kyhieuChamCongDB.NullString() == "" ? "NS" : kyhieuChamCongDB.NullString() // NS: Night Shift/ Ca đêm
+                                                                    Value = kyhieuChamCongDB.NullString() == "" ? "NS" : kyhieuChamCongDB.NullString(), // NS: Night Shift/ Ca đêm
+                                                                    FromTime = firstTime,
+                                                                    ToTime = lastTime
                                                                 });
                                                             }
 
@@ -2255,7 +2364,9 @@ namespace HRMNS.Application.Implementation
                                                             item.WorkingStatuses.Add(new WorkingStatus()
                                                             {
                                                                 DayCheck = dateCheck,
-                                                                Value = kyhieuChamCongDB.NullString() == "" ? "BM" : kyhieuChamCongDB.NullString() // BM: Làm ca đêm ngày kỷ niệm chính thức
+                                                                Value = kyhieuChamCongDB.NullString() == "" ? "BM" : kyhieuChamCongDB.NullString(), // BM: Làm ca đêm ngày kỷ niệm chính thức
+                                                                FromTime = firstTime,
+                                                                ToTime = lastTime
                                                             });
                                                         }
                                                         else if (CheckNgayDB(dateCheck, CommonConstants.CA_DEM) == 3 || CheckNgayDB(dateCheck, CommonConstants.CA_DEM) == 4) // ngay chu nhat + ngay nghi bu
@@ -2264,7 +2375,9 @@ namespace HRMNS.Application.Implementation
                                                             item.WorkingStatuses.Add(new WorkingStatus()
                                                             {
                                                                 DayCheck = dateCheck,
-                                                                Value = kyhieuChamCongDB.NullString() == "" ? "D" : ResetULIL(kyhieuChamCongDB.NullString(), dateCheck) // TVD: Thử việc làm thêm ca đêm chủ nhật
+                                                                Value = kyhieuChamCongDB.NullString() == "" ? "D" : ResetULIL(kyhieuChamCongDB.NullString(), dateCheck), // TVD: Thử việc làm thêm ca đêm chủ nhật
+                                                                FromTime = firstTime,
+                                                                ToTime = lastTime
                                                             });
                                                         }
                                                         else if (CheckNgayDB(dateCheck, CommonConstants.CA_DEM) == 1) // ngay le
@@ -2282,7 +2395,9 @@ namespace HRMNS.Application.Implementation
                                                             item.WorkingStatuses.Add(new WorkingStatus()
                                                             {
                                                                 DayCheck = dateCheck,
-                                                                Value = kyhieuChamCongDB.NullString() == "" ? "NHD" : kyhieuChamCongDB.NullString() // NHD: làm ca đêm ngày lễ
+                                                                Value = kyhieuChamCongDB.NullString() == "" ? "NHD" : kyhieuChamCongDB.NullString(), // NHD: làm ca đêm ngày lễ
+                                                                FromTime = firstTime,
+                                                                ToTime = lastTime
                                                             });
                                                         }
                                                         else if (CheckNgayDB(dateCheck, CommonConstants.CA_DEM) == 2) // ngay truoc le
@@ -2291,7 +2406,9 @@ namespace HRMNS.Application.Implementation
                                                             item.WorkingStatuses.Add(new WorkingStatus()
                                                             {
                                                                 DayCheck = dateCheck,
-                                                                Value = kyhieuChamCongDB.NullString() == "" ? "BH" : kyhieuChamCongDB.NullString() // BH: làm ca đêm trước ngày lễ( chính thức)
+                                                                Value = kyhieuChamCongDB.NullString() == "" ? "BH" : kyhieuChamCongDB.NullString(), // BH: làm ca đêm trước ngày lễ( chính thức)
+                                                                FromTime = firstTime,
+                                                                ToTime = lastTime
                                                             });
                                                         }
 
@@ -2347,6 +2464,14 @@ namespace HRMNS.Application.Implementation
 
                                                         // Di muon ve som
                                                         double ELLC = 0;
+                                                        if (CheckCheDoThaiSan("ConNho", dateCheck, item.MaNV))
+                                                        {
+                                                            if (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.ParseExact("21:05:00", "HH:mm:ss", CultureInfo.InvariantCulture))
+                                                            {
+                                                                ELLC += (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact("21:05:00", "HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+                                                            }
+                                                        }
+                                                        else
                                                         if (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.ParseExact("20:05:00", "HH:mm:ss", CultureInfo.InvariantCulture))
                                                         {
                                                             ELLC += (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact("20:05:00", "HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
@@ -2359,6 +2484,7 @@ namespace HRMNS.Application.Implementation
                                                                 ELLC += (DateTime.ParseExact("04:00:00", "HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
                                                             }
                                                         }
+
                                                         else
                                                         {
                                                             if (DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture) < DateTime.ParseExact("05:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
@@ -2382,7 +2508,7 @@ namespace HRMNS.Application.Implementation
                                                             if (BreakHaftDay(kyhieuChamCongDB.NullString()))
                                                             {
                                                                 if (DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture) >= DateTime.ParseExact("13:30:00", "HH:mm:ss", CultureInfo.InvariantCulture) ||
-                                                                GetTimeCaLamViec(item.BoPhan, CommonConstants.CA_NGAY, dateCheck).EndWorking == "17:00:00")
+                                                                GetTimeCaLamViec(item.BoPhan, CommonConstants.CA_DEM, dateCheck).EndWorking == "17:00:00")
                                                                 {
                                                                     ELLC += 0;
                                                                 }
@@ -2391,7 +2517,7 @@ namespace HRMNS.Application.Implementation
                                                                     ELLC += 0.7;
                                                                 }
                                                             }
-                                                            else if ((new int[] { 1, 3, 4 }).Contains(CheckNgayDB(dateCheck, CommonConstants.CA_NGAY)))
+                                                            else if ((new int[] { 1, 3, 4 }).Contains(CheckNgayDB(dateCheck, CommonConstants.CA_DEM)))
                                                             {
                                                                 ELLC = 0;
                                                             }
@@ -2426,11 +2552,17 @@ namespace HRMNS.Application.Implementation
                                                             ELLC = 0;
                                                         }
 
-                                                        var dmvs = DANGKY_DIMUON_VSOM_NHANVIENs.FirstOrDefault(x => x.MaNV == item.MaNV && x.NgayDangKy == dateCheck);
-                                                        if (dmvs != null)
+                                                        ChamCongDB congDB = item.lstChamCongDB.OrderByDescending(x => x.DateModified).FirstOrDefault(x => string.Compare(dateCheck, x.NgayBatDau) >= 0 && string.Compare(dateCheck, x.NgayKetThuc) <= 0 && (x.KyHieuChamCong == "EL" || x.KyHieuChamCong == "LC"));
+                                                        if (congDB != null && !(new int[] { 1, 3 }).Contains(CheckNgayDB(dateCheck, CommonConstants.CA_DEM)) && congDB.GiaTri > 0)
                                                         {
-                                                            ELLC = dmvs.SoGioDangKy;
+                                                            ELLC = congDB.GiaTri;
                                                         }
+
+                                                        //var dmvs = DANGKY_DIMUON_VSOM_NHANVIENs.FirstOrDefault(x => x.MaNV == item.MaNV && x.NgayDangKy == dateCheck);
+                                                        //if (dmvs != null)
+                                                        //{
+                                                        //    ELLC = dmvs.SoGioDangKy;
+                                                        //}
 
                                                         item.EL_LC_Statuses.Add(new EL_LC_Status()
                                                         {
@@ -2450,15 +2582,29 @@ namespace HRMNS.Application.Implementation
                                                             item.WorkingStatuses.Add(new WorkingStatus()
                                                             {
                                                                 DayCheck = dateCheck,
-                                                                Value = kyhieuChamCongDB.NullString() == "" ? "NH" : kyhieuChamCongDB.NullString() // NH: NationALHoliday/ Nghỉ lễ
+                                                                Value = kyhieuChamCongDB.NullString() == "" ? "NH" : kyhieuChamCongDB.NullString(), // NH: NationALHoliday/ Nghỉ lễ
+                                                                FromTime = firstTime,
+                                                                ToTime = lastTime
                                                             });
                                                         }
-                                                        else if (checkDate == 4 || checkDate == 5)
+                                                        else if (checkDate == 4)
                                                         {
                                                             item.WorkingStatuses.Add(new WorkingStatus()
                                                             {
                                                                 DayCheck = dateCheck,
-                                                                Value = kyhieuChamCongDB.NullString() == "" ? "-" : kyhieuChamCongDB.NullString()
+                                                                Value = kyhieuChamCongDB.NullString() == "" ? "-" : kyhieuChamCongDB.NullString(),
+                                                                FromTime = firstTime,
+                                                                ToTime = lastTime
+                                                            });
+                                                        }
+                                                        else if (checkDate == 5) // Ngày kỉ niệm công ty
+                                                        {
+                                                            item.WorkingStatuses.Add(new WorkingStatus()
+                                                            {
+                                                                DayCheck = dateCheck,
+                                                                Value = kyhieuChamCongDB.NullString() == "" ? "DS" : kyhieuChamCongDB.NullString(),
+                                                                FromTime = firstTime,
+                                                                ToTime = lastTime
                                                             });
                                                         }
                                                     }
@@ -2467,7 +2613,9 @@ namespace HRMNS.Application.Implementation
                                                         item.WorkingStatuses.Add(new WorkingStatus()
                                                         {
                                                             DayCheck = dateCheck,
-                                                            Value = kyhieuChamCongDB.NullString() == "" ? "-" : ResetULIL(kyhieuChamCongDB.NullString(), dateCheck)
+                                                            Value = kyhieuChamCongDB.NullString() == "" ? "-" : ResetULIL(kyhieuChamCongDB.NullString(), dateCheck),
+                                                            FromTime = firstTime,
+                                                            ToTime = lastTime
                                                         });
                                                     }
 
@@ -2476,7 +2624,7 @@ namespace HRMNS.Application.Implementation
                                                     {
                                                         if (BreakHaftDay(kyhieuChamCongDB.NullString()))
                                                         {
-                                                            if (GetTimeCaLamViec(item.BoPhan, CommonConstants.CA_NGAY, dateCheck).EndWorking == "17:00:00" || dateCheck == "2023-06-03")
+                                                            if (GetTimeCaLamViec(item.BoPhan, _caLamViec.MaCaLaviec, dateCheck).EndWorking == "17:00:00" || dateCheck == "2023-06-03")
                                                             {
                                                                 el += 0;
                                                             }
@@ -2485,17 +2633,22 @@ namespace HRMNS.Application.Implementation
                                                                 el += 0.7;
                                                             }
                                                         }
-                                                        else if ((new int[] { 1, 3, 4 }).Contains(CheckNgayDB(dateCheck, CommonConstants.CA_NGAY)))
+                                                        else if ((new int[] { 1, 3, 4 }).Contains(CheckNgayDB(dateCheck, _caLamViec.MaCaLaviec)))
                                                         {
                                                             el = 0;
                                                         }
                                                     }
 
-                                                    var dmvs = DANGKY_DIMUON_VSOM_NHANVIENs.FirstOrDefault(x => x.MaNV == item.MaNV && x.NgayDangKy == dateCheck);
-                                                    if (dmvs != null)
+                                                    ChamCongDB congDB = item.lstChamCongDB.OrderByDescending(x => x.DateModified).FirstOrDefault(x => string.Compare(dateCheck, x.NgayBatDau) >= 0 && string.Compare(dateCheck, x.NgayKetThuc) <= 0 && (x.KyHieuChamCong == "EL" || x.KyHieuChamCong == "LC"));
+                                                    if (congDB != null && !(new int[] { 1, 3 }).Contains(CheckNgayDB(dateCheck, _caLamViec.MaCaLaviec)) && congDB.GiaTri > 0)
                                                     {
-                                                        el = dmvs.SoGioDangKy;
+                                                        el = congDB.GiaTri;
                                                     }
+                                                    //var dmvs = DANGKY_DIMUON_VSOM_NHANVIENs.FirstOrDefault(x => x.MaNV == item.MaNV && x.NgayDangKy == dateCheck);
+                                                    //if (dmvs != null)
+                                                    //{
+                                                    //    el = dmvs.SoGioDangKy;
+                                                    //}
 
                                                     item.EL_LC_Statuses.Add(new EL_LC_Status()
                                                     {
@@ -2513,24 +2666,41 @@ namespace HRMNS.Application.Implementation
                                                             item.WorkingStatuses.Add(new WorkingStatus()
                                                             {
                                                                 DayCheck = dateCheck,
-                                                                Value = kyhieuChamCongDB.NullString() == "" ? "NH" : kyhieuChamCongDB.NullString() // NH: NationALHoliday/ Nghỉ lễ
+                                                                Value = kyhieuChamCongDB.NullString() == "" ? "NH" : kyhieuChamCongDB.NullString(), // NH: NationALHoliday/ Nghỉ lễ
+                                                                FromTime = firstTime,
+                                                                ToTime = lastTime
                                                             });
                                                         }
-                                                        else if (checkDate == 4 || checkDate == 5)
+                                                        else if (checkDate == 4)
                                                         {
                                                             item.WorkingStatuses.Add(new WorkingStatus()
                                                             {
                                                                 DayCheck = dateCheck,
-                                                                Value = kyhieuChamCongDB.NullString() == "" ? "-" : kyhieuChamCongDB.NullString()
+                                                                Value = kyhieuChamCongDB.NullString() == "" ? "-" : kyhieuChamCongDB.NullString(),
+                                                                FromTime = firstTime,
+                                                                ToTime = lastTime
                                                             });
                                                         }
+                                                        else if (checkDate == 5)
+                                                        {
+                                                            item.WorkingStatuses.Add(new WorkingStatus()
+                                                            {
+                                                                DayCheck = dateCheck,
+                                                                Value = kyhieuChamCongDB.NullString() == "" ? "DS" : kyhieuChamCongDB.NullString(),
+                                                                FromTime = firstTime,
+                                                                ToTime = lastTime
+                                                            });
+                                                        }
+
                                                     }
                                                     else
                                                     {
                                                         item.WorkingStatuses.Add(new WorkingStatus()
                                                         {
                                                             DayCheck = dateCheck,
-                                                            Value = kyhieuChamCongDB.NullString() == "" ? "-" : ResetULIL(kyhieuChamCongDB.NullString(), dateCheck)
+                                                            Value = kyhieuChamCongDB.NullString() == "" ? "-" : ResetULIL(kyhieuChamCongDB.NullString(), dateCheck),
+                                                            FromTime = firstTime,
+                                                            ToTime = lastTime
                                                         });
                                                     }
 
@@ -2540,7 +2710,7 @@ namespace HRMNS.Application.Implementation
                                                         if (BreakHaftDay(kyhieuChamCongDB.NullString()))
                                                         {
                                                             if (DateTime.ParseExact(lastTime, "HH:mm:ss", CultureInfo.InvariantCulture) >= DateTime.ParseExact("13:30:00", "HH:mm:ss", CultureInfo.InvariantCulture) ||
-                                                            GetTimeCaLamViec(item.BoPhan, CommonConstants.CA_NGAY, dateCheck).EndWorking == "17:00:00")
+                                                            GetTimeCaLamViec(item.BoPhan, _caLamViec.MaCaLaviec, dateCheck).EndWorking == "17:00:00")
                                                             {
                                                                 el += 0;
                                                             }
@@ -2549,16 +2719,16 @@ namespace HRMNS.Application.Implementation
                                                                 el += 0.7;
                                                             }
                                                         }
-                                                        else if ((new int[] { 1, 3, 4 }).Contains(CheckNgayDB(dateCheck, CommonConstants.CA_NGAY)))
+                                                        else if ((new int[] { 1, 3, 4 }).Contains(CheckNgayDB(dateCheck, _caLamViec.MaCaLaviec)))
                                                         {
                                                             el = 0;
                                                         }
                                                     }
 
-                                                    var dmvs = DANGKY_DIMUON_VSOM_NHANVIENs.FirstOrDefault(x => x.MaNV == item.MaNV && x.NgayDangKy == dateCheck);
-                                                    if (dmvs != null)
+                                                    ChamCongDB congDB = item.lstChamCongDB.OrderByDescending(x => x.DateModified).FirstOrDefault(x => string.Compare(dateCheck, x.NgayBatDau) >= 0 && string.Compare(dateCheck, x.NgayKetThuc) <= 0 && (x.KyHieuChamCong == "EL" || x.KyHieuChamCong == "LC"));
+                                                    if (congDB != null && !(new int[] { 1, 3 }).Contains(CheckNgayDB(dateCheck, _caLamViec.MaCaLaviec)) && congDB.GiaTri > 0)
                                                     {
-                                                        el = dmvs.SoGioDangKy;
+                                                        el = congDB.GiaTri;
                                                     }
 
                                                     item.EL_LC_Statuses.Add(new EL_LC_Status()
@@ -2575,7 +2745,9 @@ namespace HRMNS.Application.Implementation
                                                     item.WorkingStatuses.Add(new WorkingStatus()
                                                     {
                                                         DayCheck = dateCheck,
-                                                        Value = "IL"
+                                                        Value = "IL",
+                                                        FromTime = firstTime,
+                                                        ToTime = lastTime
                                                     });
                                                 }
                                                 else if (CheckCheDoThaiSan("ThaiSan", dateCheck, item.MaNV) && IsChuNhat(dateCheck))
@@ -2583,7 +2755,9 @@ namespace HRMNS.Application.Implementation
                                                     item.WorkingStatuses.Add(new WorkingStatus()
                                                     {
                                                         DayCheck = dateCheck,
-                                                        Value = "-"
+                                                        Value = "-",
+                                                        FromTime = firstTime,
+                                                        ToTime = lastTime
                                                     });
                                                 }
                                             }
@@ -2647,7 +2821,9 @@ namespace HRMNS.Application.Implementation
                         item.WorkingStatuses.Add(new WorkingStatus()
                         {
                             DayCheck = dayOfM,
-                            Value = kyHchamcong.NullString() == "" ? "-" : ResetULIL(kyHchamcong.NullString(), dayOfM)
+                            Value = kyHchamcong.NullString() == "" ? "-" : ResetULIL(kyHchamcong.NullString(), dayOfM),
+                            FromTime = "00:00:00",
+                            ToTime = "00:00:00"
                         });
 
                         item.EL_LC_Statuses.Add(new EL_LC_Status()
@@ -2770,12 +2946,66 @@ namespace HRMNS.Application.Implementation
                 }
             }
 
+            // them phan tinh OT vs so gio lam viec cho pow bi
+            DAILY_TIME_WORKING daily;
+            List<DAILY_TIME_WORKING> dailyUpdate = new List<DAILY_TIME_WORKING>();
+            List<DAILY_TIME_WORKING> dailyAdd = new List<DAILY_TIME_WORKING>();
+            string _month = time.Substring(0, 7);
+            List<DAILY_TIME_WORKING> dailyAll = _dailytimeResponsitory.FindAll(x => x.NgayLViec.Contains(_month)).ToList();
             foreach (var item in lstResult)
             {
                 item.WorkingStatuses.Sort((x, y) => x.DayCheck.CompareTo(y.DayCheck));
                 item.OvertimeValues.Sort((x, y) => x.DayCheckOT.CompareTo(y.DayCheckOT));
                 item.EL_LC_Statuses.Sort((x, y) => x.DayCheck_EL.CompareTo(y.DayCheck_EL));
+
+                foreach (var wk in item.WorkingStatuses)
+                {
+                    daily = dailyAll.FirstOrDefault(x => x.MaNV == item.MaNV && x.NgayLViec == wk.DayCheck);
+
+                    if (daily == null)
+                    {
+                        daily = new DAILY_TIME_WORKING();
+                        dailyAdd.Add(daily);
+                    }
+                    else
+                    {
+                        dailyUpdate.Add(daily);
+                    }
+
+                    daily.MaNV = item.MaNV;
+                    daily.NgayLViec = wk.DayCheck;
+                    daily.Time_OT = item.OvertimeValues.Where(x => x.DayCheckOT == wk.DayCheck).Select(x => x.ValueOT).Sum();
+                    daily.FromTime = wk.FromTime;
+                    daily.ToTime = wk.ToTime;
+
+                    if (DateTime.TryParse(wk.FromTime, out _) && DateTime.TryParse(wk.ToTime, out _) && (wk.FromTime != "00:00:00" || wk.ToTime != "00:00:00"))
+                    {
+                        if (wk.ToTime.CompareTo(wk.FromTime) >= 0)
+                        {
+                            daily.Time_Working = (DateTime.ParseExact(wk.ToTime, "HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(wk.FromTime, "HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+                        }
+                        else
+                        {
+                            daily.Time_Working = 24 - (DateTime.ParseExact(wk.FromTime, "HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.ParseExact(wk.ToTime, "HH:mm:ss", CultureInfo.InvariantCulture)).TotalHours;
+                        }
+                    }
+                    else
+                    {
+                        daily.Time_Working = 0;
+                    }
+                }
             }
+
+            if (dailyAdd.Count > 0)
+            {
+                _dailytimeResponsitory.AddRange(dailyAdd);
+            }
+
+            if (dailyUpdate.Count > 0)
+            {
+                _dailytimeResponsitory.UpdateRange(dailyUpdate);
+            }
+            _unitOfWork.Commit();
 
             return lstResult.OrderBy(x => x.BoPhan).ThenBy(x => x.MaNV).ToList();
         }
@@ -3155,6 +3385,8 @@ namespace HRMNS.Application.Implementation
                 {
                     oval = overtimes.Find(x => x.DMOvertime == item.DMOvertime);
                     oval.ValueOT += item.ValueOT;
+                    oval.toTime = item.toTime;
+                    oval.orderTime = item.orderTime;
                 }
                 else
                 {
@@ -3182,8 +3414,8 @@ namespace HRMNS.Application.Implementation
             }
 
             themGioModel.Duration = totalDuration.IfNullIsZero();
-            themGioModel.From = overtimes.OrderBy(x => x.orderTime).FirstOrDefault()?.fromTime;
-            themGioModel.To = overtimes.OrderBy(x => x.orderTime).LastOrDefault()?.toTime;
+            themGioModel.From = overtimes.OrderBy(x => x.toTime).FirstOrDefault()?.fromTime;
+            themGioModel.To = overtimes.OrderBy(x => x.toTime).LastOrDefault()?.toTime;
 
             return overtimes;
         }
@@ -4418,31 +4650,42 @@ namespace HRMNS.Application.Implementation
                 return 3;
             }
 
-            //if(calviec == CommonConstants.CA_NGAY)
-            //{
-            if (IsNgayDacBiet(time) != "")
-            {
-                return 5;
-            }
-            //}
 
-            if (IsNgayTruocLe(time) != "")
+            if (calviec == CommonConstants.CA_NGAY)
             {
-                return 2;
-            }
+                if (IsNgayDacBiet(time) != "")
+                {
+                    return 5;
+                }
 
-            if (IsNgayNghiBuLeNam(time) != "")
+                if (IsNgayTruocLe(time) != "")
+                {
+                    return 2;
+                }
+
+                if (IsNgayNghiBuLeNam(time) != "")
+                {
+                    return 4;
+                }
+            }
+            else
             {
-                return 4;
-            }
+                if (IsNgayTruocLe(time) != "")
+                {
+                    return 2;
+                }
 
-            //if (calviec == CommonConstants.CA_DEM)
-            //{
-            //    if (IsNgayDacBiet(time) != "")
-            //    {
-            //        return 5;
-            //    }
-            //}
+                // ki niem cty
+                if (IsNgayDacBiet(time) != "")
+                {
+                    return 5;
+                }
+
+                if (IsNgayNghiBuLeNam(time) != "")
+                {
+                    return 4;
+                }
+            }
 
             return 0;// ngay thuong
         }

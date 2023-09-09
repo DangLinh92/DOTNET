@@ -37,7 +37,6 @@
             color: midnightblue;
         }
     </style>
-
 }
 
 @section Scripts
@@ -55,7 +54,7 @@
      var roleUsers = JSON.parse('@Html.Raw(JsonSerializer.Serialize(User.FindFirst(x => x.Type == "Roles").Value + ""))');
 
      var connection = new signalR.HubConnectionBuilder()
-            .withUrl("@Url.Content("~/liveUpdateSignalRHub")")
+            .withUrl("@Url.Content("~/liveUpdateSignalR_WLP2_Hub")")
             .configureLogging(signalR.LogLevel.Information)
         .build();
 
@@ -241,6 +240,7 @@
     }).OnSaving("onSaving")
     .Summary(s => s.TotalItems(items =>
     {
+                    items.Add().SummaryType(SummaryType.Count).DisplayFormat("Count: {0}").ValueFormat(Format.FixedPoint).Column("sapCode");
         items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("waferNguyenLieu");
         items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("banThanhPham");
         items.Add().SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint).Column("choXuatHang");

@@ -58,6 +58,7 @@ namespace HRMNS.Application.ViewModels.System
         public string MaNV { get; set; }
         public string TenNV { get; set; }
         public string HangMuc { get; set; }// cham cong db
+        public string Draf { get; set; }
     }
 
     public class DangKyOT
@@ -79,6 +80,8 @@ namespace HRMNS.Application.ViewModels.System
         public string PhanLoaiDM { get; set; }
         public double HeSo { get; set; }
         public string DateModified { get; set; }
+        public string NoiDung { get; set; }
+        public double GiaTri { get; set; }
     }
 
     public class NhanVien_CaLamViec
@@ -118,6 +121,9 @@ namespace HRMNS.Application.ViewModels.System
     {
         public string DayCheck { get; set; }
         public string Value { get; set; } = "-"; // ky hieu cham cong
+
+        public string FromTime { get; set; }
+        public string ToTime { get; set; }
     }
 
     public class EL_LC_Status

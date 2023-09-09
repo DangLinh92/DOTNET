@@ -16,6 +16,15 @@ namespace OPERATION_MNS.Data.EF.Configurations
         }
     }
 
+    public class GocPlanLfemConfiguration : DbEntityConfiguration<GOC_PLAN_LFEM>
+    {
+        public override void Configure(EntityTypeBuilder<GOC_PLAN_LFEM> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
+
     public class FABPLANConfiguration : DbEntityConfiguration<FAB_PLAN>
     {
         public override void Configure(EntityTypeBuilder<FAB_PLAN> entity)
@@ -109,6 +118,24 @@ namespace OPERATION_MNS.Data.EF.Configurations
     public class DailyPlanWlp2Configuration : DbEntityConfiguration<DAILY_PLAN_WLP2>
     {
         public override void Configure(EntityTypeBuilder<DAILY_PLAN_WLP2> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
+
+    public class GocPlanSMTConfiguration : DbEntityConfiguration<GOC_PLAN_SMT>
+    {
+        public override void Configure(EntityTypeBuilder<GOC_PLAN_SMT> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
+
+    public class OutputByLotSMTConfiguration : DbEntityConfiguration<OUT_PUT_BY_LOT_SMT>
+    {
+        public override void Configure(EntityTypeBuilder<OUT_PUT_BY_LOT_SMT> entity)
         {
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Id).ValueGeneratedOnAdd();

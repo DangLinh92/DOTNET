@@ -138,6 +138,9 @@
   <data name="DANGKY" xml:space="preserve">
     <value>Đăng Ký/Duyệt Xe</value>
   </data>
+  <data name="DANGKY_TAXI" xml:space="preserve">
+    <value>Đăng Ký/Duyệt Xe Taxi</value>
+  </data>
   <data name="DANHSACHKEHOACH" xml:space="preserve">
     <value>Danh Sách Kế Hoạch</value>
   </data>
@@ -189,6 +192,9 @@
   <data name="LICHSU_DIEU_XE" xml:space="preserve">
     <value>Lịch Sử Điều Xe</value>
   </data>
+  <data name="LICHSU_DIEU_XE_TAXI" xml:space="preserve">
+    <value>Lịch Sử Điều Xe Taxi</value>
+  </data>
   <data name="NHANSU" xml:space="preserve">
     <value>Nhân Sự</value>
   </data>
@@ -224,6 +230,9 @@
   </data>
   <data name="SHIFT_SCHEDULE" xml:space="preserve">
     <value>Phân ca</value>
+  </data>
+  <data name="TAXI_REPORT" xml:space="preserve">
+    <value>Taxi report</value>
   </data>
   <data name="THAISAN" xml:space="preserve">
     <value>Thai sản</value>

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using DevExpress.XtraSpreadsheet.Model;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using OPERATION_MNS.Application.Interfaces;
 using OPERATION_MNS.Application.ViewModels;
@@ -9,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static DevExpress.Xpo.Helpers.AssociatedCollectionCriteriaHelper;
 
 namespace OPERATION_MNS.Areas.OpeationMns.Controllers
 {
@@ -344,7 +346,8 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
                                 Label_x = i < 10 ? "0" + i : i + "",
                                 Value_runtime = 0,
                                 Value_waittime = 0,
-                                Value_target = target
+                                Value_target = target,
+                                Value_leadtime = 0
                             });
                         }
                     }
@@ -355,7 +358,8 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
                             Label_x = i < 10 ? "0" + i : i + "",
                             Value_runtime = 0,
                             Value_waittime = 0,
-                            Value_target = target
+                            Value_target = target,
+                            Value_leadtime = 0
                         });
                     }
                 }
@@ -373,7 +377,8 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
                                 Label_x = i + "",
                                 Value_runtime = 0,
                                 Value_waittime = 0,
-                                Value_target = target
+                                Value_target = target,
+                                Value_leadtime = 0
                             });
                         }
                     }
@@ -384,12 +389,475 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
                             Label_x = i + "",
                             Value_runtime = 0,
                             Value_waittime = 0,
-                            Value_target = target
+                            Value_target = target,
+                            Value_leadtime = 0
                         });
                     }
                 }
             }
             return chartDatas;
         }
+
+        #region LFEM
+        public IActionResult LeadTimeLfem()
+        {
+            string year = DateTime.Now.Year.ToString();
+            string month = DateTime.Now.ToString("MM");
+            LeadTimeModel models = GetLFEMLeadTimeData(year, month, "0", "", "", "R8Y0");
+
+            return View(models);
+        }
+
+        [HttpPost]
+        public ActionResult SearchLfem(string year, string month, string week, string day, string holiday, string model)
+        {
+            LeadTimeModel models = GetLFEMLeadTimeData(year, month, week, day, holiday, model.NullString());
+            return View("LeadTimeLfem", models);
+        }
+
+        private LeadTimeModel GetLFEMLeadTimeData(string year, string month, string week, string day, string holiday, string model)
+        {
+            LeadTimeModel models = new LeadTimeModel(year);
+            models.Month = month.NullString();
+            models.Week = int.Parse(week);
+            models.Day = day;
+            models.Ox = holiday;
+            models.Category = model.NullString();
+
+            models.Weeks = models.GetWeeksByMonth(year, month.NullString());
+
+            if (week == "0" || week.NullString() == "")
+            {
+                if (month.NullString() == "")
+                {
+                    models.Weeks_Lable = models.GetWeeks();
+                }
+                else
+                {
+                    models.Weeks_Lable = models.Weeks;
+                }
+            }
+            else
+            {
+                models.Weeks_Lable.Add(week);
+            }
+
+            if (week == "0" || !string.IsNullOrEmpty(day))
+            {
+                week = "";
+
+                if (!string.IsNullOrEmpty(day))
+                {
+                    if (month.NullString() != "" && year != "")
+                    {
+                        int w = DateTime.Parse(year + "-" + month + "-" + day).GetWeekOfYear();
+                        models.Week = w == 0 ? 1 : w;
+                    }
+                    else
+                    {
+                        models.Week = 0;
+                    }
+                }
+            }
+
+            List<LeadTimeViewModel> lstAll = _LeadTimeService.GetLeadTimeLFEM(year, "", "", "", holiday, model);
+
+            List<LeadTimeViewModel> lst = new List<LeadTimeViewModel>(); //_LeadTimeService.GetLeadTimeLFEM(year, month, week, day, holiday, model);
+
+            if (day.NullString() != "" && month.NullString() != "" && year.NullString() != "")
+            {
+                string date = year + "-" + month + "-" + day;
+                lst = lstAll.Where(x => x.WorkDate == date).ToList();
+            }
+            else if (week.NullString() != "" && day.NullString() == "")
+            {
+                lst = lstAll.Where(x => int.Parse(x.WorkWeek) == int.Parse(week)).ToList();
+            }
+            else
+            if (month.NullString() != "")
+            {
+                string fromDate = DateTime.Parse(year + "-" + month + "-01").ToString("yyyy-MM-dd");
+                string toDate = DateTime.Parse(year + "-" + month + "-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd");
+                lst = lstAll.Where(x => x.WorkDate.CompareTo(fromDate) >= 0 && x.WorkDate.CompareTo(toDate) <= 0).ToList();
+            }
+
+            if (month.NullString() == "" && week.NullString() == "" && day.NullString() == "")
+            {
+                var operationLeadTime =
+                    from leadTime in lst
+                    group leadTime by new
+                    {
+                        WORK_DATE = leadTime.WorkDate,
+                        WORK_WEEK = leadTime.WorkWeek,
+                        OPERATION_ID = leadTime.OperationID,
+                        OPERATION_NAME = leadTime.Operation
+                    } into g
+                    select new
+                    {
+                        WorkDate = g.Key.WORK_DATE,
+                        WorkWeek = g.Key.WORK_WEEK,
+                        OperationId = g.Key.OPERATION_ID,
+                        OperationName = g.Key.OPERATION_NAME,
+                        WaitTimeAVG = Math.Round(g.Average(r => r.WaitTime), 1),
+                        RunTimeAVG = Math.Round(g.Average(r => r.RunTime), 1),
+                        LeadTimeAVG = Math.Round(g.Average(r => r.LeadTimeStartEnd), 1)
+                    };
+
+                string _monthStart = DateTime.Now.ToString("yyyy-MM") + "-01";
+                string _monthEnd = DateTime.Parse(_monthStart).AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd");
+                models.LFEM_LeadTimeByDay = (from lt in operationLeadTime.Where(x => x.WorkDate.CompareTo(_monthStart) >= 0 && x.WorkDate.CompareTo(_monthEnd) <= 0).AsEnumerable()
+                                             group lt by new
+                                             {
+                                                 WORK_WEEK = lt.WorkWeek,
+                                                 WORK_DATE = lt.WorkDate,
+                                             } into g
+                                             select new ChartDataItem
+                                             {
+                                                 Label_x = g.Key.WORK_DATE,
+                                                 Value_runtime = Math.Round(g.Sum(s => s.RunTimeAVG) / 24, 1),
+                                                 Value_waittime = Math.Round(g.Sum(s => s.WaitTimeAVG) / 24, 1),
+                                                 Value_leadtime = Math.Round((g.Sum(s => s.RunTimeAVG) + g.Sum(s => s.WaitTimeAVG)) / 24, 1) 
+                                             }).OrderBy(x => x.Label_x).ToList();
+            }
+            else
+            {
+
+                var operationLeadTime =
+                   from leadTime in lst
+                   group leadTime by new
+                   {
+                       WORK_DATE = leadTime.WorkDate,
+                       WORK_WEEK = leadTime.WorkWeek,
+                       OPERATION_ID = leadTime.OperationID,
+                       OPERATION_NAME = leadTime.Operation
+                   } into g
+                   select new
+                   {
+                       WorkDate = g.Key.WORK_DATE,
+                       WorkWeek = g.Key.WORK_WEEK,
+                       OperationId = g.Key.OPERATION_ID,
+                       OperationName = g.Key.OPERATION_NAME,
+                       WaitTimeAVG = Math.Round(g.Average(r => r.WaitTime), 1),
+                       RunTimeAVG = Math.Round(g.Average(r => r.RunTime), 1),
+                       LeadTimeAVG = Math.Round(g.Average(r => r.LeadTimeStartEnd), 1)
+                   };
+
+                models.LFEM_LeadTimeByDay = (from lt in operationLeadTime.AsEnumerable()
+                                             group lt by new
+                                             {
+                                                 WORK_WEEK = lt.WorkWeek,
+                                                 WORK_DATE = lt.WorkDate,
+                                             } into g
+                                             select new ChartDataItem
+                                             {
+                                                 Label_x = g.Key.WORK_DATE,
+                                                 Value_runtime = Math.Round(g.Sum(s => s.RunTimeAVG) / 24, 1),
+                                                 Value_waittime = Math.Round(g.Sum(s => s.WaitTimeAVG) / 24, 1),
+                                                 Value_leadtime = Math.Round((g.Sum(s => s.RunTimeAVG) + g.Sum(s => s.WaitTimeAVG)) / 24, 1)
+                                             }).OrderBy(x => x.Label_x).ToList();
+            }
+
+            // label ngày
+            models.Days1 = models.LFEM_LeadTimeByDay.Select(x => x.Label_x.Substring(8, 2) + "일").OrderBy(x => int.Parse(x.Replace("일", ""))).ToList();
+
+            var operationLeadTimeMonth =
+                        from leadTime in lstAll.AsEnumerable()
+                        group leadTime by new
+                        {
+                            WORK_YEAR = leadTime.WorkYear,
+                            WORK_MONTH = leadTime.WorkMonth,
+                            OPERATION_ID = leadTime.OperationID,
+                            OPERATION_NAME = leadTime.Operation
+                        } into g
+                        select new
+                        {
+                            WorkYear = g.Key.WORK_YEAR,
+                            WorkMonth = g.Key.WORK_MONTH,
+                            OperationId = g.Key.OPERATION_ID,
+                            OperationName = g.Key.OPERATION_NAME,
+                            WaitTimeAVG = Math.Round(g.Average(r => r.WaitTime), 1),
+                            RunTimeAVG = Math.Round(g.Average(r => r.RunTime), 1),
+                            LeadTimeAVG = Math.Round(g.Average(r => r.LeadTimeStartEnd), 1)
+                        };
+
+            // Month
+            var lstLFEMMonth = (from lt in operationLeadTimeMonth.AsEnumerable()
+                                group lt by new
+                                {
+                                    WORK_YEAR = lt.WorkYear,
+                                    WORK_MONTH = lt.WorkMonth
+                                } into g
+                                select new ChartDataItem
+                                {
+                                    Label_x = g.Key.WORK_MONTH,
+                                    Value_runtime = Math.Round(g.Sum(s => s.RunTimeAVG) / 24, 1),
+                                    Value_waittime = Math.Round(g.Sum(s => s.WaitTimeAVG) / 24, 1),
+                                    Value_leadtime = Math.Round((g.Sum(s => s.RunTimeAVG) + g.Sum(s => s.WaitTimeAVG)) / 24, 1)
+                                }).OrderBy(x => int.Parse(x.Label_x)).ToList();
+
+            models.LFEM_LeadTimeByMonth = UpdateDataLost(lstLFEMMonth, "Month", models.Weeks_Lable);
+
+            if (year == DateTime.Now.Year.ToString())
+            {
+                int monthNow = DateTime.Now.Month;
+                models.LFEM_LeadTimeByMonth.RemoveAll(x => int.Parse(x.Label_x) > monthNow);
+            }
+
+            // week
+
+            var operationLeadTimeWeek =
+                        from leadTime in lst.AsEnumerable()
+                        group leadTime by new
+                        {
+                            WORK_YEAR = leadTime.WorkYear,
+                            WORK_WEEK = leadTime.WorkWeek,
+                            OPERATION_ID = leadTime.OperationID,
+                            OPERATION_NAME = leadTime.Operation
+                        } into g
+                        select new
+                        {
+                            WorkYear = g.Key.WORK_YEAR,
+                            WorkWeek = g.Key.WORK_WEEK,
+                            OperationId = g.Key.OPERATION_ID,
+                            OperationName = g.Key.OPERATION_NAME,
+                            WaitTimeAVG = Math.Round(g.Average(r => r.WaitTime), 1),
+                            RunTimeAVG = Math.Round(g.Average(r => r.RunTime), 1),
+                            LeadTimeAVG = Math.Round(g.Average(r => r.LeadTimeStartEnd), 1)
+                        };
+
+            models.LFEM_LeadTimeByWeek = (from lt in operationLeadTimeWeek.AsEnumerable()
+                                          group lt by new
+                                          {
+                                              WORK_YEAR = lt.WorkYear,
+                                              WORK_WEEK = lt.WorkWeek,
+                                          } into g
+                                          select new ChartDataItem
+                                          {
+                                              Label_x = g.Key.WORK_WEEK,
+                                              Value_runtime = Math.Round(g.Sum(s => s.RunTimeAVG) / 24, 1),
+                                              Value_waittime = Math.Round(g.Sum(s => s.WaitTimeAVG) / 24, 1),
+                                              Value_leadtime = Math.Round((g.Sum(s => s.RunTimeAVG) + g.Sum(s => s.WaitTimeAVG)) / 24, 1)
+                                          }).OrderBy(x => int.Parse(x.Label_x)).ToList();
+
+            //models.LFEM_LeadTimeByWeek = UpdateDataLost(lstLfemWeek, "Week", models.Weeks_Lable);
+
+            if (day.NullString() != "" && month.NullString() != "" && year.NullString() != "")
+            {
+                var dailyLeadTime =
+                       from leadTime in lst.AsEnumerable()
+                       group leadTime by new
+                       {
+                           WORK_DATE = leadTime.WorkDate,
+                           WORK_YEAR = leadTime.WorkYear,
+                           WORK_MONTH = leadTime.WorkMonth,
+                           WORK_WEEK = leadTime.WorkWeek,
+                           OPERATION_ID = leadTime.OperationID,
+                           OPERATION_NAME = leadTime.Operation,
+                           DISPLAY_ORDER = leadTime.DisplayOrder
+                       } into g
+                       select new
+                       {
+                           WorkDate = g.Key.WORK_DATE,
+                           WorkYear = g.Key.WORK_YEAR,
+                           WorkMonth = g.Key.WORK_MONTH,
+                           WorkWeek = g.Key.WORK_WEEK,
+                           OperationId = g.Key.OPERATION_ID,
+                           OperationName = g.Key.OPERATION_NAME,
+                           DisplayOrder = g.Key.DISPLAY_ORDER,
+                           WaitTimeAVG = g.Average(r => r.WaitTime),
+                           RunTimeAVG = g.Average(r => r.RunTime),
+                           LeadTimeAVG = g.Average(r => r.LeadTimeStartEnd)
+                       };
+
+                // runtime by operation
+                models.LFEM_RuntimeByOperation = (from lt in dailyLeadTime.AsEnumerable()
+                                                  group lt by new
+                                                  {
+                                                      OPERATION_ID = lt.OperationId,
+                                                      OPERATION = lt.OperationName,
+                                                      DISPLAY_ORDER = lt.DisplayOrder
+                                                  } into g
+                                                  select new ChartDataItem
+                                                  {
+                                                      Label_x = g.Key.OPERATION,
+                                                      Value_runtime = Math.Round(g.Average(s => s.RunTimeAVG) / 24, 1),
+                                                  }).OrderByDescending(x => x.Value_runtime).ToList();
+
+                // wait time by operation
+                models.LFEM_WaitTimeByOperation = (from lt in dailyLeadTime.AsEnumerable()
+                                                   group lt by new
+                                                   {
+                                                       OPERATION_ID = lt.OperationId,
+                                                       OPERATION = lt.OperationName,
+                                                       DISPLAY_ORDER = lt.DisplayOrder
+                                                   } into g
+                                                   select new ChartDataItem
+                                                   {
+                                                       Label_x = g.Key.OPERATION,
+                                                       Value_waittime = Math.Round(g.Average(s => s.WaitTimeAVG) / 24, 1),
+                                                   }).OrderByDescending(x => x.Value_waittime).ToList();
+            }
+            else if (week.NullString() != "" && day.NullString() == "")
+            {
+                var weeklyLeadTime =
+                        from leadTime in lst.AsEnumerable()
+                        group leadTime by new
+                        {
+                            WORK_YEAR = leadTime.WorkYear,
+                            WORK_WEEK = leadTime.WorkWeek,
+                            OPERATION_ID = leadTime.OperationID,
+                            OPERATION_NAME = leadTime.Operation,
+                            DISPLAY_ORDER = leadTime.DisplayOrder
+                        } into g
+                        select new
+                        {
+                            WorkYear = g.Key.WORK_YEAR,
+                            WorkWeek = g.Key.WORK_WEEK,
+                            OperationId = g.Key.OPERATION_ID,
+                            OperationName = g.Key.OPERATION_NAME,
+                            DisplayOrder = g.Key.DISPLAY_ORDER,
+                            WaitTimeAVG = g.Average(r => r.WaitTime),
+                            RunTimeAVG = g.Average(r => r.RunTime),
+                            LeadTimeAVG = g.Average(r => r.LeadTimeStartEnd)
+                        };
+
+                // runtime by operation
+                models.LFEM_RuntimeByOperation = (from lt in weeklyLeadTime.AsEnumerable()
+                                                  group lt by new
+                                                  {
+                                                      OPERATION_ID = lt.OperationId,
+                                                      OPERATION = lt.OperationName,
+                                                      DISPLAY_ORDER = lt.DisplayOrder
+                                                  } into g
+                                                  select new ChartDataItem
+                                                  {
+                                                      Label_x = g.Key.OPERATION,
+                                                      Value_runtime = Math.Round(g.Average(s => s.RunTimeAVG) / 24, 1),
+                                                  }).OrderByDescending(x => x.Value_runtime).ToList();
+
+                // wait time by operation
+                models.LFEM_WaitTimeByOperation = (from lt in weeklyLeadTime.AsEnumerable()
+                                                   group lt by new
+                                                   {
+                                                       OPERATION_ID = lt.OperationId,
+                                                       OPERATION = lt.OperationName,
+                                                       DISPLAY_ORDER = lt.DisplayOrder
+                                                   } into g
+                                                   select new ChartDataItem
+                                                   {
+                                                       Label_x = g.Key.OPERATION,
+                                                       Value_waittime = Math.Round(g.Average(s => s.WaitTimeAVG) / 24, 1),
+                                                   }).OrderByDescending(x => x.Value_waittime).ToList();
+            }
+            else if (month.NullString() != "")
+            {
+                var mothlyLeadTime =
+                        from leadTime in lst.AsEnumerable()
+                        group leadTime by new
+                        {
+                            WORK_MONTH = leadTime.WorkMonth,
+                            WORK_YEAR = leadTime.WorkYear,
+                            WORK_WEEK = leadTime.WorkWeek,
+                            OPERATION_ID = leadTime.OperationID,
+                            OPERATION_NAME = leadTime.Operation,
+                            DISPLAY_ORDER = leadTime.DisplayOrder
+                        } into g
+                        select new
+                        {
+                            WorkYear = g.Key.WORK_YEAR,
+                            WorkMonth = g.Key.WORK_MONTH,
+                            OperationId = g.Key.OPERATION_ID,
+                            OperationName = g.Key.OPERATION_NAME,
+                            DisplayOrder = g.Key.DISPLAY_ORDER,
+                            WaitTimeAVG = g.Average(r => r.WaitTime),
+                            RunTimeAVG = g.Average(r => r.RunTime),
+                            LeadTimeAVG = g.Average(r => r.LeadTimeStartEnd)
+                        };
+
+                // runtime by operation
+                models.LFEM_RuntimeByOperation = (from lt in mothlyLeadTime.AsEnumerable()
+                                                  group lt by new
+                                                  {
+                                                      OPERATION_ID = lt.OperationId,
+                                                      OPERATION = lt.OperationName,
+                                                      DISPLAY_ORDER = lt.DisplayOrder
+                                                  } into g
+                                                  select new ChartDataItem
+                                                  {
+                                                      Label_x = g.Key.OPERATION,
+                                                      Value_runtime = Math.Round(g.Average(s => s.RunTimeAVG) / 24, 1),
+                                                  }).OrderByDescending(x => x.Value_runtime).ToList();
+
+                // wait time by operation
+                models.LFEM_WaitTimeByOperation = (from lt in mothlyLeadTime.AsEnumerable()
+                                                   group lt by new
+                                                   {
+                                                       OPERATION_ID = lt.OperationId,
+                                                       OPERATION = lt.OperationName,
+                                                       DISPLAY_ORDER = lt.DisplayOrder
+                                                   } into g
+                                                   select new ChartDataItem
+                                                   {
+                                                       Label_x = g.Key.OPERATION,
+                                                       Value_waittime = Math.Round(g.Average(s => s.WaitTimeAVG) / 24, 1),
+                                                   }).OrderByDescending(x => x.Value_waittime).ToList();
+            }
+            else
+            {
+                var yearlyLeadTime =
+                       from leadTime in lst.AsEnumerable()
+                       group leadTime by new
+                       {
+                           WORK_YEAR = leadTime.WorkYear,
+                           OPERATION_ID = leadTime.OperationID,
+                           OPERATION_NAME = leadTime.Operation,
+                           DISPLAY_ORDER = leadTime.DisplayOrder
+                       } into g
+                       select new
+                       {
+                           WorkYear = g.Key.WORK_YEAR,
+                           OperationId = g.Key.OPERATION_ID,
+                           OperationName = g.Key.OPERATION_NAME,
+                           DisplayOrder = g.Key.DISPLAY_ORDER,
+                           WaitTimeAVG = g.Average(r => r.WaitTime),
+                           RunTimeAVG = g.Average(r => r.RunTime),
+                           LeadTimeAVG = g.Average(r => r.LeadTimeStartEnd)
+                       };
+
+                // runtime by operation
+                models.LFEM_RuntimeByOperation = (from lt in yearlyLeadTime.AsEnumerable()
+                                                  group lt by new
+                                                  {
+                                                      OPERATION_ID = lt.OperationId,
+                                                      OPERATION = lt.OperationName,
+                                                      DISPLAY_ORDER = lt.DisplayOrder
+                                                  } into g
+                                                  select new ChartDataItem
+                                                  {
+                                                      Label_x = g.Key.OPERATION,
+                                                      Value_runtime = Math.Round(g.Average(s => s.RunTimeAVG) / 24, 1),
+                                                  }).OrderByDescending(x => x.Value_runtime).ToList();
+
+                // wait time by operation
+                models.LFEM_WaitTimeByOperation = (from lt in yearlyLeadTime.AsEnumerable()
+                                                   group lt by new
+                                                   {
+                                                       OPERATION_ID = lt.OperationId,
+                                                       OPERATION = lt.OperationName,
+                                                       DISPLAY_ORDER = lt.DisplayOrder
+                                                   } into g
+                                                   select new ChartDataItem
+                                                   {
+                                                       Label_x = g.Key.OPERATION,
+                                                       Value_waittime = Math.Round(g.Average(s => s.WaitTimeAVG) / 24, 1),
+                                                   }).OrderByDescending(x => x.Value_waittime).ToList();
+            }
+
+            models.Operation1.AddRange(models.LFEM_RuntimeByOperation.Select(x => x.Label_x));
+            models.Operation2.AddRange(models.LFEM_WaitTimeByOperation.Select(x => x.Label_x));
+
+            return models;
+        }
+        #endregion
     }
 }

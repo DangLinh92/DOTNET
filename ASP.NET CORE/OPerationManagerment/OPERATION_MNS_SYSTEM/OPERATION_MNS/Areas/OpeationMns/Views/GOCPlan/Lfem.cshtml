@@ -1,0 +1,118 @@
+﻿@model List<GocPlanViewModelEx>
+@{
+    ViewData["Title"] = "Actual & Prod. Plan";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts
+    {
+    <script src="~/js/dataTables.fixedColumns.min.js"></script>
+    <script src="~/js/dataTables.fixedHeader.min.js"></script>
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+
+    <script src="~/app/controllers/GocPlan/GocPlanLFemController.js"></script>
+    <script>
+        var controller = new GocPlanLFemController();
+        controller.initialize();
+
+        onSuccess = controller.doAftersearch;
+        onBeginAjax = controller.beginSearch;
+
+        $(document).ready(function () {
+            $('#gocPlanDataTable').DataTable({
+                scrollY: 530,
+                scrollX: true,
+                scrollCollapse: true,
+                paging: false,
+                select: true,
+                "searching": true,
+                fixedColumns: {
+                    left: 6
+                },
+                fixedHeader: true
+            });
+
+            $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
+            $('select[name="gocPlanDataTable_length"]').removeClass('form-control-sm');
+        });
+    </script>
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">@ViewData["Title"]</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Input GOC Plan</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+
+    <form id="frmSearch" method="post" data-ajax="true" data-ajax-url="/OpeationMns/GOCPlan/Search" data-ajax-update="#gridGocPlan" data-ajax-mode='replace' data-ajax-begin="onBeginAjax" data-ajax-success="onSuccess">
+        <div class="row filter-row">
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <input type="hidden" name="chipWafer" value="" />
+                <input type="hidden" name="wlp" value="LFEM" />
+                <input type="hidden" name="inputWlp2" value="" />
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus select-focus">
+                    <select class="select floating" id="cboView" name="actualPlanGap">
+                        <option value="">ALL</option>
+                        <option value="ACTUAL">ACTUAL</option>
+                        <option value="PLAN">PLAN</option>
+                        <option value="GAP">GAP</option>
+                    </select>
+                    <label class="focus-label">Actual/Plan/Gap</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus select-focus">
+                    <select class="select floating" id="cboDanhMuc" name="danhmuc">
+                        <option value="KHSX">Production</option>
+                        <option value="DEMAND">Shipping</option>
+                        <option value="SMT">SMT</option>
+                    </select>
+                    <label class="focus-label">Category</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus">
+                    <div class="cal-icon">
+                        <input class="form-control floating datetimepicker" type="text" id="searchFromTime" name="fromTime">
+                    </div>
+                    <label class="focus-label">From</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus">
+                    <div class="cal-icon">
+                        <input class="form-control floating datetimepicker" type="text" id="searchToTime" name="toTime">
+                    </div>
+                    <label class="focus-label">To</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <button href="#" class="btn btn-success btn-block" id="btnSearch" type="submit"> Search </button>
+            </div>
+        </div>
+    </form>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive" id="gridGocPlan">
+                @await Html.PartialAsync("_GocPlanGridViewLFEM", Model)
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+

@@ -26,10 +26,11 @@ namespace HRMNS.Application.Implementation
         private IRespository<HR_NHANVIEN_2, string> _nhanvien2Repository;
         private IRespository<HR_BO_PHAN_DETAIL, int> _bophanDetailRepository;
         private IRespository<HR_LOAIHOPDONG, int> _loaiHDRepository;
+        private IRespository<HR_NHANVIEN_CHEDO_DB, int> _nvVanPhongRepository;
         private IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public NhanVienService(IRespository<HR_NHANVIEN, string> nhanVienRepository, IRespository<HR_NHANVIEN_2, string> nhanvien2Repository, IRespository<HR_LOAIHOPDONG, int> loaiHDRepository, IRespository<HR_BO_PHAN_DETAIL, int> bophanDetailRepository, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public NhanVienService(IRespository<HR_NHANVIEN_CHEDO_DB, int> nvVanPhongRepository, IRespository<HR_NHANVIEN, string> nhanVienRepository, IRespository<HR_NHANVIEN_2, string> nhanvien2Repository, IRespository<HR_LOAIHOPDONG, int> loaiHDRepository, IRespository<HR_BO_PHAN_DETAIL, int> bophanDetailRepository, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _nhanvienRepository = nhanVienRepository;
             _bophanDetailRepository = bophanDetailRepository;
@@ -38,6 +39,7 @@ namespace HRMNS.Application.Implementation
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
+            _nvVanPhongRepository = nvVanPhongRepository;
         }
 
         public NhanVienViewModel Add(NhanVienViewModel nhanVienVm)
@@ -317,7 +319,7 @@ namespace HRMNS.Application.Implementation
                     {
                         Id = nhanvien.MaBHXH,
                         MaNV = nhanvien.Id,
-                        NgayThamGia = ngayThamGiaBH.ToString("yyyy-MM-dd"),
+                        NgayBatDau = ngayThamGiaBH.ToString("yyyy-MM-dd"),
                         NgayKetThuc = ngayKetThucBH.ToString("yyyy-MM-dd"),
                         DateCreated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                         UserCreated = GetUserId()
@@ -364,6 +366,7 @@ namespace HRMNS.Application.Implementation
 
                 if (nhanvien2 == null)
                 {
+                    nhanvien2 = new HR_NHANVIEN_2();
                     nhanvien2.Id = nhanvien.Id;
                     nhanvien2.VP_SX = worksheet.Cells[i, 38].Text.NullString();
                     _nhanvien2Repository.Add(nhanvien2);
@@ -372,6 +375,17 @@ namespace HRMNS.Application.Implementation
                 {
                     nhanvien2.VP_SX = worksheet.Cells[i, 38].Text.NullString();
                     _nhanvien2Repository.Update(nhanvien2);
+                }
+
+                HR_NHANVIEN_CHEDO_DB nvVP = _nvVanPhongRepository.FindSingle(x => x.MaNhanVien == nhanvien.Id);
+
+                if(nvVP == null && nhanvien.MaBoPhan == CommonConstants.SP)
+                {
+                    _nvVanPhongRepository.Add(new HR_NHANVIEN_CHEDO_DB() { MaNhanVien = nhanvien.Id, CheDoDB = "vp_Block_10p" });
+                }
+                else if(nvVP != null && nhanvien.MaBoPhan != CommonConstants.SP)
+                {
+                    _nvVanPhongRepository.Remove(nvVP);
                 }
 
                 if (!isUpdate)

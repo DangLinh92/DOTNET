@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using OPERATION_MNS.Application.Implementation;
 using OPERATION_MNS.Application.Interfaces;
 using OPERATION_MNS.Application.ViewModels.Sameple;
@@ -128,7 +129,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
             }
 
             List<TinhHinhSanXuatSampleViewModel> lst = new List<TinhHinhSanXuatSampleViewModel>();
-            lst.AddRange(data.OrderBy(x=>x.MucDoKhanCap));
+            lst.AddRange(data.OrderBy(x => x.MucDoKhanCap));
             lst.AddRange(data1.FindAll(x => x.DeleteFlg == "Y" || x.LeadTimeMax > 7 || x.Code.NullString().ToUpper() != "R"));
 
             return DataSourceLoader.Load(lst, loadOptions);
@@ -284,6 +285,78 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
                 }
 
                 ResultDB rs = _scheduleSampleService.ImportDelayExcel(filePath, param);
+
+                if (rs.ReturnInt == 0)
+                {
+                    _scheduleSampleService.Save();
+                }
+                else
+                {
+                    return new NotFoundObjectResult(rs.ReturnString);
+                }
+
+                if (System.IO.File.Exists(filePath))
+                {
+                    // If file found, delete it    
+                    System.IO.File.Delete(filePath);
+                }
+
+                return new OkObjectResult(filePath);
+            }
+
+            return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
+        }
+        #endregion
+
+        #region Plan Sample
+
+        public IActionResult PlanSample()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public object GetPlanSample(DataSourceLoadOptions loadOptions, string month)
+        {
+            var data = _scheduleSampleService.GetActualPlanSample(month);
+
+            return DataSourceLoader.Load(data, loadOptions);
+        }
+
+        [HttpGet]
+        public object GetPlanSampleTotal(DataSourceLoadOptions loadOptions, string month)
+        {
+            var data = _scheduleSampleService.GetActualPlanSampleTotal(month);
+            return DataSourceLoader.Load(data, loadOptions);
+        }
+
+        [HttpPost]
+        [RequestFormLimits(MultipartBodyLengthLimit = 209715200)]
+        [RequestSizeLimit(209715200)]
+        public IActionResult ImportPlanSampleExcel(IList<IFormFile> files, string param)
+        {
+            if (files != null && files.Count > 0)
+            {
+                var file = files[0];
+                var filename = ContentDispositionHeaderValue
+                                   .Parse(file.ContentDisposition)
+                                   .FileName
+                                   .Trim('"');
+
+                string folder = _hostingEnvironment.WebRootPath + $@"\uploaded\excels";
+                if (!Directory.Exists(folder))
+                {
+                    Directory.CreateDirectory(folder);
+                }
+                string fName = CorrelationIdGenerator.GetNextId() + filename;
+                string filePath = Path.Combine(folder, fName);
+                using (FileStream fs = System.IO.File.Create(filePath))
+                {
+                    file.CopyTo(fs);
+                    fs.Flush();
+                }
+
+                ResultDB rs = _scheduleSampleService.ImportPlanSampleExcel(filePath, param);
 
                 if (rs.ReturnInt == 0)
                 {

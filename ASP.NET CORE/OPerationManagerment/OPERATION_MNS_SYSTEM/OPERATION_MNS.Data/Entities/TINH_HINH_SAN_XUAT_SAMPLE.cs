@@ -24,7 +24,7 @@ namespace OPERATION_MNS.Data.Entities
             string seed_Actual_Date, string platePR_Plan_Date, string platePR_Actual_Date, string plate_Plan_Date, string plate_Actual_Date, string preProbe_Plan_Date,
             string preProbe_Actual_Date, string preDicing_Plan_Date, string preDicing_Actual_Date, string allProbe_Plan_Date, string allProbe_Actual_Date, string bg_Plan_Date, string bg_Actual_Date,
             string dicing_Plan_Date, string dicing_Actual_Date, string chipIns_Plan_Date, string chipIns_Actual_Date, string packing_Plan_Date, string packing_Actual_Date, string oqc_Plan_Date,
-            string oqc_Actual_Date, string shipping_Plan_Date, string shipping_Actual_Date, int leadTime, string deleteFlg, string planInputDateTcard,int outPutWafer, int leadTimePlan)
+            string oqc_Actual_Date, string shipping_Plan_Date, string shipping_Actual_Date, int leadTime, string deleteFlg, string planInputDateTcard,int outPutWafer, int leadTimePlan,string note_DayOff)
         {
             Id = id;
             Year = year;
@@ -78,7 +78,7 @@ namespace OPERATION_MNS.Data.Entities
             PlanInputDateTcard = planInputDateTcard;
             OutPutWafer = outPutWafer;
             LeadTimePlan = leadTimePlan;
-
+            Note_DayOff = note_DayOff;
         }
 
         public int Year { get; set; }
@@ -249,6 +249,9 @@ namespace OPERATION_MNS.Data.Entities
 
         [StringLength(50)]
         public string PlanInputDateTcard { get; set; }
+
+        [StringLength(250)]
+        public string Note_DayOff { get; set; }
 
         // actual output
         public int OutPutWafer { get; set; }

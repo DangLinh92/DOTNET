@@ -8,6 +8,7 @@ namespace OPERATION_MNS.Application.Interfaces
     public interface ILeadTimeService : IDisposable
     {
         List<LeadTimeViewModel> GetLeadTime(string year,string month,string week,string day,string ox);
+        List<LeadTimeViewModel> GetLeadTimeLFEM(string year,string month,string week,string day,string ox,string model);
 
         double GetTargetWLP(string year);
     }

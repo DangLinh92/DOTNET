@@ -112,7 +112,7 @@ namespace OPERATION_MNS.Data.EF
                 V_RETURN.Direction = ParameterDirection.Output;
                 cmd.Parameters.Add(V_RETURN);
 
-                cmd.CommandTimeout = 300;
+                cmd.CommandTimeout = 2400;
                 da = new SqlDataAdapter(cmd);
                 da.Fill(ds);
                 con.Close();

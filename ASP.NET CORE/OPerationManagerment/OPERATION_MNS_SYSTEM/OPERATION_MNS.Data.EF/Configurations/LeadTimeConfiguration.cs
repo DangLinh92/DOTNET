@@ -15,4 +15,13 @@ namespace OPERATION_MNS.Data.EF.Configurations
             entity.Property(x => x.Id).ValueGeneratedOnAdd();
         }
     }
+
+    public class LeadTimeLfemConfiguration : DbEntityConfiguration<LEAD_TIME_LFEM>
+    {
+        public override void Configure(EntityTypeBuilder<LEAD_TIME_LFEM> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
 }

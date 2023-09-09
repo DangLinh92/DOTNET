@@ -48,6 +48,14 @@ namespace HRMNS.Data.EF.Configurations
         }
     }
 
+    public class DailyTimeWorkingConfiguration : DbEntityConfiguration<DAILY_TIME_WORKING>
+    {
+        public override void Configure(EntityTypeBuilder<DAILY_TIME_WORKING> entity)
+        {
+            entity.HasKey(c => c.Id);
+        }
+    }
+
     public class KhenThuongKyLuatConfiguration : DbEntityConfiguration<HR_KY_LUAT_KHENTHUONG>
     {
         public override void Configure(EntityTypeBuilder<HR_KY_LUAT_KHENTHUONG> entity)

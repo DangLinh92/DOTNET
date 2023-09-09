@@ -47,6 +47,9 @@ namespace OPERATION_MNS.Application.ViewModels
         [StringLength(50)]
         public string Material_In_MES { get; set; }
 
+        public string Size { get; set; }
+        public string GroupName { get; set; }
+
         public List<QuantityByDay> QuantityByDays { get; set; }
     }
 
@@ -81,6 +84,16 @@ namespace OPERATION_MNS.Application.ViewModels
 
         public string CFAB { get; set; }
 
-       public List<QuantityByDay> QuantityByDays;
+        public string Display { get; set; }
+
+        public string DateFrom { get; set; }
+        public string DateTo { get; set; }
+
+        public int WeekFrom { get; set; }
+        public int WeekTo { get; set; }
+
+        public double Rate { get; set; }
+
+        public List<QuantityByDay> QuantityByDays;
     }
 }

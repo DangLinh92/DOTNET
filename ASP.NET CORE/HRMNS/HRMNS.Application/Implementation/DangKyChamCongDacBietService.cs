@@ -125,7 +125,7 @@ namespace HRMNS.Application.Implementation
             {
                 if (string.IsNullOrEmpty(fromDate) && string.IsNullOrEmpty(toDate))
                 {
-                    return GetAll(includeProperties);
+                    return GetAll(includeProperties).Where(x=>x.NgayBatDau.CompareTo(DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd")) > 0).ToList();
                 }
 
                 return _mapper.Map<List<DangKyChamCongDacBietViewModel>>(_chamCongDbRepository.FindAll(x => (x.NgayKetThuc.CompareTo(fromDate) >= 0 && x.NgayBatDau.CompareTo(toDate) <= 0), includeProperties).OrderByDescending(x => x.DateModified));

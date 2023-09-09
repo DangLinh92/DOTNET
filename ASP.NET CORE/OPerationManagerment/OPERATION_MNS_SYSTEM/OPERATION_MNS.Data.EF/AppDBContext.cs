@@ -64,6 +64,25 @@ namespace OPERATION_MNS.Data.EF
         public virtual DbSet<STAY_LOT_LIST_SAMPLE> STAY_LOT_LIST_SAMPLE { get; set; }
         public virtual DbSet<STAY_LOT_LIST_HISTORY_SAMPLE> STAY_LOT_LIST_HISTORY_SAMPLE { get; set; }
         public virtual DbSet<DATE_OFF_LINE_SAMPLE> DATE_OFF_LINE_SAMPLE { get; set; }
+        public virtual DbSet<GOC_PLAN_LFEM> GOC_PLAN_LFEM { get; set; }
+        public virtual DbSet<DATE_OFF_LINE_LFEM> DATE_OFF_LINE_LFEM { get; set; }
+        public virtual DbSet<OUT_PUT_SHIPPING_LOT_LFEM> OUT_PUT_SHIPPING_LOT_LFEM { get; set; }
+        public virtual DbSet<OUT_PUT_BY_LOT_LFEM> OUT_PUT_BY_LOT_LFEM { get; set; }
+        public virtual DbSet<KHSX_ACTUAL_LFEM> KHSX_ACTUAL_LFEM { get; set; }
+        public virtual DbSet<DAILY_PLAN_DATA_LFEM> DAILY_PLAN_DATA_LFEM { get; set; }
+        public virtual DbSet<STAY_LOT_LIST_PRIORY_LFEM> STAY_LOT_LIST_PRIORY_LFEM { get; set; }
+        public virtual DbSet<LOT_TEST_HISTOTY_LFEM> LOT_TEST_HISTOTY_LFEM { get; set; }
+        public virtual DbSet<STAY_LOT_LIST_LFEM> STAY_LOT_LIST_LFEM { get; set; }
+        public virtual DbSet<STAY_LOT_LIST_HISTORY_LFEM> STAY_LOT_LIST_HISTORY_LFEM { get; set; }
+        public virtual DbSet<ACTUAL_PLAN_SAMPLE> ACTUAL_PLAN_SAMPLE { get; set; }
+        public virtual DbSet<WARNING_LOT_RUN_LFEM> WARNING_LOT_RUN_LFEM { get; set; }
+        public virtual DbSet<WARNING_LOT_RUNTIME_LFEM> WARNING_LOT_RUNTIME_LFEM { get; set; }
+
+        // SMT
+        public virtual DbSet<GOC_PLAN_SMT> GOC_PLAN_SMT { get; set; }
+        public virtual DbSet<OUT_PUT_BY_LOT_SMT> OUT_PUT_BY_LOT_SMT { get; set; }
+        public virtual DbSet<DATE_OFF_LINE_SMT> DATE_OFF_LINE_SMT { get; set; }
+        public virtual DbSet<LEAD_TIME_LFEM> LEAD_TIME_LFEM { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -117,6 +136,27 @@ namespace OPERATION_MNS.Data.EF
             builder.AddConfiguration(new StayLotListHistorySample2Configuration());
             builder.AddConfiguration(new DateOffLineSampleConfiguration());
             builder.AddConfiguration(new DelayCommentSampleConfiguration());
+            builder.AddConfiguration(new ActualPlanSampleConfiguration());
+
+            // lfem
+            builder.AddConfiguration(new GocPlanLfemConfiguration());
+            builder.AddConfiguration(new DateOffLineLFEMConfiguration());
+            builder.AddConfiguration(new OutPutByLotLFEMConfiguration());
+            builder.AddConfiguration(new OutPutShippingLFEMConfiguration());
+            builder.AddConfiguration(new KHSXActualLFEMConfiguration());
+            builder.AddConfiguration(new DailyPlanDataLFEMConfiguration());
+            builder.AddConfiguration(new StayLotListPrioryLfemConfiguration());
+            builder.AddConfiguration(new LotTestHistoryLfemConfiguration());
+            builder.AddConfiguration(new StayLotListLfemConfiguration());
+            builder.AddConfiguration(new StayLotListHistoryLfemConfiguration());
+            builder.AddConfiguration(new WarningLotRunLfemConfiguration());
+            builder.AddConfiguration(new WarningLotRunTimeLfemConfiguration());
+            builder.AddConfiguration(new LeadTimeLfemConfiguration());
+
+            // smt
+            builder.AddConfiguration(new GocPlanSMTConfiguration());
+            builder.AddConfiguration(new OutputByLotSMTConfiguration());
+            builder.AddConfiguration(new DateOffLineSMTConfiguration());
         }
 
         public override int SaveChanges()

@@ -1,4 +1,5 @@
-﻿using CarMNS.Data.Entities;
+﻿using CarMNS.Application.ViewModels;
+using CarMNS.Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -25,7 +26,19 @@ namespace CarMNS.Application.Interfaces
         bool UnApprove(int maDangKy, string role);
 
         Dictionary<string, List<string>> GetUserSendMail(int maDangKy, bool isNew, bool isApprove, bool isUnApprove);
-
+        Dictionary<string, List<string>> GetUserSendMailTaxi(int maDangKy, bool isNew, bool isApprove, bool isUnApprove);
         void Save();
+
+        List<DANG_KY_XE_TAXI> GetAllDangKyXe_Taxi(string role, string bophan);
+        List<DANG_KY_XE_TAXI> GetHistoryByUser(string user);
+        DANG_KY_XE_TAXI AddDangKyXe_Taxi(DANG_KY_XE_TAXI dangky, string role);
+        DANG_KY_XE_TAXI GetDangKyXeTaxiById(int id);
+        DANG_KY_XE_TAXI UpdateDangKyXeTaxi(DANG_KY_XE_TAXI dangky);
+        void DeleteDangKyXeTaxi(int id);
+        bool ApproveTaxi(int maDangKy, string role);
+        bool UnApproveTaxi(int maDangKy, string role);
+        List<DANG_KY_XE_TAXI> GetDangKyXeTaxiHistory();
+
+        List<NguoiDungTaxi> GetReportTaxi(string fromDate, string toDate, string boPhan);
     }
 }

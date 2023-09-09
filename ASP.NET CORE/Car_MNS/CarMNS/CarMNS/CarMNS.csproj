@@ -97,4 +97,30 @@
     <PackageReference Include="DevExtreme.AspNet.Core" Version="21.2.8" />
     <PackageReference Include="DevExtreme.AspNet.Data" Version="2.8.6" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\Areas\Admin\Views\DangKyXe\TaxiReport.ko-KR.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Areas\Admin\Views\DangKyXe\TaxiReport.vi-VN.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Areas\Admin\Views\DangKyXe\ViewHistory.vi-VN.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Areas\Admin\Views\DangKyXe\ViewHistory.ko-KR.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Areas\Admin\Views\DangKyXe\ViewHistoryTaxi.ko-KR.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Areas\Admin\Views\DangKyXe\ViewHistoryTaxi.vi-VN.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Areas\Admin\Views\DangKyXe\Taxi.vi-VN.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Areas\Admin\Views\DangKyXe\Taxi.ko-KR.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>

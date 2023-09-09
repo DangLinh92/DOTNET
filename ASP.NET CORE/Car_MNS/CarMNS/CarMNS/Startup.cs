@@ -139,7 +139,12 @@ namespace CarMNS
             services.AddRazorPages().AddSessionStateTempDataProvider();
             services.AddControllersWithViews().AddSessionStateTempDataProvider();
             services.AddDistributedMemoryCache();
-            services.AddSession();
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromHours(8);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
             services.AddMinResponse();
 
             // If using Kestrel:

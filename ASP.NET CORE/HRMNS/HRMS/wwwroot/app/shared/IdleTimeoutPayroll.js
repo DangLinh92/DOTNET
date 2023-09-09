@@ -1,5 +1,5 @@
 ﻿(function () {
-    const idleDurationSecs = 1800;//30 minute
+    const idleDurationSecs = 7200;//30 minute
     const redirectUrl = '/Payroll/Account/Logout';
     let idleTimeout;
 

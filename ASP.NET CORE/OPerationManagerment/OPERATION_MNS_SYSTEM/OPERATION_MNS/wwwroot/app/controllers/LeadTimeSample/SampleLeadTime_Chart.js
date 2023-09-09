@@ -19,35 +19,37 @@
                 return this.height += 15;
             }
         },
-        //afterDatasetsDraw: function (chart, args, options) {
-        //    const { ctx, scales: { x, y } } = chart;
+        afterDatasetsDraw: function (chart, args, options) {
+            const { ctx, scales: { x, y } } = chart;
 
-        //    chart.data.datasets[0].data.forEach((datapoint, index) => {
+            chart.data.datasets[0].data.forEach((datapoint, index) => {
 
-        //        const datasetArray = [];
-        //        chart.data.datasets.forEach((dataset) => {
+                const datasetArray = [];
+                chart.data.datasets.forEach((dataset) => {
 
-        //            if (dataset.type == 'bar') {
-        //                datasetArray.push(dataset.data[index]);
-        //            }
-        //        })
+                    if (dataset.type == 'bar') {
+                        datasetArray.push(dataset.data[index]);
+                    }
+                })
 
-        //        function totalSum(total, values) {
-        //            return total + values;
-        //        };
+                function totalSum(total, values) {
+                    return total + values;
+                };
+                
+                let sum = datasetArray.reduce(totalSum, 0);
 
-        //        let sum = datasetArray.reduce(totalSum, 0);
+                console.log('---');
+                console.log(sum);
+                console.log(x.getPixelForValue(index), chart.getDatasetMeta(1).data[index].y, y.getPixelForValue(index));
+                console.log('---');
 
-        //        console.log(index);
-        //        console.log(chart.getDatasetMeta(1));
+                ctx.font = 'bold 11px sans-serif';
+                ctx.fillStyle = '#004e89';
+                ctx.textAlign = 'center';
+                ctx.fillText(sum.toFixed(0), x.getPixelForValue(index), chart.getDatasetMeta(1).data[index].y);
 
-        //        ctx.font = 'bold 11px sans-serif';
-        //        ctx.fillStyle = '#004e89';
-        //        ctx.textAlign = 'center';
-        //        ctx.fillText(sum.toFixed(1), x.getPixelForValue(index), y.getPixelForValue(index));
-
-        //    })
-        //}
+            })
+        }
     };
 
     var arrLeadTimeChart = [];
@@ -61,8 +63,19 @@
         arrLeadTimeChart = [];
 
         // ve bieu do leadtime theo thang
-        var arrColor = ['#664dc9', '#44c4fa', '#38cb89', '#3e80eb', '#17594A', '#ffab00', '#ef4b4b'];
-        var arrColorGap = ['#44c4fa', '#ef4b4b'];
+        var arrColor = ['#0A6EBD', '#5A96E3', '#A1C2F1', '#E7CEA6', '#17594A', '#ffab00', '#ef4b4b'];
+        var arrColor2 = ['#614BC3', '#96B6C5', '#EEE0C9', '#102C57', '#5B9A8B',
+            '#9F91CC', '#5C4B99', '#4477CE', '#8CABFF', '#7EAA92',
+            '#FFC6AC', '#FFF6DC', '#C4C1A4', '#9E9FA5', '#241468',
+            '#EAC696', '#C8AE7D', '#765827', '#65451F', '#E48586',
+            '#FCBAAD', '#CECE5A', '#91C8E4', '#4682A9', '#3E001F',
+            '#7A316F', '#CD6688', '#DFA878', '#CEE6F3', '#BA704F',
+            '#6C3428', '#0D1282', '#7A9D54', '#557A46', '#8C3333',
+            '#A1CCD1', '#F4F2DE', '#E9B384', '#7C9D96', '#1D5D9B',
+            '#75C2F6', '#F4D160', '#D7BBF5', '#FFB07F', '#7D7463',
+            '#A8A196', '#0B666A', '#1A5D1A', '#4C4B16', '#898121'];
+
+        var arrColorGap = ['#0A6EBD', '#ef4b4b'];
         let monthLabel = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
 
         let gapsLabel = [];
@@ -132,7 +145,7 @@
                 _mIndex += 1;
             }
 
-            if (dataValue_P_wlpMonth.length < _i+1) {
+            if (dataValue_P_wlpMonth.length < _i + 1) {
                 dataValue_P_wlpMonth.push(0);
             }
             if (dataValue_H_wlpMonth.length < _i + 1) {
@@ -154,8 +167,8 @@
         dic_wlpMonth['R'] = dataValue_R_wlpMonth;
         dic_wlpMonth['Z'] = dataValue_Z_wlpMonth;
         dic_wlpMonth['M'] = dataValue_M_wlpMonth;
-        dic_wlpMonth['Target R'] = dataValue_R_Target;
-        dic_wlpMonth['Target P'] = dataValue_P_Target;
+        dic_wlpMonth['Target R(9.5)'] = dataValue_R_Target;
+        dic_wlpMonth['Target P(5.5)'] = dataValue_P_Target;
 
         let objDatasets_wlpMonth = [];
         let k = 0;
@@ -336,8 +349,8 @@
         dic_wlpWeek['R'] = dataValue_R_wlpWeek;
         dic_wlpWeek['Z'] = dataValue_Z_wlpWeek;
         dic_wlpWeek['M'] = dataValue_M_wlpWeek;
-        dic_wlpWeek['Target R'] = dataValue_R_Target_Week;
-        dic_wlpWeek['Target P'] = dataValue_P_Target_Week;
+        dic_wlpWeek['Target R(9.5)'] = dataValue_R_Target_Week;
+        dic_wlpWeek['Target P(5.5)'] = dataValue_P_Target_Week;
 
         let objDatasets_wlpWeek = [];
         let h = 0;
@@ -492,7 +505,7 @@
             let obj = {
                 label: key,
                 data: dic_wafer_month[key],
-                backgroundColor: key != 'Total' ? arrColor[z] :'#ffff',
+                backgroundColor: key != 'Total' ? arrColor[z] : '#ffff',
                 type: 'bar'
             }
 
@@ -514,7 +527,7 @@
                     display: true
                 }
             }
-            
+
 
             objDatasets_wafer_month.push(obj);
             z += 1;
@@ -677,24 +690,23 @@
                     display: true
                 }
             }
-            else
-            {
+            else {
                 obj.datalabels =
                 {
                     anchor: 'center',
                     align: 'center',
                     color: '#004e89',
-                    size:12,
+                    size: 12,
                     display: true
                 }
             }
-            
+
 
             objDatasets_wafer_week.push(obj);
             m += 1;
         }
 
-       
+
 
         console.log(weeksLabel2);
         console.log(objDatasets_wafer_week);
@@ -721,7 +733,7 @@
                         //anchor: 'start',
                         //align: 'top',
                         //color: '#ffff',
-                         formatter: function (value, index, values) {
+                        formatter: function (value, index, values) {
                             if (value > 0) {
                                 return value;
                             } else {
@@ -891,6 +903,140 @@
             }
         });
         arrLeadTimeChart.push(chart_gap_leadtime);
+
+        // Tỷ lệ % người chịu  trách nhiệm theo model rút gọn
+
+        let ctx_nguoichiuTN = document.getElementById('chart_rate_nguoichiuTN').getContext('2d');
+
+        let dic_nguoichiuTN = new Object();
+
+        let dataLabel_nguoichiuTN = [];
+        let data_Model = [];
+
+        for (pl of SampleChiuTN) {
+
+            // ten nguoi chiu TN
+            if (!dataLabel_nguoichiuTN.includes(pl.Label_x)) {
+                dataLabel_nguoichiuTN.push(pl.Label_x);
+            }
+
+            // ten model 
+            if (!data_Model.includes(pl.Legend)) {
+                data_Model.push(pl.Legend);
+
+                dic_nguoichiuTN[pl.Legend] = [];
+            }
+        }
+
+        let sp = [];
+        for (nv of dataLabel_nguoichiuTN) {
+            for (m of data_Model) {
+
+                sp = SampleChiuTN.filter(element => {
+
+                    // 👇️ using AND (&&) operator
+                    return element.Legend === m && element.Label_x === nv;
+                });
+
+                if (sp.length > 0) {
+                    dic_nguoichiuTN[m].push(sp[0].Value);
+                }
+                else {
+                    dic_nguoichiuTN[m].push(0);
+                }
+            }
+        }
+
+        let objDatasets_nguoichiuTN = [];
+        let _k = 0;
+        for (let key in dic_nguoichiuTN) {
+            let obj = {
+                label: key,
+                data: dic_nguoichiuTN[key],
+                backgroundColor: arrColor2[_k],
+                borderColor: arrColor2[_k],
+                /* borderWidth: 0.5,*/
+                /*fill: true,*/
+                type: 'bar' //key == 'Target' ? 'line' : 'bar'
+            }
+
+            obj.datalabels =
+            {
+                anchor: 'center',
+                align: 'center',
+                color: '#ffff',
+                display: true
+            }
+
+            objDatasets_nguoichiuTN.push(obj);
+            _k += 1;
+        }
+
+        const absoluteFormatterTouching = (value) => {
+            if (value > 0) {
+                return value;
+            } else {
+                return null;
+            }
+        }
+
+        let chart_nguoichiuTN = new Chart(ctx_nguoichiuTN, {
+            type: 'bar',
+            data: {
+                labels: dataLabel_nguoichiuTN,
+                datasets: objDatasets_nguoichiuTN
+            },
+            plugins: [ChartDataLabels, legenMargin],
+            options: {
+                /* indexAxis: 'y',*/
+                plugins: {
+                    // Change options for ALL labels of THIS CHART
+                    datalabels: {
+                        display: 'auto',
+                        formatter: absoluteFormatterTouching
+                    },
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        align: 'start'
+                    }
+                    ,
+                    tooltip: {
+                        filter: tooltipItem => tooltipItem.dataset.data[tooltipItem.dataIndex] > 0
+                    }
+                },
+                maintainAspectRatio: false,
+                //legend: {
+                //    display: true,
+                //    labels: {
+                //        display: true
+                //    }
+                //},
+                responsive: true,
+                scales: {
+                    x: {
+                        stacked: true,
+                        ticks: {
+                            fontSize: 11
+                        },
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        stacked: true,
+                        ticks: {
+                            beginAtZero: true,
+                            fontSize: 11
+                        },
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+        arrLeadTimeChart.push(chart_nguoichiuTN);
     }
 
 }

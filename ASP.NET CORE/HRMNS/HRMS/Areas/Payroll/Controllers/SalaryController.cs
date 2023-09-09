@@ -60,6 +60,7 @@ namespace HRMS.Areas.Payroll.Controllers
             var entity = _salaryService.GetById(key);
 
             JsonConvert.PopulateObject(values, entity);
+
             _salaryService.UpdateSalary(entity);
 
             return Ok();
@@ -98,6 +99,47 @@ namespace HRMS.Areas.Payroll.Controllers
                 }
 
                 ResultDB rs = _salaryService.ImportExcel(filePath);
+                if (rs.ReturnInt != 0)
+                    return new NotFoundObjectResult(rs.ReturnString);
+
+                if (System.IO.File.Exists(filePath))
+                {
+                    // If file found, delete it    
+                    System.IO.File.Delete(filePath);
+                }
+
+                return new OkObjectResult(filePath);
+            }
+            return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
+        }
+
+        [HttpPost]
+        [RequestFormLimits(MultipartBodyLengthLimit = 209715200)]
+        [RequestSizeLimit(209715200)]
+        public IActionResult ImportIncentiveExcel(IList<IFormFile> files)
+        {
+            if (files != null && files.Count > 0)
+            {
+                var file = files[0];
+                var filename = ContentDispositionHeaderValue
+                                   .Parse(file.ContentDisposition)
+                                   .FileName
+                                   .Trim('"');
+
+                string folder = _hostingEnvironment.WebRootPath + $@"\uploaded\excels";
+                if (!Directory.Exists(folder))
+                {
+                    Directory.CreateDirectory(folder);
+                }
+
+                string filePath = Path.Combine(folder, CorrelationIdGenerator.GetNextId() + filename);
+                using (FileStream fs = System.IO.File.Create(filePath))
+                {
+                    file.CopyTo(fs);
+                    fs.Flush();
+                }
+
+                ResultDB rs = _salaryService.ImportIncentiveExcel(filePath);
                 if (rs.ReturnInt != 0)
                     return new NotFoundObjectResult(rs.ReturnString);
 

@@ -24,6 +24,9 @@ namespace HRMNS.Application.ViewModels.Time_Attendance
         [StringLength(300)]
         public string NoiDung { get; set; }
 
+        public double GiaTri { get; set; }
+        public string GiaTri1 { get; set; }
+
         [StringLength(50)]
         public string Approve { get; set; }
 

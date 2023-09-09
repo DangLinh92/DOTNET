@@ -79,4 +79,58 @@ namespace OPERATION_MNS.Data.EF.Configurations
             entity.Property(x => x.Id).ValueGeneratedOnAdd();
         }
     }
+
+    public class StayLotListPrioryLfemConfiguration : DbEntityConfiguration<STAY_LOT_LIST_PRIORY_LFEM>
+    {
+        public override void Configure(EntityTypeBuilder<STAY_LOT_LIST_PRIORY_LFEM> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
+
+    public class LotTestHistoryLfemConfiguration : DbEntityConfiguration<LOT_TEST_HISTOTY_LFEM>
+    {
+        public override void Configure(EntityTypeBuilder<LOT_TEST_HISTOTY_LFEM> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
+
+    public class StayLotListLfemConfiguration : DbEntityConfiguration<STAY_LOT_LIST_LFEM>
+    {
+        public override void Configure(EntityTypeBuilder<STAY_LOT_LIST_LFEM> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
+
+    public class StayLotListHistoryLfemConfiguration : DbEntityConfiguration<STAY_LOT_LIST_HISTORY_LFEM>
+    {
+        public override void Configure(EntityTypeBuilder<STAY_LOT_LIST_HISTORY_LFEM> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
+
+    public class WarningLotRunLfemConfiguration : DbEntityConfiguration<WARNING_LOT_RUN_LFEM>
+    {
+        public override void Configure(EntityTypeBuilder<WARNING_LOT_RUN_LFEM> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
+
+    public class WarningLotRunTimeLfemConfiguration : DbEntityConfiguration<WARNING_LOT_RUNTIME_LFEM>
+    {
+        public override void Configure(EntityTypeBuilder<WARNING_LOT_RUNTIME_LFEM> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
 }

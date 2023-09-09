@@ -1,0 +1,224 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewData["Title"] = "ViewHistoryTaxi";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <style>
+        #gridContainer td {
+            vertical-align: middle;
+        }
+
+        #gridContainer .chart-cell {
+            overflow: visible;
+        }
+
+        #gridContainer .plan-value {
+            display: inline-block;
+            display: block;
+        }
+
+        #gridContainer .actual-value {
+            position: relative;
+            display: block;
+            border-top: 1px solid #004E89;
+        }
+
+        #gridContainer .yeallow {
+            color: #333;
+            background-color: #FFD3A3;
+        }
+
+        #gridContainer .overRed {
+            color: white;
+            background-color: #E74646;
+        }
+    </style>
+}
+
+@section Scripts
+    {
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+
+    <script>
+
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('Register car');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'RegisterCarTaxi.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        function getDateBoxValueFrom() {
+            return $("#begindate-date").dxDateBox("option", "text");
+        }
+
+        function getDateBoxValueTo() {
+            return $("#todate-date").dxDateBox("option", "text");
+        }
+
+        function getSelectBoxValue() {
+            return $("#slBophan").dxSelectBox("option", "value");
+        }
+
+        function selectBox_valueChanged(data) {
+            $("#gridContainer").dxDataGrid("refresh");
+        }
+
+        function refreshGrid() {
+            $("#gridContainer").dxDataGrid("refresh");
+        }
+
+    </script>
+}
+
+@{
+    DateTime beginMonth = DateTime.Parse(DateTime.Now.ToString("yyyy-MM") + "-01");
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center" style="margin-bottom:-2rem">
+            <div class="col">
+                <h3 class="page-title">Lịch Sử Điều Xe Taxi/배차 이력(Taxi)</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/Admin/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Lịch sử điều xe Taxi/배차 이력(Taxi)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form">
+                <div class="dx-fieldset">
+                    <div class="dx-field">
+                        <div style="float:left;display:inline-block;margin-right:10px">
+
+                            @(Html.DevExtreme().DateBox()
+                                .ID("begindate-date")
+                                .Type(DateBoxType.Date)
+                                .Value(beginMonth)
+                                .DisplayFormat("yyyy-MM-dd")
+                                .Width(200)
+                                .Placeholder("Select...")
+                                .Label("Input Date From")
+                                .OnValueChanged("refreshGrid")
+                                )
+
+                        </div>
+                        <div style="display:inline-block;margin-right:10px">
+                            @(Html.DevExtreme().DateBox()
+                                .ID("todate-date")
+                                .Type(DateBoxType.Date)
+                                .Value(DateTime.Now.AddDays(1))
+                                .DisplayFormat("yyyy-MM-dd")
+                                .Width(200)
+                                .Placeholder("Select...")
+                                .Label("Input Date To")
+                                .OnValueChanged("refreshGrid")
+                                )
+                        </div>
+                        <div style="display:inline-block">
+                            @(Html.DevExtreme().SelectBox()
+                                .ID("slBophan")
+                                .InputAttr("aria-label", "Department")
+                                .DataSource(d => d.Mvc().LoadAction("GetBoPhan2").Key("Id"))
+                                .DisplayExpr("TenBoPhan")
+                                .ValueExpr("Id")
+                                .OnValueChanged("refreshGrid")
+                                )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            @(Html.DevExtreme().DataGrid<DANG_KY_XE_TAXI>
+                ()
+                .ID("gridContainer")
+                .Height(700)
+                .ShowBorders(true)
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .AllowColumnResizing(true)
+                .ColumnMinWidth(50)
+                .ColumnAutoWidth(true)
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+                .OnExporting("exporting")
+                .FilterRow(filterRow => filterRow
+                .Visible(true)
+                .ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .HoverStateEnabled(true)
+                .ColumnFixing(x => x.Enabled(true))
+                .SearchPanel(searchPanel => searchPanel
+                .Visible(true)
+                .Width(240)
+                .Placeholder("Search...")
+                )
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.Id).Visible(false).AllowEditing(false);
+                    columns.AddFor(m => m.NgaySuDung).Caption(localizer["NGAY_SU_DUNG"].Value).Format("yyyy-MM-dd").AllowEditing(false);
+                    columns.AddFor(m => m.TenNguoiSuDung).Caption(localizer["TEN_NGUOI_SU_DUNG"].Value).AllowEditing(false);
+                    columns.AddFor(m => m.MaNV).Caption(localizer["MA_NHANVIEN"].Value).AllowEditing(false);
+                    columns.AddFor(m => m.NguoiDangKy).Caption(localizer["NGUOI_DANG_KY"].Value).AllowEditing(false);
+                    columns.AddFor(m => m.BoPhan).Caption(localizer["BO_PHAN"].Value);
+                    columns.AddFor(m => m.FromTimePlan).Format("HH:mm:ss").Caption(localizer["THOI_GIAN_DU_KIEN_FROM"].Value).AllowEditing(false);
+                    columns.AddFor(m => m.ToTimePlan).Format("HH:mm:ss").Caption(localizer["THOI_GIAN_DU_KIEN_TO"].Value).AllowEditing(false);
+                    columns.AddFor(m => m.ĐiaDiemXuatPhat).Caption(localizer["XUAT_PHAT"].Value).AllowEditing(false);
+                    columns.AddFor(m => m.DiaDiemDen_SoNha).Caption(localizer["SO_NHA"].Value).AllowEditing(false);
+                    columns.AddFor(m => m.DiaDiemDen_Xa).Caption(localizer["XA"].Value).AllowEditing(false);
+                    columns.AddFor(m => m.DiaDiemDen_Huyen).Caption(localizer["HUYEN"].Value).AllowEditing(false);
+                    columns.AddFor(m => m.DiaDiemDen_Tinh).Caption(localizer["TINH"].Value).AllowEditing(false);
+                    columns.AddFor(m => m.MucDichSuDung).Caption(localizer["MUC_DICH_SU_DUNG"].Value).AllowEditing(false);
+                    columns.AddFor(m => m.Lxe_BienSo).Caption(localizer["THONG_TIN_XE"].Value).AllowEditing(false);
+                    columns.AddFor(m => m.SoTien).Format(Format.FixedPoint).Caption(localizer["TONG_TIEN"].Value).AllowEditing(false);
+                    columns.AddFor(m => m.SoNguoiSuDung).Caption(localizer["SO_NGUOI_DUNG"].Value).AllowEditing(false);
+                    columns.AddFor(m => m.MaBill).Caption("Bill Number").AllowEditing(false);
+                }).WordWrapEnabled(true)
+                .DataSource(d => d.Mvc()
+                .Area("Admin")
+                .Controller("DangKyXe")
+                .LoadAction("Get_HistoryTaxi")
+                .LoadParams(new { fromTime = new JS("getDateBoxValueFrom"), toTime = new JS("getDateBoxValueTo"), bophan = new JS("getSelectBoxValue") })
+                .Key("Id")
+                ).Summary(s => s
+                .TotalItems(totalItems =>
+                {
+                    totalItems.AddFor(m => m.NgaySuDung).SummaryType(SummaryType.Count).DisplayFormat("Count: {0}").ValueFormat(Format.FixedPoint);
+                    totalItems.AddFor(m => m.SoTien).SummaryType(SummaryType.Sum).DisplayFormat("Total: {0}").ValueFormat(Format.FixedPoint);
+                }))
+                )
+        </div>
+    </div>
+</div>
+
+
+
+
+

@@ -50,6 +50,7 @@
                         $('#_txtNgayBatDau').val(object.NgayBatDau);
                         $('#_txtNgayKetThuc').val(object.NgayKetThuc);
                         $('#_txtContent').val(object.NoiDung);
+                        $('#_txtGiatri').val(object.GiaTri);
                     }
                     else {
                         hrms.notify('error: Not found data!', 'error', 'alert', function () { });
@@ -79,6 +80,7 @@
                 var content = $('#_txtContent').val();
                 var action = $('#hd_chamCongDB').val();
                 var id = $('#_txtId').val();
+                var giatri = $('#_txtGiatri').val();
 
                 let arrManv = [];
                 $.each(maNv, function (index, value) {
@@ -89,6 +91,7 @@
                             NgayBatDau: fromTime,
                             NgayKetThuc: toTime,
                             NoiDung: content,
+                            GiaTri1: giatri,
                             Id: id
                         };
 
@@ -295,6 +298,7 @@
             $('#_txtNgayBatDau').val('');
             $('#_txtNgayKetThuc').val('');
             $('#_txtContent').val('');
+            $('#_txtGiatri').val(0);
         }
 
         // Init data nhan vien

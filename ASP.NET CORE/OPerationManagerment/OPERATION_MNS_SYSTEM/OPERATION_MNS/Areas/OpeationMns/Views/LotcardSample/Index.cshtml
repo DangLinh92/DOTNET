@@ -122,7 +122,8 @@
 
     <div class="row">
         <div class="col-md-12">
-            @(Html.DevExtreme().DataGrid<TCARD_SAMPLE>()
+            @(Html.DevExtreme().DataGrid<TCARD_SAMPLE>
+                ()
                 .ID("gridContainer")
                 .Height(720)
                 .ShowBorders(true)
@@ -150,21 +151,21 @@
                 )
                 .Editing(editing =>
                 {
-                    editing.Mode(GridEditMode.Form);
-                    editing.AllowUpdating(true);
-                    editing.AllowAdding(true);
-                    editing.AllowDeleting(true);
+                editing.Mode(GridEditMode.Form);
+                editing.AllowUpdating(true);
+                editing.AllowAdding(true);
+                editing.AllowDeleting(true);
                 })
                 .Columns(columns =>
                 {
-                    columns.AddFor(m => m.Model);
-                    columns.AddFor(m => m.LotNo);
-                    columns.AddFor(m => m.WaferID).Width(200).AllowEditing(true);
-                    columns.AddFor(m => m.Code).AllowEditing(true);
-                    columns.AddFor(m => m.MucDichInput).Width(200).Caption("Mục đích input").AllowEditing(true);
-                    columns.AddFor(m => m.NguoiChiuTrachNhiem).Caption("Người chịu trách nhiệm").AllowEditing(true);
-                    columns.AddFor(m => m.InputDatePlan2).Format("yyyy-MM-dd").Caption("Input Date").AllowEditing(true);
-                    columns.AddFor(m => m.OutPutDatePlan2).Format("yyyy-MM-dd").Caption("Output Date").AllowEditing(true);
+                columns.AddFor(m => m.Model);
+                columns.AddFor(m => m.LotNo);
+                columns.AddFor(m => m.WaferID).Width(200).AllowEditing(true);
+                columns.AddFor(m => m.Code).AllowEditing(true);
+                columns.AddFor(m => m.MucDichInput).Width(200).Caption("Mục đích input").AllowEditing(true);
+                columns.AddFor(m => m.NguoiChiuTrachNhiem).Caption("Người chịu trách nhiệm").AllowEditing(true);
+                columns.AddFor(m => m.InputDatePlan2).Format("yyyy-MM-dd").Caption("Input Date").AllowEditing(true);
+                columns.AddFor(m => m.OutPutDatePlan2).Format("yyyy-MM-dd").Caption("Output Date").AllowEditing(true);
                 }).WordWrapEnabled(true)
                 .DataSource(d => d.Mvc()
                 .Area("OpeationMns")
@@ -174,7 +175,10 @@
                 .InsertAction("Post")
                 .DeleteAction("Delete")
                 .Key("Id")
-                )
+                ).Summary(s => s.TotalItems(items =>
+                {
+                    items.AddFor(m => m.LotNo).SummaryType(SummaryType.Count).DisplayFormat("Count: {0}");
+                }))
                 )
         </div>
     </div>

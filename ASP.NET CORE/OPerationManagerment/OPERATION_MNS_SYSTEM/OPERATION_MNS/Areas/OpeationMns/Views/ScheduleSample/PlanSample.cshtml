@@ -1,0 +1,279 @@
+﻿@{
+    ViewData["Title"] = "Plan Sample";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+@section Styles {
+
+}
+
+@section Scripts
+    {
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+
+    <script>
+
+        $('#btn-import-Tcard').on('click', function () {
+            $("#fileInputExcel").val(null);
+            $('#import_gocPlan').modal('show');
+        });
+
+        $('#btnCloseImportExcel').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+            if (files.length > 0) {
+                $("#fileInputExcel").val(null);
+                $('#hd-ImportType').val('');
+                $('#import_gocPlan').modal('hide');
+                location.reload();
+            }
+        });
+
+        $('#btnCloseImport').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+            if (files.length > 0) {
+                $("#fileInputExcel").val(null);
+                $('#hd-ImportType').val('');
+                $('#import_gocPlan').modal('hide');
+                location.reload();
+            }
+        });
+
+        $('#btnImportExcel').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+
+            // Create FormData object
+            var fileData = new FormData();
+            // Looping over all files and add it to FormData object
+            for (var i = 0; i < files.length; i++) {
+                fileData.append("files", files[i]);
+            }
+            // Adding one more key to FormData object
+            // fileData.append('categoryId', $('#ddlCategoryIdImportExcel').combotree('getValue'));
+
+            $.ajax({
+                url: '/OpeationMns/ScheduleSample/ImportPlanSampleExcel',
+                type: 'POST',
+                data: fileData,
+                processData: false,  // tell jQuery not to process the data
+                contentType: false,  // tell jQuery not to set contentType
+                beforeSend: function () {
+                    hrms.run_waitMe($('#import_gocPlan'));
+                },
+                success: function (data) {
+                    $('#import_gocPlan').modal('hide');
+                    hrms.hide_waitMe($('#import_gocPlan'));
+                    hrms.notify("Import success!", 'Success', 'alert', function () {
+
+                        location.reload();
+                    });
+                },
+                error: function (status) {
+                    hrms.notify('error: Import error!' + status.responseText, 'error', 'alert', function () { });
+                    hrms.hide_waitMe($('#import_gocPlan'));
+                }
+            });
+            return false;
+        });
+
+
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('Plan Sample');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'PlanSample.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        function getMonth() {
+            return $("#begindate-date").dxDateBox("option", "text");
+        }
+
+        function refreshGrid() {
+            $("#gridContainer").dxDataGrid("refresh");
+            $("#gridContainerTotal").dxDataGrid("refresh");
+        }
+
+        function fVisible(day) {
+            var _month = new Date($("#begindate-date").dxDateBox("option", "text") + '-01');
+
+            console.log(_month);
+
+            if (lastday(_month.getFullYear(), _month.getMonth()) >= day)
+                return true;
+
+            return false;
+        }
+
+        var lastday = function (y, m) {
+            return new Date(y, m + 1, 0).getDate();
+        }
+    </script>
+}
+@{
+    DateTime _Month = DateTime.Now;
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Plan Sample</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Plan Sample</li>
+                </ul>
+            </div>
+            <div class="col-auto float-right ml-auto">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info dropdown-toggle" id="btnImport" style="margin-right:100px;width:100px" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Excel</button>
+                    <div class="dropdown-menu" style="">
+                        <a class="dropdown-item" href="~/templates/ActualPlanSampleTemp.xlsx">File mẫu import kế hoạch sample</a>
+                        <a class="dropdown-item" href="#" id="btn-import-Tcard">Import Plan Sample</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form">
+                <div class="dx-fieldset">
+                    <div class="dx-field">
+                        <div>
+
+                            @(Html.DevExtreme().DateBox()
+                                .ID("begindate-date")
+                                .Value(_Month)
+                                .DisplayFormat("yyyy-MM")
+                                .Width(200)
+                                .Placeholder("Select...")
+                                .Label("Month")
+                                .OnValueChanged("refreshGrid")
+                                )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-10" style="padding-right :0px!important">
+            @(
+                Html.DevExtreme().DataGrid<SamplePlanViewModel>
+                ()
+                .ID("gridContainer")
+                .Height(300)
+                .ShowBorders(true)
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .AllowColumnResizing(true)
+                .ColumnMinWidth(50)
+                .ColumnAutoWidth(true)
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .FilterRow(filterRow => filterRow
+                .Visible(true)
+                .ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .HoverStateEnabled(true)
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.PhanLoai).Caption("Phân Loại");
+                    columns.AddFor(m => m.D1).Caption("1일").Format(Format.FixedPoint);
+                    columns.AddFor(m => m.D2).Caption("2일").Format(Format.FixedPoint);
+                    columns.AddFor(m => m.D3).Caption("3일").Format(Format.FixedPoint);
+                    columns.AddFor(m => m.D4).Caption("4일").Format(Format.FixedPoint);
+                    columns.AddFor(m => m.D5).Caption("5일").Format(Format.FixedPoint);
+                    columns.AddFor(m => m.D6).Caption("6일").Format(Format.FixedPoint);
+                    columns.AddFor(m => m.D7).Caption("7일").Format(Format.FixedPoint);
+                    columns.AddFor(m => m.D8).Caption("8일").Format(Format.FixedPoint);
+                    columns.AddFor(m => m.D9).Caption("9일").Format(Format.FixedPoint);
+                    columns.AddFor(m => m.D10).Caption("10일").Format(Format.FixedPoint);
+                    columns.AddFor(m => m.D11).Caption("11일").Format(Format.FixedPoint);
+                    columns.AddFor(m => m.D12).Caption("12일").Format(Format.FixedPoint);
+                    columns.AddFor(m => m.D13).Caption("13일").Format(Format.FixedPoint);
+                    columns.AddFor(m => m.D14).Caption("14일").Format(Format.FixedPoint);
+                    columns.AddFor(m => m.D15).Caption("15일").Format(Format.FixedPoint);
+                    columns.AddFor(m => m.D16).Caption("16일").Format(Format.FixedPoint);
+                    columns.AddFor(m => m.D17).Caption("17일").Format(Format.FixedPoint);
+                    columns.AddFor(m => m.D18).Caption("18일").Format(Format.FixedPoint);
+                    columns.AddFor(m => m.D19).Caption("19일").Format(Format.FixedPoint);
+                    columns.AddFor(m => m.D20).Caption("20일").Format(Format.FixedPoint);
+                    columns.AddFor(m => m.D21).Caption("21일").Format(Format.FixedPoint);
+                    columns.AddFor(m => m.D22).Caption("22일").Format(Format.FixedPoint);
+                    columns.AddFor(m => m.D23).Caption("23일").Format(Format.FixedPoint);
+                    columns.AddFor(m => m.D24).Caption("24일").Format(Format.FixedPoint);
+                    columns.AddFor(m => m.D25).Caption("25일").Format(Format.FixedPoint);
+                    columns.AddFor(m => m.D26).Caption("26일").Format(Format.FixedPoint);
+                    columns.AddFor(m => m.D27).Caption("27일").Format(Format.FixedPoint);
+                    columns.AddFor(m => m.D28).Caption("28일").Format(Format.FixedPoint);
+                    columns.AddFor(m => m.D29).Caption("29일").Format(Format.FixedPoint);
+                    columns.AddFor(m => m.D30).Caption("30일").Format(Format.FixedPoint);
+                    columns.AddFor(m => m.D31).Caption("31일").Format(Format.FixedPoint);
+                })
+                .DataSource(d => d.Mvc()
+                .Area("OpeationMns")
+                .Controller("ScheduleSample")
+                .LoadAction("GetPlanSample")
+                .LoadParams(new { month = new JS("getMonth") })
+                .Key("Oder")
+                )
+                )
+        </div>
+        <div class="col-md-2">
+            @(
+                Html.DevExtreme().DataGrid<SamplePlanViewModel>
+                ()
+                .ID("gridContainerTotal")
+                .Height(300)
+                .ShowBorders(true)
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .AllowColumnResizing(true)
+                .ColumnMinWidth(50)
+                .ColumnAutoWidth(true)
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .FilterRow(filterRow => filterRow
+                .Visible(true)
+                .ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .HoverStateEnabled(true)
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.PhanLoai).Caption("Phân Loại");
+                    columns.AddFor(m => m.D1).Caption("총 계").Format(Format.FixedPoint);
+                })
+                .DataSource(d => d.Mvc()
+                .Area("OpeationMns")
+                .Controller("ScheduleSample")
+                .LoadAction("GetPlanSampleTotal")
+                .LoadParams(new { month = new JS("getMonth") })
+                .Key("Oder")
+                )
+                )
+        </div>
+    </div>
+</div>
+
+<partial name="_ImportExcelModel" />

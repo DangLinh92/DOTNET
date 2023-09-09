@@ -62,12 +62,35 @@
                                 <option value="LFEM">LFEM</option>
                                 <option value="QC">QC</option>
                                 <option value="GOC">GOC</option>
-                                <option value="Account">Kế Toán</option>
+                                <option value="Account">Account</option>
                                 <option value="PI">PI</option>
-                                <option value="HR">Nhân Sự</option>
-                                <option value="Purchase">Mua Hàng-Logistic</option>
+                                <option value="HR">Human Resources</option>
+                                <option value="Purchase">Purchase-Logistic</option>
+                                <option value="EHS">EHS</option>
                             </select>
                             <span asp-validation-for="Role" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="BoPhanDuyet" class="col-form-label">Duyệt Cho Bộ Phận </label>
+                            <select class="form-control tagging select-multiple" multiple="multiple" id="cboBophanduyet">
+                                <option value="SP">Support</option>
+                                <option value="CSP">CSP</option>
+                                <option value="SMT">SMT</option>
+                                <option value="UTILITY">UTILITY</option>
+                                <option value="WLP1">WLP1</option>
+                                <option value="WLP2">WLP2</option>
+                                <option value="KHO">KHO</option>
+                                <option value="LFEM">LFEM</option>
+                                <option value="QC">QC</option>
+                                <option value="GOC">GOC</option>
+                                <option value="Account">Account</option>
+                                <option value="PI">PI</option>
+                                <option value="HR">Human Resources</option>
+                                <option value="Purchase">Purchase-Logistic</option>
+                                <option value="EHS">EHS</option>
+                            </select>
+
+                            <input type="hidden" id="txtBoPhanduyet" name="BoPhanDuyet" />
                         </div>
                         <div class="form-group">
                             <label asp-for="Role" class="col-form-label">Role </label>
@@ -168,6 +191,9 @@
         onSuccess = function () {
         }
 
+
+
+
         $(document).ready(function () {
             $('#userDataTable').DataTable({
                 "order": [0, 'asc']
@@ -203,6 +229,20 @@
                 $('#delete_user').modal('show');
                 $('#txtId').val($(this).data('id'));
                 $('#_idHeaderDel').text('Are you sure want to delete user : ' + $(this).data('id') + '?');
+            });
+
+
+            $('.select-multiple').select2();
+            $('#cboBophanduyet').on('select2:select', function (e) {
+
+                let arr = $('#cboBophanduyet').find(':selected');
+                let bp = '';
+                for (let item of arr) {
+                    bp += item.attributes.value.value + ',';
+                }
+
+                $('#txtBoPhanduyet').val(bp);
+
             });
         });
     </script>

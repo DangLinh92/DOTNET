@@ -1,0 +1,374 @@
+﻿@using Microsoft.AspNetCore.Http
+@using OPERATION_MNS.Areas.OpeationMns.Models.SignalR;
+@{
+    ViewData["Title"] = "DailyPlanSMT";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <style>
+        #gridContainer td {
+            vertical-align: middle;
+        }
+
+        #gridContainer .chart-cell {
+            overflow: visible;
+        }
+
+        #gridContainer .plan-value {
+            display: inline-block;
+            display: block;
+        }
+
+        #gridContainer .actual-value {
+            position: relative;
+            display: block;
+            border-top: 1px solid #004E89;
+        }
+
+        #gridContainer .yeallow {
+            color: #333;
+            background-color: #FFD3A3;
+        }
+
+        #gridContainer .overRed {
+            color: white;
+            background-color: #E74646;
+        }
+
+        .stylePriory1 {
+            background-color: #FF5D5D !important;
+            color: black !important;
+        }
+
+        .stylePriory2 {
+            background-color: #FF8C8C !important;
+        }
+
+        .stylePriory3 {
+            background-color: #FFC3C3 !important;
+        }
+
+        .stylePriory4 {
+            background-color: #FFE3A9 !important;
+        }
+
+        .stylePriory5 {
+            background-color: #FAF0D7 !important;
+        }
+
+        .stylePriory6 {
+            background-color: #BDE6F1 !important;
+        }
+
+        .stylePriory7 {
+            background-color: #CCF3EE !important;
+        }
+
+        .stylePriory8 {
+            background-color: #E8F9FD !important;
+        }
+
+        .stylePriory9 {
+            background-color: #F9F3EE !important;
+        }
+
+        .stylePriory10 {
+            background-color: #FFA500 !important;
+        }
+    </style>
+}
+
+@section Scripts
+    {
+    <script src="~/js/dataTables.fixedColumns.min.js"></script>
+    <script src="~/js/dataTables.fixedHeader.min.js"></script>
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+
+    <script>
+
+        var connection = new signalR.HubConnectionBuilder()
+            .withUrl("@Url.Content("~/liveUpdateSignalR_SMT_Hub")")
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+
+        $(function () {
+
+            connection.start()
+                .then(function () {
+
+                    var store = new DevExpress.data.CustomStore({
+                        load: function () {
+                            return connection.invoke("getDailyPlanSMT");
+                        },
+                        key: "mesCode"
+                    });
+
+                    $("#gridContainer").dxDataGrid({
+                        dataSource: store,
+                        //reshapeOnPush: true
+                        visible: true
+                    });
+
+                    connection.on("getDailyPlanSMT", function (dataObj) {
+
+                        store.push([{ type: "update", key: dataObj.mesCode, data: dataObj }]);
+                    });
+                });
+        });
+
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('SMT Daily Plan');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'SMT Daily Plan.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        function selectedDate_changed(data) {
+
+            let _beginDate = formatDate(data.value);
+
+            $.ajax({
+                url: '/OpeationMns/DailyPlan/SetBeginDateSMT',
+                type: 'POST',
+                data: {
+                    beginDate: _beginDate
+                },
+                success: function (response) {
+                    hrms.hide_waitMe($('#gridContainer'));
+                    location.reload();
+                },
+                error: function (status) {
+                    hrms.notify(status.responseText, 'error', 'alert', function () { });
+                    hrms.hide_waitMe($('#gridContainer'));
+                }
+            });
+        };
+
+        function formatDate(sDate) {
+
+            if (sDate == '') {
+                var date = new Date();
+            }
+            else {
+                var date = new Date(sDate);
+            }
+
+            // Get year, month, and day part from the date
+            var year = date.toLocaleString("default", { year: "numeric" });
+            var month = date.toLocaleString("default", { month: "2-digit" });
+            var day = date.toLocaleString("default", { day: "2-digit" });
+
+            // Generate yyyy-mm-dd date string
+            var formattedDate = year + '-' + month + '-' + day;
+            return formattedDate;
+        }
+
+        function cell_prepared(options) {
+
+            var fieldData = options.value;
+            var fieldHtml = "";
+            if (options.rowType == 'data') {
+
+                if (fieldData) {
+
+                    if (options.column.dataField !== "lastUpdate"
+                        && options.column.dataField !== "mesCode"
+                        && options.column.dataField !== "model") {
+
+                        if (fieldData < 0) {
+                            options.cellElement.css({ "color": "red" });
+                        }
+                        else {
+                            options.cellElement.css({ "color": "#2ab71b" });
+                        }
+
+                        fieldHtml = formatNumber(fieldData);
+                    }
+                    else {
+                        fieldHtml = fieldData;
+                    }
+                }
+
+                options.cellElement.html(fieldHtml);
+            }
+        }
+
+        function formatNumber(number1) {
+
+            if (number1 === undefined || number1 == 0 || isNaN(number1)) {
+                return '&nbsp;';
+            }
+
+            let number = Number(number1);
+
+            let str = number.toString();
+
+            if (str.indexOf('.') > 0) {
+                let n1 = str.split('.')[1];
+                let n2 = str.split('.')[0];
+                if (Number('0.' + n1) >= 0.4) {
+
+                    if (Number(n2) >= 0)
+                        number = Number(n2) + 1;
+                    else
+                        number = Number(n2) - 1;
+                }
+                else {
+                    number = Number(n2);
+                }
+            }
+
+            return number.toLocaleString("en-US");
+        }
+
+    </script>
+}
+
+@{
+    DateTime beginMonth = DateTime.Parse(ViewBag.DayPlanSMT);
+    string next1 = ((NextDay)ViewBag.NextDaySMT).Day1;
+    string next2 = ((NextDay)ViewBag.NextDaySMT).Day2;
+    string next3 = ((NextDay)ViewBag.NextDaySMT).Day3;
+    string next4 = ((NextDay)ViewBag.NextDaySMT).Day4;
+    string next5 = ((NextDay)ViewBag.NextDaySMT).Day5;
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center" style="margin-bottom:-2rem">
+            <div class="col">
+                <h3 class="page-title">SMT Daily Plan</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">SMT Daily Plan</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form">
+                <div class="dx-fieldset">
+                    <div class="dx-field">
+                        <div style="float:left;display:inline-block;margin-right:10px">
+
+                            @(Html.DevExtreme().DateBox()
+                                .ID("begindate-date")
+                                .Type(DateBoxType.Date)
+                                .Value(beginMonth)
+                                .DisplayFormat("yyyy-MM-dd")
+                                .Width(200)
+                                .Placeholder("Select...")
+                                .Label("Input Date")
+                                .OnValueChanged("selectedDate_changed")
+                                )
+                        </div>
+                        <div style="display:inline-block;margin-right:10px">
+                        </div>
+                        <div style="display:inline-block">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            @(
+                Html.DevExtreme().DataGrid<DailyPlanSMTViewModel>
+                ()
+                .ID("gridContainer")
+                .Height(680)
+                .ShowBorders(true)
+                .RepaintChangesOnly(true)
+                .HighlightChanges(true)
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .AllowColumnResizing(true)
+                .ColumnAutoWidth(true)
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+                .OnExporting("exporting")
+                .FilterRow(filterRow => filterRow
+                .Visible(true)
+                .ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .HoverStateEnabled(true)
+                .ColumnFixing(x => x.Enabled(true))
+                .SearchPanel(searchPanel => searchPanel
+                .Visible(true)
+                .Width(240)
+                .Placeholder("Search...")
+                )
+                .OnCellPrepared("cell_prepared")
+                .Columns(columns =>
+                {
+                    columns.Add().Caption("Model").Columns(c =>
+                    {
+                        c.AddFor(m => m.LastUpdate).DataField("lastUpdate").Caption("Time");
+                        c.AddFor(m => m.Model).DataField("model").Caption("Model");
+                        c.AddFor(m => m.MesCode).DataField("mesCode").Caption("Mes Code");
+                    });
+
+                    columns.Add().Caption("WIP Information").Columns(c =>
+                    {
+                        c.AddFor(m => m.Inventory).DataField("inventory").Caption("SMT").Format(Format.FixedPoint);
+                    });
+
+                    columns.Add().Caption("Lũy kế KHSX Upload").Columns(c =>
+                    {
+                        c.AddFor(m => m.GocPlanToday).DataField("gocPlanToday").Caption(beginMonth.ToString("dd-MM")).Format(Format.FixedPoint);
+                        c.AddFor(m => m.GocPlanToday_1).DataField("gocPlanToday_1").Caption(next1).Format(Format.FixedPoint);
+                        c.AddFor(m => m.GocPlanToday_2).DataField("gocPlanToday_2").Caption(next2).Format(Format.FixedPoint);
+                        c.AddFor(m => m.GocPlanToday_3).DataField("gocPlanToday_3").Caption(next3).Format(Format.FixedPoint);
+                        c.AddFor(m => m.GocPlanToday_4).DataField("gocPlanToday_4").Caption(next4).Format(Format.FixedPoint);
+                        c.AddFor(m => m.GocPlanToday_5).DataField("gocPlanToday_5").Caption(next5).Format(Format.FixedPoint);
+                    });
+
+                    columns.Add().Caption("Result Prod").Columns(c =>
+                    {
+                        c.AddFor(m => m.ActualToday).DataField("actualToday").Caption("SMT").Format(Format.FixedPoint);
+                    });
+
+                    columns.Add().Caption("Kế Hoạch Sản Xuất Ngày").Columns(c =>
+                    {
+                        c.AddFor(m => m.PlanToday).DataField("planToday").Caption(beginMonth.ToString("dd-MM")).Format(Format.FixedPoint);
+                        c.AddFor(m => m.PlanToday_1).DataField("planToday_1").Caption(next1).Format(Format.FixedPoint);
+                        c.AddFor(m => m.PlanToday_2).DataField("planToday_2").Caption(next2).Format(Format.FixedPoint);
+                        c.AddFor(m => m.PlanToday_3).DataField("planToday_3").Caption(next3).Format(Format.FixedPoint);
+                        c.AddFor(m => m.PlanToday_4).DataField("planToday_4").Caption(next4).Format(Format.FixedPoint);
+                        c.AddFor(m => m.PlanToday_5).DataField("planToday_5").Caption(next5).Format(Format.FixedPoint);
+                    });
+
+                }).Summary(s => s.TotalItems(totalItems =>
+                {
+                    totalItems.Add().SummaryType(SummaryType.Count).Column("model").Name("model").DisplayFormat("Total: {0}").ValueFormat(Format.FixedPoint);
+                })
+                ))
+        </div>
+    </div>
+</div>
+
+
+

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using OPERATION_MNS.Application.Interfaces;
@@ -26,6 +27,7 @@ namespace OPERATION_MNS.Application.Implementation
         private IRespository<PHAN_LOAI_HANG_SAMPLE, string> _phanLoaiHangSampleRepository;
         private IRespository<TCARD_SAMPLE, int> _tCardleRepository;
         private IRespository<DELAY_COMMENT_SAMPLE, int> _delayCommentSampleRepository;
+        private IRespository<ACTUAL_PLAN_SAMPLE, int> _actualPlanleRepository;
         private IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
@@ -38,7 +40,8 @@ namespace OPERATION_MNS.Application.Implementation
                 IUnitOfWork unitOfWork,
                 IHttpContextAccessor httpContextAccessor,
                 IMapper mapper,
-                IRespository<DELAY_COMMENT_SAMPLE, int> delayCommentSampleRepository
+                IRespository<DELAY_COMMENT_SAMPLE, int> delayCommentSampleRepository,
+                IRespository<ACTUAL_PLAN_SAMPLE, int> actualPlanleRepository
             )
         {
             _scheduleSampleRepository = scheduleSampleRepository;
@@ -49,6 +52,7 @@ namespace OPERATION_MNS.Application.Implementation
             _httpContextAccessor = httpContextAccessor;
             _mapper = mapper;
             _delayCommentSampleRepository = delayCommentSampleRepository;
+            _actualPlanleRepository = actualPlanleRepository;
         }
 
         public void Save()
@@ -181,6 +185,223 @@ namespace OPERATION_MNS.Application.Implementation
             return resultDB;
         }
 
+        /// <summary>
+        /// Import sample plan
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public ResultDB ImportPlanSampleExcel(string filePath, string param)
+        {
+            ResultDB resultDB = new ResultDB();
+
+            try
+            {
+                using (var packet = new ExcelPackage(new System.IO.FileInfo(filePath)))
+                {
+                    ExcelWorksheet Sheet = packet.Workbook.Worksheets[1];
+                    List<ACTUAL_PLAN_SAMPLE> lstAdd = new List<ACTUAL_PLAN_SAMPLE>();
+                    List<ACTUAL_PLAN_SAMPLE> lstUpdate = new List<ACTUAL_PLAN_SAMPLE>();
+
+                    string beginDate = Sheet.Cells["B1"].Text.NullString();
+                    string endDate = "";
+
+                    string _day = "";
+
+                    for (int k = 0; k < 40; k++)
+                    {
+
+                        if (Sheet.Cells[2, k + 3].Text.NullString() == "" || !DateTime.TryParse(Sheet.Cells[2, k + 3].Text.NullString(), out _))
+                        {
+                            break;
+                        }
+
+                        _day = DateTime.Parse(Sheet.Cells[2, k + 3].Text.NullString()).ToString("yyyy-MM-dd");
+
+                        endDate = _day;
+
+                        ACTUAL_PLAN_SAMPLE plan = _actualPlanleRepository.FindSingle(x => x.NgayThang == _day);
+                        if (plan == null)
+                        {
+                            plan = new ACTUAL_PLAN_SAMPLE()
+                            {
+                                LotPlan = double.Parse(Sheet.Cells[3, k + 3].Value.IfNullIsZero()),
+                                CassetePlan = double.Parse(Sheet.Cells[4, k + 3].Value.IfNullIsZero()),
+                                UserCreated = GetUserId(),
+                                NgayThang = _day,
+                                DateModified = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                                Day = DateTime.Parse(_day).Day
+                            };
+                            lstAdd.Add(plan);
+                        }
+                        else
+                        {
+                            plan.UserModified = GetUserId();
+                            plan.DateModified = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                            plan.LotPlan = double.Parse(Sheet.Cells[3, k + 3].Value.IfNullIsZero());
+                            plan.CassetePlan = double.Parse(Sheet.Cells[4, k + 3].Value.IfNullIsZero());
+                            plan.Day = DateTime.Parse(_day).Day;
+                            lstUpdate.Add(plan);
+                        }
+                    }
+
+                    if (lstAdd.Count > 0)
+                    {
+                        _actualPlanleRepository.AddRange(lstAdd);
+                    }
+
+                    if (lstUpdate.Count > 0)
+                    {
+                        _actualPlanleRepository.UpdateRange(lstUpdate);
+                    }
+
+                    if (lstAdd.Count == 0 && lstUpdate.Count == 0)
+                    {
+                        resultDB.ReturnInt = -1;
+                        resultDB.ReturnString = "Not found data";
+                        return resultDB;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                resultDB.ReturnInt = -1;
+                resultDB.ReturnString = ex.Message;
+                return resultDB;
+            }
+
+            resultDB.ReturnInt = 0;
+            return resultDB;
+        }
+
+        public List<SamplePlanViewModel> GetActualPlanSample(string month)
+        {
+            var lst = _actualPlanleRepository.FindAll(x => x.NgayThang.Substring(0, 7) == month.Substring(0, 7)).OrderBy(x => x.NgayThang).ToList();
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic.Add("A_MONTH_INPUT", month.Substring(0, 7) + "-01");
+            ResultDB rs = _actualPlanleRepository.ExecProceduce2("GET_ACTUAL_SAMPLE", dic);
+
+            if (rs.ReturnInt == 0)
+            {
+                DataTable dtSoTam = rs.ReturnDataSet.Tables[0];
+                DataTable dtSoLot = rs.ReturnDataSet.Tables[1];
+                DataRow[] rows;
+                DataRow[] rows2;
+                foreach (var item in lst)
+                {
+                    rows = dtSoTam.Select("_Day = '" + item.NgayThang.Replace("-", "") + "'");
+                    rows2 = dtSoLot.Select("_Day = '" + item.NgayThang.Replace("-", "") + "'");
+
+                    if (rows.Length > 0)
+                    {
+                        item.CasseteActual = double.Parse(rows[0]["SO_TAM"].IfNullIsZero());
+                    }
+
+                    if (rows2.Length > 0)
+                    {
+                        item.LotActual = double.Parse(rows2[0]["SO_LOT"].IfNullIsZero());
+                    }
+                }
+            }
+
+            SamplePlanViewModel vmLotPlan = new SamplePlanViewModel();
+            SamplePlanViewModel vmLotActual = new SamplePlanViewModel();
+            SamplePlanViewModel vmCassetIdPlan = new SamplePlanViewModel();
+            SamplePlanViewModel vmCassetIdActual = new SamplePlanViewModel();
+            List<SamplePlanViewModel> lstSp = new List<SamplePlanViewModel>();
+
+            int EndOfMonth = DateTime.Parse(month.Substring(0, 7) + "-01").AddMonths(1).AddDays(-1).Day;
+
+            vmLotPlan.PhanLoai = "Lot(Plan)";
+            vmLotPlan.Oder = 1;
+
+            vmCassetIdPlan.PhanLoai = "매수(Số Tấm - Plan)";
+            vmCassetIdPlan.Oder = 2;
+
+            vmLotActual.PhanLoai = "Lot(Actual)";
+            vmLotActual.Oder = 3;
+
+            vmCassetIdActual.PhanLoai = "매수(Số Tấm - Actual)";
+            vmCassetIdActual.Oder = 4;
+
+            foreach (var item in lst)
+            {
+                SetValueDay(ref vmLotPlan, item.LotPlan, item.Day);
+                SetValueDay(ref vmCassetIdPlan, item.CassetePlan, item.Day);
+                SetValueDay(ref vmLotActual, item.LotActual, item.Day);
+                SetValueDay(ref vmCassetIdActual, item.CasseteActual, item.Day);
+            }
+
+            lstSp.Add(vmLotPlan);
+            lstSp.Add(vmCassetIdPlan);
+            lstSp.Add(vmLotActual);
+            lstSp.Add(vmCassetIdActual);
+
+            return lstSp;
+        }
+
+        public List<SamplePlanViewModel> GetActualPlanSampleTotal(string month)
+        {
+            List<SamplePlanViewModel> lstSp = GetActualPlanSample(month);
+
+            SamplePlanViewModel vmLotPlan = new SamplePlanViewModel();
+            SamplePlanViewModel vmLotActual = new SamplePlanViewModel();
+            SamplePlanViewModel vmCassetIdPlan = new SamplePlanViewModel();
+            SamplePlanViewModel vmCassetIdActual = new SamplePlanViewModel();
+
+            vmLotPlan.PhanLoai = "Lot(Plan)";
+            vmLotPlan.Oder = 1;
+            vmLotPlan.D1 = GetValueDayTotal(lstSp[0]);
+
+            vmCassetIdPlan.PhanLoai = "매수(Số Tấm - Plan)";
+            vmCassetIdPlan.Oder = 2;
+            vmCassetIdPlan.D1 = GetValueDayTotal(lstSp[1]);
+
+            vmLotActual.PhanLoai = "Lot(Actual)";
+            vmLotActual.Oder = 3;
+            vmLotActual.D1 = GetValueDayTotal(lstSp[2]);
+
+            vmCassetIdActual.PhanLoai = "매수(Số Tấm - Actual)";
+            vmCassetIdActual.Oder = 4;
+            vmCassetIdActual.D1 = GetValueDayTotal(lstSp[3]);
+
+            List<SamplePlanViewModel> rs = new List<SamplePlanViewModel>();
+            rs.Add(vmLotPlan);
+            rs.Add(vmCassetIdPlan);
+            rs.Add(vmLotActual);
+            rs.Add(vmCassetIdActual);
+            return rs;
+        }
+
+        public void SetValueDay(ref SamplePlanViewModel self, double plan, int day)
+        {
+            var fromProperties = self.GetType().GetProperties();
+
+            foreach (var fromProperty in fromProperties)
+            {
+                if (fromProperty.Name == ("D" + day))
+                {
+                    fromProperty.SetValue(self, plan);
+                    break;
+                }
+            }
+        }
+
+        public double GetValueDayTotal(SamplePlanViewModel self)
+        {
+            double total = 0;
+            var fromProperties = self.GetType().GetProperties();
+
+            foreach (var fromProperty in fromProperties)
+            {
+                if (fromProperty.Name.StartsWith("D"))
+                {
+                    total += (double)fromProperty.GetValue(self);
+                }
+            }
+            return total;
+        }
+
         private List<TinhHinhSanXuatSampleViewModel> RemoveHoldLotList(List<TinhHinhSanXuatSampleViewModel> lstTinhHinhSX)
         {
             ResultDB resultDB = _scheduleSampleRepository.ExecProceduce2("PKG_BUSINESS@GET_STAY_LOT_LIST_SAMPLE_2", new Dictionary<string, string>());
@@ -268,38 +489,38 @@ namespace OPERATION_MNS.Application.Implementation
                 lstLeadtimeVM.Add(leadtime);
             }
 
-            foreach (var item in lstLeadTime2)
-            {
-                leadtime = new LeadtimeViewModel()
-                {
-                    LotNo = item.LotNo,
-                    KeHoachIn = item.PlanInputDate,
-                    ThucTeIn = item.InputDate,
-                    KeHoachOut = item.PlanOutputDate,
-                    ThucTeOut = item.OutputDate,
-                    Week = WeekOfYear(item.OutputDate),
-                    Month = int.Parse(item.OutputDate.Substring(4, 2)),
-                    Year = int.Parse(item.OutputDate.Substring(0, 4)),
-                    PLCode = item.Code.NullString(),
-                    ModelRutGon = item.ModelDonLinhKien.Substring(0, 7),
-                    Model = item.ModelDonLinhKien,
-                    SoTam = item.OutPutWafer,
-                    Code_R = item.Code.NullString().ToUpper() == "R" ? item.OutPutWafer : 0,
-                    Code_P = item.Code.NullString().ToUpper() == "P" ? item.OutPutWafer : 0,
-                    Code_H = item.Code.NullString().ToUpper() == "H" ? item.OutPutWafer : 0,
-                    Code_Z = item.Code.NullString().ToUpper() == "Z" ? item.OutPutWafer : 0,
-                    Code_M = item.Code.NullString().ToUpper() == "M" ? item.OutPutWafer : 0,
-                    LeadTimeActual = item.LeadTime > 0 ? item.LeadTime : 0,
-                    LTCode_PRZ = (float)((item.LeadTime > 0 ? item.LeadTime : 0) + 1.5),
-                    NguoiChiuTrachNhiem = item.NguoiChiuTrachNhiem,
-                    LeadTimePlan = item.LeadTimePlan > 0 ? item.LeadTimePlan : 0,
-                    Gap = (item.LeadTime > 0 ? item.LeadTime : 0) - (item.LeadTimePlan > 0 ? item.LeadTimePlan : 0),
-                    LyDoDelay = item.GhiChu,
-                    DonViTinh = 1,
-                    PLHang = "",
-                };
-                lstLeadtimeVM_Year.Add(leadtime);
-            }
+            //foreach (var item in lstLeadTime2)
+            //{
+            //    leadtime = new LeadtimeViewModel()
+            //    {
+            //        LotNo = item.LotNo,
+            //        KeHoachIn = item.PlanInputDate,
+            //        ThucTeIn = item.InputDate,
+            //        KeHoachOut = item.PlanOutputDate,
+            //        ThucTeOut = item.OutputDate,
+            //        Week = WeekOfYear(item.OutputDate),
+            //        Month = int.Parse(item.OutputDate.Substring(4, 2)),
+            //        Year = int.Parse(item.OutputDate.Substring(0, 4)),
+            //        PLCode = item.Code.NullString(),
+            //        ModelRutGon = item.ModelDonLinhKien.Substring(0, 7),
+            //        Model = item.ModelDonLinhKien,
+            //        SoTam = item.OutPutWafer,
+            //        Code_R = item.Code.NullString().ToUpper() == "R" ? item.OutPutWafer : 0,
+            //        Code_P = item.Code.NullString().ToUpper() == "P" ? item.OutPutWafer : 0,
+            //        Code_H = item.Code.NullString().ToUpper() == "H" ? item.OutPutWafer : 0,
+            //        Code_Z = item.Code.NullString().ToUpper() == "Z" ? item.OutPutWafer : 0,
+            //        Code_M = item.Code.NullString().ToUpper() == "M" ? item.OutPutWafer : 0,
+            //        LeadTimeActual = item.LeadTime > 0 ? item.LeadTime : 0,
+            //        LTCode_PRZ = (float)((item.LeadTime > 0 ? item.LeadTime : 0) + 1.5),
+            //        NguoiChiuTrachNhiem = item.NguoiChiuTrachNhiem,
+            //        LeadTimePlan = item.LeadTimePlan > 0 ? item.LeadTimePlan : 0,
+            //        Gap = (item.LeadTime > 0 ? item.LeadTime : 0) - (item.LeadTimePlan > 0 ? item.LeadTimePlan : 0),
+            //        LyDoDelay = item.GhiChu,
+            //        DonViTinh = 1,
+            //        PLHang = "",
+            //    };
+            //    lstLeadtimeVM_Year.Add(leadtime);
+            //}
 
             if (gap.NullString() != "" && int.TryParse(gap, out _) && gap != "-9999")
             {
@@ -325,7 +546,7 @@ namespace OPERATION_MNS.Application.Implementation
 
             List<string> Codes = new List<string>() { "H", "P", "R", "Z", "M" };
 
-            var monthGroup = lstLeadtimeVM_Year.GroupBy(x => new { x.PLCode, x.Month }).Select(x => new { x.Key.PLCode, x.Key.Month, avg = x.Average(p => p.LTCode_PRZ) }).OrderBy(x => x.Month);
+            var monthGroup = lstLeadtimeVM.GroupBy(x => new { x.PLCode, x.Month }).Select(x => new { x.Key.PLCode, x.Key.Month, avg = x.Average(p => p.LTCode_PRZ) }).OrderBy(x => x.Month);
 
             ChartDataSampleItem sampleItem;
             foreach (var item in monthGroup)
@@ -349,7 +570,7 @@ namespace OPERATION_MNS.Application.Implementation
             }
 
             // add code thiếu trong tháng
-            AddMonthLost(month, year, Codes, true, ref result.Sample_LeadTimeByMonth);
+            //AddMonthLost(month, year, Codes, true, ref result.Sample_LeadTimeByMonth);
 
             // sắp xếp theo month
             result.Sample_LeadTimeByMonth = result.Sample_LeadTimeByMonth.OrderBy(x => int.Parse(x.Label_x)).ToList();
@@ -441,7 +662,8 @@ namespace OPERATION_MNS.Application.Implementation
             {
                 sampleItem = new ChartDataSampleItem()
                 {
-                    Legend = item.NguoiChiuTrachNhiem + " " + item.ModelRutGon,
+                    Legend = item.ModelRutGon,
+                    Label_x = item.NguoiChiuTrachNhiem
                 };
 
                 sampleItem.Value = item.sum;

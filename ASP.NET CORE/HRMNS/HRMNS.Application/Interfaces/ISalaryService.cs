@@ -19,6 +19,7 @@ namespace HRMNS.Application.Interfaces
         void Save();
 
         ResultDB ImportExcel(string path);
+        ResultDB ImportIncentiveExcel(string path);
         ResultDB ImportTaiKhoanNHExcel(string path);
 
         // Thông tin chi phí phát sinh

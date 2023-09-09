@@ -16,62 +16,59 @@ namespace OPERATION_MNS.Data.Entities
 
         }
 
-        public GOC_PLAN_LFEM(int id,string module,string model,string material,string division,float standarQty,string monthPlan,string datePlan,float qtyPlan,
-            float qtyActual,float qtyGap,string dept,string unit,string danhmuc,string type)
-        {
-            Id = id;
-            Module = module;
-            Model = model;
-            Material = material;
-            Division = division;
-            StandardQtyForMonth = standarQty;
-            QuantityActual = qtyActual;
-            MonthPlan = monthPlan;
-            DatePlan = datePlan;
-            QuantityPlan = qtyPlan;
-            QuantityGap = qtyGap;
-            Department = dept;
-            Unit = unit;
-            DanhMuc = danhmuc;
-            Type = type;
-        }
+        [StringLength(50)]
+        public string MesItemId { get; set; } // MATERIAL ID
 
         [StringLength(50)]
-        public string Module { get; set; }
-
-        // SAP CODE
-        [StringLength(50)]
-        public string Model { get; set; }
+        public string MasterialName { get; set; }
 
         [StringLength(50)]
-        public string Material { get; set; }
+        public string Erp_Item_Id { get; set; }
 
         [StringLength(50)]
-        public string Division { get; set; }
+        public string Group1 { get; set; }
 
-        public float StandardQtyForMonth { get; set; }
+        [StringLength(50)]
+        public string Group2 { get; set; }
 
+        [StringLength(50)]
+        public string Group3 { get; set; }
+
+        [StringLength(50)]
+        public string Size { get; set; }
+
+        [StringLength(50)]
+        public string OperationId { get; set; }
+
+        [StringLength(50)]
+        public string OperationName { get; set; }
+
+        [StringLength(50)]
+        public string Sales_approval { get; set; }
+
+        [StringLength(50)]
+        public string Module_model { get; set; }
+
+        [StringLength(50)]
         public string MonthPlan { get; set; }
 
+        [StringLength(50)]
         public string DatePlan { get; set; }
 
-        public float QuantityPlan { get; set; }
-
-        public float QuantityActual { get; set; }
-
-        public float QuantityGap { get; set; }
-
         [StringLength(50)]
-        public string Department { get; set; }
+        public string WeekPlan { get; set; }
+
+        public double QuantityPlan { get; set; }
+
+        public double QuantityActual { get; set; }
+
+        public double QuantityGap { get; set; }
 
         [StringLength(50)]
         public string Unit { get; set; } // chip , wafe
 
         [StringLength(50)]
-        public string DanhMuc { get; set; } // Nhập kho, sản xuất, xuất SMT
-
-        [StringLength(50)]
-        public string Type { get; set; }
+        public string DanhMuc { get; set; } // KHSX , DEMAND 
 
         [StringLength(50)]
         public string DateCreated { get; set; }

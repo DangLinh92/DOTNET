@@ -102,6 +102,23 @@
             e.cancel = true;
         }
 
+
+        function exporting_Module(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('Lot module');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'Lot module.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
         function exporting_AffectLot(e) {
             var workbook = new ExcelJS.Workbook();
             var worksheet = workbook.addWorksheet('AffectLot');
@@ -259,7 +276,7 @@
                 .HoverStateEnabled(true)
                 .Selection(s => s.Mode(SelectionMode.Single))
                 .Export(e => e.Enabled(true).AllowExportSelectedData(true))
-                .OnExporting("exporting")
+                .OnExporting("exporting_Module")
                 .SearchPanel(searchPanel => searchPanel
                 .Visible(true)
                 .Width(240)
@@ -274,48 +291,10 @@
                     columns.AddFor(m => m.LotID).Caption("WLP1 Lot Number");
                     columns.AddFor(m => m.WaferID);
                     columns.AddFor(m => m.LotFAB);
-                }).MasterDetail(md =>
-                {
-                    md.Enabled(true);
-                    md.Template(@<text>
-                        <div class="master-detail-caption">Lot History: <%- data.LotID %></div>
-                        @(Html.DevExtreme().DataGrid<LotHistory>()
-                            .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
-                            .Paging(paging => paging.Enabled(true))
-                            .AllowColumnResizing(true)
-                            .ColumnAutoWidth(true)
-                            .ShowBorders(true)
-                            .ColumnMinWidth(50)
-                            .ShowColumnLines(true)
-                            .ShowRowLines(true)
-                            .RowAlternationEnabled(true)
-                            .FilterRow(filterRow => filterRow
-                            .Visible(true)
-                            .ApplyFilter(GridApplyFilterMode.Auto)
-                            )
-                            .HeaderFilter(headerFilter => headerFilter.Visible(true))
-                            .HoverStateEnabled(false)
-                            .Selection(s => s.Mode(SelectionMode.Single))
-                            .Columns(columns =>
-                            {
-                            columns.AddFor(m => m.LotID);
-
-                            columns.AddFor(m => m.TranTime);
-
-                            columns.AddFor(m => m.Operation);
-
-                            columns.AddFor(m => m.EquiptmentName);
-
-                            columns.AddFor(m => m.OnlineOffLine);
-                        })
-                            .DataSource(d => d.Mvc()
-                            .Area("OpeationMns")
-                            .Controller("LotTracking")
-                            .LoadAction("GetLotHistory")
-                            .LoadParams(new { lotId = new JS("data.LotID") })
-                            )
-                            )
-                        </text>);
+                    columns.AddFor(m => m.Operation);
+                    columns.AddFor(m => m.EquiptmentName);
+                    columns.AddFor(m => m.OnlineOffLine);
+                    columns.AddFor(m => m.TranTime);
                 })
                 .DataSource(d => d.Mvc()
                 .Area("OpeationMns")

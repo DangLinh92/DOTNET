@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using OPERATION_MNS.Application.ViewModels;
+using OPERATION_MNS.Application.ViewModels.Lfem;
 using OPERATION_MNS.Application.ViewModels.Sameple;
 using OPERATION_MNS.Application.ViewModels.System;
 using OPERATION_MNS.Application.ViewModels.Wlp2;
@@ -75,11 +76,16 @@ namespace OPERATION_MNS.Application.AutoMapper
 
             // sample
             CreateMap<TinhHinhSanXuatSampleViewModel, TINH_HINH_SAN_XUAT_SAMPLE>()
-            .ConstructUsing(c => new TINH_HINH_SAN_XUAT_SAMPLE(c.Id,c.Year,c.Month,c.MucDoKhanCap,c.Model,c.Code,c.PhanLoai,c.ModelDonLinhKien,c.LotNo,c.QtyInput,c.QtyNG,c.OperationNow,c.MucDichNhap,
-            c.GhiChu,c.NguoiChiuTrachNhiem,c.InputDate,c.OutputDate,c.PlanInputDate,c.PlanOutputDate,c.Wall_Plan_Date,c.Wall_Actual_Date,c.Roof_Plan_Date,c.Roof_Actual_Date,c.Seed_Plan_Date,c.Seed_Actual_Date,
-            c.PlatePR_Plan_Date,c.PlatePR_Actual_Date,c.Plate_Plan_Date,c.Plate_Actual_Date,c.PreProbe_Plan_Date,c.PreProbe_Actual_Date,c.PreDicing_Plan_Date,c.PreDicing_Actual_Date,c.AllProbe_Plan_Date,c.AllProbe_Actual_Date,
-            c.BG_Plan_Date,c.BG_Actual_Date,c.Dicing_Plan_Date,c.Dicing_Actual_Date,c.ChipIns_Plan_Date,c.ChipIns_Actual_Date,c.Packing_Plan_Date,c.Packing_Actual_Date,c.OQC_Plan_Date,c.OQC_Actual_Date,c.Shipping_Plan_Date,
-            c.Shipping_Actual_Date,c.LeadTime,c.DeleteFlg,c.PlanInputDateTcard,c.OutPutWafer,c.LeadTimePlan));
+            .ConstructUsing(c => new TINH_HINH_SAN_XUAT_SAMPLE(c.Id, c.Year, c.Month, c.MucDoKhanCap, c.Model, c.Code, c.PhanLoai, c.ModelDonLinhKien, c.LotNo, c.QtyInput, c.QtyNG, c.OperationNow, c.MucDichNhap,
+            c.GhiChu, c.NguoiChiuTrachNhiem, c.InputDate, c.OutputDate, c.PlanInputDate, c.PlanOutputDate, c.Wall_Plan_Date, c.Wall_Actual_Date, c.Roof_Plan_Date, c.Roof_Actual_Date, c.Seed_Plan_Date, c.Seed_Actual_Date,
+            c.PlatePR_Plan_Date, c.PlatePR_Actual_Date, c.Plate_Plan_Date, c.Plate_Actual_Date, c.PreProbe_Plan_Date, c.PreProbe_Actual_Date, c.PreDicing_Plan_Date, c.PreDicing_Actual_Date, c.AllProbe_Plan_Date, c.AllProbe_Actual_Date,
+            c.BG_Plan_Date, c.BG_Actual_Date, c.Dicing_Plan_Date, c.Dicing_Actual_Date, c.ChipIns_Plan_Date, c.ChipIns_Actual_Date, c.Packing_Plan_Date, c.Packing_Actual_Date, c.OQC_Plan_Date, c.OQC_Actual_Date, c.Shipping_Plan_Date,
+            c.Shipping_Actual_Date, c.LeadTime, c.DeleteFlg, c.PlanInputDateTcard, c.OutPutWafer, c.LeadTimePlan, c.Note_DayOff));
+
+            // lfem
+            CreateMap<Stay_lot_list_priory_lfem_ViewModel, STAY_LOT_LIST_PRIORY_LFEM>()
+     .ConstructUsing(c => new STAY_LOT_LIST_PRIORY_LFEM(c.Id, c.MesItem, c.Priory, c.StayDay, c.Size, c.LotID, c.ProductOrder, c.OperationName, c.OperationId, c.ChipQty,
+                                                        c.FAID, c.AssyLotID, c.Date, c.DateDiff, c.Unit, c.StartFlag, c.EquipmentName, c.Worker, c.Number_Priory));
         }
     }
 }

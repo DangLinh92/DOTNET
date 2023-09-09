@@ -10,6 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace OPERATION_MNS.Application.Implementation
@@ -381,13 +382,40 @@ namespace OPERATION_MNS.Application.Implementation
         public List<WaferInfo> GetTrackingVIEWs(string lotNo)
         {
             List<WaferInfo> data = new List<WaferInfo>();
+            List<WaferInfo> result = new List<WaferInfo>();
             List<LotTrackingViewModel> lstLotTracking = GetPackingInfo(lotNo);
 
             foreach (var item in lstLotTracking)
             {
                 data.AddRange(item.WaferInfos);
             }
-            return data;
+
+            WaferInfo wf = null;
+            foreach (var item in data)
+            {
+                foreach (var lot in item.LotHistories)
+                {
+                    wf = new WaferInfo()
+                    {
+                        LotModule = item.LotModule,
+                        Wlp2_Reel_Number = item.Wlp2_Reel_Number,
+                        CassetId = item.CassetId,
+                        Model = item.Model,
+                        LotID = item.LotID,
+                        WaferID = item.WaferID,
+                        LotFAB = item.LotFAB,
+                        LotIDView = item.LotIDView,
+                        Operation = lot.Operation,
+                        EquiptmentName = lot.EquiptmentName,
+                        OnlineOffLine = lot.OnlineOffLine,
+                        TranTime = lot.TranTime
+                    };
+
+                    result.Add(wf);
+                }
+            }
+
+            return result;
         }
     }
 }

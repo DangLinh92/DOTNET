@@ -47,9 +47,18 @@ namespace OPERATION_MNS.Utilities.Constants
         public const string OFF = "OFF";
         public const string WLP1 = "WLP1";
         public const string WLP2 = "WLP2";
+        public const string LFEM = "LFEM";
+        public const string SMT = "SMT";
 
         public const string NHAP_KHO = "NHAP_KHO"; //"Wafer NHẬP KHO WLP ( 후공정 자재 입고실적)"
         public const string SAN_XUAT = "SAN_XUAT"; //"Wafer NHẬP KHO WLP ( 후공정 자재 입고실적)"
         public const string XUAT_SMT = "XUAT_SMT"; //"Wafer NHẬP KHO WLP ( 후공정 자재 입고실적)"
+
+        public const string KHSX = "KHSX";
+        public const string DEMAND = "DEMAND";
+
+        public const string Month = "Month";
+        public const string Week = "Week";
+        public const string Day = "Day";
     }
 }

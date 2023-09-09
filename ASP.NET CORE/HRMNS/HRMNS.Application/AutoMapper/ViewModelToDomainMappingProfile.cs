@@ -22,7 +22,7 @@ namespace HRMNS.Application.AutoMapper
                 c.MaBHXH, c.MaSoThue, c.SoNguoiGiamTru, c.Email, c.Note, c.NgayNghiViec, c.Status, c.Image, c.IsDelete, c.MaBoPhanChiTiet, c.NoiTuyenDung,c.MaBoPhan2));
 
             CreateMap<BHXHViewModel, HR_BHXH>()
-                .ConstructUsing(c => new HR_BHXH(c.Id, c.MaNV, c.NgayThamGia, c.NgayKetThuc));
+                .ConstructUsing(c => new HR_BHXH(c.Id, c.MaNV, c.NgayThamGia, c.NgayKetThuc,c.PhanLoai,c.ThangThamGia));
 
             CreateMap<PhepNamViewModel, HR_PHEP_NAM>()
                .ConstructUsing(c => new HR_PHEP_NAM(c.Id,c.MaNhanVien, c.SoPhepNam, c.SoPhepConLai, c.Year,c.SoTienChiTra,c.ThoiGianChiTra,c.ThangBatDauDocHai,
@@ -58,7 +58,7 @@ namespace HRMNS.Application.AutoMapper
                .ConstructUsing(c => new DANGKY_CHAMCONG_CHITIET(c.Id, c.TenChiTiet, c.PhanLoaiDM, c.KyHieuChamCong));
 
             CreateMap<DangKyChamCongDacBietViewModel, DANGKY_CHAMCONG_DACBIET>()
-             .ConstructUsing(c => new DANGKY_CHAMCONG_DACBIET(c.MaNV, c.MaChamCong_ChiTiet, c.NoiDung, c.NgayBatDau, c.NgayKetThuc, c.Approve, c.ApproveLV2, c.ApproveLV3));
+             .ConstructUsing(c => new DANGKY_CHAMCONG_DACBIET(c.MaNV, c.MaChamCong_ChiTiet, c.NoiDung, c.NgayBatDau, c.NgayKetThuc, c.Approve, c.ApproveLV2, c.ApproveLV3,c.GiaTri,c.GiaTri1));
 
             CreateMap<DMDangKyChamCongViewModel, DM_DANGKY_CHAMCONG>()
             .ConstructUsing(c => new DM_DANGKY_CHAMCONG(c.Id, c.TieuDe));

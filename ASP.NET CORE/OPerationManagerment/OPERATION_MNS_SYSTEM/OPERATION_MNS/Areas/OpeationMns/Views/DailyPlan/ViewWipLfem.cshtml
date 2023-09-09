@@ -1,0 +1,212 @@
+﻿@{
+    ViewData["Title"] = "View WIP Lot List";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts
+    {
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportfile_devextreme/4.3/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+    <script>
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('ViewWipLfem');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'ViewWipLfem.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        // refresh
+        setInterval(myTimer, 300000);
+
+        function myTimer() {
+            $("#grid-container-detail").dxDataGrid("refresh");
+        }
+
+        function cell_prepared(options) {
+            var fieldData = options.value,
+                fieldHtml = "";
+
+            console.log(options);
+            if (options.rowType == 'data') {
+                console.log(options.column.dataField);
+                if (options.column.dataField != "LastUpdate" &&
+                    options.column.dataField != "Model" &&
+                    options.column.dataField != "Size") {
+
+                    let wipNum = formatNumber(fieldData);
+                    fieldHtml += "<div>" + wipNum + "</div>";
+                }
+                else {
+                    fieldHtml = fieldData;
+                }
+            }
+            else {
+                fieldHtml = fieldData;
+            }
+
+            options.cellElement.html(fieldHtml);
+        }
+
+        function formatNumber(number1) {
+
+            if (number1 === undefined || number1 == 0 || isNaN(number1)) {
+                return '&nbsp;';
+            }
+
+            let number = Number(number1);
+
+            let str = number.toString();
+
+            if (str.indexOf('.') > 0) {
+                let n1 = str.split('.')[1];
+                let n2 = str.split('.')[0];
+                if (Number('0.' + n1) >= 0.4) {
+
+                    if (Number(n2) >= 0)
+                        number = Number(n2) + 1;
+                    else
+                        number = Number(n2) - 1;
+                }
+                else {
+                    number = Number(n2);
+                }
+            }
+
+            return number.toLocaleString("en-US");
+        }
+    </script>
+}
+
+@section Styles {
+    <style>
+        .styleHeader {
+            color: #FEF5AC;
+            font-weight: bold;
+            border-right-width: medium !important;
+            /* border-right-color: #FEF5AC !important;*/
+        }
+
+        .styleColumn {
+            border-right-width: medium !important;
+            /*   border-right-color: #FEF5AC !important;*/
+        }
+    </style>
+
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">@ViewData["Title"]</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">LFEM WIP</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            @(
+                Html.DevExtreme().DataGrid<WipLotListLFEMViewModel>()
+                .ID("grid-container-detail")
+                .Height(730)
+                .ShowBorders(true)
+                .RepaintChangesOnly(true)
+                .LoadPanel(loadPanel => loadPanel.Enabled(true))
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .AllowColumnResizing(true)
+                .ColumnMinWidth(50)
+                .ColumnAutoWidth(true)
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .FilterRow(filterRow => filterRow
+                .Visible(true)
+                .ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .HoverStateEnabled(true)
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+                .OnExporting("exporting")
+                .SearchPanel(searchPanel => searchPanel
+                .Visible(true)
+                .Width(240)
+                .Placeholder("Search..."))
+                .OnCellPrepared("cell_prepared")
+                .ColumnFixing(x => x.Enabled(true))
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.LastUpdate).Caption("LastUpdate").Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.Model).Caption("Model").Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.Size).Fixed(true).FixedPosition(HorizontalEdge.Left);
+
+                    columns.Add().Caption("RUNNING 재공수량").Columns(c =>
+                    {
+                        c.AddFor(m => m.DAM_RUN).Caption("DAM").Format(Format.FixedPoint);
+                        c.AddFor(m => m.MOLD_RUN).Caption("MOLD").Format(Format.FixedPoint);
+                        c.AddFor(m => m.GRINDING_RUN).Caption("Grinding").Format(Format.FixedPoint);
+                        c.AddFor(m => m.MARKING_RUN).Caption("Marking").Format(Format.FixedPoint);
+                        c.AddFor(m => m.DICING_RUN).Caption("Dicing").Format(Format.FixedPoint);
+                        c.AddFor(m => m.TEST_RUN).Caption("Test").Format(Format.FixedPoint);
+                        c.AddFor(m => m.VI_RUN).Caption("VI").Format(Format.FixedPoint);
+                        c.AddFor(m => m.OQC_RUN).Caption("OQC").Format(Format.FixedPoint).CssClass("styleColumn");
+                    }).CssClass("styleHeader");
+
+                    columns.Add().Caption("WAITING 재공수량").Columns(c =>
+                    {
+                        c.AddFor(m => m.DAM_WAIT).Caption("DAM").Format(Format.FixedPoint);
+                        c.AddFor(m => m.MOLD_WAIT).Caption("MOLD").Format(Format.FixedPoint);
+                        c.AddFor(m => m.GRINDING_WAIT).Caption("Grinding").Format(Format.FixedPoint);
+                        c.AddFor(m => m.MARKING_WAIT).Caption("Marking").Format(Format.FixedPoint);
+                        c.AddFor(m => m.DICING_WAIT).Caption("Dicing").Format(Format.FixedPoint);
+                        c.AddFor(m => m.TEST_WAIT).Caption("Test").Format(Format.FixedPoint);
+                        c.AddFor(m => m.VI_WAIT).Caption("VI").Format(Format.FixedPoint);
+                        c.AddFor(m => m.OQC_WAIT).Caption("OQC").Format(Format.FixedPoint).CssClass("styleColumn");
+                    }).CssClass("styleHeader");
+
+                    columns.Add().Caption("HOLD 재공수량").Columns(c =>
+                    {
+                        c.AddFor(m => m.DAM_HOLD).Caption("DAM").Format(Format.FixedPoint);
+                        c.AddFor(m => m.MOLD_HOLD).Caption("MOLD").Format(Format.FixedPoint);
+                        c.AddFor(m => m.GRINDING_HOLD).Caption("Grinding").Format(Format.FixedPoint);
+                        c.AddFor(m => m.MARKING_HOLD).Caption("Marking").Format(Format.FixedPoint);
+                        c.AddFor(m => m.DICING_HOLD).Caption("Dicing").Format(Format.FixedPoint);
+                        c.AddFor(m => m.TEST_HOLD).Caption("Test").Format(Format.FixedPoint);
+                        c.AddFor(m => m.VI_HOLD).Caption("VI").Format(Format.FixedPoint);
+                        c.AddFor(m => m.OQC_HOLD).Caption("OQC").Format(Format.FixedPoint);
+                        c.AddFor(m => m.DRY_HOLD).Caption("Dry").Format(Format.FixedPoint);
+                    }).CssClass("styleHeader");
+
+                })
+                .DataSource(d => d.Mvc()
+                .Area("OpeationMns")
+                .Controller("DailyPlan")
+                .LoadAction("GetViewWipLfem")
+                .Key("Model")
+                ).
+                Summary(s => s.TotalItems(items =>
+                {
+                    items.AddFor(m => m.Model).SummaryType(SummaryType.Count).DisplayFormat("Count: {0}");
+                }))
+                )
+        </div>
+    </div>
+</div>
+
+

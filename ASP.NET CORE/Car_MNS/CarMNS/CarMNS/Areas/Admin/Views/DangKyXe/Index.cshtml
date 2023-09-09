@@ -1,5 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Authorization
 @using CarMNS.Authorization
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
 @inject IAuthorizationService AuthorizationService
 @{
     ViewData["Title"] = "Đăng Ký Xe";
@@ -92,10 +93,10 @@
 
                 $.confirm({
                     title: 'Confirm!',
-                    content: 'UnApprove confirm!',
+                    content: 'Reject confirm!',
                     buttons: {
                         confirm: {
-                            text: 'UnApprove',
+                            text: 'Reject',
                             action: function () {
                                 let _id = e.row.data.Id;
 
@@ -156,9 +157,8 @@
                             fieldHtml += "<span class='badge bg-inverse-success'>Approve</span>"
                         }
                         else if (options.data.Nguoi_XacNhanLV3.includes(':UnApprove')) {
-                            fieldHtml += "<span class='badge bg-inverse-danger'>UnApprove</span>"
+                            fieldHtml += "<span class='badge bg-inverse-danger'>Reject</span>"
                         }
-
 
                         options.cellElement.html(fieldHtml);
                     }
@@ -169,7 +169,7 @@
                                 fieldHtml += "<span class='badge bg-inverse-success'>Approve</span>"
                             }
                             else if (options.data.Nguoi_XacNhanLV2.includes(':UnApprove')) {
-                                fieldHtml += "<span class='badge bg-inverse-danger'>UnApprove</span>"
+                                fieldHtml += "<span class='badge bg-inverse-danger'>Reject</span>"
                             }
 
                             options.cellElement.html(fieldHtml);
@@ -177,11 +177,14 @@
                         else
                             if (options.data.Nguoi_XacNhanLV1 != null && options.data.Nguoi_XacNhanLV1 != undefined && options.column.dataField == 'Nguoi_XacNhanLV1') {
 
+                                let nameLV1 = options.data.Nguoi_XacNhanLV1.split(":").length > 2 ? options.data.Nguoi_XacNhanLV1.split(":")[2] : options.data.Nguoi_XacNhanLV1.split(":")[0];
+
                                 if (options.data.Nguoi_XacNhanLV1.includes(':Approve')) {
-                                    fieldHtml += "<span class='badge bg-inverse-success'>Approve</span>"
+
+                                    fieldHtml += "<span class='badge bg-inverse-success'>" + nameLV1 + "</span>"
                                 }
                                 else if (options.data.Nguoi_XacNhanLV1.includes(':UnApprove')) {
-                                    fieldHtml += "<span class='badge bg-inverse-danger'>UnApprove</span>"
+                                    fieldHtml += "<span class='badge bg-inverse-danger'>" + nameLV1 + "</span>"
                                 }
 
                                 options.cellElement.html(fieldHtml);
@@ -249,6 +252,10 @@
 
         function fAddEditVisible(e) {
 
+            if (e.row.data.Nguoi_XacNhanLV2 != undefined && e.row.data.Nguoi_XacNhanLV2.includes(':UnApprove')) {
+                return false;
+            }
+
             if (roleUsers == 'BO_PHAN_DUYET') {
                 if (e.row.data.XacNhanLV2 == true || e.row.data.XacNhanLV3 == true) {
                     return false;
@@ -266,12 +273,14 @@
                 }
             }
             else if (roleUsers == 'NHAN_SU_DUYET') {
-                if (e.row.data.XacNhanLV3 == true) {
-                    return false;
-                }
-                else {
-                    return true;
-                }
+
+                return true;
+                //if (e.row.data.XacNhanLV3 == true) {
+                //    return false;
+                //}
+                //else {
+                //    return true;
+                //}
             }
             else if (roleUsers == 'Admin' || roleUsers == 'QUANLY_SUPPORT_DUYET') {
                 return true;
@@ -282,6 +291,11 @@
         }
 
         function fApproveVisible(e) {
+
+            if (e.row.data.Nguoi_XacNhanLV2 != undefined && e.row.data.Nguoi_XacNhanLV2.includes(':UnApprove')) {
+                return false;
+            }
+
             if (roleUsers == 'BOPHAN_DANGKY') {
                 return false;
             }
@@ -386,7 +400,7 @@
     <div class="page-header">
         <div class="row">
             <div class="col-sm-12">
-                <h3 class="page-title">Đăng Ký Xe</h3>
+                <h3 class="page-title">@localizer["DANGKY"].Value</h3>
             </div>
         </div>
     </div>
@@ -402,7 +416,7 @@
                 Html.DevExtreme().DataGrid<DANG_KY_XE>
                 ()
                 .ID("gridContainer1")
-                .Height(700)
+                .Height(800)
                 .ShowBorders(true)
                 .ColumnAutoWidth(true)
                 .ColumnMinWidth(150)
@@ -439,6 +453,7 @@
                     .Items(groupItems =>
                     {
                         groupItems.AddSimpleFor(m => m.TenNguoiSuDung);
+                        groupItems.AddSimpleFor(m => m.ĐiaDiemXuatPhat);
                         groupItems.AddSimpleFor(m => m.DiaDiemDen_SoNha);
                         groupItems.AddSimpleFor(m => m.NgaySuDung);
                         groupItems.AddSimpleFor(m => m.DiaDiemDen_Xa);
@@ -464,79 +479,72 @@
                 .Columns(columns =>
                 {
                     columns.AddFor(m => m.Id).Visible(false).AllowEditing(false);
-                    columns.AddFor(m => m.NgaySuDung).Caption("Ngày Sử Dụng").Format("yyyy-MM-dd").AllowEditing(true);
-                    columns.AddFor(m => m.TenNguoiSuDung).Caption("Tên Người Sử Dụng").AllowEditing(true);
-                    columns.AddFor(m => m.NguoiDangKy).Caption("Người Đăng Ký").AllowEditing(false);
+                    columns.AddFor(m => m.NgaySuDung).Caption(localizer["NGAY_SU_DUNG"].Value).ValidationRules(x => x.AddRequired()).Format("yyyy-MM-dd").AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.TenNguoiSuDung).Caption(localizer["TEN_NGUOI_SU_DUNG"].Value).ValidationRules(x => x.AddRequired()).AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.NguoiDangKy).Caption(localizer["NGUOI_DANG_KY"].Value).AllowEditing(false);
                     columns.AddFor(m => m.BoPhan)
-                    .Caption("Bộ Phận").AllowEditing(true)
+                    .Caption(localizer["BO_PHAN"].Value).AllowEditing(true)
                     .Lookup(lookup => lookup
                     .DataSource(d => d.Mvc().Controller("DangKyXe").LoadAction("GetBoPhan").Key("Id"))
                     .ValueExpr("Id")
                     .DisplayExpr("TenBoPhan")
                     )
                     .CalculateFilterExpression("calculateFilterExpression")
-                    .Width(120);
+                    .Width(120).ValidationRules(x => x.AddRequired());
 
-                    columns.Add().Caption("Thời Gian Dự Kiến").Columns(c =>
+                    columns.Add().Caption(localizer["THOI_GIAN_DU_KIEN"].Value).Columns(c =>
                     {
                         c.AddFor(m => m.FromTimePlan).EditorOptions(new
                         {
                             displayFormat = "shortTime",
                             type = "time"
                         }).DataType(GridColumnDataType.DateTime)
-                    .Format(Format.ShortTime).Caption("Dự Kiến Từ mấy giờ ?").AllowEditing(true);
+                    .Format(Format.ShortTime).Caption(localizer["THOI_GIAN_DU_KIEN_FROM"].Value).AllowEditing(true).ValidationRules(x => x.AddRequired());
 
                         c.AddFor(m => m.ToTimePlan).EditorOptions(new
                         {
                             displayFormat = "shortTime",
                             type = "time"
                         }).DataType(GridColumnDataType.DateTime)
-                    .Format(Format.ShortTime).Caption("Dự Kiến Đến mấy giờ ?").AllowEditing(true);
+                    .Format(Format.ShortTime).Caption(localizer["THOI_GIAN_DU_KIEN_TO"].Value).AllowEditing(true).ValidationRules(x => x.AddRequired());
                     });
 
-                    columns.AddFor(m => m.DiaDiemDen_SoNha).Caption("Địa Điểm Đến(Số Nhà)").AllowEditing(true);
-                    columns.AddFor(m => m.DiaDiemDen_Xa).ValidationRules(x => x.AddRequired()).Caption("Địa Điểm Đến(Xã)").AllowEditing(true);
-                    columns.AddFor(m => m.DiaDiemDen_Huyen).ValidationRules(x => x.AddRequired()).Caption("Địa Điểm Đến(Huyện)").AllowEditing(true);
-                    columns.AddFor(m => m.DiaDiemDen_Tinh).ValidationRules(x => x.AddRequired()).Caption("Địa Điểm Đến(Tỉnh)").AllowEditing(true);
-                    columns.AddFor(m => m.MucDichSuDung).Caption("Mục Đích Sử Dụng").AllowEditing(true);
-                    columns.AddFor(m => m.Lxe_BienSo).Caption("Thông Tin Xe").AllowEditing(false);
-                    //columns.AddFor(m => m.UrlDraf).Caption("Draf").AllowEditing(false);
-                    columns.Add().Caption("Trạng Thái Approve").Columns(c =>
+                    columns.AddFor(m => m.ĐiaDiemXuatPhat).Caption(localizer["XUAT_PHAT"].Value).AllowEditing(true);
+                    columns.AddFor(m => m.DiaDiemDen_SoNha).Caption(localizer["SO_NHA"].Value).AllowEditing(true);
+                    columns.AddFor(m => m.DiaDiemDen_Xa).ValidationRules(x => x.AddRequired()).Caption(localizer["XA"].Value).AllowEditing(true);
+                    columns.AddFor(m => m.DiaDiemDen_Huyen).ValidationRules(x => x.AddRequired()).Caption(localizer["HUYEN"].Value).AllowEditing(true);
+                    columns.AddFor(m => m.DiaDiemDen_Tinh).ValidationRules(x => x.AddRequired()).Caption(localizer["TINH"].Value).AllowEditing(true);
+                    columns.AddFor(m => m.MucDichSuDung).Caption(localizer["MUC_DICH_SU_DUNG"].Value).AllowEditing(true);
+                    columns.AddFor(m => m.Lxe_BienSo).Caption(localizer["THONG_TIN_XE"].Value).AllowEditing(false);
+                    columns.AddFor(m => m.SoXe).Caption(localizer["SO_XE"].Value).AllowEditing(false);
+
+                    columns.Add().Caption(localizer["TRANG_THAI_APPROVE"].Value).Columns(c =>
                     {
-                        c.AddFor(m => m.Nguoi_XacNhanLV3).Caption("Quản Lý Support Approve").AllowEditing(false);
-                        c.AddFor(m => m.Nguoi_XacNhanLV2).Caption("Nhân Sự Approve").AllowEditing(false);
-                        c.AddFor(m => m.Nguoi_XacNhanLV1).Caption("Quản Lý Bộ Phận Approve").AllowEditing(false);
+                        c.AddFor(m => m.Nguoi_XacNhanLV1).Caption(localizer["QUAN_LY_BOPHAN_APPROVE"].Value).AllowEditing(false);
+                        c.AddFor(m => m.Nguoi_XacNhanLV2).Caption(localizer["HR_APPROVE"].Value).AllowEditing(false);
+                        c.AddFor(m => m.Nguoi_XacNhanLV3).Caption(localizer["QUAN_LY_SP_APPROVE"].Value).AllowEditing(false);
                     });
 
-                    columns.Add().Type(GridCommandColumnType.Buttons).Width(110).Buttons(b =>
+                    columns.Add().Caption("Approve/Reject(Action)").Type(GridCommandColumnType.Buttons).Width(110).Buttons(b =>
                     {
                         b.Add()
                     .Hint("Approve")
                     .Text("Approve")
+                    .CssClass("badge bg-inverse-success")
                     .OnClick("onApproveClick").Visible(new JS("fApproveVisible"));
-                    }).Name("btnApprove").Visible(User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] != CommonConstants.ROLE_DANGKY);
 
-                    columns.Add().Type(GridCommandColumnType.Buttons).Width(110).Buttons(b =>
-                    {
                         b.Add()
-                    .Hint("UnApprove")
-                    .Text("UnApprove")
-                    .OnClick("onUnApproveClick").Visible(new JS("fUnApproveVisible")); ;
-                    }).Name("btnUnApprove").Visible(User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] != CommonConstants.ROLE_DANGKY);
+                    .Hint("Reject")
+                    .Text("Reject")
+                    .CssClass("badge bg-inverse-danger")
+                    .OnClick("onUnApproveClick").Visible(new JS("fUnApproveVisible"));
 
-@*                    columns.Add().Type(GridCommandColumnType.Buttons).Width(110).Buttons(b =>
-                    {
-                        b.Add()
-                    .Hint("Upload Draft")
-                    .Text("Upload Draft")
-                    .OnClick("onUploadDrafClick").Visible(new JS("fAddEditVisible")); ;
-                    }).Name("btnUpload");*@
-
+                    }).Visible(User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] != CommonConstants.ROLE_DANGKY);
                     columns.Add().Type(GridCommandColumnType.Buttons).Width(110).Buttons(b =>
                     {
                         b.Add().Name(GridColumnButtonName.Edit).Visible(new JS("fAddEditVisible"));
                         b.Add().Name(GridColumnButtonName.Delete).Visible(new JS("fAddEditVisible"));
-                    }).Name("btnAddEdit");
+                    }).Caption("Update Data").Name("btnAddEdit");
                 })
                 .WordWrapEnabled(true)
                 .DataSource(d => d.Mvc()
@@ -578,7 +586,8 @@
                     .Location(ToolbarItemLocation.After)
                     .Widget(widget => widget.Button()
                     .Text("Close")
-                    .OnClick(@<text>
+                    .OnClick(
+                    @<text>
                         function hideInfo(data) {
 
                         let _dataGridTmp = $("#gridContainer1").dxDataGrid("instance");
@@ -656,7 +665,7 @@
                         .CalculateFilterExpression("calculateFilterExpression")
                         .Width(200);
 
-                        columns.AddFor(m => m.Car.LoaiXe).Caption("Loại Xe").AllowEditing(false);
+                        columns.AddFor(m => m.Car.LoaiXe).Caption("Số Xe").AllowEditing(false);
 
                         columns.AddFor(m => m.MaLaiXe)
                         .Caption("Lái Xe").AllowEditing(true)

@@ -26,6 +26,7 @@ using Newtonsoft.Json.Serialization;
 using System;
 using OPERATION_MNS.Areas.OpeationMns.Models.SignalR;
 using OPERATION_MNS.Hubs;
+using Microsoft.AspNet.SignalR;
 
 namespace OPERATION_MNS
 {
@@ -90,6 +91,7 @@ namespace OPERATION_MNS
             services.AddTransient<IGocPlanService, GocPlanService>();
             services.AddTransient<IInventoryService, InventoryService>();
             services.AddTransient<IInventoryTicker, InventoryTicker>(); 
+            services.AddTransient<ISMTTicker, SMTTicker>(); 
             services.AddTransient<IDateOffLineService, DateOffLineService>();
             services.AddTransient<IYieldOfModelService, YieldOfModelService>();
             services.AddTransient<IWaitimeService, WaitimeService>();
@@ -107,6 +109,10 @@ namespace OPERATION_MNS
             services.AddTransient<ITCardSampleService, TCardSampleService>();
             services.AddTransient<IDateOffLineSampleService, DateOffLineSampleService>();
             services.AddTransient<ILotTrackingService, LotTrackingService>();
+            services.AddTransient<ILotTestHistoryLFemService, LotTestHistoryLFemService>();
+            services.AddTransient<ILFEMTicker, LFEMTicker>();
+            services.AddTransient<IWLP2Ticker, WLP2Ticker>();
+            services.AddTransient<ISMTDailyPlanService, SMTDailyPlanService>();
 
             services.AddSignalR(cfg =>cfg.EnableDetailedErrors = true);
 
@@ -208,6 +214,8 @@ namespace OPERATION_MNS
             app.UseAuthentication();
             app.UseAuthorization();
 
+            GlobalHost.Configuration.DefaultMessageBufferSize = 500;
+
             app.UseEndpoints(routes =>
               {
                   routes.MapControllerRoute(
@@ -215,6 +223,10 @@ namespace OPERATION_MNS
                       "{area:exists}/{controller=Login}/{action=Index}/{id?}");
 
                   routes.MapHub<liveUpdateSignalRHub>("/liveUpdateSignalRHub");
+                  routes.MapHub<LiveUpdateSignalR_SMT_Hub>("/liveUpdateSignalR_SMT_Hub");
+                  routes.MapHub<LiveUpdateSignalR_LFEM_Hub>("/liveUpdateSignalR_LFEM_Hub");
+                  routes.MapHub<LiveUpdateSignalR_WLP2_Hub>("/liveUpdateSignalR_WLP2_Hub");
+
                   //routes.MapControllerRoute(
                   //    "Deptdefault",
                   //      "{area:exists}/{controller=Login}/{action=Index}/{id?}");

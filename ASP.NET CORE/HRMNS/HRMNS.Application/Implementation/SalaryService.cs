@@ -25,13 +25,15 @@ namespace HRMNS.Application.Implementation
         private IRespository<HR_CHUCDANH, string> _chucDanhRepository;
         private IRespository<PHUCAP_DOC_HAI, int> _phucapdochaiRepository;
         private IRespository<HR_SALARY_GRADE, string> _gradeRepository;
+        private IRespository<HR_BHXH, string> _BHXHRepository;
 
         public SalaryService(IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork,
             IRespository<HR_SALARY, int> salaryRepository, IRespository<HR_SALARY_PHATSINH, int> salaryPhatSinhRepository,
             IRespository<HR_SALARY_DANHMUC_PHATSINH, int> salaryDanhMucPhatSinhRepository,
             IRespository<HR_NHANVIEN, string> nhanvienRespository,
             IRespository<HR_CHUCDANH, string> chucDanhRepository,
-            IRespository<PHUCAP_DOC_HAI, int> phucapdochaiRepository, IRespository<HR_SALARY_GRADE, string> gradeRepository)
+            IRespository<PHUCAP_DOC_HAI, int> phucapdochaiRepository,
+            IRespository<HR_SALARY_GRADE, string> gradeRepository, IRespository<HR_BHXH, string> bHXHRepository)
         {
             _unitOfWork = unitOfWork;
             _httpContextAccessor = httpContextAccessor;
@@ -42,6 +44,7 @@ namespace HRMNS.Application.Implementation
             _chucDanhRepository = chucDanhRepository;
             _phucapdochaiRepository = phucapdochaiRepository;
             _gradeRepository = gradeRepository;
+            _BHXHRepository = bHXHRepository;
         }
 
         public HR_SALARY AddSalary(HR_SALARY salary)
@@ -88,12 +91,27 @@ namespace HRMNS.Application.Implementation
             List<HR_SALARY> lst = _salaryRepository.FindAll(x => x.HR_NHANVIEN, y => y.HR_NHANVIEN.HR_BO_PHAN_DETAIL, z => z.HR_NHANVIEN.HR_CHUCDANH, k => k.HR_NHANVIEN.NHANVIEN_INFOR_EX)
                 .Where(x => x.HR_NHANVIEN.MaBoPhan != "KOREA").ToList();
             string capbac = "";
+            string maBophanEX = "";
+            int gradeYear = 0;
             HR_SALARY_GRADE grade = null;
+            List<HR_BHXH> lstBHXH = _BHXHRepository.FindAll().OrderByDescending(x => x.ThangThamGia).ToList();
+
             foreach (var item in lst.ToList())
             {
-                if(item.HR_NHANVIEN.NHANVIEN_INFOR_EX.OrderByDescending(x => x.Year).FirstOrDefault() != null)
+                if (lstBHXH.FirstOrDefault(x => x.MaNV == item.MaNV) != null)
+                {
+                    item.ThuocDoiTuongBaoHiemXH = lstBHXH.FirstOrDefault(x => x.MaNV == item.MaNV).PhanLoai == "OK" ? "x" : "o";
+                }
+                else
+                {
+                    item.ThuocDoiTuongBaoHiemXH = "-";
+                }
+
+                if (item.HR_NHANVIEN.NHANVIEN_INFOR_EX.OrderByDescending(x => x.Year).FirstOrDefault() != null)
                 {
                     capbac = item.HR_NHANVIEN.NHANVIEN_INFOR_EX.OrderByDescending(x => x.Year).FirstOrDefault().Grade;
+                    maBophanEX = item.HR_NHANVIEN.NHANVIEN_INFOR_EX.OrderByDescending(x => x.Year).FirstOrDefault().MaBoPhanEx;
+                    gradeYear = item.HR_NHANVIEN.NHANVIEN_INFOR_EX.OrderByDescending(x => x.Year).FirstOrDefault().Year;
                     grade = _gradeRepository.FindById(capbac);
                 }
 
@@ -101,17 +119,20 @@ namespace HRMNS.Application.Implementation
 
                 if (grade != null)
                 {
-                    if(item.DoiTuongPhuCapDocHai.NullString().ToUpper() == "X")
+                    if (item.DoiTuongPhuCapDocHai.NullString().ToUpper() == "X")
                     {
                         item.HarmfulAllowance = (decimal)(_phucapdochaiRepository.FindSingle(x => x.BoPhan == item.HR_NHANVIEN.MaBoPhan).PhuCap * grade.BasicSalary);//item.BasicSalary;
                     }
 
+                    item.Grade = capbac;
+                    item.MaBoPhanEx = maBophanEX;
+                    item.GradeYear = gradeYear;
                     item.BasicSalary = (decimal)grade.BasicSalary;
                     item.LivingAllowance = (decimal)grade.LivingAllowance;
                     item.IncentiveStandard = (decimal)grade.IncentiveStandard;
                 }
 
-                if (item.HR_NHANVIEN.Status == Status.InActive.ToString() && DateTime.Now.Subtract(DateTime.Parse(item.HR_NHANVIEN.NgayNghiViec)).TotalDays > 30)
+                if (item.HR_NHANVIEN.Status == Status.InActive.ToString() && DateTime.Now.Subtract(DateTime.Parse(item.HR_NHANVIEN.NgayNghiViec)).TotalDays > 90)
                 {
                     lst.Remove(item);
                 }
@@ -183,57 +204,103 @@ namespace HRMNS.Application.Implementation
 
                         if (worksheet.Cells[i, 7].Text.NullString() != "")
                         {
-                            salary.IncentiveSixMonth1 = worksheet.Cells[i, 7].Text.NullString();
+                            salary.HoTroCongDoan = decimal.Parse(worksheet.Cells[i, 7].Text.IfNullIsZero());
                         }
 
                         if (worksheet.Cells[i, 8].Text.NullString() != "")
                         {
-                            salary.IncentiveSixMonth2 = worksheet.Cells[i, 8].Text.NullString();
+                            salary.PCCC_CoSo = decimal.Parse(worksheet.Cells[i, 8].Text.IfNullIsZero());
                         }
 
                         if (worksheet.Cells[i, 9].Text.NullString() != "")
                         {
-                            salary.HoTroCongDoan = decimal.Parse(worksheet.Cells[i, 9].Text.IfNullIsZero());
+                            salary.HoTroATVS_SinhVien = decimal.Parse(worksheet.Cells[i, 9].Text.IfNullIsZero());
                         }
 
-                        if (worksheet.Cells[i, 10].Text.NullString() != "")
-                        {
-                            salary.PCCC_CoSo = decimal.Parse(worksheet.Cells[i, 10].Text.IfNullIsZero());
-                        }
+                        //if (worksheet.Cells[i, 10].Text.NullString() != "")
+                        //{
+                        //    salary.ThuocDoiTuongBaoHiemXH = worksheet.Cells[i, 10].Text.NullString();
+                        //}
 
                         if (worksheet.Cells[i, 11].Text.NullString() != "")
                         {
-                            salary.HoTroATVS_SinhVien = decimal.Parse(worksheet.Cells[i, 11].Text.IfNullIsZero());
+                            salary.SoNguoiPhuThuoc = decimal.Parse(worksheet.Cells[i, 11].Text.IfNullIsZero());
                         }
 
                         if (worksheet.Cells[i, 12].Text.NullString() != "")
                         {
-                            salary.ThuocDoiTuongBaoHiemXH = worksheet.Cells[i, 12].Text.NullString();
+                            salary.Note = worksheet.Cells[i, 12].Text.NullString();
                         }
 
                         if (worksheet.Cells[i, 13].Text.NullString() != "")
                         {
-                            salary.SoNguoiPhuThuoc = decimal.Parse(worksheet.Cells[i, 13].Text.IfNullIsZero());
+                            salary.DoiTuongTruyThuBHYT = worksheet.Cells[i, 13].Text.NullString();
                         }
 
                         if (worksheet.Cells[i, 14].Text.NullString() != "")
                         {
-                            salary.Note = worksheet.Cells[i, 14].Text.NullString();
+                            salary.SoConNho = int.Parse(worksheet.Cells[i, 14].Text.IfNullIsZero());
                         }
 
                         if (worksheet.Cells[i, 15].Text.NullString() != "")
                         {
-                            salary.DoiTuongTruyThuBHYT = worksheet.Cells[i, 15].Text.NullString();
+                            salary.DoiTuongPhuCapDocHai = worksheet.Cells[i, 15].Text.NullString();
                         }
 
-                        if (worksheet.Cells[i, 16].Text.NullString() != "")
+                        lstUpdate.Add(salary);
+                    }
+
+                    _salaryRepository.UpdateRange(lstUpdate);
+                    Save();
+
+                    transaction.Commit();
+                    resultDB.ReturnInt = 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                resultDB.ReturnInt = -1;
+                resultDB.ReturnString = ex.Message;
+            }
+            return resultDB;
+        }
+
+        public ResultDB ImportIncentiveExcel(string filePath)
+        {
+            using var transaction = ((EFUnitOfWork)_unitOfWork).DBContext().Database.BeginTransaction();
+            ResultDB resultDB = new ResultDB();
+            try
+            {
+                using (var packet = new ExcelPackage(new System.IO.FileInfo(filePath)))
+                {
+                    ExcelWorksheet worksheet = packet.Workbook.Worksheets[0];
+                    HR_SALARY salary;
+                    List<HR_SALARY> lstUpdate = new List<HR_SALARY>();
+                    string manv;
+                    for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
+                    {
+                        manv = worksheet.Cells[i, 1].Text.NullString();
+                        if (manv.NullString() == "")
                         {
-                            salary.SoConNho = int.Parse(worksheet.Cells[i, 16].Text.IfNullIsZero());
+                            break;
                         }
 
-                        if (worksheet.Cells[i, 17].Text.NullString() != "")
+                        salary = GetByMaNV(manv);
+
+                        if (salary == null)
                         {
-                            salary.DoiTuongPhuCapDocHai = worksheet.Cells[i, 17].Text.NullString();
+                            continue;
+                        }
+
+                        if (worksheet.Cells[i, 3].Text.NullString() != "")
+                        {
+                            salary.IncentiveSixMonth1 = worksheet.Cells[i, 3].Text.NullString();
+                        }
+
+                        if (worksheet.Cells[i, 4].Text.NullString() != "")
+                        {
+                            salary.IncentiveSixMonth2 = worksheet.Cells[i, 4].Text.NullString();
                         }
 
                         lstUpdate.Add(salary);
@@ -317,6 +384,7 @@ namespace HRMNS.Application.Implementation
             try
             {
                 salary.UserModified = GetUserId();
+                salary.DoiTuongTruyThuBHYT = salary.DoiTuongTruyThuBHYT.NullString().ToLower();
                 _salaryRepository.Update(salary);
                 Save();
                 transaction.Commit();

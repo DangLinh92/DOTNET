@@ -96,38 +96,42 @@
                 console.log(options);
                 if (fieldData && options.column.dataType == 'object') {
 
-                    // bôi đỏ nếu bị delay
-                    options.cellElement.addClass((fieldData.Diff == 0) ? "yeallow" : (fieldData.Diff == 1 ? "eqc" : "overRed"));
-                    fieldHtml += "<div class='plan-value'>" +
-                        formatValueObj(fieldData.Plan) +
-                        "</div> <div class='actual-value'>" +
-                        formatValueObj(fieldData.Actual) +
-                        "  </div>";
-
-                    if (fieldData.Diff < 0)
-                    {
-                        // show lý do delay
-                        var tooltipInstance = $("#tooltip").dxTooltip("instance");
-                        options.cellElement.mouseover(function (arg) {
-                            tooltipInstance.option("contentTemplate", function (contentElement) {
-                                contentElement.html(`<div class='tooltipContent'>` + `<div><b>비고:</b> ${formatValueObj(fieldData.Comment)}</div>` + `</div>`);
-                            });
-                            tooltipInstance.show(arg.target);
-                        });
-                        options.cellElement.mouseout(function (arg) {
-                            tooltipInstance.hide();
-                        });
+                    if (options.column.dataField == "ViewLeadTime") {
+                        fieldHtml += "<div class='plan-value'>" +
+                            formatValueNumberObj(fieldData.Plan) +
+                            "</div> <div class='actual-value'>" +
+                            formatValueNumberObj(fieldData.Actual) +
+                            "  </div>";
                     }
+                    else {
+                        // bôi đỏ nếu bị delay
+                        options.cellElement.addClass((fieldData.Diff == 0) ? "yeallow" : (fieldData.Diff == 1 ? "eqc" : "overRed"));
+                        fieldHtml += "<div class='plan-value'>" +
+                            formatValueObj(fieldData.Plan) +
+                            "</div> <div class='actual-value'>" +
+                            formatValueObj(fieldData.Actual) +
+                            "  </div>";
+
+                        if (fieldData.Diff < 0) {
+                            // show lý do delay
+                            var tooltipInstance = $("#tooltip").dxTooltip("instance");
+                            options.cellElement.mouseover(function (arg) {
+                                tooltipInstance.option("contentTemplate", function (contentElement) {
+                                    contentElement.html(`<div class='tooltipContent'>` + `<div><b>비고:</b> ${formatValueObj(fieldData.Comment)}</div>` + `</div>`);
+                                });
+                                tooltipInstance.show(arg.target);
+                            });
+                            options.cellElement.mouseout(function (arg) {
+                                tooltipInstance.hide();
+                            });
+                        }
+                    }
+
                 }
                 else {
 
-                    if (options.column.dataField == 'LeadTime') {
-                        if (fieldData == -1) {
-                            fieldHtml = '';
-                        }
-                        else {
-                            fieldHtml = fieldData;
-                        }
+                    if (options.column.dataField == 'Note_Plan_Actual') {
+                        fieldHtml += "<div class='plan-value'>Kế Hoạch</div> <div class='actual-value'>Thực Tế</div>";
                     }
                     else {
                         fieldHtml = fieldData;
@@ -165,6 +169,13 @@
 
         function formatValueObj(obj) {
             if (!obj)
+                return '-';
+            else
+                return obj;
+        }
+
+        function formatValueNumberObj(obj) {
+            if (!obj || obj < 0)
                 return '-';
             else
                 return obj;
@@ -236,7 +247,8 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            @(Html.DevExtreme().DataGrid<TinhHinhSanXuatSampleViewModel>
+            @(
+                Html.DevExtreme().DataGrid<TinhHinhSanXuatSampleViewModel>
                 ()
                 .ID("gridContainer")
                 .Height(700)
@@ -291,6 +303,7 @@
                     columns.AddFor(m => m.NguoiChiuTrachNhiem).Caption("Người chịu trách nhiệm").AllowEditing(false);
                     columns.AddFor(m => m.PlanInputDateTcardDate).Caption("Input Date(Tcard Plan)").Format("MM-dd").AllowEditing(false);
                     columns.AddFor(m => m.OutPutDay.Plan).Caption("Output Date(Tcard Plan)").AllowEditing(false);
+                    columns.AddFor(m => m.Note_Plan_Actual).Caption("Chú Thích").AllowEditing(false);
 
                     columns.Add().Caption("Process Flow Plane").Columns(c =>
                     {
@@ -309,9 +322,12 @@
                         c.AddFor(m => m.PackingDate).Caption("Packing").AllowEditing(false);
                         c.AddFor(m => m.OQCDate).Caption("OQC").AllowEditing(false);
                         c.AddFor(m => m.ShippingDate).Caption("OUT").AllowEditing(false);
-                        c.AddFor(m => m.LeadTime).Caption("LeadTime").AllowEditing(false);
+                        //c.AddFor(m => m.LeadTime).Caption("LeadTime").AllowEditing(false);
                     });
-                })
+
+                    columns.AddFor(m => m.ViewLeadTime).Caption("LeadTime").AllowEditing(false);
+                    columns.AddFor(m => m.Note_DayOff).Caption("Ngày Nghỉ").AllowEditing(false);
+                }).WordWrapEnabled(true)
                 .DataSource(d => d.Mvc()
                 .Area("OpeationMns")
                 .Controller("ScheduleSample")

@@ -37,6 +37,9 @@ namespace CarMNS.Data.Entities
         public string ToTimePlanActual { get; set; }
 
         [StringLength(250)]
+        public string ĐiaDiemXuatPhat { get; set; }
+
+        [StringLength(250)]
         public string DiaDiemDen_SoNha { get; set; }
 
         [StringLength(250)]
@@ -56,6 +59,9 @@ namespace CarMNS.Data.Entities
 
         [StringLength(500)]
         public string Lxe_BienSo { get; set; }
+
+        [StringLength(50)]
+        public string SoXe { get; set; }
 
         [StringLength(50)]
         public string NguoiDangKy { get; set; }

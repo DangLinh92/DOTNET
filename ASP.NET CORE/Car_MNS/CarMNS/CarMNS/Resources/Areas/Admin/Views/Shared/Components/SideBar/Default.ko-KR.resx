@@ -124,7 +124,7 @@
     <value>Calendar</value>
   </data>
   <data name="CARS_DRIVE" xml:space="preserve">
-    <value>Danh Sách Xe/Lái Xe</value>
+    <value>차량/ 기사 명단</value>
   </data>
   <data name="CAR_MNS" xml:space="preserve">
     <value>Car Management</value>
@@ -136,7 +136,10 @@
     <value>국가기관 점검 이력 모니터링</value>
   </data>
   <data name="DANGKY" xml:space="preserve">
-    <value>Đăng Ký/Duyệt Xe</value>
+    <value>배차 신청 / 승인</value>
+  </data>
+  <data name="DANGKY_TAXI" xml:space="preserve">
+    <value>택시 신청/ 승인</value>
   </data>
   <data name="DANHSACHKEHOACH" xml:space="preserve">
     <value>계획 명단</value>
@@ -187,7 +190,10 @@
     <value>측정 계획</value>
   </data>
   <data name="LICHSU_DIEU_XE" xml:space="preserve">
-    <value>Lịch Sử Điều Xe</value>
+    <value>배차 이력</value>
+  </data>
+  <data name="LICHSU_DIEU_XE_TAXI" xml:space="preserve">
+    <value>배차 이력(Taxi)</value>
   </data>
   <data name="NHANSU" xml:space="preserve">
     <value>인사 관리</value>
@@ -224,6 +230,9 @@
   </data>
   <data name="SHIFT_SCHEDULE" xml:space="preserve">
     <value>교대 분할 관리</value>
+  </data>
+  <data name="TAXI_REPORT" xml:space="preserve">
+    <value>Taxi report</value>
   </data>
   <data name="THAISAN" xml:space="preserve">
     <value>출산</value>

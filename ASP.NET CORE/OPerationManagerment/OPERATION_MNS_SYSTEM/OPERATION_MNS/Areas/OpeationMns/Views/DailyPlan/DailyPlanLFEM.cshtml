@@ -1,0 +1,1011 @@
+﻿@using Microsoft.AspNetCore.Http
+@using OPERATION_MNS.Areas.OpeationMns.Models.SignalR;
+@{
+    ViewData["Title"] = "DailyPlanLFEM";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <style>
+        #gridContainer td {
+            vertical-align: middle;
+        }
+
+        #gridContainer .chart-cell {
+            overflow: visible;
+        }
+
+        #gridContainer .plan-value {
+            display: inline-block;
+            display: block;
+        }
+
+        #gridContainer .actual-value {
+            position: relative;
+            display: block;
+            border-top: 1px solid #004E89;
+        }
+
+        #gridContainer .yeallow {
+            color: #333;
+            background-color: #FFD3A3;
+        }
+
+        #gridContainer .overRed {
+            color: white;
+            background-color: #E74646;
+        }
+
+        .stylePriory1 {
+            background-color: #FF5D5D !important;
+            color: black !important;
+        }
+
+        .stylePriory2 {
+            background-color: #FF8C8C !important;
+        }
+
+        .stylePriory3 {
+            background-color: #FFC3C3 !important;
+        }
+
+        .stylePriory4 {
+            background-color: #FFE3A9 !important;
+        }
+
+        .stylePriory5 {
+            background-color: #FAF0D7 !important;
+        }
+
+        .stylePriory6 {
+            background-color: #BDE6F1 !important;
+        }
+
+        .stylePriory7 {
+            background-color: #CCF3EE !important;
+        }
+
+        .stylePriory8 {
+            background-color: #E8F9FD !important;
+        }
+
+        .stylePriory9 {
+            background-color: #F9F3EE !important;
+        }
+
+        .stylePriory10 {
+            background-color: #FFA500 !important;
+        }
+
+        .stylePriory11 {
+            color: #E74646 !important;
+        }
+    </style>
+}
+
+@section Scripts
+    {
+    <script src="~/js/dataTables.fixedColumns.min.js"></script>
+    <script src="~/js/dataTables.fixedHeader.min.js"></script>
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+
+    <script>
+
+        var arrOperationData = ["dam.qtyT0", "mold.qtyT0", "grinding.qtyT0", "marking.qtyT0", "dicing.qtyT0", "test.qtyT0", "visualInspection.qtyT0", "oqc.qtyT0"];
+        var arrOperation_ID = ["OC200-OC2141-OC2142-OC2143-OC2144-OC216", "OC217-OC220-OC230", "OC235-OC240-OC245-OC247-OC250", "OC257-OC260-OC290", "OC291-OC292-OC2921-OC2922-OC293-OC294-OC295-OC296-OC300-OC302-OC304-OC310", "OC311-OC312-OC313-OC320-OC330-OC340-OC355-OC345-OC357-OC362-OC360-OC365-OR001", "OC370-OC380-OC410", "OC420"];
+
+        var connection = new signalR.HubConnectionBuilder()
+            .withUrl("@Url.Content("~/liveUpdateSignalR_LFEM_Hub")")
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+
+        $(function () {
+
+            connection.start()
+                .then(function () {
+
+                    var store = new DevExpress.data.CustomStore({
+                        load: function () {
+                            return connection.invoke("dailyPlanLfem");
+                        },
+                        key: "mesCode"
+                    });
+
+                    $("#gridContainer").dxDataGrid({
+                        dataSource: store,
+                        //reshapeOnPush: true
+                        visible: true
+                    });
+
+                    connection.on("getDailyLFEM", function (dataObj) {
+
+                        store.push([{ type: "update", key: dataObj.mesCode, data: dataObj }]);
+
+                        if (dataObj.isLoadPage != null && dataObj.isLoadPage != '') {
+
+                            let isLoadPage = localStorage.getItem('isLoadPageDailyPlanLfemKey');
+
+                            if (isLoadPage != dataObj.isLoadPage) {
+
+                                localStorage.setItem('isLoadPageDailyPlanLfemKey', dataObj.isLoadPage);
+                                location.reload();
+                            }
+                        }
+                    });
+                });
+        });
+
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('LFEM Daily Plan');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'LFEM Daily Plan.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        function selectedDate_changed(data) {
+
+            let _beginDate = formatDate(data.value);
+
+            $.ajax({
+                url: '/OpeationMns/DailyPlan/SetBeginDateLFEM',
+                type: 'POST',
+                data: {
+                    beginDate: _beginDate
+                },
+                success: function (response) {
+                    hrms.hide_waitMe($('#gridContainer'));
+                    /*$("#gridContainer").dxDataGrid("getDataSource").reload();*/
+                    location.reload();
+                },
+                error: function (status) {
+                    hrms.notify(status.responseText, 'error', 'alert', function () { });
+                    hrms.hide_waitMe($('#gridContainer'));
+                }
+            });
+        };
+
+        function formatDate(sDate) {
+
+            if (sDate == '') {
+                var date = new Date();
+            }
+            else {
+                var date = new Date(sDate);
+            }
+
+            // Get year, month, and day part from the date
+            var year = date.toLocaleString("default", { year: "numeric" });
+            var month = date.toLocaleString("default", { month: "2-digit" });
+            var day = date.toLocaleString("default", { day: "2-digit" });
+
+            // Generate yyyy-mm-dd date string
+            var formattedDate = year + '-' + month + '-' + day;
+            return formattedDate;
+        }
+
+        //function refreshGrid() {
+
+        //    let fromDate = new Date($("#begindate-date").dxDateBox("option", "text"));
+        //    //$("#cheOpenLot").dxCheckBox("option", "value", false);
+        //    $("#gridContainer").dxDataGrid("refresh");
+        //}
+
+        const itemUpdates = ['dam.totalStr', 'mold.totalStr', 'grinding.totalStr', 'marking.totalStr', 'dicing.totalStr', 'test.totalStr', 'visualInspection.totalStr', 'oqc.totalStr'];
+        function cell_prepared(options) {
+
+            if (options.rowType == 'data') {
+
+                if (options.data.prioryInOperation != null) {
+
+                    if (options.column.dataField === "model"
+                        || options.column.dataField === "mesCode"
+                        || options.column.dataField === "khsx"
+                        || options.column.dataField === "dam.totalStr"
+                        || options.column.dataField === "mold.totalStr"
+                        || options.column.dataField === "grinding.totalStr"
+                        || options.column.dataField === "marking.totalStr"
+                        || options.column.dataField === "dicing.totalStr"
+                        || options.column.dataField === "test.totalStr"
+                        || options.column.dataField === "visualInspection.totalStr"
+                        || options.column.dataField === "oqc.totalStr"
+                        || options.column.dataField === "lastUpdate") {
+
+                        options.cellElement.addClass("stylePriory10");
+                    }
+                    else {
+                        let operationNameIndex = arrOperationData.indexOf(options.column.dataField);
+
+                        if (operationNameIndex >= 0) {
+
+                            let operationID = arrOperation_ID[operationNameIndex];
+
+                            const myArray = options.data.prioryInOperation.split("-");
+
+                            let uniqueOperation = [...new Set(myArray)];
+
+                            for (var op of uniqueOperation) {
+                                if (operationID.indexOf(op) >= 0) {
+                                    options.cellElement.addClass("stylePriory10");
+                                }
+                            }
+                        }
+                    }
+                }
+
+                var fieldData = options.value,
+                    fieldHtml = "";
+
+                if (fieldData) {
+                    if (itemUpdates.includes(options.column.dataField)) {
+
+                        let plan = fieldData.split('-')[0];
+                        let actual = fieldData.split('-')[1];
+                        let wip = fieldData.split('-')[2];
+
+                        fieldHtml += "<div class='plan-value'>" + formatNumber(plan) + "</div>";
+                        fieldHtml += "<div class='actual-value'>" + formatNumber(actual) + "</div>";
+
+                        let wipNum = formatNumber(wip);
+
+                        if (Number(wip) > 0) {
+                            fieldHtml += "<div class='actual-value stylePriory11'>" + wipNum + "</div>";
+                        }
+                        else {
+                            fieldHtml += "<div class='actual-value'>" + wipNum + "</div>";
+                        }
+                    }
+                    else {
+
+                        if (options.column.dataField == 'khsx') {
+                            fieldHtml += "<div class='plan-value'>Kế Hoạch</div> <div class='actual-value'>Thực Tế</div><div class='actual-value'>Tồn Kho</div>";
+                        }
+                        else if (options.column.dataField.includes(".")) {
+
+                            if (fieldData < 0) {
+                                options.cellElement.css({ "color": "red" });
+                            }
+                            else {
+                                options.cellElement.css({ "color": "#2ab71b" });
+                            }
+                            fieldHtml = formatNumber(fieldData);
+                        }
+                        else {
+                            fieldHtml = fieldData;
+                        }
+                    }
+                }
+
+
+            }
+
+            options.cellElement.html(fieldHtml);
+        }
+
+        function OnCellClick(e) {
+
+            let operationNameIndex = arrOperationData.indexOf(e.column.dataField);
+
+            if (operationNameIndex < 0) {
+                return;
+            }
+
+            let operationID = arrOperation_ID[operationNameIndex];
+
+            $.ajax({
+                url: '/OpeationMns/DailyPlan/GetstayLotInfoLfem',
+                type: 'POST',
+                data: {
+                    model: e.key,
+                    operation: operationID
+                },
+                beforeSend: function () {
+                    hrms.run_waitMe($('#grid-container-detail'));
+                },
+                success: function (response) {
+                    hrms.hide_waitMe($('#grid-container-detail'));
+
+                    $("#grid-container-detail").dxDataGrid({
+                        dataSource: response
+                    });
+                },
+                error: function (status) {
+                    hrms.notify(status.responseText, 'error', 'alert', function () { });
+                    hrms.hide_waitMe($('#grid-container-detail'));
+                    $("#grid-container-detail").dxDataGrid({
+                        dataSource: []
+                    });
+                }
+            });
+        }
+
+        function formatNumber(number1) {
+
+            if (number1 === undefined || number1 == 0 || isNaN(number1)) {
+                return '&nbsp;';
+            }
+
+            let number = Number(number1);
+
+            let str = number.toString();
+
+            if (str.indexOf('.') > 0) {
+                let n1 = str.split('.')[1];
+                let n2 = str.split('.')[0];
+                if (Number('0.' + n1) >= 0.4) {
+
+                    if (Number(n2) >= 0)
+                        number = Number(n2) + 1;
+                    else
+                        number = Number(n2) - 1;
+                }
+                else {
+                    number = Number(n2);
+                }
+            }
+
+            return number.toLocaleString("en-US");
+        }
+
+        // save ưu tiên
+        function onSaving(e) {
+            e.cancel = true;
+
+            if (e.changes.length) {
+                e.promise = sendBatchRequest('@Url.RouteUrl(new { area="OpeationMns",controller = "DailyPlan", action = "UpdatePrioryLfem" })', e.changes).done(() => {
+                    e.component.refresh(true).done(() => {
+                        e.component.cancelEditData();
+
+                        let model = e.changes[0].key.split("^")[0];
+                        let operationID = e.changes[0].key.split("^")[1];
+                        $.ajax({
+                            url: '/OpeationMns/DailyPlan/GetstayLotInfoLfem',
+                            type: 'POST',
+                            data: {
+                                model: model,
+                                operation: operationID
+                            },
+                            beforeSend: function () {
+                                hrms.run_waitMe($('#grid-container-detail'));
+                            },
+                            success: function (response) {
+                                hrms.hide_waitMe($('#grid-container-detail'));
+
+                                $("#grid-container-detail").dxDataGrid({
+                                    dataSource: response
+                                });
+                            },
+                            error: function (status) {
+                                hrms.notify(status.responseText, 'error', 'alert', function () { });
+                                hrms.hide_waitMe($('#grid-container-detail'));
+                                $("#grid-container-detail").dxDataGrid({
+                                    dataSource: []
+                                });
+                            }
+                        });
+                    });
+                });
+            }
+        }
+
+        function sendBatchRequest(url, changes) {
+            var d = $.Deferred();
+
+            $.ajax(url, {
+                method: "POST",
+                data: JSON.stringify(changes),
+                cache: false,
+                contentType: 'application/json',
+                xhrFields: { withCredentials: true }
+            }).done(d.resolve).fail(function (xhr) {
+                d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
+            });
+
+            return d.promise();
+        }
+
+        function SetBackgroundColorPriory(e) {
+            if (e.rowType === "data" && e.data.Priory == true) {
+
+                if (e.data.Number_Priory == 1) {
+                    e.rowElement.addClass("stylePriory1");
+                }
+                else if (e.data.Number_Priory == 2) {
+                    e.rowElement.addClass("stylePriory2");
+                }
+                else if (e.data.Number_Priory == 3) {
+                    e.rowElement.addClass("stylePriory3");
+                }
+                else if (e.data.Number_Priory == 4) {
+                    e.rowElement.addClass("stylePriory4");
+                }
+                else if (e.data.Number_Priory == 5) {
+                    e.rowElement.addClass("stylePriory5");
+                }
+                else if (e.data.Number_Priory == 6) {
+                    e.rowElement.addClass("stylePriory6");
+                }
+                else if (e.data.Number_Priory == 7) {
+                    e.rowElement.addClass("stylePriory7");
+                }
+                else if (e.data.Number_Priory == 8) {
+                    e.rowElement.addClass("stylePriory8");
+                }
+                else {
+                    e.rowElement.addClass("stylePriory9");
+                }
+            }
+        }
+
+        // refresh lot test
+        setInterval(myTimer, 300000);
+
+        function myTimer() {
+            $("#grid-container_test").dxDataGrid("refresh");
+            $("#grid-container_smt").dxDataGrid("refresh");
+        }
+
+        function cell_prepared_smt(options) {
+
+            var fieldData = options.value;
+            var fieldHtml = "";
+            if (options.rowType == 'data') {
+
+                if (fieldData) {
+
+                    if (options.column.dataField !== "LastUpdate"
+                        && options.column.dataField !== "MesCode"
+                        && options.column.dataField !== "Model") {
+
+                        if (fieldData < 0) {
+                            options.cellElement.css({ "color": "red" });
+                        }
+                        else {
+                            options.cellElement.css({ "color": "#2ab71b" });
+                        }
+
+                        fieldHtml = formatNumber(fieldData);
+                    }
+                    else {
+                        fieldHtml = fieldData;
+                    }
+                }
+
+                options.cellElement.html(fieldHtml);
+            }
+        }
+
+        function getDateBoxValue() {
+            return $("#begindate-date").dxDateBox("option", "text");
+        }
+
+        function onShowStayLotListClick(e) {
+
+
+            const popup = $("#stayLot_popup").dxPopup("instance");
+            popup.option({
+                contentTemplate: $("#popup-template")
+            });
+            popup.show();
+
+
+            let operationNameIndex = arrOperationData.indexOf(e.column.dataField);
+
+            if (operationNameIndex < 0) {
+                return;
+            }
+
+            let operationID = arrOperation_ID[operationNameIndex];
+
+            $.ajax({
+                url: '/OpeationMns/DailyPlan/GetstayLotInfoLfem',
+                type: 'POST',
+                data: {
+                    model: e.key,
+                    operation: operationID
+                },
+                beforeSend: function () {
+                    hrms.run_waitMe($('#grid-container-detail'));
+                },
+                success: function (response) {
+                    hrms.hide_waitMe($('#grid-container-detail'));
+
+                    $("#grid-container-detail").dxDataGrid({
+                        dataSource: response
+                    });
+                },
+                error: function (status) {
+                    hrms.notify(status.responseText, 'error', 'alert', function () { });
+                    hrms.hide_waitMe($('#grid-container-detail'));
+                    $("#grid-container-detail").dxDataGrid({
+                        dataSource: []
+                    });
+                }
+            });
+        }
+
+        function BeforContextMenuPre(e) {
+            if (!e.items) e.items = [];
+
+            // Add a custom menu item
+            e.items.push({
+                text: "Copy",
+                onItemClick: function (arg) {
+
+                    if (window.isSecureContext){
+                        // console.log(e.targetElement[0].innerText);
+                        navigator.clipboard.writeText(e.targetElement[0].innerText);
+                    }
+                }
+            });
+        }
+    </script>
+}
+
+@{
+    DateTime beginMonth = DateTime.Parse(ViewBag.DayPlanLFEM);
+    string next1 = ((NextDay)ViewBag.NextDay).Day1;
+    string next2 = ((NextDay)ViewBag.NextDay).Day2;
+
+    string _next1 = ((NextDay_SMT)ViewBag.NextDaySMT).Day1;
+    string _next2 = ((NextDay_SMT)ViewBag.NextDaySMT).Day2;
+    string _next3 = ((NextDay_SMT)ViewBag.NextDaySMT).Day3;
+    string _next4 = ((NextDay_SMT)ViewBag.NextDaySMT).Day4;
+    string _next5 = ((NextDay_SMT)ViewBag.NextDaySMT).Day5;
+
+    bool isView = User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+             User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] != "LFEM_VIEW";
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center" style="margin-bottom:-2rem">
+            <div class="col">
+                <h3 class="page-title">LFEM Daily Plan</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">LFEM Daily Plan</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form">
+                <div class="dx-fieldset">
+                    <div class="dx-field">
+                        <div style="float:left;display:inline-block;margin-right:10px">
+
+                            @(Html.DevExtreme().DateBox()
+                                .ID("begindate-date")
+                                .Type(DateBoxType.Date)
+                                .Value(beginMonth)
+                                .DisplayFormat("yyyy-MM-dd")
+                                .Width(200)
+                                .Placeholder("Select...")
+                                .Label("Input Date")
+                                .OnValueChanged("selectedDate_changed")
+                                )
+
+                        </div>
+                        <div style="display:inline-block;margin-right:10px">
+                        </div>
+                        <div style="display:inline-block">
+                            @*                            @(Html.DevExtreme().CheckBox()
+                            .ID("cheOpenLot")
+                            .Value(false)
+                            .Text("Only Lot Running")
+                            .OnValueChanged("checkBox_valueChanged")
+                            )*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            @(Html.DevExtreme().DataGrid<LOT_TEST_HISTOTY_LFEM>()
+                .ID("grid-container_test")
+                .DataSource(d => d.Mvc()
+                .Controller("DailyPlan")
+                .LoadAction("GetLotTestView")
+                .Key("Id")
+                )
+                .Height(200)
+                .ShowBorders(true)
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .AllowColumnResizing(true)
+                .ColumnMinWidth(50)
+                .ColumnAutoWidth(true)
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .FilterRow(filterRow => filterRow
+                .Visible(true)
+                .ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .HoverStateEnabled(true)
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.ModelName).Caption("Model");
+                    columns.AddFor(m => m.LotNo).Caption("Lot No");
+                    columns.AddFor(m => m.Qty).Format(Format.FixedPoint);
+                    columns.AddFor(m => m.Operation);
+                }).OnContextMenuPreparing("BeforContextMenuPre"))
+        </div>
+    </div>
+
+    <div class="row" style="margin-bottom:20px; margin-top:5px">
+        <div class="col-md-12">
+            @(
+                Html.DevExtreme().DataGrid<DailyPlanLfemViewModel>
+                ()
+                .ID("gridContainer")
+                .Height(600)
+                .ShowBorders(true)
+                .RepaintChangesOnly(true)
+                .HighlightChanges(true)
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .AllowColumnResizing(true)
+                .ColumnMinWidth(50)
+                .ColumnAutoWidth(true)
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+                .OnExporting("exporting")
+                .FilterRow(filterRow => filterRow
+                .Visible(true)
+                .ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .HoverStateEnabled(true)
+                .ColumnFixing(x => x.Enabled(true))
+                .SearchPanel(searchPanel => searchPanel
+                .Visible(true)
+                .Width(240)
+                .Placeholder("Search...")
+                )
+                .OnCellPrepared("cell_prepared")
+                @*.OnCellClick("OnCellClick")*@
+                .OnCellDblClick("onShowStayLotListClick")
+                .Columns(columns =>
+                {
+                    columns.Add().Caption("Model").Columns(c =>
+                    {
+                        @*c.AddFor(m => m.STT).DataField("stt").Caption("STT").Width(30).Fixed(true).FixedPosition(HorizontalEdge.Left);*@
+                        c.AddFor(m => m.LastUpdate).DataField("lastUpdate").Caption("Time").Fixed(true).FixedPosition(HorizontalEdge.Left);
+                        c.AddFor(m => m.Model).DataField("model").Caption("Model").Fixed(true).FixedPosition(HorizontalEdge.Left);
+                        c.AddFor(m => m.MesCode).DataField("mesCode").Caption("Mes Code").Fixed(true).FixedPosition(HorizontalEdge.Left);
+                        c.AddFor(m => m.KHSX).DataField("khsx").Caption("Plan/Actual").Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    }).Fixed(true).FixedPosition(HorizontalEdge.Left);
+
+                    columns.Add().Caption("Plan - Actual - Inventory").Columns(c =>
+                    {
+                        c.AddFor(m => m.Dam.TotalStr).DataField("dam.totalStr").Caption("Dam").Fixed(true).FixedPosition(HorizontalEdge.Left);
+                        c.AddFor(m => m.Mold.TotalStr).DataField("mold.totalStr").Caption("Mold").Fixed(true).FixedPosition(HorizontalEdge.Left);
+                        c.AddFor(m => m.Grinding.TotalStr).DataField("grinding.totalStr").Caption("Grinding").Fixed(true).FixedPosition(HorizontalEdge.Left);
+                        c.AddFor(m => m.Marking.TotalStr).DataField("marking.totalStr").Caption("Marking").Fixed(true).FixedPosition(HorizontalEdge.Left);
+                        c.AddFor(m => m.Dicing.TotalStr).DataField("dicing.totalStr").Caption("Dicing").Fixed(true).FixedPosition(HorizontalEdge.Left);
+                        c.AddFor(m => m.Test.TotalStr).DataField("test.totalStr").Caption("Test").Fixed(true).FixedPosition(HorizontalEdge.Left);
+                        c.AddFor(m => m.VisualInspection.TotalStr).DataField("visualInspection.totalStr").Caption("VI").Fixed(true).FixedPosition(HorizontalEdge.Left);
+                        c.AddFor(m => m.OQC.TotalStr).DataField("oqc.totalStr").Caption("OQC").Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    }).Fixed(true).FixedPosition(HorizontalEdge.Left);
+
+                    columns.Add().Caption("Kế Hoạch Sản Xuất Ngày " + beginMonth.ToString("dd-MM")).Columns(c =>
+                    {
+                        c.AddFor(m => m.Dam.QtyT0).DataField("dam.qtyT0").Caption("Dam");
+                        c.AddFor(m => m.Mold.QtyT0).DataField("mold.qtyT0").Caption("Mold");
+                        c.AddFor(m => m.Grinding.QtyT0).DataField("grinding.qtyT0").Caption("Grinding");
+                        c.AddFor(m => m.Marking.QtyT0).DataField("marking.qtyT0").Caption("Marking");
+                        c.AddFor(m => m.Dicing.QtyT0).DataField("dicing.qtyT0").Caption("Dicing");
+                        c.AddFor(m => m.Test.QtyT0).DataField("test.qtyT0").Caption("Test");
+                        c.AddFor(m => m.VisualInspection.QtyT0).DataField("visualInspection.qtyT0").Caption("VI");
+                        c.AddFor(m => m.OQC.QtyT0).DataField("oqc.qtyT0").Caption("OQC");
+                    });
+
+                    columns.Add().Caption("Kế Hoạch Sản Xuất Ngày " + next1).Columns(c =>
+                    {
+                        c.AddFor(m => m.Dam.QtyT1).DataField("dam.qtyT1").Caption("Dam");
+                        c.AddFor(m => m.Mold.QtyT1).DataField("mold.qtyT1").Caption("Mold");
+                        c.AddFor(m => m.Grinding.QtyT1).DataField("grinding.qtyT1").Caption("Grinding");
+                        c.AddFor(m => m.Marking.QtyT1).DataField("marking.qtyT1").Caption("Marking");
+                        c.AddFor(m => m.Dicing.QtyT1).DataField("dicing.qtyT1").Caption("Dicing");
+                        c.AddFor(m => m.Test.QtyT1).DataField("test.qtyT1").Caption("Test");
+                        c.AddFor(m => m.VisualInspection.QtyT1).DataField("visualInspection.qtyT1").Caption("VI");
+                        c.AddFor(m => m.OQC.QtyT1).DataField("oqc.qtyT1").Caption("OQC");
+                    });
+
+                    columns.Add().Caption("Kế Hoạch Sản Xuất Ngày " + next2).Columns(c =>
+                    {
+                        c.AddFor(m => m.Dam.QtyT2).DataField("dam.qtyT2").Caption("Dam");
+                        c.AddFor(m => m.Mold.QtyT2).DataField("mold.qtyT2").Caption("Mold");
+                        c.AddFor(m => m.Grinding.QtyT2).DataField("grinding.qtyT2").Caption("Grinding");
+                        c.AddFor(m => m.Marking.QtyT2).DataField("marking.qtyT2").Caption("Marking");
+                        c.AddFor(m => m.Dicing.QtyT2).DataField("dicing.qtyT2").Caption("Dicing");
+                        c.AddFor(m => m.Test.QtyT2).DataField("test.qtyT2").Caption("Test");
+                        c.AddFor(m => m.VisualInspection.QtyT2).DataField("visualInspection.qtyT2").Caption("VI");
+                        c.AddFor(m => m.OQC.QtyT2).DataField("oqc.qtyT2").Caption("OQC");
+                    });
+
+                }).Summary(s => s.TotalItems(totalItems =>
+                {
+                    totalItems.Add().SummaryType(SummaryType.Count).Column("model").Name("model").DisplayFormat("Total: {0}").ValueFormat(Format.FixedPoint);
+                })
+                ).OnContextMenuPreparing("BeforContextMenuPre"))
+        </div>
+    </div>
+    @*    <h3>View Stay Lot List</h3>
+    <div class="row" style="margin-bottom:20px;">
+    <div class="col-md-12">
+    @(Html.DevExtreme().DataGrid<Stay_lot_list_priory_lfem_ViewModel>()
+    .ID("grid-container-detail")
+    .KeyExpr("Key")
+    .Height(350)
+    .ShowBorders(true)
+    .RepaintChangesOnly(true)
+    .HighlightChanges(true)
+    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+    .Paging(paging => paging.Enabled(false))
+    .AllowColumnResizing(true)
+    .ColumnMinWidth(50)
+    .ColumnAutoWidth(true)
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .RowAlternationEnabled(false)
+    .FilterRow(filterRow => filterRow
+    .Visible(true)
+    .ApplyFilter(GridApplyFilterMode.Auto)
+    )
+    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+    .ColumnFixing(x => x.Enabled(true))
+    .SearchPanel(searchPanel => searchPanel
+    .Visible(true)
+    .Width(240)
+    .Placeholder("Search...")
+    )
+    .Editing(editing =>
+    {
+    editing.Mode(GridEditMode.Batch);
+    editing.AllowUpdating(isView);
+    })
+    .Columns(columns =>
+    {
+    columns.AddFor(m => m.STT).Caption("No").Width(60).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+    columns.AddFor(m => m.Priory).Caption("Hàng Ưu Tiên").AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+    columns.AddFor(m => m.Number_Priory).Caption("STT Ưu Tiên").AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+    columns.AddFor(m => m.StayDay).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+    columns.AddFor(m => m.Size).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+    columns.AddFor(m => m.MesItem).Caption("Material").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+    columns.AddFor(m => m.LotID).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+    columns.AddFor(m => m.OperationName).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+    columns.AddFor(m => m.ProductOrder).AllowEditing(false);
+    columns.AddFor(m => m.FAID).AllowEditing(false);
+    columns.AddFor(m => m.AssyLotID).AllowEditing(false);
+    columns.AddFor(m => m.Date).AllowEditing(false);
+    columns.AddFor(m => m.DateDiff).AllowEditing(false);
+    columns.AddFor(m => m.ChipQty).Format(Format.FixedPoint).AllowEditing(false);
+    columns.AddFor(m => m.Unit).AllowEditing(false);
+    columns.AddFor(m => m.StartFlag).AllowEditing(false);
+    columns.AddFor(m => m.EquipmentName).AllowEditing(false);
+    columns.AddFor(m => m.Worker).AllowEditing(false);
+
+    }).Summary(s => s.TotalItems(items =>
+    {
+    items.AddFor(m => m.ChipQty).SummaryType(SummaryType.Sum).DisplayFormat("Sum: {0}").ValueFormat(Format.FixedPoint);
+    items.AddFor(m => m.StayDay).SummaryType(SummaryType.Avg).DisplayFormat("Average: {0}").ValueFormat(Format.FixedPoint);
+    })).OnSaving("onSaving").OnRowPrepared("SetBackgroundColorPriory"))
+    </div>
+    </div>*@
+
+    <h3>
+        SMT Daily Plan
+    </h3>
+    <div class="row">
+        <div class="col-md-12">
+            @(
+                Html.DevExtreme().DataGrid<DailyPlanSMTViewModel>
+                ()
+                .ID("grid-container_smt")
+                .DataSource(d => d.Mvc()
+                .Controller("DailyPlan")
+                .LoadAction("GetDailyPlanSMT")
+                .LoadParams(new { date = new JS("getDateBoxValue") })
+                .Key("MesCode")
+                )
+                .Height(680)
+                .ShowBorders(true)
+                .RepaintChangesOnly(true)
+                .HighlightChanges(true)
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .AllowColumnResizing(true)
+                .ColumnAutoWidth(true)
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .FilterRow(filterRow => filterRow
+                .Visible(true)
+                .ApplyFilter(GridApplyFilterMode.Auto))
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .HoverStateEnabled(true)
+                .ColumnFixing(x => x.Enabled(true))
+                .SearchPanel(searchPanel => searchPanel
+                .Visible(true)
+                .Width(240)
+                .Placeholder("Search...")
+                )
+                .OnCellPrepared("cell_prepared_smt")
+                .Columns(columns =>
+                {
+                    columns.Add().Caption("Model").Columns(c =>
+                    {
+                        c.AddFor(m => m.LastUpdate).Caption("Time");
+                        c.AddFor(m => m.Model).Caption("Model");
+                        c.AddFor(m => m.MesCode).Caption("Mes Code");
+                    });
+
+                    columns.Add().Caption("WIP Information").Columns(c =>
+                    {
+                        c.AddFor(m => m.Inventory).Caption("SMT").Format(Format.FixedPoint);
+                    });
+
+                    columns.Add().Caption("Lũy kế KHSX Upload").Columns(c =>
+                    {
+                        c.AddFor(m => m.GocPlanToday).Caption(beginMonth.ToString("dd-MM")).Format(Format.FixedPoint);
+                        c.AddFor(m => m.GocPlanToday_1).Caption(_next1).Format(Format.FixedPoint);
+                        c.AddFor(m => m.GocPlanToday_2).Caption(_next2).Format(Format.FixedPoint);
+                        c.AddFor(m => m.GocPlanToday_3).Caption(_next3).Format(Format.FixedPoint);
+                        c.AddFor(m => m.GocPlanToday_4).Caption(_next4).Format(Format.FixedPoint);
+                        c.AddFor(m => m.GocPlanToday_5).Caption(_next5).Format(Format.FixedPoint);
+                    });
+
+                    columns.Add().Caption("Result Prod").Columns(c =>
+                    {
+                        c.AddFor(m => m.ActualToday).Caption("SMT").Format(Format.FixedPoint);
+                    });
+
+                    columns.Add().Caption("Kế Hoạch Sản Xuất Ngày").Columns(c =>
+                    {
+                        c.AddFor(m => m.PlanToday).Caption(beginMonth.ToString("dd-MM")).Format(Format.FixedPoint);
+                        c.AddFor(m => m.PlanToday_1).Caption(_next1).Format(Format.FixedPoint);
+                        c.AddFor(m => m.PlanToday_2).Caption(_next2).Format(Format.FixedPoint);
+                        c.AddFor(m => m.PlanToday_3).Caption(_next3).Format(Format.FixedPoint);
+                        c.AddFor(m => m.PlanToday_4).Caption(_next4).Format(Format.FixedPoint);
+                        c.AddFor(m => m.PlanToday_5).Caption(_next5).Format(Format.FixedPoint);
+                    });
+
+                }).Summary(s => s.TotalItems(totalItems =>
+                {
+                    totalItems.AddFor(x => x.Model).SummaryType(SummaryType.Count).DisplayFormat("Count: {0}").ValueFormat(Format.FixedPoint);
+                })
+                ).OnContextMenuPreparing("BeforContextMenuPre"))
+        </div>
+    </div>
+
+    <div>
+        @(Html.DevExtreme().Popup()
+                .ID("stayLot_popup")
+                .Width("92%")
+                .Height(720)
+                .Container(".container-fluid")
+                .ShowTitle(true)
+                .Title("Stay Lot List")
+                .DragEnabled(false)
+                .HideOnParentScroll(true)
+                .ShowCloseButton(false)
+                .Position(positionConfig => positionConfig
+                .At(HorizontalAlignment.Center, VerticalAlignment.Center)
+                .My(HorizontalAlignment.Center, VerticalAlignment.Center)
+                .Collision(PositionResolveCollision.Fit, PositionResolveCollision.Fit))
+                .ToolbarItems(barItems =>
+                {
+                    barItems.Add()
+                .Toolbar(Toolbar.Bottom)
+                .Location(ToolbarItemLocation.After)
+                .Widget(widget => widget.Button()
+                .Text("Close")
+                .OnClick(
+                @<text>
+                    function hideInfo(data) {
+
+                    const popup = $("#stayLot_popup").dxPopup("instance");
+                    popup.hide();
+
+                    $("#grid-container-detail").dxDataGrid({
+                    dataSource: []
+                    });
+                    }
+                </text>)
+            );
+                }))
+
+        @using (Html.DevExtreme().NamedTemplate("popup-template"))
+        {
+            @(Html.DevExtreme().DataGrid<Stay_lot_list_priory_lfem_ViewModel>()
+                .ID("grid-container-detail")
+                .KeyExpr("Key")
+                .Height(580)
+                .ShowBorders(true)
+                .RepaintChangesOnly(true)
+                .HighlightChanges(true)
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .AllowColumnResizing(true)
+                .ColumnMinWidth(50)
+                .ColumnAutoWidth(true)
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(false)
+                .FilterRow(filterRow => filterRow
+                .Visible(true)
+                .ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .HoverStateEnabled(true)
+                .ColumnFixing(x => x.Enabled(true))
+                .SearchPanel(searchPanel => searchPanel
+                .Visible(true)
+                .Width(240)
+                .Placeholder("Search...")
+                )
+                .Editing(editing =>
+                {
+                    editing.Mode(GridEditMode.Batch);
+                    editing.AllowUpdating(isView);
+                })
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.STT).Caption("No").Width(60).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.Priory).Caption("Hàng Ưu Tiên").AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.Number_Priory).Caption("STT Ưu Tiên").AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.StayDay).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.Size).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.MesItem).Caption("Material").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.LotID).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.OperationName).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.ProductOrder).AllowEditing(false);
+                    columns.AddFor(m => m.FAID).AllowEditing(false);
+                    columns.AddFor(m => m.AssyLotID).AllowEditing(false);
+                    columns.AddFor(m => m.Date).AllowEditing(false);
+                    columns.AddFor(m => m.DateDiff).AllowEditing(false);
+                    columns.AddFor(m => m.ChipQty).Format(Format.FixedPoint).AllowEditing(false);
+                    columns.AddFor(m => m.Unit).AllowEditing(false);
+                    columns.AddFor(m => m.StartFlag).AllowEditing(false);
+                    columns.AddFor(m => m.EquipmentName).AllowEditing(false);
+                    columns.AddFor(m => m.Worker).AllowEditing(false);
+
+                }).Summary(s => s.TotalItems(items =>
+                {
+                    items.AddFor(m => m.ChipQty).SummaryType(SummaryType.Sum).DisplayFormat("Sum: {0}").ValueFormat(Format.FixedPoint);
+                    items.AddFor(m => m.StayDay).SummaryType(SummaryType.Avg).DisplayFormat("Average: {0}").ValueFormat(Format.FixedPoint);
+                })).OnSaving("onSaving").OnRowPrepared("SetBackgroundColorPriory").OnContextMenuPreparing("BeforContextMenuPre"))
+        }
+    </div>
+</div>
+
+
+

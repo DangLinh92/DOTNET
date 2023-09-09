@@ -70,7 +70,7 @@ namespace OPERATION_MNS.Areas.Admin.Components
                 }
             }
 
-            if(model.Functions.Count == 0 && roles[0].Name == "Admin")
+            if(model.Functions.Count == 0 && roleName == "Admin")
             {
                 model.Functions.AddRange(functions);
             }

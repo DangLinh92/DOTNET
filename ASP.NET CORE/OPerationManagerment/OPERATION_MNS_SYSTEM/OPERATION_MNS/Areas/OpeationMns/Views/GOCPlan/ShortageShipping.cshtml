@@ -1,0 +1,218 @@
+﻿@model List<SanXuat_XuatHang_ViewModel>
+@{
+    ViewData["Title"] = "Shortage Shipping";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts
+    {
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+    <script>
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('ShortageShipping');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'ShortageShipping.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        $('#searchToTime').datetimepicker({
+            format: 'YYYY-MM',
+            icons:
+            {
+                up: "fa fa-angle-up",
+                down: "fa fa-angle-down",
+                next: 'fa fa-angle-right',
+                previous: 'fa fa-angle-left'
+            }
+        });
+
+        function OnCellPrepared(options) {
+
+            const _date = new Date();
+            let day = "D_" + _date.getDate();
+          
+            if (options.rowType == 'data') {
+
+                if (options.column.dataField === day) {
+
+                    options.cellElement.addClass("stylePriory10");
+                }
+
+                var fieldData = options.value;
+
+                if (Number(fieldData) < 0){
+                    options.cellElement.addClass("stylePriory1");
+                }
+            }
+        }
+    </script>
+}
+
+@section Styles {
+    <style>
+        .stylePriory10 {
+            background-color: #FFA500 !important;
+        }
+
+        .stylePriory1 {
+            background-color: #FF5D5D !important;
+            color: black !important;
+        }
+    </style>
+}
+@{
+    string month = ViewBag.MonthViewSHG;
+    int _year = DateTime.Parse(month).Year;
+    int _month = DateTime.Parse(month).Month;
+    int dayOfMonth = DateTime.DaysInMonth(_year, _month);
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">@ViewData["Title"]</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Shortage Shipping</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <form id="frmSearch" method="post" action="/OpeationMns/GOCPlan/SearchShortageShipping">
+        <div class="row filter-row">
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus">
+                    <div class="cal-icon">
+                        <input class="form-control floating datetimepicker" type="text" id="searchToTime" name="month" value="@month">
+                    </div>
+                    <label class="focus-label">Month</label>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <button href="#" class="btn btn-success btn-block" id="btnSearch" type="submit"> Search </button>
+            </div>
+        </div>
+    </form>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive" id="gridHoldHistory">
+                @(Html.DevExtreme().LoadPanel()
+                    .ID("loadPanel")
+                    .Position(p => p.Of("#grid-container-detail"))
+                    .Visible(false)
+                    )
+                @(
+                    Html.DevExtreme().DataGrid<SanXuat_XuatHang_ViewModel>()
+                    .ID("grid-container-detail")
+                    .DataSource(Model)
+                    .Height(700)
+                    .ShowBorders(true)
+                    .RepaintChangesOnly(true)
+                    .LoadPanel(loadPanel => loadPanel.Enabled(false))
+                    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                    .Paging(paging => paging.Enabled(false))
+                    .AllowColumnResizing(true)
+                    .ColumnMinWidth(50)
+                    .ColumnAutoWidth(true)
+                    .ShowColumnLines(true)
+                    .ShowRowLines(true)
+                    .RowAlternationEnabled(true)
+                    .FilterRow(filterRow => filterRow
+                    .Visible(true)
+                    .ApplyFilter(GridApplyFilterMode.Auto)
+                    )
+                    .SearchPanel(searchPanel => searchPanel
+                    .Visible(true)
+                    .Width(240)
+                    .Placeholder("Search...")
+                    )
+                    .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                    .HoverStateEnabled(true)
+                    .Selection(s => s.Mode(SelectionMode.Single))
+                    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+                    .OnExporting("exporting")
+                    .ColumnFixing(x => x.Enabled(true))
+                    .OnCellPrepared("OnCellPrepared")
+                    .Columns(async columns =>
+                    {
+                        columns.AddFor(m => m.MesItem).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                        columns.AddFor(m => m.Model).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+
+                        columns.AddFor(m => m.D_1).Caption("1일").Format(Format.FixedPoint);
+                        columns.AddFor(m => m.D_2).Caption("2일").Format(Format.FixedPoint);
+                        columns.AddFor(m => m.D_3).Caption("3일").Format(Format.FixedPoint);
+                        columns.AddFor(m => m.D_4).Caption("4일").Format(Format.FixedPoint);
+                        columns.AddFor(m => m.D_5).Caption("5일").Format(Format.FixedPoint);
+                        columns.AddFor(m => m.D_6).Caption("6일").Format(Format.FixedPoint);
+                        columns.AddFor(m => m.D_7).Caption("7일").Format(Format.FixedPoint);
+                        columns.AddFor(m => m.D_8).Caption("8일").Format(Format.FixedPoint);
+                        columns.AddFor(m => m.D_9).Caption("9일").Format(Format.FixedPoint);
+                        columns.AddFor(m => m.D_10).Caption("10일").Format(Format.FixedPoint);
+                        columns.AddFor(m => m.D_11).Caption("11일").Format(Format.FixedPoint);
+                        columns.AddFor(m => m.D_12).Caption("12일").Format(Format.FixedPoint);
+                        columns.AddFor(m => m.D_13).Caption("13일").Format(Format.FixedPoint);
+                        columns.AddFor(m => m.D_14).Caption("14일").Format(Format.FixedPoint);
+                        columns.AddFor(m => m.D_15).Caption("15일").Format(Format.FixedPoint);
+                        columns.AddFor(m => m.D_16).Caption("16일").Format(Format.FixedPoint);
+                        columns.AddFor(m => m.D_17).Caption("17일").Format(Format.FixedPoint);
+                        columns.AddFor(m => m.D_18).Caption("18일").Format(Format.FixedPoint);
+                        columns.AddFor(m => m.D_19).Caption("19일").Format(Format.FixedPoint);
+                        columns.AddFor(m => m.D_20).Caption("20일").Format(Format.FixedPoint);
+                        columns.AddFor(m => m.D_21).Caption("21일").Format(Format.FixedPoint);
+                        columns.AddFor(m => m.D_22).Caption("22일").Format(Format.FixedPoint);
+                        columns.AddFor(m => m.D_23).Caption("23일").Format(Format.FixedPoint);
+                        columns.AddFor(m => m.D_24).Caption("24일").Format(Format.FixedPoint);
+                        columns.AddFor(m => m.D_25).Caption("25일").Format(Format.FixedPoint);
+                        columns.AddFor(m => m.D_26).Caption("26일").Format(Format.FixedPoint);
+                        columns.AddFor(m => m.D_27).Caption("27일").Format(Format.FixedPoint);
+                        columns.AddFor(m => m.D_28).Caption("28일").Format(Format.FixedPoint);
+
+                        if (dayOfMonth >= 29)
+                        {
+                            columns.AddFor(m => m.D_29).Caption("29일").Format(Format.FixedPoint);
+                        }
+
+                        if (dayOfMonth >= 30)
+                        {
+                            columns.AddFor(m => m.D_30).Caption("30일").Format(Format.FixedPoint);
+                        }
+
+                        if (dayOfMonth >= 31)
+                        {
+                            columns.AddFor(m => m.D_31).Caption("31일").Format(Format.FixedPoint);
+                        }
+                    }).
+                    Summary(s => s.TotalItems(items =>
+                    {
+                        items.AddFor(m => m.MesItem).SummaryType(SummaryType.Count).DisplayFormat("Count: {0}");
+                    }))
+                    )
+            </div>
+        </div>
+    </div>
+</div>
+
+

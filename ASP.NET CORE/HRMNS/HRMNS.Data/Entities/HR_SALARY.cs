@@ -80,6 +80,14 @@ namespace HRMNS.Data.Entities
         public int SoConNho { get; set; }
 
         [StringLength(50)]
+        public string MaBoPhanEx { get; set; }
+
+        public int GradeYear { get; set; } 
+
+        [StringLength(50)]
+        public string Grade { get; set; }
+
+        [StringLength(50)]
         public string MaNV { get; set; }
 
         [StringLength(50)]

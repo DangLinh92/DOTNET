@@ -15,8 +15,13 @@ namespace HRMNS.Application.ViewModels.HR
         [StringLength(50)]
         public string NgayThamGia { get; set; }
 
+        public string PhanLoai { get; set; }
+
         [StringLength(50)]
         public string NgayKetThuc { get; set; }
+
+        [StringLength(50)]
+        public string ThangThamGia { get; set; }
 
         [StringLength(50)]
         public string DateCreated { get; set; }

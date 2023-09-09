@@ -23,6 +23,11 @@ namespace OPERATION_MNS.Application.Interfaces
         ResultDB ImportDelayExcel(string filePath, string param);
         DELAY_COMMENT_SAMPLE UpdateComment(DELAY_COMMENT_SAMPLE en);
         DELAY_COMMENT_SAMPLE FindCommentById(int id);
+
+        ResultDB ImportPlanSampleExcel(string filePath, string param);
+        List<SamplePlanViewModel> GetActualPlanSample(string month);
+        List<SamplePlanViewModel> GetActualPlanSampleTotal(string month);
+
         void Save();
     }
 }

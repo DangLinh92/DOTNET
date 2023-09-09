@@ -20,16 +20,18 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
     {
         private readonly SignInManager<APP_USER> _signInManager;
         private readonly UserManager<APP_USER> _userManager;
+        private readonly RoleManager<APP_ROLE> _roleManager;
         private readonly IEmailSender _emailSender;
         private IHttpContextAccessor _httpContextAccessor;
 
-        public AccountController(UserManager<APP_USER> userManager, SignInManager<APP_USER> signInManager, IEmailSender emailSender, ILogger<AccountController> logger, IHttpContextAccessor httpContextAccessor)
+        public AccountController(RoleManager<APP_ROLE> roleManager, UserManager<APP_USER> userManager, SignInManager<APP_USER> signInManager, IEmailSender emailSender, ILogger<AccountController> logger, IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _logger = logger;
             _httpContextAccessor = httpContextAccessor;
+            _roleManager = roleManager;
         }
 
         public IActionResult Index()
@@ -237,6 +239,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
             }
 
             ViewBag.UserList = registerModels;
+            ViewBag.Roles = _roleManager.Roles.Select(x=>x.Name).ToList();
 
             return View();
         }

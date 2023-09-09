@@ -14,16 +14,19 @@ using System.Text;
 using System.Linq;
 using OPERATION_MNS.Utilities.Common;
 using OPERATION_MNS.Application.ViewModels.Wlp2;
+using OPERATION_MNS.Application.ViewModels.Lfem;
 
 namespace OPERATION_MNS.Application.Implementation
 {
     public class StayLotListService : BaseService, IStayLotListService
     {
         private IRespository<STAY_LOT_LIST, int> _StayLotListRepository;
+        private IRespository<STAY_LOT_LIST_LFEM, int> _StayLotListLFEMRepository;
         private IRespository<STAY_LOT_LIST_SAMPLE, int> _StayLotSampleListRepository;
         private IRespository<SETTING_ITEMS, string> _SettingItemRepository;
         private IRespository<STAY_LOT_LIST_WLP2, int> _StayLotListWLP2Repository;
         private IRespository<STAY_LOT_LIST_PRIORY_WLP2, int> _StayLotListPrioryWLP2Repository;
+        private IRespository<STAY_LOT_LIST_PRIORY_LFEM, int> _StayLotListPrioryLFEMRepository;
         private IRespository<DAILY_PLAN_WLP2, int> _DailyPlanRepository;
         private IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -32,7 +35,7 @@ namespace OPERATION_MNS.Application.Implementation
             IRespository<STAY_LOT_LIST_PRIORY_WLP2, int> stayLotListPrioryWLP2Repository,
             IRespository<DAILY_PLAN_WLP2, int> dailyPlanRepository,
             IUnitOfWork unitOfWork, IMapper mapper,
-                              IHttpContextAccessor httpContextAccessor)
+                              IHttpContextAccessor httpContextAccessor, IRespository<STAY_LOT_LIST_PRIORY_LFEM, int> stayLotListPrioryLFEMRepository, IRespository<STAY_LOT_LIST_LFEM, int> StayLotListLFEMRepository)
         {
             _SettingItemRepository = SettingItemRepository;
             _StayLotListPrioryWLP2Repository = stayLotListPrioryWLP2Repository;
@@ -43,6 +46,8 @@ namespace OPERATION_MNS.Application.Implementation
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
             _StayLotSampleListRepository = stayLotSampleListRepository;
+            _StayLotListPrioryLFEMRepository = stayLotListPrioryLFEMRepository;
+            _StayLotListLFEMRepository = StayLotListLFEMRepository;
         }
 
         public void Dispose()
@@ -462,17 +467,17 @@ namespace OPERATION_MNS.Application.Implementation
             result.AddRange(rs.FindAll(x => x.Priory == true && x.Number_Priory > 0).OrderBy(x => x.Number_Priory).ToList());
 
             var lstNoPriory = rs.FindAll(x => !(x.Priory == true && x.Number_Priory > 0)).OrderByDescending(x => x.StayDay).ToList();
-            if(lstNoPriory.Count > 0)
+            if (lstNoPriory.Count > 0)
             {
-                int priority = result.Count > 0 ? result[0].Number_Priory + 1 : 1;
+                int priority = result.Count > 0 ? result.LastOrDefault().Number_Priory + 1 : 1;
                 float stayDayOld = lstNoPriory[0].StayDay;
                 foreach (var item in lstNoPriory)
                 {
-                    if(stayDayOld == item.StayDay)
+                    if (stayDayOld == item.StayDay)
                     {
                         item.Number_Priory = priority;
                     }
-                    else if(stayDayOld > item.StayDay)
+                    else if (stayDayOld > item.StayDay)
                     {
                         item.Number_Priory = ++priority;
                     }
@@ -482,7 +487,7 @@ namespace OPERATION_MNS.Application.Implementation
 
                 result.AddRange(lstNoPriory);
             }
-           
+
             for (int i = 0; i < result.Count; i++)
             {
                 result[i].STT = i + 1;
@@ -508,7 +513,7 @@ namespace OPERATION_MNS.Application.Implementation
                 _StayLotListPrioryWLP2Repository.Add(en);
             }
 
-            if(index == 0)
+            if (index == 0)
             {
                 SETTING_ITEMS st = _SettingItemRepository.FindSingle(x => x.Id == "RELOAD_AFTER_UPDATE_STAYLOT_DAILY");
 
@@ -530,12 +535,12 @@ namespace OPERATION_MNS.Application.Implementation
 
         public DAILY_PLAN_WLP2 GetDailyPlanWlp2Update(string sapcode, string datePlan)
         {
-           return _DailyPlanRepository.FindAll(x => x.Model == sapcode && x.DatePlan == datePlan).FirstOrDefault();
+            return _DailyPlanRepository.FindAll(x => x.Model == sapcode && x.DatePlan == datePlan).FirstOrDefault();
         }
 
         public DAILY_PLAN_WLP2 UpdateDailyPlanWlp2Update(DAILY_PLAN_WLP2 dailyPlan, bool isUpdate)
         {
-            if(isUpdate)
+            if (isUpdate)
             {
                 dailyPlan.UserModified = GetUserId();
                 _DailyPlanRepository.Update(dailyPlan);
@@ -716,6 +721,314 @@ namespace OPERATION_MNS.Application.Implementation
         {
             throw new NotImplementedException();
         }
-        #endregion 
+        #endregion
+
+        #region LFEM
+        public List<Stay_lot_list_priory_lfem_ViewModel> GetStayLotListByModelLFEM(string material, string operation)
+        {
+            List<Stay_lot_list_priory_lfem_ViewModel> rs = new List<Stay_lot_list_priory_lfem_ViewModel>();
+
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic.Add("A_MATERIAL", material);
+            dic.Add("A_OPERATION", operation);
+            ResultDB resultDB = _StayLotListRepository.ExecProceduce2("GET_STAY_LOT_BY_MODEL_LFEM", dic);
+            ResultDB resultStay;
+            if (resultDB.ReturnInt == 0)
+            {
+                DataTable data = resultDB.ReturnDataSet.Tables[0];
+                DataTable stayLot;
+
+                if (data.Rows.Count > 0)
+                {
+                    Stay_lot_list_priory_lfem_ViewModel stayVm; ;
+
+                    foreach (DataRow item in data.Rows)
+                    {
+                        stayVm = new Stay_lot_list_priory_lfem_ViewModel()
+                        {
+                            StayDay = float.Parse(item["STAY_DAY"].IfNullIsZero()),
+                            Size = item["Size"].NullString(),
+                            MesItem = item["Material"].NullString(),
+                            LotID = item["Lot ID"].NullString(),
+                            ProductOrder = item["Product Order"].NullString(),
+                            FAID = item["FA ID"].NullString(),
+                            AssyLotID = item["Assy Lot ID"].NullString(),
+                            Date = item["Date"].NullString(),
+                            OperationName = item["Operation Name"].NullString(),
+                            OperationId = item["Operation"].NullString(),
+                            DateDiff = int.Parse(item["DATE_DIFF"].IfNullIsZero()),
+                            ChipQty = float.Parse(item["Chip Qty"].IfNullIsZero()),
+                            Unit = item["Unit"].NullString(),
+                            StartFlag = item["Start Flag"].NullString(),
+                            EquipmentName = item["Equipment Name"].NullString(),
+                            Worker = item["Worker"].NullString(),
+
+                            Number_Priory = int.Parse(item["Number_Priory"].IfNullIsZero()),
+                            Priory = item["Priory"].NullString().ToLower() == "true" ? true : false,
+                        };
+
+                        dic = new Dictionary<string, string>();
+                        dic.Add("A_LOT_ID", stayVm.LotID);
+                        resultStay = _StayLotListRepository.ExecProceduce2("GET_STAY_DAY_BY_LOT_LFEM_DATA", dic);
+
+                        if (resultStay.ReturnInt == 0)
+                        {
+                             stayLot = resultStay.ReturnDataSet.Tables[0];
+                            if(stayLot.Rows.Count > 0)
+                            stayVm.StayDay = float.Parse(stayLot.Rows[0][0].IfNullIsZero());
+                        }
+
+                        rs.Add(stayVm);
+                    }
+                }
+            }
+
+            List<Stay_lot_list_priory_lfem_ViewModel> result = new List<Stay_lot_list_priory_lfem_ViewModel>();
+
+            // Add ưu tiên 
+            result.AddRange(rs.FindAll(x => x.Priory == true && x.Number_Priory > 0).OrderBy(x => x.Number_Priory).ToList());
+
+            // không ưu tiên
+            var lstNoPriory = rs.FindAll(x => !(x.Priory == true && x.Number_Priory > 0)).OrderByDescending(x => x.StayDay).ToList();
+
+            if (lstNoPriory.Count > 0)
+            {
+                int priority = result.Count > 0 ? result.LastOrDefault().Number_Priory + 1 : 1;
+                float stayDayOld = lstNoPriory[0].StayDay;
+                foreach (var item in lstNoPriory)
+                {
+                    if (stayDayOld == item.StayDay)
+                    {
+                        item.Number_Priory = priority;
+                    }
+                    else if (stayDayOld > item.StayDay)
+                    {
+                        item.Number_Priory = ++priority;
+                    }
+
+                    stayDayOld = item.StayDay;
+                }
+
+                result.AddRange(lstNoPriory);
+            }
+
+            for (int i = 0; i < result.Count; i++)
+            {
+                result[i].STT = i + 1;
+            }
+
+            return result;
+        }
+
+        public Stay_lot_list_priory_lfem_ViewModel UpdatePrioryLotIdLFEM(Stay_lot_list_priory_lfem_ViewModel model, int index)
+        {
+            var en = _StayLotListPrioryLFEMRepository.FindAll(x => x.MesItem + "^" + x.OperationId + "^" + x.LotID == model.Key).FirstOrDefault();
+            if (en != null)
+            {
+                en.Priory = model.Priory;
+                en.Number_Priory = model.Number_Priory;
+                en.UserModified = GetUserId();
+                _StayLotListPrioryLFEMRepository.Update(en);
+            }
+            else
+            {
+                model.UserCreated = GetUserId();
+                en = _mapper.Map<STAY_LOT_LIST_PRIORY_LFEM>(model);
+                _StayLotListPrioryLFEMRepository.Add(en);
+            }
+
+            if (index == 0)
+            {
+                SETTING_ITEMS st = _SettingItemRepository.FindSingle(x => x.Id == "RELOAD_AFTER_UPDATE_STAYLOT_DAILY_LFEM");
+
+                if (st != null && st.ItemValue != "1")
+                {
+                    st.ItemValue = "1";
+                }
+
+                _SettingItemRepository.Update(st);
+            }
+
+            return model;
+        }
+
+        public StayLotListDisPlayViewModel GetStayLotListLFEM()
+        {
+            ResultDB resultDB = _StayLotListLFEMRepository.ExecProceduce2("PKG_BUSINESS@GET_STAY_LOT_LIST_LFEM", new Dictionary<string, string>());
+            StayLotListDisPlayViewModel result = new StayLotListDisPlayViewModel();
+            if (resultDB.ReturnInt == 0)
+            {
+                int i = 0;
+                foreach (DataRow row in resultDB.ReturnDataSet.Tables[0].Rows)
+                {
+                    result.StayLotListSumViews.Add(new StayLotListSumViewModel()
+                    {
+                        Index = ++i,
+                        MaterialCategory = row["Material Category"].NullString(),
+                        MaterialGroup = row["Material Group"].NullString(),
+                        Material = row["Material"].NullString(),
+                        Size = row["Size"].NullString(),
+                        QtyChip = decimal.Parse(row["Chip Qty"].IfNullIsZero())
+                    });
+                }
+
+                i = 0;
+                foreach (DataRow row in resultDB.ReturnDataSet.Tables[1].Rows)
+                {
+                    result.StayLotListTenLoiViews.Add(new StayLotListSumViewModel()
+                    {
+                        Index = ++i,
+                        QtyChip = decimal.Parse(row["CHIP_QTY"].IfNullIsZero()),
+                        PhanLoaiLoi = row["LoaiLoi"].NullString()
+                    });
+                }
+
+                foreach (DataRow row in resultDB.ReturnDataSet.Tables[2].Rows)
+                {
+                    result.StayLotList_Ex_ViewModels.Add(new StayLotList_Ex_ViewModel()
+                    {
+                        MaterialCategory = row["Material Category"].NullString(),
+                        MaterialGroup = row["Material Group"].NullString(),
+                        Size = row["Size"].NullString(),
+                        Material = row["Material"].NullString(),
+                        LotId = row["Lot ID"].NullString(),
+                        FA_ID = row["FA ID"].NullString(),
+                        AssyLotID = row["Assy Lot ID"].NullString(),
+                        Date = row["Date"].NullString(),
+                        DATE_DIFF = double.Parse(row["DATE_DIFF"].IfNullIsZero()),
+                        OperationID = row["Operation"].NullString(),
+                        OperationName = row["Operation Name"].NullString(),
+                        ChipQty = decimal.Parse(row["Chip Qty"].IfNullIsZero()),
+                        Worker = row["Worker"].NullString(),
+                        Comment = row["Comment"].NullString(),
+                        PhanLoaiLoi = row["LoaiLoi"].NullString(),
+                        LichTrinhXuLy = row["LichTrinhXuLy"].NullString(),
+                        ChiuTrachNhiem = row["ChiuTrachNhiem"].NullString(),
+                        UpdateByCassetteId = false,
+                        history_seq = double.Parse(row["HISTORY_SEQ"].IfNullIsZero()),
+                    });
+                }
+            }
+
+            return result;
+        }
+
+        public StayLotList_Ex_ViewModel UpdateLotInfoLFEM(StayLotList_Ex_ViewModel model, StayLotListDisPlayViewModel stayLotList)
+        {
+            if (!model.UpdateByCassetteId)
+            {
+                var lot = _StayLotListLFEMRepository.FindSingle(x => x.LotId == model.LotId && x.Material == model.Material && x.History_seq == model.history_seq);
+                if (lot != null)
+                {
+                    lot.UserModified = GetUserId();
+                    lot.LoaiLoi = model.PhanLoaiLoi.NullString();
+                    _StayLotListLFEMRepository.Update(lot);
+                }
+                else
+                {
+                    STAY_LOT_LIST_LFEM en = new STAY_LOT_LIST_LFEM();
+                    en.Material = model.Material;
+                    en.LotId = model.LotId;
+                    en.History_seq = model.history_seq;
+                    en.LoaiLoi = model.PhanLoaiLoi;
+                    en.LichTrinhXuLy = model.LichTrinhXuLy;
+                    en.ChiuTrachNhiem = model.ChiuTrachNhiem;
+                    en.UserModified = GetUserId();
+                    en.UserCreated = GetUserId();
+                    _StayLotListLFEMRepository.Add(en);
+                }
+            }
+            else
+            {
+                // update bath theo Material
+                string _material = model.Material;
+                STAY_LOT_LIST_LFEM lot;
+                foreach (var item in stayLotList.StayLotList_Ex_ViewModels.FindAll(x => x.Material == _material))
+                {
+                    lot = _StayLotListLFEMRepository.FindSingle(x => x.LotId == item.LotId && x.Material == item.Material && x.History_seq == item.history_seq);
+                    if (lot != null)
+                    {
+                        lot.LoaiLoi = model.PhanLoaiLoi;
+                        lot.LichTrinhXuLy = model.LichTrinhXuLy;
+                        lot.ChiuTrachNhiem = model.ChiuTrachNhiem;
+                        lot.UserModified = GetUserId();
+                        _StayLotListLFEMRepository.Update(lot);
+                    }
+                    else
+                    {
+                        lot = new STAY_LOT_LIST_LFEM();
+                        lot.MaterialCategory = item.MaterialCategory;
+                        lot.MaterialGroup = item.MaterialGroup;
+                        lot.Size = item.Size;
+                        lot.FAID = item.FA_ID;
+                        lot.Material = item.Material;
+                        lot.LotId = item.LotId;
+                        lot.History_seq = item.history_seq;
+                        lot.LoaiLoi = model.PhanLoaiLoi;
+                        lot.LichTrinhXuLy = model.LichTrinhXuLy;
+                        lot.ChiuTrachNhiem = model.ChiuTrachNhiem;
+                        lot.UserModified = GetUserId();
+                        lot.UserCreated = GetUserId();
+                        _StayLotListLFEMRepository.Add(lot);
+                    }
+                }
+            }
+
+            _unitOfWork.Commit();
+            return model;
+        }
+
+        public List<STAY_LOT_LIST_HISTORY_LFEM> GetStayLotListHistoryLFEM(string materialId, string lotId, string timeFrom, string timeTo)
+        {
+            List<STAY_LOT_LIST_HISTORY_LFEM> rs = new List<STAY_LOT_LIST_HISTORY_LFEM>();
+
+            if (!string.IsNullOrEmpty(materialId))
+            {
+                rs = ((EFUnitOfWork)_unitOfWork).DBContext().STAY_LOT_LIST_HISTORY_LFEM.Where(x => x.Material == materialId).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(lotId))
+            {
+                if (rs.Count > 0)
+                    rs = rs.Where(x => x.LotId == lotId).ToList();
+                else
+                {
+                    rs = ((EFUnitOfWork)_unitOfWork).DBContext().STAY_LOT_LIST_HISTORY_LFEM.Where(x => x.LotId == lotId).ToList();
+                }
+            }
+
+            if (!string.IsNullOrEmpty(timeFrom))
+            {
+                timeFrom = DateTime.Parse(timeFrom).ToString("yyyyMMdd") + "000000";
+
+                if (rs.Count > 0)
+                    rs = rs.Where(x => x.HoldTime.CompareTo(timeFrom) >= 0).ToList();
+                else
+                {
+                    rs = ((EFUnitOfWork)_unitOfWork).DBContext().STAY_LOT_LIST_HISTORY_LFEM.Where(x => x.HoldTime.CompareTo(timeFrom) >= 0).ToList();
+                }
+            }
+
+            if (!string.IsNullOrEmpty(timeTo))
+            {
+                timeTo = DateTime.Parse(timeTo).ToString("yyyyMMdd") + "235959";
+
+                if (rs.Count > 0)
+                    rs = rs.Where(x => x.HoldTime.CompareTo(timeTo) <= 0).ToList();
+                else
+                {
+                    rs = ((EFUnitOfWork)_unitOfWork).DBContext().STAY_LOT_LIST_HISTORY_LFEM.Where(x => x.HoldTime.CompareTo(timeFrom) >= 0 && x.HoldTime.CompareTo(timeTo) <= 0).ToList();
+                }
+            }
+
+            foreach (var item in rs)
+            {
+                item.HoldTime = item.HoldTime.ConvertTime();
+                item.ReleaseTime = item.ReleaseTime.ConvertTime();
+            }
+
+            return rs;
+        }
+        #endregion
     }
 }

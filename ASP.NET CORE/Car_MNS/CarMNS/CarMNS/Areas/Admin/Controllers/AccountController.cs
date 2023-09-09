@@ -1,4 +1,6 @@
-﻿using CarMNS.Data.Entities;
+﻿using CarMNS.Data.EF.Extensions;
+using CarMNS.Data.Entities;
+using CarMNS.Infrastructure.Interfaces;
 using CarMNS.Models.AccountViewModels;
 using CarMNS.Services;
 using Microsoft.AspNetCore.Authentication;
@@ -6,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -21,15 +24,19 @@ namespace CarMNS.Areas.Admin.Controllers
         private readonly SignInManager<APP_USER> _signInManager;
         private readonly UserManager<APP_USER> _userManager;
         private readonly IEmailSender _emailSender;
+        private IRespository<BOPHAN_DUYET, int> _BophanDuyetRepository;
         private IHttpContextAccessor _httpContextAccessor;
+        private IUnitOfWork _unitOfWork;
 
-        public AccountController(UserManager<APP_USER> userManager, SignInManager<APP_USER> signInManager, IEmailSender emailSender, ILogger<AccountController> logger, IHttpContextAccessor httpContextAccessor)
+        public AccountController(IUnitOfWork unitOfWork, IRespository<BOPHAN_DUYET, int> bophanDuyetRepository, UserManager<APP_USER> userManager, SignInManager<APP_USER> signInManager, IEmailSender emailSender, ILogger<AccountController> logger, IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _logger = logger;
+            _BophanDuyetRepository = bophanDuyetRepository;
             _httpContextAccessor = httpContextAccessor;
+            _unitOfWork = unitOfWork;
         }
 
         public IActionResult Index()
@@ -285,11 +292,17 @@ namespace CarMNS.Areas.Admin.Controllers
                     Department = model.Department 
                 };
 
-                //if(model.Role == "HR_Payroll")
-                //{
-                //    user.TwoFactorEnabled = true;
-                //    user.EmailConfirmed = true;
-                //}
+                BOPHAN_DUYET bophanApprove = null;
+                if (model.Role != "BOPHAN_DANGKY" && model.BoPhanDuyet.Length > 1)
+                {
+                    string bpd = model.BoPhanDuyet.NullString().Substring(0, model.BoPhanDuyet.Length - 1);
+
+                    bophanApprove = new BOPHAN_DUYET()
+                    {
+                        UserId = model.Username,
+                        BoPhan = bpd,
+                    };
+                }
 
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded && model.Role != "")
@@ -300,11 +313,17 @@ namespace CarMNS.Areas.Admin.Controllers
                     if (appUser != null)
                     {
                         await _userManager.AddToRolesAsync(appUser, new List<string> { model.Role });
+
+                        if(bophanApprove != null)
+                        {
+                            _BophanDuyetRepository.Add(bophanApprove);
+                            _unitOfWork.Commit();
+                        }
                     }
 
                     _logger.LogInformation("User created a new account with password.");
 
-                   //await GetUser();
+                   await GetUser();
 
                     return RedirectToAction("Register");
                 }
@@ -320,6 +339,15 @@ namespace CarMNS.Areas.Admin.Controllers
         {
             var appUser = await _userManager.FindByNameAsync(userName);
             await _userManager.DeleteAsync(appUser);
+
+            BOPHAN_DUYET bp = _BophanDuyetRepository.FindSingle(x => x.UserId == userName);
+
+            if (bp != null)
+            {
+                _BophanDuyetRepository.Remove(bp);
+                _unitOfWork.Commit();
+            }
+
             return new OkObjectResult(null);
         }
 

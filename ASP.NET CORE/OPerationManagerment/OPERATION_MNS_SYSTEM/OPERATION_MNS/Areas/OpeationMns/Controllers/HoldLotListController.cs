@@ -191,5 +191,64 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
             return View("HoldLotHistorySample", models);
         }
         #endregion
+
+        #region LFEM Hold lot list
+
+        public IActionResult HoldLfem()
+        {
+            var model = _StayLotListService.GetStayLotListLFEM();
+            return View(model);
+        }
+
+        [HttpPut]
+        public IActionResult UpdateLotStayLfem(string key, string values)
+        {
+            var models = _StayLotListService.GetStayLotListLFEM();
+
+            var lots = models.StayLotList_Ex_ViewModels.First(o => o.KeyLfem == key);
+
+            JsonConvert.PopulateObject(values, lots);
+
+            _StayLotListService.UpdateLotInfoLFEM(lots, models);
+
+            return Ok(lots);
+        }
+
+        [HttpGet]
+        public object GetLotStayLfem(DataSourceLoadOptions loadOptions)
+        {
+            var model = _StayLotListService.GetStayLotListLFEM();
+            return DataSourceLoader.Load(model.StayLotList_Ex_ViewModels, loadOptions);
+        }
+
+        public IActionResult HoldLotHistoryLFEM()
+        {
+            var data = _StayLotListService.GetStayLotListHistoryLFEM("", "", DateTime.Now.ToString("yyyy-MM-dd"), DateTime.Now.ToString("yyyy-MM-dd"));
+
+            ViewHistoryHoldLotModel models = new ViewHistoryHoldLotModel()
+            {
+                STAY_LOT_LIST_HISTORY_LFEM_DATA = data,
+                FromTime = DateTime.Now.ToString("yyyy-MM-dd"),
+                ToTime = DateTime.Now.ToString("yyyy-MM-dd")
+            };
+
+            return View(models);
+        }
+
+        [HttpPost]
+        public IActionResult GetLotHoldHistoryLFEM(string materialID, string lotId, string timeFrom, string timeTo)
+        {
+            var data = _StayLotListService.GetStayLotListHistoryLFEM(materialID, lotId, timeFrom, timeTo);
+            ViewHistoryHoldLotModel models = new ViewHistoryHoldLotModel()
+            {
+                STAY_LOT_LIST_HISTORY_LFEM_DATA = data,
+                Material = materialID,
+                LotId = lotId,
+                FromTime = timeFrom,
+                ToTime = timeTo
+            };
+            return View("HoldLotHistoryLFEM", models);
+        }
+        #endregion
     }
 }

@@ -15,25 +15,33 @@ namespace HRMNS.Data.Entities
         {
         }
 
-        public HR_BHXH(string maBHXH,string maNV,string ngayThamGia,string ngayKetThuc)
+        public HR_BHXH(string maBHXH, string maNV, string ngayThamGia, string ngayKetThuc, string phanload, string thangThamGia)
         {
             Id = maBHXH;
             MaNV = maNV;
-            NgayThamGia = ngayThamGia;
+            NgayBatDau = ngayThamGia;
             NgayKetThuc = ngayKetThuc;
+            PhanLoai = phanload;
+            ThangThamGia = thangThamGia;    
         }
 
         [StringLength(50)]
         public string MaNV { get; set; }
 
         [StringLength(50)]
-        public string NgayThamGia { get; set; }
+        public string NgayBatDau { get; set; }
 
         [StringLength(50)]
         public string NgayKetThuc { get; set; }
 
         [StringLength(50)]
-        public string DateCreated { get; set; } 
+        public string ThangThamGia { get; set; }
+
+        [StringLength(50)]
+        public string PhanLoai { get; set; } // Tham gia / khong tham gia
+
+        [StringLength(50)]
+        public string DateCreated { get; set; }
 
         [StringLength(50)]
         public string DateModified { get; set; }

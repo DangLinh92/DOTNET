@@ -60,4 +60,22 @@ namespace CarMNS.Data.EF.Configurations
             entity.Property(x => x.Id).HasMaxLength(50).IsRequired();
         }
     }
+
+    public class DangKyXeTaxiConfiguration : DbEntityConfiguration<DANG_KY_XE_TAXI>
+    {
+        public override void Configure(EntityTypeBuilder<DANG_KY_XE_TAXI> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
+
+    public class BoPhanDuyetConfiguration : DbEntityConfiguration<BOPHAN_DUYET>
+    {
+        public override void Configure(EntityTypeBuilder<BOPHAN_DUYET> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
 }

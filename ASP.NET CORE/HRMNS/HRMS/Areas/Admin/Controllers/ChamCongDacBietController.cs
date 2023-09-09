@@ -81,6 +81,15 @@ namespace HRMS.Areas.Admin.Controllers
                     }
                 }
 
+                if (UserRole == CommonConstants.roleApprove3 || UserRole == CommonConstants.AppRole.AdminRole)
+                {
+                    data.GiaTri = double.Parse(data.GiaTri1, System.Globalization.CultureInfo.InvariantCulture);
+                }
+                else
+                {
+                    data.GiaTri = 0;
+                }
+
                 if (action == "Add")
                 {
                     var itemCheck = _chamCongDacBietService.GetSingle(x => x.MaNV == data.MaNV && x.NgayBatDau == data.NgayBatDau && x.NgayKetThuc == data.NgayKetThuc);
@@ -91,6 +100,7 @@ namespace HRMS.Areas.Admin.Controllers
                         itemCheck.NgayBatDau = data.NgayBatDau;
                         itemCheck.NgayKetThuc = data.NgayKetThuc;
                         itemCheck.NoiDung = data.NoiDung;
+                        itemCheck.GiaTri = data.GiaTri;
 
                         itemCheck.Approve = CommonConstants.Approved;
                         itemCheck.ApproveLV2 = CommonConstants.Approved;
@@ -158,6 +168,7 @@ namespace HRMS.Areas.Admin.Controllers
                     chamcongVm.NgayBatDau = data.NgayBatDau;
                     chamcongVm.NgayKetThuc = data.NgayKetThuc;
                     chamcongVm.NoiDung = data.NoiDung;
+                    chamcongVm.GiaTri = data.GiaTri;
 
                     chamcongVm.Approve = CommonConstants.Approved;
                     chamcongVm.ApproveLV2 = CommonConstants.Approved;

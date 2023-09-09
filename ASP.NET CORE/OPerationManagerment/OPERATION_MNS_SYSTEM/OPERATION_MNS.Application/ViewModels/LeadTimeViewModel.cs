@@ -20,6 +20,11 @@ namespace OPERATION_MNS.Application.ViewModels
         public string WLP { get; set; }
         public string Ox { get; set; }
         public double Target { get; set; }
+        public string Operation { get; set; }
+        public double LeadTimeStartEnd { get; set; }
+
+        public string OperationID { get; set; }
+        public double DisplayOrder { get; set; }
     }
 
     public class LeadTimeModel
@@ -42,12 +47,23 @@ namespace OPERATION_MNS.Application.ViewModels
             Days1 = new List<string>();
             Days2 = new List<string>();
             Year = year;
+            Operation1 = new List<string>();
+            Operation2 = new List<string>();
+
+            LFEM_LeadTimeByYear = new List<ChartDataItem>();
+            LFEM_LeadTimeByMonth = new List<ChartDataItem>();
+            LFEM_LeadTimeByWeek = new List<ChartDataItem>();
+            LFEM_LeadTimeByDay = new List<ChartDataItem>();
+            LFEM_RuntimeByOperation = new List<ChartDataItem>();
+            LFEM_WaitTimeByOperation = new List<ChartDataItem>();
         }
+
         public string Year { get; set; }
         public string Month { get; set; }
         public int Week { get; set; }
         public string Day { get; set; }
         public string Ox { get; set; }
+        public string Category { get; set; }
 
         public List<ChartDataItem> WLP_LeadTimeByYear;
         public List<ChartDataItem> WLP1_LeadTimeByMonth;
@@ -65,6 +81,15 @@ namespace OPERATION_MNS.Application.ViewModels
         public List<string> Months;
         public List<string> Days1;
         public List<string> Days2;
+        public List<string> Operation1;
+        public List<string> Operation2;
+
+        public List<ChartDataItem> LFEM_LeadTimeByYear;
+        public List<ChartDataItem> LFEM_LeadTimeByMonth;
+        public List<ChartDataItem> LFEM_LeadTimeByWeek;
+        public List<ChartDataItem> LFEM_LeadTimeByDay;
+        public List<ChartDataItem> LFEM_RuntimeByOperation;
+        public List<ChartDataItem> LFEM_WaitTimeByOperation;
 
         public List<string> GetWeeks()
         {
@@ -115,6 +140,7 @@ namespace OPERATION_MNS.Application.ViewModels
         public double Value_runtime { get; set; }
         public double Value_waittime { get; set; }
         public double Value_target { get; set; }
+        public double Value_leadtime { get; set; }
 
     }
 }

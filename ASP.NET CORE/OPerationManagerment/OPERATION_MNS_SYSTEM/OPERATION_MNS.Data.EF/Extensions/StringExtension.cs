@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OPERATION_MNS.Utilities.Common;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
@@ -17,7 +18,7 @@ namespace OPERATION_MNS.Data.EF.Extensions
         }
         public static string IfNullIsZero(this object result)
         {
-            if (result == null)
+            if (result == null || result.NullString() == "-")
                 return "0";
             else
                 return result.ToString().Trim() == "" ? "0" : result.ToString().Trim();
@@ -73,7 +74,7 @@ namespace OPERATION_MNS.Data.EF.Extensions
         /// 0 : date1 = date2
         /// 1 : date1 > date2
         /// </returns>
-        public static int CompareDateTime(this string date1,string date2)
+        public static int CompareDateTime(this string date1, string date2)
         {
             return date1.CompareTo(date2);
         }
@@ -85,9 +86,9 @@ namespace OPERATION_MNS.Data.EF.Extensions
         /// <param name="date2"></param>
         /// <param name="date3"></param>
         /// <returns></returns>
-        public static bool InRangeDateTime(this string date1,string date2,string date3)
+        public static bool InRangeDateTime(this string date1, string date2, string date3)
         {
-            if(date2.CompareTo(date1) <= 0 && date3.CompareTo(date1) >= 0)
+            if (date2.CompareTo(date1) <= 0 && date3.CompareTo(date1) >= 0)
             {
                 return true;
             }
@@ -102,6 +103,48 @@ namespace OPERATION_MNS.Data.EF.Extensions
             var formatRules = CultureInfo.CurrentCulture.DateTimeFormat;
             int week = calendar.GetWeekOfYear(date, formatRules.CalendarWeekRule, formatRules.FirstDayOfWeek) - 1;
             return week;
+        }
+
+        public static List<string> GetWeeks(string year)
+        {
+            List<string> result = new List<string>();
+            string beginYear = year + "-01-01";
+            string endYear = DateTime.Parse(beginYear).AddYears(1).AddDays(-1).ToString("yyyy-MM-dd");
+
+            int weekOfYear = DateTime.Parse(endYear).GetWeekOfYear() + 1;
+
+            if (year == DateTime.Now.Year.ToString())
+            {
+                weekOfYear = DateTime.Now.GetWeekOfYear() + 1;
+            }
+
+            for (int i = 1; i <= weekOfYear; i++)
+            {
+                result.Add(i + "");
+            }
+            return result;
+        }
+
+        public static List<string> GetWeeksByMonth(string year, string month)
+        {
+            if (string.IsNullOrEmpty(month))
+                return GetWeeks(year);
+
+            List<string> result = new List<string>();
+            string beginMonth = year + "-" + month + "-01";
+            string endMonth = DateTime.Parse(beginMonth).AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd");
+
+            int weekOfYear;
+            foreach (var day in EachDay.EachDays(DateTime.Parse(beginMonth), DateTime.Parse(endMonth)))
+            {
+                weekOfYear = day.GetWeekOfYear() + 1;
+                if (!result.Contains(weekOfYear + "") && weekOfYear > 0)
+                {
+                    result.Add(weekOfYear + "");
+                }
+            }
+            result.Sort((a, b) => int.Parse(a).CompareTo(int.Parse(b)));
+            return result;
         }
     }
 }

@@ -39,5 +39,9 @@ namespace CarMNS.Models.AccountViewModels
         [Required]
         [Display(Name = "Department")]
         public string Department { get; set; }
+
+        [Display(Name = "BoPhanDuyet")]
+        [StringLength(500)]
+        public string BoPhanDuyet { get; set; }
     }
 }
