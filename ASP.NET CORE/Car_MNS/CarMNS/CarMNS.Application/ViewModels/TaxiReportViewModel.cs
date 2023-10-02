@@ -22,12 +22,25 @@ namespace CarMNS.Application.ViewModels
         public string BoPhan { get; set;}
         public double SoTien { get; set; }
         public double SoLanSuDung { get; set; }
+        public string ThangSuDung { get; set; }
     }
 
     public class TongHopBoPhan
     {
         public string BoPhan { get; set; }
         public string RowTital { get; set; }
+        public string ColumnTital { get; set; }
         public double SoTien_SD { get; set; }
+        public string Month { get; set; }
+    }
+
+    public class ItemValue
+    {
+        public ItemValue(string key,string value)
+        {
+            Key = key; Value = value;
+        }
+        public string Key { get; set; }
+        public string Value { get; set; }
     }
 }

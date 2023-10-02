@@ -403,44 +403,61 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
         {
             string year = DateTime.Now.Year.ToString();
             string month = DateTime.Now.ToString("MM");
-            LeadTimeModel models = GetLFEMLeadTimeData(year, month, "0", "", "", "R8Y0");
+            LeadTimeModel models = new LeadTimeModel(year);// GetLFEMLeadTimeData(year, month, "0", "", "", "R8Y0");
+            models.Month = month;
+            models.MonthFrom = month;
 
             return View(models);
         }
 
         [HttpPost]
-        public ActionResult SearchLfem(string year, string month, string week, string day, string holiday, string model)
+        public ActionResult SearchLfem(string year, string monthFrom, string month, string week, string day, string holiday, string model)
         {
-            LeadTimeModel models = GetLFEMLeadTimeData(year, month, week, day, holiday, model.NullString());
+            LeadTimeModel models = GetLFEMLeadTimeData(year, monthFrom, month, week, day, holiday, model.NullString());
             return View("LeadTimeLfem", models);
         }
 
-        private LeadTimeModel GetLFEMLeadTimeData(string year, string month, string week, string day, string holiday, string model)
+        private LeadTimeModel GetLFEMLeadTimeData(string year,string monthFrom, string month, string week, string day, string holiday, string model)
         {
             LeadTimeModel models = new LeadTimeModel(year);
             models.Month = month.NullString();
+            models.MonthFrom = monthFrom.NullString();
             models.Week = int.Parse(week);
             models.Day = day;
             models.Ox = holiday;
             models.Category = model.NullString();
 
-            models.Weeks = models.GetWeeksByMonth(year, month.NullString());
+            //models.Weeks = models.GetWeeksByMonth(year, month.NullString());
 
-            if (week == "0" || week.NullString() == "")
+            //if (week == "0" || week.NullString() == "")
+            //{
+            //    if (month.NullString() == "")
+            //    {
+            //        models.Weeks_Lable = models.GetWeeks();
+            //    }
+            //    else
+            //    {
+            //        models.Weeks_Lable = models.Weeks;
+            //    }
+            //}
+            //else
+            //{
+            //    models.Weeks_Lable.Add(week);
+            //}
+
+            List<string> weeks = new List<string>();
+            if(monthFrom.NullString() != "" && month.NullString() != "")
+            for (int i = int.Parse(monthFrom); i <= int.Parse(month); i++)
             {
-                if (month.NullString() == "")
-                {
-                    models.Weeks_Lable = models.GetWeeks();
-                }
-                else
-                {
-                    models.Weeks_Lable = models.Weeks;
-                }
+                    if (i < 10)
+                        weeks.AddRange(models.GetWeeksByMonth(year, "0" + i.NullString()));
+                    else
+                    {
+                        weeks.AddRange(models.GetWeeksByMonth(year, i.NullString()));
+                    }
             }
-            else
-            {
-                models.Weeks_Lable.Add(week);
-            }
+            models.Weeks = weeks;
+            models.Weeks_Lable = weeks;
 
             if (week == "0" || !string.IsNullOrEmpty(day))
             {
@@ -464,6 +481,8 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
 
             List<LeadTimeViewModel> lst = new List<LeadTimeViewModel>(); //_LeadTimeService.GetLeadTimeLFEM(year, month, week, day, holiday, model);
 
+            List<LeadTimeViewModel> lstWeek = new List<LeadTimeViewModel>();
+
             if (day.NullString() != "" && month.NullString() != "" && year.NullString() != "")
             {
                 string date = year + "-" + month + "-" + day;
@@ -479,6 +498,13 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
                 string fromDate = DateTime.Parse(year + "-" + month + "-01").ToString("yyyy-MM-dd");
                 string toDate = DateTime.Parse(year + "-" + month + "-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd");
                 lst = lstAll.Where(x => x.WorkDate.CompareTo(fromDate) >= 0 && x.WorkDate.CompareTo(toDate) <= 0).ToList();
+            }
+
+            if(monthFrom.NullString() != "" && month.NullString() != "")
+            {
+                string fromDate = DateTime.Parse(year + "-" + monthFrom + "-01").ToString("yyyy-MM-dd");
+                string toDate = DateTime.Parse(year + "-" + month + "-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd");
+                lstWeek = lstAll.Where(x => x.WorkDate.CompareTo(fromDate) >= 0 && x.WorkDate.CompareTo(toDate) <= 0).ToList();
             }
 
             if (month.NullString() == "" && week.NullString() == "" && day.NullString() == "")
@@ -606,7 +632,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
             // week
 
             var operationLeadTimeWeek =
-                        from leadTime in lst.AsEnumerable()
+                        from leadTime in lstWeek.AsEnumerable()
                         group leadTime by new
                         {
                             WORK_YEAR = leadTime.WorkYear,
@@ -625,7 +651,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
                             LeadTimeAVG = Math.Round(g.Average(r => r.LeadTimeStartEnd), 1)
                         };
 
-            models.LFEM_LeadTimeByWeek = (from lt in operationLeadTimeWeek.AsEnumerable()
+            var  LFEM_LeadTimeByWeek = (from lt in operationLeadTimeWeek.AsEnumerable()
                                           group lt by new
                                           {
                                               WORK_YEAR = lt.WorkYear,
@@ -639,7 +665,21 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
                                               Value_leadtime = Math.Round((g.Sum(s => s.RunTimeAVG) + g.Sum(s => s.WaitTimeAVG)) / 24, 1)
                                           }).OrderBy(x => int.Parse(x.Label_x)).ToList();
 
-            //models.LFEM_LeadTimeByWeek = UpdateDataLost(lstLfemWeek, "Week", models.Weeks_Lable);
+            foreach (var item in models.Weeks_Lable)
+            {
+                if(!LFEM_LeadTimeByWeek.Any(x=> int.Parse(x.Label_x) == int.Parse(item)))
+                {
+                    LFEM_LeadTimeByWeek.Add(new ChartDataItem()
+                    {
+                        Label_x = item,
+                        Value_leadtime = 0,
+                        Value_runtime = 0,
+                        Value_waittime=0,
+                    });
+                }
+            }
+
+            models.LFEM_LeadTimeByWeek = LFEM_LeadTimeByWeek.OrderBy(x => int.Parse(x.Label_x)).ToList();
 
             if (day.NullString() != "" && month.NullString() != "" && year.NullString() != "")
             {
@@ -653,7 +693,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
                            WORK_WEEK = leadTime.WorkWeek,
                            OPERATION_ID = leadTime.OperationID,
                            OPERATION_NAME = leadTime.Operation,
-                           DISPLAY_ORDER = leadTime.DisplayOrder
+                           DISPLAY_ORDER = leadTime.DisplayOrder,
                        } into g
                        select new
                        {
@@ -666,7 +706,8 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
                            DisplayOrder = g.Key.DISPLAY_ORDER,
                            WaitTimeAVG = g.Average(r => r.WaitTime),
                            RunTimeAVG = g.Average(r => r.RunTime),
-                           LeadTimeAVG = g.Average(r => r.LeadTimeStartEnd)
+                           LeadTimeAVG = g.Average(r => r.LeadTimeStartEnd),
+                           Capa = g.Average(r=>r.Capa)
                        };
 
                 // runtime by operation
@@ -680,9 +721,11 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
                                                   select new ChartDataItem
                                                   {
                                                       Label_x = g.Key.OPERATION,
-                                                      Value_runtime = Math.Round(g.Average(s => s.RunTimeAVG) / 24, 1),
+                                                      Value_runtime = Math.Round(g.Average(s => s.RunTimeAVG), 1),
+                                                      Value_target = Math.Round(g.Average(s => s.Capa), 1)
                                                   }).OrderByDescending(x => x.Value_runtime).ToList();
 
+               
                 // wait time by operation
                 models.LFEM_WaitTimeByOperation = (from lt in dailyLeadTime.AsEnumerable()
                                                    group lt by new
@@ -694,7 +737,8 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
                                                    select new ChartDataItem
                                                    {
                                                        Label_x = g.Key.OPERATION,
-                                                       Value_waittime = Math.Round(g.Average(s => s.WaitTimeAVG) / 24, 1),
+                                                       Value_waittime = Math.Round(g.Average(s => s.WaitTimeAVG), 1),
+                                                       Value_target = Math.Round(g.Average(s => s.Capa), 1)
                                                    }).OrderByDescending(x => x.Value_waittime).ToList();
             }
             else if (week.NullString() != "" && day.NullString() == "")
@@ -718,7 +762,8 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
                             DisplayOrder = g.Key.DISPLAY_ORDER,
                             WaitTimeAVG = g.Average(r => r.WaitTime),
                             RunTimeAVG = g.Average(r => r.RunTime),
-                            LeadTimeAVG = g.Average(r => r.LeadTimeStartEnd)
+                            LeadTimeAVG = g.Average(r => r.LeadTimeStartEnd),
+                            Capa = g.Average(r => r.Capa)
                         };
 
                 // runtime by operation
@@ -732,7 +777,8 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
                                                   select new ChartDataItem
                                                   {
                                                       Label_x = g.Key.OPERATION,
-                                                      Value_runtime = Math.Round(g.Average(s => s.RunTimeAVG) / 24, 1),
+                                                      Value_runtime = Math.Round(g.Average(s => s.RunTimeAVG), 1),
+                                                      Value_target = Math.Round(g.Average(s => s.Capa), 1)
                                                   }).OrderByDescending(x => x.Value_runtime).ToList();
 
                 // wait time by operation
@@ -746,7 +792,8 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
                                                    select new ChartDataItem
                                                    {
                                                        Label_x = g.Key.OPERATION,
-                                                       Value_waittime = Math.Round(g.Average(s => s.WaitTimeAVG) / 24, 1),
+                                                       Value_waittime = Math.Round(g.Average(s => s.WaitTimeAVG), 1),
+                                                       Value_target = Math.Round(g.Average(s => s.Capa), 1)
                                                    }).OrderByDescending(x => x.Value_waittime).ToList();
             }
             else if (month.NullString() != "")
@@ -771,7 +818,8 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
                             DisplayOrder = g.Key.DISPLAY_ORDER,
                             WaitTimeAVG = g.Average(r => r.WaitTime),
                             RunTimeAVG = g.Average(r => r.RunTime),
-                            LeadTimeAVG = g.Average(r => r.LeadTimeStartEnd)
+                            LeadTimeAVG = g.Average(r => r.LeadTimeStartEnd),
+                            Capa = g.Average(r => r.Capa)
                         };
 
                 // runtime by operation
@@ -785,7 +833,8 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
                                                   select new ChartDataItem
                                                   {
                                                       Label_x = g.Key.OPERATION,
-                                                      Value_runtime = Math.Round(g.Average(s => s.RunTimeAVG) / 24, 1),
+                                                      Value_runtime = Math.Round(g.Average(s => s.RunTimeAVG), 1),
+                                                      Value_target = Math.Round(g.Average(s => s.Capa), 1)
                                                   }).OrderByDescending(x => x.Value_runtime).ToList();
 
                 // wait time by operation
@@ -799,7 +848,8 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
                                                    select new ChartDataItem
                                                    {
                                                        Label_x = g.Key.OPERATION,
-                                                       Value_waittime = Math.Round(g.Average(s => s.WaitTimeAVG) / 24, 1),
+                                                       Value_waittime = Math.Round(g.Average(s => s.WaitTimeAVG), 1),
+                                                       Value_target = Math.Round(g.Average(s => s.Capa), 1)
                                                    }).OrderByDescending(x => x.Value_waittime).ToList();
             }
             else
@@ -821,7 +871,8 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
                            DisplayOrder = g.Key.DISPLAY_ORDER,
                            WaitTimeAVG = g.Average(r => r.WaitTime),
                            RunTimeAVG = g.Average(r => r.RunTime),
-                           LeadTimeAVG = g.Average(r => r.LeadTimeStartEnd)
+                           LeadTimeAVG = g.Average(r => r.LeadTimeStartEnd),
+                           Capa = g.Average(r => r.Capa)
                        };
 
                 // runtime by operation
@@ -835,7 +886,8 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
                                                   select new ChartDataItem
                                                   {
                                                       Label_x = g.Key.OPERATION,
-                                                      Value_runtime = Math.Round(g.Average(s => s.RunTimeAVG) / 24, 1),
+                                                      Value_runtime = Math.Round(g.Average(s => s.RunTimeAVG), 1),
+                                                      Value_target = Math.Round(g.Average(s => s.Capa), 1)
                                                   }).OrderByDescending(x => x.Value_runtime).ToList();
 
                 // wait time by operation
@@ -849,7 +901,8 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
                                                    select new ChartDataItem
                                                    {
                                                        Label_x = g.Key.OPERATION,
-                                                       Value_waittime = Math.Round(g.Average(s => s.WaitTimeAVG) / 24, 1),
+                                                       Value_waittime = Math.Round(g.Average(s => s.WaitTimeAVG), 1),
+                                                       Value_target = Math.Round(g.Average(s => s.Capa), 1)
                                                    }).OrderByDescending(x => x.Value_waittime).ToList();
             }
 

@@ -33,6 +33,12 @@ namespace CarMNS.Data.Entities
 
         public DateTime? ToTimePlan { get; set; }
 
+        [StringLength(50)]
+        public string FromTimePlan1 { get; set; }
+
+        [StringLength(50)]
+        public string ToTimePlan1 { get; set; }
+
         [StringLength(250)]
         public string ĐiaDiemXuatPhat { get; set; }
 

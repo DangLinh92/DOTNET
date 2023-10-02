@@ -40,5 +40,8 @@ namespace CarMNS.Application.Interfaces
         List<DANG_KY_XE_TAXI> GetDangKyXeTaxiHistory();
 
         List<NguoiDungTaxi> GetReportTaxi(string fromDate, string toDate, string boPhan);
+        List<NguoiDungTaxi> GetReportTaxiInYear(string fromDate, string toDate);
+
+        List<ItemValue> GetListTime();
     }
 }

@@ -1,0 +1,244 @@
+﻿@model TotalOperation
+@{
+    ViewData["Title"] = "FinishProductView";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <style>
+        .stats-box {
+            width: 110px;
+            float: left;
+            margin-left: 5px;
+            text-align: center;
+            background-color: #004e89;
+            color: white !important;
+        }
+
+        .stylePriory1 {
+            background-color: #FF5D5D !important;
+            color: black !important;
+        }
+
+        .stylePriory2 {
+            background-color: #FFB7B7 !important;
+        }
+
+        .stylePriory3 {
+            background-color: #FFE3A9 !important;
+        }
+
+        .stylePriory4 {
+            background-color: #ffff !important;
+        }
+    </style>
+}
+
+@section Scripts
+    {
+    <script>
+
+        var StayDayLfemItems = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.StayDayLfemItems))');
+        var LotCount = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.LotCount))');
+
+    </script>
+    <script src="~/app/controllers/LfemMonitoring/LfemMonitoring_Finish_Chart.js"></script>
+    <script>
+
+        var _lfemMonitoring_Chart = new LfemMonitoring_Finish_Chart();
+        _lfemMonitoring_Chart.DrawChart();
+
+        $(function () {
+            $('#show-hidden-grid-wlp').click(function () {
+                $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+                $('.hidden-grid-wlp').slideToggle("slow");
+
+            });
+        })
+
+        function ShowLoad() {
+            hrms.run_waitMe($('#ctrFluid'));
+        }
+
+
+        function onCellPrepared(e) {
+
+            if (e.rowType === "data" && e.column.dataField == "StayDay" && !isNaN(e.data.StayDay)) {
+
+                if (Number(e.data.StayDay) > 0 && Number(e.rowIndex) <= 10) {
+
+                    e.cellElement.addClass("stylePriory1");
+                } else
+                    if (Number(e.data.StayDay) > 0 && Number(e.rowIndex) <= 20) {
+                        e.cellElement.addClass("stylePriory2");
+                    }
+                    else if (Number(e.data.StayDay) > 0) {
+                        e.cellElement.addClass("stylePriory3");
+                    }
+                    else {
+                        e.cellElement.addClass("stylePriory4");
+                    }
+            }
+        }
+    </script>
+}
+
+<div class="content container-fluid" id="ctrFluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">@ViewData["Title"]</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Lot Monitoring/공정별 정체재공(완제품)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="myHeader">
+        <form action="/OpeationMns/LfemMonitoring/SearchMonitoringFinishProcLfem" method="post" onsubmit="ShowLoad()">
+            <div class="row filter-row">
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                </div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                </div>
+
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <div class="form-group form-focus select-focus">
+                        <select id="cboOperation" class="select floating" name="operation">
+                            <!option value="" @(Model.OperationV == "" ? "selected" : "")>All</!option>
+                            @foreach (var op in Model.Operation)
+                            {
+                                <!option value="@op.Id" @(Model.OperationV + "" == op.Id ? "selected" : "")>@op.Name</!option>
+                            }
+                        </select>
+                        <label class="focus-label">Operation</label>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <div class="form-group form-focus select-focus">
+                        <select id="cboModel" class="select floating" name="model">
+                            <!option value="" @(Model.ModelV == "" ? "selected" : "")>All</!option>
+                            @foreach (var m in Model.Models)
+                            {
+                                <!option value="@m" @(Model.ModelV + "" == m ? "selected" : "")>@m</!option>
+                            }
+                        </select>
+                        <label class="focus-label">Model</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <div class="form-group form-focus select-focus">
+                        <select id="cboStayDay" class="select floating" name="stayday">
+                            <!option value="-1" @(Model.StayDayV == -1 ? "selected" : "")>All</!option>
+                            @foreach (var m in Model.StayDays)
+                            {
+                                <!option value="@m" @(Model.StayDayV == m ? "selected" : "")>@m</!option>
+                            }
+                        </select>
+                        <label class="focus-label">Stay Day</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <button id="btnSearch" type="submit" class="btn btn-success btn-block" style="margin-bottom: 5px;"> Search </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="row contentChart">
+        <div class="col-sm-12" id="show-hidden-grid-wlp">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item active" style="cursor: pointer;">
+                    <i class="fa fa-caret-right"></i> <strong>공정별 정체재공(완제품)</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row hidden-grid-wlp">
+        <div class="chartjs-wrapper-demo col-md-12" style="margin-left: 10px;">
+            <div class="containerChart">
+                <div class="stats-box mb-4">
+                    <p>LOT 수량</p>
+                    <h4>@Model.LotCount.ToString("#,#")</h4>
+                </div>
+                <div class="stats-box mb-4">
+                    <p>Chip 수량</p>
+                    <h4>@Model.ChipQTYSumStr</h4>
+                </div>
+                <div class="stats-box mb-4">
+                    <p>정체현황</p>
+                    <h4>@Model.StayDayAvg</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 d-flex">
+            @(Html.DevExtreme().DataGrid<StayDayLfemItem>()
+                .ID("grid-container")
+                .DataSource(Model.StayDayLfemItems1)
+                .Height(500)
+                .ShowBorders(true)
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .AllowColumnResizing(true)
+                .ColumnMinWidth(50)
+                .ColumnAutoWidth(true)
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .FilterRow(filterRow => filterRow
+                .Visible(true)
+                .ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .SearchPanel(searchPanel => searchPanel
+                .Visible(true)
+                .Width(240)
+                .Placeholder("Search...")
+                )
+                .HoverStateEnabled(true)
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.LotID);
+                    columns.AddFor(m => m.Size);
+                    columns.AddFor(m => m.Model);
+                    columns.AddFor(m => m.OperationName).Caption("Operation");
+                    columns.AddFor(m => m.Status);
+                    columns.AddFor(m => m.StayDay).Format(Format.FixedPoint);
+
+                }).OnCellPrepared("onCellPrepared").WordWrapEnabled(true).Summary(s => s.TotalItems(items =>
+                {
+                    items.AddFor(m => m.LotID).SummaryType(SummaryType.Count).ValueFormat(Format.FixedPoint).DisplayFormat("Count: {0}");
+
+                    items.AddFor(m => m.StayDay)
+                    .SummaryType(SummaryType.Sum)
+                    .ValueFormat(Format.FixedPoint)
+                    .DisplayFormat("Total: {0}");
+
+                })))
+        </div>
+
+        <div class="col-md-6 d-flex">
+            <div class="card flex-fill dash-statistics">
+                <div class="card-header">
+                    <div class="card-title mb-0">제품별 정체 재공현황</div>
+                </div>
+                <div class="card-body">
+                    <div class="chartjs-wrapper-demo">
+                        <canvas id="chartStayDayByModel" style="height:400px"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

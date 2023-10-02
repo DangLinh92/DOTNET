@@ -288,6 +288,10 @@ namespace CarMNS.Data.EF.Migrations
                     b.Property<DateTime?>("FromTimePlan")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("FromTimePlan1")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<string>("FromTimePlanActual")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
@@ -329,6 +333,10 @@ namespace CarMNS.Data.EF.Migrations
 
                     b.Property<DateTime?>("ToTimePlan")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("ToTimePlan2")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("ToTimePlanActual")
                         .HasColumnType("nvarchar(50)")
@@ -402,6 +410,10 @@ namespace CarMNS.Data.EF.Migrations
                     b.Property<DateTime?>("FromTimePlan")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("FromTimePlan1")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<string>("Lxe_BienSo")
                         .HasColumnType("nvarchar(500)")
                         .HasMaxLength(500);
@@ -450,6 +462,10 @@ namespace CarMNS.Data.EF.Migrations
 
                     b.Property<DateTime?>("ToTimePlan")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("ToTimePlan1")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("UserCreated")
                         .HasColumnType("nvarchar(50)")

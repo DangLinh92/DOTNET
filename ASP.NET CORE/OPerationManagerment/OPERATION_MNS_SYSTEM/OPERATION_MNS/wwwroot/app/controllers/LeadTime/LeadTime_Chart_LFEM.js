@@ -503,12 +503,15 @@
 
         let dic_wlp2day = new Object();
         var dataValue_runtime= [];
+        var dataValue_capa= [];
 
         for (pl of LFEM_RuntimeByOperation) {
             dataValue_runtime.push(pl.Value_runtime);
+            dataValue_capa.push(pl.Value_target);
         }
 
         dic_wlp2day['Run Time'] = dataValue_runtime;
+        dic_wlp2day['CAPA'] = dataValue_capa;
 
         let objDatasets_wlp2day = [];
         let v = 0;
@@ -520,15 +523,27 @@
                 borderColor: arrColor[v],
                 /* borderWidth: 0.5,*/
                 /*fill: true,*/
-                type: 'bar'
+                type: key == 'CAPA' ? 'line' : 'bar',
+                yAxisID: (key == 'CAPA') ? 'y1' : 'y'
             }
 
-            obj.datalabels =
-            {
-                anchor: 'center',
-                align: 'center',
-                color: '#ffff',
-                display: true
+            if (obj.label != 'CAPA') {
+                obj.datalabels =
+                {
+                    anchor: 'center',
+                    align: 'center',
+                    color: '#ffff',
+                    display: true
+                }
+            } else {
+                obj.datalabels =
+                {
+                    anchor: 'end',
+                    align: 'top',
+                    color: '#CB4335',
+                    display: true,
+                    Offset: 40
+                }
             }
 
             objDatasets_wlp2day.push(obj);
@@ -584,11 +599,140 @@
                         grid: {
                             display: false
                         }
+                    },
+                    y1: {
+                        stacked: false,
+                        position: 'right',
+                        ticks: {
+                            beginAtZero: true,
+                            fontSize: 11
+                        },
+                        grid: {
+                            display: false
+                        }
                     }
                 }
             }
         });
         arrLeadTimeChart.push(dayChart_wlp2);
+
+        // run time (day)
+        let ctx_lfem_day = document.getElementById('chartstacked_LFEM_Runtimeby_Day2').getContext('2d');
+
+        let dic_lfemday = new Object();
+        var dataValue_runtime2 = [];
+        var dataValue_capa2 = [];
+
+        for (pl of LFEM_RuntimeByOperation) {
+            dataValue_runtime2.push(Math.round(pl.Value_runtime / 24 * 100) / 100);
+            dataValue_capa2.push(pl.Value_target);
+        }
+
+        dic_lfemday['Run Time'] = dataValue_runtime2;
+        dic_lfemday['CAPA'] = dataValue_capa2;
+
+        let objDatasets_lfemday = [];
+        let v1 = 0;
+        for (let key in dic_lfemday) {
+            let obj = {
+                label: key,
+                data: dic_lfemday[key],
+                backgroundColor: arrColor[v1],
+                borderColor: arrColor[v1],
+                /* borderWidth: 0.5,*/
+                /*fill: true,*/
+                type: key == 'CAPA' ? 'line' : 'bar',
+                yAxisID: (key == 'CAPA') ? 'y1' : 'y'
+            }
+
+            if (obj.label != 'CAPA') {
+                obj.datalabels =
+                {
+                    anchor: 'center',
+                    align: 'center',
+                    color: '#ffff',
+                    display: true
+                }
+            } else {
+                obj.datalabels =
+                {
+                    anchor: 'end',
+                    align: 'top',
+                    color: '#CB4335',
+                    display: true,
+                    Offset: 40
+                }
+            }
+
+            objDatasets_lfemday.push(obj);
+            v1 += 1;
+        }
+
+        let dayChart_runtimeday = new Chart(ctx_lfem_day, {
+            type: 'bar',
+            data: {
+                labels: operationLabel1,
+                datasets: objDatasets_lfemday
+            },
+            plugins: [ChartDataLabels, legenMargin2],
+            options: {
+                /* indexAxis: 'y',*/
+                plugins: {
+                    // Change options for ALL labels of THIS CHART
+                    //datalabels: {
+                    //    anchor: 'start',
+                    //    align: 'top',
+                    //    color: '#ffff'
+                    //},
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        align: 'start'
+                    }
+                },
+                maintainAspectRatio: false,
+                //legend: {
+                //    display: true,
+                //    labels: {
+                //        display: true
+                //    }
+                //},
+                responsive: true,
+                scales: {
+                    x: {
+                        stacked: false,
+                        ticks: {
+                            fontSize: 11
+                        },
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        stacked: false,
+                        ticks: {
+                            beginAtZero: true,
+                            fontSize: 11
+                        },
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y1: {
+                        stacked: false,
+                        position: 'right',
+                        ticks: {
+                            beginAtZero: true,
+                            fontSize: 11
+                        },
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+        arrLeadTimeChart.push(dayChart_runtimeday);
 
 
         // Wait time theo operation
@@ -596,12 +740,15 @@
 
         let dic_waitime = new Object();
         var dataValue_waitime = [];
+        var dataValue_capa3 = [];
 
         for (pl of LFEM_WaitTimeByOperation) {
             dataValue_waitime.push(pl.Value_waittime);
+            dataValue_capa3.push(pl.Value_target);
         }
 
         dic_waitime['Wait Time'] = dataValue_waitime;
+        dic_waitime['CAPA'] = dataValue_capa3;
 
         let objDatasets_waitime = [];
         let vi = 0;
@@ -613,15 +760,27 @@
                 borderColor: arrColor[vi],
                 /* borderWidth: 0.5,*/
                 /*fill: true,*/
-                type: 'bar'
+                type: key == 'CAPA' ? 'line' : 'bar',
+                yAxisID: (key == 'CAPA') ? 'y1' : 'y'
             }
 
-            obj.datalabels =
-            {
-                anchor: 'center',
-                align: 'center',
-                color: '#ffff',
-                display: true
+            if (obj.label != 'CAPA') {
+                obj.datalabels =
+                {
+                    anchor: 'center',
+                    align: 'center',
+                    color: '#ffff',
+                    display: true
+                }
+            } else {
+                obj.datalabels =
+                {
+                    anchor: 'end',
+                    align: 'top',
+                    color: '#CB4335',
+                    display: true,
+                    Offset: 40
+                }
             }
 
             objDatasets_waitime.push(obj);
@@ -677,11 +836,140 @@
                         grid: {
                             display: false
                         }
+                    },
+                    y1: {
+                        stacked: false,
+                        position: 'right',
+                        ticks: {
+                            beginAtZero: true,
+                            fontSize: 11
+                        },
+                        grid: {
+                            display: false
+                        }
                     }
                 }
             }
         });
         arrLeadTimeChart.push(dayWaitime);
+
+        // waite time (day)
+        let ctx_waitime2 = document.getElementById('chartstacked_LFEM_Waittimeby_Day2').getContext('2d');
+
+        let dic_waitime2 = new Object();
+        var dataValue_waitime2 = [];
+        var dataValue_waitime4 = [];
+
+        for (pl of LFEM_WaitTimeByOperation) {
+            dataValue_waitime2.push(Math.round(pl.Value_waittime / 24 * 100) / 100);
+            dataValue_waitime4.push(pl.Value_target);
+        }
+
+        dic_waitime2['Wait Time'] = dataValue_waitime2;
+        dic_waitime2['CAPA'] = dataValue_waitime4;
+
+        let objDatasets_waitime2 = [];
+        let vi2 = 0;
+        for (let key in dic_waitime2) {
+            let obj = {
+                label: key,
+                data: dic_waitime2[key],
+                backgroundColor: arrColor[vi2],
+                borderColor: arrColor[vi2],
+                /* borderWidth: 0.5,*/
+                /*fill: true,*/
+                type: key == 'CAPA' ? 'line' : 'bar',
+                yAxisID: (key == 'CAPA') ? 'y1' : 'y'
+            }
+
+            if (obj.label != 'CAPA') {
+                obj.datalabels =
+                {
+                    anchor: 'center',
+                    align: 'center',
+                    color: '#ffff',
+                    display: true
+                }
+            } else {
+                obj.datalabels =
+                {
+                    anchor: 'end',
+                    align: 'top',
+                    color: '#CB4335',
+                    display: true,
+                    Offset: 40
+                }
+            }
+
+            objDatasets_waitime2.push(obj);
+            vi2 += 1;
+        }
+
+        let dayWaitime2 = new Chart(ctx_waitime2, {
+            type: 'bar',
+            data: {
+                labels: operationLabel2,
+                datasets: objDatasets_waitime2
+            },
+            plugins: [ChartDataLabels, legenMargin2],
+            options: {
+                /* indexAxis: 'y',*/
+                plugins: {
+                    // Change options for ALL labels of THIS CHART
+                    //datalabels: {
+                    //    anchor: 'start',
+                    //    align: 'top',
+                    //    color: '#ffff'
+                    //},
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        align: 'start'
+                    }
+                },
+                maintainAspectRatio: false,
+                //legend: {
+                //    display: true,
+                //    labels: {
+                //        display: true
+                //    }
+                //},
+                responsive: true,
+                scales: {
+                    x: {
+                        stacked: false,
+                        ticks: {
+                            fontSize: 11
+                        },
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        stacked: false,
+                        ticks: {
+                            beginAtZero: true,
+                            fontSize: 11
+                        },
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y1: {
+                        stacked: false,
+                        position: 'right',
+                        ticks: {
+                            beginAtZero: true,
+                            fontSize: 11
+                        },
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+        arrLeadTimeChart.push(dayWaitime2);
     }
 
 }

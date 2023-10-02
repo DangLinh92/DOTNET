@@ -113,6 +113,8 @@ namespace OPERATION_MNS
             services.AddTransient<ILFEMTicker, LFEMTicker>();
             services.AddTransient<IWLP2Ticker, WLP2Ticker>();
             services.AddTransient<ISMTDailyPlanService, SMTDailyPlanService>();
+            services.AddTransient<ISCPService, SCPService>();
+            services.AddTransient<IGOCModuleService, GOCModuleService>();
 
             services.AddSignalR(cfg =>cfg.EnableDetailedErrors = true);
 
@@ -154,6 +156,7 @@ namespace OPERATION_MNS
             });
 
             services.AddMinResponse();
+            services.AddHttpClient();
 
             // If using Kestrel:
             services.Configure<KestrelServerOptions>(options =>

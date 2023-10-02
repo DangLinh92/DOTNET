@@ -49,5 +49,7 @@ namespace OPERATION_MNS.Application.Interfaces
         StayLotListDisPlayViewModel GetStayLotListLFEM();
         StayLotList_Ex_ViewModel UpdateLotInfoLFEM(StayLotList_Ex_ViewModel model, StayLotListDisPlayViewModel stayLotList);
         List<STAY_LOT_LIST_HISTORY_LFEM> GetStayLotListHistoryLFEM(string material, string lotId, string timeFrom, string timeTo);
+
+        List<ViewWIpLfemData> GetInventoryCurrentSmt(string materialID);
     }
 }

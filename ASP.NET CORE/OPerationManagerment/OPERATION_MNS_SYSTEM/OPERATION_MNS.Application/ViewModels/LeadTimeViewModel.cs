@@ -25,6 +25,7 @@ namespace OPERATION_MNS.Application.ViewModels
 
         public string OperationID { get; set; }
         public double DisplayOrder { get; set; }
+        public double Capa { get; set; }
     }
 
     public class LeadTimeModel
@@ -56,10 +57,12 @@ namespace OPERATION_MNS.Application.ViewModels
             LFEM_LeadTimeByDay = new List<ChartDataItem>();
             LFEM_RuntimeByOperation = new List<ChartDataItem>();
             LFEM_WaitTimeByOperation = new List<ChartDataItem>();
+            LFEM_CapaOperation = new List<ChartDataItem>();
         }
 
         public string Year { get; set; }
         public string Month { get; set; }
+        public string MonthFrom { get; set; }
         public int Week { get; set; }
         public string Day { get; set; }
         public string Ox { get; set; }
@@ -75,6 +78,7 @@ namespace OPERATION_MNS.Application.ViewModels
 
         public List<ChartDataItem> WLP1_LeadTimeByDay;
         public List<ChartDataItem> WLP2_LeadTimeByDay;
+       
 
         public List<string> Weeks;
         public List<string> Weeks_Lable;
@@ -90,6 +94,7 @@ namespace OPERATION_MNS.Application.ViewModels
         public List<ChartDataItem> LFEM_LeadTimeByDay;
         public List<ChartDataItem> LFEM_RuntimeByOperation;
         public List<ChartDataItem> LFEM_WaitTimeByOperation;
+        public List<ChartDataItem> LFEM_CapaOperation;
 
         public List<string> GetWeeks()
         {

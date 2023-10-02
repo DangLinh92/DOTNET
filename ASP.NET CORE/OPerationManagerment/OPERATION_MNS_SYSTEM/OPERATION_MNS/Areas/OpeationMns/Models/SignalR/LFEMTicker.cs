@@ -19,6 +19,7 @@ using OPERATION_MNS.Utilities.Common;
 using OPERATION_MNS.Utilities.Constants;
 using OPERATION_MNS.Utilities.Dtos;
 using static DevExpress.Xpo.Helpers.AssociatedCollectionCriteriaHelper;
+using static Microsoft.AspNetCore.Razor.Language.TagHelperMetadata;
 
 namespace OPERATION_MNS.Areas.OpeationMns.Models.SignalR
 {
@@ -468,6 +469,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models.SignalR
         public IEnumerable<WARNING_LOT_RUNTIME_LFEM> GetRunTimeLfem()
         {
             List<WARNING_LOT_RUNTIME_LFEM> lstRuntime = new List<WARNING_LOT_RUNTIME_LFEM>();
+            List<WARNING_LOT_RUNTIME_LFEM> result = new List<WARNING_LOT_RUNTIME_LFEM>();
 
             Dictionary<string, string> dic = new Dictionary<string, string>();
             ResultDB resultDB = ExecProceduce2("GET_RUNTIME_LFEM_DATA", dic);
@@ -476,7 +478,11 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models.SignalR
             {
                 lstRuntime = DataTableToJson.ConvertDataTable<WARNING_LOT_RUNTIME_LFEM>(resultDB.ReturnDataSet.Tables[0]);
             }
-            return lstRuntime.OrderByDescending(x=> x.Date.Substring(0,10)).ThenByDescending(x => float.Parse(x.RunTime_m));
+
+            result.AddRange(lstRuntime.Where(x => decimal.Parse(x.RunTime_m) - x.STBMin >= 0));
+            result.AddRange(lstRuntime.Where(x => decimal.Parse(x.RunTime_m) - x.STBMin*80/100 >= 0 && decimal.Parse(x.RunTime_m) - x.STBMin < 0));
+            result.AddRange(lstRuntime.Where(x => decimal.Parse(x.RunTime_m) - x.STBMin*80/100 < 0));
+            return result;
         }
     }
 }

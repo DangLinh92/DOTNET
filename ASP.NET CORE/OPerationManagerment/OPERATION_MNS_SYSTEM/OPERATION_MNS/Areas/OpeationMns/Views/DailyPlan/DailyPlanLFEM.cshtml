@@ -537,6 +537,44 @@
             });
         }
 
+        // SMT
+        function onShowStayLotListSMTClick(e) {
+
+            const popup = $("#stayLot_popup").dxPopup("instance");
+            popup.option({
+                contentTemplate: $("#popup-template-smt")
+            });
+            popup.show();
+
+            console.log(e);
+            let _materialID = e.data.MesCode;
+
+            $.ajax({
+                url: '/OpeationMns/DailyPlan/GetInventorySmt',
+                type: 'POST',
+                data: {
+                    materialID: _materialID,
+                },
+                beforeSend: function () {
+                    hrms.run_waitMe($('#grid-container-detail-smt'));
+                },
+                success: function (response) {
+                    hrms.hide_waitMe($('#grid-container-detail-smt'));
+
+                    $("#grid-container-detail-smt").dxDataGrid({
+                        dataSource: response
+                    });
+                },
+                error: function (status) {
+                    hrms.notify(status.responseText, 'error', 'alert', function () { });
+                    hrms.hide_waitMe($('#grid-container-detail-smt'));
+                    $("#grid-container-detail-smt").dxDataGrid({
+                        dataSource: []
+                    });
+                }
+            });
+        }
+
         function BeforContextMenuPre(e) {
             if (!e.items) e.items = [];
 
@@ -750,6 +788,33 @@
                 }).Summary(s => s.TotalItems(totalItems =>
                 {
                     totalItems.Add().SummaryType(SummaryType.Count).Column("model").Name("model").DisplayFormat("Total: {0}").ValueFormat(Format.FixedPoint);
+
+                    totalItems.Add().SummaryType(SummaryType.Sum).Column("dam.qtyT0").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+                    totalItems.Add().SummaryType(SummaryType.Sum).Column("mold.qtyT0").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+                    totalItems.Add().SummaryType(SummaryType.Sum).Column("grinding.qtyT0").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+                    totalItems.Add().SummaryType(SummaryType.Sum).Column("marking.qtyT0").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+                    totalItems.Add().SummaryType(SummaryType.Sum).Column("dicing.qtyT0").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+                    totalItems.Add().SummaryType(SummaryType.Sum).Column("test.qtyT0").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+                    totalItems.Add().SummaryType(SummaryType.Sum).Column("visualInspection.qtyT0").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+                    totalItems.Add().SummaryType(SummaryType.Sum).Column("oqc.qtyT0").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+
+                    totalItems.Add().SummaryType(SummaryType.Sum).Column("dam.qtyT1").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+                    totalItems.Add().SummaryType(SummaryType.Sum).Column("mold.qtyT1").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+                    totalItems.Add().SummaryType(SummaryType.Sum).Column("grinding.qtyT1").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+                    totalItems.Add().SummaryType(SummaryType.Sum).Column("marking.qtyT1").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+                    totalItems.Add().SummaryType(SummaryType.Sum).Column("dicing.qtyT1").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+                    totalItems.Add().SummaryType(SummaryType.Sum).Column("test.qtyT1").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+                    totalItems.Add().SummaryType(SummaryType.Sum).Column("visualInspection.qtyT1").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+                    totalItems.Add().SummaryType(SummaryType.Sum).Column("oqc.qtyT1").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+
+                    totalItems.Add().SummaryType(SummaryType.Sum).Column("dam.qtyT2").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+                    totalItems.Add().SummaryType(SummaryType.Sum).Column("mold.qtyT2").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+                    totalItems.Add().SummaryType(SummaryType.Sum).Column("grinding.qtyT2").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+                    totalItems.Add().SummaryType(SummaryType.Sum).Column("marking.qtyT2").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+                    totalItems.Add().SummaryType(SummaryType.Sum).Column("dicing.qtyT2").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+                    totalItems.Add().SummaryType(SummaryType.Sum).Column("test.qtyT2").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+                    totalItems.Add().SummaryType(SummaryType.Sum).Column("visualInspection.qtyT2").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+                    totalItems.Add().SummaryType(SummaryType.Sum).Column("oqc.qtyT2").DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
                 })
                 ).OnContextMenuPreparing("BeforContextMenuPre"))
         </div>
@@ -897,9 +962,26 @@
                         c.AddFor(m => m.PlanToday_5).Caption(_next5).Format(Format.FixedPoint);
                     });
 
-                }).Summary(s => s.TotalItems(totalItems =>
+                }).OnCellDblClick("onShowStayLotListSMTClick").Summary(s => s.TotalItems(totalItems =>
                 {
                     totalItems.AddFor(x => x.Model).SummaryType(SummaryType.Count).DisplayFormat("Count: {0}").ValueFormat(Format.FixedPoint);
+                    totalItems.AddFor(x => x.Inventory).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+
+                    totalItems.AddFor(x => x.GocPlanToday).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+                    totalItems.AddFor(x => x.GocPlanToday_1).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+                    totalItems.AddFor(x => x.GocPlanToday_2).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+                    totalItems.AddFor(x => x.GocPlanToday_3).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+                    totalItems.AddFor(x => x.GocPlanToday_4).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+                    totalItems.AddFor(x => x.GocPlanToday_5).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+
+                    totalItems.AddFor(x => x.ActualToday).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+
+                    totalItems.AddFor(x => x.PlanToday).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+                    totalItems.AddFor(x => x.PlanToday_1).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+                    totalItems.AddFor(x => x.PlanToday_2).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+                    totalItems.AddFor(x => x.PlanToday_3).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+                    totalItems.AddFor(x => x.PlanToday_4).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
+                    totalItems.AddFor(x => x.PlanToday_5).SummaryType(SummaryType.Sum).DisplayFormat("{0}").ValueFormat(Format.FixedPoint);
                 })
                 ).OnContextMenuPreparing("BeforContextMenuPre"))
         </div>
@@ -912,7 +994,7 @@
                 .Height(720)
                 .Container(".container-fluid")
                 .ShowTitle(true)
-                .Title("Stay Lot List")
+                .Title("View WIP Lot List/ Stay Lot List")
                 .DragEnabled(false)
                 .HideOnParentScroll(true)
                 .ShowCloseButton(false)
@@ -995,6 +1077,59 @@
                     columns.AddFor(m => m.ChipQty).Format(Format.FixedPoint).AllowEditing(false);
                     columns.AddFor(m => m.Unit).AllowEditing(false);
                     columns.AddFor(m => m.StartFlag).AllowEditing(false);
+                    columns.AddFor(m => m.EquipmentName).AllowEditing(false);
+                    columns.AddFor(m => m.Worker).AllowEditing(false);
+
+                }).Summary(s => s.TotalItems(items =>
+                {
+                    items.AddFor(m => m.ChipQty).SummaryType(SummaryType.Sum).DisplayFormat("Sum: {0}").ValueFormat(Format.FixedPoint);
+                    items.AddFor(m => m.StayDay).SummaryType(SummaryType.Avg).DisplayFormat("Average: {0}").ValueFormat(Format.FixedPoint);
+                })).OnSaving("onSaving").OnRowPrepared("SetBackgroundColorPriory").OnContextMenuPreparing("BeforContextMenuPre"))
+        }
+
+        @using (Html.DevExtreme().NamedTemplate("popup-template-smt"))
+        {
+            @(Html.DevExtreme().DataGrid<ViewWIpLfemData>()
+                .ID("grid-container-detail-smt")
+                .KeyExpr("LotID")
+                .Height(580)
+                .ShowBorders(true)
+                .RepaintChangesOnly(true)
+                .HighlightChanges(true)
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .AllowColumnResizing(true)
+                .ColumnMinWidth(50)
+                .ColumnAutoWidth(true)
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(false)
+                .FilterRow(filterRow => filterRow
+                .Visible(true)
+                .ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .HoverStateEnabled(true)
+                .ColumnFixing(x => x.Enabled(true))
+                .SearchPanel(searchPanel => searchPanel
+                .Visible(true)
+                .Width(240)
+                .Placeholder("Search...")
+                )
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.LotID).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.Size).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.Material).Caption("Material").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.StayDay).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.OperationName).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.ProductOrder).AllowEditing(false);
+                    columns.AddFor(m => m.FAID).AllowEditing(false);
+                    columns.AddFor(m => m.AssyLotID).AllowEditing(false);
+                    columns.AddFor(m => m.Date).AllowEditing(false);
+                    columns.AddFor(m => m.ChipQty).Format(Format.FixedPoint).AllowEditing(false);
+                    columns.AddFor(m => m.Unit).AllowEditing(false);
                     columns.AddFor(m => m.EquipmentName).AllowEditing(false);
                     columns.AddFor(m => m.Worker).AllowEditing(false);
 

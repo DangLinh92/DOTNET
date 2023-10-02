@@ -77,12 +77,27 @@ namespace OPERATION_MNS.Data.EF
         public virtual DbSet<ACTUAL_PLAN_SAMPLE> ACTUAL_PLAN_SAMPLE { get; set; }
         public virtual DbSet<WARNING_LOT_RUN_LFEM> WARNING_LOT_RUN_LFEM { get; set; }
         public virtual DbSet<WARNING_LOT_RUNTIME_LFEM> WARNING_LOT_RUNTIME_LFEM { get; set; }
+        public virtual DbSet<CAPA_LFEM_DATA> CAPA_LFEM_DATA { get; set; }
 
         // SMT
         public virtual DbSet<GOC_PLAN_SMT> GOC_PLAN_SMT { get; set; }
         public virtual DbSet<OUT_PUT_BY_LOT_SMT> OUT_PUT_BY_LOT_SMT { get; set; }
         public virtual DbSet<DATE_OFF_LINE_SMT> DATE_OFF_LINE_SMT { get; set; }
         public virtual DbSet<LEAD_TIME_LFEM> LEAD_TIME_LFEM { get; set; }
+        public virtual DbSet<VIEW_WIP_LOT_LIST_LFEM> VIEW_WIP_LOT_LIST_LFEM { get; set; }
+
+        // GOC
+        public virtual DbSet<SALES_APPROVE_MANUFATURE> SALES_APPROVE_MANUFATURE { get; set; }
+        public virtual DbSet<OPERATION_STANDARD_INFO> OPERATION_STANDARD_INFO { get; set; }
+        public virtual DbSet<PRODUCT_MIX_CAPA> PRODUCT_MIX_CAPA { get; set; }
+        public virtual DbSet<SCP_PLAN_BOM> SCP_PLAN_BOM { get; set; }
+        public virtual DbSet<OPERATION_FLOW> OPERATION_FLOW { get; set; }
+        public virtual DbSet<SITE_CALENDAR> SITE_CALENDAR { get; set; }
+        public virtual DbSet<MATERIALS_PLAN> MATERIALS_PLAN { get; set; }
+        public virtual DbSet<PRODUCTION_PLAN> PRODUCTION_PLAN { get; set; }
+        public virtual DbSet<GOC_PRODUCTION_PLAN_LFEM> GOC_PRODUCTION_PLAN_LFEM { get; set; }
+        public virtual DbSet<GOC_PRODUCTION_PLAN_LFEM_UPDATE> GOC_PRODUCTION_PLAN_LFEM_UPDATE { get; set; }
+        public virtual DbSet<PLAN_RANGE_TIME> PLAN_RANGE_TIME { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -152,11 +167,26 @@ namespace OPERATION_MNS.Data.EF
             builder.AddConfiguration(new WarningLotRunLfemConfiguration());
             builder.AddConfiguration(new WarningLotRunTimeLfemConfiguration());
             builder.AddConfiguration(new LeadTimeLfemConfiguration());
+            builder.AddConfiguration(new VIEWWIPLotListLfemConfiguration());
+            builder.AddConfiguration(new CapaLfemConfiguration());
 
             // smt
             builder.AddConfiguration(new GocPlanSMTConfiguration());
             builder.AddConfiguration(new OutputByLotSMTConfiguration());
             builder.AddConfiguration(new DateOffLineSMTConfiguration());
+
+            // GOC
+            builder.AddConfiguration(new SaleApproveManufatureConfiguration());
+            builder.AddConfiguration(new OperationStandardConfiguration());
+            builder.AddConfiguration(new ProductMixCapaConfiguration());
+            builder.AddConfiguration(new SCPPLanBomConfiguration());
+            builder.AddConfiguration(new OperationFlowConfiguration());
+            builder.AddConfiguration(new SizeCalendarConfiguration());
+            builder.AddConfiguration(new MaterialPlanConfiguration());
+            builder.AddConfiguration(new ProductionPlanConfiguration());
+            builder.AddConfiguration(new GocProductionPlanLfemConfiguration());
+            builder.AddConfiguration(new GocProductionPlanUpdateLfemConfiguration());
+            builder.AddConfiguration(new PlanRangeTimeConfiguration());
         }
 
         public override int SaveChanges()

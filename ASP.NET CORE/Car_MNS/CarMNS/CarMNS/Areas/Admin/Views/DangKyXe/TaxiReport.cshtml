@@ -63,6 +63,12 @@
             e.cancel = true;
         }
 
+        function getDateBoxValueFromYear() {
+            let time = $("#begindate-date").dxDateBox("option", "text");
+            return time.substring(0, 4);
+        }
+
+
         function getDateBoxValueFrom() {
             return $("#begindate-date").dxDateBox("option", "text");
         }
@@ -83,6 +89,35 @@
             $("#gridContainer").dxDataGrid("refresh");
             //$("#gridContainer_bp").dxDataGrid("refresh");
             $('#gridContainer_bp').dxPivotGrid('instance').getDataSource().reload();
+            $('#gridContainer_bp_year').dxPivotGrid('instance').getDataSource().reload();
+        }
+
+        function formatNumber(number1) {
+
+            if (number1 === undefined || number1 == 0 || isNaN(number1)) {
+                return '&nbsp;';
+            }
+
+            let number = Number(number1);
+
+            let str = number.toString();
+
+            if (str.indexOf('.') > 0) {
+                let n1 = str.split('.')[1];
+                let n2 = str.split('.')[0];
+                if (Number('0.' + n1) >= 0.4) {
+
+                    if (Number(n2) >= 0)
+                        number = Number(n2) + 1;
+                    else
+                        number = Number(n2) - 1;
+                }
+                else {
+                    number = Number(n2);
+                }
+            }
+
+            return number.toLocaleString("en-US");
         }
 
     </script>
@@ -153,35 +188,122 @@
 
     </div>
     <div class="row">
-        <div class="col-md-12" style="margin-bottom:5px">
+        <div class="col-md-12" style="margin-bottom:20px">
+            <h5>Báo cáo số tiền, số lần bộ phận sử dụng theo khoảng thời gian</h5>
+            @(
+                Html.DevExtreme().PivotGrid<TongHopBoPhan>()
+                        .ID("gridContainer_bp")
+                        .AllowSortingBySummary(true)
+                        .AllowSorting(true)
+                        .AllowFiltering(true)
+                        .ShowBorders(true)
+                        .FieldChooser(fc => fc.Enabled(false))
+                        .DataSource(d => d
+                        .Store(s => s.Mvc().Controller("DangKyXe").LoadAction("ReportTaxiTotalByBoPhan")
+                        .LoadParams(new { fromTime = new JS("getDateBoxValueFrom"), toTime = new JS("getDateBoxValueTo"), bophan = new JS("getSelectBoxValue") }))
+                        .Fields(fields =>
+                        {
+                            fields.AddFor(m => m.RowTital)
+                            .Width(120)
+                            .Area(PivotGridArea.Row);
+
+                            fields.AddFor(m => m.BoPhan)
+                            .Area(PivotGridArea.Column);
+
+                            fields.AddFor(m => m.SoTien_SD)
+                            .Caption("Amount")
+                            .Area(PivotGridArea.Data)
+                            .SummaryType(SummaryType.Sum)
+                            .Format(Format.FixedPoint);
+                        })).ShowRowGrandTotals(false)
+            )
+        </div>
+        <div class="col-md-12" style="margin-bottom:20px">
+            <h5>Báo cáo số tiền bộ phận sử dụng theo tháng</h5>
             @(Html.DevExtreme().PivotGrid<TongHopBoPhan>()
-                .ID("gridContainer_bp")
+                .ID("gridContainer_bp_year")
                 .AllowSortingBySummary(true)
                 .AllowSorting(true)
                 .AllowFiltering(true)
                 .ShowBorders(true)
                 .FieldChooser(fc => fc.Enabled(false))
                 .DataSource(d => d
-                .Store(s => s.Mvc().Controller("DangKyXe").LoadAction("ReportTaxiTotalByBoPhan")
-                            .LoadParams(new { fromTime = new JS("getDateBoxValueFrom"), toTime = new JS("getDateBoxValueTo"), bophan = new JS("getSelectBoxValue") }))
+                .Store(s => s.Mvc().Controller("DangKyXe").LoadAction("ReportTaxiTotalByBoPhanInYear")
+                .LoadParams(new { year = new JS("getDateBoxValueFromYear") }))
                 .Fields(fields =>
                 {
                     fields.AddFor(m => m.RowTital)
                     .Width(120)
                     .Area(PivotGridArea.Row);
 
-                    fields.AddFor(m => m.BoPhan)
+                    fields.AddFor(m => m.ColumnTital)
                     .Area(PivotGridArea.Column);
 
-                   fields.AddFor(m => m.SoTien_SD)
+                    fields.AddFor(m => m.SoTien_SD)
                     .Caption("Amount")
                     .Area(PivotGridArea.Data)
                     .SummaryType(SummaryType.Sum)
                     .Format(Format.FixedPoint);
-                }))  
+                }))
                 )
         </div>
-        <div class="col-md-8">
+        <div class="col-md-12">
+            @(Html.DevExtreme().Chart()
+                .ID("chart")
+                .DataSource(d => d.WebApi().Controller("DangKyXe").LoadAction("DataReportTaxiTotalByBoPhanInYear").LoadParams(new { year = new JS("getDateBoxValueFromYear") }))
+                @*            .DataSource(d => d
+            .StaticJson()
+            .Url(Url.Action("DataReportTaxiTotalByBoPhanInYear", "DangKyXe", new { year = new JS("getDateBoxValueFromYear") }))
+            )*@
+                .CommonSeriesSettings(s => s
+                .ArgumentField("Month")
+                .Type(SeriesType.Bar)
+                )
+                .Series(s =>
+                {
+                    s.Add().ValueField("Account").Name("Account");
+                    s.Add().ValueField("CSP").Name("CSP");
+                    s.Add().ValueField("EHS").Name("EHS");
+                    s.Add().ValueField("GOC").Name("GOC");
+                    s.Add().ValueField("Guest").Name("Guest");
+                    s.Add().ValueField("HR").Name("Human Resources");
+                    s.Add().ValueField("Warehouse").Name("Warehouse");
+                    s.Add().ValueField("LFEM").Name("LFEM");
+                    s.Add().ValueField("PI").Name("PI");
+                    s.Add().ValueField("Purchase").Name("Purchase");
+                    s.Add().ValueField("QC").Name("QC");
+                    s.Add().ValueField("SMT").Name("SMT");
+                    s.Add().ValueField("Support").Name("Support");
+                    s.Add().ValueField("UTILITY").Name("Utility");
+                    s.Add().ValueField("WLP1").Name("WLP1");
+                    s.Add().ValueField("WLP2").Name("WLP2");
+                })
+                .Legend(l => l
+                .HorizontalAlignment(HorizontalAlignment.Right)
+                .Position(RelativePosition.Inside)
+                .Border(b => b.Visible(true))
+                .ColumnCount(4)
+                )
+                .Title("Monthly costs")
+                .Export(e => e.Enabled(true))
+                .Tooltip(t => t
+                .Enabled(true)
+                .CustomizeTooltip(@<text>
+                    function(arg) {
+                        console.log(arg);
+                    return {
+                    text: arg.seriesName+ " : " + formatNumber(arg.valueText)
+                    };
+                    }
+                </text>)
+                )
+                .Size(s => s.Height(500))
+                .LoadingIndicator(l => l.Enabled(true))
+                )
+
+        </div>
+        <div class="col-md-6">
+            <h5>Báo cáo số tiền nhân viên sử dụng theo thời gian</h5>
             @(Html.DevExtreme().DataGrid<NguoiDungTaxi>
                 ()
                 .ID("gridContainer")
@@ -233,6 +355,7 @@
                 }))
                 )
         </div>
+       
     </div>
 </div>
 

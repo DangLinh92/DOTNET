@@ -363,6 +363,18 @@ namespace OPERATION_MNS.Areas.OpeationMns.Controllers
             var data = _SMTDailyPlanService.GetDailyPlanSMT(date);
             return DataSourceLoader.Load(data, loadOptions);
         }
+
+        /// <summary>
+        /// Lấy tồn hiện tại SMT
+        /// </summary>
+        /// <param name="materialID"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult GetInventorySmt(string materialID)
+        {
+            var data = _stayLotListService.GetInventoryCurrentSmt(materialID);
+            return new OkObjectResult(data);
+        }
         #endregion
     }
 }

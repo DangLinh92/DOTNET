@@ -1,0 +1,185 @@
+﻿@using OPERATION_MNS.Data.EF.Extensions
+@model TotalOperation
+@{
+    ViewData["Title"] = "Lot Monitoring";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <style>
+        .stats-box {
+            width: 110px;
+            float: left;
+            margin-left: 5px;
+            text-align: center;
+            background-color: #004e89;
+            color: white !important;
+        }
+    </style>
+}
+
+@section Scripts
+    {
+    <script>
+
+        var StayDayLfemItems = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.StayDayLfemItems))');
+        var StayDayLfemItems1 = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.StayDayLfemItems1))');
+        var StayDayLfemItems2 = JSON.parse('@Html.Raw(JsonSerializer.Serialize(Model.StayDayLfemItems2))');
+    </script>
+    <script src="~/app/controllers/LfemMonitoring/LfemMonitoring_Chart.js"></script>
+    <script>
+
+        var _lfemMonitoring_Chart = new LfemMonitoring_Chart();
+        _lfemMonitoring_Chart.DrawChart();
+
+        $(function () {
+            $('#show-hidden-grid-wlp').click(function () {
+                $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+                $('.hidden-grid-wlp').slideToggle("slow");
+
+            });
+        })
+
+        function ShowLoad() {
+            hrms.run_waitMe($('#ctrFluid'));
+        }
+    </script>
+}
+
+<div class="content container-fluid" id="ctrFluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">@ViewData["Title"]</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Lot Monitoring/전체 재공현황</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="myHeader">
+        <form action="/OpeationMns/LfemMonitoring/SearchMonitoringLfem" method="post" onsubmit="ShowLoad()">
+            <div class="row filter-row">
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                </div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                </div>
+                
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <div class="form-group form-focus select-focus">
+                        <select id="cboOperation" class="select floating" name="operation">
+                            <!option value="" @(Model.OperationV == "" ? "selected" : "")>All</!option>
+                            @foreach (var op in Model.Operation)
+                            {
+                                <!option value="@op.Id" @(Model.OperationV + "" == op.Id ? "selected" : "")>@op.Name</!option>
+                            }
+                        </select>
+                        <label class="focus-label">Operation</label>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <div class="form-group form-focus select-focus">
+                        <select id="cboModel" class="select floating" name="model">
+                            <!option value="" @(Model.ModelV == "" ? "selected" : "")>All</!option>
+                            @foreach (var m in Model.Models)
+                            {
+                                <!option value="@m" @(Model.ModelV + "" == m ? "selected" : "")>@m</!option>
+                            }
+                        </select>
+                        <label class="focus-label">Model</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <div class="form-group form-focus select-focus">
+                        <select id="cboStayDay" class="select floating" name="stayday">
+                            <!option value="-1" @(Model.StayDayV == -1 ? "selected" : "")>All</!option>
+                            @foreach (var m in Model.StayDays)
+                            {
+                                <!option value="@m" @(Model.StayDayV == m ? "selected" : "")>@m</!option>
+                            }
+                        </select>
+                        <label class="focus-label">Stay Day</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-lg-6 col-xl-2">
+                    <button id="btnSearch" type="submit" class="btn btn-success btn-block" style="margin-bottom: 5px;"> Search </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+    <div class="row contentChart">
+        <div class="col-sm-12" id="show-hidden-grid-wlp">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item active" style="cursor: pointer;">
+                    <i class="fa fa-caret-right"></i> <strong>전체 재공현황</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row hidden-grid-wlp">
+        <div class="chartjs-wrapper-demo" style="margin-left: 10px;">
+            <div class="containerChart">
+                <div class="stats-box mb-4">
+                    <p>LOT 수량</p>
+                    <h4>@Model.LotCount.ToString("#,#")</h4>
+                </div>
+                <div class="stats-box mb-4">
+                    <p>Chip 수량</p>
+                    <h4>@Model.ChipQTYSumStr</h4>
+                </div>
+                <div class="stats-box mb-4">
+                    <p>정체현황</p>
+                    <h4>@Model.StayDayAvg</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12 d-flex">
+            <div class="card flex-fill dash-statistics">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">공정별 정체 재공현황</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chartjs-wrapper-demo">
+                        <canvas id="chartStayDayByOperation" style="height:250px"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 d-flex">
+            <div class="card flex-fill dash-statistics">
+                <div class="card-header">
+                    <div id="LFEM_LeadTimeByWeek" class="card-title mb-0">제품별 정체 재공현황</div>
+                </div>
+                <div class="card-body">
+                    <div class="chartjs-wrapper-demo">
+                        <canvas id="chartStayDayByModel" style="height:250px"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 d-flex">
+            <div class="card flex-fill dash-statistics">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Size 별 정체 재공현황</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chartjs-wrapper-demo">
+                        <canvas id="chartStayDayBySize" style="height:250px"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

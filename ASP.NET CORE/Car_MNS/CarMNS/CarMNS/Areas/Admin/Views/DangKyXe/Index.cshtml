@@ -459,9 +459,9 @@
                         groupItems.AddSimpleFor(m => m.DiaDiemDen_Xa);
                         groupItems.AddSimpleFor(m => m.BoPhan);
                         groupItems.AddSimpleFor(m => m.DiaDiemDen_Huyen);
-                        groupItems.AddSimpleFor(m => m.FromTimePlan);
+                        groupItems.AddSimpleFor(m => m.FromTimePlan1);
                         groupItems.AddSimpleFor(m => m.DiaDiemDen_Tinh);
-                        groupItems.AddSimpleFor(m => m.ToTimePlan);
+                        groupItems.AddSimpleFor(m => m.ToTimePlan2);
                         groupItems.AddSimpleFor(m => m.MucDichSuDung).ColSpan(2).Editor(editor => editor.TextArea().Height(100));
                     });
 
@@ -494,19 +494,26 @@
 
                     columns.Add().Caption(localizer["THOI_GIAN_DU_KIEN"].Value).Columns(c =>
                     {
-                        c.AddFor(m => m.FromTimePlan).EditorOptions(new
-                        {
-                            displayFormat = "shortTime",
-                            type = "time"
-                        }).DataType(GridColumnDataType.DateTime)
-                    .Format(Format.ShortTime).Caption(localizer["THOI_GIAN_DU_KIEN_FROM"].Value).AllowEditing(true).ValidationRules(x => x.AddRequired());
+                        c.AddFor(m => m.FromTimePlan1)
+                               .Caption(localizer["THOI_GIAN_DU_KIEN_FROM"].Value).AllowEditing(true)
+                               .Lookup(lookup => lookup
+                               .DataSource(d => d.Mvc().Controller("DangKyXe").LoadAction("GetTime").Key("Key"))
+                               .ValueExpr("Value")
+                               .DisplayExpr("Key")
+                    )
+                    .CalculateFilterExpression("calculateFilterExpression")
+                    .Width(120).ValidationRules(x => x.AddRequired());
 
-                        c.AddFor(m => m.ToTimePlan).EditorOptions(new
-                        {
-                            displayFormat = "shortTime",
-                            type = "time"
-                        }).DataType(GridColumnDataType.DateTime)
-                    .Format(Format.ShortTime).Caption(localizer["THOI_GIAN_DU_KIEN_TO"].Value).AllowEditing(true).ValidationRules(x => x.AddRequired());
+                        c.AddFor(m => m.ToTimePlan2)
+                               .Caption(localizer["THOI_GIAN_DU_KIEN_TO"].Value).AllowEditing(true)
+                               .Lookup(lookup => lookup
+                               .DataSource(d => d.Mvc().Controller("DangKyXe").LoadAction("GetTime").Key("Key"))
+                               .ValueExpr("Value")
+                               .DisplayExpr("Key")
+                    )
+                    .CalculateFilterExpression("calculateFilterExpression")
+                    .Width(120).ValidationRules(x => x.AddRequired());
+
                     });
 
                     columns.AddFor(m => m.ĐiaDiemXuatPhat).Caption(localizer["XUAT_PHAT"].Value).AllowEditing(true);

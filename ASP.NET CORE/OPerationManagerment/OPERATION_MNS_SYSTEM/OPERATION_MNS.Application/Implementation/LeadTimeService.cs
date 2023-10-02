@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace OPERATION_MNS.Application.Implementation
 {
@@ -23,12 +24,14 @@ namespace OPERATION_MNS.Application.Implementation
         private IRespository<SETTING_ITEMS, string> _SettingItemRepository;
         private IRespository<DATE_OFF_LINE, int> _DateOffRespository;
         private IRespository<DATE_OFF_LINE_LFEM, int> _DateOffLFEMRespository;
+        private IRespository<CAPA_LFEM_DATA, int> _CapaLfemRespository;
         private IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         public LeadTimeService(IRespository<INVENTORY_ACTUAL, int> InventoryActualRepository,
             IRespository<SETTING_ITEMS, string> SettingItemRepository,
             IRespository<DATE_OFF_LINE, int> DateOffRespository,
             IRespository<DATE_OFF_LINE_LFEM, int> DateOffLFEMRespository,
+            IRespository<CAPA_LFEM_DATA, int> CapaLfemRespository,
                               IUnitOfWork unitOfWork, IMapper mapper,
                               IHttpContextAccessor httpContextAccessor)
         {
@@ -39,6 +42,7 @@ namespace OPERATION_MNS.Application.Implementation
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
             _DateOffLFEMRespository = DateOffLFEMRespository;
+            _CapaLfemRespository = CapaLfemRespository;
         }
 
         public void Dispose()
@@ -153,7 +157,7 @@ namespace OPERATION_MNS.Application.Implementation
             if (year.NullString() != "")
             {
                 fromDate = year + "0101";
-                toDate = DateTime.Parse(year+"-01-01").AddYears(1).AddDays(-1).ToString("yyyyMMdd");
+                toDate = DateTime.Parse(year + "-01-01").AddYears(1).AddDays(-1).ToString("yyyyMMdd");
             }
 
             if (month.NullString() != "")
@@ -196,47 +200,49 @@ namespace OPERATION_MNS.Application.Implementation
                 DataTable data = resultDB.ReturnDataSet.Tables[0];
                 if (data.Rows.Count > 0)
                 {
-                    LeadTimeViewModel leadTime;
+                    List<CAPA_LFEM_DATA> CAPA = _CapaLfemRespository.FindAll().ToList();
+                    Parallel.ForEach(data.AsEnumerable(), row =>
+                   {
+                       LeadTimeViewModel leadTime = new LeadTimeViewModel();
+                       leadTime.WorkDate = row["WORK_DATE"].NullString().ToYYYY_MM_DD();
+                       leadTime.WorkMonth = row["WORK_MONTH"].NullString();
+                       leadTime.WorkYear = row["WORK_YEAR"].NullString();
+                       leadTime.WorkWeek = row["WORK_WEEK"].NullString();
+                       leadTime.Operation = row["OPERATION_SHORT_NAME"].NullString();
+                       leadTime.OperationID = row["OPERATION_ID"].NullString();
+                       leadTime.LeadTimeStartEnd = double.Parse(row["LEAD_TIME_START_END"].IfNullIsZero());
+                       leadTime.DisplayOrder = double.Parse(row["DISPLAY_ORDER"].IfNullIsZero());
 
-                    string beforeDate = "";
-                    foreach (DataRow row in data.Rows)
-                    {
-                        leadTime = new LeadTimeViewModel();
-                        leadTime.WorkDate = row["WORK_DATE"].NullString();
-                        leadTime.WorkMonth = row["WORK_MONTH"].NullString();
-                        leadTime.WorkYear = row["WORK_YEAR"].NullString();
-                        leadTime.WorkWeek = row["WORK_WEEK"].NullString();
-                        leadTime.Operation = row["OPERATION_SHORT_NAME"].NullString();
-                        leadTime.OperationID = row["OPERATION_ID"].NullString();
-                        leadTime.LeadTimeStartEnd = double.Parse(row["LEAD_TIME_START_END"].IfNullIsZero());
-                        leadTime.DisplayOrder = double.Parse(row["DISPLAY_ORDER"].IfNullIsZero());
+                       if (CAPA.Any(x => x.OperationID == leadTime.OperationID))
+                           leadTime.Capa = Math.Round(CAPA.FirstOrDefault(x => x.OperationID == leadTime.OperationID).Qty / 1000000, 1);
+                       else leadTime.Capa = 0;
 
-                        // khong có kế hoach thì bỏ qua
-                        if (lstDateOff.FindAll(x => x.ItemValue.NullString() == row["WORK_DATE"].NullString() && x.DanhMuc == "KHSX").ToList().Count > 0)
-                        {
-                            leadTime.WaitTime = 0;
-                            leadTime.RunTime = 0;
-                            leadTime.LeadTime = 0;
+                       // khong có kế hoach thì bỏ qua
+                       if (lstDateOff.FindAll(x => x.ItemValue.NullString() == row["WORK_DATE"].NullString().ToYYYY_MM_DD() && x.DanhMuc == "KHSX").ToList().Count > 0)
+                       {
+                           leadTime.WaitTime = 0;
+                           leadTime.RunTime = 0;
+                           leadTime.LeadTime = 0;
+                       }
+                       else
+                       {
+                           string beforeDate = "";
+                           leadTime.WaitTime = double.Parse(row["WAIT_TIME"].IfNullIsZero());
+                           leadTime.RunTime = double.Parse(row["RUN_TIME"].IfNullIsZero());
 
-                            continue;
-                        }
-                        else
-                        {
-                            leadTime.WaitTime = double.Parse(row["WAIT_TIME"].IfNullIsZero());
-                            leadTime.RunTime = double.Parse(row["RUN_TIME"].IfNullIsZero());
-                        }
+                           beforeDate = DateTime.Parse(leadTime.WorkDate).AddDays(-1).ToString("yyyy-MM-dd");
 
-                        beforeDate = DateTime.Parse(leadTime.WorkDate).AddDays(-1).ToString("yyyy-MM-dd");
+                           // set giá trị X cho ngày sau ngày k có kế hoạch 
+                           if (lstDateOff.FindAll(x => x.ItemValue.NullString() == leadTime.WorkDate && x.DanhMuc == "KHSX").ToList().Count == 0 &&
+                               lstDateOff.FindAll(x => x.ItemValue.NullString() == beforeDate && x.DanhMuc == "KHSX").ToList().Count > 0)
+                           {
+                               leadTime.Ox = "X";
+                           }
 
-                        // set giá trị X cho ngày sau ngày k có kế hoạch 
-                        if (lstDateOff.FindAll(x => x.ItemValue.NullString() == leadTime.WorkDate && x.DanhMuc == "KHSX").ToList().Count == 0 &&
-                            lstDateOff.FindAll(x => x.ItemValue.NullString() == beforeDate && x.DanhMuc == "KHSX").ToList().Count > 0)
-                        {
-                            leadTime.Ox = "X";
-                        }
+                           result.Add(leadTime);
+                       }
 
-                        result.Add(leadTime);
-                    }
+                   });
                 }
             }
 

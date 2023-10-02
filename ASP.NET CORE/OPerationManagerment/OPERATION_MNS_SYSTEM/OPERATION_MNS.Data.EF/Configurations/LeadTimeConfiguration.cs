@@ -24,4 +24,13 @@ namespace OPERATION_MNS.Data.EF.Configurations
             entity.Property(x => x.Id).ValueGeneratedOnAdd();
         }
     }
+
+    public class VIEWWIPLotListLfemConfiguration : DbEntityConfiguration<VIEW_WIP_LOT_LIST_LFEM>
+    {
+        public override void Configure(EntityTypeBuilder<VIEW_WIP_LOT_LIST_LFEM> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
 }

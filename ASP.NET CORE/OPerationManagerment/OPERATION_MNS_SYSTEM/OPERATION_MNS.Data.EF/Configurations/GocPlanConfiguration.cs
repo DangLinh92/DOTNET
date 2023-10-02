@@ -25,6 +25,33 @@ namespace OPERATION_MNS.Data.EF.Configurations
         }
     }
 
+    public class GocProductionPlanLfemConfiguration : DbEntityConfiguration<GOC_PRODUCTION_PLAN_LFEM>
+    {
+        public override void Configure(EntityTypeBuilder<GOC_PRODUCTION_PLAN_LFEM> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
+
+    public class GocProductionPlanUpdateLfemConfiguration : DbEntityConfiguration<GOC_PRODUCTION_PLAN_LFEM_UPDATE>
+    {
+        public override void Configure(EntityTypeBuilder<GOC_PRODUCTION_PLAN_LFEM_UPDATE> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
+
+    public class PlanRangeTimeConfiguration : DbEntityConfiguration<PLAN_RANGE_TIME>
+    {
+        public override void Configure(EntityTypeBuilder<PLAN_RANGE_TIME> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
+
     public class FABPLANConfiguration : DbEntityConfiguration<FAB_PLAN>
     {
         public override void Configure(EntityTypeBuilder<FAB_PLAN> entity)

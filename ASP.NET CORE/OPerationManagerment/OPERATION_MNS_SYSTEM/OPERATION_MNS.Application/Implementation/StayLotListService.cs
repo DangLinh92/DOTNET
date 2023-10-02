@@ -773,9 +773,9 @@ namespace OPERATION_MNS.Application.Implementation
 
                         if (resultStay.ReturnInt == 0)
                         {
-                             stayLot = resultStay.ReturnDataSet.Tables[0];
-                            if(stayLot.Rows.Count > 0)
-                            stayVm.StayDay = float.Parse(stayLot.Rows[0][0].IfNullIsZero());
+                            stayLot = resultStay.ReturnDataSet.Tables[0];
+                            if (stayLot.Rows.Count > 0)
+                                stayVm.StayDay = float.Parse(stayLot.Rows[0][0].IfNullIsZero());
                         }
 
                         rs.Add(stayVm);
@@ -1030,5 +1030,20 @@ namespace OPERATION_MNS.Application.Implementation
             return rs;
         }
         #endregion
+
+        public List<ViewWIpLfemData> GetInventoryCurrentSmt(string materialID)
+        {
+            List<ViewWIpLfemData> rs = new List<ViewWIpLfemData>();
+
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic.Add("A_MATERIAL", materialID);
+            ResultDB resultDB = _StayLotListRepository.ExecProceduce2("GET_CURENT_INVENTORY_SMT", dic);
+            if (resultDB.ReturnInt == 0)
+            {
+                rs = DataTableToJson.ConvertDataTable<ViewWIpLfemData>(resultDB.ReturnDataSet.Tables[0]);
+            }
+
+            return rs;
+        }
     }
 }

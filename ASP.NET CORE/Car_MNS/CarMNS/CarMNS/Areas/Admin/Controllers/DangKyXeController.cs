@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -185,7 +186,7 @@ namespace CarMNS.Areas.Admin.Controllers
                 lst = lst.Where(x => x.BoPhan == bophan).ToList();
             }
 
-            return DataSourceLoader.Load(lst.OrderByDescending(x=>x.NgaySuDung), loadOptions);
+            return DataSourceLoader.Load(lst.OrderByDescending(x => x.NgaySuDung), loadOptions);
         }
 
         public IActionResult TaxiReport()
@@ -212,8 +213,8 @@ namespace CarMNS.Areas.Admin.Controllers
             {
                 if (lstTotal.Any(x => x.BoPhan == item.BoPhan))
                 {
-                    totalBP_Sotien = lstTotal.FirstOrDefault(x => x.RowTital == "금액");
-                    totalBP_SoNgay = lstTotal.FirstOrDefault(x => x.RowTital == "횟수");
+                    totalBP_Sotien = lstTotal.FirstOrDefault(x => x.RowTital == "금액" && x.BoPhan == item.BoPhan);
+                    totalBP_SoNgay = lstTotal.FirstOrDefault(x => x.RowTital == "횟수" && x.BoPhan == item.BoPhan);
                 }
                 else
                 {
@@ -221,12 +222,14 @@ namespace CarMNS.Areas.Admin.Controllers
                     {
                         RowTital = "금액",
                         BoPhan = item.BoPhan,
+                        SoTien_SD = 0
                     };
 
                     totalBP_SoNgay = new TongHopBoPhan()
                     {
                         RowTital = "횟수",
                         BoPhan = item.BoPhan,
+                        SoTien_SD = 0
                     };
                 }
 
@@ -241,6 +244,180 @@ namespace CarMNS.Areas.Admin.Controllers
             }
 
             return DataSourceLoader.Load(lstTotal, loadOptions);
+        }
+
+        [HttpGet]
+        public object ReportTaxiTotalByBoPhanInYear(DataSourceLoadOptions loadOptions, string year)
+        {
+            string fromTime = year + "-01-01";
+            string toTime = DateTime.Parse(fromTime).AddYears(1).AddDays(-1).ToString("yyyy-MM-dd");
+            var lst = _DangKyXeService.GetReportTaxiInYear(fromTime, toTime);
+
+            List<TongHopBoPhan> lstTotal = new List<TongHopBoPhan>();
+            TongHopBoPhan totalBP_Sotien;
+            foreach (var item in lst)
+            {
+                if (lstTotal.Any(x => x.BoPhan == item.BoPhan && x.Month == item.ThangSuDung.Substring(5, 2)))
+                {
+                    totalBP_Sotien = lstTotal.FirstOrDefault(x => x.BoPhan == item.BoPhan && x.Month == item.ThangSuDung.Substring(5, 2));
+                }
+                else
+                {
+                    totalBP_Sotien = new TongHopBoPhan()
+                    {
+                        Month = item.ThangSuDung.Substring(5, 2), // yyyy-MM
+                        RowTital = item.BoPhan,
+                        ColumnTital = item.ThangSuDung.Substring(5, 2),
+                        BoPhan = item.BoPhan,
+                        SoTien_SD = 0
+                    };
+                }
+
+                totalBP_Sotien.SoTien_SD += item.SoTien;
+
+                if (!lstTotal.Any(x => x.BoPhan == item.BoPhan && x.Month == item.ThangSuDung.Substring(5, 2)))
+                {
+                    lstTotal.Add(totalBP_Sotien);
+                }
+            }
+
+            return DataSourceLoader.Load(lstTotal.OrderByDescending(x=>x.SoTien_SD), loadOptions);
+        }
+
+        public object DataReportTaxiTotalByBoPhanInYear(string year)
+        {
+            string fromTime = year + "-01-01";
+            string toTime = DateTime.Parse(fromTime).AddYears(1).AddDays(-1).ToString("yyyy-MM-dd");
+            var lst = _DangKyXeService.GetReportTaxiInYear(fromTime, toTime);
+
+            List<TongHopBoPhan> lstTotal = new List<TongHopBoPhan>();
+            TongHopBoPhan totalBP_Sotien;
+            foreach (var item in lst)
+            {
+                if (lstTotal.Any(x => x.BoPhan == item.BoPhan && x.Month == item.ThangSuDung.Substring(5, 2)))
+                {
+                    totalBP_Sotien = lstTotal.FirstOrDefault(x => x.BoPhan == item.BoPhan && x.Month == item.ThangSuDung.Substring(5, 2));
+                }
+                else
+                {
+                    totalBP_Sotien = new TongHopBoPhan()
+                    {
+                        Month = item.ThangSuDung.Substring(5, 2), // yyyy-MM
+                        RowTital = item.BoPhan,
+                        ColumnTital = item.ThangSuDung.Substring(5, 2),
+                        BoPhan = item.BoPhan,
+                        SoTien_SD = 0
+                    };
+                }
+
+                totalBP_Sotien.SoTien_SD += item.SoTien;
+
+                if (!lstTotal.Any(x => x.BoPhan == item.BoPhan && x.Month == item.ThangSuDung.Substring(5, 2)))
+                {
+                    lstTotal.Add(totalBP_Sotien);
+                }
+            }
+
+            List<ChartReportTaxiItem> chartData = new List<ChartReportTaxiItem>();
+            ChartReportTaxiItem chartItem;
+            foreach (var item in lstTotal)
+            {
+                if (chartData.Any(x => x.Month == item.Month))
+                {
+                    chartItem = chartData.FirstOrDefault(x => x.Month == item.Month);
+                }
+                else
+                {
+                    chartItem = new ChartReportTaxiItem()
+                    {
+                        Month = item.Month
+                    };
+
+                    chartData.Add(chartItem);
+                }
+
+                if (item.BoPhan == "Account")
+                {
+                    chartItem.Account = Math.Round(item.SoTien_SD,0);
+                }
+
+                if (item.BoPhan == "CSP")
+                {
+                    chartItem.CSP = Math.Round(item.SoTien_SD, 0);
+                }
+
+                if (item.BoPhan == "EHS")
+                {
+                    chartItem.EHS = Math.Round(item.SoTien_SD, 0);
+                }
+
+                if (item.BoPhan == "GOC")
+                {
+                    chartItem.GOC = Math.Round(item.SoTien_SD, 0);
+                }
+
+                if (item.BoPhan == "GUEST")
+                {
+                    chartItem.Guest = Math.Round(item.SoTien_SD, 0);
+                }
+
+                if (item.BoPhan == "HR")
+                {
+                    chartItem.HR = Math.Round(item.SoTien_SD, 0);
+                }
+
+                if (item.BoPhan == "KHO")
+                {
+                    chartItem.Warehouse = Math.Round(item.SoTien_SD, 0);
+                }
+
+                if (item.BoPhan == "LFEM")
+                {
+                    chartItem.LFEM = Math.Round(item.SoTien_SD, 0);
+                }
+
+                if (item.BoPhan == "PI")
+                {
+                    chartItem.PI = Math.Round(item.SoTien_SD, 0);
+                }
+
+                if (item.BoPhan == "Purchase")
+                {
+                    chartItem.Purchase = Math.Round(item.SoTien_SD, 0);
+                }
+
+                if (item.BoPhan == "QC")
+                {
+                    chartItem.QC = Math.Round(item.SoTien_SD, 0);
+                }
+
+                if (item.BoPhan == "SMT")
+                {
+                    chartItem.SMT = Math.Round(item.SoTien_SD, 0);
+                }
+
+                if (item.BoPhan == "SP")
+                {
+                    chartItem.Support = Math.Round(item.SoTien_SD, 0);
+                }
+
+                if (item.BoPhan == "UTILITY")
+                {
+                    chartItem.UTILITY = Math.Round(item.SoTien_SD, 0);
+                }
+
+                if (item.BoPhan == "WLP1")
+                {
+                    chartItem.WLP1 = Math.Round(item.SoTien_SD, 0);
+                }
+
+                if (item.BoPhan == "WLP2")
+                {
+                    chartItem.WLP2 = Math.Round(item.SoTien_SD, 0);
+                }
+            }
+
+            return chartData.OrderBy(x => x.Month).ToList();
         }
         #endregion
 
@@ -509,12 +686,19 @@ namespace CarMNS.Areas.Admin.Controllers
                 lst = lst.Where(x => x.BoPhan == bophan).ToList();
             }
 
-            return DataSourceLoader.Load(lst.OrderByDescending(x=>x.NgaySuDung), loadOptions);
+            return DataSourceLoader.Load(lst.OrderByDescending(x => x.NgaySuDung), loadOptions);
         }
 
         public IActionResult ViepMap()
         {
             return View();
+        }
+
+        [HttpGet]
+        public object GetTime(DataSourceLoadOptions loadOptions)
+        {
+            var times = _DangKyXeService.GetListTime();
+            return DataSourceLoader.Load(times, loadOptions);
         }
     }
 }

@@ -60,5 +60,6 @@ namespace OPERATION_MNS.Utilities.Constants
         public const string Month = "Month";
         public const string Week = "Week";
         public const string Day = "Day";
+        public static string AUTHTOKEN = "";
     }
 }

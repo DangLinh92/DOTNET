@@ -90,16 +90,6 @@ namespace CarMNS.Application.Implementation
 
                 dangky.NguoiDangKy = ((EFUnitOfWork)_unitOfWork).DBContext().AppUsers.ToList().FirstOrDefault(x => x.UserName == GetUserId()).FullName;
 
-                if (DateTime.TryParse(dangky.NgaySuDung.Value.ToString("yyyy-MM-dd") + " " + dangky.FromTimePlan.Value.ToString("HH:mm:ss"), out _))
-                {
-                    dangky.FromTimePlan = DateTime.Parse(dangky.NgaySuDung.Value.ToString("yyyy-MM-dd") + " " + dangky.FromTimePlan.Value.ToString("HH:mm:ss"));
-                }
-
-                if (DateTime.TryParse(dangky.NgaySuDung.Value.ToString("yyyy-MM-dd") + " " + dangky.ToTimePlan.Value.ToString("HH:mm:ss"), out _))
-                {
-                    dangky.ToTimePlan = DateTime.Parse(dangky.NgaySuDung.Value.ToString("yyyy-MM-dd") + " " + dangky.ToTimePlan.Value.ToString("HH:mm:ss"));
-                }
-
                 _DangKyXeRepository.Add(dangky);
                 Save();
                 return dangky;
@@ -168,7 +158,7 @@ namespace CarMNS.Application.Implementation
 
             if (role == CommonConstants.ROLE_DANGKY)
             {
-                lst = lst.FindAll(x => x.BoPhan == bophan).Where(x => x.XacNhanLV2 == false || (x.XacNhanLV2 == true && x.DateModified.CompareTo(DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd HH:mm:ss")) >= 0)).OrderByDescending(x => x.NgaySuDung).ToList();
+                lst = lst.FindAll(x => x.BoPhan == bophan || x.UserCreated == userId || x.UserModified == userId).Where(x => x.XacNhanLV2 == false || (x.XacNhanLV2 == true && x.DateModified.CompareTo(DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd HH:mm:ss")) >= 0)).OrderByDescending(x => x.NgaySuDung).ToList();
             }
             else if (role == CommonConstants.ROLE_GROUP_LD)
             {
@@ -334,16 +324,6 @@ namespace CarMNS.Application.Implementation
 
         public DANG_KY_XE UpdateDangKyXe(DANG_KY_XE dangky)
         {
-            if (DateTime.TryParse(dangky.NgaySuDung.Value.ToString("yyyy-MM-dd") + " " + dangky.FromTimePlan.Value.ToString("HH:mm:ss"), out _))
-            {
-                dangky.FromTimePlan = DateTime.Parse(dangky.NgaySuDung.Value.ToString("yyyy-MM-dd") + " " + dangky.FromTimePlan.Value.ToString("HH:mm:ss"));
-            }
-
-            if (DateTime.TryParse(dangky.NgaySuDung.Value.ToString("yyyy-MM-dd") + " " + dangky.ToTimePlan.Value.ToString("HH:mm:ss"), out _))
-            {
-                dangky.ToTimePlan = DateTime.Parse(dangky.NgaySuDung.Value.ToString("yyyy-MM-dd") + " " + dangky.ToTimePlan.Value.ToString("HH:mm:ss"));
-            }
-
             _DangKyXeRepository.Update(dangky);
             Save();
             return dangky;
@@ -671,7 +651,7 @@ namespace CarMNS.Application.Implementation
 
             if (role == CommonConstants.ROLE_DANGKY)
             {
-                lst = lst.FindAll(x => x.BoPhan == bophan).Where(x => x.XacNhanLV2 == false || (x.XacNhanLV2 == true && x.DateModified.CompareTo(DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd HH:mm:ss")) >= 0)).OrderByDescending(x => x.NgaySuDung).ToList();
+                lst = lst.FindAll(x => x.BoPhan == bophan || x.UserCreated == userId || x.UserModified == userId).Where(x => x.XacNhanLV2 == false || (x.XacNhanLV2 == true && x.DateModified.CompareTo(DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd HH:mm:ss")) >= 0)).OrderByDescending(x => x.NgaySuDung).ToList();
             }
             else
             if (role == CommonConstants.ROLE_GROUP_LD)
@@ -744,16 +724,6 @@ namespace CarMNS.Application.Implementation
 
                 dangky.NguoiDangKy = ((EFUnitOfWork)_unitOfWork).DBContext().AppUsers.ToList().FirstOrDefault(x => x.UserName == GetUserId()).FullName;
 
-                if (DateTime.TryParse(dangky.NgaySuDung.Value.ToString("yyyy-MM-dd") + " " + dangky.FromTimePlan.Value.ToString("HH:mm:ss"), out _))
-                {
-                    dangky.FromTimePlan = DateTime.Parse(dangky.NgaySuDung.Value.ToString("yyyy-MM-dd") + " " + dangky.FromTimePlan.Value.ToString("HH:mm:ss"));
-                }
-
-                if (DateTime.TryParse(dangky.NgaySuDung.Value.ToString("yyyy-MM-dd") + " " + dangky.ToTimePlan.Value.ToString("HH:mm:ss"), out _))
-                {
-                    dangky.ToTimePlan = DateTime.Parse(dangky.NgaySuDung.Value.ToString("yyyy-MM-dd") + " " + dangky.ToTimePlan.Value.ToString("HH:mm:ss"));
-                }
-
                 _TaxiRepository.Add(dangky);
                 Save();
                 return dangky;
@@ -771,16 +741,6 @@ namespace CarMNS.Application.Implementation
 
         public DANG_KY_XE_TAXI UpdateDangKyXeTaxi(DANG_KY_XE_TAXI dangky)
         {
-            if (DateTime.TryParse(dangky.NgaySuDung.Value.ToString("yyyy-MM-dd") + " " + dangky.FromTimePlan.Value.ToString("HH:mm:ss"), out _))
-            {
-                dangky.FromTimePlan = DateTime.Parse(dangky.NgaySuDung.Value.ToString("yyyy-MM-dd") + " " + dangky.FromTimePlan.Value.ToString("HH:mm:ss"));
-            }
-
-            if (DateTime.TryParse(dangky.NgaySuDung.Value.ToString("yyyy-MM-dd") + " " + dangky.ToTimePlan.Value.ToString("HH:mm:ss"), out _))
-            {
-                dangky.ToTimePlan = DateTime.Parse(dangky.NgaySuDung.Value.ToString("yyyy-MM-dd") + " " + dangky.ToTimePlan.Value.ToString("HH:mm:ss"));
-            }
-
             _TaxiRepository.Update(dangky);
             Save();
             return dangky;
@@ -948,6 +908,8 @@ namespace CarMNS.Application.Implementation
                 else
                 {
                     nguoiDungTaxi = new NguoiDungTaxi();
+                    nguoiDungTaxi.SoLanSuDung = 0;
+                    nguoiDungTaxi.SoTien = 0;
                 }
 
                 nguoiDungTaxi.MaNV = us.MaNV;
@@ -972,5 +934,95 @@ namespace CarMNS.Application.Implementation
             return lstNguoiDungTaxi;
         }
         #endregion
+
+        public List<NguoiDungTaxi> GetReportTaxiInYear(string fromDate, string toDate)
+        {
+            List<DANG_KY_XE_TAXI> lstTaxi = new List<DANG_KY_XE_TAXI>();
+
+          var  lstTaxiAll = _TaxiRepository.FindAll(x => x.XacNhanLV1 == true).ToList();
+
+            if (fromDate.NullString() != "" && toDate.NullString() != "")
+            {
+                foreach (var item in lstTaxiAll.ToList())
+                {
+                    if (item.NgaySuDung.Value.ToString("yyyy-MM-dd").CompareTo(fromDate) >= 0 && item.NgaySuDung.Value.ToString("yyyy-MM-dd").CompareTo(toDate) <= 0)
+                    {
+                        lstTaxi.Add(item);
+                    }
+                }
+            }
+
+            NguoiDungTaxi bpDungTaxi = new NguoiDungTaxi();
+            List<NguoiDungTaxi> lstbpDungTaxi = new List<NguoiDungTaxi>();
+            foreach (var us in lstTaxi.ToList())
+            {
+                if (lstbpDungTaxi.Any(x => x.BoPhan == us.BoPhan && x.ThangSuDung.Substring(0,7) == us.NgaySuDung.Value.ToString("yyyy-MM")))
+                {
+                    bpDungTaxi = lstbpDungTaxi.FirstOrDefault( x=> x.BoPhan == us.BoPhan && x.ThangSuDung.Substring(0, 7) == us.NgaySuDung.Value.ToString("yyyy-MM"));
+                }
+                else
+                {
+                    bpDungTaxi = new NguoiDungTaxi();
+                    bpDungTaxi.SoTien = 0;
+                    bpDungTaxi.ThangSuDung = us.NgaySuDung.Value.ToString("yyyy-MM");
+                }
+                bpDungTaxi.BoPhan = us.BoPhan;
+
+                if (us.SoNguoiSuDung > 0)
+                    bpDungTaxi.SoTien += (double)((us.SoTien == null ? 0 : us.SoTien) / us.SoNguoiSuDung);
+                else
+                {
+                    bpDungTaxi.SoTien += (double)(us.SoTien == null ? 0 : us.SoTien);
+                }
+
+                if (!lstbpDungTaxi.Any(x => x.BoPhan == us.BoPhan && x.ThangSuDung.Substring(0, 7) == us.NgaySuDung.Value.ToString("yyyy-MM")))
+                {
+                    lstbpDungTaxi.Add(bpDungTaxi);
+                }
+            }
+
+            return lstbpDungTaxi;
+        }
+        public List<ItemValue> GetListTime()
+        {
+            List<ItemValue> lst = new List<ItemValue>();
+            string mm = "00";
+            string mm30 = "30";
+
+            string time = "";
+            string time30 = "";
+
+            ItemValue item;
+            ItemValue item30;
+            for (int i = 0; i <= 23; i++)
+            {
+                time = "";
+                time30 = "";
+
+                if (i <= 9)
+                {
+                    time = ("0" + i) + ":" + mm;
+                    time30 = ("0" + i) + ":" + mm30;
+
+                    item = new ItemValue(time, time + ":00");
+                    item30 = new ItemValue(time30, time30 + ":00");
+                    lst.Add(item);
+                    lst.Add(item30);
+                }
+                else
+                {
+                    time = i + ":" + mm;
+                    time30 = i + ":" + mm30;
+
+                    item = new ItemValue(time, time + ":00");
+                    item30 = new ItemValue(time30, time30 + ":00");
+                    lst.Add(item);
+                    lst.Add(item30);
+                }
+
+            }
+            return lst;
+
+        }
     }
 }

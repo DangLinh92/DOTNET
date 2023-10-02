@@ -371,7 +371,7 @@ namespace HRMNS.Application.Implementation
                     }
                     else
                     {
-                        HR_THAISAN_CONNHO thaisan = _thaisanRepository.FindAll(x => x.MaNV == item.MaNV).OrderByDescending(x => x.FromDate).FirstOrDefault();
+                        HR_THAISAN_CONNHO thaisan = _thaisanRepository.FindAll(x => x.MaNV == item.MaNV && x.CheDoThaiSan == "ThaiSan").OrderByDescending(x => x.FromDate).FirstOrDefault();
                         songaynghiThaisan = 0;
 
                         if (thaisan != null)

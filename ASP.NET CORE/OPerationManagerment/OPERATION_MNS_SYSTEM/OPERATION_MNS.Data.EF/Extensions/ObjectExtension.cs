@@ -8,6 +8,20 @@ namespace OPERATION_MNS.Data.EF.Extensions
 {
     public static class ObjectExtension
     {
+        /// <summary>
+        /// convert yyyyMMdd -> yyyy-MM-dd
+        /// </summary>
+        /// <param name="objsource"></param>
+        /// <returns></returns>
+        public static string ToYYYY_MM_DD(this string objsource)
+        {
+            if (objsource == null)
+            {
+                return "";
+            }
+
+            return objsource.Substring(0,4) +"-" + objsource.Substring(4,2) + "-" + objsource.Substring(6,2);
+        }
         public static double ViewChipWf(this float objSource,string unit)
         {
             if(unit == "CHIP")

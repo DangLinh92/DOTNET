@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using OPERATION_MNS.Areas.OpeationMns.Controllers;
+using OPERATION_MNS.Application.Implementation;
+
 
 namespace OPERATION_MNS.Areas.OpeationMns.Models
 {
@@ -15,8 +17,11 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models
     {
         private IRoleAndPermisstionService _roleAndPermisstionService;
         private IFunctionService _functionService;
-        public HomeController(IRoleAndPermisstionService service, IFunctionService function)
+        private ISCPService _SCPService;
+
+        public HomeController(IRoleAndPermisstionService service, IFunctionService function, ISCPService SCPService)
         {
+            _SCPService = SCPService;
             _roleAndPermisstionService = service;
             _functionService = function;
         }
@@ -41,7 +46,7 @@ namespace OPERATION_MNS.Areas.OpeationMns.Models
             model.Functions = new List<FunctionViewModel>();
             foreach (var item in model.PermisstionForRoleModels)
             {
-                if(functions.Any(x=>x.Id == item.FunctionId))
+                if (functions.Any(x => x.Id == item.FunctionId))
                 {
                     model.Functions.Add(functions.First(x => x.Id == item.FunctionId));
                 }

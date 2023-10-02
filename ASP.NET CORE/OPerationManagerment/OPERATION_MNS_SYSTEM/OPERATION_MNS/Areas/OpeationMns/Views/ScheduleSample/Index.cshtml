@@ -76,6 +76,17 @@
             $("#gridContainer").dxDataGrid("refresh");
         }
 
+        function checkBox_opencloseChanged(data){
+            console.log(data);
+
+            if(data.value){
+                return $("#gridContainer").dxDataGrid("option", "height", "Auto");
+            }
+            else{
+                return $("#gridContainer").dxDataGrid("option", "height", 700);
+            }
+        }
+
         function refreshGrid() {
 
             let fromDate = new Date($("#begindate-date").dxDateBox("option", "text"));
@@ -93,7 +104,6 @@
 
                 var fieldData = options.value,
                     fieldHtml = "";
-                console.log(options);
                 if (fieldData && options.column.dataType == 'object') {
 
                     if (options.column.dataField == "ViewLeadTime") {
@@ -162,7 +172,6 @@
                     }
 
                 }
-                console.log(fieldHtml);
                 options.cellElement.html(fieldHtml);
             }
         }
@@ -190,7 +199,7 @@
 <div class="content container-fluid">
     <!-- Page Header -->
     <div class="page-header">
-        <div class="row align-items-center" style="margin-bottom:-2rem">
+        <div class="row align-items-center" style="margin-bottom:-2.5rem">
             <div class="col">
                 <h3 class="page-title">Sample schedule </h3>
                 <ul class="breadcrumb">
@@ -231,12 +240,20 @@
                                 .OnValueChanged("refreshGrid")
                                 )
                         </div>
-                        <div style="display:inline-block">
+                        <div style="display:inline-block; margin-right:5px">
                             @(Html.DevExtreme().CheckBox()
                                 .ID("cheOpenLot")
                                 .Value(false)
                                 .Text("Only Lot Running")
                                 .OnValueChanged("checkBox_valueChanged")
+                                )
+                        </div>
+                        <div style="display:inline-block">
+                            @(Html.DevExtreme().CheckBox()
+                                .ID("cheOpenClose")
+                                .Value(false)
+                                .Text("Open/Close Screen")
+                                .OnValueChanged("checkBox_opencloseChanged")
                                 )
                         </div>
                     </div>

@@ -1,0 +1,354 @@
+﻿@model LotMonitoringLfemViewModel
+@{
+    ViewData["Title"] = "Lot Monitoring(Process)";
+    Layout = "~/Areas/OpeationMns/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <style>
+        .stats-box {
+            width: 110px;
+            float: left;
+            margin-left: 5px;
+            text-align: center;
+            background-color: #004e89;
+            color: white !important;
+        }
+
+        .stylePriory1 {
+            background-color: #FF6969 !important;
+            color: black !important;
+        }
+
+        .stylePriory2 {
+            background-color: #FFB7B7 !important;
+        }
+
+        .stylePriory3 {
+            background-color: #FFE3A9 !important;
+        }
+
+        .stylePriory4 {
+            background-color: #ffff !important;
+        }
+
+        .tables {
+            display: flex;
+        }
+
+        .column {
+            width: 33%;
+            padding-right: 5px;
+            text-align: center;
+        }
+
+            .column:last-child {
+                width: 33%;
+                padding-left: 5px;
+            }
+    </style>
+}
+
+@section Scripts
+    {
+
+    <script>
+
+        $(function () {
+            $('#show-hidden-grid-wlp').click(function () {
+                $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+                $('.hidden-grid-wlp').slideToggle("slow");
+
+            });
+
+            $('#show-hidden-grid-reelpacking').click(function () {
+                $("i", this).toggleClass("fa fa-caret-right fa fa-caret-down");
+                $('.hidden-grid-reelpacking').slideToggle("slow");
+
+            });
+        })
+
+        function ShowLoad() {
+            hrms.run_waitMe($('#ctrFluid'));
+        }
+
+        function onCellPrepared(e) {
+
+            if (e.rowType === "data" && e.column.dataField == "StayDay" && !isNaN(e.data.StayDay)) {
+
+                if (Number(e.data.StayDay) > 0 && Number(e.rowIndex) <= 10) {
+
+                    e.cellElement.addClass("stylePriory1");
+                } else
+                    if (Number(e.data.StayDay) > 0 && Number(e.rowIndex) <= 20) {
+                        e.cellElement.addClass("stylePriory2");
+                    }
+                    else if (Number(e.data.StayDay) > 0) {
+                        e.cellElement.addClass("stylePriory3");
+                    }
+                    else {
+                        e.cellElement.addClass("stylePriory4");
+                    }
+            }
+        }
+    </script>
+}
+
+<div class="content container-fluid" id="ctrFluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">@ViewData["Title"]</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/OpeationMns/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Lot Monitoring</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="row contentChart">
+        <div class="col-sm-12" id="show-hidden-grid-wlp">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item active" style="cursor: pointer;">
+                    <i class="fa fa-caret-right"></i> <strong>공정별 정체재공</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row hidden-grid-wlp">
+        <div class="col-md-12">
+            <div class="tables">
+                <div class="column">
+                    <h5>SMT 공정 정체시간 조사</h5>
+                    @(Html.DevExtreme().DataGrid<StayDayLfemItem>()
+                        .ID("grid-container")
+                        .DataSource(Model.SmtData)
+                        .Height(600)
+                        .ShowBorders(true)
+                        .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                        .Paging(paging => paging.Enabled(false))
+                        .AllowColumnResizing(true)
+                        .ColumnMinWidth(50)
+                        .ColumnAutoWidth(true)
+                        .ShowColumnLines(true)
+                        .ShowRowLines(true)
+                        .RowAlternationEnabled(true)
+                        .FilterRow(filterRow => filterRow
+                        .Visible(true)
+                        .ApplyFilter(GridApplyFilterMode.Auto)
+                        )
+                        .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                        .HoverStateEnabled(true)
+                        .Selection(s => s.Mode(SelectionMode.Single))
+                        .Columns(columns =>
+                        {
+                            columns.AddFor(m => m.LotID);
+                            columns.AddFor(m => m.Size);
+                            columns.AddFor(m => m.Model);
+                            columns.AddFor(m => m.OperationName).Caption("Operation");
+                            columns.AddFor(m => m.Status);
+                            columns.AddFor(m => m.StayDay).Caption("Stay Day").Format(Format.FixedPoint);
+
+                        }).OnCellPrepared("onCellPrepared").WordWrapEnabled(true))
+                </div>
+
+                <div class="column">
+                    <h5>Assy's Line 공정 정체시간 조사 </h5>
+                    @(Html.DevExtreme().DataGrid<StayDayLfemItem>()
+                        .ID("grid-container1")
+                        .DataSource(Model.AssyLine)
+                        .Height(600)
+                        .ShowBorders(true)
+                        .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                        .Paging(paging => paging.Enabled(false))
+                        .AllowColumnResizing(true)
+                        .ColumnMinWidth(50)
+                        .ColumnAutoWidth(true)
+                        .ShowColumnLines(true)
+                        .ShowRowLines(true)
+                        .RowAlternationEnabled(true)
+                        .FilterRow(filterRow => filterRow
+                        .Visible(true)
+                        .ApplyFilter(GridApplyFilterMode.Auto)
+                        )
+                        .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                        .HoverStateEnabled(true)
+                        .Selection(s => s.Mode(SelectionMode.Single))
+                        .Columns(columns =>
+                        {
+                            columns.AddFor(m => m.LotID);
+                            columns.AddFor(m => m.Size);
+                            columns.AddFor(m => m.Model);
+                            columns.AddFor(m => m.OperationName).Caption("Operation");
+                            columns.AddFor(m => m.Status);
+                            columns.AddFor(m => m.StayDay).Caption("Stay Day").Format(Format.FixedPoint);
+
+                        }).OnCellPrepared("onCellPrepared").WordWrapEnabled(true))
+                </div>
+
+                <div class="column">
+                    <h5>TEST 공정 정체시간 조사</h5>
+                    @(Html.DevExtreme().DataGrid<StayDayLfemItem>()
+                        .ID("grid-container2")
+                        .DataSource(Model.Test)
+                        .Height(600)
+                        .ShowBorders(true)
+                        .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                        .Paging(paging => paging.Enabled(false))
+                        .AllowColumnResizing(true)
+                        .ColumnMinWidth(50)
+                        .ColumnAutoWidth(true)
+                        .ShowColumnLines(true)
+                        .ShowRowLines(true)
+                        .RowAlternationEnabled(true)
+                        .FilterRow(filterRow => filterRow
+                        .Visible(true)
+                        .ApplyFilter(GridApplyFilterMode.Auto)
+                        )
+                        .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                        .HoverStateEnabled(true)
+                        .Selection(s => s.Mode(SelectionMode.Single))
+                        .Columns(columns =>
+                        {
+                            columns.AddFor(m => m.LotID);
+                            columns.AddFor(m => m.Size);
+                            columns.AddFor(m => m.Model);
+                            columns.AddFor(m => m.OperationName).Caption("Operation");
+                            columns.AddFor(m => m.Status);
+                            columns.AddFor(m => m.Qty).Format(Format.FixedPoint);
+                            columns.AddFor(m => m.StayDay).Caption("Stay Day").Format(Format.FixedPoint);
+
+                        }).OnCellPrepared("onCellPrepared").WordWrapEnabled(true))
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row contentChart" style="margin-top:10px">
+        <div class="col-sm-12" id="show-hidden-grid-reelpacking">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item active" style="cursor: pointer;">
+                    <i class="fa fa-caret-right"></i> <strong>공정별 정체재공(Reel Packing)</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row hidden-grid-reelpacking">
+
+        <div class="col-md-12">
+            <div class="tables">
+                <div class="column">
+                    <h5>FA 공정 정체시간 조사</h5>
+                    @(Html.DevExtreme().DataGrid<StayDayLfemItem>()
+                        .ID("grid-container3")
+                        .DataSource(Model.FA)
+                        .Height(600)
+                        .ShowBorders(true)
+                        .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                        .Paging(paging => paging.Enabled(false))
+                        .AllowColumnResizing(true)
+                        .ColumnMinWidth(50)
+                        .ColumnAutoWidth(true)
+                        .ShowColumnLines(true)
+                        .ShowRowLines(true)
+                        .RowAlternationEnabled(true)
+                        .FilterRow(filterRow => filterRow
+                        .Visible(true)
+                        .ApplyFilter(GridApplyFilterMode.Auto)
+                        )
+                        .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                        .HoverStateEnabled(true)
+                        .Selection(s => s.Mode(SelectionMode.Single))
+                        .Columns(columns =>
+                        {
+                            columns.AddFor(m => m.LotID);
+                            columns.AddFor(m => m.Size);
+                            columns.AddFor(m => m.Model);
+                            columns.AddFor(m => m.OperationName).Caption("Operation");
+                            columns.AddFor(m => m.Status);
+                            columns.AddFor(m => m.StayDay).Caption("Stay Day").Format(Format.FixedPoint);
+
+                        }).OnCellPrepared("onCellPrepared").WordWrapEnabled(true))
+                </div>
+
+                <div class="column">
+                    <h5>V.I 공정 정체시간 조사</h5>
+                    @(Html.DevExtreme().DataGrid<StayDayLfemItem>()
+                        .ID("grid-container4")
+                        .DataSource(Model.VI)
+                        .Height(600)
+                        .ShowBorders(true)
+                        .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                        .Paging(paging => paging.Enabled(false))
+                        .AllowColumnResizing(true)
+                        .ColumnMinWidth(50)
+                        .ColumnAutoWidth(true)
+                        .ShowColumnLines(true)
+                        .ShowRowLines(true)
+                        .RowAlternationEnabled(true)
+                        .FilterRow(filterRow => filterRow
+                        .Visible(true)
+                        .ApplyFilter(GridApplyFilterMode.Auto)
+                        )
+                        .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                        .HoverStateEnabled(true)
+                        .Selection(s => s.Mode(SelectionMode.Single))
+                        .Columns(columns =>
+                        {
+                            columns.AddFor(m => m.LotID);
+                            columns.AddFor(m => m.Size);
+                            columns.AddFor(m => m.Model);
+                            columns.AddFor(m => m.OperationName).Caption("Operation");
+                            columns.AddFor(m => m.Status);
+                            columns.AddFor(m => m.StayDay).Caption("Stay Day").Format(Format.FixedPoint);
+
+                        }).OnCellPrepared("onCellPrepared").WordWrapEnabled(true))
+                </div>
+
+                <div class="column">
+                    <h5> OQC 공정 정체시간 조사</h5>
+                    @(Html.DevExtreme().DataGrid<StayDayLfemItem>()
+                        .ID("grid-container5")
+                        .DataSource(Model.OQC)
+                        .Height(600)
+                        .ShowBorders(true)
+                        .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                        .Paging(paging => paging.Enabled(false))
+                        .AllowColumnResizing(true)
+                        .ColumnMinWidth(50)
+                        .ColumnAutoWidth(true)
+                        .ShowColumnLines(true)
+                        .ShowRowLines(true)
+                        .RowAlternationEnabled(true)
+                        .FilterRow(filterRow => filterRow
+                        .Visible(true)
+                        .ApplyFilter(GridApplyFilterMode.Auto)
+                        )
+                        .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                        .HoverStateEnabled(true)
+                        .Selection(s => s.Mode(SelectionMode.Single))
+                        .Columns(columns =>
+                        {
+                            columns.AddFor(m => m.LotID);
+                            columns.AddFor(m => m.Size);
+                            columns.AddFor(m => m.Model);
+                            columns.AddFor(m => m.OperationName).Caption("Operation");
+                            columns.AddFor(m => m.Status);
+                            columns.AddFor(m => m.StayDay).Caption("Stay Day").Format(Format.FixedPoint);
+
+                        }).OnCellPrepared("onCellPrepared").WordWrapEnabled(true))
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+

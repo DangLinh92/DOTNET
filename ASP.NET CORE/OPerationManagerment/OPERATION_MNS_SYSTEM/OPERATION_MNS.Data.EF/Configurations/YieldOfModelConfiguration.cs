@@ -44,6 +44,15 @@ namespace OPERATION_MNS.Data.EF.Configurations
         }
     }
 
+    public class CapaLfemConfiguration : DbEntityConfiguration<CAPA_LFEM_DATA>
+    {
+        public override void Configure(EntityTypeBuilder<CAPA_LFEM_DATA> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
+
     public class CTQSettingWlp2Configuration : DbEntityConfiguration<CTQ_SETTING_WLP2>
     {
         public override void Configure(EntityTypeBuilder<CTQ_SETTING_WLP2> entity)
