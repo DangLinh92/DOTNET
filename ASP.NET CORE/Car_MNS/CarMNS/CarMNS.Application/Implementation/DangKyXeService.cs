@@ -651,24 +651,24 @@ namespace CarMNS.Application.Implementation
 
             if (role == CommonConstants.ROLE_DANGKY)
             {
-                lst = lst.FindAll(x => x.BoPhan == bophan || x.UserCreated == userId || x.UserModified == userId).Where(x => x.XacNhanLV2 == false || (x.XacNhanLV2 == true && x.DateModified.CompareTo(DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd HH:mm:ss")) >= 0)).OrderByDescending(x => x.NgaySuDung).ToList();
+                lst = lst.FindAll(x => x.BoPhan == bophan || x.UserCreated == userId || x.UserModified == userId).Where(x => x.XacNhanLV2 == false || (x.XacNhanLV2 == true && x.DateModified.CompareTo(DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd HH:mm:ss")) >= 0)).OrderByDescending(x => x.NgaySuDung).ThenBy(x=>x.MaBill).ToList();
             }
             else
             if (role == CommonConstants.ROLE_GROUP_LD)
             {
-                lst = lst.FindAll(x => x.BoPhan == bophan || bophanduyets.Contains(x.BoPhan)).Where(x => x.XacNhanLV2 == false || (x.XacNhanLV2 == true && x.DateModified.CompareTo(DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd HH:mm:ss")) >= 0)).OrderByDescending(x => x.NgaySuDung).ToList();
+                lst = lst.FindAll(x => x.BoPhan == bophan || bophanduyets.Contains(x.BoPhan)).Where(x => x.XacNhanLV2 == false || (x.XacNhanLV2 == true && x.DateModified.CompareTo(DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd HH:mm:ss")) >= 0)).OrderByDescending(x => x.NgaySuDung).ThenBy(x => x.MaBill).ToList();
             }
             else if (role == CommonConstants.ROLE_HR)
             {
-                lst = lst.Where(x => x.XacNhanLV1 == true).OrderByDescending(x => x.NgaySuDung).ToList();
+                lst = lst.Where(x => x.XacNhanLV1 == true).OrderByDescending(x => x.NgaySuDung).ThenBy(x => x.MaBill).ToList();
             }
             else if (role == CommonConstants.ROLE_HR_TOP)
             {
-                lst = lst.Where(x => x.XacNhanLV2 == true).OrderByDescending(x => x.NgaySuDung).ToList();
+                lst = lst.Where(x => x.XacNhanLV2 == true).OrderByDescending(x => x.NgaySuDung).ThenBy(x => x.MaBill).ToList();
             }
             else if (role == CommonConstants.AppRole.AdminRole)
             {
-                lst = lst.OrderByDescending(x => x.NgaySuDung).ToList();
+                lst = lst.OrderByDescending(x => x.NgaySuDung).ThenBy(x => x.MaBill).ToList();
             }
 
             return lst;

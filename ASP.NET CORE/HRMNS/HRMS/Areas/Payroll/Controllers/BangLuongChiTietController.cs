@@ -144,8 +144,8 @@ namespace HRMS.Areas.Payroll.Controllers
         {
             string time = thang + "-01";
 
-            if (DateTime.Parse(DateTime.Now.ToString("yyyy-MM") + "-01").AddMonths(-1).ToString("yyyy-MM-dd") == time)
-            {
+            //if (DateTime.Parse(DateTime.Now.ToString("yyyy-MM") + "-01").AddMonths(-1).ToString("yyyy-MM-dd") == time)
+            //{
                 List<BangLuongChiTietViewModel> data = _detailSalaryService.GetBangLuongChiTiet(time);
 
                 if (data.Count > 0)
@@ -162,9 +162,9 @@ namespace HRMS.Areas.Payroll.Controllers
                 _ngayChotCongService.Update(ngayChot);
 
                 return new OkObjectResult(thang);
-            }
+            //}
 
-            return new BadRequestObjectResult("Tháng được chốt công không phù hợp!");
+            //return new BadRequestObjectResult("Tháng được chốt công không phù hợp!");
         }
 
         public string CreatBangCongChiTiet(string time)
@@ -185,6 +185,18 @@ namespace HRMS.Areas.Payroll.Controllers
             if (data == null)
             {
                 data = new List<BangLuongChiTietViewModel>();
+            }
+
+            // làm việc <= 5 day thì k tính lương
+            foreach (var item in data.ToList())
+            {
+                if (item.NgayNghiViec.NullString() != "")
+                {
+                    if (EachDay.GetWorkingDay(DateTime.Parse(item.NgayNghiViec.NullString()), DateTime.Parse(item.NgayVao)) - item.NghiKhongLuong <= 5)
+                    {
+                        data.Remove(item);
+                    }
+                }
             }
 
             string sWebRootFolder = _hostingEnvironment.WebRootPath;

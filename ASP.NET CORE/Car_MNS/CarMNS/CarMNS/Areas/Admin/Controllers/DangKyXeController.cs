@@ -186,7 +186,7 @@ namespace CarMNS.Areas.Admin.Controllers
                 lst = lst.Where(x => x.BoPhan == bophan).ToList();
             }
 
-            return DataSourceLoader.Load(lst.OrderByDescending(x => x.NgaySuDung), loadOptions);
+            return DataSourceLoader.Load(lst.OrderByDescending(x => x.NgaySuDung).ThenBy(x => x.MaBill), loadOptions);
         }
 
         public IActionResult TaxiReport()

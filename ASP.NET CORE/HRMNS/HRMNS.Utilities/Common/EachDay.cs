@@ -29,6 +29,19 @@ namespace HRMNS.Utilities.Common
 
             return Math.Abs(monthsApart);
         }
+
+        public static int GetWorkingDay(DateTime from, DateTime to)
+        {
+            int dayCount = 0;
+            foreach (var item in EachDay.EachDays(from, to))
+            {
+                if (item.DayOfWeek != DayOfWeek.Sunday)
+                {
+                    dayCount += 1;
+                }
+            }
+            return dayCount;
+        }
     }
 
 }

@@ -302,8 +302,8 @@ namespace HRMNS.Application.Implementation
                     luong.HoTroThoiGianLamViecCT_300 = item.CT_NL_300;
                     luong.HoTroThoiGianLamViecCT_390 = item.CT_D_NL_390;
 
-                    luong.HoTroNgayThanhLapCty_CaNgayTV = item.MD;
-                    luong.HoTroNgayThanhLapCty_CaNgayCT = item.PMD;
+                    luong.HoTroNgayThanhLapCty_CaNgayTV = item.PMD;
+                    luong.HoTroNgayThanhLapCty_CaNgayCT = item.MD;
                     luong.HoTroNgayThanhLapCty_CaDemTV_TruocLe = item.PM;
                     luong.HoTroNgayThanhLapCty_CaDemCT_TruocLe = item.BM;
 
@@ -378,7 +378,7 @@ namespace HRMNS.Application.Implementation
                         {
                             if (thaisan.FromDate.Substring(0, 7) == thangNam.Substring(0, 7))
                             {
-                                songaynghiThaisan = GetWorkingDay(DateTime.Parse(thaisan.FromDate), DateTime.Parse(thangNam).AddMonths(1).AddDays(-1));
+                                songaynghiThaisan = EachDay.GetWorkingDay(DateTime.Parse(thaisan.FromDate), DateTime.Parse(thangNam).AddMonths(1).AddDays(-1));
                             }
                         }
 
@@ -389,7 +389,7 @@ namespace HRMNS.Application.Implementation
                         {
                             luong.DoiTuongThamGiaCD = "o";
                         }
-                        else if (songaynghiThaisan > 14 || item.TUP > 14) // 2. Số ngày nghỉ không hưởng lương > 14 ngày , 3.Nghỉ thai sản > 14 ngày
+                        else if (songaynghiThaisan >= 14 || item.TUP >= 14) // 2. Số ngày nghỉ không hưởng lương > 14 ngày , 3.Nghỉ thai sản > 14 ngày
                         {
                             luong.DoiTuongThamGiaCD = "o";
                         }
@@ -440,18 +440,6 @@ namespace HRMNS.Application.Implementation
             return bangLuongChiTiets;
         }
 
-        private int GetWorkingDay(DateTime from, DateTime to)
-        {
-            int dayCount = 0;
-            foreach (var item in EachDay.EachDays(from, to))
-            {
-                if (item.DayOfWeek != DayOfWeek.Sunday)
-                {
-                    dayCount += 1;
-                }
-            }
-            return dayCount;
-        }
 
         public void ChotBangLuong(string time, List<BangLuongChiTietViewModel> data)
         {

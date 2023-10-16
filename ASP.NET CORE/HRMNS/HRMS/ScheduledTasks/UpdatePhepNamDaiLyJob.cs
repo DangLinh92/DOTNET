@@ -32,6 +32,8 @@ namespace HRMS.ScheduledTasks
         IRespository<HR_SALARY, int> _salaryRepository;
         IRespository<NHANVIEN_INFOR_EX, int> _nhanvienInfoExRepository;
         IRespository<HR_HOPDONG, int> _hopdongRepository;
+        IRespository<BANG_CONG_EXTENTION, int> _bangCongExRepository;
+        IRespository<HR_THAISAN_CONNHO, int> _thaisanRepository;
         public UpdatePhepNamDaiLyJob()
         {
 
@@ -47,7 +49,8 @@ namespace HRMS.ScheduledTasks
              IRespository<HR_SALARY_GRADE, string> gradeRepository,
              IRespository<HR_SALARY, int> salaryRepository,
              IRespository<NHANVIEN_INFOR_EX, int> nhanvienInfoExRepository,
-             IRespository<HR_HOPDONG, int> hopdongRepository)
+             IRespository<HR_THAISAN_CONNHO, int> thaisanRepository,
+             IRespository<HR_HOPDONG, int> hopdongRepository, IRespository<BANG_CONG_EXTENTION, int> bangCongExRepository)
         {
             _bangluongChiTietHistoryRepository = bangluongChiTietHistoryRepository;
             _ngayChotCongService = ngayChotCongService;
@@ -62,6 +65,8 @@ namespace HRMS.ScheduledTasks
             _salaryRepository = salaryRepository;
             _nhanvienInfoExRepository = nhanvienInfoExRepository;
             _hopdongRepository = hopdongRepository;
+            _bangCongExRepository = bangCongExRepository;
+            _thaisanRepository = thaisanRepository;
         }
 
         public Task Execute(IJobExecutionContext context)
@@ -92,7 +97,6 @@ namespace HRMS.ScheduledTasks
                 List<PhepNamViewModel> lstPhepNam = new List<PhepNamViewModel>();
                 lstPhepNam = _phepNamService.GetAll("").FindAll(x => x.Year.ToString() == Year);
 
-
                 List<PhepNamViewModel> lstPhepNam_Update = new List<PhepNamViewModel>();
                 List<PhepNamViewModel> lstPhepNam_Add = new List<PhepNamViewModel>();
 
@@ -113,6 +117,10 @@ namespace HRMS.ScheduledTasks
                 float nghiT10 = 0;
                 float nghiT11 = 0;
                 float nghiT12 = 0;
+
+                // NGHI K LUONG
+                double TUP = 0;
+
                 float totalNghi = 0;
                 string ngaytinhphep;
 
@@ -125,7 +133,8 @@ namespace HRMS.ScheduledTasks
 
                 int songaylamviec = 0;
                 int thamnien = 0;
-
+                BANG_CONG_EXTENTION bangcongEx;
+                int songaynghiThaisan = 0;
                 foreach (var item in lstNhanVien)
                 {
                     nghiT1 = 0;
@@ -141,6 +150,15 @@ namespace HRMS.ScheduledTasks
                     nghiT11 = 0;
                     nghiT12 = 0;
                     totalNghi = 0;
+                    songaynghiThaisan = 0;
+
+                    bangcongEx = _bangCongExRepository.FindSingle(x => x.MaNV == item.Id && x.ThangNam == beginTime);
+                    if (bangcongEx != null)
+                        TUP = bangcongEx.TUP;
+                    else
+                    {
+                        TUP = 0;
+                    }
 
                     ngaytinhphep = "";
                     BasicSalary = 0;
@@ -266,6 +284,7 @@ namespace HRMS.ScheduledTasks
                                 {
                                     nghiT1 += 0.5f;
                                 }
+
                             }
                             else
                             if (m1.ToString("yyyy-MM-dd").InRangeDateTime(Year + "-02-01", DateTime.Parse(Year + "-02-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")))
@@ -279,6 +298,8 @@ namespace HRMS.ScheduledTasks
                                 {
                                     nghiT2 += 0.5f;
                                 }
+
+
                             }
                             else
                             if (m1.ToString("yyyy-MM-dd").InRangeDateTime(Year + "-03-01", DateTime.Parse(Year + "-03-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")))
@@ -292,6 +313,8 @@ namespace HRMS.ScheduledTasks
                                 {
                                     nghiT3 += 0.5f;
                                 }
+
+
                             }
                             else
                             if (m1.ToString("yyyy-MM-dd").InRangeDateTime(Year + "-04-01", DateTime.Parse(Year + "-04-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")))
@@ -305,6 +328,8 @@ namespace HRMS.ScheduledTasks
                                 {
                                     nghiT4 += 0.5f;
                                 }
+
+
                             }
                             else
                             if (m1.ToString("yyyy-MM-dd").InRangeDateTime(Year + "-05-01", DateTime.Parse(Year + "-05-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")))
@@ -318,6 +343,8 @@ namespace HRMS.ScheduledTasks
                                 {
                                     nghiT5 += 0.5f;
                                 }
+
+
                             }
                             else
                             if (m1.ToString("yyyy-MM-dd").InRangeDateTime(Year + "-06-01", DateTime.Parse(Year + "-06-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")))
@@ -331,6 +358,8 @@ namespace HRMS.ScheduledTasks
                                 {
                                     nghiT6 += 0.5f;
                                 }
+
+
                             }
                             else
                             if (m1.ToString("yyyy-MM-dd").InRangeDateTime(Year + "-07-01", DateTime.Parse(Year + "-07-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")))
@@ -344,6 +373,8 @@ namespace HRMS.ScheduledTasks
                                 {
                                     nghiT7 += 0.5f;
                                 }
+
+
                             }
                             else
                             if (m1.ToString("yyyy-MM-dd").InRangeDateTime(Year + "-08-01", DateTime.Parse(Year + "-08-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")))
@@ -357,6 +388,8 @@ namespace HRMS.ScheduledTasks
                                 {
                                     nghiT8 += 0.5f;
                                 }
+
+
                             }
                             else
                             if (m1.ToString("yyyy-MM-dd").InRangeDateTime(Year + "-09-01", DateTime.Parse(Year + "-09-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")))
@@ -370,6 +403,8 @@ namespace HRMS.ScheduledTasks
                                 {
                                     nghiT9 += 0.5f;
                                 }
+
+
                             }
                             else
                             if (m1.ToString("yyyy-MM-dd").InRangeDateTime(Year + "-10-01", DateTime.Parse(Year + "-10-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")))
@@ -383,6 +418,8 @@ namespace HRMS.ScheduledTasks
                                 {
                                     nghiT10 += 0.5f;
                                 }
+
+
                             }
                             else
                             if (m1.ToString("yyyy-MM-dd").InRangeDateTime(Year + "-11-01", DateTime.Parse(Year + "-11-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")))
@@ -396,6 +433,8 @@ namespace HRMS.ScheduledTasks
                                 {
                                     nghiT11 += 0.5f;
                                 }
+
+
                             }
                             else
                             if (m1.ToString("yyyy-MM-dd").InRangeDateTime(Year + "-12-01", DateTime.Parse(Year + "-12-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")))
@@ -409,6 +448,8 @@ namespace HRMS.ScheduledTasks
                                 {
                                     nghiT12 += 0.5f;
                                 }
+
+
                             }
                         }
                     }
@@ -502,29 +543,85 @@ namespace HRMS.ScheduledTasks
                         {
                             phepNam.SoPhepKhongDuocSuDung = 12 - DateTime.Parse(item.NgayNghiViec.NullString()).Month;
                         }
-
-                        if (DateTime.Parse(item.NgayVao).AddMonths(2).ToString("yyyy-MM-dd").CompareTo(item.NgayNghiViec.NullString()) >= 0)
-                        {
-                            HR_HOPDONG HD = _hopdongRepository.FindAll(x => x.MaNV == item.Id, x => x.HR_LOAIHOPDONG).OrderByDescending(x => x.NgayHieuLuc).FirstOrDefault();
-                            if (HD != null && HD.HR_LOAIHOPDONG.ShortName.StartsWith("TV"))
-                            {
-                                phepNam.SoPhepKhongDuocSuDung += 2;
-                            }
-                        }
                     }
 
                     phepNam.SoPhepTonThang = (float)Math.Round((phepNam.SoPhepTonNam - phepNam.SoPhepKhongDuocSuDung), 1);
 
                     if (item.NgayNghiViec.NullString() != "")
                     {
-                        if (DateTime.Parse(item.NgayNghiViec.NullString()).Day <= 15 && item.NgayNghiViec.CompareTo(endTime) <= 0)
+                        HR_THAISAN_CONNHO thaisan = _thaisanRepository.FindAll(x => x.MaNV == item.Id && x.CheDoThaiSan == "ThaiSan").OrderByDescending(x => x.FromDate).FirstOrDefault();
+
+                        if (thaisan != null)
                         {
-                            phepNam.SoPhepThanhToanNghiViec = phepNam.SoPhepTonThang - 1;
+                            songaynghiThaisan = 0;
+                            if (thaisan.FromDate.Substring(0, 7) == beginTime.Substring(0, 7))
+                            {
+                                songaynghiThaisan = EachDay.GetWorkingDay(DateTime.Parse(thaisan.FromDate), DateTime.Parse(item.NgayNghiViec.NullString()));
+
+                                if(songaynghiThaisan >= 9 && item.NgayNghiViec.NullString().CompareTo(beginTime.Substring(0,7) + "-15") > 0)
+                                {
+                                    phepNam.SoPhepThanhToanNghiViec = phepNam.SoPhepTonThang;
+                                }
+                                else
+                                {
+                                    phepNam.SoPhepThanhToanNghiViec = phepNam.SoPhepTonThang - 1;
+                                }
+                            }
+                            else
+                            {
+                                if (item.NgayNghiViec.NullString().CompareTo(beginTime.Substring(0, 7) + "-15") > 0)
+                                {
+                                    phepNam.SoPhepThanhToanNghiViec = phepNam.SoPhepTonThang;
+                                }
+                                else
+                                {
+                                    phepNam.SoPhepThanhToanNghiViec = phepNam.SoPhepTonThang - 1;
+                                }
+                            }
                         }
                         else
                         {
-                            phepNam.SoPhepThanhToanNghiViec = phepNam.SoPhepTonThang;
+                            if (DateTime.Parse(item.NgayNghiViec.NullString()).Day <= 15 && item.NgayNghiViec.CompareTo(endTime) <= 0)
+                            {
+                                phepNam.SoPhepThanhToanNghiViec = phepNam.SoPhepTonThang - 1;
+                            }
+                            else
+                            {
+                                // nghỉ m1 thì tính tháng trươc
+                                if (DateTime.Parse(item.NgayNghiViec.NullString()).Day == 1 && item.NgayNghiViec.CompareTo(endTime) > 0)
+                                {
+                                    if (TUP >= 14)
+                                    {
+                                        phepNam.SoPhepThanhToanNghiViec = phepNam.SoPhepTonThang - 1;
+                                    }
+                                    else
+                                    {
+                                        phepNam.SoPhepThanhToanNghiViec = phepNam.SoPhepTonThang;
+                                    }
+                                }
+                                else if (DateTime.Parse(item.NgayNghiViec.NullString()).Day > 15 && item.NgayNghiViec.CompareTo(endTime) <= 0)
+                                {
+                                    //số ngày sau nghỉ việc + số ngày nghỉ KL >= 14
+                                    if (EachDay.GetWorkingDay(DateTime.Parse(item.NgayNghiViec.NullString()), DateTime.Parse(endTime)) + TUP >= 14)
+                                    {
+                                        phepNam.SoPhepThanhToanNghiViec = phepNam.SoPhepTonThang - 1;
+                                    }
+                                    else
+                                    {
+                                        phepNam.SoPhepThanhToanNghiViec = phepNam.SoPhepTonThang;
+                                    }
+                                }
+                            }
+
+                            // nghi viec truoc khi HD chinh thuc
+                            HR_HOPDONG HD = _hopdongRepository.FindAll(x => x.MaNV == item.Id, x => x.HR_LOAIHOPDONG).OrderByDescending(x => x.NgayHieuLuc).FirstOrDefault();
+                            if (HD != null && HD.HR_LOAIHOPDONG.ShortName.StartsWith("TV") &&
+                                   item.NgayNghiViec.CompareTo(DateTime.Parse(HD.NgayHetHieuLuc).AddDays(1).ToString("yyyy-MM-dd")) <= 0)
+                            {
+                                phepNam.SoPhepThanhToanNghiViec = -totalNghi;
+                            }
                         }
+
 
                         if (DateTime.Parse(endTime).AddDays(1).ToString("yyyy-MM-dd").CompareTo(item.NgayNghiViec) < 0)
                         {
@@ -538,7 +635,7 @@ namespace HRMS.ScheduledTasks
                         string beforNgaynghiviec = DateTime.Parse(item.NgayNghiViec).AddMonths(-1).ToString("yyyy-MM");
 
                         // nghỉ đầu tháng
-                        if(DateTime.Parse(endTime).AddDays(1).ToString("yyyy-MM-dd") == item.NgayNghiViec)
+                        if (DateTime.Parse(endTime).AddDays(1).ToString("yyyy-MM-dd") == item.NgayNghiViec)
                         {
                             beforNgaynghiviec = DateTime.Parse(item.NgayNghiViec).AddMonths(-2).ToString("yyyy-MM");
                         }
@@ -551,10 +648,17 @@ namespace HRMS.ScheduledTasks
                         }
                         else
                         {
-                            int lastDay = DateTime.DaysInMonth(DateTime.Parse(item.NgayNghiViec).Year, DateTime.Parse(item.NgayNghiViec).Month);//DateTime.Parse(DateTime.Parse(item.NgayNghiViec).AddMonths(-1).ToString("yyyy-MM")+"-01").Day;
+                            string _nghiviec = item.NgayNghiViec;
+
+                            if (DateTime.Parse(item.NgayNghiViec.NullString()).Day == 1 && item.NgayNghiViec.CompareTo(endTime) > 0)
+                            {
+                                _nghiviec = DateTime.Parse(item.NgayNghiViec.NullString()).AddDays(-1).ToString("yyyy-MM-dd");
+                            }
+
+                            int lastDay = DateTime.DaysInMonth(DateTime.Parse(_nghiviec).Year, DateTime.Parse(_nghiviec).Month);//DateTime.Parse(DateTime.Parse(item.NgayNghiViec).AddMonths(-1).ToString("yyyy-MM")+"-01").Day;
                             for (int i = 1; i <= lastDay; i++)
                             {
-                                DateTime d = new DateTime(DateTime.Parse(item.NgayNghiViec).Year, DateTime.Parse(item.NgayNghiViec).Month, i);
+                                DateTime d = new DateTime(DateTime.Parse(_nghiviec).Year, DateTime.Parse(_nghiviec).Month, i);
                                 //Compare date with sunday
                                 if (d.DayOfWeek != DayOfWeek.Sunday)
                                 {
@@ -574,7 +678,7 @@ namespace HRMS.ScheduledTasks
 
                                 if (grade.Id == "M1-1" || grade.Id == "P2-1")
                                 {
-                                    thamnien = EachDay.GetMonthDifference(new DateTime(DateTime.Parse(item.NgayNghiViec).Year, DateTime.Parse(item.NgayNghiViec).Month, 1), DateTime.Parse(item.NgayVao));
+                                    thamnien = EachDay.GetMonthDifference(new DateTime(DateTime.Parse(_nghiviec).Year, DateTime.Parse(_nghiviec).Month, 1), DateTime.Parse(item.NgayVao));
 
                                     // IF(DG3>=120,1250000
                                     if (thamnien >= 120)
