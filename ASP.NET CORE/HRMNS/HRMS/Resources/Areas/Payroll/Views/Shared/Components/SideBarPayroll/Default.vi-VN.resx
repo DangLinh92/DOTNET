@@ -162,6 +162,9 @@
   <data name="Home" xml:space="preserve">
     <value>Home</value>
   </data>
+  <data name="HO_TRO_SINHLY" xml:space="preserve">
+    <value>Hỗ Trợ Sinh Lý</value>
+  </data>
   <data name="KANBAN_KEHOACH" xml:space="preserve">
     <value>Bảng Theo Dõi Công Việc</value>
   </data>

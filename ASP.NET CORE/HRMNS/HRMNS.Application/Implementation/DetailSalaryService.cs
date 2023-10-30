@@ -38,6 +38,7 @@ namespace HRMNS.Application.Implementation
         IRespository<HR_SALARY_GRADE, string> _gradeRepository;
         IRespository<HR_BHXH, string> _BHXHRepository;
         IRespository<HR_THAISAN_CONNHO, int> _thaisanRepository;
+        IRespository<HOTRO_SINH_LY, int> _hotroSinhLyRepository;
 
         private IPayrollUnitOfWork _payrollUnitOfWork;
         private readonly IMapper _mapper;
@@ -58,6 +59,7 @@ namespace HRMNS.Application.Implementation
             IRespository<HR_SALARY_GRADE, string> gradeRepository,
             IRespository<HR_BHXH, string> BHXHRepository,
             IRespository<HR_THAISAN_CONNHO, int> thaisanRepository,
+            IRespository<HOTRO_SINH_LY, int> hotroSinhLyRepository,
             IMapper mapper,
             IUnitOfWork unitOfWork)
         {
@@ -78,6 +80,7 @@ namespace HRMNS.Application.Implementation
             _gradeRepository = gradeRepository;
             _BHXHRepository = BHXHRepository;
             _thaisanRepository = thaisanRepository;
+            _hotroSinhLyRepository = hotroSinhLyRepository;
 
             // _payrollUnitOfWork = payrollUnitOfWork;
             //_salarySqliteRepository = salarySqliteRepository;
@@ -166,7 +169,23 @@ namespace HRMNS.Application.Implementation
 
                         if (_nhanVienRepository.FindById(item.MaNV, x => x.HR_BO_PHAN_DETAIL) != null)
                         {
+                            luong.GioiTinh = _nhanVienRepository.FindById(item.MaNV).GioiTinh;
+
                             luong.BoPhan = _nhanVienRepository.FindById(item.MaNV, x => x.HR_BO_PHAN_DETAIL).HR_BO_PHAN_DETAIL.MaBoPhan;
+
+                            if(luong.GioiTinh == "Female")
+                            {
+                                if (_hotroSinhLyRepository.FindSingle(x => x.MaNV == item.MaNV && x.Month.Contains(thangNam.Substring(0, 7))) != null)
+                                {
+                                    luong.BauThaiSan = "";
+                                    luong.ThoiGianChuaNghi = _hotroSinhLyRepository.FindSingle(x => x.MaNV == item.MaNV && x.Month.Contains(thangNam.Substring(0, 7))).ThoiGianChuaNghi;
+                                }
+                                else
+                                {
+                                    luong.BauThaiSan = "o";
+                                    luong.ThoiGianChuaNghi = 0;
+                                }
+                            }
 
                             if (luong.Grade == "M1-1" || luong.Grade == "P2-1")
                             {

@@ -90,6 +90,10 @@
             //$("#gridContainer_bp").dxDataGrid("refresh");
             $('#gridContainer_bp').dxPivotGrid('instance').getDataSource().reload();
             $('#gridContainer_bp_year').dxPivotGrid('instance').getDataSource().reload();
+
+            var chart = $("#chart2").dxChart("instance");
+            var ds = chart.option('dataSource');
+            chart.option('dataSource', ds);
         }
 
         function formatNumber(number1) {
@@ -192,31 +196,31 @@
             <h5>Báo cáo số tiền, số lần bộ phận sử dụng theo khoảng thời gian</h5>
             @(
                 Html.DevExtreme().PivotGrid<TongHopBoPhan>()
-                        .ID("gridContainer_bp")
-                        .AllowSortingBySummary(true)
-                        .AllowSorting(true)
-                        .AllowFiltering(true)
-                        .ShowBorders(true)
-                        .FieldChooser(fc => fc.Enabled(false))
-                        .DataSource(d => d
-                        .Store(s => s.Mvc().Controller("DangKyXe").LoadAction("ReportTaxiTotalByBoPhan")
-                        .LoadParams(new { fromTime = new JS("getDateBoxValueFrom"), toTime = new JS("getDateBoxValueTo"), bophan = new JS("getSelectBoxValue") }))
-                        .Fields(fields =>
-                        {
-                            fields.AddFor(m => m.RowTital)
-                            .Width(120)
-                            .Area(PivotGridArea.Row);
+                .ID("gridContainer_bp")
+                .AllowSortingBySummary(true)
+                .AllowSorting(true)
+                .AllowFiltering(true)
+                .ShowBorders(true)
+                .FieldChooser(fc => fc.Enabled(false))
+                .DataSource(d => d
+                .Store(s => s.Mvc().Controller("DangKyXe").LoadAction("ReportTaxiTotalByBoPhan")
+                .LoadParams(new { fromTime = new JS("getDateBoxValueFrom"), toTime = new JS("getDateBoxValueTo"), bophan = new JS("getSelectBoxValue") }))
+                .Fields(fields =>
+                {
+                    fields.AddFor(m => m.RowTital)
+                    .Width(120)
+                    .Area(PivotGridArea.Row);
 
-                            fields.AddFor(m => m.BoPhan)
-                            .Area(PivotGridArea.Column);
+                    fields.AddFor(m => m.BoPhan)
+                    .Area(PivotGridArea.Column);
 
-                            fields.AddFor(m => m.SoTien_SD)
-                            .Caption("Amount")
-                            .Area(PivotGridArea.Data)
-                            .SummaryType(SummaryType.Sum)
-                            .Format(Format.FixedPoint);
-                        })).ShowRowGrandTotals(false)
-            )
+                    fields.AddFor(m => m.SoTien_SD)
+                    .Caption("Amount")
+                    .Area(PivotGridArea.Data)
+                    .SummaryType(SummaryType.Sum)
+                    .Format(Format.FixedPoint);
+                })).ShowRowGrandTotals(false)
+                )
         </div>
         <div class="col-md-12" style="margin-bottom:20px">
             <h5>Báo cáo số tiền bộ phận sử dụng theo tháng</h5>
@@ -290,7 +294,7 @@
                 .Enabled(true)
                 .CustomizeTooltip(@<text>
                     function(arg) {
-                        console.log(arg);
+                  @*  console.log(arg);*@
                     return {
                     text: arg.seriesName+ " : " + formatNumber(arg.valueText)
                     };
@@ -355,7 +359,64 @@
                 }))
                 )
         </div>
-       
+        <div class="col-md-6">
+            @(Html.DevExtreme().Chart()
+                    .ID("chart2")
+                .DataSource(d => d.WebApi().Controller("DangKyXe").LoadAction("ReportTaxiByBoPhan").LoadParams(new { fromTime = new JS("getDateBoxValueFrom"), toTime = new JS("getDateBoxValueTo"), bophan = new JS("getSelectBoxValue") }))
+                    .CommonSeriesSettings(s => s.ArgumentField("TenNV"))
+                    .Panes(p =>
+                    {
+                        p.Add().Name("TopPane");
+                        p.Add().Name("BottomPane");
+                    })
+                    .DefaultPane("BottomPane")
+                    .Series(s =>
+                    {
+                        s.Add()
+                    .Pane("TopPane")
+                    .ValueField("SoLanSuDung")
+                    .Name("횟수")
+                    .Label(l => l
+                    .Visible(false));
+
+                        s.Add()
+                    .Type(SeriesType.Bar)
+                    .ValueField("SoTien")
+                    .Name("금액")
+                    .Label(l => l
+                    .Visible(false));
+                    })
+                .ValueAxis(a =>
+                {
+                    a.Add()
+                    .Pane("BottomPane")
+                    .Grid(g => g.Visible(true))
+                    .Title(t => t.Text("금액"));
+                    a.Add()
+                    .Pane("TopPane")
+                    .Grid(g => g.Visible(true))
+                    .Title(t => t.Text("횟수"));
+                })
+                .Legend(l => l
+                .VerticalAlignment(VerticalEdge.Bottom)
+                .HorizontalAlignment(HorizontalAlignment.Center)
+                )
+                .Export(e => e.Enabled(true))
+                .Title(t => t.Text("Chart ")).Tooltip(t => t
+                .Enabled(true)
+                .CustomizeTooltip(@<text>
+                    function(arg) {
+                    console.log(arg);
+                    return {
+                    text: arg.argumentText+ "\n 금액: " + formatNumber(arg.point.data.SoTien) + "\n 횟수: " + formatNumber(arg.point.data.SoLanSuDung)
+                    };
+                    }
+                </text>)
+                )
+
+                )
+
+        </div>
     </div>
 </div>
 

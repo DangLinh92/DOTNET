@@ -57,5 +57,14 @@ namespace HRMNS.Data.Entities
         public string UserHandle { get; set; }
 
         public int NumberUpdated { get; set; }
+
+        [StringLength(50)]
+        public string ApproveRequest { get; set; }
+
+        [StringLength(50)]
+        public string FirstIn_Time_Request { get; set; }
+
+        [StringLength(50)]
+        public string Last_Out_Time_Request { get; set; }
     }
 }

@@ -15,9 +15,15 @@
             <th>Result</th>
             <th class="text-nowrap">Status</th>
             <th>Update By</th>
+            <th>FirtTime Request</th>
+            <th>LastTime Request</th>
+            <th>Approve/Request</th>
             <th class="text-right no-sort">Action</th>
         </tr>
         <tr>
+            <th></th>
+            <th></th>
+            <th></th>
             <th></th>
             <th></th>
             <th></th>
@@ -116,6 +122,31 @@
                         <span class="badge badge bg-inverse-warning">@("+" + item.NumberUpdated)</span>
                     </td>
                 }
+
+                <td>
+                    <span>@item.FirstIn_Time_Request</span>
+                </td>
+                <td>
+                    <span>@item.Last_Out_Time_Request</span>
+                </td>
+                <td>
+                    @if (item.ApproveRequest == "Approve")
+                    {
+                        <span class="badge bg-inverse-success">@item.ApproveRequest</span>
+                    }
+                    else if (item.ApproveRequest == "Request")
+                    {
+                        <span class="badge badge bg-inverse-warning">@item.ApproveRequest</span>
+                    }
+                    else if (item.ApproveRequest == "UnApprove")
+                    {
+                        <span class="badge bg-inverse-danger">@item.ApproveRequest</span>
+                    }
+                    else
+                    {
+                        <span>-</span>
+                    }
+                </td>
 
                 <td class="text-right">
                     <div class="dropdown dropdown-action">

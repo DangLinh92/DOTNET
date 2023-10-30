@@ -1,4 +1,5 @@
 ﻿using HRMNS.Application.Interfaces;
+using HRMNS.Application.ViewModels.HR;
 using HRMNS.Data.EF;
 using HRMNS.Data.EF.Extensions;
 using HRMNS.Data.Entities;
@@ -26,6 +27,9 @@ namespace HRMNS.Application.Implementation
         private IRespository<PHUCAP_DOC_HAI, int> _phucapdochaiRepository;
         private IRespository<HR_SALARY_GRADE, string> _gradeRepository;
         private IRespository<HR_BHXH, string> _BHXHRepository;
+        private IRespository<HOTRO_SINH_LY, int> _HoTroSLRepository;
+        private IRespository<HR_NHANVIEN, string> _NhanVienRepository;
+        private IRespository<HR_THAISAN_CONNHO, int> _ThaisanConNhoRepository;
 
         public SalaryService(IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork,
             IRespository<HR_SALARY, int> salaryRepository, IRespository<HR_SALARY_PHATSINH, int> salaryPhatSinhRepository,
@@ -33,7 +37,11 @@ namespace HRMNS.Application.Implementation
             IRespository<HR_NHANVIEN, string> nhanvienRespository,
             IRespository<HR_CHUCDANH, string> chucDanhRepository,
             IRespository<PHUCAP_DOC_HAI, int> phucapdochaiRepository,
-            IRespository<HR_SALARY_GRADE, string> gradeRepository, IRespository<HR_BHXH, string> bHXHRepository)
+            IRespository<HR_SALARY_GRADE, string> gradeRepository,
+            IRespository<HR_BHXH, string> bHXHRepository, 
+            IRespository<HOTRO_SINH_LY, int> hoTroSLRepository,
+            IRespository<HR_NHANVIEN, string> nhanVienRepository,
+            IRespository<HR_THAISAN_CONNHO, int> thaisanConNhoRepository)
         {
             _unitOfWork = unitOfWork;
             _httpContextAccessor = httpContextAccessor;
@@ -45,6 +53,9 @@ namespace HRMNS.Application.Implementation
             _phucapdochaiRepository = phucapdochaiRepository;
             _gradeRepository = gradeRepository;
             _BHXHRepository = bHXHRepository;
+            _HoTroSLRepository = hoTroSLRepository;
+            _NhanVienRepository = nhanVienRepository;
+            _ThaisanConNhoRepository = thaisanConNhoRepository;
         }
 
         public HR_SALARY AddSalary(HR_SALARY salary)

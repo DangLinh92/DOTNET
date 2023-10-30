@@ -84,6 +84,63 @@
             $('.bs-timepicker').timepicker();
 
             $('#btnSearch').submit();
+
+            // Approve
+            $('#btnApprove').on('click', function (e) {
+
+                e.preventDefault();
+                $('#hiIdApprove').val(0);
+                $('#approve_overtime').modal('show');
+            });
+
+            // Approve
+            $('#btn-approve_overtime').on('click', function (e) {
+
+                e.preventDefault();
+
+                var code = $('#hiIdApprove').val();
+                var ids = [];
+
+                if (code == '0') {
+                    // Iterate over all checkboxes in the table
+                    let arrV = $($.fn.dataTable.tables(true)).DataTable().$('input[type="checkbox"]');
+                    arrV.each(function () {
+                        // If checkbox is checked
+                        if (this.checked) {
+                            ids.push(this.value);
+                        }
+                    });
+                }
+                else {
+                    ids.push(code);
+                }
+
+                if (ids.length == 0) {
+                    hrms.notify('error: Choose item for approve', 'error', 'alert', function () { });
+                    return;
+                }
+
+                $.ajax({
+                    url: '/Admin/ChamCong/ApproveAction',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        lstID: ids,
+                        action: 'approve'
+                    },
+                    success: function (response) {
+
+                        $('#approve_overtime').modal('hide');
+                        hrms.notify("Update success!", 'Success', 'alert', function () {
+                            location.reload();
+                        });
+                    },
+                    error: function (status) {
+                        console.log(status.responseText);
+                        hrms.notify('error:' + status.responseText, 'error', 'alert', function () { });
+                    }
+                });
+            });
         });
     </script>
 }
@@ -122,7 +179,7 @@
                 }
 
                 @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
-         (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin" || User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" || User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "AssLeader"))
+                (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin" || User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" || User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "AssLeader" || User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR_Payroll"))
                 {
                     <div class="btn-group" style="margin-right:5px">
                         <button type="button" class="btn btn-info dropdown-toggle" id="btnManagement" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Management</button>
@@ -156,6 +213,15 @@
                     </select>
                     <label class="focus-label">Result</label>
                 </div>
+
+                <div class="form-group form-focus select-focus">
+                    <select id="cboRequestApprove" name="requestApprove" class="select floating">
+                        <option value="" selected>--All--</option>
+                        <option value="Request">Request</option>
+                        <option value="Approve">Approve</option>
+                    </select>
+                    <label class="focus-label">Request/Approve</label>
+                </div>
             </div>
             <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
                 <div class="form-group form-focus select-focus">
@@ -188,6 +254,12 @@
             </div>
             <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
                 <button id="btnSearch" type="submit" class="btn btn-success btn-block"> Search </button>
+                @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 &&
+                (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" ||
+                User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin"))
+                {
+                    <a href="#" style="min-width: 100px; margin-top:10px" class="btn btn-info" id="btnApprove" data-target="#approve_overtime">  Approve</a>
+                }
             </div>
         </div>
     </form>
@@ -356,6 +428,31 @@
         </div>
     </div>
 </div>
+
+<div class="modal custom-modal fade" id="approve_overtime" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header">
+                    <input type="hidden" id="hiIdApprove" />
+                    <h3>Approve</h3>
+                    <p>Are you sure want to approve?</p>
+                </div>
+                <div class="modal-btn delete-action">
+                    <div class="row">
+                        <div class="col-6">
+                            <a href="javascript:void(0);" class="btn btn-primary continue-btn" id="btn-approve_overtime">Approve</a>
+                        </div>
+                        <div class="col-6">
+                            <a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- /Add Expense Modal -->
 <!-- import excel model -->
 <partial name="_ImportExcelModel" />

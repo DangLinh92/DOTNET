@@ -18,4 +18,15 @@ namespace HRMNS.Data.EF.Configurations
             entity.HasMany(x => x.HR_NHANVIEN).WithOne(x => x.BOPHAN).OnDelete(DeleteBehavior.SetNull);
         }
     }
+
+    public class HoTroSinhLyConfiguration : DbEntityConfiguration<HOTRO_SINH_LY>
+    {
+        public override void Configure(EntityTypeBuilder<HOTRO_SINH_LY> entity)
+        {
+            entity.HasKey(c => c.Id);
+            entity.Property(c => c.Id).ValueGeneratedOnAdd();
+        }
+    }
+
+    
 }

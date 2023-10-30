@@ -187,12 +187,12 @@ namespace HRMS.Areas.Payroll.Controllers
                 data = new List<BangLuongChiTietViewModel>();
             }
 
-            // làm việc <= 5 day thì k tính lương
+            // làm việc < 5 day thì k tính lương
             foreach (var item in data.ToList())
             {
                 if (item.NgayNghiViec.NullString() != "")
                 {
-                    if (EachDay.GetWorkingDay(DateTime.Parse(item.NgayNghiViec.NullString()), DateTime.Parse(item.NgayVao)) - item.NghiKhongLuong <= 5)
+                    if (EachDay.GetWorkingDay(DateTime.Parse(item.NgayVao),DateTime.Parse(item.NgayNghiViec.NullString()).AddDays(-1)) - item.NghiKhongLuong < 5)
                     {
                         data.Remove(item);
                     }
@@ -311,7 +311,7 @@ namespace HRMS.Areas.Payroll.Controllers
                     worksheet.Cells["CA" + beginIndex].Value = data[i].HoTroPCCC_CoSo;
                     worksheet.Cells["CB" + beginIndex].Value = data[i].HoTroAT_SinhVien;
 
-                    worksheet.Cells["CD" + beginIndex].Value = data[i].TV_NghiKhongLuong;
+                    //worksheet.Cells["CD" + beginIndex].Value = data[i].TV_NghiKhongLuong;
                     worksheet.Cells["CE" + beginIndex].Value = data[i].NghiKhongLuong;
                     worksheet.Cells["CF" + beginIndex].Value = data[i].Probation_Late_Come_Early_Leave_Time;
                     worksheet.Cells["CG" + beginIndex].Value = data[i].Official_Late_Come_Early_Leave_Time;
@@ -335,11 +335,14 @@ namespace HRMS.Areas.Payroll.Controllers
 
                     worksheet.Cells["EA" + beginIndex].Value = data[i].TraTienPhepNam_Total;
                     worksheet.Cells["ED" + beginIndex].Value = data[i].TT_Tien_GioiThieu;
+                    worksheet.Cells["EE" + beginIndex].Value = data[i].GioiTinh;
+                    worksheet.Cells["EF" + beginIndex].Value = data[i].BauThaiSan;
+                    worksheet.Cells["EG" + beginIndex].Value = data[i].ThoiGianChuaNghi;
 
                     if (i < data.Count - 1)
                     {
-                        cellFrom = "A" + beginIndex + ":ED" + beginIndex;
-                        cellTo = "A" + (beginIndex + 1) + ":ED" + (beginIndex + 1);
+                        cellFrom = "A" + beginIndex + ":EH" + beginIndex;
+                        cellTo = "A" + (beginIndex + 1) + ":EH" + (beginIndex + 1);
                         worksheet.Cells[cellFrom].Copy(worksheet.Cells[cellTo]);
                     }
                     beginIndex += 1;

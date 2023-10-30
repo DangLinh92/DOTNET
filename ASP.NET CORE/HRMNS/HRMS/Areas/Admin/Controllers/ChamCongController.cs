@@ -1,4 +1,5 @@
-﻿using HRMNS.Application.Interfaces;
+﻿using HRMNS.Application.Implementation;
+using HRMNS.Application.Interfaces;
 using HRMNS.Application.ViewModels.Time_Attendance;
 using HRMNS.Data.EF;
 using HRMNS.Data.EF.Extensions;
@@ -297,9 +298,9 @@ namespace HRMS.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Search(string result, string dept, string fromTime, string toTime, string maNV)
+        public IActionResult Search(string result, string dept, string fromTime, string toTime, string maNV, string requestApprove)
         {
-            if(result.NullString() == "" && dept.NullString() == "" && fromTime.NullString()=="" && toTime.NullString() == "" && maNV.NullString() == "")
+            if (result.NullString() == "" && dept.NullString() == "" && fromTime.NullString() == "" && toTime.NullString() == "" && maNV.NullString() == "")
             {
                 return PartialView("_gridChamCongPartialView", new List<ChamCongLogViewModel>());
             }
@@ -353,6 +354,12 @@ namespace HRMS.Areas.Admin.Controllers
             }
 
             var lstData = UpdateShifts(lst);
+
+            if (requestApprove.NullString() != "")
+            {
+                lstData = lstData.FindAll(x => x.ApproveRequest == requestApprove);
+            }
+
             _memoryCache.Remove("SearchData");
             _memoryCache.Set("SearchData", lstData);
 
@@ -478,13 +485,51 @@ namespace HRMS.Areas.Admin.Controllers
                 ID_NV = maNV,
                 Ten_NV = tenNV,
                 Ngay_ChamCong = ngayChamCong,
-                FirstIn_Time = firstTime,
-                Last_Out_Time = lastTime,
                 UserModified = UserName
             };
-            _chamCongService.Update(model);
+
+            if (UserRole == "Admin" || UserRole == "HR")
+            {
+                model.FirstIn_Time = firstTime;
+                model.Last_Out_Time = lastTime;
+                model.FirstIn_Time_Request = firstTime;
+                model.Last_Out_Time_Request = lastTime;
+                model.ApproveRequest = "Approve";
+                _chamCongService.Update(model);
+            }
+            else
+            {
+                model.FirstIn_Time_Request = firstTime;
+                model.Last_Out_Time_Request = lastTime;
+                model.ApproveRequest = "Request";
+                _chamCongService.UpdateRequest(model);
+            }
+
             _chamCongService.Save();
             return new OkObjectResult(model);
+        }
+
+        [HttpPost]
+        public IActionResult ApproveAction(List<long> lstID, string action)
+        {
+            List<ChamCongLogViewModel> lstChamCongLog = _chamCongService.GetAll("").Where(x => lstID.Contains(x.Id)).ToList();
+
+            if (action == "approve")
+            {
+                foreach (var item in lstChamCongLog)
+                {
+                    if (UserRole == CommonConstants.roleApprove3 || UserRole == CommonConstants.AppRole.AdminRole)
+                    {
+                        item.ApproveRequest = "Approve";
+                        item.FirstIn_Time = item.FirstIn_Time_Request;
+                        item.Last_Out_Time = item.Last_Out_Time_Request;
+                        _chamCongService.UpdateRequest(item);
+                    }
+                }
+            }
+
+            _chamCongService.Save();
+            return new OkObjectResult(lstID);
         }
 
         private List<ChamCongLogViewModel> UpdateShifts(List<ChamCongLogViewModel> chamCongs)

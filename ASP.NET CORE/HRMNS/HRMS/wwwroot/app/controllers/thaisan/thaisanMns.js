@@ -186,7 +186,24 @@
         }
 
         this.doAftersearch = function () {
-            
+            InitDataTable();
+        }
+
+        function InitDataTable() {
+            var table1 = $('#thaisanDataTable');
+            if (table1) {
+                table1.DataTable().destroy();
+            }
+
+            var table = $('#thaisanDataTable');
+            if (table) {
+                table.DataTable().destroy();
+                $('#thaisanDataTable').DataTable({
+                    "order": [6, 'asc']
+                });
+                $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search.');
+                $('select[name="thaisanDataTable_length"]').removeClass('form-control-sm');
+            }
         }
     }
 }

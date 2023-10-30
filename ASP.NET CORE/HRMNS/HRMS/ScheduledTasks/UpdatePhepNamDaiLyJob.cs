@@ -556,7 +556,7 @@ namespace HRMS.ScheduledTasks
                             songaynghiThaisan = 0;
                             if (thaisan.FromDate.Substring(0, 7) == beginTime.Substring(0, 7))
                             {
-                                songaynghiThaisan = EachDay.GetWorkingDay(DateTime.Parse(thaisan.FromDate), DateTime.Parse(item.NgayNghiViec.NullString()));
+                                songaynghiThaisan = EachDay.GetWorkingDay(DateTime.Parse(thaisan.FromDate), DateTime.Parse(item.NgayNghiViec.NullString()).AddDays(-1));
 
                                 if(songaynghiThaisan >= 9 && item.NgayNghiViec.NullString().CompareTo(beginTime.Substring(0,7) + "-15") > 0)
                                 {

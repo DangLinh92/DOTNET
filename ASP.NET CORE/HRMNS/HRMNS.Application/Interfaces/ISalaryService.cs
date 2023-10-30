@@ -1,4 +1,5 @@
-﻿using HRMNS.Data.Entities;
+﻿using HRMNS.Application.ViewModels.HR;
+using HRMNS.Data.Entities;
 using HRMNS.Utilities.Dtos;
 using System;
 using System.Collections.Generic;
@@ -31,5 +32,7 @@ namespace HRMNS.Application.Interfaces
         List<HR_SALARY_DANHMUC_PHATSINH> GetDanhMucPhatSinh();
         ResultDB ImportPhatSinhExcel(string path);
         HR_SALARY_PHATSINH GetPhatSinhByMaNV(string manv);
+
+      
     }
 }

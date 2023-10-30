@@ -286,5 +286,7 @@ namespace HRMS.Areas.Payroll.Controllers
             return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
         }
         #endregion
+
+       
     }
 }

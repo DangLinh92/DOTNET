@@ -121,6 +121,7 @@ namespace HRMNS.Data.EF
         public virtual DbSet<HR_SALARY_GRADE> HR_SALARY_GRADE { get; set; }
         public virtual DbSet<HR_NHANVIEN_2> HR_NHANVIEN_2 { get; set; }
         public virtual DbSet<DAILY_TIME_WORKING> DAILY_TIME_WORKING { get; set; }
+        public virtual DbSet<HOTRO_SINH_LY> HOTRO_SINH_LY { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -227,6 +228,7 @@ namespace HRMNS.Data.EF
             builder.AddConfiguration(new HrGradeConfiguration());
             builder.AddConfiguration(new NhanVien2Configuration());
             builder.AddConfiguration(new DailyTimeWorkingConfiguration());
+            builder.AddConfiguration(new HoTroSinhLyConfiguration());
 
             //base.OnModelCreating(builder);
         }

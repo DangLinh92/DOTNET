@@ -17,6 +17,8 @@
     <Compile Remove="Migrations\20230517083247_updateTypeIdSalaryPhatsinh.Designer.cs" />
     <Compile Remove="Migrations\20230520061415_updateUserIdentity.cs" />
     <Compile Remove="Migrations\20230520061415_updateUserIdentity.Designer.cs" />
+    <Compile Remove="Migrations\20231030024629_updateHotrosinhly.cs" />
+    <Compile Remove="Migrations\20231030024629_updateHotrosinhly.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

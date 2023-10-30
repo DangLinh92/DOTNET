@@ -37,7 +37,7 @@
                 </ul>
             </div>
             <div class="col-auto float-right ml-auto">
-                @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 && (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin" || User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR"))
+                @if (User.FindFirst(x => x.Type == "Roles").Value.Split(';').Length > 0 && (User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "Admin" || User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR" || User.FindFirst(x => x.Type == "Roles").Value.Split(';')[0] == "HR_Payroll"))
                 {
                     <a href="#" id="btnCreate" class="btn add-btn" data-toggle="modal" data-target="#add_thaisan"><i class="fa fa-plus"></i> Add</a>
                     <a href="#" id="btnExport" class="btn add-btn"><i class="fa fa-file"></i> Export</a>
@@ -51,7 +51,17 @@
         <div class="row filter-row">
 
             <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12"></div>
-            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12"></div>
+            <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
+                <div class="form-group form-focus select-focus">
+                    <select id="cboCheDo" name="chedo" class="select floating">
+                        <option value="" selected>--All--</option>
+                        <option value="ThaiSan">Thai Sản</option>
+                        <option value="MangBau">Mang Bầu</option>
+                        <option value="ConNho">Con Nhỏ</option>
+                    </select>
+                    <label class="focus-label">Chêd Độ</label>
+                </div>
+            </div>
 
             <div class="col-sm-6 col-md-3 col-lg-3 col-xl-2 col-12">
                 <div class="form-group form-focus select-focus">

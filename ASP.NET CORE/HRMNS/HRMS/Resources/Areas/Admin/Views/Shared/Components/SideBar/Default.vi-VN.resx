@@ -234,37 +234,40 @@
   <data name="TRAINING_TYPE" xml:space="preserve">
     <value>Danh Mục Đào Tạo</value>
   </data>
-	<data name="PAYROLL" xml:space="preserve">
+  <data name="PAYROLL" xml:space="preserve">
     <value>Payroll</value>
   </data>
-	<data name="PAYROLL_CHAMCONG" xml:space="preserve">
+  <data name="PAYROLL_CHAMCONG" xml:space="preserve">
     <value>Dữ Liệu Tính Lương</value>
   </data>
-	<data name="PAYROLL_SALARY" xml:space="preserve">
+  <data name="PAYROLL_SALARY" xml:space="preserve">
     <value>Thông Tin Lương Cơ Bản</value>
   </data>
-	<data name="PAYROLL_SALARY_DETAIL" xml:space="preserve">
+  <data name="PAYROLL_SALARY_DETAIL" xml:space="preserve">
     <value>Bảng Lương Chi Tiết</value>
   </data>
-	<data name="PHEP_NAM_PAYROLL" xml:space="preserve">
+  <data name="PHEP_NAM_PAYROLL" xml:space="preserve">
     <value>Phép Năm</value>
   </data>
-	<data name="PHU_CAP_LUONG" xml:space="preserve">
+  <data name="PHU_CAP_LUONG" xml:space="preserve">
     <value>Thông Tin Phụ Cấp</value>
   </data>
-	<data name="SALARY_CHIPHI_PHATSINH" xml:space="preserve">
+  <data name="SALARY_CHIPHI_PHATSINH" xml:space="preserve">
     <value>Khoản Phát Sinh</value>
   </data>
-	<data name="HETHAN_HOPDONG" xml:space="preserve">
+  <data name="HETHAN_HOPDONG" xml:space="preserve">
     <value>Hợp Đồng Đến Hạn</value>
   </data>
-	<data name="KY_LUAT" xml:space="preserve">
+  <data name="KY_LUAT" xml:space="preserve">
     <value>Xử Lý Kỷ Luật</value>
   </data>
-	<data name="CONG_DOAN_NOT_JOIN_PAYROLL" xml:space="preserve">
+  <data name="CONG_DOAN_NOT_JOIN_PAYROLL" xml:space="preserve">
     <value>DS Không Tham Gia CD</value>
   </data>
-	<data name="CAP_BAC_LUONG" xml:space="preserve">
+  <data name="CAP_BAC_LUONG" xml:space="preserve">
     <value>Cấp Bậc Lương</value>
+  </data>
+  <data name="HO_TRO_SINHLY" xml:space="preserve">
+    <value>Hỗ Trợ Sinh Lý</value>
   </data>
 </root>

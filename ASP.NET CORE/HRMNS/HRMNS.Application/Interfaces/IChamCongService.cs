@@ -14,6 +14,7 @@ namespace HRMNS.Application.Interfaces
         List<ChamCongLogViewModel> GetByTime(string fromTime,string toTime);
 
         ChamCongLogViewModel Update(ChamCongLogViewModel model);
+        ChamCongLogViewModel UpdateRequest(ChamCongLogViewModel model);
 
         List<ChamCongLogViewModel> Search(string result,string dept,ref string timeFrom,ref string timeTo);
 

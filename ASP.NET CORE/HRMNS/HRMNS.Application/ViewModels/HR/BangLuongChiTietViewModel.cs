@@ -104,5 +104,9 @@ namespace HRMNS.Application.ViewModels.HR
         public string ThangNam { get; set; }
 
         public string DoiTuongPhuCapDocHai { get; set; }
+
+        public string GioiTinh { get; set; }
+        public string BauThaiSan { get; set; }
+        public double ThoiGianChuaNghi { get; set; }
     }
 }

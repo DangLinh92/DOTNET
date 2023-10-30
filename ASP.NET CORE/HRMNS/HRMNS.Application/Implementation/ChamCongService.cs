@@ -260,6 +260,22 @@ namespace HRMNS.Application.Implementation
             return new List<ChamCongLogViewModel>();
         }
 
+        public ChamCongLogViewModel UpdateRequest(ChamCongLogViewModel model)
+        {
+            var entity = _chamCongLogRepository.FindAll(x => x.ID_NV == model.ID_NV && x.Ngay_ChamCong == model.Ngay_ChamCong).FirstOrDefault();
+
+            if (entity != null)
+            {
+                entity.Last_Out_Time_Request = model.Last_Out_Time_Request;
+                entity.FirstIn_Time_Request = model.FirstIn_Time_Request;
+                entity.ApproveRequest = model.ApproveRequest;
+
+                _chamCongLogRepository.Update(entity);
+            }
+
+            return model;
+        }
+
         public ChamCongLogViewModel Update(ChamCongLogViewModel model)
         {
             var entity = _chamCongLogRepository.FindAll(x => x.ID_NV == model.ID_NV && x.Ngay_ChamCong == model.Ngay_ChamCong).FirstOrDefault();

@@ -1,5 +1,6 @@
 ﻿using HRMNS.Application.ViewModels.HR;
 using HRMNS.Data.Entities;
+using HRMNS.Utilities.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -19,8 +20,15 @@ namespace HRMNS.Application.Interfaces
 
         NhanVienThaiSanViewModel GetById(int id, params Expression<Func<HR_THAISAN_CONNHO, object>>[] includeProperties);
 
-        List<NhanVienThaiSanViewModel> Search(string maNV, string fromDate, string toDate);
+        List<NhanVienThaiSanViewModel> Search(string maNV, string fromDate, string toDate,string chedo);
 
         void Save();
+
+        List<HoTroSinhLyViewModel> GetHoTroSinhLyImport(string month,string boPhan);
+        List<HoTroSinhLyViewModel> GetHoTroSinhLy(string month,string boPhan);
+        HoTroSinhLyViewModel AddHotrosinhly(HoTroSinhLyViewModel model);
+        HoTroSinhLyViewModel EditHotrosinhly(HoTroSinhLyViewModel model);
+        void DeleteHotrosinhly(int id);
+        ResultDB ImportExcel(string filePath, string param);
     }
 }
