@@ -226,7 +226,7 @@
                     columns.AddFor(m => m.MaNV).Caption("Mã NV").AllowEditing(false).Width(200);
                     columns.AddFor(m => m.TenNV).Caption("Họ Tên").AllowEditing(false).Width(200);
                     columns.AddFor(m => m.BoPhan).Caption("Bộ Phận").AllowEditing(false).Width(200);
-                    columns.AddFor(m => m.ThoiGianChuaNghi).Caption("Thời gian chưa nghỉ").Format(Format.FixedPoint).AllowEditing(true);
+                    columns.AddFor(m => m.ThoiGianChuaNghi).DataType(GridColumnDataType.Number).Format("#.##").Caption("Thời gian chưa nghỉ").AllowEditing(true);
                 })
                 .DataSource(d => d.Mvc()
                 .Area("Admin")

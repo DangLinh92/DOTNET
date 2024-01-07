@@ -313,7 +313,7 @@ namespace HRMS.Areas.Admin.Controllers
             }
 
             _chamCongService.SetDepartment(Department);
-            var lst = _chamCongService.Search(result, dept, ref fromTime, ref toTime);
+            var lst = _chamCongService.Search(result, dept, requestApprove, ref fromTime, ref toTime);
             if (!string.IsNullOrEmpty(maNV.NullString()) && lst.Any(x => maNV != null && maNV.Contains(x.ID_NV)))
             {
                 lst = lst.Where(x => maNV.Contains(x.ID_NV)).ToList();
@@ -512,23 +512,26 @@ namespace HRMS.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult ApproveAction(List<long> lstID, string action)
         {
-            List<ChamCongLogViewModel> lstChamCongLog = _chamCongService.GetAll("").Where(x => lstID.Contains(x.Id)).ToList();
+            List<ChamCongLogViewModel> lstChamCongLog = _chamCongService.GetAll("").Where(x => lstID.Contains(x.Id)).OrderBy(x => x.Ngay_ChamCong).ToList();
 
             if (action == "approve")
             {
-                foreach (var item in lstChamCongLog)
+                if (UserRole == CommonConstants.roleApprove3 || UserRole == CommonConstants.AppRole.AdminRole)
                 {
-                    if (UserRole == CommonConstants.roleApprove3 || UserRole == CommonConstants.AppRole.AdminRole)
+                    foreach (var item in lstChamCongLog)
                     {
                         item.ApproveRequest = "Approve";
                         item.FirstIn_Time = item.FirstIn_Time_Request;
                         item.Last_Out_Time = item.Last_Out_Time_Request;
-                        _chamCongService.UpdateRequest(item);
+                        _chamCongService.UpdateApprove(item);
                     }
+                    _chamCongService.Save();
+
+                    _chamCongService.UpdateAfterApprove(lstChamCongLog);
+                    _chamCongService.Save();
                 }
             }
 
-            _chamCongService.Save();
             return new OkObjectResult(lstID);
         }
 

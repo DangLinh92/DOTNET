@@ -60,7 +60,7 @@ namespace HRMS
         {
             services.AddDbContext<AppDBContext>(options =>
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection"), o => o.MigrationsAssembly("HRMNS.Data.EF")));
+                    Configuration.GetConnectionString("DefaultConnection"), o => o.MigrationsAssembly("HRMNS.Data.EF")).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
 
             services.AddDbContext<BioStarDBContext>(option => option.UseSqlServer(@"Data Source = 10.70.22.240;Initial Catalog = BioStar;User Id = sa;Password = qwe123!@#;Connect Timeout=3"));
             //services.AddDbContext<PayrollDBContext>(option => option.UseSqlite(Configuration.GetConnectionString("PayrollConnection"), o => o.MigrationsAssembly("HRMNS.Data.EF")));

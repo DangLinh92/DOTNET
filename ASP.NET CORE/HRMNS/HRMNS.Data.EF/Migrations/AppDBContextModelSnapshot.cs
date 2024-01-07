@@ -486,6 +486,10 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
+                    b.Property<string>("ThanhToanLuong")
+                        .HasColumnType("nvarchar(5)")
+                        .HasMaxLength(5);
+
                     b.Property<string>("ThuocDoiTuong_BHXH")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
@@ -4580,6 +4584,49 @@ namespace HRMNS.Data.EF.Migrations
                     b.ToTable("HR_THAISAN_CONNHO");
                 });
 
+            modelBuilder.Entity("HRMNS.Data.Entities.HR_THANHTOAN_NGHIVIEC", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<bool>("IsPay")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPayed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MaNV")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Month")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MaNV");
+
+                    b.ToTable("HR_THANHTOAN_NGHIVIEC");
+                });
+
             modelBuilder.Entity("HRMNS.Data.Entities.HR_TINHTRANGHOSO", b =>
                 {
                     b.Property<int>("Id")
@@ -5969,6 +6016,13 @@ namespace HRMNS.Data.EF.Migrations
                 {
                     b.HasOne("HRMNS.Data.Entities.HR_NHANVIEN", "HR_NHANVIEN")
                         .WithMany("HR_THAISAN_CONNHO")
+                        .HasForeignKey("MaNV");
+                });
+
+            modelBuilder.Entity("HRMNS.Data.Entities.HR_THANHTOAN_NGHIVIEC", b =>
+                {
+                    b.HasOne("HRMNS.Data.Entities.HR_NHANVIEN", "HR_NHANVIEN")
+                        .WithMany("HR_THANHTOAN_NGHIVIEC")
                         .HasForeignKey("MaNV");
                 });
 

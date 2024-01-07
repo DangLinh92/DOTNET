@@ -28,5 +28,12 @@ namespace HRMNS.Data.EF.Configurations
         }
     }
 
-    
+    public class ThanhToanNghiViecConfiguration : DbEntityConfiguration<HR_THANHTOAN_NGHIVIEC>
+    {
+        public override void Configure(EntityTypeBuilder<HR_THANHTOAN_NGHIVIEC> entity)
+        {
+            entity.HasKey(c => c.Id);
+        }
+    }
+
 }

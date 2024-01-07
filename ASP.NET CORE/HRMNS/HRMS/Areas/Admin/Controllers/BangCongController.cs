@@ -117,22 +117,26 @@ namespace HRMS.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> ChotBangCong(string timeEndUser, string thang)
         {
-            string _month = thang + "-01";
-            if (DateTime.Parse(DateTime.Now.ToString("yyyy-MM") + "-01").AddMonths(-1).ToString("yyyy-MM-dd") == _month)
-            {
-                //HR_NgayChotCongViewModel ngayChot = new HR_NgayChotCongViewModel()
-                //{
-                //    NgayChotCong = DateTime.Now.ToString("yyyy-MM-dd"),
-                //    ChotCongChoThang = _month
-                //};
-                //_ngayChotCongService.Update(ngayChot);
+            //string _month = thang + "-01";
+            //if (DateTime.Parse(DateTime.Now.ToString("yyyy-MM") + "-01").AddMonths(-1).ToString("yyyy-MM-dd") == _month)
+            //{
+            //    //HR_NgayChotCongViewModel ngayChot = new HR_NgayChotCongViewModel()
+            //    //{
+            //    //    NgayChotCong = DateTime.Now.ToString("yyyy-MM-dd"),
+            //    //    ChotCongChoThang = _month
+            //    //};
+            //    //_ngayChotCongService.Update(ngayChot);
 
-                await ChotCongFinal();
-                UpdateBangCongExtention(timeEndUser, thang);
-                return new OkObjectResult(thang);
-            }
+            //    await ChotCongFinal();
+            //    UpdateBangCongExtention(timeEndUser, thang);
+            //    return new OkObjectResult(thang);
+            //}
 
-            return new BadRequestObjectResult(thang);
+            await ChotCongFinal();
+            UpdateBangCongExtention(timeEndUser, thang);
+            return new OkObjectResult(thang);
+
+           // return new BadRequestObjectResult(thang);
         }
 
         public async Task ChotCongFinal()

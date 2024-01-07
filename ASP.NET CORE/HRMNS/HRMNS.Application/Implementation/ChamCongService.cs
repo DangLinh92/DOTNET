@@ -44,7 +44,7 @@ namespace HRMNS.Application.Implementation
         public List<ChamCongLogViewModel> GetAll(string keyword)
         {
             string lastMonth = DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd");
-            var lst = _chamCongLogRepository.FindAll(x => string.Compare(x.Ngay_ChamCong, lastMonth) >= 0).OrderByDescending(x => x.Ngay_ChamCong);
+            var lst = _chamCongLogRepository.FindAll(x => string.Compare(x.Ngay_ChamCong, lastMonth) >= 0).AsNoTracking().OrderByDescending(x => x.Ngay_ChamCong);
             var results = _mapper.Map<List<ChamCongLogViewModel>>(lst);
 
             return results;
@@ -166,7 +166,7 @@ namespace HRMNS.Application.Implementation
             return _chamCongLogRepository.ExecProceduce("PKG_BUSINESS.PUT_EVENT_LOG", param, "A_DATA", data);
         }
 
-        public List<ChamCongLogViewModel> Search(string result, string dept, ref string timeFrom1, ref string timeTo1)
+        public List<ChamCongLogViewModel> Search(string result, string dept, string request, ref string timeFrom1, ref string timeTo1)
         {
             string timeFrom, timeTo;
 
@@ -183,14 +183,29 @@ namespace HRMNS.Application.Implementation
             {
                 if (!string.IsNullOrEmpty(timeFrom) && !string.IsNullOrEmpty(timeTo))
                 {
-                    var lst = _chamCongLogRepository.FindAll(x => string.Compare(x.Ngay_ChamCong, timeFrom) >= 0 && string.Compare(x.Ngay_ChamCong, timeTo) <= 0).OrderByDescending(x => x.Ngay_ChamCong);
-                    var vm = _mapper.Map<List<ChamCongLogViewModel>>(lst);
-                    if (!string.IsNullOrEmpty(result))
+                    if (request.NullString() == "")
                     {
-                        vm = vm.Where(x => x.Result.Contains(result)).ToList();
+                        var lst = _chamCongLogRepository.FindAll(x => string.Compare(x.Ngay_ChamCong, timeFrom) >= 0 && string.Compare(x.Ngay_ChamCong, timeTo) <= 0).OrderByDescending(x => x.Ngay_ChamCong);
+                        var vm = _mapper.Map<List<ChamCongLogViewModel>>(lst);
+                        if (!string.IsNullOrEmpty(result))
+                        {
+                            vm = vm.Where(x => x.Result.Contains(result)).ToList();
+                        }
+
+                        return vm;
+                    }
+                    else
+                    {
+                        var lst = _chamCongLogRepository.FindAll(x => x.ApproveRequest == request && string.Compare(x.Ngay_ChamCong, timeFrom) >= 0 && string.Compare(x.Ngay_ChamCong, timeTo) <= 0).OrderByDescending(x => x.Ngay_ChamCong);
+                        var vm = _mapper.Map<List<ChamCongLogViewModel>>(lst);
+                        if (!string.IsNullOrEmpty(result))
+                        {
+                            vm = vm.Where(x => x.Result.Contains(result)).ToList();
+                        }
+
+                        return vm;
                     }
 
-                    return vm;
                 }
                 else if (string.IsNullOrEmpty(timeFrom) && string.IsNullOrEmpty(timeTo))
                 {
@@ -207,30 +222,60 @@ namespace HRMNS.Application.Implementation
             {
                 if (!string.IsNullOrEmpty(timeFrom) && !string.IsNullOrEmpty(timeTo))
                 {
-                    var lstCC = _chamCongLogRepository.FindAll(x => string.Compare(x.Ngay_ChamCong, timeFrom) >= 0 && string.Compare(x.Ngay_ChamCong, timeTo) <= 0).OrderByDescending(x => x.Ngay_ChamCong).ToList();
-                    var lst = lstCC.Where(x => x.Department.Contains(dept)).OrderByDescending(x => x.Ngay_ChamCong).ToList();
-
-                    var lstNV = _nhanvienRepository.FindAll(x => x.MaBoPhan == Department);
-                    if (lstNV.Count() > 0)
+                    if (request.NullString() == "")
                     {
-                        foreach (var item in lstNV)
+                        var lstCC = _chamCongLogRepository.FindAll(x => string.Compare(x.Ngay_ChamCong, timeFrom) >= 0 && string.Compare(x.Ngay_ChamCong, timeTo) <= 0).OrderByDescending(x => x.Ngay_ChamCong).ToList();
+                        var lst = lstCC.Where(x => x.Department.Contains(dept)).OrderByDescending(x => x.Ngay_ChamCong).ToList();
+
+                        var lstNV = _nhanvienRepository.FindAll(x => x.MaBoPhan == Department);
+                        if (lstNV.Count() > 0)
                         {
-                            if (!lst.Any(x => item.Id.ToUpper() == "H" + x.ID_NV))
+                            foreach (var item in lstNV)
                             {
-                                var nv = lstCC.Where(x => item.Id.ToUpper() == "H" + x.ID_NV).OrderByDescending(x => x.Ngay_ChamCong).ToList();
-                                lst.AddRange(nv);
+                                if (!lst.Any(x => item.Id.ToUpper() == "H" + x.ID_NV))
+                                {
+                                    var nv = lstCC.Where(x => item.Id.ToUpper() == "H" + x.ID_NV).OrderByDescending(x => x.Ngay_ChamCong).ToList();
+                                    lst.AddRange(nv);
+                                }
                             }
                         }
+
+                        var vm = _mapper.Map<List<ChamCongLogViewModel>>(lst);
+
+                        if (!string.IsNullOrEmpty(result))
+                        {
+                            vm = vm.Where(x => x.Result.Contains(result)).ToList();
+                        }
+
+                        return vm;
                     }
-
-                    var vm = _mapper.Map<List<ChamCongLogViewModel>>(lst);
-
-                    if (!string.IsNullOrEmpty(result))
+                    else
                     {
-                        vm = vm.Where(x => x.Result.Contains(result)).ToList();
-                    }
+                        var lstCC = _chamCongLogRepository.FindAll(x => x.ApproveRequest == request && string.Compare(x.Ngay_ChamCong, timeFrom) >= 0 && string.Compare(x.Ngay_ChamCong, timeTo) <= 0).OrderByDescending(x => x.Ngay_ChamCong).ToList();
+                        var lst = lstCC.Where(x => x.Department.Contains(dept)).OrderByDescending(x => x.Ngay_ChamCong).ToList();
 
-                    return vm;
+                        var lstNV = _nhanvienRepository.FindAll(x => x.MaBoPhan == Department);
+                        if (lstNV.Count() > 0)
+                        {
+                            foreach (var item in lstNV)
+                            {
+                                if (!lst.Any(x => item.Id.ToUpper() == "H" + x.ID_NV))
+                                {
+                                    var nv = lstCC.Where(x => item.Id.ToUpper() == "H" + x.ID_NV).OrderByDescending(x => x.Ngay_ChamCong).ToList();
+                                    lst.AddRange(nv);
+                                }
+                            }
+                        }
+
+                        var vm = _mapper.Map<List<ChamCongLogViewModel>>(lst);
+
+                        if (!string.IsNullOrEmpty(result))
+                        {
+                            vm = vm.Where(x => x.Result.Contains(result)).ToList();
+                        }
+
+                        return vm;
+                    }
                 }
                 else if (string.IsNullOrEmpty(timeFrom) && string.IsNullOrEmpty(timeTo))
                 {
@@ -268,12 +313,134 @@ namespace HRMNS.Application.Implementation
             {
                 entity.Last_Out_Time_Request = model.Last_Out_Time_Request;
                 entity.FirstIn_Time_Request = model.FirstIn_Time_Request;
-                entity.ApproveRequest = model.ApproveRequest;
 
+                if (model.ApproveRequest == "Approve")
+                {
+                    entity.FirstIn_Time = model.FirstIn_Time;
+                    entity.Last_Out_Time = model.Last_Out_Time;
+                }
+
+                entity.ApproveRequest = model.ApproveRequest;
                 _chamCongLogRepository.Update(entity);
             }
 
             return model;
+        }
+
+        public ChamCongLogViewModel UpdateApprove(ChamCongLogViewModel model)
+        {
+            var entity = _chamCongLogRepository.FindAll(x => x.ID_NV == model.ID_NV && x.Ngay_ChamCong == model.Ngay_ChamCong).FirstOrDefault();
+            var isUserHandle = entity.UserHandle == "Y";
+
+            DateTime ngayCham = DateTime.Parse(model.Ngay_ChamCong);
+            string ex = "";
+            if (entity != null)
+            {
+                entity.ApproveRequest = model.ApproveRequest;
+                entity.Last_Out_Time_Request = model.Last_Out_Time_Request;
+                entity.FirstIn_Time_Request = model.FirstIn_Time_Request;
+
+                if (entity.FirstIn_Time != model.FirstIn_Time)
+                {
+                    entity.FirstIn_Time = model.FirstIn_Time;
+                    entity.FirstIn = "IN";
+                    ex = "-IN";
+                }
+
+                if (entity.Last_Out_Time != model.Last_Out_Time)
+                {
+                    entity.Last_Out_Time = model.Last_Out_Time;
+                    entity.LastOut = "OUT";
+                    ex += "-OUT";
+                }
+
+                if (model.FirstIn_Time == "00:00:00")
+                {
+                    entity.FirstIn = "";
+                }
+                else
+                {
+                    entity.FirstIn = "IN";
+                }
+
+                if (model.Last_Out_Time == "00:00:00")
+                {
+                    entity.LastOut = "";
+                }
+                else
+                {
+                    entity.LastOut = "OUT";
+                }
+
+                if (entity.FirstIn_Time == "00:00:00" && entity.Last_Out_Time == "00:00:00")
+                {
+                    entity.UserHandle = "N";
+                }
+                else
+                {
+                    entity.UserHandle = "Y";
+                }
+
+                entity.UserModified = model.UserModified + ex;
+
+                if (entity.UserHandle == "Y" && !isUserHandle)
+                {
+                    entity.NumberUpdated += 1;
+                }
+
+               
+                _chamCongLogRepository.Update(entity);
+
+            }
+            return model;
+        }
+
+        public void UpdateAfterApprove(List<ChamCongLogViewModel> models)
+        {
+            CHAM_CONG_LOG entityPreday;
+            List<CHAM_CONG_LOG> lstEntityPreday = new List<CHAM_CONG_LOG>();
+            string preday = "";
+            DateTime ngayCham;
+            foreach (var entity in models.ToList())
+            {
+                ngayCham = DateTime.Parse(entity.Ngay_ChamCong);
+                preday = ngayCham.AddDays(-1).ToString("yyyy-MM-dd");
+
+                if (lstEntityPreday.Any(x => x.ID_NV == entity.ID_NV && x.Ngay_ChamCong == preday))
+                {
+                    entityPreday = lstEntityPreday.FirstOrDefault(x => x.ID_NV == entity.ID_NV && x.Ngay_ChamCong == preday);
+                }
+                else
+                {
+                    entityPreday = _chamCongLogRepository.FindSingle(x => x.ID_NV == entity.ID_NV && x.Ngay_ChamCong == preday);
+                }
+               
+                if (entityPreday != null)
+                {
+                    entityPreday.Last_Out_Time_Update = entity.Last_Out_Time;
+
+                    if (!lstEntityPreday.Any(x => x.ID_NV == entity.ID_NV && x.Ngay_ChamCong == entityPreday.Ngay_ChamCong))
+                    {
+                        lstEntityPreday.Add(entityPreday);
+                    }
+                }
+            }
+
+            if (lstEntityPreday.Count > 0)
+            {
+                DetachAllEntities();
+                _chamCongLogRepository.UpdateRange(lstEntityPreday);
+            }
+        }
+
+        public void DetachAllEntities()
+        {
+            var undetachedEntriesCopy = ((EFUnitOfWork)_unitOfWork).DBContext().ChangeTracker.Entries()
+                .Where(e => e.State != EntityState.Detached)
+                .ToList();
+
+            foreach (var entry in undetachedEntriesCopy)
+                entry.State = EntityState.Detached;
         }
 
         public ChamCongLogViewModel Update(ChamCongLogViewModel model)
@@ -305,10 +472,18 @@ namespace HRMNS.Application.Implementation
                 {
                     entity.FirstIn = "";
                 }
+                else
+                {
+                    entity.FirstIn = "IN";
+                }
 
                 if (model.Last_Out_Time == "00:00:00")
                 {
                     entity.LastOut = "";
+                }
+                else
+                {
+                    entity.LastOut = "OUT";
                 }
 
                 if (entity.FirstIn_Time == "00:00:00" && entity.Last_Out_Time == "00:00:00")
@@ -330,10 +505,10 @@ namespace HRMNS.Application.Implementation
                 if (entity.UserHandle == "Y" && !isUserHandle)
                 {
                     var lst = _chamCongLogRepository.FindAll(x => x.ID_NV == model.ID_NV && x.Ngay_ChamCong.Substring(0, 7) == model.Ngay_ChamCong.Substring(0, 7));
-                    int count = lst.Where(x=>x.UserHandle == "Y").Count();
+                    int count = lst.Where(x => x.UserHandle == "Y").Count();
                     foreach (var item in lst)
                     {
-                        if(item.Ngay_ChamCong != entity.Ngay_ChamCong && item.Ngay_ChamCong != entityPreday?.Ngay_ChamCong)
+                        if (item.Ngay_ChamCong != entity.Ngay_ChamCong && item.Ngay_ChamCong != entityPreday?.Ngay_ChamCong)
                         {
                             item.NumberUpdated = count + 1;
                             _chamCongLogRepository.Update(item);
@@ -345,13 +520,17 @@ namespace HRMNS.Application.Implementation
                 {
                     entity.NumberUpdated += 1;
 
-                    if(entityPreday != null && entity.Ngay_ChamCong.Substring(0,7) == entityPreday?.Ngay_ChamCong.Substring(0, 7))
+                    if (entityPreday != null && entity.Ngay_ChamCong.Substring(0, 7) == entityPreday?.Ngay_ChamCong.Substring(0, 7))
                     {
                         entityPreday.NumberUpdated = entity.NumberUpdated;
                     }
                 }
 
-                 _chamCongLogRepository.Update(entity);
+                entity.FirstIn_Time_Request = model.FirstIn_Time_Request;
+                entity.Last_Out_Time_Request = model.Last_Out_Time_Request;
+                entity.ApproveRequest = model.ApproveRequest;
+
+                _chamCongLogRepository.Update(entity);
 
                 if (entityPreday != null)
                     _chamCongLogRepository.Update(entityPreday);

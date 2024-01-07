@@ -34,6 +34,7 @@ namespace HRMNS.Data.Entities
             BANG_CONG_EXTENTION = new HashSet<BANG_CONG_EXTENTION>();
             NHANVIEN_INFOR_EX = new HashSet<NHANVIEN_INFOR_EX>();
             HR_KY_LUAT_KHENTHUONG = new HashSet<HR_KY_LUAT_KHENTHUONG>();
+            HR_THANHTOAN_NGHIVIEC = new HashSet<HR_THANHTOAN_NGHIVIEC>();
         }
 
         public HR_NHANVIEN
@@ -235,5 +236,6 @@ namespace HRMNS.Data.Entities
         public virtual ICollection<BANG_CONG_EXTENTION> BANG_CONG_EXTENTION { get; set; }
         public virtual ICollection<NHANVIEN_INFOR_EX> NHANVIEN_INFOR_EX { get; set; }
         public virtual ICollection<HR_KY_LUAT_KHENTHUONG> HR_KY_LUAT_KHENTHUONG { get; set; }
+        public virtual ICollection<HR_THANHTOAN_NGHIVIEC> HR_THANHTOAN_NGHIVIEC { get; set; }
     }
 }

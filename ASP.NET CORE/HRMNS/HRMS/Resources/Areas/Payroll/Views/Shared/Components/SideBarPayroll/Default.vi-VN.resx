@@ -222,6 +222,9 @@
   <data name="PAYROLL_SALARY_DETAIL" xml:space="preserve">
     <value>Bảng Lương Chi Tiết</value>
   </data>
+  <data name="PAY_OFF" xml:space="preserve">
+    <value>Đăng Ký Thanh Toán Nghỉ Việc</value>
+  </data>
   <data name="PHEP_NAM" xml:space="preserve">
     <value>Phép Năm</value>
   </data>

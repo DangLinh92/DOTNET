@@ -2,11 +2,11 @@
 <table class="table table-striped custom-table datatable" id="chamCongLogDataTable">
     <thead>
         <tr>
-            <th><input type="checkbox" name="select_all" value="1" id="chamCongLogDataTable-select-all"> All</th>
-            <th>Date</th>
-            <th>User Id</th>
-            <th>User Name</th>
-            <th>Department</th>
+            <th class="bgGridFix"><input type="checkbox" name="select_all" value="1" id="chamCongLogDataTable-select-all"> All</th>
+            <th class="bgGridFix">Date</th>
+            <th class="bgGridFix">User Id</th>
+            <th class="bgGridFix">User Name</th>
+            <th class="bgGridFix">Department</th>
             <th>First-In Time</th>
             <th>Last-Out Time</th>
             <th>First-In</th>
@@ -21,11 +21,11 @@
             <th class="text-right no-sort">Action</th>
         </tr>
         <tr>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
+            <th class="bgGridFix"></th>
+            <th class="bgGridFix"></th>
+            <th class="bgGridFix"></th>
+            <th class="bgGridFix"></th>
+            <th class="bgGridFix"></th>
             <th></th>
             <th></th>
             <th></th>
@@ -44,11 +44,11 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>@item.Id</td>
-                <td>@item.Ngay_ChamCong</td>
-                <td>@item.ID_NV</td>
-                <td>@item.Ten_NV</td>
-                <td>@item.Department</td>
+                <td class="bgGridFix">@item.Id</td>
+                <td class="bgGridFix">@item.Ngay_ChamCong</td>
+                <td class="bgGridFix">@item.ID_NV</td>
+                <td class="bgGridFix">@item.Ten_NV</td>
+                <td class="bgGridFix">@item.Department</td>
 
                 @if (item.UserModified != "sys")
                 {

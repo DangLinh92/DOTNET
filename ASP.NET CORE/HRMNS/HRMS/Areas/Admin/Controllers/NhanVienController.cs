@@ -1,16 +1,21 @@
-﻿using HRMNS.Application.Interfaces;
+﻿using DevExtreme.AspNet.Data;
+using DevExtreme.AspNet.Mvc;
+using HRMNS.Application.Interfaces;
 using HRMNS.Application.ViewModels.HR;
 using HRMNS.Application.ViewModels.System;
 using HRMNS.Data.EF.Extensions;
+using HRMNS.Data.Entities;
 using HRMNS.Data.Enums;
 using HRMNS.Utilities.Common;
 using HRMNS.Utilities.Constants;
 using HRMNS.Utilities.Dtos;
 using HRMS.Areas.Admin.Models;
+using HRMS.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Newtonsoft.Json;
 using OfficeOpenXml;
 using OfficeOpenXml.Table;
 using System;
@@ -147,7 +152,7 @@ namespace HRMS.Areas.Admin.Controllers
             string datetime = DateTime.Now.ToString("yyyy-MM");
             datetime = datetime + "-01";
 
-            if(UserRole == "HR")
+            if (UserRole == "HR")
             {
                 List<NhanVienViewModel> nhanviens = _nhanvienService.GetAll().
               Where(x => x.Status != Status.InActive.NullString() ||
@@ -286,13 +291,13 @@ namespace HRMS.Areas.Admin.Controllers
                 {
                     Id = x.Id,
                     TenNV = x.TenNV,
-                    MaBoPhan  = x.MaBoPhan,
+                    MaBoPhan = x.MaBoPhan,
                     MaChucDanh = x.MaChucDanh,
                     GioiTinh = x.GioiTinh,
                     NgaySinh = x.NgaySinh,
                     NoiSinh = x.NoiSinh,
                     TinhTrangHonNhan = x.TinhTrangHonNhan,
-                    DanToc=  x.DanToc,
+                    DanToc = x.DanToc,
                     TonGiao = x.TonGiao,
                     DiaChiThuongTru = x.DiaChiThuongTru,
                     SoDienThoai = x.SoDienThoai,
@@ -304,7 +309,7 @@ namespace HRMS.Areas.Admin.Controllers
                     TruongDaoTao = x.TruongDaoTao,
                     NgayVao = x.NgayVao,
                     NguyenQuan = x.NguyenQuan,
-                    DChiHienTai =x.DChiHienTai,
+                    DChiHienTai = x.DChiHienTai,
                     MaBHXH = x.MaBHXH,
                     MaSoThue = x.MaSoThue,
                     Status = x.Status
@@ -1330,5 +1335,39 @@ namespace HRMS.Areas.Admin.Controllers
 
             return PartialView("_NhanVienGridPartial", nhanviens);
         }
+
+        // Thanh toán nghỉ việc
+        public IActionResult PayOffIndex()
+        {
+            return View();
+        }
+
+        [HttpPut]
+        public IActionResult UpdatePayOff(string key, string values)
+        {
+            var models = HttpContext.Session.Get<List<HR_THANHTOAN_NGHIVIEC>>("GetPayOff");
+            Guid Id = Guid.Parse(key);
+            var item = models.FirstOrDefault(o => o.Id.Equals(Id));
+
+            JsonConvert.PopulateObject(values, item);
+
+            if (item.IsPay == false)
+            {
+                item.IsPayed = false;
+            }
+
+            _nhanvienService.UpdatePayOff(item);
+            _nhanvienService.Save();
+            return Ok(key);
+        }
+
+        [HttpGet]
+        public object GetPayOff(DataSourceLoadOptions loadOptions,string month)
+        {
+            var models = _nhanvienService.GetPayOff(month);
+            HttpContext.Session.Set("GetPayOff", models);
+            return DataSourceLoader.Load(models, loadOptions);
+        }
+
     }
 }

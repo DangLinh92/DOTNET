@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Bảng công chi tiết";
     Layout = "~/Areas/Payroll/Views/Shared/_Layout.cshtml";
 }
@@ -47,6 +46,7 @@
 
             var dateBox = $("#txt_year").dxDateBox("instance");
             let _time = dateBox.option('text') + '-01';
+            let _chedo = $('#cboCheDo').val();
 
             hrms.run_waitMe($('#contentLuong'));
             $.ajax({
@@ -54,7 +54,8 @@
                 url: "/Payroll/BangLuongChiTiet/ViewBangCongByMonth",
                 data:
                 {
-                    time: _time
+                    time: _time,
+                    chedo: _chedo
                 },
                 success: function (response) {
                     hrms.hide_waitMe($('#contentLuong'));
@@ -65,6 +66,37 @@
                     hrms.hide_waitMe($('#contentLuong'));
                 }
             });
+        });
+
+        $("#btnXacNhanTT").on('click', function () {
+
+            let _chedo = $('#cboCheDo').val();
+            
+            if(_chedo == "NghiViec"){
+                hrms.run_waitMe($('#contentLuong'));
+
+                console.log(_chedo);
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Payroll/BangLuongChiTiet/XacNhanThanhToanNghiViec",
+                    data:
+                    {
+                        chedo: _chedo
+                    },
+                    success: function (response) {
+                        hrms.hide_waitMe($('#contentLuong'));
+                        location.reload();
+                    },
+                    error: function (status) {
+                        hrms.notify(status.responseText, 'error', 'alert', function () { });
+                        hrms.hide_waitMe($('#contentLuong'));
+                    }
+                });
+            }
+            else{
+                hrms.notify("Chọn chế độ nghỉ việc để xác nhận", 'error', 'alert', function () { });
+            }
         });
 
         $("#btnChotLuong").on('click', function () {
@@ -176,6 +208,7 @@
 
 @{
     string thangView = ViewBag.ThangChotCong;
+    string chedo = ViewBag.CheDoView;
 }
 
 <div class="content container-fluid" id="contentLuong">
@@ -187,31 +220,43 @@
                     <div class="dx-field" style="float: left; display: inline-block; ">
                         <div>
                             @(Html.DevExtreme().DateBox()
-                                  .ID("txt_year")
-                                  .Value(DateTime.Parse(thangView).ToString("yyyy-MM"))
-                                  .CalendarOptions(x=>x.MaxZoomLevel(CalendarZoomLevel.Year))
-                                  .DisplayFormat("yyyy-MM")
-                                  .Width(200)
-                                  .Placeholder("Select...")
-                                  .Label("Month")
-                            )
+                                .ID("txt_year")
+                                .Value(DateTime.Parse(thangView).ToString("yyyy-MM"))
+                                .CalendarOptions(x => x.MaxZoomLevel(CalendarZoomLevel.Year))
+                                .DisplayFormat("yyyy-MM")
+                                .Width(200)
+                                .Height(47)
+                                .Placeholder("Select...")
+                                .Label("Month")
+                                )
 
                         </div>
                     </div>
-                    <div style="float: left; margin: 5px;">
-                        <a href="#" id="btnViewData" class="btn btn-info">View Data</a>
-                    </div>
+                </div>
+                <div style="float: left; margin: 5px;width:200px" class="form-group form-focus select-focus">
+                    <select id="cboCheDo" name="chedo" class="select floating">
+                        <!option value="" @(chedo == "" ? "selected" : "")>--All--</!option>
+                        <!option value="NghiViec" @(chedo == "NghiViec" ? "selected" : "")>Nghỉ Việc</!option>
+                        <!option value="LamViec" @(chedo == "LamViec" ? "selected" : "")>Đang Làm Việc</!option>
+                    </select>
+                    <label class="focus-label">Xem Bảng Lương</label>
+                </div>
+                <div style="float: left; margin: 5px;">
+                    <a href="#" id="btnViewData" class="btn btn-info">View Data</a>
+                </div>
+                <div style="float: left; margin-left: 10px;margin-top: 5px;">
+                    <a href="#" id="btnXacNhanTT" class="btn btn-warning">Xác Nhận TT Nghỉ Việc</a>
                 </div>
             </div>
         </div>
         <div class="col-auto float-right ml-auto" style="margin-right:100px;">
             <a href="#" id="btnChotLuong" class="btn add-btn"><i class="fa fa-arrow-circle-down"></i>Chốt Bảng Lương Tháng</a>
             @*<div class="btn-group">
-                <button type="button" class="btn btn-info dropdown-toggle" id="btnImport" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width:100px">Excel</button>
-                <div class="dropdown-menu" style="">
-                    <a class="dropdown-item" href="~/templates/SalaryBaseInformation.xlsx">File mẫu import thông tin Lương Cơ Bản</a>
-                    <a class="dropdown-item" id="btnImport" onclick="ImportExcel()">Import Lương CB</a>
-                </div>
+            <button type="button" class="btn btn-info dropdown-toggle" id="btnImport" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width:100px">Excel</button>
+            <div class="dropdown-menu" style="">
+            <a class="dropdown-item" href="~/templates/SalaryBaseInformation.xlsx">File mẫu import thông tin Lương Cơ Bản</a>
+            <a class="dropdown-item" id="btnImport" onclick="ImportExcel()">Import Lương CB</a>
+            </div>
             </div>*@
         </div>
     </div>
@@ -226,48 +271,48 @@
     </div>
 
     <script type="text/javascript">
-    $(function () {
-        $("#button-download-xlsx").dxButton({
-            icon: "download",
-            type: "normal",
-            text: "Download as Xlsx",
-            onClick: function (e) {
-                var spreadsheetState = spreadsheet.getSpreadsheetState();
-                $("#formExport").attr('action', '@Url.Action("DownloadXlsx")');
-                $("input[name='SpreadsheetWorkSessionId']").val(spreadsheetState.SpreadsheetWorkSessionId);
+        $(function () {
+            $("#button-download-xlsx").dxButton({
+                icon: "download",
+                type: "normal",
+                text: "Download as Xlsx",
+                onClick: function (e) {
+                    var spreadsheetState = spreadsheet.getSpreadsheetState();
+                    $("#formExport").attr('action', '@Url.Action("DownloadXlsx")');
+                    $("input[name='SpreadsheetWorkSessionId']").val(spreadsheetState.SpreadsheetWorkSessionId);
 
-            },
-            useSubmitBehavior: true
-        });
+                },
+                useSubmitBehavior: true
+            });
         @*$("#button-download-html").dxButton({
-            icon: "download",
-            type: "normal",
-            text: "Download as Html",
-            onClick: function (e) {
+                icon: "download",
+                type: "normal",
+                text: "Download as Html",
+                onClick: function (e) {
                 var spreadsheetState = spreadsheet.getSpreadsheetState();
                 $("#formExport").attr('action', '@Url.Action("DownloadHtml")');
                 $("input[name='SpreadsheetWorkSessionId']").val(spreadsheetState.SpreadsheetWorkSessionId);
-            },
-            useSubmitBehavior: true
-        });
-        $("#button-print").dxButton({
-            icon: "print",
-            type: "normal",
-            text: "Print document",
-            onClick: function(e) {
+                },
+                useSubmitBehavior: true
+                });
+                $("#button-print").dxButton({
+                icon: "print",
+                type: "normal",
+                text: "Print document",
+                onClick: function(e) {
                 spreadsheet.print("_blank");
-            }
-        });*@
-    });
+                }
+                });*@
+                    });
     </script>
     @(Html.DevExpress()
-    .Spreadsheet("spreadsheet")
-    .Height("800px")
-    .Width("100%")
-    .ConfirmOnLosingChanges(confirm => confirm.Enabled(false))
-    .DocumentRequestHandlerUrl(Url.Action("DxDocumentRequest"))
-    .Open((string)ViewData["DocumentPath"])
-    )
+        .Spreadsheet("spreadsheet")
+        .Height("800px")
+        .Width("100%")
+        .ConfirmOnLosingChanges(confirm => confirm.Enabled(false))
+        .DocumentRequestHandlerUrl(Url.Action("DxDocumentRequest"))
+        .Open((string)ViewData["DocumentPath"])
+        )
 </div>
 <partial name="_ImportExcelModel" />
 

@@ -357,7 +357,10 @@
                     return '<input type="checkbox" name="id[]" value="' + $('<div/>').text(data).html() + '">';
                 }
             }],
-            "order": [13, 'asc']
+            "order": [13, 'asc'],
+            fixedColumns: {
+                left: 5
+            }
         });
         $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');
         $('select[name="chamCongLogDataTable_length"]').removeClass('form-control-sm');

@@ -155,7 +155,7 @@ namespace HRMNS.Application.Implementation
                 };
 
                 htro.TenNV = lstNhanvien.FirstOrDefault(x => x.Id == item.MaNV).TenNV;
-                htro.BoPhan = lstNhanvien.FirstOrDefault(x => x.Id == item.MaNV).MaBoPhan2;
+                htro.BoPhan = lstNhanvien.FirstOrDefault(x => x.Id == item.MaNV).MaBoPhan;
                 data.Add(htro);
             }
 
@@ -166,7 +166,7 @@ namespace HRMNS.Application.Implementation
         {
             string endMonth = DateTime.Parse(month).AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd");
             List<HR_THAISAN_CONNHO> ThaiSanConNho = new List<HR_THAISAN_CONNHO>();
-            ThaiSanConNho = _thaisanRepository.FindAll(x => x.FromDate.CompareTo(month) <= 0 && x.ToDate.CompareTo(endMonth) >= 0).ToList();
+            ThaiSanConNho = _thaisanRepository.FindAll(x => x.FromDate.CompareTo(month) <= 0 && x.ToDate.CompareTo(endMonth) >= 0 && (x.CheDoThaiSan == "ThaiSan" || x.CheDoThaiSan == "MangBau")).ToList();
             List<HR_NHANVIEN> lstNhanvien = _nhanvienRepository.FindAll(x => ((x.NgayNghiViec != "" && x.NgayNghiViec.CompareTo(month) >= 0) || x.NgayNghiViec == "" || x.NgayNghiViec == null) && x.GioiTinh == "Female").ToList();
 
             foreach (var item in lstNhanvien.ToList())

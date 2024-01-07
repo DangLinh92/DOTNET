@@ -167,7 +167,7 @@
                             @(Html.DevExtreme().DateBox()
                                 .ID("todate-date")
                                 .Type(DateBoxType.Date)
-                                .Value(DateTime.Now.AddDays(1))
+                                .Value(DateTime.Now)
                                 .DisplayFormat("yyyy-MM-dd")
                                 .Width(200)
                                 .Placeholder("Select...")
@@ -283,7 +283,7 @@
                     s.Add().ValueField("WLP2").Name("WLP2");
                 })
                 .Legend(l => l
-                .HorizontalAlignment(HorizontalAlignment.Right)
+                .HorizontalAlignment(HorizontalAlignment.Left)
                 .Position(RelativePosition.Inside)
                 .Border(b => b.Visible(true))
                 .ColumnCount(4)

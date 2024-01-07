@@ -6,6 +6,7 @@
             <th>Mã NV</th>
             <th>Vị trí</th>
             <th>Bộ Phận</th>
+            <th>Tên Bộ Phận</th>
             <th>Ngày Hết Hạn HD</th>
             @if (Model.FirstOrDefault()?.Status == "InActive")
             {
@@ -34,6 +35,7 @@
                 <td>@nv.Id</td>
                 <td>@nv.MaChucDanh</td>
                 <td>@nv.MaBoPhan</td>
+                <td>@nv.HR_BO_PHAN_DETAIL.MaBoPhan</td>
                 <td>@nv.HR_HOPDONG.OrderByDescending(x => x.NgayHetHieuLuc).FirstOrDefault()?.NgayHetHieuLuc</td>
 
                 @if (nv.Status == "InActive")

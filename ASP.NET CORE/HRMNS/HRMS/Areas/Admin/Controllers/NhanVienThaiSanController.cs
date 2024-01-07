@@ -217,11 +217,11 @@ namespace HRMS.Areas.Admin.Controllers
             {
                 var data = HtroSinhLy.Select(x => new
                 {
-                    MaNV = x.MaNV,
-                    TenNV = x.TenNV,
-                    BoPhan = x.BoPhan,
-                    ThoiGianChuaNghi = x.ThoiGianChuaNghi,
-                    Month = x.Month
+                    x.MaNV,
+                    x.TenNV,
+                    x.BoPhan,
+                    x.ThoiGianChuaNghi,
+                    x.Month
                 });
                 // add a new worksheet to the empty workbook
                 ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("HoTroSinhLy");

@@ -27,6 +27,9 @@ namespace HRMNS.Application.Interfaces
 
         List<NhanVienViewModel> Search(string id, string name, string dept);
 
+        List<HR_THANHTOAN_NGHIVIEC> GetPayOff(string month);
+        HR_THANHTOAN_NGHIVIEC UpdatePayOff(HR_THANHTOAN_NGHIVIEC model);
+
         void ImportExcel(string filePath,string param);
 
         void Save();

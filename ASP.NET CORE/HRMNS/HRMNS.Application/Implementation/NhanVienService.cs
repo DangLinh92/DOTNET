@@ -27,10 +27,16 @@ namespace HRMNS.Application.Implementation
         private IRespository<HR_BO_PHAN_DETAIL, int> _bophanDetailRepository;
         private IRespository<HR_LOAIHOPDONG, int> _loaiHDRepository;
         private IRespository<HR_NHANVIEN_CHEDO_DB, int> _nvVanPhongRepository;
+        private IRespository<HR_THANHTOAN_NGHIVIEC, Guid> _thanhtoanNghiViecRepository;
         private IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public NhanVienService(IRespository<HR_NHANVIEN_CHEDO_DB, int> nvVanPhongRepository, IRespository<HR_NHANVIEN, string> nhanVienRepository, IRespository<HR_NHANVIEN_2, string> nhanvien2Repository, IRespository<HR_LOAIHOPDONG, int> loaiHDRepository, IRespository<HR_BO_PHAN_DETAIL, int> bophanDetailRepository, IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public NhanVienService(IRespository<HR_NHANVIEN_CHEDO_DB, int> nvVanPhongRepository,
+            IRespository<HR_NHANVIEN, string> nhanVienRepository,
+            IRespository<HR_NHANVIEN_2, string> nhanvien2Repository,
+            IRespository<HR_LOAIHOPDONG, int> loaiHDRepository,
+            IRespository<HR_BO_PHAN_DETAIL, int> bophanDetailRepository,
+            IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor, IRespository<HR_THANHTOAN_NGHIVIEC, Guid> thanhtoanNghiViecRepository)
         {
             _nhanvienRepository = nhanVienRepository;
             _bophanDetailRepository = bophanDetailRepository;
@@ -40,6 +46,7 @@ namespace HRMNS.Application.Implementation
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
             _nvVanPhongRepository = nvVanPhongRepository;
+            _thanhtoanNghiViecRepository = thanhtoanNghiViecRepository;
         }
 
         public NhanVienViewModel Add(NhanVienViewModel nhanVienVm)
@@ -149,6 +156,7 @@ namespace HRMNS.Application.Implementation
             nhanVienVm.UserModified = GetUserId();
             HR_NHANVIEN nHANVIEN = ((Data.EF.EFUnitOfWork)_unitOfWork).DBContext().HrNhanVien.First(x => x.Id == nhanVienVm.Id);
             var nhanvien = _mapper.Map(nhanVienVm, nHANVIEN);
+            _nhanvienRepository.Update(nhanvien);
         }
 
         public void ImportExcel(string filePath, string param)
@@ -379,11 +387,11 @@ namespace HRMNS.Application.Implementation
 
                 HR_NHANVIEN_CHEDO_DB nvVP = _nvVanPhongRepository.FindSingle(x => x.MaNhanVien == nhanvien.Id);
 
-                if(nvVP == null && nhanvien.MaBoPhan == CommonConstants.SP)
+                if (nvVP == null && nhanvien.MaBoPhan == CommonConstants.SP)
                 {
                     _nvVanPhongRepository.Add(new HR_NHANVIEN_CHEDO_DB() { MaNhanVien = nhanvien.Id, CheDoDB = "vp_Block_10p" });
                 }
-                else if(nvVP != null && nhanvien.MaBoPhan != CommonConstants.SP)
+                else if (nvVP != null && nhanvien.MaBoPhan != CommonConstants.SP)
                 {
                     _nvVanPhongRepository.Remove(nvVP);
                 }
@@ -580,6 +588,66 @@ namespace HRMNS.Application.Implementation
         private int? GetBoPhanChiTiet(string maBophan)
         {
             return _bophanDetailRepository.FindAll(x => x.MaBoPhan == maBophan).FirstOrDefault()?.Id;
+        }
+
+        /// <summary>
+        /// Lấy danh sách cần thanh toán khi nghỉ việc
+        /// </summary>
+        /// <param name="month"></param>
+        /// <returns></returns>
+        public List<HR_THANHTOAN_NGHIVIEC> GetPayOff(string month)
+        {
+            month = DateTime.Parse(month).ToString("yyyy-MM") + "-01";
+            string fromDate = month;
+            string toDate = DateTime.Parse(month).AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd");
+
+            List<HR_NHANVIEN> nhanviens = _nhanvienRepository.FindAll(x => x.NgayNghiViec != "" && x.NgayNghiViec != null && x.NgayNghiViec.CompareTo(fromDate) >= 0 && x.NgayNghiViec.CompareTo(toDate) <= 0).ToList();
+            HR_THANHTOAN_NGHIVIEC payOff;
+            List<HR_THANHTOAN_NGHIVIEC> lstPayOff = new List<HR_THANHTOAN_NGHIVIEC>();
+            foreach (var item in nhanviens)
+            {
+                payOff = new HR_THANHTOAN_NGHIVIEC()
+                {
+                    Id = Guid.NewGuid(),
+                    MaNV = item.Id,
+                    IsPay = false,
+                    IsPayed = false,
+                    Month = month,
+                };
+                payOff.HR_NHANVIEN = item;
+                lstPayOff.Add(payOff);
+            }
+
+            List<HR_THANHTOAN_NGHIVIEC> lstTT = _thanhtoanNghiViecRepository.FindAll(x => x.Month == month, x => x.HR_NHANVIEN).ToList();
+            HR_THANHTOAN_NGHIVIEC tt;
+            foreach (var item in lstTT)
+            {
+                if (lstPayOff.Any(x => x.MaNV == item.MaNV && x.Month == month))
+                {
+                    tt = lstPayOff.FirstOrDefault(x => x.MaNV == item.MaNV && x.Month == month);
+                    tt.IsPay = item.IsPay;
+                    tt.IsPayed = item.IsPayed;
+                    tt.Id = item.Id;
+                }
+            }
+
+            return lstPayOff;
+        }
+
+        public HR_THANHTOAN_NGHIVIEC UpdatePayOff(HR_THANHTOAN_NGHIVIEC model)
+        {
+            model.UserModified = GetUserId();
+            model.HR_NHANVIEN = null;
+            if (_thanhtoanNghiViecRepository.FindById(model.Id) != null)
+            {
+                _thanhtoanNghiViecRepository.Update(model);
+            }
+            else
+            {
+                model.UserCreated = GetUserId();
+                _thanhtoanNghiViecRepository.Add(model);
+            }
+            return model;
         }
     }
 }

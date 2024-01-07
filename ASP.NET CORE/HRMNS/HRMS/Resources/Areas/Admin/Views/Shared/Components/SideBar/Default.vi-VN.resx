@@ -270,4 +270,7 @@
   <data name="HO_TRO_SINHLY" xml:space="preserve">
     <value>Hỗ Trợ Sinh Lý</value>
   </data>
+  <data name="PAY_OFF" xml:space="preserve">
+    <value>Đăng Ký Thanh Toán Nghỉ Việc</value>
+  </data>
 </root>

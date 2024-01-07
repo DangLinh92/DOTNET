@@ -260,7 +260,7 @@ namespace HRMS.ScheduledTasks
                     if (phepNam.SoPhepCongThem == 0)
                         phepNam.SoPhepCongThem = DateTime.Parse(ngaytinhphep).AddYears(5).CompareTo(item.NgayNghiViec.NullString() != "" ? DateTime.Parse(item.NgayNghiViec.NullString().Substring(0, 7) + "-01") : DateTime.Parse(endTime.Substring(0, 7) + "-01")) <= 0 ? 1 : 0;
 
-                    if (DateTime.Now.Year > 2023)
+                    if (DateTime.Now.Year > 2023 && _phepNamService.GetByCodeAndYear(item.Id, int.Parse(Year) - 1) != null)
                     {
                         phepNam.SoPhepDaUng = _phepNamService.GetByCodeAndYear(item.Id, int.Parse(Year) - 1).SoPhepTonNam;
                     }

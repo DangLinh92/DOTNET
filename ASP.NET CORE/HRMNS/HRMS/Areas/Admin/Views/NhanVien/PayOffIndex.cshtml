@@ -1,0 +1,235 @@
+﻿
+@{
+    ViewData["Title"] = "PayOffIndex";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <style>
+    </style>
+}
+
+@section Scripts{
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+    <script>
+
+        function getDataGridInstance() {
+            return $("#grid-container-detail").dxDataGrid("instance");
+        }
+
+        var dataGrid, loadPanel;
+        $(function () {
+
+            dataGrid = $("#grid-container-detail").dxDataGrid("instance");
+            loadPanel = $("#loadPanel").dxLoadPanel("instance");
+
+            let _month = getMonth();
+            console.log(_month);
+            loadPanel.show();
+            sendRequest('@Url.RouteUrl(new { area = "Admin", controller = "NhanVien", action = "GetPayOff" })',"GET",{month : _month})
+                .always(() => { loadPanel.hide(); })
+                .done((data) => {
+                    dataGrid.option("dataSource", data);
+                });
+        });
+
+        function onSaving(e) {
+            var change = e.changes[0];
+            console.log(change);
+            if (change) {
+                e.cancel = true;
+                loadPanel.show();
+                e.promise = saveChange(change)
+                    .always(() => { loadPanel.hide(); })
+                    .done((data) => {
+                        var orders = e.component.option("dataSource");
+
+                        console.log(change);
+                        console.log(orders);
+                        console.log(data);
+
+                        if (change.type === "insert") {
+                            change.data = data;
+                        }
+
+                        orders = DevExpress.data.applyChanges(orders, [change], { keyExpr: "Id" });
+
+                        e.component.option({
+                            dataSource: orders,
+                            editing: {
+                                editRowKey: null,
+                                changes: []
+                            }
+                        });
+
+                        e.component.refresh(true).done(() => {
+                            if (change.data.UpdateByCassetteId == true)
+                                location.reload();
+                        });
+
+                    });
+            }
+        };
+
+        function saveChange(change) {
+            switch (change.type) {
+                case "update":
+                    return sendRequest('@Url.RouteUrl(new { area= "Admin", controller = "NhanVien", action = "UpdatePayOff" })', "PUT", { key: change.key, values: JSON.stringify(change.data) });
+            }
+        };
+
+        function sendRequest(url, method, data) {
+            var d = $.Deferred();
+
+            method = method || "GET";
+
+            $.ajax(url, {
+                method: method,
+                data: data,
+                cache: false,
+                xhrFields: { withCredentials: true }
+            }).done(function (result) {
+                d.resolve(method === "GET" ? result.data : result);
+            }).fail(function (xhr) {
+                d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
+            });
+
+            return d.promise();
+        };
+
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('PayOffList');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'PayOffList.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        // chon thang
+        function selectedDate_changed(data) {
+
+            let _month = getMonth();
+            console.log(_month);
+            loadPanel.show();
+            sendRequest('@Url.RouteUrl(new { area = "Admin", controller = "NhanVien", action = "GetPayOff" })', "GET", { month: _month })
+                .always(() => { loadPanel.hide(); })
+                .done((data) => {
+                    dataGrid.option("dataSource", data);
+                });
+        };
+
+        function getMonth() {
+
+            var dateBox = $("#txt_month").dxDateBox("instance");
+
+            let sDate = dateBox.option('value');
+
+            return sDate;
+        }
+    </script>
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Danh Sách Đăng Ký Thanh Toán</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/Admin/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Đăng Ký Thanh Toán</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="row align-items-center">
+        <div class="col">
+            <div class="form">
+                <div class="dx-fieldset">
+                    <div class="dx-field">
+                        <div>
+                            @(Html.DevExtreme().DateBox()
+                                .ID("txt_month")
+                                .Value(DateTime.Now.ToString("yyyy-MM-dd"))
+                                .CalendarOptions(x => x.MaxZoomLevel(CalendarZoomLevel.Year))
+                                .DisplayFormat("yyyy-MM")
+                                .Width(200)
+                                .Placeholder("Select...")
+                                .Label("Year")
+                                .OnValueChanged("selectedDate_changed")
+                                )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top:10px">
+        <div class="col-md-12">
+            @(Html.DevExtreme().LoadPanel()
+                .ID("loadPanel")
+                .Position(p => p.Of("#grid-container-detail"))
+                .Visible(false)
+                )
+            @(Html.DevExtreme().DataGrid<HR_THANHTOAN_NGHIVIEC>()
+                .ID("grid-container-detail")
+                .KeyExpr("Id")
+                .Height(700)
+                .ShowBorders(true)
+                .RepaintChangesOnly(true)
+                .LoadPanel(loadPanel => loadPanel.Enabled(false))
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .AllowColumnResizing(true)
+                .ColumnMinWidth(50)
+                .ColumnAutoWidth(true)
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .FilterRow(filterRow => filterRow
+                .Visible(true)
+                .ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .HoverStateEnabled(true)
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+                .OnExporting("exporting")
+                .ColumnFixing(x => x.Enabled(true))
+                .Editing(editing =>
+                {
+                    editing.Mode(GridEditMode.Row);
+                    editing.AllowUpdating(true);
+                })
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.Id).AllowEditing(false).Fixed(true).Visible(false).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.HR_NHANVIEN.Id).Caption("Mã NV").AllowEditing(false).Fixed(true).Visible(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.HR_NHANVIEN.TenNV).Caption("Tên NV").AllowEditing(false).Fixed(true).Visible(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.HR_NHANVIEN.NgayNghiViec).Caption("Ngày Nghỉ Việc").AllowEditing(false).Fixed(true).Visible(true).FixedPosition(HorizontalEdge.Left);
+
+                    columns.AddFor(m => m.IsPay).Caption("Xác Nhận Sẽ Chi Trả").AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.Month).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                }).OnSaving("onSaving").
+                Summary(s => s.TotalItems(items =>
+                {
+                    items.AddFor(m => m.Month).SummaryType(SummaryType.Count).DisplayFormat("Count: {0}");
+                }))
+                )
+        </div>
+    </div>
+</div>
+
+

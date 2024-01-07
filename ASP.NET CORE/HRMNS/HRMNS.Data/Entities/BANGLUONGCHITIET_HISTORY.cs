@@ -145,5 +145,8 @@ namespace HRMNS.Data.Entities
 
         [StringLength(50)]
         public string UserModified { get; set; }
+
+        [StringLength(5)]
+        public string ThanhToanLuong { get; set; } // trạng thái thanh toán lương
     }
 }
