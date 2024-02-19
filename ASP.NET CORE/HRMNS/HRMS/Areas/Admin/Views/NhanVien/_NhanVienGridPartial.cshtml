@@ -35,7 +35,7 @@
                 <td>@nv.Id</td>
                 <td>@nv.MaChucDanh</td>
                 <td>@nv.MaBoPhan</td>
-                <td>@nv.HR_BO_PHAN_DETAIL.MaBoPhan</td>
+                <td>@nv.HR_BO_PHAN_DETAIL?.MaBoPhan</td>
                 <td>@nv.HR_HOPDONG.OrderByDescending(x => x.NgayHetHieuLuc).FirstOrDefault()?.NgayHetHieuLuc</td>
 
                 @if (nv.Status == "InActive")

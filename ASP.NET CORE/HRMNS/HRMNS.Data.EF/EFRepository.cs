@@ -119,7 +119,7 @@ namespace HRMNS.Data.EF
                 SqlParameter V_RETURN = new SqlParameter("@V_RETURN", SqlDbType.NVarChar, 4000);
                 V_RETURN.Direction = ParameterDirection.Output;
                 cmd.Parameters.Add(V_RETURN);
-
+                cmd.CommandTimeout = 1200;
                 da = new SqlDataAdapter(cmd);
                 da.Fill(ds);
                 con.Close();

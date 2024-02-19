@@ -671,7 +671,7 @@ namespace CarMNS.Application.Implementation
                 lst = lst.OrderByDescending(x => x.NgaySuDung).ThenBy(x => x.MaBill).ToList();
             }
 
-            return lst;
+            return lst.OrderByDescending(x => x.NgaySuDung).ThenBy(x => x.MaBill.NullString()).ToList();
         }
 
         public DANG_KY_XE_TAXI AddDangKyXe_Taxi(DANG_KY_XE_TAXI dangky, string role)

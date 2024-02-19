@@ -300,7 +300,7 @@ namespace HRMS.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Search(string result, string dept, string fromTime, string toTime, string maNV, string requestApprove)
         {
-            if (result.NullString() == "" && dept.NullString() == "" && fromTime.NullString() == "" && toTime.NullString() == "" && maNV.NullString() == "")
+             if (result.NullString() == "" && dept.NullString() == "" && fromTime.NullString() == "" && toTime.NullString() == "" && maNV.NullString() == "")
             {
                 return PartialView("_gridChamCongPartialView", new List<ChamCongLogViewModel>());
             }

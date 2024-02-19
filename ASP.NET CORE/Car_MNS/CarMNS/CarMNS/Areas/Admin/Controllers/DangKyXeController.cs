@@ -69,6 +69,7 @@ namespace CarMNS.Areas.Admin.Controllers
             var xe = new DANG_KY_XE_TAXI();
             JsonConvert.PopulateObject(values, xe);
 
+            xe.MaBill = xe.MaBill.NullString();
             xe = _DangKyXeService.AddDangKyXe_Taxi(xe, UserRole);
 
             if (xe != null)
@@ -186,7 +187,7 @@ namespace CarMNS.Areas.Admin.Controllers
                 lst = lst.Where(x => x.BoPhan == bophan).ToList();
             }
 
-            return DataSourceLoader.Load(lst.OrderByDescending(x => x.NgaySuDung).ThenBy(x => x.MaBill), loadOptions);
+            return DataSourceLoader.Load(lst.OrderByDescending(x => x.NgaySuDung).ThenBy(x => x.MaBill.NullString()), loadOptions);
         }
 
         public IActionResult TaxiReport()

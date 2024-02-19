@@ -152,12 +152,14 @@ namespace HRMS.Areas.Admin.Controllers
             string datetime = DateTime.Now.ToString("yyyy-MM");
             datetime = datetime + "-01";
 
-            if (UserRole == "HR")
+            string preDate = DateTime.Now.AddMonths(-3).ToString("yyyy-MM") + "-01";
+
+            if (UserRole == "HR" || UserRole == "Admin")
             {
                 List<NhanVienViewModel> nhanviens = _nhanvienService.GetAll().
               Where(x => x.Status != Status.InActive.NullString() ||
               string.Compare(datetime, x.NgayNghiViec) <= 0 ||
-              (x.NgayNghiViec.NullString() != "" && x.NgayNghiViec.Substring(0, 4) == datetime.Substring(0, 4))).ToList();
+              (x.NgayNghiViec.NullString() != "" && x.NgayNghiViec.CompareTo(preDate) >= 0)).ToList();
                 return new OkObjectResult(nhanviens);
             }
             else
@@ -1362,7 +1364,7 @@ namespace HRMS.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public object GetPayOff(DataSourceLoadOptions loadOptions,string month)
+        public object GetPayOff(DataSourceLoadOptions loadOptions, string month)
         {
             var models = _nhanvienService.GetPayOff(month);
             HttpContext.Session.Set("GetPayOff", models);

@@ -30,7 +30,7 @@
             initSelectOptionChamCongChiTiet();
 
             var that = $(this).data('id');
-
+            console.log(that);
             $.ajax({
                 type: "GET",
                 url: "/Admin/ChamCongDacBiet/GetById",
@@ -41,8 +41,12 @@
                 success: function (object) {
                     if (object) {
                         console.log(object);
+                        console.log(object.MaNV);
                         $('#_txtMaNV').val(object.MaNV);
                         $('#_txtMaNV').trigger('change');
+
+                        console.log('xxx');
+                        console.log($('#_txtMaNV').val());
 
                         $('#_txtId').val(that);
                         $('#_txtMaChamCongChiTiet').val(object.MaChamCong_ChiTiet);
