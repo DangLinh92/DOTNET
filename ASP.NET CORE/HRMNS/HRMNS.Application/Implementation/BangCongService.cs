@@ -45,6 +45,7 @@ namespace HRMNS.Application.Implementation
 
         private EFUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private BioStarDBContext _bioStarDB;
 
         public BangCongService(
             IRespository<ATTENDANCE_RECORD, long> attendance_record, IRespository<NGAY_LE_NAM, string> ngayleRespository,
@@ -64,7 +65,7 @@ namespace HRMNS.Application.Implementation
             IRespository<HR_NHANVIEN_2, string> nhanvien2Responsitory,
             IRespository<DAILY_TIME_WORKING, int> dailytimeResponsitory,
             IUnitOfWork unitOfWork, IMapper mapper,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor, BioStarDBContext bioStarDB)
         {
             _bangCongExResponsitory = bangCongExResponsitory;
             _attendanceRecordRespository = attendance_record;
@@ -87,6 +88,7 @@ namespace HRMNS.Application.Implementation
             _settingTimeCaLamviecResponsitory = settingTimeCaLamviecResponsitory;
             _nhanvien2Responsitory = nhanvien2Responsitory;
             _dailytimeResponsitory = dailytimeResponsitory;
+            _bioStarDB = bioStarDB;
         }
 
         List<CHAM_CONG_LOG> CHAM_CONG_LOGs;
@@ -334,39 +336,6 @@ namespace HRMNS.Application.Implementation
                         item.lstNhanVienCaLamViec.Sort((x, y) => x.DateModified.CompareTo(y.DateModified));
                     }
 
-                    // lọai những khoảng thời gian cũ, lấy thời gian mới nhất.
-                    //int _count = 0;
-                    //string _dateInMonth = "";
-                    //foreach (var item in lstResult)
-                    //{
-
-                    //    for (int i = 1; i <= DateTime.Parse(endMonth).Day; i++)
-                    //    {
-                    //        _count = 0;
-                    //        _dateInMonth = (new DateTime(DateTime.Parse(endMonth).Year, DateTime.Parse(endMonth).Month, i)).ToString("yyyy-MM-dd");
-                    //        foreach (var calv in item.lstNhanVienCaLamViec)
-                    //        {
-                    //            if (string.Compare(_dateInMonth, calv.BatDau_TheoCa) >= 0 && string.Compare(_dateInMonth, calv.KetThuc_TheoCa) <= 0)
-                    //            {
-                    //                _count += 1;
-                    //            }
-                    //        }
-
-                    //        if (_count > 1)
-                    //        {
-                    //            var lstCalv = item.lstNhanVienCaLamViec.FindAll(x => string.Compare(_dateInMonth, x.BatDau_TheoCa) >= 0 && string.Compare(_dateInMonth, x.KetThuc_TheoCa) <= 0).OrderByDescending(x => x.DateModified).ToList();
-                    //            int _numberlst = lstCalv.Count;
-                    //            for (int j = 0; j < _numberlst; j++)
-                    //            {
-                    //                if (j > 0 && (lstCalv[0].BatDau_TheoCa != lstCalv[j].BatDau_TheoCa || lstCalv[0].KetThuc_TheoCa != lstCalv[j].KetThuc_TheoCa || lstCalv[0].DateModified != lstCalv[j].DateModified))
-                    //                {
-                    //                    item.lstNhanVienCaLamViec.Remove(lstCalv[j]);
-                    //                }
-                    //            }
-                    //        }
-                    //    }
-                    //}
-
                     foreach (var item in lstResult)
                     {
                         item.lstNhanVienCaLamViec.Sort((x, y) => x.BatDau_TheoCa.CompareTo(y.BatDau_TheoCa));
@@ -492,7 +461,7 @@ namespace HRMNS.Application.Implementation
                                         }
                                     }
 
-                                    if (item.MaNV == "H2212011" && dateCheck == "2024-02-08")
+                                    if (item.MaNV == "H2401009" && dateCheck == "2024-02-07")
                                     {
                                         var x = 0;
                                     }
@@ -566,6 +535,23 @@ namespace HRMNS.Application.Implementation
                                                     if (_chamCongLog.Last_Out_Time_Update.NullString() != "" && dateCheck != "2024-02-08")
                                                     {
                                                         lastTime = _chamCongLog.Last_Out_Time_Update.NullString();
+                                                    }
+
+                                                    if (dateCheck == "2024-02-07")
+                                                    {
+                                                        ResultDB result = _bioStarDB.ShowChamCongLogInDay(item.MaNV.ToUpper().Replace("H", ""), "2024-02-08");
+                                                        DataRow row = result.ReturnDataSet.Tables[0].Select("[sName] = 'OUT'").FirstOrDefault();
+                                                        if (row != null)
+                                                            lastTime = row["sLogTime"].NullString().Substring(10).NullString();
+                                                        else
+                                                        {
+                                                            lastTime = "07:00:00";
+                                                        }
+
+                                                        if (string.Compare(lastTime, "08:00:00") >= 0)
+                                                        {
+                                                            lastTime = "07:00:00";
+                                                        }
                                                     }
 
                                                     if (dateCheck == "2023-01-18" && string.Compare(lastTime, "05:30:00") > 0)
@@ -1585,6 +1571,24 @@ namespace HRMNS.Application.Implementation
                                                     if (dateCheck == "2024-02-08" && string.Compare(lastTime, "22:00:00") > 0)
                                                     {
                                                         lastTime = "22:00:00";
+                                                    }
+
+                                                    if (dateCheck == "2024-02-07")
+                                                    {
+                                                        ResultDB result = _bioStarDB.ShowChamCongLogInDay(item.MaNV.ToUpper().Replace("H", ""), "2024-02-08");
+                                                        DataRow row = result.ReturnDataSet.Tables[0].Select("[sName] = 'OUT'").FirstOrDefault();
+
+                                                        if (row != null)
+                                                            lastTime = row["sLogTime"].NullString().Substring(10).NullString();
+                                                        else
+                                                        {
+                                                            lastTime = "07:00:00";
+                                                        }
+
+                                                        if (string.Compare(lastTime, "08:00:00") >= 0)
+                                                        {
+                                                            lastTime = "07:00:00";
+                                                        }
                                                     }
 
                                                     if (dateCheck != "2024-02-08")
@@ -4662,7 +4666,7 @@ namespace HRMNS.Application.Implementation
         private Dictionary<string, int> lstSpecialDay = new Dictionary<string, int>()
         {
             { "2023-06-16", 3 }, { "2023-06-18", 0 },// đổi ngày 16 thành OT như chủ nhật, 18 chủ nhật như ngày thường.
-            { "2023-06-22", 3 }, { "2023-06-25", 0 }
+            { "2023-06-22", 3 }, { "2023-06-25", 0 },{  "2024-02-13", 3 }
         };
 
         private int CheckNgayDB(string time, string calviec = "", bool isOT = true)

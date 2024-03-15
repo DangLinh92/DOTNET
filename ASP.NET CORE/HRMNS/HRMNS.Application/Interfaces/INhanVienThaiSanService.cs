@@ -30,5 +30,6 @@ namespace HRMNS.Application.Interfaces
         HoTroSinhLyViewModel EditHotrosinhly(HoTroSinhLyViewModel model);
         void DeleteHotrosinhly(int id);
         ResultDB ImportExcel(string filePath, string param);
+        ResultDB ImportThaiSanExcel(string filePath, string param);
     }
 }

@@ -417,6 +417,11 @@ namespace HRMNS.Application.Implementation
                     }
                     else
                     {
+                        if (item.MaNV == "H1608013")
+                        {
+                            var x = 0;
+                        }
+
                         HR_THAISAN_CONNHO thaisan = _thaisanRepository.FindAll(x => x.MaNV == item.MaNV && x.CheDoThaiSan == "ThaiSan").OrderByDescending(x => x.FromDate).FirstOrDefault();
                         songaynghiThaisan = 0;
 
@@ -426,20 +431,15 @@ namespace HRMNS.Application.Implementation
                             {
                                 songaynghiThaisan = EachDay.GetWorkingDay(DateTime.Parse(thaisan.FromDate), DateTime.Parse(thangNam).AddMonths(1).AddDays(-1));
                             }
+                            else if (thaisan.ToDate.Substring(0, 7) == thangNam.Substring(0, 7))
+                            {
+                                songaynghiThaisan = EachDay.GetWorkingDay(DateTime.Parse(thangNam.Substring(0, 7) + "-01"), DateTime.Parse(thaisan.ToDate));
+                            }
                         }
-
-                        //if ((item.HR_NHANVIEN.NgayNghiViec.NullString() != "" &&
-                        //    (item.HR_NHANVIEN.NgayNghiViec.NullString().Substring(0, 7) == thangNam.Substring(0, 7) && DateTime.Parse(item.HR_NHANVIEN.NgayNghiViec).Day < 15)) // Nghỉ trước ngày 15 của tháng tính lương thì ko tham gia
-                        //    || (DateTime.Parse(luong.NgayVao).ToString("yyyyMM").CompareTo(DateTime.Parse(thangNam).ToString("yyyyMM")) == 0 && DateTime.Parse(luong.NgayVao).Day > 15) // Vào làm sau ngày 15 hàng tháng thì không tham gia
-                        //   )
-                        //{
-                        //    luong.DoiTuongThamGiaCD = "o";
-                        //}
-                        //else
 
                         //Người mới vào công ty: Vào từ ngày 1 đến ngày 15 của tháng sẽ trừ đoàn phí công đoàn của tháng đó luôn, sau ngày 15 sẽ trừ phí bắt đầu từ tháng sau.
                         // 2. Số ngày nghỉ không hưởng lương > 14 ngày , 3.Nghỉ thai sản > 14 ngày
-                        if (songaynghiThaisan >= songaylamviec || item.TUP >= songaylamviec ||
+                        if (songaynghiThaisan > 14 || item.TUP > 14 ||
                             _nhanVienRepository.FindById(item.MaNV).NgayVao.CompareTo(thangNam.Substring(0, 7) + "-15") > 0 ||
                             (_nhanVienRepository.FindById(item.MaNV).NgayNghiViec.NullString() != "" &&
                             _nhanVienRepository.FindById(item.MaNV).NgayNghiViec.NullString().CompareTo(thangNam.Substring(0, 7) + "-15") <= 0))
@@ -462,7 +462,16 @@ namespace HRMNS.Application.Implementation
                     }
 
                     luong.DoiTuongTruyThuBHYT = salary.DoiTuongTruyThuBHYT;
-                    luong.SoConNho = _thaisanRepository.FindAll(x => x.MaNV == item.MaNV && x.CheDoThaiSan == "ThaiSan" && x.FromDate.CompareTo(endOfMonth) <= 0 && x.ToDate.CompareTo(thangNam.Substring(0, 7) + "-01") >= 0).FirstOrDefault() != null ? 0 : salary.SoConNho;
+
+                    if (songaynghiThaisan >= songaylamviec)
+                    {
+                        luong.SoConNho = 0;
+                    }
+                    else
+                    {
+                        luong.SoConNho = salary.SoConNho;
+                    }
+                    
                     luong.SoNgayNghi70 = item.L160; // L160
                     luong.DieuChinhCong_Total = dieuChinhCong;//!= null ? (double)dieuChinhCong?.TongSoTien : 0;
 

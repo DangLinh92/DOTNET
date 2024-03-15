@@ -265,6 +265,62 @@ namespace HRMNS.Application.Implementation
             }
         }
 
+        public ResultDB ImportThaiSanExcel(string filePath, string param)
+        {
+            using (var packet = new ExcelPackage(new System.IO.FileInfo(filePath)))
+            {
+                ResultDB resultDB = new ResultDB();
+                try
+                {
+                    ExcelWorksheet worksheet = packet.Workbook.Worksheets[0];
+                    HR_THAISAN_CONNHO thaisan = null;
+
+                    string maNV = "";
+                    DateTime fromdate, todate;
+                    List<HR_THAISAN_CONNHO> lstThaiSanConNho = new List<HR_THAISAN_CONNHO>();
+                    for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
+                    {
+                        maNV = worksheet.Cells[i, 1].Text.NullString();
+                        if (maNV == "")
+                        {
+                            resultDB.ReturnInt = -1;
+                            return resultDB;
+                        }
+
+                        thaisan = new HR_THAISAN_CONNHO();
+                        thaisan.MaNV = maNV;
+                        thaisan.CheDoThaiSan = worksheet.Cells[i, 3].Text.NullString();
+
+                        if (DateTime.TryParse(worksheet.Cells[i, 4].Text.NullString(), out fromdate))
+                        {
+                            thaisan.FromDate = fromdate.ToString("yyyy-MM-dd");
+                        }
+
+                        if (DateTime.TryParse(worksheet.Cells[i, 5].Text.NullString(), out todate))
+                        {
+                            thaisan.ToDate = todate.ToString("yyyy-MM-dd");
+                        }
+
+                        lstThaiSanConNho.Add(thaisan);
+                    }
+
+                    if (lstThaiSanConNho.Count > 0)
+                    {
+                        _thaisanRepository.AddRange(lstThaiSanConNho);
+                    }
+                    resultDB.ReturnInt = 0;
+                    return resultDB;
+                }
+                catch (Exception ex)
+                {
+                    resultDB.ReturnInt = -1;
+                    resultDB.ReturnString = ex.Message;
+
+                    return resultDB;
+                }
+            }
+        }
+
         public HoTroSinhLyViewModel AddHotrosinhly(HoTroSinhLyViewModel model)
         {
             HOTRO_SINH_LY hotrosinhly = new HOTRO_SINH_LY();

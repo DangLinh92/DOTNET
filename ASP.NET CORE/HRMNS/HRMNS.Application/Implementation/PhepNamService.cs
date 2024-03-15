@@ -78,7 +78,7 @@ namespace HRMNS.Application.Implementation
             List<HR_PHEP_NAM> phepnam = new List<HR_PHEP_NAM>();
             foreach (var item in lst.ToList())
             {
-                if(item.HR_NHANVIEN.NgayNghiViec.NullString() == "" || DateTime.Parse(item.HR_NHANVIEN.NgayNghiViec.NullString()).AddMonths(2).ToString("yyyyMM").CompareTo(DateTime.Now.ToString("yyyyMM")) >= 0)
+                if(item.HR_NHANVIEN.NgayNghiViec.NullString() == "" || DateTime.Parse(item.HR_NHANVIEN.NgayNghiViec.NullString()).AddMonths(8).ToString("yyyyMM").CompareTo(DateTime.Now.ToString("yyyyMM")) >= 0)
                 {
                     phepnam.Add(item);
                 }

@@ -279,5 +279,52 @@ namespace HRMS.Areas.Admin.Controllers
             return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
         }
         #endregion
+
+        /// <summary>
+        /// Import ho tro sinh lý
+        /// </summary>
+        /// <param name="files"></param>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [RequestFormLimits(MultipartBodyLengthLimit = 209715200)]
+        [RequestSizeLimit(209715200)]
+        public IActionResult ImportThaiSanExcel(IList<IFormFile> files, [FromQuery] string param)
+        {
+            if (files != null && files.Count > 0)
+            {
+                var file = files[0];
+                var filename = ContentDispositionHeaderValue
+                                   .Parse(file.ContentDisposition)
+                                   .FileName
+                                   .Trim('"');
+
+                string folder = _hostingEnvironment.WebRootPath + $@"\uploaded\excels";
+                if (!Directory.Exists(folder))
+                {
+                    Directory.CreateDirectory(folder);
+                }
+                string filePath = Path.Combine(folder, CorrelationIdGenerator.GetNextId() + filename);
+                using (FileStream fs = System.IO.File.Create(filePath))
+                {
+                    file.CopyTo(fs);
+                    fs.Flush();
+                }
+                ResultDB resultDB = _nhanVienThaiSanService.ImportThaiSanExcel(filePath, param);
+
+                if (resultDB.ReturnInt == 0)
+                {
+                    _nhanVienThaiSanService.Save();
+                }
+
+                if (System.IO.File.Exists(filePath))
+                {
+                    // If file found, delete it    
+                    System.IO.File.Delete(filePath);
+                }
+                return new OkObjectResult(filePath);
+            }
+            return new NotFoundObjectResult(CommonConstants.NotFoundObjectResult_Msg);
+        }
     }
 }

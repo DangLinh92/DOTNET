@@ -4,6 +4,63 @@
     }
 
     function registerEvents() {
+        $('#btn-import').on('click', function () {
+            $("#fileInputExcel").val(null);
+            $('#import_File').modal('show');
+        });
+
+        $('#btnCloseImportExcel').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+            if (files.length > 0) {
+                $("#fileInputExcel").val(null);
+                $('#hd-ImportData').val('');
+                $('#import_File').modal('hide');
+                location.reload();
+            }
+        });
+
+        $('#btnCloseImport').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+            if (files.length > 0) {
+                $("#fileInputExcel").val(null);
+                $('#hd-ImportData').val('');
+                $('#import_File').modal('hide');
+                location.reload();
+            }
+        });
+
+        $('#btnImportExcel').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+
+            // Create FormData object
+            var fileData = new FormData();
+
+            // Looping over all files and add it to FormData object
+            for (var i = 0; i < files.length; i++) {
+                fileData.append("files", files[i]);
+            }
+
+            $.ajax({
+                url: '/Admin/NhanVienThaiSan/ImportThaiSanExcel',
+                type: 'POST',
+                data: fileData,
+                processData: false,  // tell jQuery not to process the data
+                contentType: false,  // tell jQuery not to set contentType
+                success: function (data) {
+                    $('#import_File').modal('hide');
+                    hrms.notify("Import success!", 'Success', 'alert', function () {
+                        location.reload();
+                    });
+                },
+                error: function (status) {
+                    hrms.notify('error: Import error!', 'error', 'alert', function () { });
+                }
+            });
+            return false;
+        });
 
         // Export excel start
         $('#btnExport').on('click', function () {

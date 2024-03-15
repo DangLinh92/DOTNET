@@ -41,6 +41,14 @@
                 {
                     <a href="#" id="btnCreate" class="btn add-btn" data-toggle="modal" data-target="#add_thaisan"><i class="fa fa-plus"></i> Add</a>
                     <a href="#" id="btnExport" class="btn add-btn"><i class="fa fa-file"></i> Export</a>
+
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-info dropdown-toggle" id="btnImport" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Excel</button>
+                        <div class="dropdown-menu" style="">
+                            <a class="dropdown-item" href="~/templates/ThaiSanConNhoTemplate.xlsx">File mẫu nhân viên Thai Sản</a>
+                            <a class="dropdown-item" href="#" id="btn-import">Import Thai Sản</a>
+                        </div>
+                    </div>
                 }
             </div>
         </div>
@@ -125,6 +133,8 @@
     </div>
 </div>
 
-<!-- import excel model -->
 <partial name="_thaisanModelPartialView" />
+
+<!-- import excel model -->
+<partial name="_ImportExcelModel" />
 
