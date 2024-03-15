@@ -77,6 +77,7 @@ _[Ss]cripts
 *.dot[Cc]over
 FileContentIndex/
 Logs/
+*/Document HRMS/
 ASP.NET CORE/OPerationManagerment/wlp1
 ASP.NET CORE/OPerationManagerment/wlp2
 ASP.NET CORE/HRMNS/HRMS/node_modules/

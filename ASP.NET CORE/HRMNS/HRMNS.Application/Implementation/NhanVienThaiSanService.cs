@@ -295,10 +295,18 @@ namespace HRMNS.Application.Implementation
                         {
                             thaisan.FromDate = fromdate.ToString("yyyy-MM-dd");
                         }
+                        else
+                        {
+                            throw new Exception("ngày bắt đầu cần format: yyyy-MM-dd");
+                        }
 
                         if (DateTime.TryParse(worksheet.Cells[i, 5].Text.NullString(), out todate))
                         {
                             thaisan.ToDate = todate.ToString("yyyy-MM-dd");
+                        }
+                        else
+                        {
+                            throw new Exception("ngày kết thúc cần format: yyyy-MM-dd");
                         }
 
                         lstThaiSanConNho.Add(thaisan);
