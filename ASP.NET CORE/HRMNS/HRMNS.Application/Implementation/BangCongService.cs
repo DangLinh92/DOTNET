@@ -614,7 +614,7 @@ namespace HRMNS.Application.Implementation
                                                             if (CheckCheDoThaiSan("ConNho1H", dateCheck, item.MaNV))
                                                             {
                                                                 isSetMaxOT = false;
-                                                                newBeginOT = "16:00:00";
+                                                                newBeginOT = "16:15:00";
 
                                                                 if (string.Compare(lastTime, "17:30:00") > 0)
                                                                 {
@@ -1676,7 +1676,7 @@ namespace HRMNS.Application.Implementation
                                                                 // Ca ngay con nhỏ, văn phòng con nhỏ thì dc về sớm 1h
                                                                 if (CheckCheDoThaiSan("ConNho1H", dateCheck, item.MaNV))
                                                                 {
-                                                                    newBeginOT = "16:00:00";
+                                                                    newBeginOT = "16:15:00";
                                                                     isSetMaxOT = false;
 
                                                                     if (string.Compare(lastTime, "17:30:00") > 0)

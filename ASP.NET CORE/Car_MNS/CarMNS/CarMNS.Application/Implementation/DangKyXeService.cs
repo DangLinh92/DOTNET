@@ -24,10 +24,12 @@ namespace CarMNS.Application.Implementation
         private IRespository<LAI_XE, int> _LaiXeRepository;
         private IRespository<BOPHAN_DUYET, int> _BoPhanDuyetRepository;
         private IRespository<CAR, int> _XeRepository;
+        private IRespository<TAXI_CARD_INFO, int> _TaxiCardInfoRepository;
+        private IRespository<MUCDICHSD_XE, int> _MucDichSDInfoRepository;
 
         public DangKyXeService(IRespository<LAI_XE, int> LaiXeRepository, IRespository<CAR, int> XeRepository, IUnitOfWork unitOfWork, IRespository<DANG_KY_XE, int> dangKyXeRepository,
             IRespository<BOPHAN, string> boPhanRepository, IRespository<DIEUXE_DANGKY, int> dieuXeRepository, IHttpContextAccessor httpContextAccessor, IRespository<DANG_KY_XE_TAXI, int> taxiRepository,
-            IRespository<BOPHAN_DUYET, int> boPhanDuyetRepository)
+            IRespository<BOPHAN_DUYET, int> boPhanDuyetRepository, IRespository<TAXI_CARD_INFO, int> TaxiCardInfoRepository, IRespository<MUCDICHSD_XE, int> MucDichSDInfoRepository)
         {
             _unitOfWork = unitOfWork;
             _DangKyXeRepository = dangKyXeRepository;
@@ -38,6 +40,8 @@ namespace CarMNS.Application.Implementation
             _httpContextAccessor = httpContextAccessor;
             _TaxiRepository = taxiRepository;
             _BoPhanDuyetRepository = boPhanDuyetRepository;
+            _TaxiCardInfoRepository = TaxiCardInfoRepository;
+            _MucDichSDInfoRepository = MucDichSDInfoRepository;
         }
 
         public DANG_KY_XE AddDangKyXe(DANG_KY_XE dangky, string role)
@@ -651,7 +655,7 @@ namespace CarMNS.Application.Implementation
 
             if (role == CommonConstants.ROLE_DANGKY)
             {
-                lst = lst.FindAll(x => x.BoPhan == bophan || x.UserCreated == userId || x.UserModified == userId).Where(x => x.XacNhanLV2 == false || (x.XacNhanLV2 == true && x.DateModified.CompareTo(DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd HH:mm:ss")) >= 0)).OrderByDescending(x => x.NgaySuDung).ThenBy(x=>x.MaBill).ToList();
+                lst = lst.FindAll(x => x.BoPhan == bophan || x.UserCreated == userId || x.UserModified == userId).Where(x => x.XacNhanLV2 == false || (x.XacNhanLV2 == true && x.DateModified.CompareTo(DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd HH:mm:ss")) >= 0)).OrderByDescending(x => x.NgaySuDung).ThenBy(x => x.MaBill).ToList();
             }
             else
             if (role == CommonConstants.ROLE_GROUP_LD)
@@ -939,7 +943,7 @@ namespace CarMNS.Application.Implementation
         {
             List<DANG_KY_XE_TAXI> lstTaxi = new List<DANG_KY_XE_TAXI>();
 
-          var  lstTaxiAll = _TaxiRepository.FindAll(x => x.XacNhanLV1 == true).ToList();
+            var lstTaxiAll = _TaxiRepository.FindAll(x => x.XacNhanLV1 == true).ToList();
 
             if (fromDate.NullString() != "" && toDate.NullString() != "")
             {
@@ -956,9 +960,9 @@ namespace CarMNS.Application.Implementation
             List<NguoiDungTaxi> lstbpDungTaxi = new List<NguoiDungTaxi>();
             foreach (var us in lstTaxi.ToList())
             {
-                if (lstbpDungTaxi.Any(x => x.BoPhan == us.BoPhan && x.ThangSuDung.Substring(0,7) == us.NgaySuDung.Value.ToString("yyyy-MM")))
+                if (lstbpDungTaxi.Any(x => x.BoPhan == us.BoPhan && x.ThangSuDung.Substring(0, 7) == us.NgaySuDung.Value.ToString("yyyy-MM")))
                 {
-                    bpDungTaxi = lstbpDungTaxi.FirstOrDefault( x=> x.BoPhan == us.BoPhan && x.ThangSuDung.Substring(0, 7) == us.NgaySuDung.Value.ToString("yyyy-MM"));
+                    bpDungTaxi = lstbpDungTaxi.FirstOrDefault(x => x.BoPhan == us.BoPhan && x.ThangSuDung.Substring(0, 7) == us.NgaySuDung.Value.ToString("yyyy-MM"));
                 }
                 else
                 {
@@ -1023,6 +1027,67 @@ namespace CarMNS.Application.Implementation
             }
             return lst;
 
+        }
+
+        /// <summary>
+        /// Get dữ liệu báo cáo chi phí theo tháng dùng cho excel
+        /// </summary>
+        /// <returns></returns>
+        public List<TaxiCostReportViewModel> TaxiCostReportData(string fromTime, string toTime)
+        {
+            List<TaxiCostReportViewModel> taxiCosts = new List<TaxiCostReportViewModel>();
+
+            List<DANG_KY_XE_TAXI> lstTaxi = _TaxiRepository.FindAll().ToList();
+
+            List<DANG_KY_XE_TAXI> lstTaxiNew = new List<DANG_KY_XE_TAXI>();
+            foreach (var item in lstTaxi)
+            {
+                if (item.NgaySuDung.Value.ToString("yyyy-MM-dd").CompareTo(fromTime) >= 0 && item.NgaySuDung.Value.ToString("yyyy-MM-dd").CompareTo(toTime) <= 0)
+                {
+                    lstTaxiNew.Add(item);
+                }
+            }
+
+            List<TAXI_CARD_INFO> lstCardInfo = _TaxiCardInfoRepository.FindAll().ToList();
+            TaxiCostReportViewModel taxiCost;
+            foreach (var item in lstTaxiNew)
+            {
+                taxiCost = new TaxiCostReportViewModel();
+                taxiCost.CardNo = item.TaxiCardNo;
+
+                if (lstCardInfo.Any(x => x.CardNo == item.TaxiCardNo))
+                {
+                    taxiCost.CardName = lstCardInfo.FirstOrDefault(x => x.CardNo == item.TaxiCardNo).CardName;
+                }
+
+                taxiCost.UserName = item.TenNguoiSuDung;
+                taxiCost.Department = item.BoPhan;
+                taxiCost.Date = item.NgaySuDung.Value.ToString("yyyy-MM-dd");
+                taxiCost.DeparturePlace = item.ĐiaDiemXuatPhat;
+                taxiCost.ArrivalPlace = item.DiaDiemDen_Tinh;
+                taxiCost.BillNo = item.MaBill;
+
+                if (item.SoTien != null && item.SoNguoiSuDung > 0)
+                {
+                    taxiCost.Amount1 = item.SoTien.Value;
+                    taxiCost.Amount2 = (double)(item.SoTien.Value / item.SoNguoiSuDung);
+                }
+
+                taxiCost.Note = item.MucDichSuDung;
+                taxiCosts.Add(taxiCost);
+            }
+
+            return taxiCosts.OrderBy(x=>x.Date).ThenBy(x=>x.BillNo).ToList();
+        }
+
+        public List<TAXI_CARD_INFO> GetBoCardInfo()
+        {
+            return _TaxiCardInfoRepository.FindAll().ToList();
+        }
+
+        public List<MUCDICHSD_XE> GetMucDichSD()
+        {
+            return _MucDichSDInfoRepository.FindAll().ToList();
         }
     }
 }

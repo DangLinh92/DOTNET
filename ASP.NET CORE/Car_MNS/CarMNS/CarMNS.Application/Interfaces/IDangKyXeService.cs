@@ -16,6 +16,9 @@ namespace CarMNS.Application.Interfaces
         DANG_KY_XE GetDangKyXeById(int id);
         List<BOPHAN> GetBoPhan();
 
+        List<TAXI_CARD_INFO> GetBoCardInfo();
+        List<MUCDICHSD_XE> GetMucDichSD();
+
         List<DIEUXE_DANGKY> GetXe(int maDangKy);
         DIEUXE_DANGKY AddXe(DIEUXE_DANGKY en);
         DIEUXE_DANGKY UpdateXe(DIEUXE_DANGKY en);
@@ -43,5 +46,7 @@ namespace CarMNS.Application.Interfaces
         List<NguoiDungTaxi> GetReportTaxiInYear(string fromDate, string toDate);
 
         List<ItemValue> GetListTime();
+
+        List<TaxiCostReportViewModel> TaxiCostReportData(string fromTime, string toTime);
     }
 }

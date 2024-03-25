@@ -96,5 +96,49 @@ namespace CarMNS.Data.Entities
 
         [StringLength(50)]
         public string UserModified { get; set; }
+
+        [StringLength(50)]
+        public string TaxiCardNo { get; set; }
+    }
+
+    [Table("TAXI_CARD_INFO")]
+    public class TAXI_CARD_INFO : DomainEntity<int>, IDateTracking
+    {
+        [StringLength(50)]
+        public string CardNo { get; set; }
+
+        [StringLength(50)]
+        public string CardName { get; set; }
+
+        [StringLength(50)]
+        public string DateCreated { get; set; }
+
+        [StringLength(50)]
+        public string DateModified { get; set; }
+
+        [StringLength(50)]
+        public string UserCreated { get; set; }
+
+        [StringLength(50)]
+        public string UserModified { get; set; }
+    }
+
+    [Table("MUCDICHSD_XE")]
+    public class MUCDICHSD_XE : DomainEntity<int>, IDateTracking
+    {
+        [StringLength(250)]
+        public string MucDich { get; set; }
+
+        [StringLength(50)]
+        public string DateCreated { get; set; }
+
+        [StringLength(50)]
+        public string DateModified { get; set; }
+
+        [StringLength(50)]
+        public string UserCreated { get; set; }
+
+        [StringLength(50)]
+        public string UserModified { get; set; }
     }
 }

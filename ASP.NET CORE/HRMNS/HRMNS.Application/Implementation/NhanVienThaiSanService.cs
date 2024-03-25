@@ -274,10 +274,12 @@ namespace HRMNS.Application.Implementation
                 {
                     ExcelWorksheet worksheet = packet.Workbook.Worksheets[0];
                     HR_THAISAN_CONNHO thaisan = null;
+                    HR_THAISAN_CONNHO thaisanUpdate = null;
 
                     string maNV = "";
                     DateTime fromdate, todate;
                     List<HR_THAISAN_CONNHO> lstThaiSanConNho = new List<HR_THAISAN_CONNHO>();
+                    List<HR_THAISAN_CONNHO> lstThaiSanConNhoUpdate = new List<HR_THAISAN_CONNHO>();
                     for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
                     {
                         maNV = worksheet.Cells[i, 1].Text.NullString();
@@ -309,13 +311,29 @@ namespace HRMNS.Application.Implementation
                             throw new Exception("ngày kết thúc cần format: yyyy-MM-dd");
                         }
 
-                        lstThaiSanConNho.Add(thaisan);
+                        if(_thaisanRepository.FindSingle(x=>x.MaNV == maNV && x.CheDoThaiSan == thaisan.CheDoThaiSan) != null)
+                        {
+                            thaisanUpdate = _thaisanRepository.FindAll(x => x.MaNV == maNV && x.CheDoThaiSan == thaisan.CheDoThaiSan).OrderByDescending(x => x.DateModified).FirstOrDefault();
+                            thaisanUpdate.CopyPropertiesFrom(thaisan, new List<string>() { "Id", "DateCreated" });
+
+                            lstThaiSanConNhoUpdate.Add(thaisanUpdate);
+                        }
+                        else
+                        {
+                            lstThaiSanConNho.Add(thaisan);
+                        }
                     }
 
                     if (lstThaiSanConNho.Count > 0)
                     {
                         _thaisanRepository.AddRange(lstThaiSanConNho);
                     }
+
+                    if (lstThaiSanConNhoUpdate.Count > 0)
+                    {
+                        _thaisanRepository.UpdateRange(lstThaiSanConNhoUpdate);
+                    }
+
                     resultDB.ReturnInt = 0;
                     return resultDB;
                 }

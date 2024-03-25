@@ -456,6 +456,10 @@ namespace CarMNS.Data.EF.Migrations
                     b.Property<double?>("SoTien")
                         .HasColumnType("float");
 
+                    b.Property<string>("TaxiCardNo")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<string>("TenNguoiSuDung")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
@@ -680,6 +684,38 @@ namespace CarMNS.Data.EF.Migrations
                     b.ToTable("LAI_XE_CAR");
                 });
 
+            modelBuilder.Entity("CarMNS.Data.Entities.MUCDICHSD_XE", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("MucDich")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MUCDICHSD_XE");
+                });
+
             modelBuilder.Entity("CarMNS.Data.Entities.PERMISSION", b =>
                 {
                     b.Property<int>("Id")
@@ -723,6 +759,42 @@ namespace CarMNS.Data.EF.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("PERMISSION");
+                });
+
+            modelBuilder.Entity("CarMNS.Data.Entities.TAXI_CARD_INFO", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CardName")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("CardNo")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TAXI_CARD_INFO");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

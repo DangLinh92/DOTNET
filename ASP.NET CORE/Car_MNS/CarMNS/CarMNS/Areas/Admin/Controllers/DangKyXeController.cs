@@ -7,6 +7,7 @@ using CarMNS.Extensions;
 using CarMNS.Services;
 using CarMNS.Utilities.Common;
 using CarMNS.Utilities.Constants;
+using DevExpress.ClipboardSource.SpreadsheetML;
 using DevExpress.CodeParser;
 using DevExtreme.AspNet.Data;
 using DevExtreme.AspNet.Mvc;
@@ -16,6 +17,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -282,7 +284,7 @@ namespace CarMNS.Areas.Admin.Controllers
                 }
             }
 
-            return DataSourceLoader.Load(lstTotal.OrderByDescending(x=>x.SoTien_SD), loadOptions);
+            return DataSourceLoader.Load(lstTotal.OrderByDescending(x => x.SoTien_SD), loadOptions);
         }
 
         public object DataReportTaxiTotalByBoPhanInYear(string year)
@@ -339,7 +341,7 @@ namespace CarMNS.Areas.Admin.Controllers
 
                 if (item.BoPhan == "Account")
                 {
-                    chartItem.Account = Math.Round(item.SoTien_SD,0);
+                    chartItem.Account = Math.Round(item.SoTien_SD, 0);
                 }
 
                 if (item.BoPhan == "CSP")
@@ -428,6 +430,20 @@ namespace CarMNS.Areas.Admin.Controllers
         {
             var bophans = _DangKyXeService.GetBoPhan();
             return DataSourceLoader.Load(bophans, loadOptions);
+        }
+
+        [HttpGet]
+        public object GetCardInfo(DataSourceLoadOptions loadOptions)
+        {
+            var cardInfos = _DangKyXeService.GetBoCardInfo();
+            return DataSourceLoader.Load(cardInfos, loadOptions);
+        }
+
+        [HttpGet]
+        public object GetMucDichSD(DataSourceLoadOptions loadOptions)
+        {
+            var cardInfos = _DangKyXeService.GetMucDichSD();
+            return DataSourceLoader.Load(cardInfos, loadOptions);
         }
 
         [HttpGet]
@@ -700,6 +716,86 @@ namespace CarMNS.Areas.Admin.Controllers
         {
             var times = _DangKyXeService.GetListTime();
             return DataSourceLoader.Load(times, loadOptions);
+        }
+
+        [HttpPost]
+        public IActionResult ExportTaxiCost(string fromDate, string toDate)
+        {
+            string sWebRootFolder = _hostingEnvironment.WebRootPath;
+            string directory = Path.Combine(sWebRootFolder, "export-files/sr");
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
+            string sFileName = $"Taxi Draff Form" + $"_{DateTime.Now:yyyyMMddhhmmss}.xlsx";
+            string fileUrl = $"{Request.Scheme}://{Request.Host}/export-files/sr/{sFileName}";
+            FileInfo file = new FileInfo(Path.Combine(directory, sFileName));
+            FileInfo fileSrc = new FileInfo(Path.Combine(Path.Combine(sWebRootFolder, "templates"), "Taxi Draff Form_Tmp.xlsx"));
+            if (file.Exists)
+            {
+                file.Delete();
+            }
+
+            if (fileSrc.Exists)
+            {
+                fileSrc.CopyTo(file.FullName, true);
+            }
+
+            List<TaxiCostReportViewModel> Data = _DangKyXeService.TaxiCostReportData(fromDate, toDate);
+            string cellFrom, cellTo;
+            using (ExcelPackage package = new ExcelPackage(file))
+            {
+                ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                package.Workbook.CalcMode = ExcelCalcMode.Automatic;
+
+                string date1 = DateTime.Parse(toDate).ToString("MM/yyyy");
+                string date2 = DateTime.Parse(fromDate).ToString("dd/MM/yyyy");
+                string date3 = DateTime.Parse(toDate).ToString("dd/MM/yyyy");
+
+                worksheet.Cells["C5"].Value = "BẢNG KÊ PHÍ TAXI MAI LINH THÁNG " + date1 + " ( " + date2 + " - " + date3 + " )";
+
+                worksheet.Cells["S2"].Value = "Đi làm\r\n출근";
+                worksheet.Cells["S3"].Value = "Đi làm sớm\r\n일찍 출근";
+                worksheet.Cells["S4"].Value = "Đi làm muộn\r\n지각";
+                worksheet.Cells["S5"].Value = "Tan ca\r\n퇴근";
+                worksheet.Cells["S6"].Value = "Tan ca sớm\r\n조퇴";
+                worksheet.Cells["S7"].Value = "Tăng ca\r\n잔업";
+                worksheet.Cells["S8"].Value = "công tác bên ngoài\r\n외근";
+                worksheet.Cells["S9"].Value = "Liên hoan\r\n회식";
+                worksheet.Cells["S10"].Value = "Trực\r\n당직";
+                worksheet.Cells["S11"].Value = "Làm chủ nhật, ngày lễ\r\n일요일 특근";
+                worksheet.Cells["S12"].Value = "Khác\r\n기타";
+
+                int beginIndex = 8;
+                for (int i = 0; i < Data.Count; i++)
+                {
+                    worksheet.Cells["C" + beginIndex].Value = i + 1;
+                    worksheet.Cells["D" + beginIndex].Value = Data[i].CardNo;
+                    worksheet.Cells["E" + beginIndex].Value = Data[i].CardName;
+                    worksheet.Cells["F" + beginIndex].Value = Data[i].UserName;
+                    worksheet.Cells["G" + beginIndex].Value = Data[i].Department;
+                    worksheet.Cells["H" + beginIndex].Value = Data[i].Date;
+                    worksheet.Cells["I" + beginIndex].Value = Data[i].DeparturePlace;
+                    worksheet.Cells["J" + beginIndex].Value = Data[i].ArrivalPlace;
+                    worksheet.Cells["K" + beginIndex].Value = Data[i].BillNo;
+                    worksheet.Cells["L" + beginIndex].Value = Data[i].Amount1;
+                    worksheet.Cells["M" + beginIndex].Value = Data[i].Amount2;
+                    worksheet.Cells["N" + beginIndex].Value = Data[i].Note;
+
+                    if (i > 135)
+                    {
+                        cellFrom = "C" + beginIndex + ":N" + beginIndex;
+                        cellTo = "C" + (beginIndex + 1) + ":N" + (beginIndex + 1);
+                        worksheet.Cells[cellFrom].Copy(worksheet.Cells[cellTo]);
+                    }
+                    beginIndex += 1;
+                }
+
+                package.Save(); //Save the workbook.
+            }
+
+            return new OkObjectResult(fileUrl);
         }
     }
 }

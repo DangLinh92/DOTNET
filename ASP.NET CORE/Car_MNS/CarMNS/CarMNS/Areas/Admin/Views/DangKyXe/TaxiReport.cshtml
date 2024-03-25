@@ -40,12 +40,33 @@
 }
 
 @section Scripts
-    {
+{
     <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
     <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
     <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
 
     <script>
+
+        function GetTaxiDraff() {
+            var _fromDate = $("#begindate-date").dxDateBox("option", "text");
+            var _toDate = $("#todate-date").dxDateBox("option", "text");
+
+            $.ajax({
+                type: "POST",
+                url: "/Admin/DangKyXe/ExportTaxiCost",
+                data:
+                {
+                    fromDate: _fromDate,
+                    toDate: _toDate,
+                },
+                success: function (response) {
+                    window.location.href = response;
+                },
+                error: function (status) {
+                    hrms.notify(status.responseText, 'error', 'alert', function () { });
+                }
+            });
+        }
 
         function exporting(e) {
             var workbook = new ExcelJS.Workbook();
@@ -175,7 +196,7 @@
                                 .OnValueChanged("refreshGrid")
                                 )
                         </div>
-                        <div style="display:inline-block">
+                        <div style="display:inline-block;margin-right:10px">
                             @(Html.DevExtreme().SelectBox()
                                 .ID("slBophan")
                                 .InputAttr("aria-label", "Department")
@@ -184,6 +205,9 @@
                                 .ValueExpr("Id")
                                 .OnValueChanged("refreshGrid")
                                 )
+                        </div>
+                        <div style="display:inline-block">
+                            <button onclick="GetTaxiDraff()" class="btn btn-info">Taxi Draff Report</button>
                         </div>
                     </div>
                 </div>
@@ -293,13 +317,13 @@
                 .Tooltip(t => t
                 .Enabled(true)
                 .CustomizeTooltip(@<text>
-                    function(arg) {
-                  @*  console.log(arg);*@
-                    return {
-                    text: arg.seriesName+ " : " + formatNumber(arg.valueText)
-                    };
-                    }
-                </text>)
+                function(arg) {
+                @*  console.log(arg);*@
+                return {
+                text: arg.seriesName+ " : " + formatNumber(arg.valueText)
+                };
+                }
+            </text>)
                 )
                 .Size(s => s.Height(500))
                 .LoadingIndicator(l => l.Enabled(true))
@@ -361,31 +385,31 @@
         </div>
         <div class="col-md-6">
             @(Html.DevExtreme().Chart()
-                    .ID("chart2")
+                .ID("chart2")
                 .DataSource(d => d.WebApi().Controller("DangKyXe").LoadAction("ReportTaxiByBoPhan").LoadParams(new { fromTime = new JS("getDateBoxValueFrom"), toTime = new JS("getDateBoxValueTo"), bophan = new JS("getSelectBoxValue") }))
-                    .CommonSeriesSettings(s => s.ArgumentField("TenNV"))
-                    .Panes(p =>
-                    {
-                        p.Add().Name("TopPane");
-                        p.Add().Name("BottomPane");
-                    })
-                    .DefaultPane("BottomPane")
-                    .Series(s =>
-                    {
-                        s.Add()
+                .CommonSeriesSettings(s => s.ArgumentField("TenNV"))
+                .Panes(p =>
+                {
+                    p.Add().Name("TopPane");
+                    p.Add().Name("BottomPane");
+                })
+                .DefaultPane("BottomPane")
+                .Series(s =>
+                {
+                    s.Add()
                     .Pane("TopPane")
                     .ValueField("SoLanSuDung")
                     .Name("횟수")
                     .Label(l => l
                     .Visible(false));
 
-                        s.Add()
+                    s.Add()
                     .Type(SeriesType.Bar)
                     .ValueField("SoTien")
                     .Name("금액")
                     .Label(l => l
                     .Visible(false));
-                    })
+                })
                 .ValueAxis(a =>
                 {
                     a.Add()
@@ -405,13 +429,13 @@
                 .Title(t => t.Text("Chart ")).Tooltip(t => t
                 .Enabled(true)
                 .CustomizeTooltip(@<text>
-                    function(arg) {
-                    console.log(arg);
-                    return {
-                    text: arg.argumentText+ "\n 금액: " + formatNumber(arg.point.data.SoTien) + "\n 횟수: " + formatNumber(arg.point.data.SoLanSuDung)
-                    };
-                    }
-                </text>)
+                function(arg) {
+                console.log(arg);
+                return {
+                text: arg.argumentText+ "\n 금액: " + formatNumber(arg.point.data.SoTien) + "\n 횟수: " + formatNumber(arg.point.data.SoLanSuDung)
+                };
+                }
+            </text>)
                 )
 
                 )

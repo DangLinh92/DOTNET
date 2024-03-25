@@ -456,7 +456,7 @@
                         groupItems.AddSimpleFor(m => m.FromTimePlan1);
                         groupItems.AddSimpleFor(m => m.DiaDiemDen_Tinh);
                         groupItems.AddSimpleFor(m => m.ToTimePlan1);
-                        groupItems.AddSimpleFor(m => m.MucDichSuDung).ColSpan(2).Editor(editor => editor.TextArea().Height(80));
+                        groupItems.AddSimpleFor(m => m.MucDichSuDung);
                     });
 
                         items.AddGroup()
@@ -472,6 +472,7 @@
                             groupItems.AddSimpleFor(m => m.SoTien).Editor(e => e.NumberBox().Format("#,##0.00")).ColSpan(2);
                             groupItems.AddSimpleFor(m => m.SoNguoiSuDung).ColSpan(2);
                             groupItems.AddSimpleFor(m => m.MaBill).ColSpan(2);
+                            groupItems.AddSimpleFor(m => m.TaxiCardNo).ColSpan(2);
                         }
                     });
                     }));
@@ -525,11 +526,30 @@
                     columns.AddFor(m => m.DiaDiemDen_Xa).ValidationRules(x => x.AddRequired()).Caption(localizer["XA"].Value).AllowEditing(true);
                     columns.AddFor(m => m.DiaDiemDen_Huyen).ValidationRules(x => x.AddRequired()).Caption(localizer["HUYEN"].Value).AllowEditing(true);
                     columns.AddFor(m => m.DiaDiemDen_Tinh).ValidationRules(x => x.AddRequired()).Caption(localizer["TINH"].Value).AllowEditing(true);
-                    columns.AddFor(m => m.MucDichSuDung).Caption(localizer["MUC_DICH_SU_DUNG"].Value).AllowEditing(true);
+
+                    columns.AddFor(m => m.MucDichSuDung)
+                    .Caption(localizer["MUC_DICH_SU_DUNG"].Value).AllowEditing(true)
+                    .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("DangKyXe").LoadAction("GetMucDichSD").Key("MucDich"))
+                    .ValueExpr("MucDich")
+                    .DisplayExpr("MucDich")
+                    )
+                    .CalculateFilterExpression("calculateFilterExpression")
+                    .Width(120).ValidationRules(x => x.AddRequired());
+
                     columns.AddFor(m => m.Lxe_BienSo).Caption(localizer["THONG_TIN_XE"].Value).AllowEditing(true);
                     columns.AddFor(m => m.SoTien).Format(Format.FixedPoint).Caption(localizer["TONG_TIEN"].Value).AllowEditing(true);
                     columns.AddFor(m => m.SoNguoiSuDung).Caption(localizer["SO_NGUOI_DUNG"].Value).AllowEditing(true);
                     columns.AddFor(m => m.MaBill).Caption("Bill Number").AllowEditing(true);
+                    columns.AddFor(m => m.TaxiCardNo)
+                    .Caption("Taxi Card No").AllowEditing(true)
+                    .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("DangKyXe").LoadAction("GetCardInfo").Key("CardNo"))
+                    .ValueExpr("CardNo")
+                    .DisplayExpr("CardNo")
+                    )
+                    .CalculateFilterExpression("calculateFilterExpression")
+                    .Width(120);
 
                     columns.Add().Caption(localizer["TRANG_THAI_APPROVE"].Value).Columns(c =>
                     {

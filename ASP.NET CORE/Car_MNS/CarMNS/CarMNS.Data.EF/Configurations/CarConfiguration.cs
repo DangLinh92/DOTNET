@@ -70,6 +70,25 @@ namespace CarMNS.Data.EF.Configurations
         }
     }
 
+    public class TaxiCardInfoConfiguration : DbEntityConfiguration<TAXI_CARD_INFO>
+    {
+        public override void Configure(EntityTypeBuilder<TAXI_CARD_INFO> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
+
+    public class MucDichSDConfiguration : DbEntityConfiguration<MUCDICHSD_XE>
+    {
+        public override void Configure(EntityTypeBuilder<MUCDICHSD_XE> entity)
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+        }
+    }
+    
+
     public class BoPhanDuyetConfiguration : DbEntityConfiguration<BOPHAN_DUYET>
     {
         public override void Configure(EntityTypeBuilder<BOPHAN_DUYET> entity)
