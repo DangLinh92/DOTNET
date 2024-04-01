@@ -202,15 +202,33 @@ namespace HRMNS.Application.Implementation
 
                             if (luong.GioiTinh == "Female")
                             {
-                                if (_hotroSinhLyRepository.FindSingle(x => x.MaNV == item.MaNV && x.Month.Contains(thangNam.Substring(0, 7))) != null)
+                                string monthCheck = thangNam.Substring(0, 7) + "-01";
+                                List<HR_THAISAN_CONNHO> lstThaisan = _thaisanRepository.FindAll(
+                                    x => x.MaNV == item.MaNV &&
+                                    (x.CheDoThaiSan == "ThaiSan" || x.CheDoThaiSan == "MangBau") &&
+                                    x.FromDate.CompareTo(monthCheck) <= 0 &&
+                                    x.ToDate.CompareTo(monthCheck) >= 0).ToList();
+
+                                if (lstThaisan.Count > 0)
                                 {
-                                    luong.BauThaiSan = "";
-                                    luong.ThoiGianChuaNghi = _hotroSinhLyRepository.FindSingle(x => x.MaNV == item.MaNV && x.Month.Contains(thangNam.Substring(0, 7))).ThoiGianChuaNghi;
+                                    HR_THAISAN_CONNHO ts = lstThaisan.FirstOrDefault();
+
+                                    // nếu đi làm trước ngày 15 thì có nhận htro sinh ly
+                                    if (ts.ToDate.Substring(0, 7) == thangNam.Substring(0, 7) && DateTime.Parse(ts.ToDate).Day < 15)
+                                    {
+                                        luong.BauThaiSan = "";
+                                        luong.ThoiGianChuaNghi = 1.5; // ht 1.5h
+                                    }
+                                    else
+                                    {
+                                        luong.BauThaiSan = "o";
+                                        luong.ThoiGianChuaNghi = 0;
+                                    }
                                 }
                                 else
                                 {
-                                    luong.BauThaiSan = "o";
-                                    luong.ThoiGianChuaNghi = 0;
+                                    luong.BauThaiSan = "";
+                                    luong.ThoiGianChuaNghi = 1.5;
                                 }
                             }
 
@@ -417,7 +435,7 @@ namespace HRMNS.Application.Implementation
                     }
                     else
                     {
-                        if (item.MaNV == "H1608013")
+                        if (item.MaNV == "H2110006")
                         {
                             var x = 0;
                         }
@@ -434,6 +452,10 @@ namespace HRMNS.Application.Implementation
                             else if (thaisan.ToDate.Substring(0, 7) == thangNam.Substring(0, 7))
                             {
                                 songaynghiThaisan = EachDay.GetWorkingDay(DateTime.Parse(thangNam.Substring(0, 7) + "-01"), DateTime.Parse(thaisan.ToDate));
+                            }
+                            else if(thaisan.FromDate.CompareTo(thangNam.Substring(0, 7) + "-01") <= 0 && thaisan.ToDate.CompareTo(thangNam.Substring(0, 7) + "-01") >= 0)
+                            {
+                                songaynghiThaisan = EachDay.GetWorkingDay(DateTime.Parse(thaisan.FromDate), DateTime.Parse(thaisan.ToDate));
                             }
                         }
 
@@ -471,7 +493,7 @@ namespace HRMNS.Application.Implementation
                     {
                         luong.SoConNho = salary.SoConNho;
                     }
-                    
+
                     luong.SoNgayNghi70 = item.L160; // L160
                     luong.DieuChinhCong_Total = dieuChinhCong;//!= null ? (double)dieuChinhCong?.TongSoTien : 0;
 

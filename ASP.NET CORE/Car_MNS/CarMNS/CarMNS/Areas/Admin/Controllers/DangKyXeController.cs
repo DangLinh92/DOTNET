@@ -783,7 +783,7 @@ namespace CarMNS.Areas.Admin.Controllers
                     worksheet.Cells["M" + beginIndex].Value = Data[i].Amount2;
                     worksheet.Cells["N" + beginIndex].Value = Data[i].Note;
 
-                    if (i > 135)
+                    if (i > 284 && i < Data.Count - 1)
                     {
                         cellFrom = "C" + beginIndex + ":N" + beginIndex;
                         cellTo = "C" + (beginIndex + 1) + ":N" + (beginIndex + 1);

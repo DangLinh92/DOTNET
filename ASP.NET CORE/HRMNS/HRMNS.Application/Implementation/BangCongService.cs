@@ -461,7 +461,7 @@ namespace HRMNS.Application.Implementation
                                         }
                                     }
 
-                                    if (item.MaNV == "H2401009" && dateCheck == "2024-02-07")
+                                    if (item.MaNV == "H2211021" && dateCheck == "2024-03-23")
                                     {
                                         var x = 0;
                                     }
@@ -694,9 +694,19 @@ namespace HRMNS.Application.Implementation
                                                                 }
                                                             }
 
-                                                            if (kyhieuChamCongDB.NullString() == "" && CheckCheDoThaiSan("ConNho1H", dateCheck, item.MaNV) && string.Compare(lastTime, "11:00:00") > 0 && string.Compare(lastTime, "13:00:00") < 0)
+                                                            if (item.VP_SX == CommonConstants.VP)
                                                             {
-                                                                kyhieuChamCongDB = "P/DS";
+                                                                if (kyhieuChamCongDB.NullString() == "" && DateTime.Parse(dateCheck).DayOfWeek != DayOfWeek.Saturday && CheckCheDoThaiSan("ConNho1H", dateCheck, item.MaNV) && string.Compare(lastTime, "11:00:00") > 0 && string.Compare(lastTime, "13:00:00") < 0)
+                                                                {
+                                                                    kyhieuChamCongDB = "P/DS";
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                if (kyhieuChamCongDB.NullString() == "" && CheckCheDoThaiSan("ConNho1H", dateCheck, item.MaNV) && string.Compare(lastTime, "11:00:00") > 0 && string.Compare(lastTime, "13:00:00") < 0)
+                                                                {
+                                                                    kyhieuChamCongDB = "P/DS";
+                                                                }
                                                             }
 
                                                             item.WorkingStatuses.Add(new WorkingStatus()
@@ -1730,9 +1740,19 @@ namespace HRMNS.Application.Implementation
                                                                 }
                                                             }
 
-                                                            if (kyhieuChamCongDB.NullString() == "" && CheckCheDoThaiSan("ConNho1H", dateCheck, item.MaNV) && string.Compare(lastTime, "11:00:00") > 0 && string.Compare(lastTime, "13:00:00") < 0)
+                                                            if(item.VP_SX == CommonConstants.VP)
                                                             {
-                                                                kyhieuChamCongDB = "AL/DS";
+                                                                if (kyhieuChamCongDB.NullString() == "" && DateTime.Parse(dateCheck).DayOfWeek != DayOfWeek.Saturday && CheckCheDoThaiSan("ConNho1H", dateCheck, item.MaNV) && string.Compare(lastTime, "11:00:00") > 0 && string.Compare(lastTime, "13:00:00") < 0)
+                                                                {
+                                                                    kyhieuChamCongDB = "AL/DS";
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                if (kyhieuChamCongDB.NullString() == "" && CheckCheDoThaiSan("ConNho1H", dateCheck, item.MaNV) && string.Compare(lastTime, "11:00:00") > 0 && string.Compare(lastTime, "13:00:00") < 0)
+                                                                {
+                                                                    kyhieuChamCongDB = "AL/DS";
+                                                                }
                                                             }
 
                                                             item.WorkingStatuses.Add(new WorkingStatus()

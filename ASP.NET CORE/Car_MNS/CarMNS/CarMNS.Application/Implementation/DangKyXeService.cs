@@ -672,6 +672,7 @@ namespace CarMNS.Application.Implementation
             }
             else if (role == CommonConstants.AppRole.AdminRole)
             {
+                lst = _TaxiRepository.FindAll(x => x.NgaySuDung.Value.AddDays(60).CompareTo(DateTime.Now) >= 0).ToList();
                 lst = lst.OrderByDescending(x => x.NgaySuDung).ThenBy(x => x.MaBill).ToList();
             }
 
@@ -1037,7 +1038,7 @@ namespace CarMNS.Application.Implementation
         {
             List<TaxiCostReportViewModel> taxiCosts = new List<TaxiCostReportViewModel>();
 
-            List<DANG_KY_XE_TAXI> lstTaxi = _TaxiRepository.FindAll().ToList();
+            List<DANG_KY_XE_TAXI> lstTaxi = _TaxiRepository.FindAll(x=>x.XacNhanLV3 == true && x.XacNhanLV2 == true).ToList();
 
             List<DANG_KY_XE_TAXI> lstTaxiNew = new List<DANG_KY_XE_TAXI>();
             foreach (var item in lstTaxi)
