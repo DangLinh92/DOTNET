@@ -5,17 +5,24 @@ using GroupDocs.Viewer.Options;
 using HRMNS.Application.Implementation;
 using HRMNS.Application.Interfaces;
 using HRMNS.Application.ViewModels.HR;
+using HRMNS.Data.EF;
 using HRMNS.Data.EF.Extensions;
 using HRMNS.Data.Entities;
 using HRMNS.Utilities.Common;
 using HRMNS.Utilities.Constants;
 using HRMNS.Utilities.Dtos;
 using HRMS.Extensions;
+using HRMS.Infrastructure.Interfaces;
+using HRMS.ScheduledTasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 using OfficeOpenXml;
+using Quartz.Impl;
+using Quartz;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,6 +30,8 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using DevExpress.DataAccess.DataFederation;
 
 namespace HRMS.Areas.Payroll.Controllers
 {
@@ -45,7 +54,7 @@ namespace HRMS.Areas.Payroll.Controllers
             _salaryService = salaryService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             DeleteFileSr(_hostingEnvironment);
 
@@ -63,10 +72,12 @@ namespace HRMS.Areas.Payroll.Controllers
             ViewBag.ThangChotCong = chotCongChoThang;
             ViewBag.CheDoView = chedo;
 
+            // Phép Năm update
+            
             string isInBL = HttpContext.Session.Get<string>("IsInBangLuongChiTiet");
             if (isInBL == CommonConstants.IN)
             {
-                string fileName = CreatBangCongChiTiet(chotCongChoThang, chedo);
+                string fileName =  CreatBangCongChiTiet(chotCongChoThang, chedo);
                 HttpContext.Session.Set("TblLuongChiTiet", fileName);
                 var sWebRootFolder = _hostingEnvironment.WebRootPath;
                 string directory = Path.Combine(sWebRootFolder, "export-files/sr");
@@ -74,6 +85,7 @@ namespace HRMS.Areas.Payroll.Controllers
             }
             else
             {
+                await ChotCongFinal();
                 ViewData["DocumentPath"] = "";
                 HttpContext.Session.Set("IsInBangLuongChiTiet", CommonConstants.IN);
             }
@@ -82,8 +94,11 @@ namespace HRMS.Areas.Payroll.Controllers
         }
 
         [HttpPost]
-        public IActionResult ViewBangCongByMonth(string time, string chedo)
+        public async Task<IActionResult> ViewBangCongByMonth(string time, string chedo)
         {
+            // wait 30s để update phep nam
+            await Task.Delay(TimeSpan.FromSeconds(15));
+
             HttpContext.Session.Set("IsInBangLuongChiTiet", CommonConstants.IN);
             //string fileName = CreatBangCongChiTiet(time);
             //HttpContext.Session.Set("TblLuongChiTiet", fileName);
@@ -162,6 +177,7 @@ namespace HRMS.Areas.Payroll.Controllers
             };
 
             _ngayChotCongService.Update(ngayChot);
+            HttpContext.Session.Set("BangLuongThang", "");
 
             return new OkObjectResult(thang);
         }
@@ -377,82 +393,82 @@ namespace HRMS.Areas.Payroll.Controllers
                     beginIndex += 1;
                 }
 
-                worksheet.Cells["J" + beginIndex].Formula = string.Format("=SUM(J3:J{0})", beginIndex-1);
-                worksheet.Cells["K" + beginIndex].Formula = string.Format("=SUM(K3:K{0})", beginIndex-1);
-                worksheet.Cells["L" + beginIndex].Formula = string.Format("=SUM(L3:L{0})", beginIndex-1);
-                worksheet.Cells["M" + beginIndex].Formula = string.Format("=SUM(M3:M{0})", beginIndex-1);
-                worksheet.Cells["O" + beginIndex].Formula = string.Format("=SUM(O3:O{0})", beginIndex-1);
-                worksheet.Cells["R" + beginIndex].Formula = string.Format("=SUM(R3:R{0})", beginIndex-1);
-                worksheet.Cells["S" + beginIndex].Formula = string.Format("=SUM(S3:S{0})", beginIndex-1);
-                worksheet.Cells["T" + beginIndex].Formula = string.Format("=SUM(T3:T{0})", beginIndex-1);
-                worksheet.Cells["W" + beginIndex].Formula = string.Format("=SUM(W3:W{0})", beginIndex-1);
-                worksheet.Cells["X" + beginIndex].Formula = string.Format("=SUM(X3:X{0})", beginIndex-1);
-                worksheet.Cells["Y" + beginIndex].Formula = string.Format("=SUM(Y3:Y{0})", beginIndex-1);
+                worksheet.Cells["J" + beginIndex].Formula = string.Format("=SUM(J3:J{0})", beginIndex - 1);
+                worksheet.Cells["K" + beginIndex].Formula = string.Format("=SUM(K3:K{0})", beginIndex - 1);
+                worksheet.Cells["L" + beginIndex].Formula = string.Format("=SUM(L3:L{0})", beginIndex - 1);
+                worksheet.Cells["M" + beginIndex].Formula = string.Format("=SUM(M3:M{0})", beginIndex - 1);
+                worksheet.Cells["O" + beginIndex].Formula = string.Format("=SUM(O3:O{0})", beginIndex - 1);
+                worksheet.Cells["R" + beginIndex].Formula = string.Format("=SUM(R3:R{0})", beginIndex - 1);
+                worksheet.Cells["S" + beginIndex].Formula = string.Format("=SUM(S3:S{0})", beginIndex - 1);
+                worksheet.Cells["T" + beginIndex].Formula = string.Format("=SUM(T3:T{0})", beginIndex - 1);
+                worksheet.Cells["W" + beginIndex].Formula = string.Format("=SUM(W3:W{0})", beginIndex - 1);
+                worksheet.Cells["X" + beginIndex].Formula = string.Format("=SUM(X3:X{0})", beginIndex - 1);
+                worksheet.Cells["Y" + beginIndex].Formula = string.Format("=SUM(Y3:Y{0})", beginIndex - 1);
 
-                worksheet.Cells["AC" + beginIndex].Formula = string.Format("=SUM(AC3:AC{0})", beginIndex-1);
-                worksheet.Cells["AD" + beginIndex].Formula = string.Format("=SUM(AD3:AD{0})", beginIndex-1);
-                worksheet.Cells["AE" + beginIndex].Formula = string.Format("=SUM(AE3:AE{0})", beginIndex-1);
-                worksheet.Cells["AF" + beginIndex].Formula = string.Format("=SUM(AF3:AF{0})", beginIndex-1);
-                worksheet.Cells["AG" + beginIndex].Formula = string.Format("=SUM(AG3:AG{0})", beginIndex-1);
-                worksheet.Cells["AH" + beginIndex].Formula = string.Format("=SUM(AH3:AH{0})", beginIndex-1);
-                worksheet.Cells["AI" + beginIndex].Formula = string.Format("=SUM(AI3:AI{0})", beginIndex-1);
-                worksheet.Cells["AJ" + beginIndex].Formula = string.Format("=SUM(AJ3:AJ{0})", beginIndex-1);
+                worksheet.Cells["AC" + beginIndex].Formula = string.Format("=SUM(AC3:AC{0})", beginIndex - 1);
+                worksheet.Cells["AD" + beginIndex].Formula = string.Format("=SUM(AD3:AD{0})", beginIndex - 1);
+                worksheet.Cells["AE" + beginIndex].Formula = string.Format("=SUM(AE3:AE{0})", beginIndex - 1);
+                worksheet.Cells["AF" + beginIndex].Formula = string.Format("=SUM(AF3:AF{0})", beginIndex - 1);
+                worksheet.Cells["AG" + beginIndex].Formula = string.Format("=SUM(AG3:AG{0})", beginIndex - 1);
+                worksheet.Cells["AH" + beginIndex].Formula = string.Format("=SUM(AH3:AH{0})", beginIndex - 1);
+                worksheet.Cells["AI" + beginIndex].Formula = string.Format("=SUM(AI3:AI{0})", beginIndex - 1);
+                worksheet.Cells["AJ" + beginIndex].Formula = string.Format("=SUM(AJ3:AJ{0})", beginIndex - 1);
 
-                worksheet.Cells["AK" + beginIndex].Formula = string.Format("=SUM(AK3:AK{0})", beginIndex-1);
-                worksheet.Cells["AL" + beginIndex].Formula = string.Format("=SUM(AL3:AL{0})", beginIndex-1);
-                worksheet.Cells["AM" + beginIndex].Formula = string.Format("=SUM(AM3:AM{0})", beginIndex-1);
-                worksheet.Cells["AN" + beginIndex].Formula = string.Format("=SUM(AN3:AN{0})", beginIndex-1);
-                worksheet.Cells["AQ" + beginIndex].Formula = string.Format("=SUM(AQ3:AQ{0})", beginIndex-1);
-                worksheet.Cells["AR" + beginIndex].Formula = string.Format("=SUM(AR3:AR{0})", beginIndex-1);
-                worksheet.Cells["AT" + beginIndex].Formula = string.Format("=SUM(AT3:AT{0})", beginIndex-1);
-                worksheet.Cells["AU" + beginIndex].Formula = string.Format("=SUM(AU3:AU{0})", beginIndex-1);
-                worksheet.Cells["AW" + beginIndex].Formula = string.Format("=SUM(AW3:AW{0})", beginIndex-1);
-                worksheet.Cells["AX" + beginIndex].Formula = string.Format("=SUM(AX3:AX{0})", beginIndex-1);
-                worksheet.Cells["AY" + beginIndex].Formula = string.Format("=SUM(AY3:AY{0})", beginIndex-1);
-                worksheet.Cells["AZ" + beginIndex].Formula = string.Format("=SUM(AZ3:AZ{0})", beginIndex-1);
-                worksheet.Cells["BA" + beginIndex].Formula = string.Format("=SUM(BA3:BA{0})", beginIndex-1);
-                worksheet.Cells["BB" + beginIndex].Formula = string.Format("=SUM(BB3:BB{0})", beginIndex-1);
-                worksheet.Cells["BC" + beginIndex].Formula = string.Format("=SUM(BC3:BC{0})", beginIndex-1);
-                worksheet.Cells["BD" + beginIndex].Formula = string.Format("=SUM(BD3:BD{0})", beginIndex-1);
-                worksheet.Cells["BE" + beginIndex].Formula = string.Format("=SUM(BE3:BE{0})", beginIndex-1);
-                worksheet.Cells["BF" + beginIndex].Formula = string.Format("=SUM(BF3:BF{0})", beginIndex-1);
-                worksheet.Cells["BG" + beginIndex].Formula = string.Format("=SUM(BG3:BG{0})", beginIndex-1);
-                worksheet.Cells["BH" + beginIndex].Formula = string.Format("=SUM(BH3:BH{0})", beginIndex-1);
-                worksheet.Cells["BK" + beginIndex].Formula = string.Format("=SUM(BK3:BK{0})", beginIndex-1);
-                worksheet.Cells["BL" + beginIndex].Formula = string.Format("=SUM(BL3:BL{0})", beginIndex-1);
-                worksheet.Cells["BM" + beginIndex].Formula = string.Format("=SUM(BM3:BM{0})", beginIndex-1);
+                worksheet.Cells["AK" + beginIndex].Formula = string.Format("=SUM(AK3:AK{0})", beginIndex - 1);
+                worksheet.Cells["AL" + beginIndex].Formula = string.Format("=SUM(AL3:AL{0})", beginIndex - 1);
+                worksheet.Cells["AM" + beginIndex].Formula = string.Format("=SUM(AM3:AM{0})", beginIndex - 1);
+                worksheet.Cells["AN" + beginIndex].Formula = string.Format("=SUM(AN3:AN{0})", beginIndex - 1);
+                worksheet.Cells["AQ" + beginIndex].Formula = string.Format("=SUM(AQ3:AQ{0})", beginIndex - 1);
+                worksheet.Cells["AR" + beginIndex].Formula = string.Format("=SUM(AR3:AR{0})", beginIndex - 1);
+                worksheet.Cells["AT" + beginIndex].Formula = string.Format("=SUM(AT3:AT{0})", beginIndex - 1);
+                worksheet.Cells["AU" + beginIndex].Formula = string.Format("=SUM(AU3:AU{0})", beginIndex - 1);
+                worksheet.Cells["AW" + beginIndex].Formula = string.Format("=SUM(AW3:AW{0})", beginIndex - 1);
+                worksheet.Cells["AX" + beginIndex].Formula = string.Format("=SUM(AX3:AX{0})", beginIndex - 1);
+                worksheet.Cells["AY" + beginIndex].Formula = string.Format("=SUM(AY3:AY{0})", beginIndex - 1);
+                worksheet.Cells["AZ" + beginIndex].Formula = string.Format("=SUM(AZ3:AZ{0})", beginIndex - 1);
+                worksheet.Cells["BA" + beginIndex].Formula = string.Format("=SUM(BA3:BA{0})", beginIndex - 1);
+                worksheet.Cells["BB" + beginIndex].Formula = string.Format("=SUM(BB3:BB{0})", beginIndex - 1);
+                worksheet.Cells["BC" + beginIndex].Formula = string.Format("=SUM(BC3:BC{0})", beginIndex - 1);
+                worksheet.Cells["BD" + beginIndex].Formula = string.Format("=SUM(BD3:BD{0})", beginIndex - 1);
+                worksheet.Cells["BE" + beginIndex].Formula = string.Format("=SUM(BE3:BE{0})", beginIndex - 1);
+                worksheet.Cells["BF" + beginIndex].Formula = string.Format("=SUM(BF3:BF{0})", beginIndex - 1);
+                worksheet.Cells["BG" + beginIndex].Formula = string.Format("=SUM(BG3:BG{0})", beginIndex - 1);
+                worksheet.Cells["BH" + beginIndex].Formula = string.Format("=SUM(BH3:BH{0})", beginIndex - 1);
+                worksheet.Cells["BK" + beginIndex].Formula = string.Format("=SUM(BK3:BK{0})", beginIndex - 1);
+                worksheet.Cells["BL" + beginIndex].Formula = string.Format("=SUM(BL3:BL{0})", beginIndex - 1);
+                worksheet.Cells["BM" + beginIndex].Formula = string.Format("=SUM(BM3:BM{0})", beginIndex - 1);
 
-                worksheet.Cells["BN" + beginIndex].Formula = string.Format("=SUM(BN3:BN{0})", beginIndex-1);
-                worksheet.Cells["BP" + beginIndex].Formula = string.Format("=SUM(BP3:BP{0})", beginIndex-1);
-                worksheet.Cells["BQ" + beginIndex].Formula = string.Format("=SUM(BQ3:BQ{0})", beginIndex-1);
-                worksheet.Cells["BR" + beginIndex].Formula = string.Format("=SUM(BR3:BR{0})", beginIndex-1);
-                worksheet.Cells["BS" + beginIndex].Formula = string.Format("=SUM(BS3:BS{0})", beginIndex-1);
-                worksheet.Cells["CA" + beginIndex].Formula = string.Format("=SUM(CA3:CA{0})", beginIndex-1);
-                worksheet.Cells["CB" + beginIndex].Formula = string.Format("=SUM(CB3:CB{0})", beginIndex-1);
-                worksheet.Cells["CE" + beginIndex].Formula = string.Format("=SUM(CE3:CE{0})", beginIndex-1);
-                worksheet.Cells["CF" + beginIndex].Formula = string.Format("=SUM(CF3:CF{0})", beginIndex-1);
-                worksheet.Cells["CG" + beginIndex].Formula = string.Format("=SUM(CG3:CG{0})", beginIndex-1);
-                worksheet.Cells["CK" + beginIndex].Formula = string.Format("=SUM(CK3:CK{0})", beginIndex-1);
-                worksheet.Cells["CN" + beginIndex].Formula = string.Format("=SUM(CN3:CN{0})", beginIndex-1);
-                worksheet.Cells["CP" + beginIndex].Formula = string.Format("=SUM(CP3:CP{0})", beginIndex-1);
-                worksheet.Cells["CS" + beginIndex].Formula = string.Format("=SUM(CS3:CS{0})", beginIndex-1);
-                worksheet.Cells["CX" + beginIndex].Formula = string.Format("=SUM(CX3:CX{0})", beginIndex-1);
-                worksheet.Cells["CY" + beginIndex].Formula = string.Format("=SUM(CY3:CY{0})", beginIndex-1);
-                worksheet.Cells["CZ" + beginIndex].Formula = string.Format("=SUM(CZ3:CZ{0})", beginIndex-1);
-                worksheet.Cells["DA" + beginIndex].Formula = string.Format("=SUM(DA3:DA{0})", beginIndex-1);
-                worksheet.Cells["DD" + beginIndex].Formula = string.Format("=SUM(DD3:DD{0})", beginIndex-1);
-                worksheet.Cells["DE" + beginIndex].Formula = string.Format("=SUM(DE3:DE{0})", beginIndex-1);
-                worksheet.Cells["DF" + beginIndex].Formula = string.Format("=SUM(DF3:DF{0})", beginIndex-1);
-                worksheet.Cells["DR" + beginIndex].Formula = string.Format("=SUM(DR3:DR{0})", beginIndex-1);
-                worksheet.Cells["DT" + beginIndex].Formula = string.Format("=SUM(DT3:DT{0})", beginIndex-1);
-                worksheet.Cells["DU" + beginIndex].Formula = string.Format("=SUM(DU3:DU{0})", beginIndex-1);
-                worksheet.Cells["DW" + beginIndex].Formula = string.Format("=SUM(DW3:DW{0})", beginIndex-1);
-                worksheet.Cells["DX" + beginIndex].Formula = string.Format("=SUM(DX3:DX{0})", beginIndex-1);
-                worksheet.Cells["EA" + beginIndex].Formula = string.Format("=SUM(EA3:EA{0})", beginIndex-1);
-                worksheet.Cells["ED" + beginIndex].Formula = string.Format("=SUM(ED3:ED{0})", beginIndex-1);
-                worksheet.Cells["EE" + beginIndex].Formula = string.Format("=SUM(EE3:EE{0})", beginIndex-1);
-                worksheet.Cells["EF" + beginIndex].Formula = string.Format("=SUM(EF3:EF{0})", beginIndex-1);
-                worksheet.Cells["EG" + beginIndex].Formula = string.Format("=SUM(EG3:EG{0})", beginIndex-1);
+                worksheet.Cells["BN" + beginIndex].Formula = string.Format("=SUM(BN3:BN{0})", beginIndex - 1);
+                worksheet.Cells["BP" + beginIndex].Formula = string.Format("=SUM(BP3:BP{0})", beginIndex - 1);
+                worksheet.Cells["BQ" + beginIndex].Formula = string.Format("=SUM(BQ3:BQ{0})", beginIndex - 1);
+                worksheet.Cells["BR" + beginIndex].Formula = string.Format("=SUM(BR3:BR{0})", beginIndex - 1);
+                worksheet.Cells["BS" + beginIndex].Formula = string.Format("=SUM(BS3:BS{0})", beginIndex - 1);
+                worksheet.Cells["CA" + beginIndex].Formula = string.Format("=SUM(CA3:CA{0})", beginIndex - 1);
+                worksheet.Cells["CB" + beginIndex].Formula = string.Format("=SUM(CB3:CB{0})", beginIndex - 1);
+                worksheet.Cells["CE" + beginIndex].Formula = string.Format("=SUM(CE3:CE{0})", beginIndex - 1);
+                worksheet.Cells["CF" + beginIndex].Formula = string.Format("=SUM(CF3:CF{0})", beginIndex - 1);
+                worksheet.Cells["CG" + beginIndex].Formula = string.Format("=SUM(CG3:CG{0})", beginIndex - 1);
+                worksheet.Cells["CK" + beginIndex].Formula = string.Format("=SUM(CK3:CK{0})", beginIndex - 1);
+                worksheet.Cells["CN" + beginIndex].Formula = string.Format("=SUM(CN3:CN{0})", beginIndex - 1);
+                worksheet.Cells["CP" + beginIndex].Formula = string.Format("=SUM(CP3:CP{0})", beginIndex - 1);
+                worksheet.Cells["CS" + beginIndex].Formula = string.Format("=SUM(CS3:CS{0})", beginIndex - 1);
+                worksheet.Cells["CX" + beginIndex].Formula = string.Format("=SUM(CX3:CX{0})", beginIndex - 1);
+                worksheet.Cells["CY" + beginIndex].Formula = string.Format("=SUM(CY3:CY{0})", beginIndex - 1);
+                worksheet.Cells["CZ" + beginIndex].Formula = string.Format("=SUM(CZ3:CZ{0})", beginIndex - 1);
+                worksheet.Cells["DA" + beginIndex].Formula = string.Format("=SUM(DA3:DA{0})", beginIndex - 1);
+                worksheet.Cells["DD" + beginIndex].Formula = string.Format("=SUM(DD3:DD{0})", beginIndex - 1);
+                worksheet.Cells["DE" + beginIndex].Formula = string.Format("=SUM(DE3:DE{0})", beginIndex - 1);
+                worksheet.Cells["DF" + beginIndex].Formula = string.Format("=SUM(DF3:DF{0})", beginIndex - 1);
+                worksheet.Cells["DR" + beginIndex].Formula = string.Format("=SUM(DR3:DR{0})", beginIndex - 1);
+                worksheet.Cells["DT" + beginIndex].Formula = string.Format("=SUM(DT3:DT{0})", beginIndex - 1);
+                worksheet.Cells["DU" + beginIndex].Formula = string.Format("=SUM(DU3:DU{0})", beginIndex - 1);
+                worksheet.Cells["DW" + beginIndex].Formula = string.Format("=SUM(DW3:DW{0})", beginIndex - 1);
+                worksheet.Cells["DX" + beginIndex].Formula = string.Format("=SUM(DX3:DX{0})", beginIndex - 1);
+                worksheet.Cells["EA" + beginIndex].Formula = string.Format("=SUM(EA3:EA{0})", beginIndex - 1);
+                worksheet.Cells["ED" + beginIndex].Formula = string.Format("=SUM(ED3:ED{0})", beginIndex - 1);
+                worksheet.Cells["EE" + beginIndex].Formula = string.Format("=SUM(EE3:EE{0})", beginIndex - 1);
+                worksheet.Cells["EF" + beginIndex].Formula = string.Format("=SUM(EF3:EF{0})", beginIndex - 1);
+                worksheet.Cells["EG" + beginIndex].Formula = string.Format("=SUM(EG3:EG{0})", beginIndex - 1);
 
                 beginIndex = 6;
                 worksheetTH.InsertRow(beginIndex + 1, data.Count, beginIndex);
@@ -471,6 +487,57 @@ namespace HRMS.Areas.Payroll.Controllers
                 package.Save(); // Save the workbook.
             }
             return sFileName;
+        }
+
+        public async Task ChotCongFinal()
+        {
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddDbContext<AppDBContext>(options =>
+               options.UseSqlServer(
+                    @"Persist Security Info=True;Data Source = 10.70.21.208;Initial Catalog = HRMSDB2;User Id = sa;Password = sa@21208;Connect Timeout=3", o => o.MigrationsAssembly("HRMNS.Data.EF")));
+
+            serviceCollection.AddSingleton(HRMNS.Application.AutoMapper.AutoMapperConfig.RegisterMappings().CreateMapper());
+            serviceCollection.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            serviceCollection.AddScoped<UserManager<APP_USER>, UserManager<APP_USER>>();
+            serviceCollection.AddScoped<RoleManager<APP_ROLE>, RoleManager<APP_ROLE>>();
+
+            serviceCollection.AddScoped(typeof(IUnitOfWork), typeof(EFUnitOfWork));
+            serviceCollection.AddScoped(typeof(IRespository<,>), typeof(EFRepository<,>));
+            serviceCollection.AddScoped<UpdatePhepNamDaiLyJob>();
+            serviceCollection.AddScoped<INgayChotCongService, NgayChotCongService>();
+            serviceCollection.AddScoped<INhanVienService, NhanVienService>();
+            serviceCollection.AddScoped<IPhepNamService, PhepNamService>();
+            serviceCollection.AddScoped<IDangKyChamCongChiTietService, DangKyChamCongChiTietService>();
+            serviceCollection.AddScoped<IDangKyChamCongDacBietService, DangKyChamCongDacBietService>();
+            serviceCollection.AddScoped<IDangKyChamCongDacBietService, DangKyChamCongDacBietService>();
+
+            serviceCollection.AddLogging();
+
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+
+            // construct a scheduler factory
+            ISchedulerFactory schedFact = new StdSchedulerFactory();
+
+            // get a scheduler
+            IScheduler sched = await schedFact.GetScheduler();
+            sched.JobFactory = new PhepNamHanldeJobFactory(serviceProvider);
+
+            await sched.Start();
+
+            var job = JobBuilder.Create<UpdatePhepNamDaiLyJob>()
+                                .WithIdentity("PhepNamDaiLyJob", "group1")
+                                .Build();
+
+            var trigger = TriggerBuilder.Create()
+                .WithIdentity("PhepNamDaiLyJob-trigger", "group1")
+                .StartNow()
+                //.WithSimpleSchedule(x => x
+                //.WithIntervalInSeconds(40)
+                //.RepeatForever())
+                .Build();
+
+            await sched.ScheduleJob(job, trigger);
         }
 
         //[HttpPost]

@@ -18,4 +18,13 @@ namespace HRMNS.Data.EF.Configurations
             entity.HasMany(x => x.HR_NHANVIEN).WithOne(x => x.HR_CHUCDANH).OnDelete(DeleteBehavior.SetNull);
         }
     }
+
+    public class ChucDanhByYearConfiguration : DbEntityConfiguration<HR_CHUCDANH_BY_YEAR>
+    {
+        public override void Configure(EntityTypeBuilder<HR_CHUCDANH_BY_YEAR> entity)
+        {
+            entity.HasKey(c => c.Id);
+            entity.Property(c => c.Id).ValueGeneratedOnAdd();
+        }
+    }
 }

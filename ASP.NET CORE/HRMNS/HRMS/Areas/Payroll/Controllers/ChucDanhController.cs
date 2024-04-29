@@ -25,7 +25,7 @@ namespace HRMS.Areas.Payroll.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult GetAll(int year)
         {
             var chucDanhs = _chucDanhService.GetAll(null);
             return new OkObjectResult(chucDanhs);

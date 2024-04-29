@@ -13,20 +13,37 @@
         var dataGrid, loadPanel, dataGridTmp;
 
         $(function () {
-            LoadData();
+            let currentYear = new Date().getFullYear();
+            LoadData(currentYear);
         });
 
-        function LoadData() {
+        function LoadData(txtYear) {
             dataGrid = $("#gridContainer1").dxDataGrid("instance");
             loadPanel = $("#loadPanel").dxLoadPanel("instance");
 
             loadPanel.show();
-            sendRequest('@Url.RouteUrl(new { area = "Payroll", controller = "Salary", action = "Get" })', "GET")
+            sendRequest('@Url.RouteUrl(new { area = "Payroll", controller = "Salary", action = "Get" })', "GET", { year: txtYear })
                 .always(() => { loadPanel.hide(); })
                 .done((data) => {
                     dataGrid.option("dataSource", data);
                 });
         }
+
+        // chon nam
+        function selectedDate_changed(data) {
+
+            let sDate = data.value;
+            if (sDate == '') {
+                var date = new Date();
+            }
+            else {
+                var date = new Date(sDate);
+            }
+
+            // Get year, month, and day part from the date
+            var year = date.toLocaleString("default", { year: "numeric" });
+            LoadData(year);
+        };
 
         function SaveLuong(e) {
 
@@ -214,6 +231,25 @@
 
     <div class="row align-items-center">
         <div class="col">
+            <div class="form">
+                <div class="dx-fieldset">
+                    <div class="dx-field">
+                        <div>
+                            @(Html.DevExtreme().DateBox()
+                                .ID("txt_year")
+                                .Value(DateTime.Now.Year.ToString())
+                                .CalendarOptions(x => x.MaxZoomLevel(CalendarZoomLevel.Decade))
+                                .DisplayFormat("yyyy")
+                                .Width(200)
+                                .Placeholder("Select...")
+                                .Label("Year")
+                                .OnValueChanged("selectedDate_changed")
+                                )
+
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="col-auto float-right ml-auto" style="margin-right:100px;">
             <div class="btn-group">
@@ -319,6 +355,7 @@
                         c.AddFor(m => m.SoConNho).Caption("Số Con nhỏ").AllowEditing(true);
                         c.AddFor(m => m.Note).Caption("Note").AllowEditing(true);
                         c.AddFor(m => m.HR_NHANVIEN.SoTaiKhoanNH).Caption("Số Tài Khoản NH").AllowEditing(false);
+                        c.AddFor(m => m.Year).Caption("Năm").AllowEditing(true);
                     });
                 }).SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true).OnSaving("SaveLuong")
                 .Summary(s => s.TotalItems(items =>

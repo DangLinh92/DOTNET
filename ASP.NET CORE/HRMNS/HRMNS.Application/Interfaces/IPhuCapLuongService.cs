@@ -1,5 +1,6 @@
 ﻿using HRMNS.Data.Entities;
 using HRMNS.Data.Entities.Payroll;
+using HRMNS.Utilities.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,10 +16,11 @@ namespace HRMNS.Application.Interfaces
         public PHUCAP_DOC_HAI GetAllById(int Id);
         public List<BOPHAN> GetBoPhanAll();
 
-        public List<HR_SALARY_GRADE> GetAllGrade();
+        public List<HR_SALARY_GRADE> GetAllGrade(int year);
         public HR_SALARY_GRADE AddGrade(HR_SALARY_GRADE en);
         public HR_SALARY_GRADE UpdateGrade(HR_SALARY_GRADE en);
         public HR_SALARY_GRADE GetGradeById(string Id);
         public void DeleteGrade(string Id);
+        public ResultDB ImportExcel(string filePath);
     }
 }

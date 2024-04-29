@@ -133,6 +133,7 @@ namespace HRMNS.Application.Implementation
                 CONGDOAN_NOT_JOIN condoan;
                 NHANVIEN_INFOR_EX nhanvienEx;
                 int songaylamviec = 0;
+                int year = DateTime.Parse(thangNam).Year;
                 int lastDay = DateTime.DaysInMonth(DateTime.Parse(thangNam).Year, DateTime.Parse(thangNam).Month);//DateTime.Parse(thangNam).Day;
                 string endOfMonth = DateTime.Parse(thangNam.Substring(0, 7) + "-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd");
 
@@ -152,10 +153,13 @@ namespace HRMNS.Application.Implementation
 
                 int thamnien = 0;
                 int songaynghiThaisan = 0;
-
+                int numDayOff = 0;
                 foreach (var item in lstBangCong)
                 {
                     thamnien = 0;
+                    songaynghiThaisan = 0;
+                    numDayOff = 0;
+
                     luong = new BangLuongChiTietViewModel()
                     {
                         MaNV = item.MaNV,
@@ -169,7 +173,7 @@ namespace HRMNS.Application.Implementation
 
                     try
                     {
-                        salary = _salaryRepository.FindSingle(x => x.MaNV == item.MaNV, x => x.HR_NHANVIEN);
+                        salary = _salaryRepository.FindSingle(x => x.MaNV == item.MaNV && x.Year == year, x => x.HR_NHANVIEN);
                         nhanvienEx = _nhanvienInfoExRepository.FindAll(x => x.MaNV == item.MaNV && x.Year.ToString().CompareTo(thangNam.Substring(0, 4)) == 0, x => x.HR_NHANVIEN).FirstOrDefault();
 
                         dieuChinhCong = _dieuchinhCongRepository.FindAll(x => x.MaNV == item.MaNV && x.ChiTraVaoLuongThang2.Substring(0, 7).CompareTo(thangNam.Substring(0, 7)) == 0).Select(x => x.TongSoTien).Sum(x => x.Value);
@@ -194,6 +198,11 @@ namespace HRMNS.Application.Implementation
                         luong.MaBoPhan = nhanvienEx.MaBoPhanEx;
                         luong.Grade = nhanvienEx.Grade;
 
+                        if (item.MaNV == "H2403015")
+                        {
+                            var x = 0;
+                        }
+
                         if (_nhanVienRepository.FindById(item.MaNV, x => x.HR_BO_PHAN_DETAIL) != null)
                         {
                             luong.GioiTinh = _nhanVienRepository.FindById(item.MaNV).GioiTinh;
@@ -202,33 +211,33 @@ namespace HRMNS.Application.Implementation
 
                             if (luong.GioiTinh == "Female")
                             {
-                                string monthCheck = thangNam.Substring(0, 7) + "-01";
-                                List<HR_THAISAN_CONNHO> lstThaisan = _thaisanRepository.FindAll(
-                                    x => x.MaNV == item.MaNV &&
-                                    (x.CheDoThaiSan == "ThaiSan" || x.CheDoThaiSan == "MangBau") &&
-                                    x.FromDate.CompareTo(monthCheck) <= 0 &&
-                                    x.ToDate.CompareTo(monthCheck) >= 0).ToList();
-
-                                if (lstThaisan.Count > 0)
+                                if (item.HR_NHANVIEN.NgayNghiViec.NullString() != "" &&
+                                    item.HR_NHANVIEN.NgayNghiViec.NullString().Substring(0, 7) == thangNam.Substring(0, 7)) // nghi viec thang
                                 {
-                                    HR_THAISAN_CONNHO ts = lstThaisan.FirstOrDefault();
+                                    luong.BauThaiSan = "o";
+                                    luong.ThoiGianChuaNghi = 0;
+                                }
+                                else
+                                {
+                                    string beginMonth = thangNam.Substring(0, 7) + "-01";
+                                    string endMonth = DateTime.Parse(beginMonth).AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd");
 
-                                    // nếu đi làm trước ngày 15 thì có nhận htro sinh ly
-                                    if (ts.ToDate.Substring(0, 7) == thangNam.Substring(0, 7) && DateTime.Parse(ts.ToDate).Day < 15)
-                                    {
-                                        luong.BauThaiSan = "";
-                                        luong.ThoiGianChuaNghi = 1.5; // ht 1.5h
-                                    }
-                                    else
+                                    List<HR_THAISAN_CONNHO> lstThaisan = _thaisanRepository.FindAll(
+                                   x => x.MaNV == item.MaNV &&
+                                   (x.CheDoThaiSan == "ThaiSan" || x.CheDoThaiSan == "MangBau") &&
+                                   x.FromDate.CompareTo(endMonth) <= 0 &&
+                                   x.ToDate.CompareTo(beginMonth) >= 0).ToList();
+
+                                    if (lstThaisan.Count > 0 || item.TP == 0)
                                     {
                                         luong.BauThaiSan = "o";
                                         luong.ThoiGianChuaNghi = 0;
                                     }
-                                }
-                                else
-                                {
-                                    luong.BauThaiSan = "";
-                                    luong.ThoiGianChuaNghi = 1.5;
+                                    else
+                                    {
+                                        luong.BauThaiSan = "";
+                                        luong.ThoiGianChuaNghi = 1.5;
+                                    }
                                 }
                             }
 
@@ -304,7 +313,7 @@ namespace HRMNS.Application.Implementation
                         }
                     }
 
-                    HR_SALARY_GRADE grade = nhanvienEx != null ? _gradeRepository.FindAll(x => x.Id == nhanvienEx.Grade).FirstOrDefault() : null;
+                    HR_SALARY_GRADE grade = nhanvienEx != null ? _gradeRepository.FindAll(x => x.CapBac == nhanvienEx.Grade && x.Year == year).FirstOrDefault() : null;
 
                     if (salary != null)
                     {
@@ -397,9 +406,9 @@ namespace HRMNS.Application.Implementation
                         luong.TruQuyPhongChongThienTai = 0;
                     }
 
-                    if (phatsinhs.FirstOrDefault(x => x.HR_SALARY_DANHMUC_PHATSINH.KeyDanhMuc == "THUONG") != null)
+                    if (phatsinhs.Any(x => x.HR_SALARY_DANHMUC_PHATSINH.KeyDanhMuc == "THUONG" || x.HR_SALARY_DANHMUC_PHATSINH.KeyDanhMuc == "PI" || x.HR_SALARY_DANHMUC_PHATSINH.KeyDanhMuc == "CI"))
                     {
-                        luong.Thuong = (double)phatsinhs.FirstOrDefault(x => x.HR_SALARY_DANHMUC_PHATSINH.KeyDanhMuc == "THUONG").SoTien;
+                        luong.Thuong = (double)phatsinhs.FindAll(x => x.HR_SALARY_DANHMUC_PHATSINH.KeyDanhMuc == "THUONG" || x.HR_SALARY_DANHMUC_PHATSINH.KeyDanhMuc == "PI" || x.HR_SALARY_DANHMUC_PHATSINH.KeyDanhMuc == "CI").Sum(x => x.SoTien);
                     }
                     else
                     {
@@ -435,7 +444,7 @@ namespace HRMNS.Application.Implementation
                     }
                     else
                     {
-                        if (item.MaNV == "H2110006")
+                        if (item.MaNV == "H2403015")
                         {
                             var x = 0;
                         }
@@ -453,18 +462,32 @@ namespace HRMNS.Application.Implementation
                             {
                                 songaynghiThaisan = EachDay.GetWorkingDay(DateTime.Parse(thangNam.Substring(0, 7) + "-01"), DateTime.Parse(thaisan.ToDate));
                             }
-                            else if(thaisan.FromDate.CompareTo(thangNam.Substring(0, 7) + "-01") <= 0 && thaisan.ToDate.CompareTo(thangNam.Substring(0, 7) + "-01") >= 0)
+                            else if (thaisan.FromDate.CompareTo(thangNam.Substring(0, 7) + "-01") <= 0 && thaisan.ToDate.CompareTo(thangNam.Substring(0, 7) + "-01") >= 0)
                             {
                                 songaynghiThaisan = EachDay.GetWorkingDay(DateTime.Parse(thaisan.FromDate), DateTime.Parse(thaisan.ToDate));
                             }
                         }
 
+                        string ngayVao = _nhanVienRepository.FindById(item.MaNV).NgayVao.NullString();
+                        string ngayNghiViec = _nhanVienRepository.FindById(item.MaNV).NgayNghiViec.NullString();
+
+                        numDayOff = 0;
+                        if (ngayVao.Substring(0, 7) == thangNam.Substring(0, 7))
+                        {
+                            numDayOff = EachDay.GetWorkingDay(DateTime.Parse(ngayVao.Substring(0, 7) + "-01"), DateTime.Parse(ngayVao));
+
+                            if (ngayNghiViec != "" && ngayNghiViec.Substring(0, 7) == ngayVao.Substring(0, 7))
+                            {
+                                numDayOff += EachDay.GetWorkingDay(DateTime.Parse(ngayNghiViec), DateTime.Parse(ngayNghiViec.Substring(0, 7) + "-01").AddMonths(1).AddDays(-1));
+                            }
+                        }
+
                         //Người mới vào công ty: Vào từ ngày 1 đến ngày 15 của tháng sẽ trừ đoàn phí công đoàn của tháng đó luôn, sau ngày 15 sẽ trừ phí bắt đầu từ tháng sau.
                         // 2. Số ngày nghỉ không hưởng lương > 14 ngày , 3.Nghỉ thai sản > 14 ngày
-                        if (songaynghiThaisan > 14 || item.TUP > 14 ||
-                            _nhanVienRepository.FindById(item.MaNV).NgayVao.CompareTo(thangNam.Substring(0, 7) + "-15") > 0 ||
-                            (_nhanVienRepository.FindById(item.MaNV).NgayNghiViec.NullString() != "" &&
-                            _nhanVienRepository.FindById(item.MaNV).NgayNghiViec.NullString().CompareTo(thangNam.Substring(0, 7) + "-15") <= 0))
+                        if (songaynghiThaisan > 14 
+                            || (ngayVao.Substring(0, 7) == thangNam.Substring(0, 7) && ngayVao.CompareTo(thangNam.Substring(0, 7) + "-15") <= 0 && numDayOff + (item != null ? item.TUP : 0) > 14) 
+                            || (ngayVao.CompareTo(thangNam.Substring(0, 7) + "-15") > 0) 
+                            || (ngayNghiViec != "" && ngayNghiViec.CompareTo(thangNam.Substring(0, 7) + "-15") <= 0) || (item.TP == 0))
                         {
                             luong.DoiTuongThamGiaCD = "o";
                         }
@@ -494,6 +517,11 @@ namespace HRMNS.Application.Implementation
                         luong.SoConNho = salary.SoConNho;
                     }
 
+                    if (item.MaNV == "H2402001")
+                    {
+                        var x = 0;
+                    }
+
                     luong.SoNgayNghi70 = item.L160; // L160
                     luong.DieuChinhCong_Total = dieuChinhCong;//!= null ? (double)dieuChinhCong?.TongSoTien : 0;
 
@@ -501,7 +529,41 @@ namespace HRMNS.Application.Implementation
                         (item.HR_NHANVIEN.NgayNghiViec.NullString().Substring(0, 7) == thangNam.Substring(0, 7) ||
                         DateTime.Parse(thangNam).AddMonths(1).ToString("yyyy-MM") + "-01" == item.HR_NHANVIEN.NgayNghiViec.NullString())) // nghỉ việc đầu tháng
                     {
-                        luong.TraTienPhepNam_Total = phepnam != null ? (double)phepnam.SoTienChiTra : 0;
+                        string preMonth = DateTime.Parse(thangNam).AddMonths(-1).ToString("yyyy-MM");
+                        BANGLUONGCHITIET_HISTORY his = _bangluongChiTietHistoryRepository.FindAll(x => x.MaNV == item.MaNV && (x.ThangNam + "").Substring(0, 7) == preMonth).FirstOrDefault();
+
+                        if (his != null)
+                        {
+                            luong.TraTienPhepNam_Total = phepnam != null ? (double)phepnam.SoTienChiTra : 0;
+                        }
+                        else
+                        {
+                            luong.TraTienPhepNam_Total = phepnam != null && phepnam.SoPhepThanhToanNghiViec > 0 ? (double)phepnam.SoPhepThanhToanNghiViec * luong.DailySalary : 0;
+
+                            if (grade != null && grade.Id != "M1-1" && grade.Id != "P2-1")
+                            {
+                                luong.TraTienPhepNam_Total = luong.TraTienPhepNam_Total / 2;
+                            }
+                        }
+                    }
+                    else if (DateTime.Parse(thangNam).Month == 12)
+                    {
+                        string preMonth = DateTime.Parse(thangNam).AddMonths(-1).ToString("yyyy-MM");
+                        BANGLUONGCHITIET_HISTORY his = _bangluongChiTietHistoryRepository.FindAll(x => x.MaNV == item.MaNV && (x.ThangNam + "").Substring(0, 7) == preMonth).FirstOrDefault();
+
+                        if (his != null)
+                        {
+                            luong.TraTienPhepNam_Total = phepnam != null ? (double)phepnam.SoTienChiTra : 0;
+                        }
+                        else
+                        {
+                            luong.TraTienPhepNam_Total = phepnam != null && phepnam.SoPhepTonNamTmp > 0 ? (double)phepnam.SoPhepTonNamTmp * luong.DailySalary : 0;
+
+                            if (grade != null && grade.Id != "M1-1" && grade.Id != "P2-1")
+                            {
+                                luong.TraTienPhepNam_Total = luong.TraTienPhepNam_Total / 2;
+                            }
+                        }
                     }
 
                     if (phatsinhs.FirstOrDefault(x => x.HR_SALARY_DANHMUC_PHATSINH.KeyDanhMuc == "TIEN_GIOI_THIEU") != null)
@@ -547,8 +609,8 @@ namespace HRMNS.Application.Implementation
                     en.CopyPropertiesFrom(item, new List<string>() { });
                     lstAdd.Add(en);
                 }
-
-                HR_SALARY salary = _salaryRepository.FindAll(x => x.MaNV == item.MaNV).FirstOrDefault();
+                int year = int.Parse(time.Substring(0, 4));
+                HR_SALARY salary = _salaryRepository.FindAll(x => x.MaNV == item.MaNV && x.Year == year).FirstOrDefault();
                 if (salary != null)
                 {
                     salary.SeniorityAllowance = (decimal)item.SeniorityAllowance;

@@ -43,7 +43,7 @@ namespace HRMNS.Application.Implementation
 
         public List<ChamCongLogViewModel> GetAll(string keyword)
         {
-            string lastMonth = DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd");
+            string lastMonth = DateTime.Now.AddMonths(-2).ToString("yyyy-MM-dd");
             var lst = _chamCongLogRepository.FindAll(x => string.Compare(x.Ngay_ChamCong, lastMonth) >= 0).AsNoTracking().OrderByDescending(x => x.Ngay_ChamCong);
             var results = _mapper.Map<List<ChamCongLogViewModel>>(lst);
 

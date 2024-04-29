@@ -15,6 +15,8 @@ namespace HRMNS.Data.Entities.Payroll
         {
 
         }
+        [StringLength(50)]
+        public string CapBac { get; set; }
         public double BasicSalaryStandard { get; set; }
         public double IncentiveLanguage { get; set; }
 
@@ -22,6 +24,8 @@ namespace HRMNS.Data.Entities.Payroll
         public double LivingAllowance { get; set; } // phu cap đời sống
         public double IncentiveStandard { get; set; }
         public double AttendanceAllowance { get; set; }
+
+        public int Year { get; set; }
 
         [StringLength(50)]
         public string DateCreated { get; set; }

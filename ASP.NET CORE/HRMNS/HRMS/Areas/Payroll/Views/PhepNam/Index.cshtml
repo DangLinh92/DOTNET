@@ -4,7 +4,7 @@
 }
 
 @section Scripts
-    {
+{
     <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
     <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
     <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
@@ -14,15 +14,25 @@
 
         $(function () {
             let currentYear = new Date().getFullYear();
-            LoadData(currentYear);
+            let currentMonth = (new Date().getMonth()) + 1;
+
+            let month = ''
+            if (currentMonth < 10) {
+                month = currentYear + '-0' + currentMonth + '-01';
+            }
+            else {
+                month = currentYear + '-' + currentMonth + '-01';
+            }
+
+            LoadData(month);
         });
 
-        function LoadData(txtYear) {
+        function LoadData(txtMonth) {
             dataGrid = $("#gridContainer1").dxDataGrid("instance");
             loadPanel = $("#loadPanel").dxLoadPanel("instance");
 
             loadPanel.show();
-            sendRequest('@Url.RouteUrl(new { area = "Payroll", controller = "phepnam", action = "PhepNams" })', "GET", { year: txtYear })
+            sendRequest('@Url.RouteUrl(new { area = "Payroll", controller = "phepnam", action = "PhepNams" })', "GET", { month: txtMonth })
                 .always(() => { loadPanel.hide(); })
                 .done((data) => {
                     dataGrid.option("dataSource", data);
@@ -102,7 +112,21 @@
 
             // Get year, month, and day part from the date
             var year = date.toLocaleString("default", { year: "numeric" });
-            LoadData(year);
+
+            let _month = $("#txt_month").dxDateBox("instance").option('value');
+
+            LoadData(_month);
+        };
+
+        function selectedMonth_changed(data) {
+
+            // let _year = $("#txt_year").dxDateBox("instance").option('value');
+            let _month = data.value;
+
+            // console.log(_year);
+            console.log(_month);
+
+            LoadData(_month);
         };
 
         // Xuất excel phep nam
@@ -201,16 +225,29 @@
             <div class="form">
                 <div class="dx-fieldset">
                     <div class="dx-field">
-                        <div>
+                        @*                         <div style="float:left; display:inline-block">
+                        @(Html.DevExtreme().DateBox()
+                        .ID("txt_year")
+                        .Value(DateTime.Now.Year.ToString())
+                        .CalendarOptions(x => x.MaxZoomLevel(CalendarZoomLevel.Decade))
+                        .DisplayFormat("yyyy")
+                        .Width(200)
+                        .Placeholder("Select...")
+                        .Label("Year")
+                        .OnValueChanged("selectedDate_changed")
+                        )
+
+                        </div> *@
+                        <div style="float:left; display:inline-block;margin-left: 10px;">
                             @(Html.DevExtreme().DateBox()
-                                .ID("txt_year")
-                                .Value(DateTime.Now.Year.ToString())
-                                .CalendarOptions(x => x.MaxZoomLevel(CalendarZoomLevel.Decade))
-                                .DisplayFormat("yyyy")
+                                .ID("txt_month")
+                                .Value(DateTime.Now.ToString("yyyy-MM-01"))
+                                .CalendarOptions(x => x.MaxZoomLevel(CalendarZoomLevel.Month))
+                                .DisplayFormat("yyyy-MM")
                                 .Width(200)
                                 .Placeholder("Select...")
-                                .Label("Year")
-                                .OnValueChanged("selectedDate_changed")
+                                .Label("Month")
+                                .OnValueChanged("selectedMonth_changed")
                                 )
 
                         </div>
@@ -222,8 +259,8 @@
             <div class="btn-group">
                 <button type="button" class="btn btn-info dropdown-toggle" id="btnImport" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Excel</button>
                 <div class="dropdown-menu" style="">
-                    <a class="dropdown-item" href="~/templates/PhepNamTemplate.xlsx">File mẫu import phép năm</a>
-                    <a class="dropdown-item" id="btnImport" onclick="ImportExcel()">Import Phép Năm</a>
+                    <a class="dropdown-item" href="~/templates/NhanVien_Htro_DocHaiTemplate.xlsx">File mẫu import tháng độc hại</a>
+                    <a class="dropdown-item" id="btnImport" onclick="ImportExcel()">Import tháng độc hại</a>
                 </div>
             </div>
         </div>

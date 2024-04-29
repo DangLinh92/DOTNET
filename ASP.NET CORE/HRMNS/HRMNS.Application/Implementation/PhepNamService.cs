@@ -71,14 +71,14 @@ namespace HRMNS.Application.Implementation
             return _mapper.Map<HR_PHEP_NAM, PhepNamViewModel>(_phepNamRepository.FindById(id));
         }
 
-        public List<PhepNamViewModel> GetList(string year)
+        public List<PhepNamViewModel> GetList(string month)
         {
-            int _year = int.Parse(year);
+            int _year = int.Parse(month.Substring(0, 4));
             var lst = _phepNamRepository.FindAll(x => x.Year == _year, x => x.HR_NHANVIEN, z => z.HR_NHANVIEN.HR_BO_PHAN_DETAIL).ToList();
             List<HR_PHEP_NAM> phepnam = new List<HR_PHEP_NAM>();
             foreach (var item in lst.ToList())
             {
-                if(item.HR_NHANVIEN.NgayNghiViec.NullString() == "" || DateTime.Parse(item.HR_NHANVIEN.NgayNghiViec.NullString()).AddMonths(8).ToString("yyyyMM").CompareTo(DateTime.Now.ToString("yyyyMM")) >= 0)
+                if (item.HR_NHANVIEN.NgayNghiViec.NullString() == "" || item.HR_NHANVIEN.NgayNghiViec.NullString().Substring(0, 7).CompareTo(month.Substring(0, 7)) >= 0 || (item.ThoiGianChiTra.NullString() != "" && item.ThoiGianChiTra.NullString().Substring(0, 7) == month.Substring(0, 7)))
                 {
                     phepnam.Add(item);
                 }

@@ -28,7 +28,7 @@ namespace HRMNS.Application.AutoMapper
                .ConstructUsing(c => new HR_PHEP_NAM(c.Id,c.MaNhanVien, c.SoPhepNam, c.SoPhepConLai, c.Year,c.SoTienChiTra,c.ThoiGianChiTra,c.ThangBatDauDocHai,
                c.ThangKetThucDocHai,c.SoPhepDocHai,c.SoPhepCongThem,c.SoPhepDaUng,c.SoPhepDuocHuong,c.NghiThang_1,
                c.NghiThang_2,c.NghiThang_3,c.NghiThang_4,c.NghiThang_5,c.NghiThang_6,c.NghiThang_7,c.NghiThang_8,c.NghiThang_9,
-               c.NghiThang_10,c.NghiThang_11,c.NghiThang_12,c.SoPhepKhongDuocSuDung,c.SoPhepTonThang,c.SoPhepThanhToanNghiViec,c.MucThanhToan,c.SoPhepTonNam));
+               c.NghiThang_10,c.NghiThang_11,c.NghiThang_12,c.SoPhepKhongDuocSuDung,c.SoPhepTonThang,c.SoPhepThanhToanNghiViec,c.MucThanhToan,c.SoPhepTonNam,c.SoPhepTonNamTmp));
 
             CreateMap<TinhTrangHoSoViewModel, HR_TINHTRANGHOSO>()
                .ConstructUsing(c => new HR_TINHTRANGHOSO(c.Id, c.MaNV, c.SoYeuLyLich, c.CMTND, c.SoHoKhau, c.GiayKhaiSinh, c.BangTotNghiep, c.XacNhanDanSu, c.AnhThe));
@@ -187,7 +187,7 @@ namespace HRMNS.Application.AutoMapper
  .ConstructUsing(c => new EHS_COQUAN_KIEMTRA(c.Id, c.Demuc, c.CoQuanKiemTra, c.NgayKiemTra, c.NoiDungKiemTra, c.KetQua, c.NoiDungNG, c.NguyenNhan, c.DoiSachCaiTien, c.TienDoCaiTien));
 
             CreateMap<HR_NgayChotCongViewModel, HR_NGAY_CHOT_CONG>().ConstructUsing(c => new HR_NGAY_CHOT_CONG(c.Id,c.NgayChotCong,c.ChotCongChoThang));
-            CreateMap<ChucDanhViewModel, HR_CHUCDANH>().ConstructUsing(c => new HR_CHUCDANH(c.Id,c.TenChucDanh,c.PhuCap));
+            CreateMap<ChucDanhViewModel, HR_CHUCDANH>().ConstructUsing(c => new HR_CHUCDANH(c.Id, c.TenChucDanh,c.PhuCap));
         }
     }
 }

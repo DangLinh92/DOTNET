@@ -7,7 +7,7 @@ namespace HRMNS.Application.Interfaces
 {
     public interface IPhepNamService
     {
-        List<PhepNamViewModel> GetList(string year);
+        List<PhepNamViewModel> GetList(string month);
         PhepNamViewModel Add(PhepNamViewModel phepNamVm);
         PhepNamViewModel Update(PhepNamViewModel phepNamVm);
         void UpdateRange(List<PhepNamViewModel> phepNamVms);

@@ -461,7 +461,7 @@ namespace HRMNS.Application.Implementation
                                         }
                                     }
 
-                                    if (item.MaNV == "H2211021" && dateCheck == "2024-03-23")
+                                    if (item.MaNV == "H1707014" && dateCheck == "2024-03-09")
                                     {
                                         var x = 0;
                                     }
@@ -610,15 +610,28 @@ namespace HRMNS.Application.Implementation
 
                                                             string newBeginOT = GetTimeCaLamViec(item.BoPhan, _caLamViec.MaCaLaviec, dateCheck, item.VP_SX).BeginTimeOT;
 
-                                                            // Ca ngay con nhỏ, văn phòng con nhỏ thì dc về sớm 1h
-                                                            if (CheckCheDoThaiSan("ConNho1H", dateCheck, item.MaNV))
+                                                            if (item.VP_SX == CommonConstants.VP)
                                                             {
-                                                                isSetMaxOT = false;
-                                                                newBeginOT = "16:15:00";
-
-                                                                if (string.Compare(lastTime, "17:30:00") > 0)
+                                                                // Ca ngay con nhỏ, văn phòng con nhỏ thì dc về sớm 1h
+                                                                if (CheckCheDoThaiSan("ConNho1H", dateCheck, item.MaNV))
                                                                 {
-                                                                    newBeginOT = "16:30:00";
+                                                                    isSetMaxOT = false;
+                                                                    newBeginOT = "16:15:00";
+
+                                                                    if (string.Compare(lastTime, "17:30:00") > 0)
+                                                                    {
+                                                                        newBeginOT = "16:30:00";
+                                                                    }
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                // Ca ngay con nhỏ, văn phòng con nhỏ thì dc về sớm 1h
+                                                                if (CheckCheDoThaiSan("ConNho1H", dateCheck, item.MaNV))
+                                                                {
+                                                                    isSetMaxOT = false;
+                                                                    newBeginOT = "16:00:00";
+
                                                                 }
                                                             }
 
@@ -1601,7 +1614,7 @@ namespace HRMNS.Application.Implementation
                                                         }
                                                     }
 
-                                                    if (dateCheck != "2024-02-08")
+                                                    if (dateCheck != "2024-02-08" && firstTime != "")
                                                     {
                                                         if (DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) >= DateTime.ParseExact("00:00:00", "HH:mm:ss", CultureInfo.InvariantCulture) &&
                                                        DateTime.ParseExact(firstTime, "HH:mm:ss", CultureInfo.InvariantCulture) <= DateTime.ParseExact("05:00:00", "HH:mm:ss", CultureInfo.InvariantCulture))
@@ -1627,7 +1640,7 @@ namespace HRMNS.Application.Implementation
                                                 }
 
                                                 // Co du lieu cham cong
-                                                if (_chamCongLog.FirstIn.NullString() == CommonConstants.IN && _chamCongLog.LastOut.NullString() == CommonConstants.OUT && Math.Abs(TimeSpan.Parse(lastTime).Subtract(TimeSpan.Parse(firstTime)).TotalHours) >= 0.2)
+                                                if (firstTime != "" && lastTime != "" && _chamCongLog.FirstIn.NullString() == CommonConstants.IN && _chamCongLog.LastOut.NullString() == CommonConstants.OUT && Math.Abs(TimeSpan.Parse(lastTime).Subtract(TimeSpan.Parse(firstTime)).TotalHours) >= 0.2)
                                                 {
                                                     #region CHINH THUC + CA NGAY
                                                     if (_caLamViec.MaCaLaviec == CommonConstants.CA_NGAY)
@@ -1683,17 +1696,30 @@ namespace HRMNS.Application.Implementation
                                                             {
                                                                 newBeginOT = GetTimeCaLamViec(item.BoPhan, _caLamViec.MaCaLaviec, dateCheck, item.VP_SX).BeginTimeOT;
 
-                                                                // Ca ngay con nhỏ, văn phòng con nhỏ thì dc về sớm 1h
-                                                                if (CheckCheDoThaiSan("ConNho1H", dateCheck, item.MaNV))
+                                                                if (item.VP_SX == CommonConstants.VP)
                                                                 {
-                                                                    newBeginOT = "16:15:00";
-                                                                    isSetMaxOT = false;
-
-                                                                    if (string.Compare(lastTime, "17:30:00") > 0)
+                                                                    // Ca ngay con nhỏ, văn phòng con nhỏ thì dc về sớm 1h
+                                                                    if (CheckCheDoThaiSan("ConNho1H", dateCheck, item.MaNV))
                                                                     {
-                                                                        newBeginOT = "16:30:00";
+                                                                        newBeginOT = "16:15:00";
+                                                                        isSetMaxOT = false;
+
+                                                                        if (string.Compare(lastTime, "17:30:00") > 0)
+                                                                        {
+                                                                            newBeginOT = "16:30:00";
+                                                                        }
                                                                     }
                                                                 }
+                                                                else
+                                                                {
+                                                                    // Ca ngay con nhỏ, văn phòng con nhỏ thì dc về sớm 1h
+                                                                    if (CheckCheDoThaiSan("ConNho1H", dateCheck, item.MaNV))
+                                                                    {
+                                                                        newBeginOT = "16:00:00";
+                                                                        isSetMaxOT = false;
+                                                                    }
+                                                                }
+
                                                             }
 
                                                             if (string.Compare(lastTime, newBeginOT) > 0)
@@ -1740,7 +1766,7 @@ namespace HRMNS.Application.Implementation
                                                                 }
                                                             }
 
-                                                            if(item.VP_SX == CommonConstants.VP)
+                                                            if (item.VP_SX == CommonConstants.VP)
                                                             {
                                                                 if (kyhieuChamCongDB.NullString() == "" && DateTime.Parse(dateCheck).DayOfWeek != DayOfWeek.Saturday && CheckCheDoThaiSan("ConNho1H", dateCheck, item.MaNV) && string.Compare(lastTime, "11:00:00") > 0 && string.Compare(lastTime, "13:00:00") < 0)
                                                                 {
@@ -5256,6 +5282,8 @@ namespace HRMNS.Application.Implementation
 
             lst = _bangCongExResponsitory.FindAll(x => x.HR_NHANVIEN).Where(x => x.ThangNam == thangNam).ToList();
             _bangCongExResponsitory.RemoveMultiple(lst);
+            _unitOfWork.Commit();
+
             _bangCongExResponsitory.AddRange(data);
             _unitOfWork.Commit();
         }

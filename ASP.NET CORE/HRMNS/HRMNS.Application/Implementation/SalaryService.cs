@@ -38,7 +38,7 @@ namespace HRMNS.Application.Implementation
             IRespository<HR_CHUCDANH, string> chucDanhRepository,
             IRespository<PHUCAP_DOC_HAI, int> phucapdochaiRepository,
             IRespository<HR_SALARY_GRADE, string> gradeRepository,
-            IRespository<HR_BHXH, string> bHXHRepository, 
+            IRespository<HR_BHXH, string> bHXHRepository,
             IRespository<HOTRO_SINH_LY, int> hoTroSLRepository,
             IRespository<HR_NHANVIEN, string> nhanVienRepository,
             IRespository<HR_THAISAN_CONNHO, int> thaisanConNhoRepository)
@@ -97,9 +97,9 @@ namespace HRMNS.Application.Implementation
             GC.SuppressFinalize(this);
         }
 
-        public List<HR_SALARY> GetAllSalary()
+        public List<HR_SALARY> GetAllSalary(int year)
         {
-            List<HR_SALARY> lst = _salaryRepository.FindAll(x => x.HR_NHANVIEN, y => y.HR_NHANVIEN.HR_BO_PHAN_DETAIL, z => z.HR_NHANVIEN.HR_CHUCDANH, k => k.HR_NHANVIEN.NHANVIEN_INFOR_EX)
+            List<HR_SALARY> lst = _salaryRepository.FindAll(x => x.Year == year, x => x.HR_NHANVIEN, y => y.HR_NHANVIEN.HR_BO_PHAN_DETAIL, z => z.HR_NHANVIEN.HR_CHUCDANH, k => k.HR_NHANVIEN.NHANVIEN_INFOR_EX)
                 .Where(x => x.HR_NHANVIEN.MaBoPhan != "KOREA").ToList();
             string capbac = "";
             string maBophanEX = "";
@@ -118,12 +118,12 @@ namespace HRMNS.Application.Implementation
                     item.ThuocDoiTuongBaoHiemXH = "-";
                 }
 
-                if (item.HR_NHANVIEN.NHANVIEN_INFOR_EX.OrderByDescending(x => x.Year).FirstOrDefault() != null)
+                if (item.HR_NHANVIEN.NHANVIEN_INFOR_EX.Where(x => x.Year == year).OrderByDescending(x => x.Year).FirstOrDefault() != null)
                 {
-                    capbac = item.HR_NHANVIEN.NHANVIEN_INFOR_EX.OrderByDescending(x => x.Year).FirstOrDefault().Grade;
-                    maBophanEX = item.HR_NHANVIEN.NHANVIEN_INFOR_EX.OrderByDescending(x => x.Year).FirstOrDefault().MaBoPhanEx;
-                    gradeYear = item.HR_NHANVIEN.NHANVIEN_INFOR_EX.OrderByDescending(x => x.Year).FirstOrDefault().Year;
-                    grade = _gradeRepository.FindById(capbac);
+                    capbac = item.HR_NHANVIEN.NHANVIEN_INFOR_EX.Where(x => x.Year == year).OrderByDescending(x => x.Year).FirstOrDefault().Grade;
+                    maBophanEX = item.HR_NHANVIEN.NHANVIEN_INFOR_EX.Where(x => x.Year == year).OrderByDescending(x => x.Year).FirstOrDefault().MaBoPhanEx;
+                    gradeYear = year;//item.HR_NHANVIEN.NHANVIEN_INFOR_EX.OrderByDescending(x => x.Year).FirstOrDefault().Year;
+                    grade = _gradeRepository.FindSingle(x => x.CapBac == capbac && x.Year == year);
                 }
 
                 item.PositionAllowance = (decimal)_chucDanhRepository.FindById(item.HR_NHANVIEN.MaChucDanh).PhuCap;
@@ -143,7 +143,7 @@ namespace HRMNS.Application.Implementation
                     item.IncentiveStandard = (decimal)grade.IncentiveStandard;
                 }
 
-                if (item.HR_NHANVIEN.Status == Status.InActive.ToString() && DateTime.Now.Subtract(DateTime.Parse(item.HR_NHANVIEN.NgayNghiViec)).TotalDays > 90)
+                if (item.HR_NHANVIEN.Status == Status.InActive.ToString() && DateTime.Now.Subtract(DateTime.Parse(item.HR_NHANVIEN.NgayNghiViec)).TotalDays > 200)
                 {
                     lst.Remove(item);
                 }
@@ -156,9 +156,9 @@ namespace HRMNS.Application.Implementation
             return _salaryRepository.FindById(id);
         }
 
-        public HR_SALARY GetByMaNV(string manv)
+        public HR_SALARY GetByMaNV(string manv, int year)
         {
-            return _salaryRepository.FindSingle(x => x.MaNV == manv, y => y.HR_NHANVIEN);
+            return _salaryRepository.FindSingle(x => x.MaNV == manv && x.Year == year, y => y.HR_NHANVIEN);
         }
 
         public ResultDB ImportExcel(string filePath)
@@ -173,15 +173,17 @@ namespace HRMNS.Application.Implementation
                     HR_SALARY salary;
                     List<HR_SALARY> lstUpdate = new List<HR_SALARY>();
                     string manv;
+                    int year;
                     for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
                     {
                         manv = worksheet.Cells[i, 1].Text.NullString();
+                        year = int.Parse(worksheet.Cells[i, 16].Text.NullString());
                         if (manv.NullString() == "")
                         {
                             break;
                         }
 
-                        salary = GetByMaNV(manv);
+                        salary = GetByMaNV(manv, year);
 
                         if (salary == null)
                         {
@@ -289,15 +291,17 @@ namespace HRMNS.Application.Implementation
                     HR_SALARY salary;
                     List<HR_SALARY> lstUpdate = new List<HR_SALARY>();
                     string manv;
+                    int year;
                     for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
                     {
                         manv = worksheet.Cells[i, 1].Text.NullString();
+                        year = int.Parse(worksheet.Cells[i, 5].Text.NullString());
                         if (manv.NullString() == "")
                         {
                             break;
                         }
 
-                        salary = GetByMaNV(manv);
+                        salary = GetByMaNV(manv, year);
 
                         if (salary == null)
                         {

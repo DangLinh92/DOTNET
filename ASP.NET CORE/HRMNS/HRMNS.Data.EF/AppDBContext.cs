@@ -31,6 +31,7 @@ namespace HRMNS.Data.EF
         public virtual DbSet<HR_BHXH> HrBHXH { get; set; }
         public virtual DbSet<HR_CHEDOBH> HrCheDoBH { get; set; }
         public virtual DbSet<HR_CHUCDANH> HrChucDanh { get; set; }
+        public virtual DbSet<HR_CHUCDANH_BY_YEAR> HR_CHUCDANH_BY_YEAR { get; set; }
         public virtual DbSet<CHUNG_CHI> HrChungChi { get; set; }
         public virtual DbSet<HR_HOPDONG> HrHopDong { get; set; }
         public virtual DbSet<HR_KEKHAIBAOHIEM> HrKeKhaiBaoHiem { get; set; }
@@ -142,6 +143,7 @@ namespace HRMNS.Data.EF
             builder.AddConfiguration(new NhanVienConfiguration());
             builder.AddConfiguration(new BoPhanConfiguration());
             builder.AddConfiguration(new ChucDanhConfiguration());
+            builder.AddConfiguration(new ChucDanhByYearConfiguration());
             builder.AddConfiguration(new ChungChiNhanVienConfiguration());
             builder.AddConfiguration(new ChungChiConfiguration());
             builder.AddConfiguration(new FunctionConfiguration());

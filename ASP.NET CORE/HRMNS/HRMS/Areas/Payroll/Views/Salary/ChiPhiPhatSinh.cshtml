@@ -297,8 +297,7 @@
        .DataSource(d => d.Mvc().Controller("DCChamCong").LoadAction("Employees").Key("Id"))
        .ValueExpr("Id")
        .DisplayExpr("TenNV")
-   )
-.CalculateFilterExpression("calculateFilterExpression");
+   ).CalculateFilterExpression("calculateFilterExpression");
 
         columns.AddFor(m => m.HR_NHANVIEN.HR_BO_PHAN_DETAIL.MaBoPhan_TOP2).Caption("Bộ Phận").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
         columns.AddFor(m => m.HR_NHANVIEN.NgayVao).Caption("Ngày Vào").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);

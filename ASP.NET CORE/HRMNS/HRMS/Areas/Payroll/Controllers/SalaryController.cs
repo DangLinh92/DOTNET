@@ -37,9 +37,9 @@ namespace HRMS.Areas.Payroll.Controllers
         }
 
         [HttpGet]
-        public object Get(DataSourceLoadOptions loadOptions)
+        public object Get(DataSourceLoadOptions loadOptions, int year)
         {
-            return DataSourceLoader.Load(_salaryService.GetAllSalary(), loadOptions);
+            return DataSourceLoader.Load(_salaryService.GetAllSalary(year), loadOptions);
         }
 
         [HttpPost]
@@ -72,6 +72,11 @@ namespace HRMS.Areas.Payroll.Controllers
             _salaryService.DeleteSalary(key);
         }
 
+        /// <summary>
+        /// Salary information
+        /// </summary>
+        /// <param name="files"></param>
+        /// <returns></returns>
         [HttpPost]
         [RequestFormLimits(MultipartBodyLengthLimit = 209715200)]
         [RequestSizeLimit(209715200)]
@@ -287,6 +292,6 @@ namespace HRMS.Areas.Payroll.Controllers
         }
         #endregion
 
-       
+
     }
 }

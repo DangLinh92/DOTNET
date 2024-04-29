@@ -70,6 +70,8 @@ namespace HRMNS.Application.ViewModels.HR
 
         public float SoPhepTonNam { get; set; }
 
+        public float SoPhepTonNamTmp { get; set; }
+
         [ForeignKey("MaNhanVien")]
         public virtual HR_NHANVIEN HR_NHANVIEN { get; set; }
     }

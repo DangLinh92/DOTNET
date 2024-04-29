@@ -14,6 +14,8 @@ namespace HRMNS.Application.ViewModels.HR
 
         public double PhuCap { get; set; }
 
+        public int Year { get; set; }
+
         [StringLength(50)]
         public string DateCreated { get; set; }
 
@@ -25,6 +27,9 @@ namespace HRMNS.Application.ViewModels.HR
 
         [StringLength(50)]
         public string UserModified { get; set; }
+
+        [StringLength(50)]
+        public string MaChucDanhEN { get; set; }
 
         public ICollection<NhanVienViewModel> HR_NHANVIEN { get; set; }
     }

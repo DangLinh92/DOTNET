@@ -7,7 +7,7 @@
 }
 
 @section Scripts
-    {
+{
     <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
     <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
     <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
@@ -87,6 +87,84 @@
 
             return sDate;
         }
+
+        function getYear() {
+
+            var dateBox = $("#txt_year").dxDateBox("instance");
+
+            let sDate = dateBox.option('value');
+
+            return sDate;
+        }
+
+        function selectedDate_changed(data) {
+            console.log(data.value);
+            const dataGridDataSource = $("#gridContainer").dxDataGrid("getDataSource");
+            const dataGridContainergradeScr = $("#gridContainergrade").dxDataGrid("getDataSource");
+            dataGridDataSource.reload();
+            dataGridContainergradeScr.reload();
+        };
+
+        function ImportSalaryGrade() {
+            $("#fileInputExcel").val(null);
+            $('#import_File').modal('show');
+        }
+
+        $('#btnCloseImportExcel').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+            if (files.length > 0) {
+                $("#fileInputExcel").val(null);
+                $('#hd-ImportData').val('');
+                $('#import_File').modal('hide');
+                location.reload();
+            }
+        });
+
+        $('#btnCloseImport').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+            if (files.length > 0) {
+                $("#fileInputExcel").val(null);
+                $('#hd-ImportData').val('');
+                $('#import_File').modal('hide');
+                location.reload();
+            }
+        });
+
+        $('#btnImportExcel').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+
+            // Create FormData object
+            var fileData = new FormData();
+
+            // Looping over all files and add it to FormData object
+            for (var i = 0; i < files.length; i++) {
+                fileData.append("files", files[i]);
+            }
+
+            var type = $('#hd-ImportData').val();
+            var _url = '/Payroll/PhuCapLuong/ImportExcel';
+
+            $.ajax({
+                url: _url,
+                type: 'POST',
+                data: fileData,
+                processData: false,  // tell jQuery not to process the data
+                contentType: false,  // tell jQuery not to set contentType
+                success: function (data) {
+                    $('#import_File').modal('hide');
+                    hrms.notify("Import success!", 'Success', 'alert', function () {
+                        location.reload();
+                    });
+                },
+                error: function (status) {
+                    hrms.notify('error: Import error!', 'error', 'alert', function () { });
+                }
+            });
+            return false;
+        });
     </script>
 }
 
@@ -104,29 +182,38 @@
         </div>
     </div>
 
-    <!--<div class="row align-items-center">
+    <div class="row align-items-center">
         <div class="col">
             <div class="form">
                 <div class="dx-fieldset">
                     <div class="dx-field">
-                        <div>-->
-    @*@(Html.DevExtreme().DateBox()
-    .ID("txt_month")
-    .Value(DateTime.Now.ToString("yyyy-MM-dd"))
-    .CalendarOptions(x=>x.MaxZoomLevel(CalendarZoomLevel.Year))
-    .DisplayFormat("yyyy-MM")
-    .Width(200)
-    .Placeholder("Select...")
-    .Label("Year")
-    .OnValueChanged("selectedDate_changed")
-    )*@
+                        <div>
+                            @(Html.DevExtreme().DateBox()
+                                .ID("txt_year")
+                                .Value(DateTime.Now.Year.ToString())
+                                .CalendarOptions(x => x.MaxZoomLevel(CalendarZoomLevel.Decade))
+                                .DisplayFormat("yyyy")
+                                .Width(200)
+                                .Placeholder("Select...")
+                                .Label("Year")
+                                .OnValueChanged("selectedDate_changed")
+                                )
 
-    <!--</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>-->
+        <div class="col-auto float-right ml-auto" style="margin-right:100px;">
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" id="btnImport" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Excel</button>
+                <div class="dropdown-menu" style="">
+                    <a class="dropdown-item" href="~/templates/SalaryGradeInformation.xlsx">File mẫu import Hỗ trợ theo cấp bậc</a>
+                    <a class="dropdown-item" id="btnImportSalaryGrade" onclick="ImportSalaryGrade()">Import Hỗ trợ theo cấp bậc</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="row">
         <div class="col-md-6">
@@ -169,6 +256,7 @@
                 .Area("Payroll")
                 .Controller("ChucDanh")
                 .LoadAction("GetAll")
+                .LoadParams(new { year = new JS("getYear") })
                 .UpdateAction("Put")
                 .InsertAction("Post")
                 .DeleteAction("Delete")
@@ -276,18 +364,21 @@
                 })
                 .Columns(columns =>
                 {
-                    columns.AddFor(m => m.Id).Caption("Cấp Bậc").AllowEditing(true);
+                    columns.AddFor(m => m.Id).Caption("Id").AllowEditing(false);
+                    columns.AddFor(m => m.CapBac).Caption("Cấp Bậc").AllowEditing(true);
                     columns.AddFor(m => m.BasicSalaryStandard).Format("#,##0").Caption("Basic Salary Standard").AllowEditing(true);
                     columns.AddFor(m => m.IncentiveLanguage).Format("#,##0").Caption("Hỗ Trợ Ngoại Ngữ").AllowEditing(true);
                     columns.AddFor(m => m.BasicSalary).Format("#,##0").AllowEditing(true);
                     columns.AddFor(m => m.AttendanceAllowance).Format("#,##0").AllowEditing(true);
                     columns.AddFor(m => m.LivingAllowance).Format("#,##0").AllowEditing(true);
                     columns.AddFor(m => m.IncentiveStandard).Format("#,##0").AllowEditing(true);
+                    columns.AddFor(m => m.Year).Format(Format.FixedPoint).AllowEditing(true);
                 })
                 .DataSource(d => d.Mvc()
                 .Area("Payroll")
                 .Controller("PhuCapLuong")
                 .LoadAction("GetPCGrade")
+                .LoadParams(new { year = new JS("getYear") })
                 .UpdateAction("UpdateGrade")
                 .InsertAction("InsertGrade")
                 .DeleteAction("DeleteGrade")
@@ -303,4 +394,4 @@
     </div>
 </div>
 
-
+<partial name="_ImportExcelModel" />

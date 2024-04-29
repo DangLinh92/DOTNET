@@ -43,7 +43,7 @@ namespace HRMNS.Data.Entities
             float soPhepTonThang,
             float soPhepThanhToanNghiViec,
             float mucThanhToan,
-            float sophepTonNam)
+            float sophepTonNam, float sophepTonNamTmp)
         {
             Id = id;
             MaNhanVien = maNV;
@@ -76,6 +76,7 @@ namespace HRMNS.Data.Entities
             SoPhepThanhToanNghiViec = soPhepThanhToanNghiViec;
             MucThanhToan = mucThanhToan;
             SoPhepTonNam = sophepTonNam;
+            SoPhepTonNamTmp = sophepTonNamTmp;
         }
 
         [StringLength(50)]
@@ -114,6 +115,7 @@ namespace HRMNS.Data.Entities
         public float SoPhepKhongDuocSuDung { get; set; }
 
         public float SoPhepTonNam { get; set; }
+        public float SoPhepTonNamTmp { get; set; }
 
         public float SoPhepTonThang { get; set; }
 

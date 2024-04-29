@@ -3486,6 +3486,48 @@ namespace HRMNS.Data.EF.Migrations
                     b.ToTable("HR_CHUCDANH");
                 });
 
+            modelBuilder.Entity("HRMNS.Data.Entities.HR_CHUCDANH_BY_YEAR", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("MaChucDanh")
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
+
+                    b.Property<double>("PhuCap")
+                        .HasColumnType("float");
+
+                    b.Property<string>("TenChucDanh")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("HR_CHUCDANH_BY_YEAR");
+                });
+
             modelBuilder.Entity("HRMNS.Data.Entities.HR_CHUNGCHI_NHANVIEN", b =>
                 {
                     b.Property<int>("Id")
@@ -4121,6 +4163,9 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<float>("SoPhepTonNam")
                         .HasColumnType("real");
 
+                    b.Property<float>("SoPhepTonNamTmp")
+                        .HasColumnType("real");
+
                     b.Property<float>("SoPhepTonThang")
                         .HasColumnType("real");
 
@@ -4321,6 +4366,9 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("UserModified")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -5135,6 +5183,10 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<double>("BasicSalaryStandard")
                         .HasColumnType("float");
 
+                    b.Property<string>("CapBac")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<string>("DateCreated")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
@@ -5159,6 +5211,9 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("UserModified")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

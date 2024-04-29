@@ -47,10 +47,10 @@ namespace HRMS.Areas.Payroll.Controllers
         }
 
         [HttpGet]
-        public object PhepNams(DataSourceLoadOptions loadOptions, string year)
+        public object PhepNams(DataSourceLoadOptions loadOptions,string month)
         {
             _ = ChotCongFinal();
-            var lstModel = _phepNamService.GetList(year);
+            var lstModel = _phepNamService.GetList(month);
             return DataSourceLoader.Load(lstModel, loadOptions);
         }
 

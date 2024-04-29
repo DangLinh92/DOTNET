@@ -46,7 +46,6 @@ namespace HRMS.Areas.Admin.Controllers
         private INhanVienService _nhanVienService;
         private INgayChotCongService _ngayChotCongService;
 
-
         public BangCongController(INgayChotCongService ngayChotCongService, INhanVienService nhanVienService, IBangCongService bangCongService, IBoPhanService boPhanService, IWebHostEnvironment hostEnvironment, ILogger<NhanVien_CaLamViecController> logger, IMemoryCache memoryCache)
         {
             _bangCongService = bangCongService;
@@ -916,6 +915,7 @@ namespace HRMS.Areas.Admin.Controllers
                 string timeChamCong = timeTo + "-01";
                 BANG_CONG_EXTENTION bangcongEx;
                 List<BANG_CONG_EXTENTION> lstBangCongEx = new List<BANG_CONG_EXTENTION>();
+                List<BANG_CONG_EXTENTION> lstBangCongUpdateEx = new List<BANG_CONG_EXTENTION>();
                 int startColumn = 39;
                 string kytu = "";
                 double valueEx = 0;
@@ -942,6 +942,10 @@ namespace HRMS.Areas.Admin.Controllers
 
                     for (int i = 0; i < data.Count; i++)
                     {
+                        if(data[i].MaNV == "H2203071")
+                        {
+                            var x = 0;
+                        }
                         worksheet.Cells["A" + beginIndex].Value = (i + 1);
                         worksheet.Cells["B" + beginIndex].Value = data[i].MaNV;
                         worksheet.Cells["C" + beginIndex].Value = data[i].TenNV;
@@ -1089,6 +1093,7 @@ namespace HRMS.Areas.Admin.Controllers
                         worksheet.Cells["CK" + beginIndex].Calculate();
                         worksheet.Cells["CL" + beginIndex].Calculate();
                         worksheet.Cells["CM" + beginIndex].Calculate();
+                        worksheet.Cells["CN" + beginIndex].Calculate();
                         worksheet.Cells["CO" + beginIndex].Calculate();
                         worksheet.Cells["CP" + beginIndex].Calculate();
                         worksheet.Cells["CQ" + beginIndex].Calculate();

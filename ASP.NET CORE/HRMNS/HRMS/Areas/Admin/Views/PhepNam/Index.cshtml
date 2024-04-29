@@ -12,84 +12,91 @@
 
         var dataGrid, loadPanel, dataGridTmp;
 
-        $(function ()
-        {
+        $(function () {
             let currentYear = new Date().getFullYear();
-            LoadData(currentYear);
+            let currentMonth = (new Date().getMonth()) + 1;
+
+            let month = ''
+            if (currentMonth < 10) {
+                month = currentYear + '-0' + currentMonth + '-01';
+            }
+            else {
+                month = currentYear + '-' + currentMonth + '-01';
+            }
+
+            LoadData(month);
         });
 
-        function LoadData(txtYear) {
-                    dataGrid = $("#gridContainer1").dxDataGrid("instance");
-                    loadPanel = $("#loadPanel").dxLoadPanel("instance");
+        function LoadData(txtMonth) {
+            dataGrid = $("#gridContainer1").dxDataGrid("instance");
+            loadPanel = $("#loadPanel").dxLoadPanel("instance");
 
             loadPanel.show();
-            sendRequest('@Url.RouteUrl(new { area = "admin", controller = "phepnam", action = "PhepNams" })', "GET", { year: txtYear })
-                    .always(() => { loadPanel.hide(); })
-                    .done((data) => {
-                        dataGrid.option("dataSource", data);
-                    });
+            sendRequest('@Url.RouteUrl(new { area = "admin", controller = "phepnam", action = "PhepNams" })', "GET", { month: txtMonth })
+                .always(() => { loadPanel.hide(); })
+                .done((data) => {
+                    dataGrid.option("dataSource", data);
+                });
         }
 
         function SavePhepNam(e) {
 
-       var change = e.changes[0];
+            var change = e.changes[0];
 
-      if (change) {
-          e.cancel = true;
-          loadPanel.show();
-          e.promise = saveChange(change)
-              .always(() => { loadPanel.hide(); })
-              .done((data) => {
-                  var datas = e.component.option("dataSource");
+            if (change) {
+                e.cancel = true;
+                loadPanel.show();
+                e.promise = saveChange(change)
+                    .always(() => { loadPanel.hide(); })
+                    .done((data) => {
+                        var datas = e.component.option("dataSource");
 
-                  if (change.type === "insert") {
-                      change.data = data;
-                  }
+                        if (change.type === "insert") {
+                            change.data = data;
+                        }
 
-                  datas = DevExpress.data.applyChanges(datas, [change], { keyExpr: "Id" });
+                        datas = DevExpress.data.applyChanges(datas, [change], { keyExpr: "Id" });
 
-                  e.component.option({
-                      dataSource: datas,
-                      editing: {
-                          editRowKey: null,
-                          changes: []
-                      }
-                  });
-              });
-      }
-    };
-
-        function saveChange(change)
-        {
-            console.log(change);
-            switch (change.type)
-            {
-                    case "insert":
-                        return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "phepnam", action = "Insert" })', "POST", { values: JSON.stringify(change.data) });
-                    case "update":
-                        return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "phepnam", action = "Update" })', "PUT", { key: change.key, values: JSON.stringify(change.data) });
-                    case "remove":
-                        return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "phepnam", action = "Delete" })', "DELETE", { key: change.key });
+                        e.component.option({
+                            dataSource: datas,
+                            editing: {
+                                editRowKey: null,
+                                changes: []
+                            }
+                        });
+                    });
             }
         };
 
-            function sendRequest(url, method, data) {
-                var d = $.Deferred();
+        function saveChange(change) {
+            console.log(change);
+            switch (change.type) {
+                case "insert":
+                    return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "phepnam", action = "Insert" })', "POST", { values: JSON.stringify(change.data) });
+                case "update":
+                    return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "phepnam", action = "Update" })', "PUT", { key: change.key, values: JSON.stringify(change.data) });
+                case "remove":
+                    return sendRequest('@Url.RouteUrl(new { area = "admin", controller = "phepnam", action = "Delete" })', "DELETE", { key: change.key });
+            }
+        };
 
-                method = method || "GET";
+        function sendRequest(url, method, data) {
+            var d = $.Deferred();
 
-                $.ajax(url, {
-                    method: method,
-                    data: data,
-                    cache: false,
-                    xhrFields: { withCredentials: true }
-                }).done(function (result) {
-                    d.resolve(method === "GET" ? result.data : result);
-                }).fail(function (xhr) {
-                    d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
-                });
+            method = method || "GET";
 
-                return d.promise();
+            $.ajax(url, {
+                method: method,
+                data: data,
+                cache: false,
+                xhrFields: { withCredentials: true }
+            }).done(function (result) {
+                d.resolve(method === "GET" ? result.data : result);
+            }).fail(function (xhr) {
+                d.reject(xhr.responseJSON ? xhr.responseJSON.Message : xhr.statusText);
+            });
+
+            return d.promise();
         };
 
         // chon nam
@@ -105,7 +112,19 @@
 
             // Get year, month, and day part from the date
             var year = date.toLocaleString("default", { year: "numeric" });
-            LoadData(year);
+            let _month = $("#txt_month").dxDateBox("instance").option('value');
+            LoadData(_month);
+        };
+
+        function selectedMonth_changed(data) {
+
+            // let _year = $("#txt_year").dxDateBox("instance").option('value');
+            let _month = data.value;
+
+            // console.log(_year);
+            console.log(_month);
+
+            LoadData(_month);
         };
 
         // Xuất excel phep nam
@@ -126,8 +145,7 @@
         }
 
         /* Import, export, insert,update,delete danh sách nhân viên khám sk */
-        function ImportExcel()
-        {
+        function ImportExcel() {
             $("#fileInputExcel").val(null);
             $('#import_File').modal('show');
         }
@@ -205,17 +223,29 @@
             <div class="form">
                 <div class="dx-fieldset">
                     <div class="dx-field">
-                        <div>
+                        @*   <div style="float:left; display:inline-block">
+                        @(Html.DevExtreme().DateBox()
+                        .ID("txt_year")
+                        .Value(DateTime.Now.Year.ToString())
+                        .CalendarOptions(x=>x.MaxZoomLevel(CalendarZoomLevel.Decade))
+                        .DisplayFormat("yyyy")
+                        .Width(200)
+                        .Placeholder("Select...")
+                        .Label("Year")
+                        .OnValueChanged("selectedDate_changed")
+                        )
+                        </div> *@
+                        <div style="float:left; display:inline-block;margin-left: 10px;">
                             @(Html.DevExtreme().DateBox()
-                                  .ID("txt_year")
-                                  .Value(DateTime.Now.Year.ToString())
-                                  .CalendarOptions(x=>x.MaxZoomLevel(CalendarZoomLevel.Decade))
-                                  .DisplayFormat("yyyy")
-                                  .Width(200)
-                                  .Placeholder("Select...")
-                                  .Label("Year")
-                                  .OnValueChanged("selectedDate_changed")
-                            )
+                                .ID("txt_month")
+                                .Value(DateTime.Now.ToString("yyyy-MM-01"))
+                                .CalendarOptions(x => x.MaxZoomLevel(CalendarZoomLevel.Month))
+                                .DisplayFormat("yyyy-MM")
+                                .Width(200)
+                                .Placeholder("Select...")
+                                .Label("Month")
+                                .OnValueChanged("selectedMonth_changed")
+                                )
 
                         </div>
                     </div>
@@ -226,8 +256,8 @@
             <div class="btn-group">
                 <button type="button" class="btn btn-info dropdown-toggle" id="btnImport" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Excel</button>
                 <div class="dropdown-menu" style="">
-                    <a class="dropdown-item" href="~/templates/PhepNamTemplate.xlsx">File mẫu import phép năm</a>
-                    <a class="dropdown-item" id="btnImport" onclick="ImportExcel()">Import Phép Năm</a>
+                    <a class="dropdown-item" href="~/templates/NhanVien_Htro_DocHaiTemplate.xlsx">File mẫu import tháng độc hại</a>
+                    <a class="dropdown-item" id="btnImport" onclick="ImportExcel()">Import tháng độc hại</a>
                 </div>
             </div>
         </div>
@@ -235,80 +265,80 @@
     <div class="row">
         <div class="col-md-12">
             @(Html.DevExtreme().LoadPanel()
-                      .ID("loadPanel")
-                      .Position(p => p.Of("#gridContainer1"))
-                      .Visible(false)
+                .ID("loadPanel")
+                .Position(p => p.Of("#gridContainer1"))
+                .Visible(false)
                 )
             @(Html.DevExtreme().DataGrid<PhepNamViewModel>
-    ()
-    .ID("gridContainer1")
-    .KeyExpr("Id")
-    .Height(700)
-    .ShowBorders(true)
-    .ColumnAutoWidth(true)
-    .ColumnMinWidth(150)
-    .RepaintChangesOnly(true)
-    .LoadPanel(loadPanel => loadPanel.Enabled(false))
-    .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
-    .Paging(paging => paging.Enabled(false))
-    .ShowColumnLines(true)
-    .ShowRowLines(true)
-    .RowAlternationEnabled(true)
-    .FilterRow(filterRow => filterRow.Visible(true).ApplyFilter(GridApplyFilterMode.Auto)
-    )
-    .HeaderFilter(headerFilter => headerFilter.Visible(true))
-    .Selection(s => s.Mode(SelectionMode.Single))
-    .HoverStateEnabled(true)
-    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
-    .OnExporting("exporting")
-    .Editing(editing =>
-    {
-        editing.Mode(GridEditMode.Row);
-        editing.AllowUpdating(true);
-        //editing.AllowDeleting(true);
-        //editing.AllowAdding(true);
-    })
-    .Columns(columns =>
-    {
-        columns.AddFor(m => m.Id).Visible(false).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.MaNhanVien).Caption("Mã Nhân Viên").AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.HR_NHANVIEN.TenNV).Caption("Tên Nhân Viên").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.HR_NHANVIEN.HR_BO_PHAN_DETAIL.MaBoPhan_TOP2).Caption("Bộ Phận").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.HR_NHANVIEN.NgayVao).Caption("Ngày Vào").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
-        columns.AddFor(m => m.SoPhepNam).Caption("Số Phép Quy Định").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                ()
+                .ID("gridContainer1")
+                .KeyExpr("Id")
+                .Height(700)
+                .ShowBorders(true)
+                .ColumnAutoWidth(true)
+                .ColumnMinWidth(150)
+                .RepaintChangesOnly(true)
+                .LoadPanel(loadPanel => loadPanel.Enabled(false))
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .FilterRow(filterRow => filterRow.Visible(true).ApplyFilter(GridApplyFilterMode.Auto)
+                )
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .HoverStateEnabled(true)
+                .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+                .OnExporting("exporting")
+                .Editing(editing =>
+                {
+                    editing.Mode(GridEditMode.Row);
+                    editing.AllowUpdating(true);
+                    //editing.AllowDeleting(true);
+                    //editing.AllowAdding(true);
+                })
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.Id).Visible(false).AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.MaNhanVien).Caption("Mã Nhân Viên").AllowEditing(true).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.HR_NHANVIEN.TenNV).Caption("Tên Nhân Viên").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.HR_NHANVIEN.HR_BO_PHAN_DETAIL.MaBoPhan_TOP2).Caption("Bộ Phận").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.HR_NHANVIEN.NgayVao).Caption("Ngày Vào").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
+                    columns.AddFor(m => m.SoPhepNam).Caption("Số Phép Quy Định").AllowEditing(false).Fixed(true).FixedPosition(HorizontalEdge.Left);
 
-        columns.AddFor(m => m.ThangBatDauDocHai).Format("yyyy-MM-dd").Caption("Tháng bắt đầu độc hại").AllowEditing(true);
-        columns.AddFor(m => m.ThangKetThucDocHai).Format("yyyy-MM-dd").Caption("Tháng kết thúc độc hại").AllowEditing(true);
-        columns.AddFor(m => m.SoPhepDocHai).Caption("Số phép độc hại").AllowEditing(false);
-        columns.AddFor(m => m.SoPhepCongThem).Caption("Số Phép Cộng Thêm").AllowEditing(false);
-        columns.AddFor(m => m.SoPhepDaUng).Caption("Số phép đã ứng").AllowEditing(false);
-        columns.AddFor(m => m.SoPhepDuocHuong).Caption("Tổng phép đc hưởng");
+                    columns.AddFor(m => m.ThangBatDauDocHai).Format("yyyy-MM-dd").Caption("Tháng bắt đầu độc hại").AllowEditing(true);
+                    columns.AddFor(m => m.ThangKetThucDocHai).Format("yyyy-MM-dd").Caption("Tháng kết thúc độc hại").AllowEditing(true);
+                    columns.AddFor(m => m.SoPhepDocHai).Caption("Số phép độc hại").AllowEditing(false);
+                    columns.AddFor(m => m.SoPhepCongThem).Caption("Số Phép Cộng Thêm").AllowEditing(false);
+                    columns.AddFor(m => m.SoPhepDaUng).Caption("Số phép đã ứng").AllowEditing(false);
+                    columns.AddFor(m => m.SoPhepDuocHuong).Caption("Tổng phép đc hưởng");
 
-        columns.Add().Caption("Ngày Nghỉ Trong Tháng").Columns(c =>
-        {
-            c.AddFor(m => m.NghiThang_1).Caption("Tháng 1").AllowEditing(false);
-            c.AddFor(m => m.NghiThang_2).Caption("Tháng 2").AllowEditing(false);
-            c.AddFor(m => m.NghiThang_3).Caption("Tháng 3").AllowEditing(false);
-            c.AddFor(m => m.NghiThang_4).Caption("Tháng 4").AllowEditing(false);
-            c.AddFor(m => m.NghiThang_5).Caption("Tháng 5").AllowEditing(false);
-            c.AddFor(m => m.NghiThang_6).Caption("Tháng 6").AllowEditing(false);
-            c.AddFor(m => m.NghiThang_7).Caption("Tháng 7").AllowEditing(false);
-            c.AddFor(m => m.NghiThang_8).Caption("Tháng 8").AllowEditing(false);
-            c.AddFor(m => m.NghiThang_9).Caption("Tháng 9").AllowEditing(false);
-            c.AddFor(m => m.NghiThang_10).Caption("Tháng 10").AllowEditing(false);
-            c.AddFor(m => m.NghiThang_11).Caption("Tháng 11").AllowEditing(false);
-            c.AddFor(m => m.NghiThang_12).Caption("Tháng 12").AllowEditing(false);
-        });
+                    columns.Add().Caption("Ngày Nghỉ Trong Tháng").Columns(c =>
+                    {
+                        c.AddFor(m => m.NghiThang_1).Caption("Tháng 1").AllowEditing(false);
+                        c.AddFor(m => m.NghiThang_2).Caption("Tháng 2").AllowEditing(false);
+                        c.AddFor(m => m.NghiThang_3).Caption("Tháng 3").AllowEditing(false);
+                        c.AddFor(m => m.NghiThang_4).Caption("Tháng 4").AllowEditing(false);
+                        c.AddFor(m => m.NghiThang_5).Caption("Tháng 5").AllowEditing(false);
+                        c.AddFor(m => m.NghiThang_6).Caption("Tháng 6").AllowEditing(false);
+                        c.AddFor(m => m.NghiThang_7).Caption("Tháng 7").AllowEditing(false);
+                        c.AddFor(m => m.NghiThang_8).Caption("Tháng 8").AllowEditing(false);
+                        c.AddFor(m => m.NghiThang_9).Caption("Tháng 9").AllowEditing(false);
+                        c.AddFor(m => m.NghiThang_10).Caption("Tháng 10").AllowEditing(false);
+                        c.AddFor(m => m.NghiThang_11).Caption("Tháng 11").AllowEditing(false);
+                        c.AddFor(m => m.NghiThang_12).Caption("Tháng 12").AllowEditing(false);
+                    });
 
-        columns.AddFor(m => m.TongNgayNghi).Caption("Tổng Ngày Nghỉ").AllowEditing(false);
-        columns.AddFor(m => m.SoPhepTonNam).Caption("Số phép tồn/năm").AllowEditing(false);
-        columns.AddFor(m => m.SoPhepKhongDuocSuDung).Caption("Số phép không được sử dụng").AllowEditing(false);
-        columns.AddFor(m => m.SoPhepTonThang).Caption("Số phép tồn/tháng").AllowEditing(false);
-        columns.AddFor(m => m.HR_NHANVIEN.NgayNghiViec).Caption("Ngày Nghỉ Việc").AllowEditing(false);
-        columns.AddFor(m => m.SoPhepThanhToanNghiViec).Caption("Số Phép Thanh Toán Nghỉ Việc").AllowEditing(false);
-    }).SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true).OnSaving("SavePhepNam")
-    )
-</div>
+                    columns.AddFor(m => m.TongNgayNghi).Caption("Tổng Ngày Nghỉ").AllowEditing(false);
+                    columns.AddFor(m => m.SoPhepTonNam).Caption("Số phép tồn/năm").AllowEditing(false);
+                    columns.AddFor(m => m.SoPhepKhongDuocSuDung).Caption("Số phép không được sử dụng").AllowEditing(false);
+                    columns.AddFor(m => m.SoPhepTonThang).Caption("Số phép tồn/tháng").AllowEditing(false);
+                    columns.AddFor(m => m.HR_NHANVIEN.NgayNghiViec).Caption("Ngày Nghỉ Việc").AllowEditing(false);
+                    columns.AddFor(m => m.SoPhepThanhToanNghiViec).Caption("Số Phép Thanh Toán Nghỉ Việc").AllowEditing(false);
+                }).SearchPanel(searchPanel => searchPanel.Visible(true)).WordWrapEnabled(true).OnSaving("SavePhepNam")
+                )
+        </div>
     </div>
 </div>
 <partial name="_ImportExcelModel" />

@@ -82,7 +82,7 @@ namespace HRMNS.Data.Entities
         [StringLength(50)]
         public string MaBoPhanEx { get; set; }
 
-        public int GradeYear { get; set; } 
+        public int GradeYear { get; set; }
 
         [StringLength(50)]
         public string Grade { get; set; }
@@ -101,6 +101,8 @@ namespace HRMNS.Data.Entities
 
         [StringLength(50)]
         public string UserModified { get; set; }
+
+        public int Year { get; set; }
 
         [ForeignKey("MaNV")]
         public virtual HR_NHANVIEN HR_NHANVIEN { get; set; }

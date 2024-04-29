@@ -74,10 +74,10 @@ namespace HRMS.ScheduledTasks
             try
             {
                 // NGHỈ TRỪ PHÉP
-                List<string> AL = new List<string>()
-                {
-                    "AL","AL30","AL/DS","AL/NS","AL/BF","AL/BL"
-                };
+                //List<string> AL = new List<string>()
+                //{
+                //    "AL","AL30","AL/DS","AL/NS","AL/BF","AL/BL"
+                //};
 
                 _logger.LogInformation("UpdatePhepNamDaiLyJob:Execute:Start:" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
 
@@ -92,7 +92,7 @@ namespace HRMS.ScheduledTasks
                     _chamCongDacBietService
                     .GetAll(x => x.DANGKY_CHAMCONG_CHITIET)
                     .Where(x => x.NgayBatDau.CompareTo(endTime) <= 0 && x.NgayKetThuc.CompareTo(Year + "-01-01") >= 0
-                               && AL.Contains(x.DANGKY_CHAMCONG_CHITIET.KyHieuChamCong)).ToList();
+                               ).ToList(); //&& AL.Contains(x.DANGKY_CHAMCONG_CHITIET.KyHieuChamCong)
 
                 List<PhepNamViewModel> lstPhepNam = new List<PhepNamViewModel>();
                 lstPhepNam = _phepNamService.GetAll("").FindAll(x => x.Year.ToString() == Year);
@@ -121,6 +121,9 @@ namespace HRMS.ScheduledTasks
                 // NGHI K LUONG
                 double TUP = 0;
 
+                // Số tháng nghỉ K lương 
+                int NumMonth_UP = 0;
+
                 float totalNghi = 0;
                 string ngaytinhphep;
 
@@ -130,11 +133,12 @@ namespace HRMS.ScheduledTasks
                 double AbilityAllowance = 0;
                 double SeniorityAllowance = 0;
                 double HarmfulAllowance = 0;
-
+                int numDayOff = 0;
                 int songaylamviec = 0;
                 int thamnien = 0;
                 BANG_CONG_EXTENTION bangcongEx;
                 int songaynghiThaisan = 0;
+                List<BANG_CONG_EXTENTION> lstbangcongEx = new List<BANG_CONG_EXTENTION>();
                 foreach (var item in lstNhanVien)
                 {
                     nghiT1 = 0;
@@ -151,10 +155,15 @@ namespace HRMS.ScheduledTasks
                     nghiT12 = 0;
                     totalNghi = 0;
                     songaynghiThaisan = 0;
+                    NumMonth_UP = 0;
 
                     bangcongEx = _bangCongExRepository.FindSingle(x => x.MaNV == item.Id && x.ThangNam == beginTime);
+                    lstbangcongEx = _bangCongExRepository.FindAll(x => x.MaNV == item.Id && x.ThangNam.Contains(Year)).ToList();
+
                     if (bangcongEx != null)
+                    {
                         TUP = bangcongEx.TUP;
+                    }
                     else
                     {
                         TUP = 0;
@@ -169,6 +178,7 @@ namespace HRMS.ScheduledTasks
                     HarmfulAllowance = 0;
                     songaylamviec = 0;
                     thamnien = 0;
+                    numDayOff = 0;
 
                     PhepNamViewModel phepNam;
                     if (lstPhepNam.Exists(x => x.MaNhanVien == item.Id && x.Year.ToString() == Year))
@@ -189,6 +199,11 @@ namespace HRMS.ScheduledTasks
                         lstPhepNam_Add.Add(phepNam);
                     }
 
+                    if (item.Id == "H2403015")
+                    {
+                        var x = 0;
+                    }
+
                     /**
                       * • Nếu năm vào làm trước năm hiện tại thì 12 ngày
                         • Nếu năm vào làm sau năm hiện tại thì số phép bằng với số tháng làm việc tính đến cuối năm
@@ -204,7 +219,14 @@ namespace HRMS.ScheduledTasks
                         month = int.Parse(item.NgayVao.Split("-")[1]);
                         day = int.Parse(item.NgayVao.Split("-")[2]);
 
-                        if (day <= 15)
+                        numDayOff = EachDay.GetWorkingDay(DateTime.Parse(item.NgayVao.Substring(0, 7) + "-01"), DateTime.Parse(item.NgayVao));
+
+                        if (item.NgayNghiViec.NullString() != "" && item.NgayNghiViec.NullString().Substring(0, 7) == item.NgayVao.NullString().Substring(0, 7))
+                        {
+                            numDayOff += EachDay.GetWorkingDay(DateTime.Parse(item.NgayNghiViec), DateTime.Parse(item.NgayNghiViec.Substring(0, 7) + "-01").AddMonths(1).AddDays(-1));
+                        }
+
+                        if (day <= 15 && TUP + numDayOff <= 14)
                         {
                             phepNam.SoPhepNam = 12 - month + 1;
                         }
@@ -234,11 +256,11 @@ namespace HRMS.ScheduledTasks
                         {
                             if (item.MaBoPhan == "UTILITY")
                             {
-                                phepNam.SoPhepDocHai = (sothangDocHai * 14 / 12) - sothangDocHai;
+                                phepNam.SoPhepDocHai = (float)Math.Round((sothangDocHai * 14 / 12) - sothangDocHai);
                             }
                             else
                             {
-                                phepNam.SoPhepDocHai = (sothangDocHai * 16 / 12) - sothangDocHai;
+                                phepNam.SoPhepDocHai = (float)Math.Round((sothangDocHai * 16 / 12) - sothangDocHai);
                             }
                         }
                     }
@@ -267,12 +289,19 @@ namespace HRMS.ScheduledTasks
 
                     phepNam.SoPhepDuocHuong = (float)Math.Round((phepNam.SoPhepNam + phepNam.SoPhepDocHai + phepNam.SoPhepCongThem - (phepNam.SoPhepDaUng * -1)), 1);
 
-                    var lstALUser = lstChamCongDB.FindAll(x => x.MaNV == item.Id);
-
+                    var lstALUser = lstChamCongDB.FindAll(x => x.MaNV == item.Id).OrderByDescending(x => x.DateModified);
+                    List<string> DaysScheck = new List<string>();
                     foreach (var us in lstALUser)
                     {
                         foreach (DateTime m1 in EachDay.EachDays(DateTime.Parse(us.NgayBatDau), DateTime.Parse(us.NgayKetThuc)))
                         {
+                            if (DaysScheck.Contains(m1.ToString("yyyy-MM-dd")))
+                            {
+                                continue;
+                            }
+
+                            DaysScheck.Add(m1.ToString("yyyy-MM-dd"));
+
                             if (m1.ToString("yyyy-MM-dd").InRangeDateTime(Year + "-01-01", DateTime.Parse(Year + "-01-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")))
                             {
                                 if ((new List<string> { "AL", "AL30" }).Contains(us.DANGKY_CHAMCONG_CHITIET.KyHieuChamCong))
@@ -343,8 +372,6 @@ namespace HRMS.ScheduledTasks
                                 {
                                     nghiT5 += 0.5f;
                                 }
-
-
                             }
                             else
                             if (m1.ToString("yyyy-MM-dd").InRangeDateTime(Year + "-06-01", DateTime.Parse(Year + "-06-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")))
@@ -454,6 +481,259 @@ namespace HRMS.ScheduledTasks
                         }
                     }
 
+                    double AL_T1 = 0;
+                    BANG_CONG_EXTENTION T1 = lstbangcongEx.FirstOrDefault(x => x.MaNV == item.Id && x.ThangNam == (Year + "-01-01"));
+                    if (T1 != null)
+                    {
+                        AL_T1 = T1.AL + T1.AL30;
+
+                        if (nghiT1 != AL_T1)
+                        {
+                            nghiT1 = (float)AL_T1;
+                        }
+
+                        if (T1.TP == 0 && T1.IL < 15 && beginTime.CompareTo(Year + "-01-01") >= 0 && (
+                                item.NgayNghiViec.NullString() == ""
+                             || (item.NgayNghiViec.NullString().Contains(Year + "-01") && item.NgayNghiViec.CompareTo(Year + "-01-02") >= 0 && item.NgayNghiViec.CompareTo(Year + "-01-15") <= 0) // nnghỉ việc ngày 1 thì sẽ vào tháng trước
+                             || (item.NgayNghiViec.NullString().Contains(Year + "-01") && item.NgayNghiViec.CompareTo(Year + "-01-15") > 0 && TUP + (DateTime.Parse(Year + "-01-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14)
+                             || (item.NgayNghiViec.NullString() != "" && item.NgayNghiViec.NullString().CompareTo(DateTime.Parse(Year + "-01-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")) > 0)))
+                        {
+                            NumMonth_UP += 1;
+                        }
+                    }
+
+                    double AL_T2 = 0;
+                    BANG_CONG_EXTENTION T2 = lstbangcongEx.FirstOrDefault(x => x.MaNV == item.Id && x.ThangNam == (Year + "-02-01"));
+                    if (T2 != null)
+                    {
+                        AL_T2 = T2.AL + T2.AL30;
+
+                        if (nghiT2 != AL_T2)
+                        {
+                            nghiT2 = (float)AL_T2;
+                        }
+
+                        if (T2.TP == 0 && T2.IL < 15 && beginTime.CompareTo(Year + "-02-01") >= 0 && (
+                              item.NgayNghiViec.NullString() == ""
+                             || (item.NgayNghiViec.NullString().Contains(Year + "-02") && item.NgayNghiViec.CompareTo(Year + "-02-02") >= 0 && item.NgayNghiViec.CompareTo(Year + "-02-15") <= 0)
+                             || (item.NgayNghiViec.NullString().Contains(Year + "-02") && item.NgayNghiViec.CompareTo(Year + "-02-15") > 0 && TUP + (DateTime.Parse(Year + "-02-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14)
+                             || (item.NgayNghiViec.NullString() != "" && item.NgayNghiViec.NullString().CompareTo(DateTime.Parse(Year + "-02-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")) > 0)))
+                        {
+                            NumMonth_UP += 1;
+                        }
+                    }
+
+                    double AL_T3 = 0;
+                    BANG_CONG_EXTENTION T3 = lstbangcongEx.FirstOrDefault(x => x.MaNV == item.Id && x.ThangNam == (Year + "-03-01"));
+                    if (T3 != null)
+                    {
+                        AL_T3 = T3.AL + T3.AL30;
+
+                        if (nghiT3 != AL_T3)
+                        {
+                            nghiT3 = (float)AL_T3;
+                        }
+
+                        if (T3.TP == 0 && T3.IL < 15 && beginTime.CompareTo(Year + "-03-01") >= 0 && (
+                             item.NgayNghiViec.NullString() == ""
+                             || (item.NgayNghiViec.NullString().Contains(Year + "-03") && item.NgayNghiViec.CompareTo(Year + "-03-02") >= 0 && item.NgayNghiViec.CompareTo(Year + "-03-15") <= 0)
+                             || (item.NgayNghiViec.NullString().Contains(Year + "-03") && item.NgayNghiViec.CompareTo(Year + "-03-15") > 0 && TUP + (DateTime.Parse(Year + "-03-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14)
+                             || (item.NgayNghiViec.NullString() != "" && item.NgayNghiViec.NullString().CompareTo(DateTime.Parse(Year + "-03-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")) > 0)))
+                        {
+                            NumMonth_UP += 1;
+                        }
+                    }
+
+                    double AL_T4 = 0;
+                    BANG_CONG_EXTENTION T4 = lstbangcongEx.FirstOrDefault(x => x.MaNV == item.Id && x.ThangNam == (Year + "-04-01"));
+                    if (T4 != null && int.Parse(Year) > 2023)
+                    {
+                        AL_T4 = T4.AL + T4.AL30;
+
+                        if (nghiT4 != AL_T4)
+                        {
+                            nghiT4 = (float)AL_T4;
+                        }
+
+                        if (T4.TP == 0 && T4.IL < 15 && beginTime.CompareTo(Year + "-04-01") >= 0 && (
+                             item.NgayNghiViec.NullString() == ""
+                             || (item.NgayNghiViec.NullString().Contains(Year + "-04") && item.NgayNghiViec.CompareTo(Year + "-04-02") >= 0 && item.NgayNghiViec.CompareTo(Year + "-04-15") <= 0)
+                             || (item.NgayNghiViec.NullString().Contains(Year + "-04") && item.NgayNghiViec.CompareTo(Year + "-04-15") > 0 && TUP + (DateTime.Parse(Year + "-04-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14)
+                             || (item.NgayNghiViec.NullString() != "" && item.NgayNghiViec.NullString().CompareTo(DateTime.Parse(Year + "-04-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")) > 0)))
+                        {
+                            NumMonth_UP += 1;
+                        }
+                    }
+
+                    double AL_T5 = 0;
+                    BANG_CONG_EXTENTION T5 = lstbangcongEx.FirstOrDefault(x => x.MaNV == item.Id && x.ThangNam == (Year + "-05-01"));
+                    if (T5 != null)
+                    {
+                        AL_T5 = T5.AL + T5.AL30;
+
+                        if (nghiT5 != AL_T5)
+                        {
+                            nghiT5 = (float)AL_T5;
+                        }
+
+                        if (T5.TP == 0 && T5.IL < 15 && beginTime.CompareTo(Year + "-05-01") >= 0 && (
+                             item.NgayNghiViec.NullString() == ""
+                             || (item.NgayNghiViec.NullString().Contains(Year + "-05") && item.NgayNghiViec.CompareTo(Year + "-05-02") >= 0 && item.NgayNghiViec.CompareTo(Year + "-05-15") <= 0)
+                             || (item.NgayNghiViec.NullString().Contains(Year + "-05") && item.NgayNghiViec.CompareTo(Year + "-05-15") > 0 && TUP + (DateTime.Parse(Year + "-05-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14)
+                             || (item.NgayNghiViec.NullString() != "" && item.NgayNghiViec.NullString().CompareTo(DateTime.Parse(Year + "-05-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")) > 0)))
+                        {
+                            NumMonth_UP += 1;
+                        }
+                    }
+
+                    double AL_T6 = 0;
+                    BANG_CONG_EXTENTION T6 = lstbangcongEx.FirstOrDefault(x => x.MaNV == item.Id && x.ThangNam == (Year + "-06-01"));
+                    if (T6 != null)
+                    {
+                        AL_T6 = T6.AL + T6.AL30;
+
+                        if (nghiT6 != AL_T6)
+                        {
+                            nghiT6 = (float)AL_T6;
+                        }
+
+                        if (T6.TP == 0 && T6.IL < 15 && beginTime.CompareTo(Year + "-06-01") >= 0 && (
+                             item.NgayNghiViec.NullString() == ""
+                             || (item.NgayNghiViec.NullString().Contains(Year + "-06") && item.NgayNghiViec.CompareTo(Year + "-06-02") >= 0 && item.NgayNghiViec.CompareTo(Year + "-06-15") <= 0)
+                             || (item.NgayNghiViec.NullString().Contains(Year + "-06") && item.NgayNghiViec.CompareTo(Year + "-06-15") > 0 && TUP + (DateTime.Parse(Year + "-06-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14)
+                             || (item.NgayNghiViec.NullString() != "" && item.NgayNghiViec.NullString().CompareTo(DateTime.Parse(Year + "-06-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")) > 0)))
+                        {
+                            NumMonth_UP += 1;
+                        }
+                    }
+
+                    double AL_T7 = 0;
+                    BANG_CONG_EXTENTION T7 = lstbangcongEx.FirstOrDefault(x => x.MaNV == item.Id && x.ThangNam == (Year + "-07-01"));
+                    if (T7 != null)
+                    {
+                        AL_T7 = T7.AL + T7.AL30;
+
+                        if (nghiT7 != AL_T7)
+                        {
+                            nghiT7 = (float)AL_T7;
+                        }
+
+                        if (T7.TP == 0 && T7.IL < 15 && beginTime.CompareTo(Year + "-07-01") >= 0 && (
+                             item.NgayNghiViec.NullString() == ""
+                             || (item.NgayNghiViec.NullString().Contains(Year + "-07") && item.NgayNghiViec.CompareTo(Year + "-07-02") >= 0 && item.NgayNghiViec.CompareTo(Year + "-07-15") <= 0)
+                             || (item.NgayNghiViec.NullString().Contains(Year + "-07") && item.NgayNghiViec.CompareTo(Year + "-07-15") > 0 && TUP + (DateTime.Parse(Year + "-07-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14)
+                             || (item.NgayNghiViec.NullString() != "" && item.NgayNghiViec.NullString().CompareTo(DateTime.Parse(Year + "-07-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")) > 0)))
+                        {
+                            NumMonth_UP += 1;
+                        }
+                    }
+
+                    double AL_T8 = 0;
+                    BANG_CONG_EXTENTION T8 = lstbangcongEx.FirstOrDefault(x => x.MaNV == item.Id && x.ThangNam == (Year + "-08-01"));
+                    if (T8 != null)
+                    {
+                        AL_T8 = T8.AL + T8.AL30;
+
+                        if (nghiT8 != AL_T8)
+                        {
+                            nghiT8 = (float)AL_T8;
+                        }
+
+                        if (T8.TP == 0 && T8.IL < 15 && beginTime.CompareTo(Year + "-08-01") >= 0 && (
+                             item.NgayNghiViec.NullString() == ""
+                             || (item.NgayNghiViec.NullString().Contains(Year + "-08") && item.NgayNghiViec.CompareTo(Year + "-08-02") >= 0 && item.NgayNghiViec.CompareTo(Year + "-08-15") <= 0)
+                             || (item.NgayNghiViec.NullString().Contains(Year + "-08") && item.NgayNghiViec.CompareTo(Year + "-08-15") > 0 && TUP + (DateTime.Parse(Year + "-08-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14)
+                             || (item.NgayNghiViec.NullString() != "" && item.NgayNghiViec.NullString().CompareTo(DateTime.Parse(Year + "-08-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")) > 0)))
+                        {
+                            NumMonth_UP += 1;
+                        }
+                    }
+
+                    double AL_T9 = 0;
+                    BANG_CONG_EXTENTION T9 = lstbangcongEx.FirstOrDefault(x => x.MaNV == item.Id && x.ThangNam == (Year + "-09-01"));
+                    if (T9 != null)
+                    {
+                        AL_T9 = T9.AL + T9.AL30;
+
+                        if (nghiT9 != AL_T9)
+                        {
+                            nghiT9 = (float)AL_T9;
+                        }
+
+                        if (T9.TP == 0 && T9.IL < 15 && beginTime.CompareTo(Year + "-09-01") >= 0 && (
+                             item.NgayNghiViec.NullString() == ""
+                             || (item.NgayNghiViec.NullString().Contains(Year + "-09") && item.NgayNghiViec.CompareTo(Year + "-09-02") >= 0 && item.NgayNghiViec.CompareTo(Year + "-09-15") <= 0)
+                             || (item.NgayNghiViec.NullString().Contains(Year + "-09") && item.NgayNghiViec.CompareTo(Year + "-09-15") > 0 && TUP + (DateTime.Parse(Year + "-09-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14)
+                             || (item.NgayNghiViec.NullString() != "" && item.NgayNghiViec.NullString().CompareTo(DateTime.Parse(Year + "-09-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")) > 0)))
+                        {
+                            NumMonth_UP += 1;
+                        }
+                    }
+
+                    double AL_T10 = 0;
+                    BANG_CONG_EXTENTION T10 = lstbangcongEx.FirstOrDefault(x => x.MaNV == item.Id && x.ThangNam == (Year + "-10-01"));
+                    if (T10 != null)
+                    {
+                        AL_T10 = T10.AL + T10.AL30;
+
+                        if (nghiT10 != AL_T10)
+                        {
+                            nghiT10 = (float)AL_T10;
+                        }
+
+                        if (T10.TP == 0 && T10.IL < 15 && beginTime.CompareTo(Year + "-10-01") >= 0 && (
+                             item.NgayNghiViec.NullString() == ""
+                             || (item.NgayNghiViec.NullString().Contains(Year + "-10") && item.NgayNghiViec.CompareTo(Year + "-10-02") >= 0 && item.NgayNghiViec.CompareTo(Year + "-10-15") <= 0)
+                             || (item.NgayNghiViec.NullString().Contains(Year + "-10") && item.NgayNghiViec.CompareTo(Year + "-10-15") > 0 && TUP + (DateTime.Parse(Year + "-10-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14)
+                             || (item.NgayNghiViec.NullString() != "" && item.NgayNghiViec.NullString().CompareTo(DateTime.Parse(Year + "-10-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")) > 0)))
+                        {
+                            NumMonth_UP += 1;
+                        }
+                    }
+
+                    double AL_T11 = 0;
+                    BANG_CONG_EXTENTION T11 = lstbangcongEx.FirstOrDefault(x => x.MaNV == item.Id && x.ThangNam == (Year + "-11-01"));
+                    if (T11 != null)
+                    {
+                        AL_T11 = T11.AL + T11.AL30;
+
+                        if (nghiT11 != AL_T11)
+                        {
+                            nghiT11 = (float)AL_T11;
+                        }
+
+                        if (T11.TP == 0 && T11.IL < 15 && beginTime.CompareTo(Year + "-11-01") >= 0 && (
+                             item.NgayNghiViec.NullString() == ""
+                             || (item.NgayNghiViec.NullString().Contains(Year + "-11") && item.NgayNghiViec.CompareTo(Year + "-11-02") >= 0 && item.NgayNghiViec.CompareTo(Year + "-11-15") <= 0)
+                             || (item.NgayNghiViec.NullString().Contains(Year + "-11") && item.NgayNghiViec.CompareTo(Year + "-11-15") > 0 && TUP + (DateTime.Parse(Year + "-11-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14)
+                             || (item.NgayNghiViec.NullString() != "" && item.NgayNghiViec.NullString().CompareTo(DateTime.Parse(Year + "-11-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")) > 0)))
+                        {
+                            NumMonth_UP += 1;
+                        }
+                    }
+
+                    double AL_T12 = 0;
+                    BANG_CONG_EXTENTION T12 = lstbangcongEx.FirstOrDefault(x => x.MaNV == item.Id && x.ThangNam == (Year + "-12-01"));
+                    if (T12 != null)
+                    {
+                        AL_T12 = T12.AL + T12.AL30;
+
+                        if (nghiT12 != AL_T12)
+                        {
+                            nghiT12 = (float)AL_T12;
+                        }
+
+                        if (T12.TP == 0 && T12.IL < 15 && beginTime.CompareTo(Year + "-12-01") >= 0 && (
+                             item.NgayNghiViec.NullString() == ""
+                             || (item.NgayNghiViec.NullString().Contains(Year + "-12") && item.NgayNghiViec.CompareTo(Year + "-12-02") >= 0 && item.NgayNghiViec.CompareTo(Year + "-12-15") <= 0)
+                             || (item.NgayNghiViec.NullString().Contains(Year + "-12") && item.NgayNghiViec.CompareTo(Year + "-12-15") > 0 && TUP + (DateTime.Parse(Year + "-12-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14)
+                             || (item.NgayNghiViec.NullString() != "" && item.NgayNghiViec.NullString().CompareTo(DateTime.Parse(Year + "-12-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")) > 0)
+                             || item.NgayNghiViec.NullString().Contains("-01-01"))) // nghỉ việc đầu năm mới sẽ tính vào tháng 12 năm cũ
+                        {
+                            NumMonth_UP += 1;
+                        }
+                    }
+
                     if (nghiT1 >= 0)
                     {
                         totalNghi += nghiT1;
@@ -526,8 +806,11 @@ namespace HRMS.ScheduledTasks
                         phepNam.NghiThang_12 = nghiT12;
                     }
 
+                    phepNam.SoPhepDuocHuong -= NumMonth_UP;
+
                     phepNam.TongNgayNghi = totalNghi;
                     phepNam.SoPhepTonNam = (float)Math.Round(phepNam.SoPhepDuocHuong - totalNghi, 1);
+                    phepNam.SoPhepTonNamTmp = phepNam.SoPhepTonNam;
 
                     if (item.NgayNghiViec.NullString() == "")
                     {
@@ -541,13 +824,29 @@ namespace HRMS.ScheduledTasks
                         }
                         else
                         {
-                            phepNam.SoPhepKhongDuocSuDung = 12 - DateTime.Parse(item.NgayNghiViec.NullString()).Month;
+                            HR_HOPDONG HD = _hopdongRepository.FindAll(x => x.MaNV == item.Id, x => x.HR_LOAIHOPDONG).OrderByDescending(x => x.NgayHieuLuc).FirstOrDefault();
+                            if (HD != null && HD.HR_LOAIHOPDONG.ShortName.StartsWith("TV") &&
+                                   item.NgayNghiViec.CompareTo(DateTime.Parse(HD.NgayHetHieuLuc).AddDays(1).ToString("yyyy-MM-dd")) <= 0)
+                            {
+                                phepNam.SoPhepKhongDuocSuDung = 12 - DateTime.Parse(item.NgayNghiViec.NullString()).Month + 1; // thử việc , nghỉ trước chính thức
+                            }
+                            else
+                            {
+                                if (item.NgayNghiViec.NullString().CompareTo(beginTime.Substring(0, 7) + "-15") <= 0 && bangcongEx != null && bangcongEx.TP > 0)
+                                {
+                                    phepNam.SoPhepKhongDuocSuDung = 12 - DateTime.Parse(item.NgayNghiViec.NullString()).Month + 1;
+                                }
+                                else
+                                {
+                                    phepNam.SoPhepKhongDuocSuDung = 12 - DateTime.Parse(item.NgayNghiViec.NullString()).Month;
+                                }
+                            }
                         }
                     }
 
                     phepNam.SoPhepTonThang = (float)Math.Round((phepNam.SoPhepTonNam - phepNam.SoPhepKhongDuocSuDung), 1);
 
-                    if (item.NgayNghiViec.NullString() != "")
+                    if (item.NgayNghiViec.NullString() != "" && DateTime.Parse(endTime).AddDays(3).ToString("yyyy-MM-dd").CompareTo(item.NgayNghiViec) >= 0)
                     {
                         HR_THAISAN_CONNHO thaisan = _thaisanRepository.FindAll(x => x.MaNV == item.Id && x.CheDoThaiSan == "ThaiSan").OrderByDescending(x => x.FromDate).FirstOrDefault();
 
@@ -558,13 +857,13 @@ namespace HRMS.ScheduledTasks
                             {
                                 songaynghiThaisan = EachDay.GetWorkingDay(DateTime.Parse(thaisan.FromDate), DateTime.Parse(item.NgayNghiViec.NullString()).AddDays(-1));
 
-                                if(songaynghiThaisan >= 9 && item.NgayNghiViec.NullString().CompareTo(beginTime.Substring(0,7) + "-15") > 0)
+                                if (songaynghiThaisan >= 9 && item.NgayNghiViec.NullString().CompareTo(beginTime.Substring(0, 7) + "-15") > 0)
                                 {
                                     phepNam.SoPhepThanhToanNghiViec = phepNam.SoPhepTonThang;
                                 }
                                 else
                                 {
-                                    phepNam.SoPhepThanhToanNghiViec = phepNam.SoPhepTonThang - 1;
+                                    phepNam.SoPhepThanhToanNghiViec = phepNam.SoPhepTonThang;//> 0 ? phepNam.SoPhepTonThang - 1 : 0;
                                 }
                             }
                             else
@@ -575,7 +874,7 @@ namespace HRMS.ScheduledTasks
                                 }
                                 else
                                 {
-                                    phepNam.SoPhepThanhToanNghiViec = phepNam.SoPhepTonThang - 1;
+                                    phepNam.SoPhepThanhToanNghiViec = phepNam.SoPhepTonThang;//> 0 ? phepNam.SoPhepTonThang - 1 : 0; ;
                                 }
                             }
                         }
@@ -583,16 +882,16 @@ namespace HRMS.ScheduledTasks
                         {
                             if (DateTime.Parse(item.NgayNghiViec.NullString()).Day <= 15 && item.NgayNghiViec.CompareTo(endTime) <= 0)
                             {
-                                phepNam.SoPhepThanhToanNghiViec = phepNam.SoPhepTonThang - 1;
+                                phepNam.SoPhepThanhToanNghiViec = phepNam.SoPhepTonThang;//> 0 ? phepNam.SoPhepTonThang - 1 : 0; ;
                             }
                             else
                             {
                                 // nghỉ m1 thì tính tháng trươc
-                                if (DateTime.Parse(item.NgayNghiViec.NullString()).Day == 1 && item.NgayNghiViec.CompareTo(endTime) > 0)
+                                if (DateTime.Parse(item.NgayNghiViec.NullString()).Day == 1 && DateTime.Parse(item.NgayNghiViec.NullString()).AddDays(-1).ToString("yyyy-MM-dd").CompareTo(endTime) == 0)
                                 {
                                     if (TUP >= 14)
                                     {
-                                        phepNam.SoPhepThanhToanNghiViec = phepNam.SoPhepTonThang - 1;
+                                        phepNam.SoPhepThanhToanNghiViec = phepNam.SoPhepTonThang;//> 0 ? phepNam.SoPhepTonThang - 1 : 0; ;
                                     }
                                     else
                                     {
@@ -604,7 +903,7 @@ namespace HRMS.ScheduledTasks
                                     //số ngày sau nghỉ việc + số ngày nghỉ KL >= 14
                                     if (EachDay.GetWorkingDay(DateTime.Parse(item.NgayNghiViec.NullString()), DateTime.Parse(endTime)) + TUP >= 14)
                                     {
-                                        phepNam.SoPhepThanhToanNghiViec = phepNam.SoPhepTonThang - 1;
+                                        phepNam.SoPhepThanhToanNghiViec = phepNam.SoPhepTonThang;// > 0 ? phepNam.SoPhepTonThang - 1 : 0; ;
                                     }
                                     else
                                     {
@@ -669,11 +968,11 @@ namespace HRMS.ScheduledTasks
                             nhanvienEx = _nhanvienInfoExRepository.FindAll(x => x.MaNV == item.Id && x.Year.ToString() == Year, x => x.HR_NHANVIEN).FirstOrDefault();
                             if (nhanvienEx != null)
                             {
-                                HR_SALARY salary = _salaryRepository.FindSingle(x => x.MaNV == item.Id, x => x.HR_NHANVIEN);
-                                HR_SALARY_GRADE grade = _gradeRepository.FindAll(x => x.Id == nhanvienEx.Grade).FirstOrDefault();
+                                HR_SALARY salary = _salaryRepository.FindSingle(x => x.MaNV == item.Id && x.Year.ToString() == Year, x => x.HR_NHANVIEN);
+                                HR_SALARY_GRADE grade = _gradeRepository.FindAll(x => x.CapBac == nhanvienEx.Grade && x.Year.ToString() == Year).FirstOrDefault();
                                 BasicSalary = grade != null ? grade.BasicSalary : 0;
                                 LivingAllowance = grade.LivingAllowance;
-                                PositionAllowance = _chucDanhRepository.FindById(item.MaChucDanh).PhuCap;
+                                PositionAllowance = _chucDanhRepository.FindSingle(x => x.Id == item.MaChucDanh).PhuCap;
                                 AbilityAllowance = (double)salary.AbilityAllowance;
 
                                 if (grade.Id == "M1-1" || grade.Id == "P2-1")
@@ -754,7 +1053,75 @@ namespace HRMS.ScheduledTasks
                                 phepNam.MucThanhToan = (float)Math.Round((BasicSalary + LivingAllowance + PositionAllowance + AbilityAllowance + SeniorityAllowance + HarmfulAllowance) / songaylamviec, 0);
                             }
                         }
+
                         phepNam.SoTienChiTra = (decimal)(phepNam.MucThanhToan * phepNam.SoPhepThanhToanNghiViec);
+                    }
+                    else
+                    {
+                        // lương tháng 12 những TH còn phép năm mà dưowng:
+                        // M1 - 1, P2 - 1 thanh toán 100 %
+                        // CÒn lại thanh toán 50 %
+                        if (DateTime.Parse(beginTime).Month == 12)
+                        {
+                            if (phepNam.SoPhepTonNam >= 0)
+                            {
+                                phepNam.SoPhepTonNamTmp = phepNam.SoPhepTonNam;
+                                nhanvienEx = _nhanvienInfoExRepository.FindAll(x => x.MaNV == item.Id && x.Year.ToString() == Year, x => x.HR_NHANVIEN).FirstOrDefault();
+
+                                if (nhanvienEx != null)
+                                {
+                                    if (nhanvienEx.MaNV == "H2207001" || nhanvienEx.MaNV == "H2204022")
+                                    {
+                                        var x = 0;
+                                    }
+
+                                    HR_SALARY_GRADE grade = _gradeRepository.FindAll(x => x.CapBac == nhanvienEx.Grade && x.Year.ToString() == Year).FirstOrDefault();
+                                    string preMonth = DateTime.Parse(beginTime).AddMonths(-1).ToString("yyyy-MM");
+                                    BANGLUONGCHITIET_HISTORY his = _bangluongChiTietHistoryRepository.FindAll(x => x.MaNV == item.Id && (x.ThangNam + "").Substring(0, 7) == preMonth).FirstOrDefault();
+
+                                    if (his != null)
+                                    {
+                                        if (grade.Id == "M1-1" || grade.Id == "P2-1")
+                                        {
+                                            phepNam.SoTienChiTra = (decimal)(phepNam.SoPhepTonNam * (float)(his.DailySalary));
+                                        }
+                                        else
+                                        {
+                                            phepNam.SoTienChiTra = (decimal)(phepNam.SoPhepTonNam * (float)(his.DailySalary)) / 2;
+                                        }
+
+                                        if (DateTime.Now.Year > DateTime.Parse(beginTime).Year)
+                                        {
+                                            phepNam.SoPhepTonNam = 0;
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                phepNam.SoTienChiTra = 0;
+                            }
+                        }
+                        else if (DateTime.Parse(beginTime).Month == 1) // Reset lại tồn phép năm trước sau khi đã thanh toán
+                        {
+                            int preYear = int.Parse(Year) - 1;
+                            List<PhepNamViewModel> phepNamViewModels = _phepNamService.GetAll("").FindAll(x => x.Year.ToString() == preYear.ToString());
+
+                            PhepNamViewModel prePhepNam;
+                            if (phepNamViewModels.Exists(x => x.MaNhanVien == item.Id && x.Year.ToString() == preYear.ToString()))
+                            {
+                                prePhepNam = phepNamViewModels.FirstOrDefault(x => x.MaNhanVien == item.Id && x.Year.ToString() == preYear.ToString());
+
+                                prePhepNam.SoPhepTonNamTmp = prePhepNam.SoPhepTonNam;
+
+                                if (prePhepNam.SoPhepTonNam > 0)
+                                {
+                                    prePhepNam.SoPhepTonNam = 0;
+
+                                    lstPhepNam_Update.Add(prePhepNam);
+                                }
+                            }
+                        }
                     }
                 }
 
