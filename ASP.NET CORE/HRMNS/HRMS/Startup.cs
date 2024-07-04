@@ -186,6 +186,7 @@ namespace HRMS
             services.AddTransient<IDetailSalaryService, DetailSalaryService>();
             services.AddTransient<IKyLuatKhenThuongService, KyLuatKhenThuongService>();
             services.AddTransient<IPhuCapLuongService, PhuCapLuongService>();
+            services.AddTransient<IConNhoMnsService, ConNhoMnsService>();
 
             services.AddMvc().AddJsonOptions(options => {
                 options.JsonSerializerOptions.PropertyNamingPolicy = null;

@@ -5231,6 +5231,54 @@ namespace HRMNS.Data.EF.Migrations
                     b.ToTable("HR_CHECK_POINT");
                 });
 
+            modelBuilder.Entity("HRMNS.Data.Entities.Payroll.HR_CON_NHO", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("HoTenCon")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("MaNV")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("NgaySinh")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("TenNV")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("ThangTinhHuong")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("HR_CON_NHO");
+                });
+
             modelBuilder.Entity("HRMNS.Data.Entities.Payroll.HR_SALARY_GRADE", b =>
                 {
                     b.Property<string>("Id")

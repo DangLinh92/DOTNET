@@ -132,6 +132,9 @@
   <data name="CONG_DOAN_NOT_JOIN_PAYROLL" xml:space="preserve">
     <value>DS Không Tham Gia CD</value>
   </data>
+  <data name="CON_NHO" xml:space="preserve">
+    <value>Con Nhỏ</value>
+  </data>
   <data name="CO_QUAN_KTRA" xml:space="preserve">
     <value>Cơ quan nhà nước kiêm tra</value>
   </data>

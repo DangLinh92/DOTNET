@@ -37,6 +37,7 @@ using System.Xml.Linq;
 using HRMNS.Application.ViewModels.Time_Attendance;
 using HRMS.Services;
 using Syncfusion.EJ2;
+using HRMNS.Data.Entities.Payroll;
 
 namespace HRMS.Areas.Payroll.Controllers
 {
@@ -52,6 +53,7 @@ namespace HRMS.Areas.Payroll.Controllers
         private IDCChamCongService _dcChamCongService;
         private IPhepNamService _phepNamService;
         private INhanVienService _nhanvienService;
+        private IConNhoMnsService _conNhoService;
         private readonly IEmailSender _emailSender;
 
         private readonly IMemoryCache _memoryCache;
@@ -62,6 +64,7 @@ namespace HRMS.Areas.Payroll.Controllers
             ISalaryService salaryService,
             IPhepNamService phepNamService,
             INhanVienService nhanvienService,
+            IConNhoMnsService conNhoService,
              IEmailSender emailSender,
             IMemoryCache memoryCache)
         {
@@ -74,6 +77,7 @@ namespace HRMS.Areas.Payroll.Controllers
             _memoryCache = memoryCache;
             _salaryService = salaryService;
             _emailSender = emailSender;
+            _conNhoService = conNhoService;
         }
 
         public async Task<IActionResult> Index()
@@ -650,19 +654,47 @@ namespace HRMS.Areas.Payroll.Controllers
 
                 // Con nho 
                 BangLuongChiTietViewModel bl;
-                string maNV;
-                for (int i = worksheetConNhoDetail.Dimension.Start.Row + 2; i <= worksheetConNhoDetail.Dimension.End.Row; i++)
-                {
-                    maNV = worksheetConNhoDetail.Cells[i, 2].Text.NullString().ToUpper();
+                List<HR_CON_NHO> lstConNho = _conNhoService.GetConNhos();
 
-                    if (maNV.NullString() == "")
+                for (int i = 0; i < lstConNho.Count; i++)
+                {
+                    bl = data.FirstOrDefault(x => x.MaNV == lstConNho[i].MaNV);
+
+                    worksheetConNhoDetail.Cells["A" + (i + 3)].Value = i + 1;
+                    worksheetConNhoDetail.Cells["B" + (i + 3)].Value = lstConNho[i].MaNV;
+                    worksheetConNhoDetail.Cells["C" + (i + 3)].Value = lstConNho[i].TenNV;
+                    worksheetConNhoDetail.Cells["D" + (i + 3)].Value = bl != null ? bl.BoPhan : "";
+                    worksheetConNhoDetail.Cells["E" + (i + 3)].Value = lstConNho[i].NgaySinh;
+                    worksheetConNhoDetail.Cells["K" + (i + 3)].Value = lstConNho[i].ThangTinhHuong;
+
+                    if(bl != null)
                     {
-                        break;
+                        worksheetConNhoDetail.Cells["L" + (i + 3)].Value = bl.TongNgayCongThucTe > 0 ? "" : bl.NghiTS.NullString();
+                        worksheetConNhoDetail.Cells["M" + (i + 3)].Value = bl.NgayNghiViec;
                     }
 
-                    bl = data.FirstOrDefault(x => x.MaNV == maNV);
-                    worksheetConNhoDetail.Cells["L" + i].Value = bl != null ? bl.NghiTS : "";
+                    worksheetConNhoDetail.Cells["F" + (i + 3)].Formula = string.Format("=+YEAR($E$1)-YEAR(E{0})", i + 3);
+                    worksheetConNhoDetail.Cells["G" + (i + 3)].Formula = string.Format("=+DATEDIF(E{0},$E$1,\"y\")&\" năm\"&\" \"&DATEDIF(E{1},$E$1,\"ym\")&\" tháng\"", i + 3, i + 3);
+                    worksheetConNhoDetail.Cells["H" + (i + 3)].Formula = string.Format("=+COUNTIFS($B$3:$B$1048576,B{0},$I$3:$I$1048576,\"Có\")", i + 3);
+                    worksheetConNhoDetail.Cells["I" + (i + 3)].Formula = string.Format("=+IF((YEAR($E$1)-YEAR(E{0}))>6,\"Không\",IF(AND((YEAR($E$1)-YEAR(E{1}))=6,MONTH($E$1)<MONTH($C$1)),\"có\",IF(AND(YEAR($E$1)-YEAR(E{2})=6,MONTH($E$1)>=MONTH($C$1)),\"Không\",\"có\")))", i + 3, i + 3, i + 3);
+                    worksheetConNhoDetail.Cells["J" + (i + 3)].Formula = string.Format("=+IF(I{0}=\"Không\",0,IF(AND(I{1}=\"có\",L{2}=\"nghỉ thai sản\"),0,30000))", i + 3, i + 3, i + 3);
+                    worksheetConNhoDetail.Cells["N" + (i + 3)].Formula = string.Format("=+IF(COUNTIFS($B$3:$B$1048576,B{0},$E$3:$E$1048576,E{1})>1,\"Có\",\"Không\")", i + 3, i + 3);
+                    worksheetConNhoDetail.Cells["R" + (i + 3)].Formula = string.Format("=+COUNTIFS($B$3:$B$1048576,B{0},$J$3:$J$1048576,\">0\")", i + 3);
                 }
+
+                //string maNV;
+                //for (int i = worksheetConNhoDetail.Dimension.Start.Row + 2; i <= worksheetConNhoDetail.Dimension.End.Row; i++)
+                //{
+                //    maNV = worksheetConNhoDetail.Cells[i, 2].Text.NullString().ToUpper();
+
+                //    if (maNV.NullString() == "")
+                //    {
+                //        break;
+                //    }
+
+                //    bl = data.FirstOrDefault(x => x.MaNV == maNV);
+                //    worksheetConNhoDetail.Cells["L" + i].Value = bl != null ? bl.NghiTS : "";
+                //}
 
                 package.Save(); // Save the workbook.
             }
