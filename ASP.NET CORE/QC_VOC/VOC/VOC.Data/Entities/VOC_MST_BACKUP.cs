@@ -58,7 +58,7 @@ namespace VOC.Data.Entities
         public string ProcessCustomer { get; set; }
 
         // 기종명(Full name)
-        [StringLength(50)]
+        [StringLength(250)]
         public string ModelFullname { get; set; }
 
         // 불량명/현상 (고객사)

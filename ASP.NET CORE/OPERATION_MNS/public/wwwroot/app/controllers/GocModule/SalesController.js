@@ -11,7 +11,7 @@
             let planID = $('#cboPlanID').val();
             let siteID = $('#cboSiteId').val();
             let param = masterID + '^' + planID + '^' + siteID;
-           
+
             $("#fileInputExcel").val(null);
             $('#hd-ImportType').val(param);
             $('#hd-ImportUrl').val('/OpeationMns/GOCModule/ImportPlanGocWeekExcel?param=');
@@ -28,6 +28,18 @@
             $("#fileInputExcel").val(null);
             $('#hd-ImportType').val(param);
             $('#hd-ImportUrl').val('/OpeationMns/GOCModule/ImportExcel?param=');
+            $('#import_gocPlan').modal('show');
+        });
+
+        $('#btn-import-sales-korea').on('click', function () {
+            let masterID = $('#cboMasterID').val();
+            let planID = $('#cboPlanID').val();
+            let siteID = $('#cboSiteId').val();
+            let param = masterID + '^' + planID + '^' + siteID;
+
+            $("#fileInputExcel").val(null);
+            $('#hd-ImportType').val(param);
+            $('#hd-ImportUrl').val('/OpeationMns/GOCModule/ImportExcelSaleFromKorea?param=');
             $('#import_gocPlan').modal('show');
         });
 
@@ -67,7 +79,7 @@
                     hrms.run_waitMe($('#import_gocPlan'));
                 },
                 success: function (data) {
-                 
+
                     $("#fileInputExcel").val(null);
                     $('#hd-ImportType').val('');
                     $('#import_gocPlan').modal('hide');
@@ -88,6 +100,13 @@
     }
 
     function initSelectGetPlanIds() {
+        let planID = $('#cboPlanID').val();
+        console.log(planID);
+
+        if (planID == 'KOREA_INPUT') {
+            return;
+        }
+
         $.ajax({
             url: '/OpeationMns/SCPMaster/GetPlanIds',
             type: 'GET',
@@ -150,7 +169,37 @@
             fixedColumns: {
                 left: 3
             },
-            fixedHeader: true
+            fixedHeader: true,
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    text: 'Excel',
+                    action: function (e, dt, node, config) {
+
+                        let _planId = $('#cboPlanID').val();
+                        console.log(_planId);
+
+                        $.ajax({
+                            type: "POST",
+                            url: "/OpeationMns/GOCModule/ExportExcelSalePlan",
+                            data: {
+                                planId: _planId
+                            },
+                            beforeSend: function () {
+                                hrms.run_waitMe($('#gridGocPlan'));
+                            },
+                            success: function (response) {
+                                window.location.href = response;
+                                hrms.hide_waitMe($('#gridGocPlan'));
+                            },
+                            error: function () {
+                                hrms.notify('Has an error in progress!', 'error', 'alert', function () { });
+                                hrms.hide_waitMe($('#gridGocPlan'));
+                            }
+                        });
+                    }
+                }
+            ]
         });
 
         $('input[type=search]').addClass('floating').removeClass('form-control-sm').css('width', 300).attr('placeholder', 'Type to search');

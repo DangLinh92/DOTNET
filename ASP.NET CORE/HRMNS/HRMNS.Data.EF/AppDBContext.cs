@@ -124,6 +124,8 @@ namespace HRMNS.Data.EF
         public virtual DbSet<DAILY_TIME_WORKING> DAILY_TIME_WORKING { get; set; }
         public virtual DbSet<HOTRO_SINH_LY> HOTRO_SINH_LY { get; set; }
         public virtual DbSet<HR_THANHTOAN_NGHIVIEC> HR_THANHTOAN_NGHIVIEC { get; set; }
+        public virtual DbSet<HR_CHECK_POINT> HR_CHECK_POINT { get; set; }
+        public virtual DbSet<HR_CON_NHO> HR_CON_NHO { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -233,6 +235,8 @@ namespace HRMNS.Data.EF
             builder.AddConfiguration(new DailyTimeWorkingConfiguration());
             builder.AddConfiguration(new HoTroSinhLyConfiguration());
             builder.AddConfiguration(new ThanhToanNghiViecConfiguration());
+            builder.AddConfiguration(new CheckpointConfiguration());
+            builder.AddConfiguration(new ConNhoConfiguration());
 
             //base.OnModelCreating(builder);
         }

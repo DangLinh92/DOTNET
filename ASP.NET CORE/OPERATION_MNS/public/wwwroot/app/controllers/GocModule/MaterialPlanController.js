@@ -12,6 +12,20 @@
             let planID = $('#cboPlanID').val();
             let siteID = $('#cboSiteId').val();
             let param = masterID + '^' + planID + '^' + siteID;
+
+            $('#hd-ImportUrl').val('/OpeationMns/GOCModule/ImportMaterialExcel?param=');
+            $("#fileInputExcel").val(null);
+            $('#hd-ImportType').val(param);
+            $('#import_gocPlan').modal('show');
+        });
+        
+        $('#btn-import-material-pur').on('click', function () {
+            let masterID = $('#cboMasterID').val();
+            let planID = $('#cboPlanID').val();
+            let siteID = $('#cboSiteId').val();
+            let param = masterID + '^' + planID + '^' + siteID;
+
+            $('#hd-ImportUrl').val('/OpeationMns/GOCModule/ImportMateriaByPurlExcel?param=');
             $("#fileInputExcel").val(null);
             $('#hd-ImportType').val(param);
             $('#import_gocPlan').modal('show');
@@ -41,9 +55,10 @@
             // Adding one more key to FormData object  
             // fileData.append('categoryId', $('#ddlCategoryIdImportExcel').combotree('getValue'));
             var type = $('#hd-ImportType').val();
+            var _url =  $('#hd-ImportUrl').val() + type;
 
             $.ajax({
-                url: '/OpeationMns/GOCModule/ImportMaterialExcel?param=' + type,
+                url: _url,
                 type: 'POST',
                 data: fileData,
                 processData: false,  // tell jQuery not to process the data
@@ -90,7 +105,7 @@
                     },
                     success: function (data) {
                         hrms.hide_waitMe($('#productionContent'));
-
+                        console.log(data);
                         if (data) {
                             hrms.notify("Load data success!", 'Success', 'alert', function () {
                             });
@@ -110,6 +125,14 @@
     }
 
     function initSelectGetPlanIds() {
+
+        let planID = $('#cboPlanID').val();
+        console.log(planID);
+
+        if (planID == 'PUR_INPUT') {
+            return;
+        }
+
         $.ajax({
             url: '/OpeationMns/SCPMaster/GetPlanIds',
             type: 'GET',
@@ -175,7 +198,33 @@
             fixedHeader: true,
             dom: 'Bfrtip',
             buttons: [
-                'excel'
+                {
+                    text: 'Excel',
+                    action: function (e, dt, node, config) {
+
+                        let _planId = $('#cboPlanID').val();
+                        console.log(_planId);
+
+                        $.ajax({
+                            type: "POST",
+                            url: "/OpeationMns/GOCModule/ExportExcelMaterialPlan",
+                            data: {
+                                planId: _planId
+                            },
+                            beforeSend: function () {
+                                hrms.run_waitMe($('#gridMaterialPlan'));
+                            },
+                            success: function (response) {
+                                window.location.href = response;
+                                hrms.hide_waitMe($('#gridMaterialPlan'));
+                            },
+                            error: function () {
+                                hrms.notify('Has an error in progress!', 'error', 'alert', function () { });
+                                hrms.hide_waitMe($('#gridMaterialPlan'));
+                            }
+                        });
+                    }
+                }
             ]
         });
 

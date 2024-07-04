@@ -461,9 +461,14 @@ namespace HRMNS.Application.Implementation
                                         }
                                     }
 
-                                    if (item.MaNV == "H1707014" && dateCheck == "2024-03-09")
+                                    if (item.MaNV == "H2202060" && dateCheck == "2024-06-08")
                                     {
                                         var x = 0;
+                                    }
+
+                                    if(item.NgayVao.CompareTo(dateCheck) > 0)
+                                    {
+                                        continue;
                                     }
 
                                     isRegistedOT = item.lstDangKyOT.Any(x => x.NgayOT == dateCheck);
@@ -1717,9 +1722,13 @@ namespace HRMNS.Application.Implementation
                                                                     {
                                                                         newBeginOT = "16:00:00";
                                                                         isSetMaxOT = false;
+
+                                                                        if (string.Compare(lastTime, "17:30:00") > 0)
+                                                                        {
+                                                                            newBeginOT = "16:30:00";
+                                                                        }
                                                                     }
                                                                 }
-
                                                             }
 
                                                             if (string.Compare(lastTime, newBeginOT) > 0)

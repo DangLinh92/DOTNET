@@ -468,8 +468,9 @@ namespace CarMNS.Application.Implementation
                 }
             }
 
-            result.Add("SEND_NEXT", lstSendNext.Where(x => x.NullString() != "").ToList());
-            result.Add("SEND_PRE", lstSendPre.Where(x => x.NullString() != "").ToList());
+            List<string> IgnoreEmail = new List<string>() { "thilan684@wisol.co.kr", "w2230608@wisol.co.kr" };
+            result.Add("SEND_NEXT", lstSendNext.Where(x => x.NullString() != "" && !IgnoreEmail.Contains(x)).ToList());
+            result.Add("SEND_PRE", lstSendPre.Where(x => x.NullString() != "" && !IgnoreEmail.Contains(x)).ToList());
 
             return result;
         }
@@ -602,8 +603,10 @@ namespace CarMNS.Application.Implementation
                 }
             }
 
-            result.Add("SEND_NEXT", lstSendNext.Where(x => x.NullString() != "").ToList());
-            result.Add("SEND_PRE", lstSendPre.Where(x => x.NullString() != "").ToList());
+            List<string> IgnoreEmail = new List<string>() { "thilan684@wisol.co.kr", "w2230608@wisol.co.kr" };
+         
+            result.Add("SEND_NEXT", lstSendNext.Where(x => x.NullString() != "" && !IgnoreEmail.Contains(x)).ToList());
+            result.Add("SEND_PRE", lstSendPre.Where(x => x.NullString() != "" && !IgnoreEmail.Contains(x)).ToList());
 
             return result;
         }

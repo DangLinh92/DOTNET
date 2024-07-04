@@ -51,7 +51,7 @@ namespace HRMS.Areas.Admin.Controllers
             var spreadsheet = SpreadsheetRequestProcessor.GetSpreadsheetFromState(spreadsheetState);
 
             MemoryStream stream = new MemoryStream();
-            spreadsheet.SaveCopy(stream, DocumentFormat.Xlsx);
+            spreadsheet.SaveCopy(stream, DevExpress.Spreadsheet.DocumentFormat.Xlsx);
             stream.Position = 0;
             DocumentName = HttpContext.Session.Get<string>("DocumentName");
             return File(stream, XlsxContentType, DocumentName);

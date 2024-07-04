@@ -428,8 +428,8 @@ namespace VOC.Data.EF.Migrations
                         .HasMaxLength(1000);
 
                     b.Property<string>("ModelFullname")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
 
                     b.Property<string>("PBA_FAE_Result")
                         .HasColumnType("nvarchar(50)")
@@ -591,8 +591,8 @@ namespace VOC.Data.EF.Migrations
                         .HasMaxLength(1000);
 
                     b.Property<string>("ModelFullname")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
 
                     b.Property<string>("PartsClassification")
                         .HasColumnType("nvarchar(50)")

@@ -1,0 +1,252 @@
+﻿
+@{
+    ViewData["Title"] = "Wisol-CHE";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+
+}
+
+@section Scripts
+{
+    <script src="~/js/exportFile_devextreme/polyfill.min.js"></script>
+    <script src="~/js/exportFile_devextreme/exceljs.min.js"></script>
+    <script src="~/js/exportFile_devextreme/FileSaver.min.js"></script>
+
+    <script>
+        /* Import, export, insert,update,delete danh sách nhân viên khám sk */
+        function ImportExcel() {
+            $("#fileInputExcel").val(null);
+            $('#import_File').modal('show');
+        }
+
+        $('#btnCloseImportExcel').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+            if (files.length > 0) {
+                $("#fileInputExcel").val(null);
+                $('#hd-ImportData').val('');
+                $('#import_File').modal('hide');
+                location.reload();
+            }
+        });
+
+        $('#btnCloseImport').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+            if (files.length > 0) {
+                $("#fileInputExcel").val(null);
+                $('#hd-ImportData').val('');
+                $('#import_File').modal('hide');
+                location.reload();
+            }
+        });
+
+        $('#btnImportExcel').on('click', function () {
+            var fileUpload = $("#fileInputExcel").get(0);
+            var files = fileUpload.files;
+
+            // Create FormData object
+            var fileData = new FormData();
+
+            // Looping over all files and add it to FormData object
+            for (var i = 0; i < files.length; i++) {
+                fileData.append("files", files[i]);
+            }
+
+            $.ajax({
+                url: '/Payroll/DCChamCong/ImportExcel',
+                type: 'POST',
+                data: fileData,
+                processData: false,  // tell jQuery not to process the data
+                contentType: false,  // tell jQuery not to set contentType
+                success: function (data) {
+                    $('#import_File').modal('hide');
+                    hrms.notify("Import success!", 'Success', 'alert', function () {
+                        location.reload();
+                    });
+                },
+                error: function (status) {
+                    hrms.notify('error: Import error!', 'error', 'alert', function () { });
+                }
+            });
+            return false;
+        });
+
+        function exporting(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet('DieuChinhLuong');
+
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true
+            }).then(function () {
+                workbook.xlsx.writeBuffer().then(function (buffer) {
+                    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'DieuChinhLuong.xlsx');
+                });
+            });
+            e.cancel = true;
+        }
+
+        function calculateFilterExpression(filterValue, selectedFilterOperation, target) {
+            if (target === "search" && typeof (filterValue) === "string") {
+                return [this.dataField, "contains", filterValue]
+            }
+
+            return function (data) {
+                return (data.AssignedEmployee || []).indexOf(filterValue) !== -1
+            }
+        }
+
+        // chon thang
+        function selectedDate_changed(data) {
+            console.log(data.value);
+            const dataGridDataSource = $("#gridContainer").dxDataGrid("getDataSource");
+            dataGridDataSource.reload();
+        };
+
+        function getMonth() {
+
+            var dateBox = $("#txt_month").dxDateBox("instance");
+
+            let sDate = dateBox.option('value');
+
+            return sDate;
+        }
+
+        function getCheckNumber() {
+            var selectCheckNums = $("#txt_checkNum").dxSelectBox("instance");
+            return selectCheckNums.option("value");
+        }
+    </script>
+}
+
+<div class="content container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Wisol Check Point</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/Payroll/Home/Index">Home</a></li>
+                    <li class="breadcrumb-item active">Wisol Check Point</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="row align-items-center">
+        <div class="col">
+            <div class="form">
+                <div class="dx-fieldset">
+                    <div class="dx-field">
+                        <div>
+                            @(Html.DevExtreme().DateBox()
+                                .ID("txt_month")
+                                .Value(DateTime.Now.ToString("yyyy-MM-dd"))
+                                .CalendarOptions(x => x.MaxZoomLevel(CalendarZoomLevel.Year))
+                                .DisplayFormat("yyyy")
+                                .Width(200)
+                                .Placeholder("Select...")
+                                .Label("Year")
+                                .OnValueChanged("selectedDate_changed")
+                                )
+
+                        </div>
+                    </div>
+                </div>
+                <div class="dx-field">
+                    <div class="dx-field-value">
+                        @(Html.DevExtreme().SelectBox()
+                            .ID("txt_checkNum")
+                            .DataSource(new List<string>(){"V1","V2"})
+                            .Placeholder("Check Number")
+                            )
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-auto float-right ml-auto" style="margin-right:100px;">
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" id="btnImport" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Excel</button>
+                <div class="dropdown-menu" style="">
+                    <a class="dropdown-item" href="~/templates/Wisol_CheckPoint.xlsx">File mẫu import điều chỉnh công</a>
+                    <a class="dropdown-item" id="btnImport" onclick="ImportExcel()">Import Điều Chỉnh Công</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            @(Html.DevExtreme().DataGrid<CheckPointViewModel>
+                ()
+                .ID("gridContainer")
+                .Height(720)
+                .ShowBorders(true)
+                .Scrolling(scrolling => scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual))
+                .Paging(paging => paging.Enabled(false))
+                .AllowColumnResizing(true)
+                .ColumnMinWidth(50)
+                .ColumnAutoWidth(true)
+                .ShowColumnLines(true)
+                .ShowRowLines(true)
+                .RowAlternationEnabled(true)
+                .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+                .OnExporting("exporting")
+                .FilterRow(filterRow => filterRow
+                .Visible(true)
+                .ApplyFilter(GridApplyFilterMode.Auto)
+                ).SearchPanel(searchPanel => searchPanel
+                .Visible(true)
+                .Width(240)
+                .Placeholder("Search...")
+                )
+                .HeaderFilter(headerFilter => headerFilter.Visible(true))
+                .Selection(s => s.Mode(SelectionMode.Single))
+                .HoverStateEnabled(true)
+                .Editing(editing =>
+                {
+                    editing.Mode(GridEditMode.Popup);
+                    editing.AllowUpdating(true);
+                    editing.AllowAdding(true);
+                    editing.AllowDeleting(true);
+                })
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.MaNV).Caption("ID").AllowEditing(false);
+                    columns.AddFor(m => m.TenNV).Caption("Name").AllowEditing(false);
+                    columns.AddFor(m => m.ChucDanh).Caption("Team Position").AllowEditing(false);
+                    columns.AddFor(m => m.Dept2).Caption("Dept 2").AllowEditing(false);
+                    columns.AddFor(m => m.Sex).Caption("Sex").AllowEditing(false);
+                    columns.AddFor(m => m.NgaySinh).Caption("Age").AllowEditing(false);
+                    columns.AddFor(m => m.NgayVao).Caption("Starting Working").AllowEditing(false);
+                    columns.AddFor(m => m.TimeWorking).Caption("Time Working").AllowEditing(false);
+                    columns.AddFor(m => m.GradeCHE).Caption("GRADE별").AllowEditing(true);
+                    columns.AddFor(m => m.TeamCHE).Caption("팀").AllowEditing(true);
+                    columns.AddFor(m => m.RSCHE).Caption("2024_V1").AllowEditing(true);
+                    columns.AddFor(m => m.Year).Caption("Year").AllowEditing(false);
+                })
+                .DataSource(d => d.Mvc()
+                .Area("Payroll")
+                .Controller("CheckPoint")
+                .LoadAction("Get")
+                .LoadParams(new { month = new JS("getMonth"), checkNum = new JS("getCheckNumber") })
+                .UpdateAction("Put")
+                .InsertAction("Post")
+                .DeleteAction("Delete")
+                .Key("MaNV")
+                ).Summary(s => s.TotalItems(items =>
+                {
+                    items.AddFor(m => m.MaNV)
+                    .SummaryType(SummaryType.Count);
+                })
+                )
+                )
+        </div>
+    </div>
+</div>
+<partial name="_ImportExcelModel" />
+

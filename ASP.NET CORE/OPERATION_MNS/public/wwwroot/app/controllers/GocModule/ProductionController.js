@@ -122,11 +122,17 @@
                     action: function (e, dt, node, config) {
 
                         let _planId = $('#cboPlanID').val();
+                        let _siteId = $('#cboSiteId').val();
                         console.log(_planId);
+
+                        let _url = "/OpeationMns/GOCModule/ExportExcelProdPlan";
+                        if (_siteId == "WHWLP") {
+                            _url = "/OpeationMns/GOCModule/ExportExcelProdPlanWlp";
+                        }
 
                         $.ajax({
                             type: "POST",
-                            url: "/OpeationMns/GOCModule/ExportExcelProdPlan",
+                            url: _url,
                             data: {
                                 planId: _planId
                             },

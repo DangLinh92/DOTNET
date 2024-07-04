@@ -199,7 +199,7 @@ namespace HRMS.ScheduledTasks
                         lstPhepNam_Add.Add(phepNam);
                     }
 
-                    if (item.Id == "H2403015")
+                    if (item.Id == "H2003047")
                     {
                         var x = 0;
                     }
@@ -207,7 +207,7 @@ namespace HRMS.ScheduledTasks
                     /**
                       * • Nếu năm vào làm trước năm hiện tại thì 12 ngày
                         • Nếu năm vào làm sau năm hiện tại thì số phép bằng với số tháng làm việc tính đến cuối năm
-                            + Vào trước ngày 15 thì tính phép tháng đó luôn
+                            + Vào trước ngày 15 và nghỉ k lương <= 14 ngày thì tính phép tháng đó luôn
                             + Vào sau ngày 15 thì tháng đó chưa đc phép
                     * **/
                     if (int.Parse(item.NgayVao.Substring(0, 4)) < int.Parse(Year))
@@ -219,7 +219,7 @@ namespace HRMS.ScheduledTasks
                         month = int.Parse(item.NgayVao.Split("-")[1]);
                         day = int.Parse(item.NgayVao.Split("-")[2]);
 
-                        numDayOff = EachDay.GetWorkingDay(DateTime.Parse(item.NgayVao.Substring(0, 7) + "-01"), DateTime.Parse(item.NgayVao));
+                        numDayOff = EachDay.GetWorkingDay(DateTime.Parse(item.NgayVao.Substring(0, 7) + "-01"), DateTime.Parse(item.NgayVao).AddDays(-1));
 
                         if (item.NgayNghiViec.NullString() != "" && item.NgayNghiViec.NullString().Substring(0, 7) == item.NgayVao.NullString().Substring(0, 7))
                         {
@@ -415,8 +415,6 @@ namespace HRMS.ScheduledTasks
                                 {
                                     nghiT8 += 0.5f;
                                 }
-
-
                             }
                             else
                             if (m1.ToString("yyyy-MM-dd").InRangeDateTime(Year + "-09-01", DateTime.Parse(Year + "-09-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")))
@@ -430,8 +428,6 @@ namespace HRMS.ScheduledTasks
                                 {
                                     nghiT9 += 0.5f;
                                 }
-
-
                             }
                             else
                             if (m1.ToString("yyyy-MM-dd").InRangeDateTime(Year + "-10-01", DateTime.Parse(Year + "-10-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")))
@@ -492,11 +488,13 @@ namespace HRMS.ScheduledTasks
                             nghiT1 = (float)AL_T1;
                         }
 
-                        if (T1.TP == 0 && T1.IL < 15 && beginTime.CompareTo(Year + "-01-01") >= 0 && (
+                        // nếu đang trong thời gian nghỉ TS (TP vẫn bằng 0) thì vẫn được hưởng PN, TH hết thời gian TS trước 15 mà tháng đó NV luôn thì ko được hưởng còn hết thời gian TS sau ngày 15 mà nghie việc luôn thì tháng đó vẫn đc hưởng PN
+                        if ((T1.TP == 0 && T1.IL < 15 && beginTime.CompareTo(Year + "-01-01") >= 0 && (
                                 item.NgayNghiViec.NullString() == ""
                              || (item.NgayNghiViec.NullString().Contains(Year + "-01") && item.NgayNghiViec.CompareTo(Year + "-01-02") >= 0 && item.NgayNghiViec.CompareTo(Year + "-01-15") <= 0) // nnghỉ việc ngày 1 thì sẽ vào tháng trước
                              || (item.NgayNghiViec.NullString().Contains(Year + "-01") && item.NgayNghiViec.CompareTo(Year + "-01-15") > 0 && TUP + (DateTime.Parse(Year + "-01-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14)
                              || (item.NgayNghiViec.NullString() != "" && item.NgayNghiViec.NullString().CompareTo(DateTime.Parse(Year + "-01-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")) > 0)))
+                             || (T1.IL < 15 && item.NgayNghiViec.NullString().Contains(Year + "-01") && item.NgayNghiViec.CompareTo(Year + "-01-15") > 0 && TUP + (DateTime.Parse(Year + "-01-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14))
                         {
                             NumMonth_UP += 1;
                         }
@@ -513,11 +511,12 @@ namespace HRMS.ScheduledTasks
                             nghiT2 = (float)AL_T2;
                         }
 
-                        if (T2.TP == 0 && T2.IL < 15 && beginTime.CompareTo(Year + "-02-01") >= 0 && (
+                        if ((T2.TP == 0 && T2.IL < 15 && beginTime.CompareTo(Year + "-02-01") >= 0 && (
                               item.NgayNghiViec.NullString() == ""
                              || (item.NgayNghiViec.NullString().Contains(Year + "-02") && item.NgayNghiViec.CompareTo(Year + "-02-02") >= 0 && item.NgayNghiViec.CompareTo(Year + "-02-15") <= 0)
                              || (item.NgayNghiViec.NullString().Contains(Year + "-02") && item.NgayNghiViec.CompareTo(Year + "-02-15") > 0 && TUP + (DateTime.Parse(Year + "-02-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14)
                              || (item.NgayNghiViec.NullString() != "" && item.NgayNghiViec.NullString().CompareTo(DateTime.Parse(Year + "-02-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")) > 0)))
+                             || (T2.IL < 15 && item.NgayNghiViec.NullString().Contains(Year + "-02") && item.NgayNghiViec.CompareTo(Year + "-02-15") > 0 && TUP + (DateTime.Parse(Year + "-02-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14))
                         {
                             NumMonth_UP += 1;
                         }
@@ -534,11 +533,12 @@ namespace HRMS.ScheduledTasks
                             nghiT3 = (float)AL_T3;
                         }
 
-                        if (T3.TP == 0 && T3.IL < 15 && beginTime.CompareTo(Year + "-03-01") >= 0 && (
+                        if ((T3.TP == 0 && T3.IL < 15 && beginTime.CompareTo(Year + "-03-01") >= 0 && (
                              item.NgayNghiViec.NullString() == ""
                              || (item.NgayNghiViec.NullString().Contains(Year + "-03") && item.NgayNghiViec.CompareTo(Year + "-03-02") >= 0 && item.NgayNghiViec.CompareTo(Year + "-03-15") <= 0)
                              || (item.NgayNghiViec.NullString().Contains(Year + "-03") && item.NgayNghiViec.CompareTo(Year + "-03-15") > 0 && TUP + (DateTime.Parse(Year + "-03-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14)
                              || (item.NgayNghiViec.NullString() != "" && item.NgayNghiViec.NullString().CompareTo(DateTime.Parse(Year + "-03-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")) > 0)))
+                             || (T3.IL < 15 && item.NgayNghiViec.NullString().Contains(Year + "-03") && item.NgayNghiViec.CompareTo(Year + "-03-15") > 0 && TUP + (DateTime.Parse(Year + "-03-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14))
                         {
                             NumMonth_UP += 1;
                         }
@@ -555,11 +555,12 @@ namespace HRMS.ScheduledTasks
                             nghiT4 = (float)AL_T4;
                         }
 
-                        if (T4.TP == 0 && T4.IL < 15 && beginTime.CompareTo(Year + "-04-01") >= 0 && (
+                        if ((T4.TP == 0 && T4.IL < 15 && beginTime.CompareTo(Year + "-04-01") >= 0 && (
                              item.NgayNghiViec.NullString() == ""
                              || (item.NgayNghiViec.NullString().Contains(Year + "-04") && item.NgayNghiViec.CompareTo(Year + "-04-02") >= 0 && item.NgayNghiViec.CompareTo(Year + "-04-15") <= 0)
                              || (item.NgayNghiViec.NullString().Contains(Year + "-04") && item.NgayNghiViec.CompareTo(Year + "-04-15") > 0 && TUP + (DateTime.Parse(Year + "-04-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14)
                              || (item.NgayNghiViec.NullString() != "" && item.NgayNghiViec.NullString().CompareTo(DateTime.Parse(Year + "-04-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")) > 0)))
+                             || (T4.IL < 15 && item.NgayNghiViec.NullString().Contains(Year + "-04") && item.NgayNghiViec.CompareTo(Year + "-04-15") > 0 && TUP + (DateTime.Parse(Year + "-04-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14))
                         {
                             NumMonth_UP += 1;
                         }
@@ -576,11 +577,12 @@ namespace HRMS.ScheduledTasks
                             nghiT5 = (float)AL_T5;
                         }
 
-                        if (T5.TP == 0 && T5.IL < 15 && beginTime.CompareTo(Year + "-05-01") >= 0 && (
+                        if ((T5.TP == 0 && T5.IL < 15 && beginTime.CompareTo(Year + "-05-01") >= 0 && (
                              item.NgayNghiViec.NullString() == ""
                              || (item.NgayNghiViec.NullString().Contains(Year + "-05") && item.NgayNghiViec.CompareTo(Year + "-05-02") >= 0 && item.NgayNghiViec.CompareTo(Year + "-05-15") <= 0)
                              || (item.NgayNghiViec.NullString().Contains(Year + "-05") && item.NgayNghiViec.CompareTo(Year + "-05-15") > 0 && TUP + (DateTime.Parse(Year + "-05-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14)
                              || (item.NgayNghiViec.NullString() != "" && item.NgayNghiViec.NullString().CompareTo(DateTime.Parse(Year + "-05-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")) > 0)))
+                             || (T5.IL < 15 && item.NgayNghiViec.NullString().Contains(Year + "-05") && item.NgayNghiViec.CompareTo(Year + "-05-15") > 0 && TUP + (DateTime.Parse(Year + "-05-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14))
                         {
                             NumMonth_UP += 1;
                         }
@@ -597,11 +599,12 @@ namespace HRMS.ScheduledTasks
                             nghiT6 = (float)AL_T6;
                         }
 
-                        if (T6.TP == 0 && T6.IL < 15 && beginTime.CompareTo(Year + "-06-01") >= 0 && (
+                        if ((T6.TP == 0 && T6.IL < 15 && beginTime.CompareTo(Year + "-06-01") >= 0 && (
                              item.NgayNghiViec.NullString() == ""
                              || (item.NgayNghiViec.NullString().Contains(Year + "-06") && item.NgayNghiViec.CompareTo(Year + "-06-02") >= 0 && item.NgayNghiViec.CompareTo(Year + "-06-15") <= 0)
                              || (item.NgayNghiViec.NullString().Contains(Year + "-06") && item.NgayNghiViec.CompareTo(Year + "-06-15") > 0 && TUP + (DateTime.Parse(Year + "-06-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14)
                              || (item.NgayNghiViec.NullString() != "" && item.NgayNghiViec.NullString().CompareTo(DateTime.Parse(Year + "-06-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")) > 0)))
+                             || (T6.IL < 15 && item.NgayNghiViec.NullString().Contains(Year + "-06") && item.NgayNghiViec.CompareTo(Year + "-06-15") > 0 && TUP + (DateTime.Parse(Year + "-06-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14))
                         {
                             NumMonth_UP += 1;
                         }
@@ -618,11 +621,12 @@ namespace HRMS.ScheduledTasks
                             nghiT7 = (float)AL_T7;
                         }
 
-                        if (T7.TP == 0 && T7.IL < 15 && beginTime.CompareTo(Year + "-07-01") >= 0 && (
+                        if ((T7.TP == 0 && T7.IL < 15 && beginTime.CompareTo(Year + "-07-01") >= 0 && (
                              item.NgayNghiViec.NullString() == ""
                              || (item.NgayNghiViec.NullString().Contains(Year + "-07") && item.NgayNghiViec.CompareTo(Year + "-07-02") >= 0 && item.NgayNghiViec.CompareTo(Year + "-07-15") <= 0)
                              || (item.NgayNghiViec.NullString().Contains(Year + "-07") && item.NgayNghiViec.CompareTo(Year + "-07-15") > 0 && TUP + (DateTime.Parse(Year + "-07-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14)
                              || (item.NgayNghiViec.NullString() != "" && item.NgayNghiViec.NullString().CompareTo(DateTime.Parse(Year + "-07-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")) > 0)))
+                             || (T7.IL < 15 && item.NgayNghiViec.NullString().Contains(Year + "-07") && item.NgayNghiViec.CompareTo(Year + "-07-15") > 0 && TUP + (DateTime.Parse(Year + "-07-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14))
                         {
                             NumMonth_UP += 1;
                         }
@@ -639,11 +643,12 @@ namespace HRMS.ScheduledTasks
                             nghiT8 = (float)AL_T8;
                         }
 
-                        if (T8.TP == 0 && T8.IL < 15 && beginTime.CompareTo(Year + "-08-01") >= 0 && (
+                        if ((T8.TP == 0 && T8.IL < 15 && beginTime.CompareTo(Year + "-08-01") >= 0 && (
                              item.NgayNghiViec.NullString() == ""
                              || (item.NgayNghiViec.NullString().Contains(Year + "-08") && item.NgayNghiViec.CompareTo(Year + "-08-02") >= 0 && item.NgayNghiViec.CompareTo(Year + "-08-15") <= 0)
                              || (item.NgayNghiViec.NullString().Contains(Year + "-08") && item.NgayNghiViec.CompareTo(Year + "-08-15") > 0 && TUP + (DateTime.Parse(Year + "-08-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14)
                              || (item.NgayNghiViec.NullString() != "" && item.NgayNghiViec.NullString().CompareTo(DateTime.Parse(Year + "-08-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")) > 0)))
+                             || (T8.IL < 15 && item.NgayNghiViec.NullString().Contains(Year + "-08") && item.NgayNghiViec.CompareTo(Year + "-08-15") > 0 && TUP + (DateTime.Parse(Year + "-08-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14))
                         {
                             NumMonth_UP += 1;
                         }
@@ -660,11 +665,12 @@ namespace HRMS.ScheduledTasks
                             nghiT9 = (float)AL_T9;
                         }
 
-                        if (T9.TP == 0 && T9.IL < 15 && beginTime.CompareTo(Year + "-09-01") >= 0 && (
+                        if ((T9.TP == 0 && T9.IL < 15 && beginTime.CompareTo(Year + "-09-01") >= 0 && (
                              item.NgayNghiViec.NullString() == ""
                              || (item.NgayNghiViec.NullString().Contains(Year + "-09") && item.NgayNghiViec.CompareTo(Year + "-09-02") >= 0 && item.NgayNghiViec.CompareTo(Year + "-09-15") <= 0)
                              || (item.NgayNghiViec.NullString().Contains(Year + "-09") && item.NgayNghiViec.CompareTo(Year + "-09-15") > 0 && TUP + (DateTime.Parse(Year + "-09-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14)
                              || (item.NgayNghiViec.NullString() != "" && item.NgayNghiViec.NullString().CompareTo(DateTime.Parse(Year + "-09-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")) > 0)))
+                             || (T9.IL < 15 && item.NgayNghiViec.NullString().Contains(Year + "-09") && item.NgayNghiViec.CompareTo(Year + "-09-15") > 0 && TUP + (DateTime.Parse(Year + "-09-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14))
                         {
                             NumMonth_UP += 1;
                         }
@@ -681,11 +687,12 @@ namespace HRMS.ScheduledTasks
                             nghiT10 = (float)AL_T10;
                         }
 
-                        if (T10.TP == 0 && T10.IL < 15 && beginTime.CompareTo(Year + "-10-01") >= 0 && (
+                        if ((T10.TP == 0 && T10.IL < 15 && beginTime.CompareTo(Year + "-10-01") >= 0 && (
                              item.NgayNghiViec.NullString() == ""
                              || (item.NgayNghiViec.NullString().Contains(Year + "-10") && item.NgayNghiViec.CompareTo(Year + "-10-02") >= 0 && item.NgayNghiViec.CompareTo(Year + "-10-15") <= 0)
                              || (item.NgayNghiViec.NullString().Contains(Year + "-10") && item.NgayNghiViec.CompareTo(Year + "-10-15") > 0 && TUP + (DateTime.Parse(Year + "-10-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14)
                              || (item.NgayNghiViec.NullString() != "" && item.NgayNghiViec.NullString().CompareTo(DateTime.Parse(Year + "-10-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")) > 0)))
+                             || (T10.IL < 15 && item.NgayNghiViec.NullString().Contains(Year + "-10") && item.NgayNghiViec.CompareTo(Year + "-10-15") > 0 && TUP + (DateTime.Parse(Year + "-10-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14))
                         {
                             NumMonth_UP += 1;
                         }
@@ -702,11 +709,12 @@ namespace HRMS.ScheduledTasks
                             nghiT11 = (float)AL_T11;
                         }
 
-                        if (T11.TP == 0 && T11.IL < 15 && beginTime.CompareTo(Year + "-11-01") >= 0 && (
+                        if ((T11.TP == 0 && T11.IL < 15 && beginTime.CompareTo(Year + "-11-01") >= 0 && (
                              item.NgayNghiViec.NullString() == ""
                              || (item.NgayNghiViec.NullString().Contains(Year + "-11") && item.NgayNghiViec.CompareTo(Year + "-11-02") >= 0 && item.NgayNghiViec.CompareTo(Year + "-11-15") <= 0)
                              || (item.NgayNghiViec.NullString().Contains(Year + "-11") && item.NgayNghiViec.CompareTo(Year + "-11-15") > 0 && TUP + (DateTime.Parse(Year + "-11-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14)
                              || (item.NgayNghiViec.NullString() != "" && item.NgayNghiViec.NullString().CompareTo(DateTime.Parse(Year + "-11-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")) > 0)))
+                             || (T11.IL < 15 && item.NgayNghiViec.NullString().Contains(Year + "-11") && item.NgayNghiViec.CompareTo(Year + "-11-15") > 0 && TUP + (DateTime.Parse(Year + "-11-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14))
                         {
                             NumMonth_UP += 1;
                         }
@@ -723,12 +731,13 @@ namespace HRMS.ScheduledTasks
                             nghiT12 = (float)AL_T12;
                         }
 
-                        if (T12.TP == 0 && T12.IL < 15 && beginTime.CompareTo(Year + "-12-01") >= 0 && (
+                        if ((T12.TP == 0 && T12.IL < 15 && beginTime.CompareTo(Year + "-12-01") >= 0 && (
                              item.NgayNghiViec.NullString() == ""
                              || (item.NgayNghiViec.NullString().Contains(Year + "-12") && item.NgayNghiViec.CompareTo(Year + "-12-02") >= 0 && item.NgayNghiViec.CompareTo(Year + "-12-15") <= 0)
                              || (item.NgayNghiViec.NullString().Contains(Year + "-12") && item.NgayNghiViec.CompareTo(Year + "-12-15") > 0 && TUP + (DateTime.Parse(Year + "-12-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14)
                              || (item.NgayNghiViec.NullString() != "" && item.NgayNghiViec.NullString().CompareTo(DateTime.Parse(Year + "-12-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")) > 0)
-                             || item.NgayNghiViec.NullString().Contains("-01-01"))) // nghỉ việc đầu năm mới sẽ tính vào tháng 12 năm cũ
+                             || item.NgayNghiViec.NullString().Contains((int.Parse(Year) + 1) + "-01-01"))) // nghỉ việc đầu năm mới sẽ tính vào tháng 12 năm cũ
+                             || (T12.IL < 15 && item.NgayNghiViec.NullString().Contains(Year + "-12") && item.NgayNghiViec.CompareTo(Year + "-12-15") > 0 && TUP + (DateTime.Parse(Year + "-12-01").AddMonths(1).AddDays(-1).Subtract(DateTime.Parse(item.NgayNghiViec))).Days > 14))
                         {
                             NumMonth_UP += 1;
                         }
@@ -806,11 +815,11 @@ namespace HRMS.ScheduledTasks
                         phepNam.NghiThang_12 = nghiT12;
                     }
 
-                    phepNam.SoPhepDuocHuong -= NumMonth_UP;
+                    //phepNam.SoPhepDuocHuong -= NumMonth_UP;
 
                     phepNam.TongNgayNghi = totalNghi;
                     phepNam.SoPhepTonNam = (float)Math.Round(phepNam.SoPhepDuocHuong - totalNghi, 1);
-                    phepNam.SoPhepTonNamTmp = phepNam.SoPhepTonNam;
+                    phepNam.SoPhepTonNamTmp = phepNam.SoPhepTonNam - NumMonth_UP;
 
                     if (item.NgayNghiViec.NullString() == "")
                     {
@@ -828,17 +837,17 @@ namespace HRMS.ScheduledTasks
                             if (HD != null && HD.HR_LOAIHOPDONG.ShortName.StartsWith("TV") &&
                                    item.NgayNghiViec.CompareTo(DateTime.Parse(HD.NgayHetHieuLuc).AddDays(1).ToString("yyyy-MM-dd")) <= 0)
                             {
-                                phepNam.SoPhepKhongDuocSuDung = 12 - DateTime.Parse(item.NgayNghiViec.NullString()).Month + 1; // thử việc , nghỉ trước chính thức
+                                phepNam.SoPhepKhongDuocSuDung = 12 - DateTime.Parse(item.NgayNghiViec.NullString()).Month + 1 + NumMonth_UP; // thử việc , nghỉ trước chính thức
                             }
                             else
-                            {
+                            {   //Nghỉ việc trước ngày 15 thì tháng đó ko hưởng PN, sau ngày 15 thì tháng đó được tính PN
                                 if (item.NgayNghiViec.NullString().CompareTo(beginTime.Substring(0, 7) + "-15") <= 0 && bangcongEx != null && bangcongEx.TP > 0)
                                 {
-                                    phepNam.SoPhepKhongDuocSuDung = 12 - DateTime.Parse(item.NgayNghiViec.NullString()).Month + 1;
+                                    phepNam.SoPhepKhongDuocSuDung = 12 - DateTime.Parse(item.NgayNghiViec.NullString()).Month + 1 + NumMonth_UP;
                                 }
                                 else
                                 {
-                                    phepNam.SoPhepKhongDuocSuDung = 12 - DateTime.Parse(item.NgayNghiViec.NullString()).Month;
+                                    phepNam.SoPhepKhongDuocSuDung = 12 - DateTime.Parse(item.NgayNghiViec.NullString()).Month + NumMonth_UP;
                                 }
                             }
                         }
@@ -973,7 +982,7 @@ namespace HRMS.ScheduledTasks
                                 BasicSalary = grade != null ? grade.BasicSalary : 0;
                                 LivingAllowance = grade.LivingAllowance;
                                 PositionAllowance = _chucDanhRepository.FindSingle(x => x.Id == item.MaChucDanh).PhuCap;
-                                AbilityAllowance = (double)salary.AbilityAllowance;
+                                AbilityAllowance = salary != null ? (double)salary.AbilityAllowance : 0;
 
                                 if (grade.Id == "M1-1" || grade.Id == "P2-1")
                                 {
@@ -1041,7 +1050,7 @@ namespace HRMS.ScheduledTasks
                                     }
                                 }
 
-                                if (salary.DoiTuongPhuCapDocHai.NullString().ToLower() == CommonConstants.X)
+                                if (salary != null && salary.DoiTuongPhuCapDocHai.NullString().ToLower() == CommonConstants.X)
                                 {
                                     HarmfulAllowance = _phucapdochaiRepository.FindSingle(x => x.BoPhan == item.MaBoPhan).PhuCap * BasicSalary;
                                 }

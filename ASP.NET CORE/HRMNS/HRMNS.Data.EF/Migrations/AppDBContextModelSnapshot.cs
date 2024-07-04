@@ -237,6 +237,10 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<double>("BasicSalary")
                         .HasColumnType("float");
 
+                    b.Property<string>("BauThaiSan")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
                     b.Property<string>("BoPhan")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
@@ -310,6 +314,10 @@ namespace HRMNS.Data.EF.Migrations
 
                     b.Property<double>("GioLamThemTrongTV_390")
                         .HasColumnType("float");
+
+                    b.Property<string>("GioiTinh")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<string>("Grade")
                         .HasColumnType("nvarchar(50)")
@@ -489,6 +497,9 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<string>("ThanhToanLuong")
                         .HasColumnType("nvarchar(5)")
                         .HasMaxLength(5);
+
+                    b.Property<double>("ThoiGianChuaNghi")
+                        .HasColumnType("float");
 
                     b.Property<string>("ThuocDoiTuong_BHXH")
                         .HasColumnType("nvarchar(50)")
@@ -5167,6 +5178,57 @@ namespace HRMNS.Data.EF.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PHUCAP_DOC_HAI");
+                });
+
+            modelBuilder.Entity("HRMNS.Data.Entities.Payroll.HR_CHECK_POINT", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CheNumber")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("GradeCHE")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("MaNV")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("RSCHE")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("TeamCHE")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Year")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("HR_CHECK_POINT");
                 });
 
             modelBuilder.Entity("HRMNS.Data.Entities.Payroll.HR_SALARY_GRADE", b =>

@@ -3,7 +3,7 @@
     Layout = "~/Areas/Payroll/Views/Shared/_Layout.cshtml";
 }
 
-@section Scripts{
+@section Scripts {
     <script>
 
         function selectedDate_changed(data) {
@@ -71,8 +71,8 @@
         $("#btnXacNhanTT").on('click', function () {
 
             let _chedo = $('#cboCheDo').val();
-            
-            if(_chedo == "NghiViec"){
+
+            if (_chedo == "NghiViec") {
                 hrms.run_waitMe($('#contentLuong'));
 
                 console.log(_chedo);
@@ -86,6 +86,7 @@
                     },
                     success: function (response) {
                         hrms.hide_waitMe($('#contentLuong'));
+                        hrms.notify("Xác nhận OK", 'Success', 'alert', function () { });
                         location.reload();
                     },
                     error: function (status) {
@@ -94,7 +95,7 @@
                     }
                 });
             }
-            else{
+            else {
                 hrms.notify("Chọn chế độ nghỉ việc để xác nhận", 'error', 'alert', function () { });
             }
         });
@@ -170,9 +171,17 @@
                 fileData.append("files", files[i]);
             }
 
+            var dateBox = $("#txt_year").dxDateBox("instance");
+            let _time = dateBox.option('text');
+
+            if (!_time) {
+                hrms.notify('Hãy nhập tháng cần gửi!', 'error', 'alert', function () { });
+                return;
+            }
+
             var type = $('#hd-ImportData').val();
-            var _url = '/Payroll/BangLuongChiTiet/ImportExcel';
-            hrms.run_waitMe($('#contentLuong'));
+            var _url = '/Payroll/BangLuongChiTiet/SendMailLuong?param=' + _time;
+            hrms.run_waitMe($('#import_File'));
             $.ajax({
                 url: _url,
                 type: 'POST',
@@ -180,15 +189,15 @@
                 processData: false,  // tell jQuery not to process the data
                 contentType: false,  // tell jQuery not to set contentType
                 success: function (data) {
-                    hrms.hide_waitMe($('#contentLuong'));
+                    hrms.hide_waitMe($('#import_File'));
                     $('#import_File').modal('hide');
-                    hrms.notify("Import success!", 'Success', 'alert', function () {
+                    hrms.notify("send success!", 'Success', 'alert', function () {
                         location.reload();
                     });
                 },
                 error: function (status) {
-                    hrms.hide_waitMe($('#contentLuong'));
-                    hrms.notify('error: Import error!', 'error', 'alert', function () { });
+                    hrms.hide_waitMe($('#import_File'));
+                    hrms.notify('error: send error!', 'error', 'alert', function () { });
                 }
             });
             return false;
@@ -198,7 +207,7 @@
 
 }
 
-@section Styles{
+@section Styles {
     <style>
         .button-container {
             padding-bottom: 16px;
@@ -247,17 +256,13 @@
                 <div style="float: left; margin-left: 10px;margin-top: 5px;">
                     <a href="#" id="btnXacNhanTT" class="btn btn-warning">Xác Nhận TT Nghỉ Việc</a>
                 </div>
+                <div style="float: left; margin-left: 10px;margin-top: 5px;">
+                    <a href="#" id="btnChotLuong" class="btn add-btn"><i class="fa fa-arrow-circle-down"></i>Chốt Bảng Lương Tháng</a>
+                </div>
             </div>
         </div>
-        <div class="col-auto float-right ml-auto" style="margin-right:100px;">
-            <a href="#" id="btnChotLuong" class="btn add-btn"><i class="fa fa-arrow-circle-down"></i>Chốt Bảng Lương Tháng</a>
-            @*<div class="btn-group">
-            <button type="button" class="btn btn-info dropdown-toggle" id="btnImport" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width:100px">Excel</button>
-            <div class="dropdown-menu" style="">
-            <a class="dropdown-item" href="~/templates/SalaryBaseInformation.xlsx">File mẫu import thông tin Lương Cơ Bản</a>
-            <a class="dropdown-item" id="btnImport" onclick="ImportExcel()">Import Lương CB</a>
-            </div>
-            </div>*@
+        <div class="col-auto float-left ml-auto">
+            <a class="btn btn-info" id="btnSendMail" onclick="ImportExcel()" style="color:white"><i class="fa fa-envelope-square"></i>Send Mail</a>
         </div>
     </div>
 
@@ -303,7 +308,7 @@
                 spreadsheet.print("_blank");
                 }
                 });*@
-                    });
+                            });
     </script>
     @(Html.DevExpress()
         .Spreadsheet("spreadsheet")

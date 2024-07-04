@@ -1,12 +1,30 @@
 ﻿using HRMNS.Utilities.Constants;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace HRMNS.Data.EF.Extensions
 {
     public static class StringExtension
     {
+        public static string StringFormatNumber(this string result, string no)
+        {
+            if (double.TryParse(result, out double number))
+            {
+                // Sử dụng String.Format để định dạng số
+                string formattedNumber = number.ToString(no, new CultureInfo("en-US")); //String.Format("{0:" + no + "}", number);
+                return formattedNumber;
+            }
+
+            if((new List<string>() { "#VALUE!", "#N/A" }).Contains(result))
+            {
+                return "_";
+            }
+
+            return result;
+        }
+
         public static string AddString(this object result, string newStr)
         {
             if (result == null)
@@ -24,7 +42,7 @@ namespace HRMNS.Data.EF.Extensions
         }
         public static string IfNullIsZero(this object result)
         {
-            if (result == null || result.NullString() == "-")
+            if (result == null || result.NullString() == "-" || !double.TryParse(result.NullString(),out _))
                 return "0";
             else
                 return result.ToString().Trim() == "" ? "0" : result.ToString().Trim();

@@ -22,7 +22,7 @@
 
             if (!permisstionLst.find(e => e.FunctionId == functionId)) {
                 let newObj = {
-                    Id : 0,
+                    // Id: 0,
                     RoleId: roleId,
                     FunctionId: functionId,
                     CanCreate: false,
@@ -31,9 +31,9 @@
                     CanDelete: false,
                     ApproveL1: false,
                     ApproveL2: false,
-                    ApproveL3: false,
-                    AppRole: null,
-                    Function: null
+                    ApproveL3: false
+                    // AppRole: null,
+                    // Function: null
                 };
 
                 permisstionLst.push(newObj);
@@ -80,8 +80,7 @@
                 $('#frmRoleChange').submit();
             };
 
-            ulClick = function (roleName, roleId, e)
-            {
+            ulClick = function (roleName, roleId, e) {
                 e.stopImmediatePropagation();
                 e.stopPropagation();
                 $('#txtRoleId').val(roleId);

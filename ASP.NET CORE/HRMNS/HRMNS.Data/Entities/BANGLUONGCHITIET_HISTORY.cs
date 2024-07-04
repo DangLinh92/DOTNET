@@ -148,5 +148,12 @@ namespace HRMNS.Data.Entities
 
         [StringLength(5)]
         public string ThanhToanLuong { get; set; } // trạng thái thanh toán lương
+
+        [StringLength(50)]
+        public string GioiTinh { get; set; }
+
+        [StringLength(50)]
+        public string BauThaiSan { get; set; }
+        public double ThoiGianChuaNghi { get; set; }
     }
 }

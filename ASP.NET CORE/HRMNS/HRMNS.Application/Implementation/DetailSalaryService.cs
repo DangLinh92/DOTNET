@@ -98,8 +98,8 @@ namespace HRMNS.Application.Implementation
             List<BangLuongChiTietViewModel> bangLuongChiTiets = new List<BangLuongChiTietViewModel>();
             try
             {
+                string preThangNam = DateTime.Parse(thangNam).AddMonths(-1).ToString("yyyy-MM-dd");
                 List<BANG_CONG_EXTENTION> lstBangCong = _bangCongExRepository.FindAll(x => x.ThangNam == thangNam, x => x.HR_NHANVIEN, x => x.HR_NHANVIEN.HR_CHUCDANH).ToList();
-
                 List<BANG_CONG_EXTENTION> bangcongTmp = new List<BANG_CONG_EXTENTION>();
                 if (chedo.NullString() == "NghiViec")
                 {
@@ -198,11 +198,18 @@ namespace HRMNS.Application.Implementation
                         luong.MaBoPhan = nhanvienEx.MaBoPhanEx;
                         luong.Grade = nhanvienEx.Grade;
 
-                        if (item.MaNV == "H2403015")
+                        if (item.MaNV == "H2405009")
                         {
                             var x = 0;
                         }
 
+                        // Hỗ trợ sinh lý
+                        /*
+                         * Các TH ko được hưởng:
+                                1. Male
+                                2. Bầu hoặc nghỉ TS( chỉ cần phát sinh thời điểm bầu 1 ngày trong tháng)
+                                3. Nghỉ việc trong tháng
+                         */
                         if (_nhanVienRepository.FindById(item.MaNV, x => x.HR_BO_PHAN_DETAIL) != null)
                         {
                             luong.GioiTinh = _nhanVienRepository.FindById(item.MaNV).GioiTinh;
@@ -223,10 +230,10 @@ namespace HRMNS.Application.Implementation
                                     string endMonth = DateTime.Parse(beginMonth).AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd");
 
                                     List<HR_THAISAN_CONNHO> lstThaisan = _thaisanRepository.FindAll(
-                                   x => x.MaNV == item.MaNV &&
-                                   (x.CheDoThaiSan == "ThaiSan" || x.CheDoThaiSan == "MangBau") &&
-                                   x.FromDate.CompareTo(endMonth) <= 0 &&
-                                   x.ToDate.CompareTo(beginMonth) >= 0).ToList();
+                                                                            x => x.MaNV == item.MaNV &&
+                                                                            (x.CheDoThaiSan == "ThaiSan" || x.CheDoThaiSan == "MangBau") &&
+                                                                            x.FromDate.CompareTo(endMonth) <= 0 &&
+                                                                            x.ToDate.CompareTo(beginMonth) >= 0).ToList();
 
                                     if (lstThaisan.Count > 0 || item.TP == 0)
                                     {
@@ -239,6 +246,11 @@ namespace HRMNS.Application.Implementation
                                         luong.ThoiGianChuaNghi = 1.5;
                                     }
                                 }
+                            }
+                            else if (luong.GioiTinh != "Female")
+                            {
+                                luong.BauThaiSan = "o";
+                                luong.ThoiGianChuaNghi = 0;
                             }
 
                             if (luong.Grade == "M1-1" || luong.Grade == "P2-1")
@@ -389,8 +401,11 @@ namespace HRMNS.Application.Implementation
                     luong.Probation_Late_Come_Early_Leave_Time = item.P_TV;
                     luong.Official_Late_Come_Early_Leave_Time = item.O_CT;
 
-                    luong.HoTroPCCC_CoSo = (double)salary.PCCC_CoSo;
-                    luong.HoTroAT_SinhVien = (double)salary.HoTroATVS_SinhVien;
+                    if (salary != null)
+                    {
+                        luong.HoTroPCCC_CoSo = (double)salary.PCCC_CoSo;
+                        luong.HoTroAT_SinhVien = (double)salary.HoTroATVS_SinhVien;
+                    }
 
                     if (BHXH.FirstOrDefault(x => x.MaNV == item.MaNV) != null)
                     {
@@ -415,20 +430,23 @@ namespace HRMNS.Application.Implementation
                         luong.Thuong = 0;
                     }
 
-                    luong.SoNguoiPhuThuoc = salary.SoNguoiPhuThuoc;
-                    luong.Note = salary.Note;
-                    luong.InsentiveStandard = (grade != null ? (decimal)grade.IncentiveStandard : 0) + salary.IncentiveLanguage + salary.IncentiveTechnical + salary.IncentiveOther;
+                    if (salary != null)
+                    {
+                        luong.SoNguoiPhuThuoc = salary.SoNguoiPhuThuoc;
+                        luong.Note = salary.Note;
+                        luong.InsentiveStandard = (grade != null ? (decimal)grade.IncentiveStandard : 0) + salary.IncentiveLanguage + salary.IncentiveTechnical + salary.IncentiveOther;
 
-                    if (DateTime.Parse(thangNam).ToString("yyyyMM").CompareTo(DateTime.Parse(thangNam).Year + "06") <= 0)
-                    {
-                        luong.DanhGia = salary.IncentiveSixMonth1;
+                        if (DateTime.Parse(thangNam).ToString("yyyyMM").CompareTo(DateTime.Parse(thangNam).Year + "06") <= 0)
+                        {
+                            luong.DanhGia = salary.IncentiveSixMonth1;
+                        }
+                        else
+                        {
+                            luong.DanhGia = salary.IncentiveSixMonth2;
+                        }
+                        luong.HoTroCongDoan = salary.HoTroCongDoan;
+                        luong.SoTK = salary.HR_NHANVIEN.SoTaiKhoanNH;
                     }
-                    else
-                    {
-                        luong.DanhGia = salary.IncentiveSixMonth2;
-                    }
-                    luong.HoTroCongDoan = salary.HoTroCongDoan;
-                    luong.SoTK = salary.HR_NHANVIEN.SoTaiKhoanNH;
 
                     condoan = _congDoanRepository.FindAll(x => x.MaNV == item.MaNV).ToList().LastOrDefault();
                     if (condoan != null)
@@ -444,7 +462,7 @@ namespace HRMNS.Application.Implementation
                     }
                     else
                     {
-                        if (item.MaNV == "H2403015")
+                        if (item.MaNV == "H1805001" || item.MaNV == "H2311035")
                         {
                             var x = 0;
                         }
@@ -466,6 +484,15 @@ namespace HRMNS.Application.Implementation
                             {
                                 songaynghiThaisan = EachDay.GetWorkingDay(DateTime.Parse(thaisan.FromDate), DateTime.Parse(thaisan.ToDate));
                             }
+
+                            if (songaynghiThaisan > 0)
+                            {
+                                luong.NghiTS = "Nghỉ thai sản";
+                            }
+                            else
+                            {
+                                luong.NghiTS = "";
+                            }
                         }
 
                         string ngayVao = _nhanVienRepository.FindById(item.MaNV).NgayVao.NullString();
@@ -474,7 +501,7 @@ namespace HRMNS.Application.Implementation
                         numDayOff = 0;
                         if (ngayVao.Substring(0, 7) == thangNam.Substring(0, 7))
                         {
-                            numDayOff = EachDay.GetWorkingDay(DateTime.Parse(ngayVao.Substring(0, 7) + "-01"), DateTime.Parse(ngayVao));
+                            numDayOff = EachDay.GetWorkingDay(DateTime.Parse(ngayVao.Substring(0, 7) + "-01"), DateTime.Parse(ngayVao).AddDays(-1));
 
                             if (ngayNghiViec != "" && ngayNghiViec.Substring(0, 7) == ngayVao.Substring(0, 7))
                             {
@@ -482,12 +509,16 @@ namespace HRMNS.Application.Implementation
                             }
                         }
 
-                        //Người mới vào công ty: Vào từ ngày 1 đến ngày 15 của tháng sẽ trừ đoàn phí công đoàn của tháng đó luôn, sau ngày 15 sẽ trừ phí bắt đầu từ tháng sau.
-                        // 2. Số ngày nghỉ không hưởng lương > 14 ngày , 3.Nghỉ thai sản > 14 ngày
-                        if (songaynghiThaisan > 14 
-                            || (ngayVao.Substring(0, 7) == thangNam.Substring(0, 7) && ngayVao.CompareTo(thangNam.Substring(0, 7) + "-15") <= 0 && numDayOff + (item != null ? item.TUP : 0) > 14) 
-                            || (ngayVao.CompareTo(thangNam.Substring(0, 7) + "-15") > 0) 
-                            || (ngayNghiViec != "" && ngayNghiViec.CompareTo(thangNam.Substring(0, 7) + "-15") <= 0) || (item.TP == 0))
+                        //  * Với người mới vào: Vào từ ngày 1 - 15 sẽ trừ phí sau 15 không trừ phí ...--> bỏ (TH vào từ ngày 1 - 15 mà tháng đó nghỉ KL > 14 ngày thì ko trừ)
+                        //  * Người nghỉ TS: Nếu tháng đó có đóng BHXH thì sẽ trừ, không thì thôi
+                        //  * người nghỉ việc : Nếu tháng đó có đóng BHXH thì sẽ trừ, không thì thôi
+                        //  * Người đang làm việc: Không phát sinh ngày lương nào thì ko trừ phí, còn chỉ cần phát sinh 1 ngày lương(kể cả tháng đó nghri KL > 14 ngày) thì vẫn trừ phí
+
+                        if ((songaynghiThaisan > 0 && luong.ThuocDoiTuong_BHXH != "x")
+                            //|| (ngayVao.Substring(0, 7) == thangNam.Substring(0, 7) && ngayVao.CompareTo(thangNam.Substring(0, 7) + "-15") <= 0 && numDayOff + (item != null ? item.TUP : 0) > 14)
+                            || (ngayVao.CompareTo(thangNam.Substring(0, 7) + "-15") > 0)
+                            || (ngayNghiViec.NullString() != "" && ngayNghiViec.Contains(thangNam.Substring(0, 7)) && luong.ThuocDoiTuong_BHXH != "x")//ngayNghiViec.CompareTo(thangNam.Substring(0, 7) + "-15") <= 0)
+                            || (ngayNghiViec.NullString() == "" && item.TP == 0))
                         {
                             luong.DoiTuongThamGiaCD = "o";
                         }
@@ -506,7 +537,7 @@ namespace HRMNS.Application.Implementation
                         }
                     }
 
-                    luong.DoiTuongTruyThuBHYT = salary.DoiTuongTruyThuBHYT;
+                    luong.DoiTuongTruyThuBHYT = salary != null ? salary.DoiTuongTruyThuBHYT : "";
 
                     if (songaynghiThaisan >= songaylamviec)
                     {
@@ -514,10 +545,10 @@ namespace HRMNS.Application.Implementation
                     }
                     else
                     {
-                        luong.SoConNho = salary.SoConNho;
+                        luong.SoConNho = salary != null ? salary.SoConNho : 0;
                     }
 
-                    if (item.MaNV == "H2402001")
+                    if (item.MaNV == "H2403022")
                     {
                         var x = 0;
                     }

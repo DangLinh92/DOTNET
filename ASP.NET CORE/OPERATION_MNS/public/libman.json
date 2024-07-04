@@ -19,6 +19,11 @@
       "provider": "cdnjs",
       "library": "modernizr@2.8.3",
       "destination": "wwwroot/lib/modernizr/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "datatables.net@2.1.1",
+      "destination": "wwwroot/lib/datatables.net/"
     }
   ]
 }

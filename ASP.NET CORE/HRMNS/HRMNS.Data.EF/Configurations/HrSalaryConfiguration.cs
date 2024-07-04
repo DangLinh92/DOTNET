@@ -17,6 +17,24 @@ namespace HRMNS.Data.EF.Configurations
         }
     }
 
+   public class CheckpointConfiguration : DbEntityConfiguration<HR_CHECK_POINT>
+    {
+        public override void Configure(EntityTypeBuilder<HR_CHECK_POINT> entity)
+        {
+            entity.HasKey(c => c.Id);
+            entity.Property(c => c.Id).ValueGeneratedOnAdd();
+        }
+    }
+
+    public class ConNhoConfiguration : DbEntityConfiguration<HR_CON_NHO>
+    {
+        public override void Configure(EntityTypeBuilder<HR_CON_NHO> entity)
+        {
+            entity.HasKey(c => c.Id);
+            entity.Property(c => c.Id).ValueGeneratedOnAdd();
+        }
+    }
+    
     class HrSalaryConfiguration : DbEntityConfiguration<HR_SALARY>
     {
         public override void Configure(EntityTypeBuilder<HR_SALARY> entity)

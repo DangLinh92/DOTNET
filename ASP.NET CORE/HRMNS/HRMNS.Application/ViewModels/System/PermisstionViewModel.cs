@@ -20,8 +20,8 @@ namespace HRMNS.Application.ViewModels.System
         public bool ApproveL2 { get; set; } // KOREA
         public bool ApproveL3 { get; set; } // HR
 
-        public RoleViewModel AppRole { get; set; }
+        //public RoleViewModel AppRole { get; set; }
 
-        public FunctionViewModel Function { get; set; }
+        //public FunctionViewModel Function { get; set; }
     }
 }

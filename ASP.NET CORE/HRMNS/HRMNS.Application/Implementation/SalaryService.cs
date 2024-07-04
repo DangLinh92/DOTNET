@@ -143,7 +143,7 @@ namespace HRMNS.Application.Implementation
                     item.IncentiveStandard = (decimal)grade.IncentiveStandard;
                 }
 
-                if (item.HR_NHANVIEN.Status == Status.InActive.ToString() && DateTime.Now.Subtract(DateTime.Parse(item.HR_NHANVIEN.NgayNghiViec)).TotalDays > 200)
+                if (item.HR_NHANVIEN.Status == Status.InActive.ToString() && item.HR_NHANVIEN.NgayNghiViec.NullString() != "" && DateTime.Now.Subtract(DateTime.Parse(item.HR_NHANVIEN.NgayNghiViec)).TotalDays > 200)
                 {
                     lst.Remove(item);
                 }

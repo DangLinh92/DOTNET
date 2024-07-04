@@ -754,18 +754,17 @@ namespace CarMNS.Areas.Admin.Controllers
                 string date3 = DateTime.Parse(toDate).ToString("dd/MM/yyyy");
 
                 worksheet.Cells["C5"].Value = "BẢNG KÊ PHÍ TAXI MAI LINH THÁNG " + date1 + " ( " + date2 + " - " + date3 + " )";
-
-                worksheet.Cells["S2"].Value = "Đi làm\r\n출근";
-                worksheet.Cells["S3"].Value = "Đi làm sớm\r\n일찍 출근";
-                worksheet.Cells["S4"].Value = "Đi làm muộn\r\n지각";
-                worksheet.Cells["S5"].Value = "Tan ca\r\n퇴근";
-                worksheet.Cells["S6"].Value = "Tan ca sớm\r\n조퇴";
-                worksheet.Cells["S7"].Value = "Tăng ca\r\n잔업";
-                worksheet.Cells["S8"].Value = "công tác bên ngoài\r\n외근";
-                worksheet.Cells["S9"].Value = "Liên hoan\r\n회식";
-                worksheet.Cells["S10"].Value = "Trực\r\n당직";
-                worksheet.Cells["S11"].Value = "Làm chủ nhật, ngày lễ\r\n일요일 특근";
-                worksheet.Cells["S12"].Value = "Khác\r\n기타";
+                worksheet.Cells["S2"].Value = "Đi làm출근";
+                worksheet.Cells["S3"].Value = "Đi làm sớm일찍 출근";
+                worksheet.Cells["S4"].Value = "Đi làm muộn지각";
+                worksheet.Cells["S5"].Value = "Tan ca퇴근";
+                worksheet.Cells["S6"].Value = "Tan ca sớm조퇴";
+                worksheet.Cells["S7"].Value = "Tăng ca잔업";
+                worksheet.Cells["S8"].Value = "công tác bên ngoài외근";
+                worksheet.Cells["S9"].Value = "Liên hoan회식";
+                worksheet.Cells["S10"].Value = "Trực당직";
+                worksheet.Cells["S11"].Value = "Làm chủ nhật, ngày lễ일요일 특근";
+                worksheet.Cells["S12"].Value = "Khác기타";
 
                 int beginIndex = 8;
                 for (int i = 0; i < Data.Count; i++)

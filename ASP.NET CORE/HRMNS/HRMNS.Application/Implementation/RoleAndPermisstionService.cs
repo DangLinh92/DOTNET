@@ -97,7 +97,7 @@ namespace HRMNS.Application.Implementation
         public void UpdatePermisstion(PermisstionViewModel permisstion)
         {
             var existObj = _PermisstionRepository.FindById(permisstion.Id);
-            existObj.CopyPropertiesFrom(permisstion,new List<string>() { "Id"});
+            existObj.CopyPropertiesFrom(permisstion,new List<string>() { "Id", "AppRole", "Function" });
             if (existObj != null)
             {
                 _PermisstionRepository.Update(existObj);

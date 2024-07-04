@@ -1,4 +1,6 @@
-﻿using MailKit.Net.Smtp;
+﻿using DocumentFormat.OpenXml.Wordprocessing;
+using HRMNS.Data.EF.Extensions;
+using MailKit.Net.Smtp;
 using MimeKit;
 using System;
 using System.Collections.Generic;
@@ -18,18 +20,72 @@ namespace HRMS.Services
             Send(emailMessage);
         }
 
+        public void SendEmailWithAttack(Message message, string attachmentPath)
+        {
+            var emailMessage = CreateEmailMessage(message, attachmentPath);
+            Send(emailMessage);
+        }
+
+
+        public void SendEmailHtml(Message message)
+        {
+            var emailMessage = CreateEmailMessageHtml(message);
+            Send(emailMessage);
+        }
+
+        public void SendEmailHtmlWithAttack(Message message, string attachmentPath)
+        {
+            var emailMessage = CreateEmailMessageHtml(message, attachmentPath);
+            Send(emailMessage);
+        }
+
         public Task SendEmailAsync(string email, string subject, string message)
         {
             return Task.CompletedTask;
         }
 
-        private MimeMessage CreateEmailMessage(Message message)
+        private MimeMessage CreateEmailMessage(Message message, string attachmentPath = "")
         {
             var emailMessage = new MimeMessage();
             emailMessage.From.Add(new MailboxAddress("email", _emailConfig.From));
             emailMessage.To.AddRange(message.To);
             emailMessage.Subject = message.Subject;
-            emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Text) { Text = message.Content };
+
+            if (attachmentPath == "")
+            {
+                emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Text) { Text = message.Content };
+            }
+            else
+            {
+                var builder = new BodyBuilder { TextBody = message.Content };
+                // Đính kèm tệp
+                builder.Attachments.Add(attachmentPath);
+
+                emailMessage.Body = builder.ToMessageBody();
+            }
+            return emailMessage;
+        }
+
+        private MimeMessage CreateEmailMessageHtml(Message message, string attachmentPath = "")
+        {
+            var emailMessage = new MimeMessage();
+            emailMessage.From.Add(new MailboxAddress("email", _emailConfig.From));
+            emailMessage.Cc.AddRange(new List<MailboxAddress> { new MailboxAddress("email", _emailConfig.From) });
+            emailMessage.To.AddRange(message.To);
+            emailMessage.Subject = message.Subject;
+
+            if (attachmentPath == "")
+            {
+                emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = message.Content };
+            }
+            else
+            {
+                var builder = new BodyBuilder { HtmlBody = message.Content };
+                // Đính kèm tệp
+                builder.Attachments.Add(attachmentPath);
+
+                emailMessage.Body = builder.ToMessageBody();
+            }
 
             return emailMessage;
         }
