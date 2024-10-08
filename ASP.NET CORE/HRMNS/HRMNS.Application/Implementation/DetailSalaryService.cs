@@ -9,6 +9,7 @@ using HRMNS.Utilities.Constants;
 using HRMNS.Utilities.Dtos;
 using HRMS.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using OfficeOpenXml;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
@@ -40,6 +41,7 @@ namespace HRMNS.Application.Implementation
         IRespository<HR_BHXH, string> _BHXHRepository;
         IRespository<HR_THAISAN_CONNHO, int> _thaisanRepository;
         IRespository<HOTRO_SINH_LY, int> _hotroSinhLyRepository;
+        IRespository<SEND_MAIL_LUONG_STATUS, int> _SendMailStatusRepository;
         IRespository<HR_THANHTOAN_NGHIVIEC, Guid> _thanhToanNghiViecRepository;
 
         private IPayrollUnitOfWork _payrollUnitOfWork;
@@ -63,6 +65,7 @@ namespace HRMNS.Application.Implementation
             IRespository<HR_THAISAN_CONNHO, int> thaisanRepository,
             IRespository<HOTRO_SINH_LY, int> hotroSinhLyRepository,
             IRespository<HR_THANHTOAN_NGHIVIEC, Guid> thanhToanNghiViecRepository,
+            IRespository<SEND_MAIL_LUONG_STATUS, int> SendMailStatusRepository,
             IMapper mapper,
             IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor)
         {
@@ -78,6 +81,7 @@ namespace HRMNS.Application.Implementation
             _bangluongChiTietHistoryRepository = bangluongChiTietRepository;
             _chucDanhRepository = chucDanhRepository;
             _phucapdochaiRepository = phucapdochaiRepository;
+            _SendMailStatusRepository = SendMailStatusRepository;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _gradeRepository = gradeRepository;
@@ -151,6 +155,11 @@ namespace HRMNS.Application.Implementation
                     }
                 }
 
+                if (thangNam == "2024-08-01" || thangNam == "2024-09-01")
+                {
+                    songaylamviec = 26;
+                }
+
                 int thamnien = 0;
                 int songaynghiThaisan = 0;
                 int numDayOff = 0;
@@ -198,7 +207,7 @@ namespace HRMNS.Application.Implementation
                         luong.MaBoPhan = nhanvienEx.MaBoPhanEx;
                         luong.Grade = nhanvienEx.Grade;
 
-                        if (item.MaNV == "H2405009")
+                        if (item.MaNV == "H1606015")
                         {
                             var x = 0;
                         }
@@ -410,6 +419,11 @@ namespace HRMNS.Application.Implementation
                     if (BHXH.FirstOrDefault(x => x.MaNV == item.MaNV) != null)
                     {
                         luong.ThuocDoiTuong_BHXH = BHXH.FirstOrDefault(x => x.MaNV == item.MaNV).PhanLoai == "OK" ? "x" : "o"; //salary.ThuocDoiTuongBaoHiemXH;
+
+                        if (((new List<string>() { "H2409006", "H2007015", "H2409007", "H2409008" }).Contains(item.MaNV)) && thangNam == "2024-09-01")
+                        {
+                            luong.ThuocDoiTuong_BHXH = "x";
+                        }
                     }
 
                     if (phatsinhs.FirstOrDefault(x => x.HR_SALARY_DANHMUC_PHATSINH.KeyDanhMuc == "PCTT") != null)
@@ -462,7 +476,7 @@ namespace HRMNS.Application.Implementation
                     }
                     else
                     {
-                        if (item.MaNV == "H1805001" || item.MaNV == "H2311035")
+                        if (item.MaNV == "H1606015")
                         {
                             var x = 0;
                         }
@@ -527,6 +541,11 @@ namespace HRMNS.Application.Implementation
                             luong.DoiTuongThamGiaCD = "x"; // có tham gia
                         }
 
+                        if ((item.MaNV == "H1606015" || item.MaNV == "H2303002") && thangNam == "2024-08-01")
+                        {
+                            luong.DoiTuongThamGiaCD = "x";
+                        }
+
                         // TH đặc biệt có ngoại lệ
                         foreach (var cd in CommonConstants.THAM_GIA_CD_EX)
                         {
@@ -548,9 +567,9 @@ namespace HRMNS.Application.Implementation
                         luong.SoConNho = salary != null ? salary.SoConNho : 0;
                     }
 
-                    if (item.MaNV == "H2403022")
+                    if (item.MaNV == "H1803061" && thangNam == "2024-08-01")
                     {
-                        var x = 0;
+                        luong.SoConNho = 0;
                     }
 
                     luong.SoNgayNghi70 = item.L160; // L160
@@ -681,6 +700,21 @@ namespace HRMNS.Application.Implementation
             }
 
             return result;
+        }
+
+        public bool UpdateSendMailStatus(List<SEND_MAIL_LUONG_STATUS> data)
+        {
+            try
+            {
+                _SendMailStatusRepository.AddRange(data);
+                _unitOfWork.Commit();
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public ResultDB ImportExcel(string filePath, out List<HR_SALARY> lstUpdate)

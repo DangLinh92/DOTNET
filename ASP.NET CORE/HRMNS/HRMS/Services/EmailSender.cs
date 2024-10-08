@@ -1,4 +1,5 @@
-﻿using DocumentFormat.OpenXml.Wordprocessing;
+﻿using DevExtreme.AspNet.Mvc.Builders;
+using DocumentFormat.OpenXml.Wordprocessing;
 using HRMNS.Data.EF.Extensions;
 using MailKit.Net.Smtp;
 using MimeKit;
@@ -33,10 +34,10 @@ namespace HRMS.Services
             Send(emailMessage);
         }
 
-        public void SendEmailHtmlWithAttack(Message message, string attachmentPath)
+        public bool SendEmailHtmlWithAttack(Message message, string attachmentPath)
         {
             var emailMessage = CreateEmailMessageHtml(message, attachmentPath);
-            Send(emailMessage);
+            return Send(emailMessage);
         }
 
         public Task SendEmailAsync(string email, string subject, string message)
@@ -81,6 +82,7 @@ namespace HRMS.Services
             else
             {
                 var builder = new BodyBuilder { HtmlBody = message.Content };
+
                 // Đính kèm tệp
                 builder.Attachments.Add(attachmentPath);
 
@@ -90,7 +92,7 @@ namespace HRMS.Services
             return emailMessage;
         }
 
-        private void Send(MimeMessage mailMessage)
+        private bool Send(MimeMessage mailMessage)
         {
             using var client = new SmtpClient();
             try
@@ -100,9 +102,12 @@ namespace HRMS.Services
                 //client.Authenticate(_emailConfig.UserName, _emailConfig.Password);
 
                 client.Send(mailMessage);
+
+                return true;
             }
             catch (Exception ex)
             {
+                return false;
                 //log an error message or throw an exception or both.
                 throw;
             }

@@ -752,7 +752,7 @@ namespace HRMS.Areas.Admin.Controllers
                         worksheet.Cells["C" + beginIndex].Value = orderData[i].TenNV;
                         worksheet.Cells["D" + beginIndex].Value = orderData[i].NgayVao;
                         worksheet.Cells["E" + beginIndex].Value = orderData[i].BoPhanDetail;
-                        worksheet.Cells["CP" + beginIndex].Value = orderData[i].VP_SX;
+                        worksheet.Cells["CQ" + beginIndex].Value = orderData[i].VP_SX;
 
                         for (int j = 1; j <= 31; j++)
                         {
@@ -838,13 +838,13 @@ namespace HRMS.Areas.Admin.Controllers
                         if (i < orderData.Count - 2)
                         {
                             // copy range cell
-                            cellfrom = "A" + (beginIndex + 8) + ":CQ" + (beginIndex + 16);
-                            cellTo = "A" + (beginIndex + 16) + ":CQ" + (beginIndex + 24);
+                            cellfrom = "A" + (beginIndex + 8) + ":CR" + (beginIndex + 16);
+                            cellTo = "A" + (beginIndex + 16) + ":CR" + (beginIndex + 24);
                             worksheet.Cells[cellfrom].Copy(worksheet.Cells[cellTo]);
 
                             // format sum total
                             string hAM = "";
-                            for (int h = 39; h <= 91; h++) // AM ->
+                            for (int h = 39; h <= 96; h++) // AM ->
                             {
                                 hAM = GetExcelColumnName(h);
                                 worksheet.Cells[hAM + (beginIndex + 24)].Formula = "SUM(" + hAM + "17:" + hAM + (beginIndex + 16) + ")";
@@ -951,7 +951,7 @@ namespace HRMS.Areas.Admin.Controllers
                         worksheet.Cells["C" + beginIndex].Value = data[i].TenNV;
                         worksheet.Cells["D" + beginIndex].Value = data[i].NgayVao;
                         worksheet.Cells["E" + beginIndex].Value = data[i].BoPhanDetail;
-                        worksheet.Cells["CP" + beginIndex].Value = data[i].VP_SX;
+                        worksheet.Cells["CQ" + beginIndex].Value = data[i].VP_SX;
 
                         for (int j = 1; j <= 31; j++)
                         {
@@ -1097,6 +1097,7 @@ namespace HRMS.Areas.Admin.Controllers
                         worksheet.Cells["CO" + beginIndex].Calculate();
                         worksheet.Cells["CP" + beginIndex].Calculate();
                         worksheet.Cells["CQ" + beginIndex].Calculate();
+                        worksheet.Cells["CR" + beginIndex].Calculate();
 
                         // duyệt từ cột AM
                         startColumn = 39;
@@ -1146,6 +1147,9 @@ namespace HRMS.Areas.Admin.Controllers
                                     break;
                                 case "AL":
                                     bangcongEx.AL = valueEx;
+                                    break;
+                                case "TN":
+                                    bangcongEx.TN = valueEx;
                                     break;
                                 case "AL30":
                                     bangcongEx.AL30 = valueEx;
@@ -1290,13 +1294,13 @@ namespace HRMS.Areas.Admin.Controllers
                         if (i < data.Count - 2)
                         {
                             // copy range cell
-                            cellfrom = "A" + (beginIndex + 8) + ":CQ" + (beginIndex + 16);
-                            cellTo = "A" + (beginIndex + 16) + ":CQ" + (beginIndex + 24);
+                            cellfrom = "A" + (beginIndex + 8) + ":CR" + (beginIndex + 16);
+                            cellTo = "A" + (beginIndex + 16) + ":CR" + (beginIndex + 24);
                             worksheet.Cells[cellfrom].Copy(worksheet.Cells[cellTo]);
 
                             // format sum total
                             string hAM = "";
-                            for (int h = 39; h <= 91; h++) // AM ->
+                            for (int h = 39; h <= 96; h++) // AM ->
                             {
                                 hAM = GetExcelColumnName(h);
                                 worksheet.Cells[hAM + (beginIndex + 24)].Formula = "SUM(" + hAM + "17:" + hAM + (beginIndex + 16) + ")";

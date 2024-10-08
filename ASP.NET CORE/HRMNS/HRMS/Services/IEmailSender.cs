@@ -12,6 +12,6 @@ namespace HRMS.Services
         void SendEmailHtml(Message message);
 
         void SendEmailWithAttack(Message message,string attachmentPath);
-        void SendEmailHtmlWithAttack(Message message, string attachmentPath);
+        bool SendEmailHtmlWithAttack(Message message, string attachmentPath);
     }
 }

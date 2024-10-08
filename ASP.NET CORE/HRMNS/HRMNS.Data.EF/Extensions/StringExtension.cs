@@ -8,6 +8,7 @@ namespace HRMNS.Data.EF.Extensions
 {
     public static class StringExtension
     {
+
         public static string StringFormatNumber(this string result, string no)
         {
             if (double.TryParse(result, out double number))
@@ -17,7 +18,7 @@ namespace HRMNS.Data.EF.Extensions
                 return formattedNumber;
             }
 
-            if((new List<string>() { "#VALUE!", "#N/A" }).Contains(result))
+            if ((new List<string>() { "#VALUE!", "#N/A" }).Contains(result))
             {
                 return "_";
             }
@@ -42,7 +43,7 @@ namespace HRMNS.Data.EF.Extensions
         }
         public static string IfNullIsZero(this object result)
         {
-            if (result == null || result.NullString() == "-" || !double.TryParse(result.NullString(),out _))
+            if (result == null || result.NullString() == "-" || !double.TryParse(result.NullString(), out _))
                 return "0";
             else
                 return result.ToString().Trim() == "" ? "0" : result.ToString().Trim();

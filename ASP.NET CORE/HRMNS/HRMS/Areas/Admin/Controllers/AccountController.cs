@@ -1,4 +1,5 @@
-﻿using HRMNS.Data.Entities;
+﻿using DevExpress.XtraPrinting.Native;
+using HRMNS.Data.Entities;
 using HRMS.Models.AccountViewModels;
 using HRMS.Services;
 using Microsoft.AspNetCore.Authentication;
@@ -295,7 +296,6 @@ namespace HRMS.Areas.Admin.Controllers
                     user.TwoFactorEnabled = true;
                     user.EmailConfirmed = true;
                 }
-
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded && model.Role != "")
                 {

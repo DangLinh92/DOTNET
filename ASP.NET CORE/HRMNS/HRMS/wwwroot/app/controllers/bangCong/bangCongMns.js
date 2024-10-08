@@ -206,6 +206,11 @@
 
                 if (deparment != '' && deparment != 'SP') {
                     var render = "<option value='" + deparment + "'>" + deparment + "</option >";
+
+                    if (deparment == 'CSP') {
+                        render += "<option value='R&D'>R&D</option >";
+                    }
+
                     $('#cboDepartment').html(render);
                     $('#cboDepartmentDenghi').html(render);
                     $('#cboDepartmentBaoCao').html(render);

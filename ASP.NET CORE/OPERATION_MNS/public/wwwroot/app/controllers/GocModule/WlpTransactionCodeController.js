@@ -27,6 +27,14 @@
             $('#hd-ImportUrl').val('/OpeationMns/GOCModule/ImportWLPSettingMaxCapaByCodeExcel?param=');
             $('#import_gocPlan').modal('show');
         });
+
+
+        // import setting day capa
+        $('#btn-import-wlp_day_capa').on('click', function () {
+            $("#fileInputExcel").val(null);
+            $('#hd-ImportUrl').val('/OpeationMns/GOCModule/ImportWLPSettingMaxCapaByDayExcel?param=');
+            $('#import_gocPlan').modal('show');
+        });
         
    
         $('#btnCloseImportExcel').on('click', function () {

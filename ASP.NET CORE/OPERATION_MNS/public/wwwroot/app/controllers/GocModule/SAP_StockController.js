@@ -6,6 +6,12 @@
     function registerEvents() {
 
         // IMPORT EXCEL START
+        $('#btn-import-setting-modelbyday').on('click', function () {
+            $("#fileInputExcel").val(null);
+            $('#hd-ImportUrl').val('/OpeationMns/GOCModule/ImportProductionModelWithDay?param=');
+            $('#import_gocPlan').modal('show');
+        });
+
         $('#btn-import-stockSap').on('click', function () {
             $("#fileInputExcel").val(null);
             $('#hd-ImportUrl').val('/OpeationMns/GOCModule/ImportStockMaterialEndOfDay?param=');

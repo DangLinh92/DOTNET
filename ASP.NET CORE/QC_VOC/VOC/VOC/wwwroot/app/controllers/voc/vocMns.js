@@ -98,12 +98,33 @@
             $('#previewFile_Voc').modal('show');
         });
 
+        $('body').on('click', '.view-issue2', function (e) {
+            e.preventDefault();
+            var url = $(this).data('id');
+            var urlData = url.substring(0, url.lastIndexOf('.')) + '.pdf#toolbar=0';
+            var obj = '<object id="previewFile-obj" data="' + urlData + '" style="width:100%;height:100%"></object>'
+            $('#previewFile-result').html(obj);
+            $('#previewFile-result').on("contextmenu", function (e) {
+                e.preventDefault();
+                return false;
+            });
+            $('#previewFile_Voc').modal('show');
+        });
+
         // upload file for issue
         $('body').on('click', '.upload-issue', function (e) {
             e.preventDefault();
             $("#fileInputExcel").val(null);
             var vocId = $(this).data('id');
             $('#hd-ImportType').val(vocId);
+            $('#import_Voc').modal('show');
+        });
+
+        $('body').on('click', '.upload-issue1', function (e) {
+            e.preventDefault();
+            $("#fileInputExcel").val(null);
+            var vocId = $(this).data('id');
+            $('#hd-ImportType').val(vocId+'-2');
             $('#import_Voc').modal('show');
         });
 

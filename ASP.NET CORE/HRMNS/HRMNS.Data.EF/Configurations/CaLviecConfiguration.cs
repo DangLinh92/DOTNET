@@ -1,5 +1,6 @@
 ﻿using HRMNS.Data.EF.Extensions;
 using HRMNS.Data.Entities;
+using HRMNS.Data.Entities.luong;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -26,4 +27,23 @@ namespace HRMNS.Data.EF.Configurations
             entity.Property(c => c.Id).ValueGeneratedOnAdd();
         }
     }
+
+    public class UserViewLuongConfiguration : DbEntityConfiguration<USER_VIEW_LUONG>
+    {
+        public override void Configure(EntityTypeBuilder<USER_VIEW_LUONG> entity)
+        {
+            entity.HasKey(c => c.Id);
+        }
+    }
+
+    public class SendMailLuongStatusConfiguration : DbEntityConfiguration<SEND_MAIL_LUONG_STATUS>
+    {
+        public override void Configure(EntityTypeBuilder<SEND_MAIL_LUONG_STATUS> entity)
+        {
+            entity.HasKey(c => c.Id);
+            entity.Property(c => c.Id).ValueGeneratedOnAdd();
+        }
+    }
+
+    
 }

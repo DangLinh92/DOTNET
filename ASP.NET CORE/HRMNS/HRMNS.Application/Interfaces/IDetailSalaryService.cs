@@ -17,5 +17,7 @@ namespace HRMNS.Application.Interfaces
         ResultDB ImportExcel(string filePath, out List<HR_SALARY> lstUpdate);
 
         void XacNhanChiTra(List<string> lstMaNV);
+
+        bool UpdateSendMailStatus(List<SEND_MAIL_LUONG_STATUS> data);
     }
 }

@@ -175,6 +175,10 @@ namespace HRMNS.Application.Implementation
                 {
                     ImportChucVu2Info(packet);
                 }
+                else if (param == CommonConstants.IMPORT_EMAIL)
+                {
+                    ImportEmailNV(packet);
+                }
             }
         }
 
@@ -583,6 +587,37 @@ namespace HRMNS.Application.Implementation
             {
                 _nhanvienRepository.Update(item);
             }
+        }
+
+        private void ImportEmailNV(ExcelPackage packet)
+        {
+            ExcelWorksheet worksheet = packet.Workbook.Worksheets[0];
+            HR_NHANVIEN nhanvien;
+            string maNV = "";
+            List<HR_NHANVIEN> lstNV = new List<HR_NHANVIEN>();
+            for (int i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
+            {
+                maNV = worksheet.Cells[i, 1].Text.NullString().ToUpper();
+
+                if (string.IsNullOrEmpty(maNV))
+                {
+                    continue;
+                }
+
+                if (_nhanvienRepository.FindById(maNV) != null)
+                {
+                    nhanvien = _nhanvienRepository.FindById(maNV);
+                    nhanvien.Email = worksheet.Cells[i, 2].Text.NullString();
+                    lstNV.Add(nhanvien);
+                }
+                else
+                {
+                    continue;
+                }
+            }
+
+            if (lstNV.Count > 0)
+                _nhanvienRepository.UpdateRange(lstNV);
         }
 
         private int? GetBoPhanChiTiet(string maBophan)

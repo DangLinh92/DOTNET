@@ -23,6 +23,8 @@
     <PackageReference Include="EPPlus" Version="5.4.1" />
     <PackageReference Include="GroupDocs.Viewer" Version="22.9.0" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.61" />
+    <PackageReference Include="iTextSharp" Version="5.5.13.4" />
+    <PackageReference Include="LibreOfficeLibrary" Version="1.0.7" />
     <PackageReference Include="MailKit" Version="2.10.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.32" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.16" />
@@ -49,6 +51,7 @@
     <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="3.6.2" />
     <PackageReference Include="Serilog.Extensions.Logging.File" Version="2.0.0" />
     <PackageReference Include="Spire.Doc" Version="12.6.10" />
+    <PackageReference Include="Spire.PDF" Version="10.9.0" />
     <PackageReference Include="Syncfusion.EJ2.AspNet.Core" Version="20.3.0.50" />
     <PackageReference Include="WebMarkupMin.AspNetCore2" Version="2.10.0" />
     <PackageReference Include="WebMarkupMin.NUglify" Version="2.11.0" />
@@ -63,6 +66,8 @@
   <ItemGroup>
     <Folder Include="Areas\Admin\Data\" />
     <Folder Include="App_Data\" />
+    <Folder Include="Areas\Luong\Data\" />
+    <Folder Include="Areas\Luong\Models\" />
     <Folder Include="Areas\Payroll\Data\" />
     <Folder Include="Areas\Payroll\Models\" />
     <Folder Include="Models\Base\" />

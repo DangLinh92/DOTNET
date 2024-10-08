@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using HRMNS.Application.AutoMapper;
 using HRMNS.Application.Implementation;
 using HRMNS.Application.Interfaces;
@@ -35,6 +35,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using OfficeOpenXml;
 using Quartz;
 using System;
 using System.Collections.Generic;
@@ -66,6 +67,8 @@ namespace HRMS
             //services.AddDbContext<PayrollDBContext>(option => option.UseSqlite(Configuration.GetConnectionString("PayrollConnection"), o => o.MigrationsAssembly("HRMNS.Data.EF")));
 
             services.AddIdentity<APP_USER, APP_ROLE>().AddEntityFrameworkStores<AppDBContext>().AddDefaultTokenProviders();
+
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
             // Configure Identity
             services.Configure<IdentityOptions>(options =>
@@ -187,6 +190,7 @@ namespace HRMS
             services.AddTransient<IKyLuatKhenThuongService, KyLuatKhenThuongService>();
             services.AddTransient<IPhuCapLuongService, PhuCapLuongService>();
             services.AddTransient<IConNhoMnsService, ConNhoMnsService>();
+            services.AddTransient<IViewLuongService, ViewLuongService>();
 
             services.AddMvc().AddJsonOptions(options => {
                 options.JsonSerializerOptions.PropertyNamingPolicy = null;
@@ -221,6 +225,8 @@ namespace HRMS
             services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(480);
+                options.Cookie.HttpOnly = true; // Bảo mật cookie
+                options.Cookie.IsEssential = true; // Bắt buộc để session hoạt động khi bật chế độ GDPR
             });
             services.AddMinResponse();
 

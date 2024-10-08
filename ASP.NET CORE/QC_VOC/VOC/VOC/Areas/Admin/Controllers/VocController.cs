@@ -371,11 +371,14 @@ namespace VOC.Areas.Admin.Controllers
                                        .FileName
                                        .Trim('"');
 
-                    string folder = _hostingEnvironment.WebRootPath + $@"\uploaded\voc_issue";
+                    string folder = _hostingEnvironment.WebRootPath + (vocId.Contains("-2") ? $@"\uploaded\voc_issue_noibo" : $@"\uploaded\voc_issue");
                     if (!Directory.Exists(folder))
                     {
                         Directory.CreateDirectory(folder);
                     }
+
+                    bool isIssue_noibo = vocId.Contains("-2");
+                    vocId = isIssue_noibo ? vocId.Split("-")[0] : vocId;
 
                     string newName = vocId + filename;
                     string filePath = Path.Combine(folder, newName);
@@ -387,14 +390,29 @@ namespace VOC.Areas.Admin.Controllers
                     string url = "";
                     if (System.IO.File.Exists(filePath))
                     {
-                        ConvertPPTToPdf.ConvertToPdf(filePath);
+                        
 
-                        VOC_MSTViewModel voc = _vocMstService.GetById(int.Parse(vocId));
+                        if (isIssue_noibo)
+                        {
+                            ConvertPPTToPdf.UrlSavePdf = "wwwroot/uploaded/voc_issue_noibo/";
+                            ConvertPPTToPdf.ConvertToPdf(filePath);
+                            VOC_MSTViewModel voc = _vocMstService.GetById(int.Parse(vocId));
+                            url = $"{Request.Scheme}://{Request.Host}/uploaded/voc_issue_noibo/{newName}";
+                            voc.LinkReport2 = url;
 
-                        url = $"{Request.Scheme}://{Request.Host}/uploaded/voc_issue/{newName}";
+                            _vocMstService.Update(voc);
+                        }
+                        else
+                        {
+                            ConvertPPTToPdf.UrlSavePdf = "wwwroot/uploaded/voc_issue/";
+                            ConvertPPTToPdf.ConvertToPdf(filePath);
+                            VOC_MSTViewModel voc = _vocMstService.GetById(int.Parse(vocId));
+                            url = $"{Request.Scheme}://{Request.Host}/uploaded/voc_issue/{newName}";
+                            voc.LinkReport = url;
 
-                        voc.LinkReport = url;
-                        _vocMstService.Update(voc);
+                            _vocMstService.Update(voc);
+                        }
+
                         _vocMstService.Save();
                     }
 

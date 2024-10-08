@@ -39,6 +39,7 @@ namespace HRMNS.Utilities.Constants
         public const string IMPORT_BASIC_EMP = "basic_emp";
         public const string IMPORT_DETAIL_EMP = "detail_emp";
         public const string IMPORT_CHUCVU2_EMP = "chucvu2_emp";
+        public const string IMPORT_EMAIL = "imp_email";
 
         // Hop Dong
         public const string HD_THUVIEC_EM = "TV85";

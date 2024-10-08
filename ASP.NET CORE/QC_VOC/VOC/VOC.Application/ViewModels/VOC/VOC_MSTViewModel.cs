@@ -157,8 +157,13 @@ namespace VOC.Application.ViewModels.VOC
         [StringLength(50)]
         public string VOC_TAT { get; set; }
 
+        // Report khách hàng
         [StringLength(1000)]
         public string LinkReport { get; set; }
+
+        // REPORT NỘI BỘ
+        [StringLength(1000)]
+        public string LinkReport2 { get; set; }
 
         public string DateCreated { get; set; }
         public string DateModified { get; set; }

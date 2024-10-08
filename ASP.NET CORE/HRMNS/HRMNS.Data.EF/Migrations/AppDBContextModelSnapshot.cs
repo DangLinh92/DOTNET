@@ -427,6 +427,10 @@ namespace HRMNS.Data.EF.Migrations
                     b.Property<double>("NghiKhongLuong")
                         .HasColumnType("float");
 
+                    b.Property<string>("NghiTS")
+                        .HasColumnType("nvarchar(150)")
+                        .HasMaxLength(150);
+
                     b.Property<double>("NghiViecCoLuong")
                         .HasColumnType("float");
 
@@ -685,6 +689,9 @@ namespace HRMNS.Data.EF.Migrations
                         .HasColumnType("float");
 
                     b.Property<double>("SUM_OTHER")
+                        .HasColumnType("float");
+
+                    b.Property<double>("TN")
                         .HasColumnType("float");
 
                     b.Property<double>("TP")
@@ -5442,6 +5449,50 @@ namespace HRMNS.Data.EF.Migrations
                     b.ToTable("SAMSUNG_TRAINING");
                 });
 
+            modelBuilder.Entity("HRMNS.Data.Entities.SEND_MAIL_LUONG_STATUS", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("MaNV")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("SendDate")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SEND_MAIL_LUONG_STATUS");
+                });
+
             modelBuilder.Entity("HRMNS.Data.Entities.SETTING_TIME_CA_LVIEC", b =>
                 {
                     b.Property<int>("Id")
@@ -5654,6 +5705,48 @@ namespace HRMNS.Data.EF.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TRU_SO_LVIEC");
+                });
+
+            modelBuilder.Entity("HRMNS.Data.Entities.luong.USER_VIEW_LUONG", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("DateCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("DateModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<int>("FirtLogin")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MaNV")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PasswordDefault")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserCreated")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserModified")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("USER_VIEW_LUONG");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

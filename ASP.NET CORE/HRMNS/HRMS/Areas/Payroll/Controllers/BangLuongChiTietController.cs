@@ -38,7 +38,16 @@ using HRMNS.Application.ViewModels.Time_Attendance;
 using HRMS.Services;
 using Syncfusion.EJ2;
 using HRMNS.Data.Entities.Payroll;
-
+using DocumentFormat.OpenXml.Bibliography;
+//using Spire.Doc;
+using System.Net.Http;
+using static DevExpress.XtraPrinting.Native.ExportOptionsPropertiesNames;
+using System.Globalization;
+using Spire.Doc;
+using DevExpress.Data.Helpers;
+using System.Diagnostics;
+using iTextSharp.text.pdf;
+using System.Text.RegularExpressions;
 namespace HRMS.Areas.Payroll.Controllers
 {
     [IgnoreAntiforgeryToken]
@@ -328,9 +337,30 @@ namespace HRMS.Areas.Payroll.Controllers
                 string cellFromInluong = "";
                 string cellToInLuong = "";
 
-                worksheet.Cells["P1"].Value = DateTime.Parse(time + "-01").ToString("yyyy-MM-dd");
-                worksheet.Cells["DG1"].Value = DateTime.Parse(time + "-01").ToString("yyyy-MM-dd");
-                worksheet.Cells["Q1"].Value = DateTime.Parse(time + "-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd");
+                if (DateTime.Parse(time + "-01").ToString("yyyy-MM-dd") == "2024-08-01")
+                {
+                    worksheet.Cells["P1"].Value = DateTime.Parse(time + "-01").ToString("yyyy-MM-dd");
+                    worksheet.Cells["Q1"].Value = DateTime.Parse(time + "-01").AddMonths(1).AddDays(-2).ToString("yyyy-MM-dd");
+                }
+                else if (DateTime.Parse(time + "-01").ToString("yyyy-MM-dd") == "2024-09-01")
+                {
+                    worksheet.Cells["P1"].Value = DateTime.Parse(time + "-01").AddDays(-1).ToString("yyyy-MM-dd");
+                    worksheet.Cells["Q1"].Value = DateTime.Parse(time + "-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd");
+                }
+                else
+                {
+                    worksheet.Cells["P1"].Value = DateTime.Parse(time + "-01").ToString("yyyy-MM-dd");
+                    worksheet.Cells["Q1"].Value = DateTime.Parse(time + "-01").AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd");
+                }
+
+                if (DateTime.Parse(time + "-01").ToString("yyyy-MM-dd") == "2024-08-01")
+                {
+                    worksheet.Cells["DG1"].Value = DateTime.Parse(time + "-01").ToString("yyyy-MM") + "-02";
+                }
+                else
+                {
+                    worksheet.Cells["DG1"].Value = DateTime.Parse(time + "-01").ToString("yyyy-MM-dd");
+                }
 
                 for (int i = 0; i < data.Count; i++)
                 {
@@ -522,6 +552,12 @@ namespace HRMS.Areas.Payroll.Controllers
                 worksheet.Cells["EE" + beginIndex].Formula = string.Format("=SUM(EE3:EE{0})", beginIndex - 1);
                 worksheet.Cells["EF" + beginIndex].Formula = string.Format("=SUM(EF3:EF{0})", beginIndex - 1);
                 worksheet.Cells["EG" + beginIndex].Formula = string.Format("=SUM(EG3:EG{0})", beginIndex - 1);
+                worksheet.Cells["CW" + beginIndex].Formula = string.Format("=SUM(CW3:CW{0})", beginIndex - 1);
+                worksheet.Cells["CW" + beginIndex].Style.Numberformat.Format = "#,##0.00";
+
+                worksheet.Cells["CW2"].Formula = string.Format("=SUM(CW3:CW{0})", beginIndex - 1);
+                worksheet.Cells["CW2"].Style.Numberformat.Format = "#,##0";
+                worksheet.Cells["CW2"].AutoFitColumns(20);
 
                 beginIndex = 6;
                 worksheetTH.InsertRow(beginIndex + 1, data.Count, beginIndex);
@@ -590,18 +626,115 @@ namespace HRMS.Areas.Payroll.Controllers
                         worksheetPhepNam.Cells["H" + beginIndex_phepNam].Value = pn.SoPhepDaUng;
                         worksheetPhepNam.Cells["I" + beginIndex_phepNam].Value = pn.SoPhepDocHai;
                         worksheetPhepNam.Cells["K" + beginIndex_phepNam].Value = pn.SoPhepNam;
-                        worksheetPhepNam.Cells["N" + beginIndex_phepNam].Value = pn.NghiThang_1;
-                        worksheetPhepNam.Cells["O" + beginIndex_phepNam].Value = pn.NghiThang_2;
-                        worksheetPhepNam.Cells["P" + beginIndex_phepNam].Value = pn.NghiThang_3;
-                        worksheetPhepNam.Cells["Q" + beginIndex_phepNam].Value = pn.NghiThang_4;
-                        worksheetPhepNam.Cells["R" + beginIndex_phepNam].Value = pn.NghiThang_5;
-                        worksheetPhepNam.Cells["S" + beginIndex_phepNam].Value = pn.NghiThang_6;
-                        worksheetPhepNam.Cells["T" + beginIndex_phepNam].Value = pn.NghiThang_7;
-                        worksheetPhepNam.Cells["U" + beginIndex_phepNam].Value = pn.NghiThang_8;
-                        worksheetPhepNam.Cells["V" + beginIndex_phepNam].Value = pn.NghiThang_9;
-                        worksheetPhepNam.Cells["W" + beginIndex_phepNam].Value = pn.NghiThang_10;
-                        worksheetPhepNam.Cells["X" + beginIndex_phepNam].Value = pn.NghiThang_11;
-                        worksheetPhepNam.Cells["Y" + beginIndex_phepNam].Value = pn.NghiThang_12;
+
+                        if (pn.NghiThang_1 > 0)
+                        {
+                            worksheetPhepNam.Cells["N" + beginIndex_phepNam].Value = pn.NghiThang_1;
+                        }
+                        else
+                        {
+                            worksheetPhepNam.Cells["N" + beginIndex_phepNam].Value = "";
+                        }
+
+                        if (pn.NghiThang_2 > 0)
+                        {
+                            worksheetPhepNam.Cells["O" + beginIndex_phepNam].Value = pn.NghiThang_2;
+                        }
+                        else
+                        {
+                            worksheetPhepNam.Cells["O" + beginIndex_phepNam].Value = "";
+                        }
+
+                        if (pn.NghiThang_3 > 0)
+                        {
+                            worksheetPhepNam.Cells["P" + beginIndex_phepNam].Value = pn.NghiThang_3;
+                        }
+                        else
+                        {
+                            worksheetPhepNam.Cells["P" + beginIndex_phepNam].Value = "";
+                        }
+
+                        if (pn.NghiThang_4 > 0)
+                        {
+                            worksheetPhepNam.Cells["Q" + beginIndex_phepNam].Value = pn.NghiThang_4;
+                        }
+                        else
+                        {
+                            worksheetPhepNam.Cells["Q" + beginIndex_phepNam].Value = "";
+                        }
+
+                        if (pn.NghiThang_5 > 0)
+                        {
+                            worksheetPhepNam.Cells["R" + beginIndex_phepNam].Value = pn.NghiThang_5;
+                        }
+                        else
+                        {
+                            worksheetPhepNam.Cells["R" + beginIndex_phepNam].Value = "";
+                        }
+
+                        if (pn.NghiThang_6 > 0)
+                        {
+                            worksheetPhepNam.Cells["S" + beginIndex_phepNam].Value = pn.NghiThang_6;
+                        }
+                        else
+                        {
+                            worksheetPhepNam.Cells["S" + beginIndex_phepNam].Value = "";
+                        }
+
+                        if (pn.NghiThang_7 > 0)
+                        {
+                            worksheetPhepNam.Cells["T" + beginIndex_phepNam].Value = pn.NghiThang_7;
+                        }
+                        else
+                        {
+                            worksheetPhepNam.Cells["T" + beginIndex_phepNam].Value = "";
+                        }
+
+                        if (pn.NghiThang_8 > 0)
+                        {
+                            worksheetPhepNam.Cells["U" + beginIndex_phepNam].Value = pn.NghiThang_8;
+                        }
+                        else
+                        {
+                            worksheetPhepNam.Cells["U" + beginIndex_phepNam].Value = "";
+                        }
+
+                        if (pn.NghiThang_9 > 0)
+                        {
+                            worksheetPhepNam.Cells["V" + beginIndex_phepNam].Value = pn.NghiThang_9;
+                        }
+                        else
+                        {
+                            worksheetPhepNam.Cells["V" + beginIndex_phepNam].Value = "";
+                        }
+
+                        if (pn.NghiThang_10 > 0)
+                        {
+                            worksheetPhepNam.Cells["W" + beginIndex_phepNam].Value = pn.NghiThang_10;
+                        }
+                        else
+                        {
+                            worksheetPhepNam.Cells["W" + beginIndex_phepNam].Value = "";
+                        }
+
+                        if (pn.NghiThang_11 > 0)
+                        {
+                            worksheetPhepNam.Cells["X" + beginIndex_phepNam].Value = pn.NghiThang_11;
+                        }
+                        else
+                        {
+                            worksheetPhepNam.Cells["X" + beginIndex_phepNam].Value = "";
+                        }
+
+                        if (pn.NghiThang_12 > 0)
+                        {
+                            worksheetPhepNam.Cells["Y" + beginIndex_phepNam].Value = pn.NghiThang_12;
+                        }
+                        else
+                        {
+                            worksheetPhepNam.Cells["Y" + beginIndex_phepNam].Value = "";
+                        }
+
                         worksheetPhepNam.Cells["AI" + beginIndex_phepNam].Value = pn.MucThanhToan;
                         worksheetPhepNam.Cells["AJ" + beginIndex_phepNam].Value = pn.SoTienChiTra;
 
@@ -656,6 +789,17 @@ namespace HRMS.Areas.Payroll.Controllers
                 BangLuongChiTietViewModel bl;
                 List<HR_CON_NHO> lstConNho = _conNhoService.GetConNhos();
 
+                if (DateTime.Parse(time + "-01").ToString("yyyyMMdd").CompareTo(DateTime.Parse(time + "-01").Year + "0901") >= 0)
+                {
+                    worksheetConNhoDetail.Cells["C1"].Value = DateTime.Parse(time + "-01").Year + "-09-01";
+                    worksheetConNhoDetail.Cells["E1"].Value = DateTime.Parse(time + "-01").Year + "-09-01";
+                }
+                else
+                {
+                    worksheetConNhoDetail.Cells["C1"].Value = (DateTime.Parse(time + "-01").Year - 1) + "-09-01";
+                    worksheetConNhoDetail.Cells["E1"].Value = (DateTime.Parse(time + "-01").Year - 1) + "-09-01";
+                }
+
                 for (int i = 0; i < lstConNho.Count; i++)
                 {
                     bl = data.FirstOrDefault(x => x.MaNV == lstConNho[i].MaNV);
@@ -667,7 +811,7 @@ namespace HRMS.Areas.Payroll.Controllers
                     worksheetConNhoDetail.Cells["E" + (i + 3)].Value = lstConNho[i].NgaySinh;
                     worksheetConNhoDetail.Cells["K" + (i + 3)].Value = lstConNho[i].ThangTinhHuong;
 
-                    if(bl != null)
+                    if (bl != null)
                     {
                         worksheetConNhoDetail.Cells["L" + (i + 3)].Value = bl.TongNgayCongThucTe > 0 ? "" : bl.NghiTS.NullString();
                         worksheetConNhoDetail.Cells["M" + (i + 3)].Value = bl.NgayNghiViec;
@@ -679,25 +823,27 @@ namespace HRMS.Areas.Payroll.Controllers
                     worksheetConNhoDetail.Cells["I" + (i + 3)].Formula = string.Format("=+IF((YEAR($E$1)-YEAR(E{0}))>6,\"Không\",IF(AND((YEAR($E$1)-YEAR(E{1}))=6,MONTH($E$1)<MONTH($C$1)),\"có\",IF(AND(YEAR($E$1)-YEAR(E{2})=6,MONTH($E$1)>=MONTH($C$1)),\"Không\",\"có\")))", i + 3, i + 3, i + 3);
                     worksheetConNhoDetail.Cells["J" + (i + 3)].Formula = string.Format("=+IF(I{0}=\"Không\",0,IF(AND(I{1}=\"có\",L{2}=\"nghỉ thai sản\"),0,30000))", i + 3, i + 3, i + 3);
                     worksheetConNhoDetail.Cells["N" + (i + 3)].Formula = string.Format("=+IF(COUNTIFS($B$3:$B$1048576,B{0},$E$3:$E$1048576,E{1})>1,\"Có\",\"Không\")", i + 3, i + 3);
-                    worksheetConNhoDetail.Cells["R" + (i + 3)].Formula = string.Format("=+COUNTIFS($B$3:$B$1048576,B{0},$J$3:$J$1048576,\">0\")", i + 3);
+
+                    if (lstConNho[i].MaNV == "H1803061" && (DateTime.Parse(time + "-01").ToString("yyyy-MM-dd") == "2024-08-01"))
+                    {
+                        worksheetConNhoDetail.Cells["R" + (i + 3)].Value = 0;
+                    }
+                    else
+                    {
+                        worksheetConNhoDetail.Cells["R" + (i + 3)].Formula = string.Format("=+COUNTIFS($B$3:$B$1048576,B{0},$J$3:$J$1048576,\">0\")", i + 3);
+                    }
                 }
-
-                //string maNV;
-                //for (int i = worksheetConNhoDetail.Dimension.Start.Row + 2; i <= worksheetConNhoDetail.Dimension.End.Row; i++)
-                //{
-                //    maNV = worksheetConNhoDetail.Cells[i, 2].Text.NullString().ToUpper();
-
-                //    if (maNV.NullString() == "")
-                //    {
-                //        break;
-                //    }
-
-                //    bl = data.FirstOrDefault(x => x.MaNV == maNV);
-                //    worksheetConNhoDetail.Cells["L" + i].Value = bl != null ? bl.NghiTS : "";
-                //}
 
                 package.Save(); // Save the workbook.
             }
+
+            //FileInfo newFile = new FileInfo("E:\\TEST_BL.xlsx");
+            //using (ExcelPackage package = new ExcelPackage(newFile))
+            //{
+            //    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+            //    string v = worksheet.Cells["CW621"].Value.NullString();
+            //}
+
             return sFileName;
         }
 
@@ -800,9 +946,17 @@ namespace HRMS.Areas.Payroll.Controllers
                         string content = "";
                         List<NhanVienViewModel> lstNhanVienInfo = _nhanvienService.GetAll().ToList();
                         PayslipItem payslipItem = new PayslipItem();
+                        List<SEND_MAIL_LUONG_STATUS> lstStatus = new List<SEND_MAIL_LUONG_STATUS>();
+                        SEND_MAIL_LUONG_STATUS mailStatus;
                         for (int i = worksheetInLuong.Dimension.Start.Row + 1; i <= worksheetInLuong.Dimension.End.Row; i++)
                         {
                             string Bi = worksheetInLuong.Cells["B" + i].Text.NullString();
+
+                            if (Bi == "")
+                            {
+                                break;
+                            }
+
                             string Ci = worksheetInLuong.Cells["C" + i].Text.NullString();
                             string Di = worksheetInLuong.Cells["D" + i].Text.NullString();
                             string Ei = worksheetInLuong.Cells["E" + i].Text.NullString();
@@ -974,28 +1128,28 @@ namespace HRMS.Areas.Payroll.Controllers
                             payslipItem.BP = Di;
                             payslipItem.Ngayvao = Ei;
 
-                            payslipItem.LCB = Fi.StringFormatNumber("N0");
-                            payslipItem.PCDS = Gi.StringFormatNumber("N0");
-                            payslipItem.PCCV = Hi.StringFormatNumber("N0");
-                            payslipItem.PC_NL = Ii.StringFormatNumber("N0");
-                            payslipItem.Luong_D = Li.StringFormatNumber("N0");
+                            payslipItem.LCB = Fi.StringFormatNumber("N1");
+                            payslipItem.PCDS = Gi.StringFormatNumber("N1");
+                            payslipItem.PCCV = Hi.StringFormatNumber("N1");
+                            payslipItem.PC_NL = Ii.StringFormatNumber("N1");
+                            payslipItem.Luong_D = Li.StringFormatNumber("N1");
 
                             payslipItem.PhepNamTon = EFi.StringFormatNumber("N1");
-                            payslipItem.PCTN = Ji.StringFormatNumber("N0");
-                            payslipItem.PCDH = Ki.StringFormatNumber("N0");
-                            payslipItem.Luong_H = Mi.StringFormatNumber("N0");
+                            payslipItem.PCTN = Ji.StringFormatNumber("N1");
+                            payslipItem.PCDH = Ki.StringFormatNumber("N1");
+                            payslipItem.Luong_H = Mi.StringFormatNumber("N1");
 
                             payslipItem.TV_ngay = Ni.StringFormatNumber("N1");
                             payslipItem.TV_dem = Pi.StringFormatNumber("N1");
                             payslipItem.CT_ngay = Ri.StringFormatNumber("N1");
                             payslipItem.CT_dem = Ti.StringFormatNumber("N1");
                             payslipItem.Nghi_co_luong = Vi.StringFormatNumber("N1");
-                            payslipItem.Cong_ngay = Zi.StringFormatNumber("N0");
-                            payslipItem.Cong_dem = AAi.StringFormatNumber("N0");
-                            payslipItem.TTien_nghi_co_luong = Wi.StringFormatNumber("N0");
-                            payslipItem.nghi_KL = Xi.StringFormatNumber("N0");
-                            payslipItem.TT_lviec = Yi.StringFormatNumber("N0");
-                            payslipItem.Luong_theo_ngay_cong = ABi.StringFormatNumber("N0");
+                            payslipItem.Cong_ngay = Zi.StringFormatNumber("N1");
+                            payslipItem.Cong_dem = AAi.StringFormatNumber("N1");
+                            payslipItem.TTien_nghi_co_luong = Wi.StringFormatNumber("N1");
+                            payslipItem.nghi_KL = Xi.StringFormatNumber("N1");
+                            payslipItem.TT_lviec = Yi.StringFormatNumber("N1");
+                            payslipItem.Luong_theo_ngay_cong = ABi.StringFormatNumber("N1");
 
                             payslipItem.OT_time_150 = BOi.StringFormatNumber("N1");
                             payslipItem.OT_time_200 = BPi.StringFormatNumber("N1");
@@ -1028,11 +1182,11 @@ namespace HRMS.Areas.Payroll.Controllers
                             payslipItem.Tong_OT = CCi.StringFormatNumber("N1");
                             payslipItem.Tong_HTLV = CXi.StringFormatNumber("N1");
 
-                            payslipItem.Ca_ngay_TV = AHi.StringFormatNumber("N0");
-                            payslipItem.Ca_ngay_CT = AIi.StringFormatNumber("N0");
-                            payslipItem.ca_dem_TV_ky_niem_truoc_le = AJi.StringFormatNumber("N0");
-                            payslipItem.ca_dem_CT_ky_niem_truoc_le = AKi.StringFormatNumber("N0");
-                            payslipItem.Thanh_tien = ALi.StringFormatNumber("N0");
+                            payslipItem.Ca_ngay_TV = AHi.StringFormatNumber("N1");
+                            payslipItem.Ca_ngay_CT = AIi.StringFormatNumber("N1");
+                            payslipItem.ca_dem_TV_ky_niem_truoc_le = AJi.StringFormatNumber("N1");
+                            payslipItem.ca_dem_CT_ky_niem_truoc_le = AKi.StringFormatNumber("N1");
+                            payslipItem.Thanh_tien = ALi.StringFormatNumber("N1");
 
                             payslipItem.Nghi_Bu_AL30 = CYi.StringFormatNumber("N1");
                             payslipItem.Nghi_Bu_NB = CZi.StringFormatNumber("N1");
@@ -1044,34 +1198,34 @@ namespace HRMS.Areas.Payroll.Controllers
                             payslipItem.thanh_tien_nghi_70 = ADi.StringFormatNumber("N1");
 
                             payslipItem.Cong_them = DRi.StringFormatNumber("N1");
-                            payslipItem.Chuyencan = DHi.StringFormatNumber("N0");
-                            payslipItem.Incentive = DIi.StringFormatNumber("N0");
-                            payslipItem.Thanh_toan_PN = DQi.StringFormatNumber("N0");
-                            payslipItem.HT_gui_tre = DLi.StringFormatNumber("N0");
-                            payslipItem.HT_PCCC_co_so = DMi.StringFormatNumber("N0");
-                            payslipItem.HT_ATNVSV = DNi.StringFormatNumber("N0");
+                            payslipItem.Chuyencan = DHi.StringFormatNumber("N1");
+                            payslipItem.Incentive = DIi.StringFormatNumber("N1");
+                            payslipItem.Thanh_toan_PN = DQi.StringFormatNumber("N1");
+                            payslipItem.HT_gui_tre = DLi.StringFormatNumber("N1");
+                            payslipItem.HT_PCCC_co_so = DMi.StringFormatNumber("N1");
+                            payslipItem.HT_ATNVSV = DNi.StringFormatNumber("N1");
                             payslipItem.HT_CD = "-";
 
-                            payslipItem.HT_Sinh_ly = DOi.StringFormatNumber("N0");
-                            payslipItem.TN_khac = DPi.StringFormatNumber("N0");
+                            payslipItem.HT_Sinh_ly = DOi.StringFormatNumber("N1");
+                            payslipItem.TN_khac = DPi.StringFormatNumber("N1");
                             payslipItem.Dem_TV = DDi.StringFormatNumber("N1");
                             payslipItem.Dem_CT = DFi.StringFormatNumber("N1");
 
-                            payslipItem.Ttien = DEi.StringFormatNumber("N0");
-                            payslipItem.Ttien1 = DGi.StringFormatNumber("N0");
+                            payslipItem.Ttien = DEi.StringFormatNumber("N1");
+                            payslipItem.Ttien1 = DGi.StringFormatNumber("N1");
 
-                            payslipItem.Cong_tru = EBi.StringFormatNumber("N0");
-                            payslipItem.BHXH = DSi.StringFormatNumber("N0");
-                            payslipItem.Truy_thu_BHYT = DTi.StringFormatNumber("N0");
-                            payslipItem.Cong_doan = DUi.StringFormatNumber("N0");
-                            payslipItem.thue_TNCN = DWi.StringFormatNumber("N0");
-                            payslipItem.hmuon = DXi.StringFormatNumber("N0");
+                            payslipItem.Cong_tru = EBi.StringFormatNumber("N1");
+                            payslipItem.BHXH = DSi.StringFormatNumber("N1");
+                            payslipItem.Truy_thu_BHYT = DTi.StringFormatNumber("N1");
+                            payslipItem.Cong_doan = DUi.StringFormatNumber("N1");
+                            payslipItem.thue_TNCN = DWi.StringFormatNumber("N1");
+                            payslipItem.hmuon = DXi.StringFormatNumber("N1");
                             payslipItem.Di_muon = DYi.StringFormatNumber("N1");
-                            payslipItem.tru_khac = DZi.StringFormatNumber("N0");
-                            payslipItem.Quy_PCTT = DVi.StringFormatNumber("N0");
+                            payslipItem.tru_khac = DZi.StringFormatNumber("N1");
+                            payslipItem.Quy_PCTT = DVi.StringFormatNumber("N1");
 
                             // THUC NHAN
-                            payslipItem.Thuc_nhan = ECi.StringFormatNumber("N0");
+                            payslipItem.Thuc_nhan = ECi.StringFormatNumber("N1");
 
                             #region Html doc
                             //HtmlAgilityPack.HtmlDocument document = new HtmlAgilityPack.HtmlDocument();
@@ -1201,36 +1355,84 @@ namespace HRMS.Areas.Payroll.Controllers
                             //}
                             #endregion
 
-                            if (lstNhanVienInfo.FirstOrDefault(x => x.Id == payslipItem.Code).NgaySinh.NullString() != "")
-                            {
-                                payslipItem.NamSinh = DateTime.Parse(lstNhanVienInfo.FirstOrDefault(x => x.Id == payslipItem.Code).NgaySinh).Year.ToString();
-                            }
-                            else
-                            {
-                                payslipItem.NamSinh = month.Substring(0, 4);
-                            }
-
                             string attackPath = CreatePayrollDocument(payslipItem, folderPayrollDocuments);
                             email = lstNhanVienInfo.FirstOrDefault(x => x.Id == payslipItem.Code).Email.NullString();
 
                             if (email != "")
                             {
-                                HtmlAgilityPack.HtmlDocument document = new HtmlAgilityPack.HtmlDocument();
-                                document.Load(path);
-                                document.GetElementbyId("id_dear").InnerHtml = "Gửi Anh/Chị " + payslipItem.Ten + "!";
-                                using (var stream = new MemoryStream())
+                                try
                                 {
-                                    document.Save(stream);
-                                    stream.Position = 0;
-                                    content = new StreamReader(stream).ReadToEnd();
+                                    if (IsValidEmail(email))
+                                    {
+                                        HtmlAgilityPack.HtmlDocument document = new HtmlAgilityPack.HtmlDocument();
+                                        document.Load(path);
+                                        document.GetElementbyId("id_dear").InnerHtml = "Gửi Anh/Chị " + payslipItem.Ten + "!";
+                                        using (var stream = new MemoryStream())
+                                        {
+                                            document.Save(stream);
+                                            stream.Position = 0;
+                                            content = new StreamReader(stream).ReadToEnd();
+                                        }
+
+                                        var message = new Message(new string[] { email }, "WHC - PAYROLL SLIP \" " + month + " \"", content);
+                                        bool isOk = _emailSender.SendEmailHtmlWithAttack(message, attackPath);
+
+                                        if (!isOk)
+                                        {
+                                            mailStatus = new SEND_MAIL_LUONG_STATUS()
+                                            {
+                                                MaNV = payslipItem.Code,
+                                                Email = email,
+                                                SendDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                                                Status = "NG"
+                                            };
+
+                                            lstStatus.Add(mailStatus);
+                                        }
+                                        else
+                                        {
+                                            mailStatus = new SEND_MAIL_LUONG_STATUS()
+                                            {
+                                                MaNV = payslipItem.Code,
+                                                Email = email,
+                                                SendDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                                                Status = "OK"
+                                            };
+
+                                            lstStatus.Add(mailStatus);
+                                        }
+
+                                        // await Task.Delay(1000);
+                                    }
+                                    else
+                                    {
+                                        mailStatus = new SEND_MAIL_LUONG_STATUS()
+                                        {
+                                            MaNV = payslipItem.Code,
+                                            Email = email,
+                                            SendDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                                            Status = "NG"
+                                        };
+
+                                        lstStatus.Add(mailStatus);
+                                    }
                                 }
+                                catch (Exception ex)
+                                {
+                                    mailStatus = new SEND_MAIL_LUONG_STATUS()
+                                    {
+                                        MaNV = payslipItem.Code,
+                                        Email = email,
+                                        SendDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                                        Status = "NG"
+                                    };
 
-                                var message = new Message(new string[] { email }, "WHC - THÔNG TIN LƯƠNG THÁNG " + month, content);
-                                _emailSender.SendEmailHtmlWithAttack(message, attackPath);
-
-                                // await Task.Delay(1000);
+                                    lstStatus.Add(mailStatus);
+                                }
                             }
                         }
+
+                        _detailSalaryService.UpdateSendMailStatus(lstStatus);
 
                         if (System.IO.File.Exists(filePath))
                         {
@@ -1246,6 +1448,22 @@ namespace HRMS.Areas.Payroll.Controllers
             catch (Exception ex)
             {
                 throw ex;
+            }
+        }
+
+        public bool IsValidEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return false;
+
+            try
+            {
+                var emailFormat = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+                return emailFormat.IsMatch(email);
+            }
+            catch
+            {
+                return false;
             }
         }
 
@@ -1265,12 +1483,32 @@ namespace HRMS.Areas.Payroll.Controllers
                 wordDocument.MainDocumentPart.Document.Save();
             }
 
-            // code + tháng + năm vào : 2105001 06 92
-            string password = item.Code.ToUpper().Replace("H", "") + item.Month.Split("-")[1] + item.NamSinh.Substring(item.NamSinh.Length - 2);
-            SetPassword(filePath, password);
+            // NGÀY VÀO yyyyMMdd + tháng
+            string password = DateTime.Parse(item.Ngayvao).ToString("yyyyMMdd") + DateTime.Parse(item.Month + "-01").ToString("MM");
 
-            return filePath;
+            return SetPasswordDocFile(filePath, password);
         }
+
+        //public string ConvertDocxToPdf(string path)
+        //{
+        //    try
+        //    {
+        //        Document doc = new Document();
+        //        doc.LoadFromFile(path, FileFormat.Docx);
+
+        //        // Step 3: Generate a unique file name for the PDF
+        //        string pdfFilePath = Path.ChangeExtension(path, ".pdf");
+
+        //        // Step 4: Save the document as a PDF
+        //        doc.SaveToFile(pdfFilePath, FileFormat.PDF);
+
+        //        return pdfFilePath;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
 
         private void ReplacePlaceholders(DocumentFormat.OpenXml.Packaging.WordprocessingDocument document, PayslipItem item)
         {
@@ -1641,14 +1879,72 @@ namespace HRMS.Areas.Payroll.Controllers
             }
         }
 
-        private void SetPassword(string filePath, string password)
+        private string SetPasswordDocFile(string filePath, string password)
         {
-            Spire.Doc.Document document = new Spire.Doc.Document();
-            document.LoadFromFile(filePath);
-            document.Encrypt(password);
-            document.Protect(Spire.Doc.ProtectionType.AllowOnlyReading);
-            document.SaveToFile(filePath, Spire.Doc.FileFormat.Docx);
+            try
+            {
+                Spire.Doc.Document document = new Spire.Doc.Document();
+                document.LoadFromFile(filePath);
+                //document.ViewSetup.ZoomPercent = 125;
+                //document.Encrypt(password);
+                //document.Protect(Spire.Doc.ProtectionType.AllowOnlyReading);
+
+                string pdfFilePath = Path.ChangeExtension(filePath, ".pdf");
+                document.SaveToFile(pdfFilePath, Spire.Doc.FileFormat.PDF);
+                SetPassword_PDF_File(pdfFilePath, password);
+                //document.SaveToFile(filePath, Spire.Doc.FileFormat.Docx);
+
+                return pdfFilePath;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
+
+        private void SetPassword_PDF_File(string filePath, string password)
+        {
+            try
+            {
+                Spire.Pdf.PdfDocument pdf = new Spire.Pdf.PdfDocument();
+                pdf.LoadFromFile(filePath);
+#pragma warning disable CS0618 // Type or member is obsolete
+                Spire.Pdf.Security.PdfSecurity security = pdf.Security;
+#pragma warning restore CS0618 // Type or member is obsolete
+
+                security.Encrypt(password);
+                pdf.SaveToFile(filePath);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        //public string ConvertDocxToPasswordProtectedPdf(string filePath, string password)
+        //{
+        //    string pdfFilePath = Path.ChangeExtension(filePath, ".pdf");
+        //    string outputDir = _hostingEnvironment.WebRootPath + $@"\uploaded\PayrollDocuments";
+
+        //    // Command to convert DOCX to PDF
+        //    Process process = new Process();
+        //    process.StartInfo.FileName = "libreoffice";
+        //    process.StartInfo.Arguments = $"--headless --convert-to pdf {filePath} --outdir {outputDir}";
+        //    process.StartInfo.UseShellExecute = false;
+        //    process.StartInfo.RedirectStandardOutput = true;
+        //    process.StartInfo.RedirectStandardError = true;
+        //    process.Start();
+        //    process.WaitForExit();
+
+        //    using (Stream input = new FileStream(pdfFilePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+        //    using (Stream output = new FileStream(outputFilePath, FileMode.Create, FileAccess.Write, FileShare.None))
+        //    {
+        //        PdfReader reader = new PdfReader(input);
+        //        PdfEncryptor.Encrypt(reader, output, true, password, password, PdfWriter.ALLOW_PRINTING);
+        //    }
+
+        //    return pdfFilePath;
+        //}
 
         //[HttpPost]
         //[RequestFormLimits(MultipartBodyLengthLimit = 209715200)]

@@ -203,6 +203,7 @@
             return false;
         });
 
+
     </script>
 
 }
@@ -266,13 +267,25 @@
         </div>
     </div>
 
-    <div class="button-container">
-        <form id="formExport" method="post">
-            <input name="SpreadsheetWorkSessionId" type="hidden" value="" />
-            <div id="button-download-xlsx"></div>
-            <div id="button-download-html"></div>
-            <div id="button-print"></div>
-        </form>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="button-container">
+                <form id="formExport" method="post">
+                    <input name="SpreadsheetWorkSessionId" type="hidden" value="" />
+                    <div id="button-download-xlsx"></div>
+                    <div id="button-download-html"></div>
+                    <div id="button-print"></div>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 id="totalMoneyId">Total Net Salary: 0</h5>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script type="text/javascript">
@@ -289,6 +302,17 @@
                 },
                 useSubmitBehavior: true
             });
+
+
+            // Scroll to the specific column, here column index 5 (6th column, zero-based index)
+            spreadsheet.scrollToViaServer(100, 1, true);
+           
+            setTimeout(function () {
+                if (document.getElementById('spreadsheet_TR_tb.100.1')){
+                    document.getElementById('totalMoneyId').textContent = 'Total Net Salary: ' + document.getElementById('spreadsheet_TR_tb.100.1').textContent + ' VND';
+                }
+            }, 1000);
+
         @*$("#button-download-html").dxButton({
                 icon: "download",
                 type: "normal",
@@ -308,11 +332,12 @@
                 spreadsheet.print("_blank");
                 }
                 });*@
-                            });
+                                            });
     </script>
-    @(Html.DevExpress()
+    @(
+        Html.DevExpress()
         .Spreadsheet("spreadsheet")
-        .Height("800px")
+        .Height("680px")
         .Width("100%")
         .ConfirmOnLosingChanges(confirm => confirm.Enabled(false))
         .DocumentRequestHandlerUrl(Url.Action("DxDocumentRequest"))

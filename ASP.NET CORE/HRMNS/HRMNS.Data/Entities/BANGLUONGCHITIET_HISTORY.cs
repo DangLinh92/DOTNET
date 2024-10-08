@@ -155,5 +155,8 @@ namespace HRMNS.Data.Entities
         [StringLength(50)]
         public string BauThaiSan { get; set; }
         public double ThoiGianChuaNghi { get; set; }
+
+        [StringLength(150)]
+        public string NghiTS { get; set; }
     }
 }

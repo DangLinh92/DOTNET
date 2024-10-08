@@ -1047,7 +1047,7 @@ namespace VOC.Application.Implementation
                     }
                     if (vOCPPM_Customer.ToTal_Input > 0)
                     {
-                        vOCPPM_Customer.ToTal_PPM = Math.Round((vOCPPM_Customer.ToTal_Defect / vOCPPM_Customer.ToTal_Input) * Math.Pow(10, 6), 0);
+                        vOCPPM_Customer.ToTal_PPM = Math.Round((vOCPPM_Customer.ToTal_Defect / vOCPPM_Customer.ToTal_Input) * Math.Pow(10, 6), 1);
                     }
                     else
                     {
@@ -1150,7 +1150,7 @@ namespace VOC.Application.Implementation
 
                         if (sub.vocPPMModels.FirstOrDefault(x => x.Month == month && x.Type == "Input")?.Value > 0)
                         {
-                            pPMByMonth.PPM = Math.Round(Math.Pow(10, 6) * sub.vocPPMModels.FirstOrDefault(x => x.Month == month && x.Type == "Defect").Value / sub.vocPPMModels.FirstOrDefault(x => x.Month == month && x.Type == "Input").Value, 0);
+                            pPMByMonth.PPM = Math.Round(Math.Pow(10, 6) * sub.vocPPMModels.FirstOrDefault(x => x.Month == month && x.Type == "Defect").Value / sub.vocPPMModels.FirstOrDefault(x => x.Month == month && x.Type == "Input").Value, 1);
                         }
                         else
                         {
@@ -1233,7 +1233,7 @@ namespace VOC.Application.Implementation
                             Month = i,
                             Target = ppmCheck3.TargetValue
                         };
-                        pMByMonth.PPM = ppm1.Value > 0 ? Math.Round(Math.Pow(10, 6) * (ppm2.Value / ppm1.Value), 0) : 0;
+                        pMByMonth.PPM = ppm1.Value > 0 ? Math.Round(Math.Pow(10, 6) * (ppm2.Value / ppm1.Value), 1) : 0;
                         lstPPMMonthsALL.Add(pMByMonth);
 
                         // targetTotal = pMByMonth.Target;
@@ -1247,7 +1247,7 @@ namespace VOC.Application.Implementation
                 _customer.Customer = lstVocPPMModelALL.FirstOrDefault()?.Customer;
                 _customer.ToTal_Defect = totalDefect;
                 _customer.ToTal_Input = totalInput;
-                _customer.ToTal_PPM = totalInput > 0 ? Math.Round(Math.Pow(10, 6) * (totalDefect / totalInput), 0) : 0;
+                _customer.ToTal_PPM = totalInput > 0 ? Math.Round(Math.Pow(10, 6) * (totalDefect / totalInput), 1) : 0;
                 _customer.ToTal_PPM_Target = targetTotal;
                 _customer.vocPPMModels.AddRange(lstVocPPMModelALL);
 
@@ -1345,7 +1345,7 @@ namespace VOC.Application.Implementation
 
                 if (lstTotalInput.Sum() > 0)
                 {
-                    totalPPM = Math.Round(Math.Pow(10, 6) * (lstTotalDefect.Sum() / lstTotalInput.Sum()), 0);
+                    totalPPM = Math.Round(Math.Pow(10, 6) * (lstTotalDefect.Sum() / lstTotalInput.Sum()), 1);
                 }
                 else
                 {
@@ -1354,7 +1354,7 @@ namespace VOC.Application.Implementation
                 lstTotalPPM[0] = totalPPM;
                 for (int i = 1; i <= 12; i++)
                 {
-                    lstTotalPPM[i] = lstTotalInput[i - 1] > 0 ? Math.Round(Math.Pow(10, 6) * (lstTotalDefect[i - 1] / lstTotalInput[i - 1]), 0) : 0;
+                    lstTotalPPM[i] = lstTotalInput[i - 1] > 0 ? Math.Round(Math.Pow(10, 6) * (lstTotalDefect[i - 1] / lstTotalInput[i - 1]), 1) : 0;
                 }
 
                 pPMDataChart = new PPMDataChart()
@@ -1545,10 +1545,10 @@ namespace VOC.Application.Implementation
 
             VocProgessInfo info = new VocProgessInfo();
             info.ReceiveCount = lstVoc.Count();
-            info.CloseCount = lstVoc.Where(x => x.VOCState == "Close").Count();
+            info.CloseCount = lstVoc.Where(x => x.VOCState.NullString().ToLower() == "close").Count();
             info.ProgressCount = info.ReceiveCount - info.CloseCount;
-            info.lstVocProgress = lstVoc.Where(x => x.VOCState != "Close").ToList();
-            info.lstVocComplete = lstVoc.Where(x => x.VOCCount == "Y").ToList();
+            info.lstVocProgress = lstVoc.Where(x => x.VOCState.NullString().ToLower() != "close").ToList();
+            info.lstVocComplete = lstVoc.Where(x => x.VOCCount.NullString().ToLower() == "y" || x.VOCCount.NullString().ToLower() == "n").ToList();
 
             return info;
         }

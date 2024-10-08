@@ -1,6 +1,7 @@
 ﻿using HRMNS.Data.EF.Configurations;
 using HRMNS.Data.EF.Extensions;
 using HRMNS.Data.Entities;
+using HRMNS.Data.Entities.luong;
 using HRMNS.Data.Entities.Payroll;
 using HRMNS.Data.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -126,6 +127,8 @@ namespace HRMNS.Data.EF
         public virtual DbSet<HR_THANHTOAN_NGHIVIEC> HR_THANHTOAN_NGHIVIEC { get; set; }
         public virtual DbSet<HR_CHECK_POINT> HR_CHECK_POINT { get; set; }
         public virtual DbSet<HR_CON_NHO> HR_CON_NHO { get; set; }
+        public virtual DbSet<USER_VIEW_LUONG> USER_VIEW_LUONG { get; set; }
+        public virtual DbSet<SEND_MAIL_LUONG_STATUS> SEND_MAIL_LUONG_STATUS { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -237,6 +240,8 @@ namespace HRMNS.Data.EF
             builder.AddConfiguration(new ThanhToanNghiViecConfiguration());
             builder.AddConfiguration(new CheckpointConfiguration());
             builder.AddConfiguration(new ConNhoConfiguration());
+            builder.AddConfiguration(new UserViewLuongConfiguration());
+            builder.AddConfiguration(new SendMailLuongStatusConfiguration());
 
             //base.OnModelCreating(builder);
         }

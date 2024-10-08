@@ -6,6 +6,14 @@
     }
 
     function registerEvents() {
+        $('#btn-import-sale-demand-week').on('click', function () {
+
+            $("#fileInputExcel").val(null);
+            $('#hd-ImportType').val('');
+            $('#hd-ImportUrl').val('/OpeationMns/GOCModule/ImportSaleDemandWeekExcel?param=');
+            $('#import_gocPlan').modal('show');
+        });
+
         $('#btn-import-goc_byHand').on('click', function () {
             let masterID = $('#cboMasterID').val();
             let planID = $('#cboPlanID').val();

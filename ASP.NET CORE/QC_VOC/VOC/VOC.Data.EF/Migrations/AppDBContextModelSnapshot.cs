@@ -427,6 +427,10 @@ namespace VOC.Data.EF.Migrations
                         .HasColumnType("nvarchar(1000)")
                         .HasMaxLength(1000);
 
+                    b.Property<string>("LinkReport2")
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
                     b.Property<string>("ModelFullname")
                         .HasColumnType("nvarchar(250)")
                         .HasMaxLength(250);

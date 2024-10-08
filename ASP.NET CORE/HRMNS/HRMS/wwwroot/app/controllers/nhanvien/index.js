@@ -217,6 +217,12 @@
         $('#import_employee').modal('show');
     });
 
+    $('#btn-importEmail').on('click', function () { // import basic info for employee
+        $("#fileInputExcel").val(null);
+        $('#hd-ImportType').val('imp_email');
+        $('#import_employee').modal('show');
+    });
+
     $('#btnCloseImportExcel').on('click', function () {
         var fileUpload = $("#fileInputExcel").get(0);
         var files = fileUpload.files;

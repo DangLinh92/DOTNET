@@ -274,6 +274,10 @@
             }
             else {
                 render = "<option value='" + deparment + "'>" + deparment + "</option >";
+
+                if (deparment == 'CSP') {
+                    render += "<option value='R&D'>R&D</option >";
+                }
             }
             $('#cboBoPhan').html(render);
         }
@@ -295,6 +299,10 @@
                         }
                         else {
                             render = "<option value='" + deparment + "'>" + deparment + "</option >";
+
+                            if (deparment == 'CSP') {
+                                render += "<option value='R&D'>R&D</option >";
+                            }
                         }
                         $('#cboBoPhan').html(render);
                     }

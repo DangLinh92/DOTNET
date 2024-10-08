@@ -29,6 +29,7 @@ namespace HRMNS.Data.Entities
         public double CD_TV { get; set; }
         public double CD_CT { get; set; }
         public double AL { get; set; }
+        public double TN { get; set; }
         public double AL30 { get; set; }
         public double L160 { get; set; }
         public double SL { get; set; }
@@ -88,5 +89,33 @@ namespace HRMNS.Data.Entities
 
         [ForeignKey("MaNV")]
         public virtual HR_NHANVIEN HR_NHANVIEN { get; set; }
+    }
+
+    [Table("SEND_MAIL_LUONG_STATUS")]
+    public class SEND_MAIL_LUONG_STATUS : DomainEntity<int>, IDateTracking
+    {
+        [StringLength(50)]
+        public string Email { get; set; }
+
+        [StringLength(50)]
+        public string MaNV { get; set; }
+
+        [StringLength(50)]
+        public string SendDate {  get; set; }
+
+        [StringLength(50)]
+        public string Status { get; set; }
+
+        [StringLength(50)]
+        public string DateCreated { get; set; }
+
+        [StringLength(50)]
+        public string DateModified { get; set; }
+
+        [StringLength(50)]
+        public string UserCreated { get; set; }
+
+        [StringLength(50)]
+        public string UserModified { get; set; }
     }
 }

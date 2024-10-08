@@ -22,7 +22,7 @@ namespace VOC.Data.Entities
             string produtiondatemarking, string analysisresult, string voccount, string defectcause,
             string defectclassification, string customerresponse,
             string report_finalapprover, string report_sender, string rport_sentdate, string vocstate,
-            string vocfinishingdate, string voc_tat, string pba_fae_result, string link,string customerGroup,string produtionDate,string produtionDate_2,string receivedDate_2,string sPLReceivedDate_2)
+            string vocfinishingdate, string voc_tat, string pba_fae_result, string link,string customerGroup,string produtionDate,string produtionDate_2,string receivedDate_2,string sPLReceivedDate_2,string link2)
         {
             Received_site = received_site;
             PlaceOfOrigin = placeoforigin;
@@ -52,6 +52,7 @@ namespace VOC.Data.Entities
             VOC_TAT = voc_tat;
             PBA_FAE_Result = pba_fae_result;
             LinkReport = link;
+            LinkReport2 = link2;
 
             CustomerGroup = customerGroup;
             ProdutionDate = produtionDate;
@@ -197,6 +198,9 @@ namespace VOC.Data.Entities
 
         [StringLength(1000)]
         public string LinkReport { get; set; }
+
+        [StringLength(1000)]
+        public string LinkReport2 { get; set; }
 
         [StringLength(50)]
         public string DateCreated { get; set; }

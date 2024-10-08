@@ -83,7 +83,7 @@ namespace HRMNS.Application.Implementation
                             break;
                         }
 
-                        maNV = Sheet.Cells[i, 1].Text.NullString();
+                        maNV = Sheet.Cells[i, 1].Text.NullString().ToUpper();
                         TenNV = Sheet.Cells[i, 2].Text.NullString();
 
                         if (DateTime.TryParse(Sheet.Cells[i, 3].Text.NullString(), out DateTime date))

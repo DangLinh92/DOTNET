@@ -42,7 +42,7 @@ namespace VOC.Application.AutoMapper
             c.ProdutionDate,
             c.ProdutionDate_2,
             c.ReceivedDate_2,
-            c.SPLReceivedDate_2));
+            c.SPLReceivedDate_2,c.LinkReport2));
 
             CreateMap<VOC_DefectTypeViewModel, VOC_DEFECT_TYPE>()
                .ConstructUsing(c => new VOC_DEFECT_TYPE(c.EngsNotation, c.KoreanNotation));
